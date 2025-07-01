@@ -1,0 +1,48 @@
+{
+  "id": "025e35e5-2f20-43cf-b9a4-f12919871a2f",
+  "template": "app-nolayers",
+  "versions": {
+    "AbpFramework": "9.2.1",
+    "AbpStudio": "1.0.2",
+    "TargetDotnetFramework": "net9.0"
+  },
+  "modules": {
+    "CourseMate": {
+      "path": "CourseMate.abpmdl"
+    }
+  },
+  "runProfiles": {
+    "Default": {
+      "path": "etc/run-profiles/Default.abprun.json"
+    }
+  },
+  "options": {
+    "httpRequests": {
+      "ignoredUrls": [
+      
+      ]
+    }
+  },
+  "creatingStudioConfiguration": {
+    "template": "app-nolayers",
+    "createdAbpStudioVersion": "1.0.2",
+    "multiTenancy": "false",
+    "runInstallLibs": "true",
+    "useLocalReferences": "false",
+    "uiFramework": "angular",
+    "databaseProvider": "ef",
+    "runDbMigrator": "true",
+    "databaseManagementSystem": "postgresql",
+    "createInitialMigration": "true",
+    "theme": "leptonx-lite",
+    "themeStyle": "",
+    "themeMenuPlacement": "",
+    "progressiveWebApp": "",
+    "runProgressiveWebAppSupport": "",
+    "publicWebsite": "",
+    "socialLogin": "false",
+    "selectedLanguages": ["English", "Vietnamese", ],
+    "defaultLanguage": "English",
+    "createCommand": "abp new CourseMate -t app-nolayers --ui-framework angular --mobile  --database-provider ef --database-management-system postgresql --theme leptonx-lite --no-tests --without-cms-kit --sample-crud-page --dont-run-bundling --no-multi-tenancy --no-social-logins -no-gdpr -no-openiddict-admin-ui -no-audit-logging -no-file-management -no-language-management -no-text-template-management"
+  }
+}

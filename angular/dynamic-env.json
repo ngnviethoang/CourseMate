@@ -1,0 +1,21 @@
+{
+  "production": true,
+  "application": {
+    "baseUrl":"https://coursemate-web",
+    "name": "CourseMate",
+    "logoUrl": ""
+  },
+  "oAuthConfig": {
+    "issuer": "https://coursemate-api/",
+    "redirectUri": "https://coursemate",
+    "clientId": "CourseMate_App",
+    "responseType": "code",
+    "scope": "offline_access openid profile email phone"
+  },
+  "apis": {
+    "default": {
+      "url": "https://coursemate-api",
+      "rootNamespace": "CourseMate"
+    }
+  }
+}

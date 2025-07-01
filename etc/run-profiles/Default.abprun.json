@@ -1,0 +1,23 @@
+﻿{
+  "applications": {
+    "CourseMate.Angular": {
+      "type": "cli",
+      "workingDirectory": "../../angular",
+      "startCommand": "./start.ps1",
+      "launchUrl": "http://localhost:4200",
+      "execution": {
+        "order": 0
+      }
+    },
+    "CourseMate": {
+      "type": "dotnet-project",
+      "launchUrl": "https://localhost:44393",
+      "healthCheckEndpoint": "/health-status",
+      "healthUiEndpoint": "/health-ui",
+      "path": "../../CourseMate/CourseMate.csproj",
+      "execution": {
+        "order": 1
+      }
+    }
+  }
+}

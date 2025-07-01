@@ -1,0 +1,21 @@
+{
+  "production": true,
+  "application": {
+    "baseUrl":"http://localhost:4200",
+    "name": "CourseMate",
+    "logoUrl": ""
+  },
+  "oAuthConfig": {
+    "issuer": "https://localhost:44393",
+    "redirectUri": "https://localhost:44393",
+    "clientId": "CourseMate_App",
+    "responseType": "code",
+    "scope": "offline_access openid profile email phone CourseMate"
+  },
+  "apis": {
+    "default": {
+      "url": "https://localhost:44393",
+      "rootNamespace": "CourseMate"
+    }
+  }
+}
