@@ -1,36 +1,46 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Volo.Abp.EntityFrameworkCore;
-using Volo.Abp.EntityFrameworkCore.Modeling;
+﻿using CourseMate.Entities.Books;
+using CourseMate.Entities.Categories;
+using CourseMate.Entities.Chapter;
+using CourseMate.Entities.Courses;
+using CourseMate.Entities.Enrollments;
+using CourseMate.Entities.Lessons;
+using CourseMate.Entities.Orders;
+using CourseMate.Entities.PaymentRequests;
+using CourseMate.Entities.Reviews;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity.EntityFrameworkCore;
 using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
-using CourseMate.Entities.Books;
 
 namespace CourseMate.Data;
 
 public class CourseMateDbContext : AbpDbContext<CourseMateDbContext>
 {
-    public DbSet<Book> Books { get; set; }
-    
-    public const string DbTablePrefix = "App";
-    public const string DbSchema = null;
-
     public CourseMateDbContext(DbContextOptions<CourseMateDbContext> options)
         : base(options)
     {
     }
 
+    public DbSet<Book> Books { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Chapter> Chapters { get; set; }
+    public DbSet<Course> Courses { get; set; }
+    public DbSet<Enrollment> Enrollments { get; set; }
+    public DbSet<Lesson> Lessons { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<PaymentRequest> PaymentRequests { get; set; }
+    public DbSet<Review> Reviews { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
-        /* Include modules to your migration db context */
-
         builder.ConfigureSettingManagement();
         builder.ConfigureBackgroundJobs();
         builder.ConfigureAuditLogging();
@@ -39,16 +49,6 @@ public class CourseMateDbContext : AbpDbContext<CourseMateDbContext>
         builder.ConfigureBlobStoring();
         builder.ConfigureIdentity();
         builder.ConfigureOpenIddict();
-        
-        builder.Entity<Book>(b =>
-        {
-            b.ToTable(DbTablePrefix + "Books",
-                DbSchema);
-            b.ConfigureByConvention(); //auto configure for the base class props
-            b.Property(x => x.Name).IsRequired().HasMaxLength(128);
-        });
-        
-        /* Configure your own entities here */
+        builder.ConfigureCourseMateEntities();
     }
 }
-

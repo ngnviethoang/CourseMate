@@ -1,7 +1,6 @@
 using CourseMate.Localization;
 using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Localization;
-using Volo.Abp.MultiTenancy;
 
 namespace CourseMate.Permissions;
 
@@ -9,10 +8,10 @@ public class CourseMatePermissionDefinitionProvider : PermissionDefinitionProvid
 {
     public override void Define(IPermissionDefinitionContext context)
     {
-        var myGroup = context.AddGroup(CourseMatePermissions.GroupName);
+        PermissionGroupDefinition myGroup = context.AddGroup(CourseMatePermissions.GroupName);
 
 
-        var booksPermission = myGroup.AddPermission(CourseMatePermissions.Books.Default, L("Permission:Books"));
+        PermissionDefinition booksPermission = myGroup.AddPermission(CourseMatePermissions.Books.Default, L("Permission:Books"));
         booksPermission.AddChild(CourseMatePermissions.Books.Create, L("Permission:Books.Create"));
         booksPermission.AddChild(CourseMatePermissions.Books.Edit, L("Permission:Books.Edit"));
         booksPermission.AddChild(CourseMatePermissions.Books.Delete, L("Permission:Books.Delete"));

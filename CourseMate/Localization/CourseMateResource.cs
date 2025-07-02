@@ -5,5 +5,4 @@ namespace CourseMate.Localization;
 [LocalizationResourceName("CourseMate")]
 public class CourseMateResource
 {
-    
 }

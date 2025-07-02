@@ -1,56 +1,55 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using CourseMate.Data;
+using CourseMate.HealthChecks;
+using CourseMate.Localization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using CourseMate.Data;
-using CourseMate.Localization;
-using CourseMate.HealthChecks;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.OpenApi.Models;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
-using Volo.Abp.Uow;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
-using Volo.Abp.SettingManagement;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Serilog;
+using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.Autofac;
 using Volo.Abp.AutoMapper;
+using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
+using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
 using Volo.Abp.Caching;
-using Volo.Abp.FeatureManagement;
-using Volo.Abp.Identity;
 using Volo.Abp.Emailing;
+using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.PostgreSql;
+using Volo.Abp.FeatureManagement;
+using Volo.Abp.FeatureManagement.EntityFrameworkCore;
+using Volo.Abp.Identity;
+using Volo.Abp.Identity.EntityFrameworkCore;
 using Volo.Abp.Localization;
 using Volo.Abp.Localization.ExceptionHandling;
 using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
+using Volo.Abp.OpenIddict;
+using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement;
+using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.HttpApi;
 using Volo.Abp.PermissionManagement.Identity;
+using Volo.Abp.PermissionManagement.OpenIddict;
+using Volo.Abp.Security.Claims;
 using Volo.Abp.SettingManagement;
+using Volo.Abp.SettingManagement.EntityFrameworkCore;
+using Volo.Abp.Studio.Client.AspNetCore;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
-using Volo.Abp.OpenIddict;
-using Volo.Abp.PermissionManagement.OpenIddict;
-using Volo.Abp.Security.Claims;
-using Volo.Abp.EntityFrameworkCore;
-using Volo.Abp.OpenIddict.EntityFrameworkCore;
-using Volo.Abp.SettingManagement.EntityFrameworkCore;
-using Volo.Abp.PermissionManagement.EntityFrameworkCore;
-using Volo.Abp.AuditLogging.EntityFrameworkCore;
-using Volo.Abp.Identity.EntityFrameworkCore;
-using Volo.Abp.FeatureManagement.EntityFrameworkCore;
-using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
-using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
-using Volo.Abp.EntityFrameworkCore.PostgreSql;
-using Volo.Abp.Studio.Client.AspNetCore;
 
 namespace CourseMate;
 
@@ -108,8 +107,8 @@ public class CourseMateModule : AbpModule
 
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {
-        var hostingEnvironment = context.Services.GetHostingEnvironment();
-        var configuration = context.Services.GetConfiguration();
+        IWebHostEnvironment hostingEnvironment = context.Services.GetHostingEnvironment();
+        IConfiguration configuration = context.Services.GetConfiguration();
 
         context.Services.PreConfigure<AbpMvcDataAnnotationsLocalizationOptions>(options =>
         {
@@ -130,15 +129,9 @@ public class CourseMateModule : AbpModule
 
         if (!hostingEnvironment.IsDevelopment())
         {
-            PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
-            {
-                options.AddDevelopmentEncryptionAndSigningCertificate = false;
-            });
+            PreConfigure<AbpOpenIddictAspNetCoreOptions>(options => { options.AddDevelopmentEncryptionAndSigningCertificate = false; });
 
-            PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
-            {
-                serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", configuration["AuthServer:CertificatePassPhrase"]!);
-            });
+            PreConfigure<OpenIddictServerBuilder>(serverBuilder => { serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", configuration["AuthServer:CertificatePassPhrase"]!); });
         }
 
         CourseMateGlobalFeatureConfigurator.Configure();
@@ -148,19 +141,16 @@ public class CourseMateModule : AbpModule
 
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        var hostingEnvironment = context.Services.GetHostingEnvironment();
-        var configuration = context.Services.GetConfiguration();
+        IWebHostEnvironment hostingEnvironment = context.Services.GetHostingEnvironment();
+        IConfiguration configuration = context.Services.GetConfiguration();
 
         if (!hostingEnvironment.IsProduction())
         {
-            Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
-            Microsoft.IdentityModel.Logging.IdentityModelEventSource.LogCompleteSecurityArtifact = true;
+            IdentityModelEventSource.ShowPII = true;
+            IdentityModelEventSource.LogCompleteSecurityArtifact = true;
         }
 
-        if (hostingEnvironment.IsDevelopment())
-        {
-            context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
-        }
+        if (hostingEnvironment.IsDevelopment()) context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
 
         ConfigureAuthentication(context);
         ConfigureBundles();
@@ -176,20 +166,16 @@ public class CourseMateModule : AbpModule
         ConfigureVirtualFiles(hostingEnvironment);
         ConfigureEfCore(context);
     }
-    
 
     private void ConfigureHealthChecks(ServiceConfigurationContext context)
     {
         context.Services.AddCourseMateHealthChecks();
     }
-    
+
     private void ConfigureAuthentication(ServiceConfigurationContext context)
     {
         context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
-        context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
-        {
-            options.IsDynamicClaimsEnabled = true;
-        });
+        context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options => { options.IsDynamicClaimsEnabled = true; });
     }
 
     private void ConfigureBundles()
@@ -198,28 +184,19 @@ public class CourseMateModule : AbpModule
         {
             options.StyleBundles.Configure(
                 LeptonXLiteThemeBundles.Styles.Global,
-                bundle => 
-                { 
-                    bundle.AddFiles("/global-styles.css"); 
-                }
+                bundle => { bundle.AddFiles("/global-styles.css"); }
             );
 
             options.ScriptBundles.Configure(
                 LeptonXLiteThemeBundles.Scripts.Global,
-                bundle =>
-                {
-                    bundle.AddFiles("/global-scripts.js");
-                }
+                bundle => { bundle.AddFiles("/global-scripts.js"); }
             );
         });
     }
 
     private void ConfigureMultiTenancy()
     {
-        Configure<AbpMultiTenancyOptions>(options =>
-        {
-            options.IsEnabled = IsMultiTenant;
-        });
+        Configure<AbpMultiTenancyOptions>(options => { options.IsEnabled = IsMultiTenant; });
     }
 
     private void ConfigureUrls(IConfiguration configuration)
@@ -244,24 +221,17 @@ public class CourseMateModule : AbpModule
                 .AddVirtualJson("/Localization/CourseMate");
 
             options.DefaultResourceType = typeof(CourseMateResource);
-            
-            options.Languages.Add(new LanguageInfo("en", "en", "English")); 
-            options.Languages.Add(new LanguageInfo("vi", "vi", "Vietnamese")); 
 
+            options.Languages.Add(new LanguageInfo("en", "en", "English"));
+            options.Languages.Add(new LanguageInfo("vi", "vi", "Vietnamese"));
         });
 
-        Configure<AbpExceptionLocalizationOptions>(options =>
-        {
-            options.MapCodeNamespace("CourseMate", typeof(CourseMateResource));
-        });
+        Configure<AbpExceptionLocalizationOptions>(options => { options.MapCodeNamespace("CourseMate", typeof(CourseMateResource)); });
     }
 
     private void ConfigureAutoApiControllers()
     {
-        Configure<AbpAspNetCoreMvcOptions>(options =>
-        {
-            options.ConventionalControllers.Create(typeof(CourseMateModule).Assembly);
-        });
+        Configure<AbpAspNetCoreMvcOptions>(options => { options.ConventionalControllers.Create(typeof(CourseMateModule).Assembly); });
     }
 
     private void ConfigureSwagger(IServiceCollection services, IConfiguration configuration)
@@ -270,7 +240,7 @@ public class CourseMateModule : AbpModule
             configuration["AuthServer:Authority"]!,
             new Dictionary<string, string>
             {
-                {"CourseMate", "CourseMate API"}
+                { "CourseMate", "CourseMate API" }
             },
             options =>
             {
@@ -289,7 +259,7 @@ public class CourseMateModule : AbpModule
              * See AutoMapper's documentation to learn what it is:
              * https://docs.automapper.org/en/stable/Configuration-validation.html
              */
-            options.AddMaps<CourseMateModule>(/* validate: true */);
+            options.AddMaps<CourseMateModule>( /* validate: true */);
         });
     }
 
@@ -326,10 +296,8 @@ public class CourseMateModule : AbpModule
         {
             options.FileSets.AddEmbedded<CourseMateModule>();
             if (hostingEnvironment.IsDevelopment())
-            {
                 /* Using physical files in development, so we don't need to recompile on changes */
                 options.FileSets.ReplaceEmbeddedByPhysical<CourseMateModule>(hostingEnvironment.ContentRootPath);
-            }
         });
     }
 
@@ -341,36 +309,22 @@ public class CourseMateModule : AbpModule
              * default repositories only for aggregate roots
              * Documentation: https://docs.abp.io/en/abp/latest/Entity-Framework-Core#add-default-repositories
              */
-            options.AddDefaultRepositories(includeAllEntities: true);
+            options.AddDefaultRepositories(true);
         });
 
-        Configure<AbpDbContextOptions>(options =>
-        {
-            options.Configure(configurationContext =>
-            {
-                configurationContext.UseNpgsql();
-            });
-        });
-        
+        Configure<AbpDbContextOptions>(options => { options.Configure(configurationContext => { configurationContext.UseNpgsql(); }); });
     }
-
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
-        var app = context.GetApplicationBuilder();
-        var env = context.GetEnvironment();
+        IApplicationBuilder app = context.GetApplicationBuilder();
+        IWebHostEnvironment env = context.GetEnvironment();
 
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
+        if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
         app.UseAbpRequestLocalization();
 
-        if (!env.IsDevelopment())
-        {
-            app.UseErrorPage();
-        }
+        if (!env.IsDevelopment()) app.UseErrorPage();
 
         app.UseCorrelationId();
         app.UseRouting();
@@ -381,10 +335,7 @@ public class CourseMateModule : AbpModule
         app.UseAuthentication();
         app.UseAbpOpenIddictValidation();
 
-        if (IsMultiTenant)
-        {
-            app.UseMultiTenancy();
-        }
+        if (IsMultiTenant) app.UseMultiTenancy();
 
         app.UseUnitOfWork();
         app.UseDynamicClaims();

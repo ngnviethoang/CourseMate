@@ -4,7 +4,6 @@ public static class CourseMatePermissions
 {
     public const string GroupName = "CourseMate";
 
-
     public static class Books
     {
         public const string Default = GroupName + ".Books";
@@ -13,6 +12,67 @@ public static class CourseMatePermissions
         public const string Delete = Default + ".Delete";
     }
 
-    //Add your own permission names. Example:
-    //public const string MyPermission1 = GroupName + ".MyPermission1";
+    public static class Categories
+    {
+        public const string Default = GroupName + ".Categories";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
+
+    public static class Chapters
+    {
+        public const string Default = GroupName + ".Chapters";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
+
+    public static class Courses
+    {
+        public const string Default = GroupName + ".Courses";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
+
+    public static class Enrollments
+    {
+        public const string Default = GroupName + ".Enrollments";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
+
+    public static class Lessons
+    {
+        public const string Default = GroupName + ".Lessons";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
+
+    public static class Orders
+    {
+        public const string Default = GroupName + ".Orders";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
+
+    public static class PaymentRequests
+    {
+        public const string Default = GroupName + ".PaymentRequests";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
+
+    public static class Reviews
+    {
+        public const string Default = GroupName + ".Reviews";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
 }

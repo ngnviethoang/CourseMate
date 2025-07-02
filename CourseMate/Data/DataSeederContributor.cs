@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using CourseMate.Entities.Books;
+﻿using CourseMate.Entities.Books;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
@@ -29,7 +27,7 @@ public class CourseMateDataSeederContributor
                     PublishDate = new DateTime(1949, 6, 8),
                     Price = 19.84f
                 },
-                autoSave: true
+                true
             );
 
             await _bookRepository.InsertAsync(
@@ -40,7 +38,7 @@ public class CourseMateDataSeederContributor
                     PublishDate = new DateTime(1995, 9, 27),
                     Price = 42.0f
                 },
-                autoSave: true
+                true
             );
         }
     }

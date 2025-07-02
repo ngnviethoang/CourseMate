@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using System.Linq.Dynamic.Core;
+using CourseMate.Entities.Books;
 using CourseMate.Permissions;
+using CourseMate.Services.Dtos.Books;
+using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using System.Linq.Dynamic.Core;
-using CourseMate.Entities.Books;
-using CourseMate.Services.Dtos.Books;
 
 namespace CourseMate.Services.Books;
 
@@ -25,20 +21,20 @@ public class BookAppService : ApplicationService, IBookAppService
 
     public async Task<BookDto> GetAsync(Guid id)
     {
-        var book = await _repository.GetAsync(id);
+        Book book = await _repository.GetAsync(id);
         return ObjectMapper.Map<Book, BookDto>(book);
     }
 
     public async Task<PagedResultDto<BookDto>> GetListAsync(PagedAndSortedResultRequestDto input)
     {
-        var queryable = await _repository.GetQueryableAsync();
-        var query = queryable
+        IQueryable<Book> queryable = await _repository.GetQueryableAsync();
+        IQueryable<Book> query = queryable
             .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "Name" : input.Sorting)
             .Skip(input.SkipCount)
             .Take(input.MaxResultCount);
 
-        var books = await AsyncExecuter.ToListAsync(query);
-        var totalCount = await AsyncExecuter.CountAsync(queryable);
+        List<Book> books = await AsyncExecuter.ToListAsync(query);
+        int totalCount = await AsyncExecuter.CountAsync(queryable);
 
         return new PagedResultDto<BookDto>(
             totalCount,
@@ -49,7 +45,7 @@ public class BookAppService : ApplicationService, IBookAppService
     [Authorize(CourseMatePermissions.Books.Create)]
     public async Task<BookDto> CreateAsync(CreateUpdateBookDto input)
     {
-        var book = ObjectMapper.Map<CreateUpdateBookDto, Book>(input);
+        Book book = ObjectMapper.Map<CreateUpdateBookDto, Book>(input);
         await _repository.InsertAsync(book);
         return ObjectMapper.Map<Book, BookDto>(book);
     }
@@ -57,7 +53,7 @@ public class BookAppService : ApplicationService, IBookAppService
     [Authorize(CourseMatePermissions.Books.Edit)]
     public async Task<BookDto> UpdateAsync(Guid id, CreateUpdateBookDto input)
     {
-        var book = await _repository.GetAsync(id);
+        Book book = await _repository.GetAsync(id);
         ObjectMapper.Map(input, book);
         await _repository.UpdateAsync(book);
         return ObjectMapper.Map<Book, BookDto>(book);

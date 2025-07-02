@@ -2,6 +2,7 @@
     --lpx-logo: url('/images/logo/leptonxlite/logo-light.png');
     --lpx-logo-icon: url('/images/logo/leptonxlite/logo-light-thumbnail.png');
 }
-:root .abp-account-layout .lpx-brand-logo{
+
+:root .abp-account-layout .lpx-brand-logo {
     --lpx-logo: url('/images/logo/leptonxlite/logo-dark.png');
 }

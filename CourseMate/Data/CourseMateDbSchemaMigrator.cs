@@ -1,5 +1,5 @@
-﻿using Volo.Abp.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Volo.Abp.DependencyInjection;
 
 namespace CourseMate.Data;
 
@@ -15,7 +15,6 @@ public class CourseMateDbSchemaMigrator : ITransientDependency
 
     public async Task MigrateAsync()
     {
-        
         /* We intentionally resolving the CourseMateDbContext
          * from IServiceProvider (instead of directly injecting it)
          * to properly get the connection string of the current tenant in the
@@ -26,6 +25,5 @@ public class CourseMateDbSchemaMigrator : ITransientDependency
             .GetRequiredService<CourseMateDbContext>()
             .Database
             .MigrateAsync();
-
     }
 }

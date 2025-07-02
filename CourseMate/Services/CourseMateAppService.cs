@@ -1,5 +1,15 @@
-using Volo.Abp.Application.Services;
+using CourseMate.Entities.Books;
+using CourseMate.Entities.Categories;
+using CourseMate.Entities.Chapter;
+using CourseMate.Entities.Courses;
+using CourseMate.Entities.Enrollments;
+using CourseMate.Entities.Lessons;
+using CourseMate.Entities.Orders;
+using CourseMate.Entities.PaymentRequests;
+using CourseMate.Entities.Reviews;
 using CourseMate.Localization;
+using Volo.Abp.Application.Services;
+using Volo.Abp.Domain.Repositories;
 
 namespace CourseMate.Services;
 
@@ -10,4 +20,34 @@ public abstract class CourseMateAppService : ApplicationService
     {
         LocalizationResource = typeof(CourseMateResource);
     }
+
+    protected IRepository<Book, Guid> BookRepo =>
+        LazyServiceProvider.GetRequiredService<IRepository<Book, Guid>>();
+
+    protected IRepository<Category, Guid> CategoryRepo =>
+        LazyServiceProvider.GetRequiredService<IRepository<Category, Guid>>();
+
+    protected IRepository<Chapter, Guid> ChapterRepo =>
+        LazyServiceProvider.GetRequiredService<IRepository<Chapter, Guid>>();
+
+    protected IRepository<Course, Guid> CourseRepo =>
+        LazyServiceProvider.GetRequiredService<IRepository<Course, Guid>>();
+
+    protected IRepository<Enrollment, Guid> EnrollmentRepo =>
+        LazyServiceProvider.GetRequiredService<IRepository<Enrollment, Guid>>();
+
+    protected IRepository<Lesson, Guid> LessonRepo =>
+        LazyServiceProvider.GetRequiredService<IRepository<Lesson, Guid>>();
+
+    protected IRepository<Order, Guid> OrderRepo =>
+        LazyServiceProvider.GetRequiredService<IRepository<Order, Guid>>();
+
+    protected IRepository<OrderItem, Guid> OrderItemRepo =>
+        LazyServiceProvider.GetRequiredService<IRepository<OrderItem, Guid>>();
+
+    protected IRepository<PaymentRequest, Guid> PaymentRequestRepo =>
+        LazyServiceProvider.GetRequiredService<IRepository<PaymentRequest, Guid>>();
+
+    protected IRepository<Review, Guid> ReviewRepo =>
+        LazyServiceProvider.GetRequiredService<IRepository<Review, Guid>>();
 }

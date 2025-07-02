@@ -10,11 +10,10 @@ namespace CourseMate.Data;
 
 public class CourseMateDbMigrationService : ITransientDependency
 {
-    public ILogger<CourseMateDbMigrationService> Logger { get; set; }
+    private readonly ICurrentTenant _currentTenant;
 
     private readonly IDataSeeder _dataSeeder;
     private readonly CourseMateDbSchemaMigrator _dbSchemaMigrator;
-    private readonly ICurrentTenant _currentTenant;
 
     public CourseMateDbMigrationService(
         IDataSeeder dataSeeder,
@@ -28,21 +27,20 @@ public class CourseMateDbMigrationService : ITransientDependency
         Logger = NullLogger<CourseMateDbMigrationService>.Instance;
     }
 
+    public ILogger<CourseMateDbMigrationService> Logger { get; set; }
+
     public async Task MigrateAsync()
     {
-        var initialMigrationAdded = AddInitialMigrationIfNotExist();
+        bool initialMigrationAdded = AddInitialMigrationIfNotExist();
 
-        if (initialMigrationAdded)
-        {
-            return;
-        }
+        if (initialMigrationAdded) return;
 
         Logger.LogInformation("Started database migrations...");
 
         await MigrateDatabaseSchemaAsync();
         await SeedDataAsync();
 
-        Logger.LogInformation($"Successfully completed host database migrations.");
+        Logger.LogInformation("Successfully completed host database migrations.");
         Logger.LogInformation("You can safely end this process...");
     }
 
@@ -63,10 +61,7 @@ public class CourseMateDbMigrationService : ITransientDependency
     {
         try
         {
-            if (!DbMigrationsProjectExists())
-            {
-                return false;
-            }
+            if (!DbMigrationsProjectExists()) return false;
         }
         catch (Exception)
         {
@@ -80,10 +75,8 @@ public class CourseMateDbMigrationService : ITransientDependency
                 AddInitialMigration();
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
         catch (Exception e)
         {
@@ -99,7 +92,7 @@ public class CourseMateDbMigrationService : ITransientDependency
 
     private bool MigrationsFolderExists()
     {
-        var dbMigrationsProjectFolder = GetEntityFrameworkCoreProjectFolderPath();
+        string dbMigrationsProjectFolder = GetEntityFrameworkCoreProjectFolderPath();
 
         return Directory.Exists(Path.Combine(dbMigrationsProjectFolder, "Migrations"));
     }
@@ -122,7 +115,7 @@ public class CourseMateDbMigrationService : ITransientDependency
             fileName = "cmd.exe";
         }
 
-        var procStartInfo = new ProcessStartInfo(fileName,
+        ProcessStartInfo procStartInfo = new(fileName,
             $"{argumentPrefix} \"abp create-migration-and-run-migrator \"{GetEntityFrameworkCoreProjectFolderPath()}\" --nolayers\""
         );
 
@@ -138,28 +131,22 @@ public class CourseMateDbMigrationService : ITransientDependency
 
     private string GetEntityFrameworkCoreProjectFolderPath()
     {
-        var slnDirectoryPath = GetSolutionDirectoryPath();
+        string? slnDirectoryPath = GetSolutionDirectoryPath();
 
-        if (slnDirectoryPath == null)
-        {
-            throw new Exception("Solution folder not found!");
-        }
+        if (slnDirectoryPath == null) throw new Exception("Solution folder not found!");
 
         return Path.Combine(slnDirectoryPath, "CourseMate.Mvc");
     }
 
     private string GetSolutionDirectoryPath()
     {
-        var currentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
+        DirectoryInfo? currentDirectory = new(Directory.GetCurrentDirectory());
 
         while (Directory.GetParent(currentDirectory.FullName) != null)
         {
             currentDirectory = Directory.GetParent(currentDirectory.FullName);
 
-            if (Directory.GetFiles(currentDirectory.FullName).FirstOrDefault(f => f.EndsWith(".sln")) != null)
-            {
-                return currentDirectory.FullName;
-            }
+            if (Directory.GetFiles(currentDirectory.FullName).FirstOrDefault(f => f.EndsWith(".sln")) != null) return currentDirectory.FullName;
         }
 
         return null;

@@ -1,4 +1,5 @@
 ﻿using HealthChecks.UI.Client;
+using HealthChecks.UI.Configuration;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 namespace CourseMate.HealthChecks;
@@ -8,23 +9,17 @@ public static class HealthChecksBuilderExtensions
     public static void AddCourseMateHealthChecks(this IServiceCollection services)
     {
         // Add your health checks here
-        var healthChecksBuilder = services.AddHealthChecks();
-        healthChecksBuilder.AddCheck<CourseMateDatabaseCheck>("CourseMate DbContext Check", tags: new string[] { "database" });
+        IHealthChecksBuilder healthChecksBuilder = services.AddHealthChecks();
+        healthChecksBuilder.AddCheck<CourseMateDatabaseCheck>("CourseMate DbContext Check", tags: new[] { "database" });
 
-        var configuration = services.GetConfiguration();
-        var healthCheckUrl = configuration["App:HealthCheckUrl"];
+        IConfiguration configuration = services.GetConfiguration();
+        string? healthCheckUrl = configuration["App:HealthCheckUrl"];
 
-        if (string.IsNullOrEmpty(healthCheckUrl))
-        {
-            healthCheckUrl = "/health-status";
-        }
-        
+        if (string.IsNullOrEmpty(healthCheckUrl)) healthCheckUrl = "/health-status";
+
         services.ConfigureHealthCheckEndpoint("/health-status");
 
-        var healthChecksUiBuilder = services.AddHealthChecksUI(settings =>
-        {
-            settings.AddHealthCheckEndpoint("CourseMate Health Status", healthCheckUrl);
-        });
+        HealthChecksUIBuilder healthChecksUiBuilder = services.AddHealthChecksUI(settings => { settings.AddHealthCheckEndpoint("CourseMate Health Status", healthCheckUrl); });
 
         // Set your HealthCheck UI Storage here
         healthChecksUiBuilder.AddInMemoryStorage();
@@ -48,7 +43,7 @@ public static class HealthChecksBuilderExtensions
                     {
                         Predicate = _ => true,
                         ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
-                        AllowCachingResponses = false,
+                        AllowCachingResponses = false
                     });
             });
         });
@@ -56,15 +51,9 @@ public static class HealthChecksBuilderExtensions
         return services;
     }
 
-    private static IServiceCollection MapHealthChecksUiEndpoints(this IServiceCollection services, Action<global::HealthChecks.UI.Configuration.Options>? setupOption = null)
+    private static IServiceCollection MapHealthChecksUiEndpoints(this IServiceCollection services, Action<Options>? setupOption = null)
     {
-        services.Configure<AbpEndpointRouterOptions>(routerOptions =>
-        {
-            routerOptions.EndpointConfigureActions.Add(endpointContext =>
-            {
-                endpointContext.Endpoints.MapHealthChecksUI(setupOption);
-            });
-        });
+        services.Configure<AbpEndpointRouterOptions>(routerOptions => { routerOptions.EndpointConfigureActions.Add(endpointContext => { endpointContext.Endpoints.MapHealthChecksUI(setupOption); }); });
 
         return services;
     }

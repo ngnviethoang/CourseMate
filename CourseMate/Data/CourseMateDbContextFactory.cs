@@ -9,11 +9,11 @@ public class CourseMateDbContextFactory : IDesignTimeDbContextFactory<CourseMate
     {
         // https://www.npgsql.org/efcore/release-notes/6.0.html#opting-out-of-the-new-timestamp-mapping-logic
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-        
-        CourseMateEfCoreEntityExtensionMappings.Configure();
-        var configuration = BuildConfiguration();
 
-        var builder = new DbContextOptionsBuilder<CourseMateDbContext>()
+        CourseMateEfCoreEntityExtensionMappings.Configure();
+        IConfigurationRoot configuration = BuildConfiguration();
+
+        DbContextOptionsBuilder<CourseMateDbContext> builder = new DbContextOptionsBuilder<CourseMateDbContext>()
             .UseNpgsql(configuration.GetConnectionString("Default"));
 
         return new CourseMateDbContext(builder.Options);
@@ -21,9 +21,9 @@ public class CourseMateDbContextFactory : IDesignTimeDbContextFactory<CourseMate
 
     private static IConfigurationRoot BuildConfiguration()
     {
-        var builder = new ConfigurationBuilder()
+        IConfigurationBuilder builder = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false);
+            .AddJsonFile("appsettings.json", false);
 
         return builder.Build();
     }
