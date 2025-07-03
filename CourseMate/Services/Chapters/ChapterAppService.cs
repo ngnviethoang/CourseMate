@@ -2,8 +2,11 @@
 using CourseMate.Entities.Chapters;
 using CourseMate.Permissions;
 using CourseMate.Services.Dtos.Chapters;
+using CourseMate.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.Domain.Repositories;
 
 namespace CourseMate.Services.Chapters;
 
@@ -27,13 +30,13 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
         List<Chapter> categories = await AsyncExecuter.ToListAsync(query);
         int totalCount = await AsyncExecuter.CountAsync(queryable);
 
-        return new PagedResultDto<ChapterDto>(totalCount, ObjectMapper.Map<List<Chapter>, List<ChapterDto>>(categories)
-        );
+        return new PagedResultDto<ChapterDto>(totalCount, ObjectMapper.Map<List<Chapter>, List<ChapterDto>>(categories));
     }
 
     [Authorize(CourseMatePermissions.Chapters.Create)]
     public async Task<ChapterDto> CreateAsync(CreateUpdateChapterDto input)
     {
+        await CourseRepo.EnsureExistsAsync(input.CourseId);
         Chapter category = ObjectMapper.Map<CreateUpdateChapterDto, Chapter>(input);
         await ChapterRepo.InsertAsync(category);
         return ObjectMapper.Map<Chapter, ChapterDto>(category);
@@ -43,6 +46,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
     public async Task<ChapterDto> UpdateAsync(Guid id, CreateUpdateChapterDto input)
     {
         Chapter chapter = await ChapterRepo.GetAsync(id);
+        await CourseRepo.EnsureExistsAsync(input.CourseId);
         ObjectMapper.Map(input, chapter);
         await ChapterRepo.UpdateAsync(chapter);
         return ObjectMapper.Map<Chapter, ChapterDto>(chapter);
@@ -51,6 +55,11 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
     [Authorize(CourseMatePermissions.Chapters.Delete)]
     public async Task DeleteAsync(Guid id)
     {
+        if (await LessonRepo.AnyAsync(i => i.ChapterId == id))
+        {
+            throw new BusinessException(ExceptionConst.InvalidRequest);
+        }
+
         await ChapterRepo.DeleteAsync(id);
     }
 }

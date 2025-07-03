@@ -2,9 +2,9 @@
 using CourseMate.Entities.Reviews;
 using CourseMate.Permissions;
 using CourseMate.Services.Dtos.Reviews;
-using CourseMate.Services.Lessons;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.Domain.Repositories;
 
 namespace CourseMate.Services.Reviews;
 
@@ -35,6 +35,8 @@ public class ReviewAppService : CourseMateAppService, IReviewAppService
     [Authorize(CourseMatePermissions.Reviews.Create)]
     public async Task<ReviewDto> CreateAsync(CreateUpdateReviewDto input)
     {
+        await UserRepo.EnsureExistsAsync(input.StudentId);
+        await UserRepo.EnsureExistsAsync(input.CourseId);
         Review review = ObjectMapper.Map<CreateUpdateReviewDto, Review>(input);
         await ReviewRepo.InsertAsync(review);
         return ObjectMapper.Map<Review, ReviewDto>(review);
@@ -44,6 +46,8 @@ public class ReviewAppService : CourseMateAppService, IReviewAppService
     public async Task<ReviewDto> UpdateAsync(Guid id, CreateUpdateReviewDto input)
     {
         Review review = await ReviewRepo.GetAsync(id);
+        await UserRepo.EnsureExistsAsync(input.StudentId);
+        await UserRepo.EnsureExistsAsync(input.CourseId);
         ObjectMapper.Map(input, review);
         await ReviewRepo.UpdateAsync(review);
         return ObjectMapper.Map<Review, ReviewDto>(review);

@@ -2,8 +2,11 @@
 using CourseMate.Entities.Categories;
 using CourseMate.Permissions;
 using CourseMate.Services.Dtos.Categories;
+using CourseMate.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.Domain.Repositories;
 
 namespace CourseMate.Services.Categories;
 
@@ -27,8 +30,7 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
         List<Category> categories = await AsyncExecuter.ToListAsync(query);
         int totalCount = await AsyncExecuter.CountAsync(queryable);
 
-        return new PagedResultDto<CategoryDto>(totalCount, ObjectMapper.Map<List<Category>, List<CategoryDto>>(categories)
-        );
+        return new PagedResultDto<CategoryDto>(totalCount, ObjectMapper.Map<List<Category>, List<CategoryDto>>(categories));
     }
 
     [Authorize(CourseMatePermissions.Categories.Create)]
@@ -51,6 +53,11 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
     [Authorize(CourseMatePermissions.Categories.Delete)]
     public async Task DeleteAsync(Guid id)
     {
+        if (await CourseRepo.AnyAsync(i => i.CategoryId == id))
+        {
+            throw new BusinessException(ExceptionConst.InvalidRequest);
+        }
+
         await CategoryRepo.DeleteAsync(id);
     }
 }

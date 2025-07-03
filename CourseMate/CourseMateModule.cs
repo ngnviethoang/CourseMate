@@ -1,4 +1,4 @@
-﻿using CourseMate.Data;
+using CourseMate.Data;
 using CourseMate.HealthChecks;
 using CourseMate.Localization;
 using Microsoft.AspNetCore.Cors;
@@ -50,6 +50,7 @@ using Volo.Abp.Swashbuckle;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
+using Volo.Abp.AspNetCore.SignalR;
 
 namespace CourseMate;
 
@@ -98,7 +99,10 @@ namespace CourseMate;
     typeof(AbpSettingManagementEntityFrameworkCoreModule),
     typeof(AbpBackgroundJobsEntityFrameworkCoreModule),
     typeof(BlobStoringDatabaseEntityFrameworkCoreModule),
-    typeof(AbpEntityFrameworkCorePostgreSqlModule)
+    typeof(AbpEntityFrameworkCorePostgreSqlModule),
+
+    // Other modules
+    typeof(AbpAspNetCoreSignalRModule)
 )]
 public class CourseMateModule : AbpModule
 {

@@ -10,6 +10,7 @@ using CourseMate.Entities.Reviews;
 using CourseMate.Localization;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Identity;
 
 namespace CourseMate.Services;
 
@@ -21,6 +22,7 @@ public abstract class CourseMateAppService : ApplicationService
         LocalizationResource = typeof(CourseMateResource);
     }
 
+    protected IRepository<IdentityUser, Guid> UserRepo => LazyServiceProvider.GetRequiredService<IRepository<IdentityUser, Guid>>();
     protected IRepository<Book, Guid> BookRepo => LazyServiceProvider.GetRequiredService<IRepository<Book, Guid>>();
     protected IRepository<Category, Guid> CategoryRepo => LazyServiceProvider.GetRequiredService<IRepository<Category, Guid>>();
     protected IRepository<Chapter, Guid> ChapterRepo => LazyServiceProvider.GetRequiredService<IRepository<Chapter, Guid>>();
