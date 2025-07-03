@@ -1,6 +1,6 @@
 ﻿using CourseMate.Entities.Books;
 using CourseMate.Entities.Categories;
-using CourseMate.Entities.Chapter;
+using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
 using CourseMate.Entities.Enrollments;
 using CourseMate.Entities.Lessons;

@@ -14,7 +14,7 @@ public class CourseMateDbContextFactory : IDesignTimeDbContextFactory<CourseMate
         IConfigurationRoot configuration = BuildConfiguration();
 
         DbContextOptionsBuilder<CourseMateDbContext> builder = new DbContextOptionsBuilder<CourseMateDbContext>()
-            .UseNpgsql(configuration.GetConnectionString("Default"));
+            .UseNpgsql(configuration.GetConnectionString("Default"), o => o.UseVector());
 
         return new CourseMateDbContext(builder.Options);
     }

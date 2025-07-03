@@ -33,7 +33,10 @@ public class CourseMateDbMigrationService : ITransientDependency
     {
         bool initialMigrationAdded = AddInitialMigrationIfNotExist();
 
-        if (initialMigrationAdded) return;
+        if (initialMigrationAdded)
+        {
+            return;
+        }
 
         Logger.LogInformation("Started database migrations...");
 
@@ -61,7 +64,10 @@ public class CourseMateDbMigrationService : ITransientDependency
     {
         try
         {
-            if (!DbMigrationsProjectExists()) return false;
+            if (!DbMigrationsProjectExists())
+            {
+                return false;
+            }
         }
         catch (Exception)
         {
@@ -133,7 +139,10 @@ public class CourseMateDbMigrationService : ITransientDependency
     {
         string? slnDirectoryPath = GetSolutionDirectoryPath();
 
-        if (slnDirectoryPath == null) throw new Exception("Solution folder not found!");
+        if (slnDirectoryPath == null)
+        {
+            throw new Exception("Solution folder not found!");
+        }
 
         return Path.Combine(slnDirectoryPath, "CourseMate.Mvc");
     }
@@ -146,7 +155,10 @@ public class CourseMateDbMigrationService : ITransientDependency
         {
             currentDirectory = Directory.GetParent(currentDirectory.FullName);
 
-            if (Directory.GetFiles(currentDirectory.FullName).FirstOrDefault(f => f.EndsWith(".sln")) != null) return currentDirectory.FullName;
+            if (Directory.GetFiles(currentDirectory.FullName).FirstOrDefault(f => f.EndsWith(".sln")) != null)
+            {
+                return currentDirectory.FullName;
+            }
         }
 
         return null;

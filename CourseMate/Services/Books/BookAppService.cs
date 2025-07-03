@@ -4,13 +4,12 @@ using CourseMate.Permissions;
 using CourseMate.Services.Dtos.Books;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Application.Dtos;
-using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
 namespace CourseMate.Services.Books;
 
 [Authorize(CourseMatePermissions.Books.Default)]
-public class BookAppService : ApplicationService, IBookAppService
+public class BookAppService : CourseMateAppService, IBookAppService
 {
     private readonly IRepository<Book, Guid> _repository;
 

@@ -150,7 +150,10 @@ public class CourseMateModule : AbpModule
             IdentityModelEventSource.LogCompleteSecurityArtifact = true;
         }
 
-        if (hostingEnvironment.IsDevelopment()) context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
+        if (hostingEnvironment.IsDevelopment())
+        {
+            context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
+        }
 
         ConfigureAuthentication(context);
         ConfigureBundles();
@@ -297,7 +300,9 @@ public class CourseMateModule : AbpModule
             options.FileSets.AddEmbedded<CourseMateModule>();
             if (hostingEnvironment.IsDevelopment())
                 /* Using physical files in development, so we don't need to recompile on changes */
+            {
                 options.FileSets.ReplaceEmbeddedByPhysical<CourseMateModule>(hostingEnvironment.ContentRootPath);
+            }
         });
     }
 
@@ -320,11 +325,17 @@ public class CourseMateModule : AbpModule
         IApplicationBuilder app = context.GetApplicationBuilder();
         IWebHostEnvironment env = context.GetEnvironment();
 
-        if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
 
         app.UseAbpRequestLocalization();
 
-        if (!env.IsDevelopment()) app.UseErrorPage();
+        if (!env.IsDevelopment())
+        {
+            app.UseErrorPage();
+        }
 
         app.UseCorrelationId();
         app.UseRouting();
@@ -335,7 +346,10 @@ public class CourseMateModule : AbpModule
         app.UseAuthentication();
         app.UseAbpOpenIddictValidation();
 
-        if (IsMultiTenant) app.UseMultiTenancy();
+        if (IsMultiTenant)
+        {
+            app.UseMultiTenancy();
+        }
 
         app.UseUnitOfWork();
         app.UseDynamicClaims();

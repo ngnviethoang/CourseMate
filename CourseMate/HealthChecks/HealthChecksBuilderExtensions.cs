@@ -15,7 +15,10 @@ public static class HealthChecksBuilderExtensions
         IConfiguration configuration = services.GetConfiguration();
         string? healthCheckUrl = configuration["App:HealthCheckUrl"];
 
-        if (string.IsNullOrEmpty(healthCheckUrl)) healthCheckUrl = "/health-status";
+        if (string.IsNullOrEmpty(healthCheckUrl))
+        {
+            healthCheckUrl = "/health-status";
+        }
 
         services.ConfigureHealthCheckEndpoint("/health-status");
 

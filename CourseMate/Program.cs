@@ -24,11 +24,14 @@ public class Program
                 .UseSerilog((context, services, loggerConfiguration) =>
                 {
                     if (IsMigrateDatabase(args))
+                    {
                         loggerConfiguration
                             .MinimumLevel.Override("Volo.Abp", LogEventLevel.Warning)
                             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                             .WriteTo.Async(c => c.Console(standardErrorFromLevel: LogEventLevel.Error));
+                    }
                     else
+                    {
                         loggerConfiguration
 #if DEBUG
                             .MinimumLevel.Debug()
@@ -41,8 +44,13 @@ public class Program
                             .WriteTo.Async(c => c.File("Logs/logs.txt"))
                             .WriteTo.Async(c => c.Console())
                             .WriteTo.Async(c => c.AbpStudio(services));
+                    }
                 });
-            if (IsMigrateDatabase(args)) builder.Services.AddDataMigrationEnvironment();
+            if (IsMigrateDatabase(args))
+            {
+                builder.Services.AddDataMigrationEnvironment();
+            }
+
             await builder.AddApplicationAsync<CourseMateModule>();
             WebApplication app = builder.Build();
             await app.InitializeApplicationAsync();
@@ -63,7 +71,10 @@ public class Program
         }
         catch (Exception ex)
         {
-            if (ex is HostAbortedException) throw;
+            if (ex is HostAbortedException)
+            {
+                throw;
+            }
 
             Log.Fatal(ex, "CourseMate terminated unexpectedly!");
             return 1;

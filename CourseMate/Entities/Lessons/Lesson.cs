@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Pgvector;
 using Volo.Abp.Domain.Entities.Auditing;
 
 namespace CourseMate.Entities.Lessons;
@@ -14,12 +15,17 @@ public class Lesson : FullAuditedEntity<Guid>
         ChapterId = chapterId;
     }
 
-    [MaxLength(1024)] public string Title { get; set; }
+    [MaxLength(1024)]
+    public string Title { get; set; }
 
-    [MaxLength(1024)] public string ContentText { get; set; }
+    [MaxLength(1024)]
+    public string ContentText { get; set; }
 
-    [MaxLength(1024)] public string VideoUrl { get; set; }
+    [MaxLength(1024)]
+    public string VideoUrl { get; set; }
 
     public TimeSpan Duration { get; set; }
     public Guid ChapterId { get; set; }
+
+    public Vector? Embedding { get; set; }
 }

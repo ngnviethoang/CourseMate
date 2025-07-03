@@ -15,9 +15,12 @@ public class PaymentRequest : FullAuditedEntity<Guid>
 
     public PaymentStateType State { get; set; }
 
-    [MaxLength(24)] public string Currency { get; set; }
+    [MaxLength(24)]
+    public string Currency { get; set; }
 
-    [MaxLength(1024)] public string Gateway { get; set; }
+    [MaxLength(1024)]
+    public string Gateway { get; set; }
 
-    [MaxLength(1024)] public string FailReason { get; set; }
+    [MaxLength(1024)]
+    public string FailReason { get; set; }
 }

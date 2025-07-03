@@ -17,5 +17,6 @@ public class Review : FullAuditedEntity<Guid>
     public Guid CourseId { get; set; }
     public RatingType Rating { get; set; }
 
-    [MaxLength(1024)] public string Comment { get; set; }
+    [MaxLength(1024)]
+    public string Comment { get; set; }
 }

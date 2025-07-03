@@ -16,7 +16,8 @@ public class Order : FullAuditedEntity<Guid>
     public Guid StudentId { get; set; }
     public decimal TotalAmount { get; set; }
 
-    [MaxLength(24)] public string Currency { get; set; }
+    [MaxLength(24)]
+    public string Currency { get; set; }
 
     public Guid PaymentRequestId { get; set; }
 }
