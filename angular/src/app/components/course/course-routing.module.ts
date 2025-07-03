@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { authGuard, permissionGuard } from '@abp/ng.core';
-import { BookComponent } from './book.component';
+import { CourseComponent } from './course.component';
 
 const routes: Routes = [
-  { path: '', component: BookComponent, canActivate: [authGuard, permissionGuard] },
+  { path: '', component: CourseComponent, canActivate: [authGuard, permissionGuard] }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
-export class BookRoutingModule {}
+export class CourseRoutingModule {
+}

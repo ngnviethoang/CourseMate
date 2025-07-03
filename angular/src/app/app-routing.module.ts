@@ -6,26 +6,38 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
+    loadChildren: () => import('./components/home/home.module').then(m => m.HomeModule)
   },
   {
     path: 'account',
-    loadChildren: () => import('@abp/ng.account').then(m => m.AccountModule.forLazy()),
+    loadChildren: () => import('@abp/ng.account').then(m => m.AccountModule.forLazy())
   },
   {
     path: 'identity',
-    loadChildren: () => import('@abp/ng.identity').then(m => m.IdentityModule.forLazy()),
+    loadChildren: () => import('@abp/ng.identity').then(m => m.IdentityModule.forLazy())
   },
   {
     path: 'setting-management',
     loadChildren: () =>
-      import('@abp/ng.setting-management').then(m => m.SettingManagementModule.forLazy()),
+      import('@abp/ng.setting-management').then(m => m.SettingManagementModule.forLazy())
   },
-  { path: 'books', loadChildren: () => import('./book/book.module').then(m => m.BookModule) },
+  {
+    path: 'books',
+    loadChildren: () => import('./components/book/book.module').then(m => m.BookModule)
+  },
+  {
+    path: 'courses',
+    loadChildren: () => import('./components/course/course.module').then(m => m.CourseModule)
+  },
+  {
+    path: 'chapters',
+    loadChildren: () => import('./components/book/book.module').then(m => m.BookModule)
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {})],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule {
+}

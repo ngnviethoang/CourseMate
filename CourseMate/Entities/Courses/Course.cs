@@ -34,6 +34,4 @@ public class Course : FullAuditedEntity<Guid>
     public bool IsPublished { get; set; }
     public Guid InstructorId { get; set; }
     public Guid CategoryId { get; set; }
-    
-    public Vector? Embedding { get; set; }
 }

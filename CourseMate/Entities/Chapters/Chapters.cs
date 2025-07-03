@@ -16,6 +16,4 @@ public class Chapter : FullAuditedEntity<Guid>
     public string Title { get; set; }
 
     public Guid CourseId { get; set; }
-    
-    public Vector? Embedding { get; set; }
 }

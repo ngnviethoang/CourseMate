@@ -40,7 +40,7 @@ public class CourseMateDataSeederContributor : IDataSeedContributor, ITransientD
                 await _permissionManager.SetForRoleAsync(RoleConst.Anonymous, permission.Name, true);
             }
         }
-        
+
         if (!await _identityRoleManager.RoleExistsAsync(RoleConst.Student))
         {
             IdentityRole role = new(Guid.NewGuid(), RoleConst.Student)

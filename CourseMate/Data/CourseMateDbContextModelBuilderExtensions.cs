@@ -19,8 +19,6 @@ public static class CourseMateDbContextModelBuilderExtensions
 
     public static void ConfigureCourseMateEntities(this ModelBuilder builder)
     {
-        builder.HasPostgresExtension("vector");
-
         builder.Entity<Book>(b =>
         {
             b.ToTable("Books", DbSchema);
@@ -34,9 +32,6 @@ public static class CourseMateDbContextModelBuilderExtensions
             b.ConfigureByConvention();
             b.HasOne<IdentityUser>().WithMany().HasForeignKey(i => i.InstructorId).IsRequired();
             b.HasOne<Category>().WithMany().HasForeignKey(i => i.CategoryId).IsRequired();
-            
-            b.Property(x => x.Embedding).HasColumnType("vector(3)");
-            b.HasIndex(i => i.Embedding).HasMethod("ivfflat").HasOperators("vector_l2_ops");
         });
 
         builder.Entity<Chapter>(b =>
@@ -44,9 +39,6 @@ public static class CourseMateDbContextModelBuilderExtensions
             b.ToTable("Chapters", DbSchema);
             b.ConfigureByConvention();
             b.HasOne<Course>().WithMany().HasForeignKey(i => i.CourseId).IsRequired();
-
-            b.Property(x => x.Embedding).HasColumnType("vector(3)");
-            b.HasIndex(i => i.Embedding).HasMethod("ivfflat").HasOperators("vector_l2_ops");
         });
 
         builder.Entity<Lesson>(b =>
@@ -54,9 +46,6 @@ public static class CourseMateDbContextModelBuilderExtensions
             b.ToTable("Lessons", DbSchema);
             b.ConfigureByConvention();
             b.HasOne<Chapter>().WithMany().HasForeignKey(i => i.ChapterId).IsRequired();
-            
-            b.Property(x => x.Embedding).HasColumnType("vector(3)");
-            b.HasIndex(i => i.Embedding).HasMethod("ivfflat").HasOperators("vector_l2_ops");
         });
 
         builder.Entity<Category>(b =>

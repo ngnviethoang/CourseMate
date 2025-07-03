@@ -26,6 +26,4 @@ public class Lesson : FullAuditedEntity<Guid>
 
     public TimeSpan Duration { get; set; }
     public Guid ChapterId { get; set; }
-
-    public Vector? Embedding { get; set; }
 }

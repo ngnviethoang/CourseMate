@@ -3,14 +3,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
-import { BookService, BookDto, bookTypeOptions } from '../proxy/books';
+import { BookService, BookDto, bookTypeOptions } from '../../proxy/books';
 
 @Component({
-  standalone:false,
+  standalone: false,
   selector: 'app-book',
   templateUrl: './book.component.html',
-  styleUrls: ['./book.component.scss'],
-  providers: [ListService, { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }],
+  providers: [ListService, { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }]
 })
 export class BookComponent implements OnInit {
   book = { items: [], totalCount: 0 } as PagedResultDto<BookDto>;
@@ -28,7 +27,8 @@ export class BookComponent implements OnInit {
     private bookService: BookService,
     private fb: FormBuilder,
     private confirmation: ConfirmationService // inject the ConfirmationService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     const bookStreamCreator = (query) => this.bookService.getList(query);
@@ -66,9 +66,9 @@ export class BookComponent implements OnInit {
       type: [this.selectedBook.type || null, Validators.required],
       publishDate: [
         this.selectedBook.publishDate ? new Date(this.selectedBook.publishDate) : null,
-        Validators.required,
+        Validators.required
       ],
-      price: [this.selectedBook.price || null, Validators.required],
+      price: [this.selectedBook.price || null, Validators.required]
     });
   }
 
