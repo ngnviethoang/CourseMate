@@ -31,3 +31,7 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 The application provides a remote environment for production. we use `dynamic-env.json` file to set the environment variables and configured web server's `getEnvConfig` endpoint by default.
 
 See [Environment](https://abp.io/docs/latest/framework/ui/angular/environment) for more information.
+
+## Service Proxies
+
+Run `abp generate-proxy -t ng`

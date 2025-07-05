@@ -1,7 +1,15 @@
-﻿using CourseMate.Services.Dtos.Categories;
+﻿using CourseMate.Services.Dtos;
+using CourseMate.Services.Dtos.Categories;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
 namespace CourseMate.Services.Categories;
 
-public interface ICategoryAppService : ICrudAppService<CategoryDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateCategoryDto>;
+public interface ICategoryAppService : IApplicationService
+{
+    Task<CategoryDto> GetAsync(Guid id);
+    Task<PagedResultDto<CategoryDto>> GetListAsync(GetListRequestDto input);
+    Task<ResultObjectDto> CreateAsync(CreateUpdateCategoryDto input);
+    Task<CategoryDto> UpdateAsync(Guid id, CreateUpdateCategoryDto input);
+    Task DeleteAsync(Guid id);
+}

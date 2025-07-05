@@ -18,12 +18,15 @@ const routes: Routes = [
   },
   {
     path: 'setting-management',
-    loadChildren: () =>
-      import('@abp/ng.setting-management').then(m => m.SettingManagementModule.forLazy())
+    loadChildren: () => import('@abp/ng.setting-management').then(m => m.SettingManagementModule.forLazy())
   },
   {
     path: 'books',
     loadChildren: () => import('./components/book/book.module').then(m => m.BookModule)
+  },
+  {
+    path: 'categories',
+    loadChildren: () => import('./components/category/category.module').then(m => m.CategoryModule)
   },
   {
     path: 'courses',
@@ -31,7 +34,11 @@ const routes: Routes = [
   },
   {
     path: 'chapters',
-    loadChildren: () => import('./components/book/book.module').then(m => m.BookModule)
+    loadChildren: () => import('./components/chapter/chapter.module').then(m => m.ChapterModule)
+  },
+  {
+    path: 'lessons',
+    loadChildren: () => import('./components/lesson/lesson.module').then(m => m.LessonModule)
   }
 ];
 

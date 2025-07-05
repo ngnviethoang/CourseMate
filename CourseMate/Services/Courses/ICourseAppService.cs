@@ -1,7 +1,15 @@
-﻿using CourseMate.Services.Dtos.Courses;
+﻿using CourseMate.Services.Dtos;
+using CourseMate.Services.Dtos.Courses;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
 namespace CourseMate.Services.Courses;
 
-public interface ICourseAppService : ICrudAppService<CourseDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateCourseDto>;
+public interface ICourseAppService : IApplicationService
+{
+    Task<CourseDto> GetAsync(Guid id);
+    Task<PagedResultDto<CourseDto>> GetListAsync(GetListRequestDto input);
+    Task<ResultObjectDto> CreateAsync(CreateUpdateCourseDto input);
+    Task<CourseDto> UpdateAsync(Guid id, CreateUpdateCourseDto input);
+    Task DeleteAsync(Guid id);
+}

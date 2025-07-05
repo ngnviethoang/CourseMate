@@ -3,7 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
-import { BookService, BookDto, bookTypeOptions } from '../../proxy/books';
+import { bookTypeOptions } from '../../proxy/entities/books';
+import { BookDto } from '../../proxy/services/dtos/books';
+import { BookService } from '../../proxy/services/books';
 
 @Component({
   standalone: false,

@@ -3,50 +3,63 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
-import { BookService, BookDto, bookTypeOptions } from '../../proxy/books';
+import { CourseService } from '../../proxy/services/courses';
+import { CourseDto } from '../../proxy/services/dtos/courses';
+import { CurrencyType, currencyTypeOptions, LevelType, levelTypeOptions } from '../../proxy/entities/courses';
+import { CategoryService } from '../../proxy/services/categories';
+import type { CategoryDto } from '../../proxy/services/dtos/categories';
+import { FileSelectEvent, FileUploadEvent, UploadEvent } from 'primeng/fileupload';
+import { MessageService } from 'primeng/api';
+import { StorageService } from '../../proxy/services/storages';
 
 @Component({
   standalone: false,
-  selector: 'app-book',
+  selector: 'app-course',
   templateUrl: './course.component.html',
   providers: [ListService, { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }]
 })
 export class CourseComponent implements OnInit {
-  book = { items: [], totalCount: 0 } as PagedResultDto<BookDto>;
-
-  selectedBook = {} as BookDto; // declare selectedBook
-
+  courses = { items: [], totalCount: 0 } as PagedResultDto<CourseDto>;
+  selectedCourse = {} as CourseDto; // declare selectedBook
   form: FormGroup;
-
-  bookTypes = bookTypeOptions;
-
+  currencyTypes = currencyTypeOptions;
+  levelTypes = levelTypeOptions;
   isModalOpen = false;
+  categories: CategoryDto[] = [];
+  thumbnailFile: File;
 
   constructor(
     public readonly list: ListService,
-    private bookService: BookService,
+    private courseService: CourseService,
     private fb: FormBuilder,
-    private confirmation: ConfirmationService // inject the ConfirmationService
+    private confirmation: ConfirmationService,
+    private categoryService: CategoryService,
+    private messageService: MessageService,
+    private storageService: StorageService
   ) {
   }
 
   ngOnInit() {
-    const bookStreamCreator = (query) => this.bookService.getList(query);
+    const courseStreamCreator = (query) => this.courseService.getList(query);
 
-    this.list.hookToQuery(bookStreamCreator).subscribe((response) => {
-      this.book = response;
+    this.list.hookToQuery(courseStreamCreator).subscribe((response) => {
+      this.courses = response;
+    });
+
+    this.categoryService.getList({ sorting: null, maxResultCount: null, skipCount: null }).subscribe((response) => {
+      this.categories = response.items;
     });
   }
 
-  createBook() {
-    this.selectedBook = {} as BookDto; // reset the selected book
+  create() {
+    this.selectedCourse = {} as CourseDto; // reset the selected book
     this.buildForm();
     this.isModalOpen = true;
   }
 
-  editBook(id: string) {
-    this.bookService.get(id).subscribe((book) => {
-      this.selectedBook = book;
+  edit(id: string) {
+    this.courseService.get(id).subscribe((book) => {
+      this.selectedCourse = book;
       this.buildForm();
       this.isModalOpen = true;
     });
@@ -55,37 +68,71 @@ export class CourseComponent implements OnInit {
   delete(id: string) {
     this.confirmation.warn('::AreYouSureToDelete', '::AreYouSure').subscribe((status) => {
       if (status === Confirmation.Status.confirm) {
-        this.bookService.delete(id).subscribe(() => this.list.get());
+        this.courseService.delete(id).subscribe(() => this.list.get());
       }
     });
   }
 
   buildForm() {
     this.form = this.fb.group({
-      name: [this.selectedBook.name || '', Validators.required],
-      type: [this.selectedBook.type || null, Validators.required],
-      publishDate: [
-        this.selectedBook.publishDate ? new Date(this.selectedBook.publishDate) : null,
-        Validators.required
-      ],
-      price: [this.selectedBook.price || null, Validators.required]
+      title: [this.selectedCourse.title || '', [Validators.required, Validators.maxLength(1024)]],
+      description: [this.selectedCourse.description || '', [Validators.maxLength(1024)]],
+      thumbnailUrl: [this.selectedCourse.thumbnailUrl || '', [Validators.maxLength(1024)]],
+      price: [this.selectedCourse.price || null, [Validators.required, Validators.min(0)]],
+      currency: [this.selectedCourse.currency || CurrencyType.Usd, [Validators.required]],
+      levelType: [this.selectedCourse.levelType || LevelType.Beginner, [Validators.required]],
+      isPublished: [this.selectedCourse.isPublished || true, [Validators.required]],
+      categoryId: [this.selectedCourse.categoryId || '', [Validators.required, Validators.maxLength(100)]]
     });
   }
 
-  // change the save method
   save() {
     if (this.form.invalid) {
       return;
     }
 
-    const request = this.selectedBook.id
-      ? this.bookService.update(this.selectedBook.id, this.form.value)
-      : this.bookService.create(this.form.value);
+    const request = this.selectedCourse.id
+      ? this.courseService.update(this.selectedCourse.id, this.form.value)
+      : this.courseService.create(this.form.value);
 
     request.subscribe(() => {
       this.isModalOpen = false;
       this.form.reset();
       this.list.get();
     });
+  }
+
+  onSelect(event: FileSelectEvent) {
+
+
+    const file = event.files[0];
+    if (!file) {
+      return;
+    }
+    this.thumbnailFile = file;
+  }
+
+  async onUpload() {
+    try {
+      const formData = new FormData();
+      formData.append('streamContent', this.thumbnailFile);
+      this.storageService.uploadImage(formData).subscribe(response => {
+        this.selectedCourse.thumbnailUrl = response.id;
+        this.form.controls['thumbnailUrl'].setValue(response.id);
+      });
+
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Success',
+        detail: 'File uploaded successfully'
+      });
+    } catch (error) {
+      console.error('Upload failed:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Upload failed',
+        detail: 'There was a problem uploading your file.'
+      });
+    }
   }
 }

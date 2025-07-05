@@ -1,4 +1,5 @@
-﻿using CourseMate.Permissions;
+﻿using CourseMate.BlobContainers;
+using CourseMate.Permissions;
 using CourseMate.Services.Dtos.Storages;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.BlobStoring;
@@ -10,34 +11,65 @@ namespace CourseMate.Services.Storages;
 public class StorageAppService : CourseMateAppService, IStorageAppService
 {
     private readonly IBlobContainerFactory _blobContainerFactory;
+    private readonly IBlobContainer _blobContainer;
 
-    public StorageAppService(IBlobContainerFactory blobContainerFactory)
+    public StorageAppService(IBlobContainerFactory blobContainerFactory, IBlobContainer blobContainer)
     {
         _blobContainerFactory = blobContainerFactory;
+        _blobContainer = blobContainer;
     }
 
-    public Task<FileDto> UploadVideoAsync(IRemoteStreamContent streamContent)
+    [Authorize(CourseMatePermissions.Files.Create)]
+    public async Task<FileDto> UploadVideoAsync(IRemoteStreamContent streamContent)
     {
-        throw new NotImplementedException();
+        IBlobContainer videoContainer = _blobContainerFactory.Create<VideoContainer>();
+        Stream fs = streamContent.GetStream();
+        Guid fileId = GuidGenerator.Create();
+        string extension = Path.GetExtension(streamContent.FileName) ?? string.Empty;
+        string fileName = $"{fileId}{extension}";
+        await videoContainer.SaveAsync(fileName, fs);
+        return new FileDto
+        {
+            Id = fileId,
+            Name = fileName,
+            Size = streamContent.ContentLength.GetValueOrDefault()
+        };
     }
 
-    public Task<IRemoteStreamContent> DownloadVideoAsync(Guid fileId)
+    public async Task<IRemoteStreamContent> StreamVideoAsync(string fileName)
     {
-        throw new NotImplementedException();
+        IBlobContainer videoContainer = _blobContainerFactory.Create<VideoContainer>();
+        Stream fs = await videoContainer.GetAsync(fileName);
+        return new RemoteStreamContent(fs);
     }
 
-    public Task<FileDto> SaveBytesAsync(byte[] bytes)
+    [Authorize(CourseMatePermissions.Files.Create)]
+    public async Task<FileDto> UploadImageAsync(IRemoteStreamContent streamContent)
     {
-        throw new NotImplementedException();
+        IBlobContainer imageContainer = _blobContainerFactory.Create<ImageContainer>();
+        Stream fs = streamContent.GetStream();
+        Guid fileId = GuidGenerator.Create();
+        string extension = Path.GetExtension(streamContent.FileName) ?? string.Empty;
+        string fileName = $"{fileId}{extension}";
+        await imageContainer.SaveAsync(fileName, fs);
+        return new FileDto
+        {
+            Id = fileId,
+            Name = fileName,
+            Size = streamContent.ContentLength.GetValueOrDefault()
+        };
     }
 
-    public Task<byte[]?> GetBytesAsync(Guid fileId)
+    public async Task<IRemoteStreamContent> GetImageAsync(string fileName)
     {
-        throw new NotImplementedException();
+        IBlobContainer imageContainer = _blobContainerFactory.Create<ImageContainer>();
+        Stream fs = await imageContainer.GetAsync(fileName);
+        return new RemoteStreamContent(fs);
     }
 
-    public Task DeleteAsync(Guid fileId)
+    [Authorize(CourseMatePermissions.Files.Delete)]
+    public async Task DeleteAsync(string fileName)
     {
-        throw new NotImplementedException();
+        await _blobContainer.DeleteAsync(fileName);
     }
 }

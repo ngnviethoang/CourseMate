@@ -1,8 +1,10 @@
 ﻿using System.Linq.Dynamic.Core;
 using CourseMate.Entities.Lessons;
 using CourseMate.Permissions;
+using CourseMate.Services.Dtos;
 using CourseMate.Services.Dtos.Lessons;
 using Microsoft.AspNetCore.Authorization;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 
@@ -13,41 +15,86 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
 {
     public async Task<LessonDto> GetAsync(Guid id)
     {
-        Lesson lesson = await LessonRepo.GetAsync(id);
-        return ObjectMapper.Map<Lesson, LessonDto>(lesson);
+        IQueryable<LessonDto> queryable =
+            from lesson in await LessonRepo.GetQueryableAsync()
+            where lesson.Id == id
+            select new LessonDto
+            {
+                Id = lesson.Id,
+                Title = lesson.Title,
+                ChapterId = lesson.ChapterId,
+                ContentText = lesson.ContentText,
+                Duration = lesson.Duration,
+                VideoUrl = lesson.VideoUrl,
+                CreationTime = lesson.CreationTime,
+                CreatorId = lesson.CreatorId,
+                LastModificationTime = lesson.LastModificationTime,
+                LastModifierId = lesson.LastModifierId
+            };
+        return await AsyncExecuter.FirstOrDefaultAsync(queryable) ?? new LessonDto();
     }
 
     public async Task<PagedResultDto<LessonDto>> GetListAsync(PagedAndSortedResultRequestDto input)
     {
-        IQueryable<Lesson> queryable = await LessonRepo.GetQueryableAsync();
-        IQueryable<Lesson> query = queryable
+        IQueryable<LessonDto> queryable =
+            from lesson in await LessonRepo.GetQueryableAsync()
+            select new LessonDto
+            {
+                Id = lesson.Id,
+                Title = lesson.Title,
+                ChapterId = lesson.ChapterId,
+                ContentText = lesson.ContentText,
+                Duration = lesson.Duration,
+                VideoUrl = lesson.VideoUrl,
+                CreationTime = lesson.CreationTime,
+                CreatorId = lesson.CreatorId,
+                LastModificationTime = lesson.LastModificationTime,
+                LastModifierId = lesson.LastModifierId
+            };
+        queryable = queryable
             .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "Name" : input.Sorting)
             .Skip(input.SkipCount)
             .Take(input.MaxResultCount);
 
-        List<Lesson> lessons = await AsyncExecuter.ToListAsync(query);
+        List<LessonDto> categories = await AsyncExecuter.ToListAsync(queryable);
         int totalCount = await AsyncExecuter.CountAsync(queryable);
-
-        return new PagedResultDto<LessonDto>(totalCount, ObjectMapper.Map<List<Lesson>, List<LessonDto>>(lessons));
+        return new PagedResultDto<LessonDto>(totalCount, categories);
     }
 
     [Authorize(CourseMatePermissions.Lessons.Create)]
-    public async Task<LessonDto> CreateAsync(CreateUpdateLessonDto input)
+    public async Task<ResultObjectDto> CreateAsync(CreateUpdateLessonDto input)
     {
-        await ChapterRepo.EnsureExistsAsync(input.ChapterId);
-        Lesson lesson = ObjectMapper.Map<CreateUpdateLessonDto, Lesson>(input);
+        Lesson lesson = new(GuidGenerator.Create(), input.Title, input.ContentText, input.VideoUrl, input.Duration, input.ChapterId);
         await LessonRepo.InsertAsync(lesson);
-        return ObjectMapper.Map<Lesson, LessonDto>(lesson);
+        return new ResultObjectDto(lesson.Id);
     }
 
     [Authorize(CourseMatePermissions.Lessons.Edit)]
     public async Task<LessonDto> UpdateAsync(Guid id, CreateUpdateLessonDto input)
     {
-        Lesson lesson = await LessonRepo.GetAsync(id);
         await ChapterRepo.EnsureExistsAsync(input.ChapterId);
-        ObjectMapper.Map(input, lesson);
+        Lesson lesson = await LessonRepo.GetAsync(id);
+
+        lesson.Title = input.Title;
+        lesson.ContentText = input.ContentText;
+        lesson.VideoUrl = input.VideoUrl;
+        lesson.Duration = input.Duration;
+        lesson.ChapterId = input.ChapterId;
+
         await LessonRepo.UpdateAsync(lesson);
-        return ObjectMapper.Map<Lesson, LessonDto>(lesson);
+        return new LessonDto
+        {
+            Id = lesson.Id,
+            Title = lesson.Title,
+            ChapterId = lesson.ChapterId,
+            ContentText = lesson.ContentText,
+            Duration = lesson.Duration,
+            VideoUrl = lesson.VideoUrl,
+            CreationTime = lesson.CreationTime,
+            CreatorId = lesson.CreatorId,
+            LastModificationTime = lesson.LastModificationTime,
+            LastModifierId = lesson.LastModifierId
+        };
     }
 
     [Authorize(CourseMatePermissions.Lessons.Delete)]

@@ -23,6 +23,7 @@ using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.Autofac;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
+using Volo.Abp.BlobStoring;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
 using Volo.Abp.Caching;
 using Volo.Abp.Emailing;
@@ -51,6 +52,7 @@ using Volo.Abp.Swashbuckle;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
+using Volo.Abp.BlobStoring.FileSystem;
 
 namespace CourseMate;
 
@@ -102,7 +104,8 @@ namespace CourseMate;
     typeof(AbpEntityFrameworkCorePostgreSqlModule),
 
     // Other modules
-    typeof(AbpAspNetCoreSignalRModule)
+    typeof(AbpAspNetCoreSignalRModule),
+    typeof(AbpBlobStoringFileSystemModule)
 )]
 public class CourseMateModule : AbpModule
 {
@@ -172,6 +175,7 @@ public class CourseMateModule : AbpModule
         ConfigureDataProtection(context);
         ConfigureVirtualFiles(hostingEnvironment);
         ConfigureEfCore(context);
+        ConfigureBlobStoring();
     }
 
     private void ConfigureHealthChecks(ServiceConfigurationContext context)
@@ -322,6 +326,17 @@ public class CourseMateModule : AbpModule
         });
 
         Configure<AbpDbContextOptions>(options => { options.Configure(configurationContext => { configurationContext.UseNpgsql(); }); });
+    }
+
+    private void ConfigureBlobStoring()
+    {
+        Configure<AbpBlobStoringOptions>(options =>
+        {
+            options.Containers.ConfigureDefault(container =>
+            {
+                container.UseFileSystem(fileSystem => { fileSystem.BasePath = "./coursemate-files"; });
+            });
+        });
     }
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)

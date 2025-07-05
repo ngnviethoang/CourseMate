@@ -1,12 +1,14 @@
 ﻿using System.Linq.Dynamic.Core;
 using CourseMate.Entities.Chapters;
 using CourseMate.Permissions;
+using CourseMate.Services.Dtos;
 using CourseMate.Services.Dtos.Chapters;
 using CourseMate.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Validation;
 
 namespace CourseMate.Services.Chapters;
 
@@ -15,41 +17,78 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
 {
     public async Task<ChapterDto> GetAsync(Guid id)
     {
-        Chapter chapter = await ChapterRepo.GetAsync(id);
-        return ObjectMapper.Map<Chapter, ChapterDto>(chapter);
+        IQueryable<ChapterDto> queryable =
+            from chapter in await ChapterRepo.GetQueryableAsync()
+            where chapter.Id == id
+            select new ChapterDto
+            {
+                Id = chapter.Id,
+                Title = chapter.Title,
+                CreationTime = chapter.CreationTime,
+                CreatorId = chapter.CreatorId,
+                LastModificationTime = chapter.LastModificationTime,
+                LastModifierId = chapter.LastModifierId
+            };
+        return await AsyncExecuter.FirstOrDefaultAsync(queryable) ?? new ChapterDto();
     }
 
-    public async Task<PagedResultDto<ChapterDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+    public async Task<PagedResultDto<ChapterDto>> GetListAsync(GetListRequestDto input)
     {
-        IQueryable<Chapter> queryable = await ChapterRepo.GetQueryableAsync();
-        IQueryable<Chapter> query = queryable
-            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "Name" : input.Sorting)
-            .Skip(input.SkipCount)
-            .Take(input.MaxResultCount);
+        IQueryable<ChapterDto> queryable =
+            from chapter in await ChapterRepo.GetQueryableAsync()
+            select new ChapterDto
+            {
+                Id = chapter.Id,
+                Title = chapter.Title,
+                CreationTime = chapter.CreationTime,
+                CreatorId = chapter.CreatorId,
+                LastModificationTime = chapter.LastModificationTime,
+                LastModifierId = chapter.LastModifierId
+            };
 
-        List<Chapter> categories = await AsyncExecuter.ToListAsync(query);
+        if (input.SkipCount.HasValue)
+        {
+            queryable = queryable.Skip(input.SkipCount.Value);
+        }
+
+        if (input.MaxResultCount.HasValue)
+        {
+            queryable = queryable.Take(input.MaxResultCount.Value);
+        }
+
+        List<ChapterDto> chapters = await AsyncExecuter.ToListAsync(queryable);
         int totalCount = await AsyncExecuter.CountAsync(queryable);
-
-        return new PagedResultDto<ChapterDto>(totalCount, ObjectMapper.Map<List<Chapter>, List<ChapterDto>>(categories));
+        return new PagedResultDto<ChapterDto>(totalCount, chapters);
     }
 
     [Authorize(CourseMatePermissions.Chapters.Create)]
-    public async Task<ChapterDto> CreateAsync(CreateUpdateChapterDto input)
+    public async Task<ResultObjectDto> CreateAsync(CreateUpdateChapterDto input)
     {
         await CourseRepo.EnsureExistsAsync(input.CourseId);
-        Chapter category = ObjectMapper.Map<CreateUpdateChapterDto, Chapter>(input);
-        await ChapterRepo.InsertAsync(category);
-        return ObjectMapper.Map<Chapter, ChapterDto>(category);
+        Chapter chapter = new(GuidGenerator.Create(), input.Title, input.CourseId);
+        await ChapterRepo.InsertAsync(chapter);
+        return new ResultObjectDto(chapter.Id);
     }
 
     [Authorize(CourseMatePermissions.Chapters.Edit)]
     public async Task<ChapterDto> UpdateAsync(Guid id, CreateUpdateChapterDto input)
     {
-        Chapter chapter = await ChapterRepo.GetAsync(id);
         await CourseRepo.EnsureExistsAsync(input.CourseId);
-        ObjectMapper.Map(input, chapter);
+        Chapter chapter = await ChapterRepo.GetAsync(id);
+
+        chapter.Title = input.Title;
+        chapter.CourseId = input.CourseId;
+
         await ChapterRepo.UpdateAsync(chapter);
-        return ObjectMapper.Map<Chapter, ChapterDto>(chapter);
+        return new ChapterDto
+        {
+            Id = chapter.Id,
+            Title = chapter.Title,
+            CreationTime = chapter.CreationTime,
+            CreatorId = chapter.CreatorId,
+            LastModificationTime = chapter.LastModificationTime,
+            LastModifierId = chapter.LastModifierId
+        };
     }
 
     [Authorize(CourseMatePermissions.Chapters.Delete)]
@@ -57,7 +96,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
     {
         if (await LessonRepo.AnyAsync(i => i.ChapterId == id))
         {
-            throw new BusinessException(ExceptionConst.InvalidRequest);
+            throw new AbpValidationException(ExceptionConst.InvalidRequest);
         }
 
         await ChapterRepo.DeleteAsync(id);

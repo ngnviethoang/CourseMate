@@ -1,12 +1,14 @@
 ﻿using System.Linq.Dynamic.Core;
 using CourseMate.Entities.Categories;
 using CourseMate.Permissions;
+using CourseMate.Services.Dtos;
 using CourseMate.Services.Dtos.Categories;
 using CourseMate.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Validation;
 
 namespace CourseMate.Services.Categories;
 
@@ -15,39 +17,90 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
 {
     public async Task<CategoryDto> GetAsync(Guid id)
     {
-        Category category = await CategoryRepo.GetAsync(id);
-        return ObjectMapper.Map<Category, CategoryDto>(category);
+        IQueryable<CategoryDto> queryable =
+            from category in await CategoryRepo.GetQueryableAsync()
+            where category.Id == id
+            select new CategoryDto
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description,
+                CreationTime = category.CreationTime,
+                CreatorId = category.CreatorId,
+                LastModificationTime = category.LastModificationTime,
+                LastModifierId = category.LastModifierId
+            };
+        return await AsyncExecuter.FirstOrDefaultAsync(queryable) ?? new CategoryDto();
     }
 
-    public async Task<PagedResultDto<CategoryDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+    public async Task<PagedResultDto<CategoryDto>> GetListAsync(GetListRequestDto input)
     {
-        IQueryable<Category> queryable = await CategoryRepo.GetQueryableAsync();
-        IQueryable<Category> query = queryable
-            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "Name" : input.Sorting)
-            .Skip(input.SkipCount)
-            .Take(input.MaxResultCount);
+        IQueryable<CategoryDto> queryable =
+            from category in await CategoryRepo.GetQueryableAsync()
+            select new CategoryDto
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description,
+                CreationTime = category.CreationTime,
+                CreatorId = category.CreatorId,
+                LastModificationTime = category.LastModificationTime,
+                LastModifierId = category.LastModifierId
+            };
+        queryable = queryable.OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "Name" : input.Sorting);
 
-        List<Category> categories = await AsyncExecuter.ToListAsync(query);
+        if (input.SkipCount.HasValue)
+        {
+            queryable = queryable.Skip(input.SkipCount.Value);
+        }
+
+        if (input.MaxResultCount.HasValue)
+        {
+            queryable = queryable.Take(input.MaxResultCount.Value);
+        }
+
+        List<CategoryDto> categories = await AsyncExecuter.ToListAsync(queryable);
         int totalCount = await AsyncExecuter.CountAsync(queryable);
-
-        return new PagedResultDto<CategoryDto>(totalCount, ObjectMapper.Map<List<Category>, List<CategoryDto>>(categories));
+        return new PagedResultDto<CategoryDto>(totalCount, categories);
     }
 
     [Authorize(CourseMatePermissions.Categories.Create)]
-    public async Task<CategoryDto> CreateAsync(CreateUpdateCategoryDto input)
+    public async Task<ResultObjectDto> CreateAsync(CreateUpdateCategoryDto input)
     {
-        Category category = ObjectMapper.Map<CreateUpdateCategoryDto, Category>(input);
+        bool isDuplicateName = await CategoryRepo.AnyAsync(i => i.Name == input.Name);
+        if (isDuplicateName)
+        {
+            throw new UserFriendlyException("Duplicate category name");
+        }
+
+        Category category = new(GuidGenerator.Create(), input.Name, input.Description);
         await CategoryRepo.InsertAsync(category);
-        return ObjectMapper.Map<Category, CategoryDto>(category);
+        return new ResultObjectDto(category.Id);
     }
 
     [Authorize(CourseMatePermissions.Categories.Edit)]
     public async Task<CategoryDto> UpdateAsync(Guid id, CreateUpdateCategoryDto input)
     {
+        bool isDuplicateName = await CategoryRepo.AnyAsync(i => i.Name == input.Name);
+        if (isDuplicateName)
+        {
+            throw new UserFriendlyException("Duplicate category name");
+        }
+
         Category category = await CategoryRepo.GetAsync(id);
-        ObjectMapper.Map(input, category);
+        category.Name = input.Name;
+        category.Description = input.Name;
         await CategoryRepo.UpdateAsync(category);
-        return ObjectMapper.Map<Category, CategoryDto>(category);
+        return new CategoryDto
+        {
+            Id = category.Id,
+            Name = category.Name,
+            Description = category.Description,
+            CreationTime = category.CreationTime,
+            CreatorId = category.CreatorId,
+            LastModificationTime = category.LastModificationTime,
+            LastModifierId = category.LastModifierId
+        };
     }
 
     [Authorize(CourseMatePermissions.Categories.Delete)]
@@ -55,7 +108,7 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
     {
         if (await CourseRepo.AnyAsync(i => i.CategoryId == id))
         {
-            throw new BusinessException(ExceptionConst.InvalidRequest);
+            throw new AbpValidationException(ExceptionConst.InvalidRequest);
         }
 
         await CategoryRepo.DeleteAsync(id);

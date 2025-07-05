@@ -18,6 +18,5 @@ public class CreateUpdateCourseDto
     public CurrencyType Currency { get; set; }
     public LevelType LevelType { get; set; }
     public bool IsPublished { get; set; }
-    public Guid InstructorId { get; set; }
     public Guid CategoryId { get; set; }
 }
