@@ -1,4 +1,4 @@
-import { ListService, PagedResultDto } from '@abp/ng.core';
+import { getShortTimeFormat, ListService, PagedResultDto } from '@abp/ng.core';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
@@ -79,4 +79,6 @@ export class CategoryComponent implements OnInit {
       this.list.get();
     });
   }
+
+  protected readonly getShortTimeFormat = getShortTimeFormat;
 }

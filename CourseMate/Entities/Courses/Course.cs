@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using CourseMate.Shared.Constants;
 using Pgvector;
 using Volo.Abp.Domain.Entities.Auditing;
 
@@ -6,11 +7,11 @@ namespace CourseMate.Entities.Courses;
 
 public class Course : FullAuditedEntity<Guid>
 {
-    public Course(Guid id, string title, string description, string thumbnailUrl, decimal price, CurrencyType currency, LevelType levelType, bool isPublished, Guid instructorId, Guid categoryId) : base(id)
+    public Course(Guid id, string title, string description, string thumbnailFile, decimal price, CurrencyType currency, LevelType levelType, bool isPublished, Guid instructorId, Guid categoryId) : base(id)
     {
         Title = title;
         Description = description;
-        ThumbnailUrl = thumbnailUrl;
+        ThumbnailFile = thumbnailFile;
         Price = price;
         Currency = currency;
         LevelType = levelType;
@@ -25,8 +26,8 @@ public class Course : FullAuditedEntity<Guid>
     [MaxLength(1024)]
     public string Description { get; set; }
 
-    [MaxLength(1024)]
-    public string ThumbnailUrl { get; set; }
+    [MaxLength(CourseMateConst.FileNameMaxLength)]
+    public string ThumbnailFile { get; set; }
 
     public decimal Price { get; set; }
     public CurrencyType Currency { get; set; }

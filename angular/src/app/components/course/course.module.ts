@@ -5,7 +5,8 @@ import { CourseComponent } from './course.component';
 import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { Image } from 'primeng/image';
 import { FileUpload } from 'primeng/fileupload';
-import { Button } from 'primeng/button'; // add this line
+import { Button } from 'primeng/button';
+import { NgOptimizedImage } from '@angular/common'; // add this line
 
 @NgModule({
   declarations: [CourseComponent],
@@ -15,7 +16,8 @@ import { Button } from 'primeng/button'; // add this line
     NgbDatepickerModule,
     Image,
     FileUpload,
-    Button
+    Button,
+    NgOptimizedImage
     // add this line
   ]
 })

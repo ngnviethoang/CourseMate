@@ -28,6 +28,14 @@
     "Permission:Courses.Create": "Create",
     "Permission:Courses.Edit": "Edit ",
     "Permission:Courses.Delete": "Delete",
+    "Permission:Chapters": "Chapters",
+    "Permission:Chapters.Create": "Create",
+    "Permission:Chapters.Edit": "Edit ",
+    "Permission:Chapters.Delete": "Delete",
+    "Permission:Lessons": "Lessons",
+    "Permission:Lessons.Create": "Create",
+    "Permission:Lessons.Edit": "Edit ",
+    "Permission:Lessons.Delete": "Delete",
     
     "Menu:Home": "Home",
     "Menu:CourseMate": "Book Store",
@@ -48,7 +56,6 @@
     "Price": "Price",
     "CreationTime": "Creation time",
 
-    
     "Enum:BookType.0": "Undefined",
     "Enum:BookType.1": "Adventure",
     "Enum:BookType.2": "Biography",

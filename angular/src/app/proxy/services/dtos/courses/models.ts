@@ -5,7 +5,7 @@ import type { LevelType } from '../../../entities/courses/level-type.enum';
 export interface CourseDto extends AuditedEntityDto<string> {
   title?: string;
   description?: string;
-  thumbnailUrl?: string;
+  thumbnailFile?: string;
   price: number;
   currency?: CurrencyType;
   levelType?: LevelType;
@@ -17,7 +17,7 @@ export interface CourseDto extends AuditedEntityDto<string> {
 export interface CreateUpdateCourseDto {
   title?: string;
   description?: string;
-  thumbnailUrl?: string;
+  thumbnailFile?: string;
   price: number;
   currency?: CurrencyType;
   levelType?: LevelType;

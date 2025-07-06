@@ -2,6 +2,7 @@
 using CourseMate.Permissions;
 using CourseMate.Services.Dtos.Storages;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.BlobStoring;
 using Volo.Abp.Content;
 
@@ -30,17 +31,9 @@ public class StorageAppService : CourseMateAppService, IStorageAppService
         await videoContainer.SaveAsync(fileName, fs);
         return new FileDto
         {
-            Id = fileId,
             Name = fileName,
             Size = streamContent.ContentLength.GetValueOrDefault()
         };
-    }
-
-    public async Task<IRemoteStreamContent> StreamVideoAsync(string fileName)
-    {
-        IBlobContainer videoContainer = _blobContainerFactory.Create<VideoContainer>();
-        Stream fs = await videoContainer.GetAsync(fileName);
-        return new RemoteStreamContent(fs);
     }
 
     [Authorize(CourseMatePermissions.Files.Create)]
@@ -54,7 +47,6 @@ public class StorageAppService : CourseMateAppService, IStorageAppService
         await imageContainer.SaveAsync(fileName, fs);
         return new FileDto
         {
-            Id = fileId,
             Name = fileName,
             Size = streamContent.ContentLength.GetValueOrDefault()
         };
@@ -64,7 +56,7 @@ public class StorageAppService : CourseMateAppService, IStorageAppService
     {
         IBlobContainer imageContainer = _blobContainerFactory.Create<ImageContainer>();
         Stream fs = await imageContainer.GetAsync(fileName);
-        return new RemoteStreamContent(fs);
+        return new RemoteStreamContent(fs, contentType: "image/jpg");
     }
 
     [Authorize(CourseMatePermissions.Files.Delete)]

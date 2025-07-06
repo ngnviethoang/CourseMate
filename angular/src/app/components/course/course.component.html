@@ -42,20 +42,25 @@
               <button *abpPermission="'CourseMate.Courses.Delete'" ngbDropdownItem (click)="this.delete(row.id)">
                 {{ '::Delete' | abpLocalization }}
               </button>
+              <button *abpPermission="'CourseMate.Chapters'" ngbDropdownItem
+                      (click)="this.onClickChapterManagement(row.id)">
+                {{ '::Menu:Chapters' | abpLocalization }}
+              </button>
             </div>
           </div>
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column [name]="'::Name' | abpLocalization" prop="name"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Description' | abpLocalization" prop="description"
-                            [sortable]="false"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Description' | abpLocalization" prop="price"
-                            [sortable]="false"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Description' | abpLocalization" prop="description"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Description' | abpLocalization" prop="price"></ngx-datatable-column>
       <ngx-datatable-column [name]="'::LevelType' | abpLocalization" prop="levelType">
         <ng-template let-row="row" ngx-datatable-cell-template>
           {{ '::Enum:LevelType.' + row.levelType | abpLocalization }}
         </ng-template>
       </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::CreationTime' | abpLocalization" prop="creationTime"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::LastModificationTime' | abpLocalization"
+                            prop="lastModificationTime"></ngx-datatable-column>
     </ngx-datatable>
   </div>
 </div>
@@ -87,18 +92,22 @@
           <label>Thumbnail</label>
           <div class="flex gap-6 items-center justify-between">
             <p-fileupload #fu mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="demo[]"
-                          accept="image/*" maxFileSize="1000000"
+                          accept=".jpg" maxFileSize="1000000"
                           [fileLimit]="1"
                           (onSelect)="this.onSelect($event)"
                           [chooseButtonProps]="{ size: 'small', styleClass: 'p-1' }" />
-            <p-button label="Upload" (onClick)="this.onUpload()" severity="secondary" size="small" class="p-1" />
+            <p-button label="Upload" (onClick)="this.onUpload()" severity="secondary" size="small" class="p-1"
+                      [disabled]="this.thumbnailFile === null || this.thumbnailFile === undefined" />
           </div>
         </div>
       </div>
 
       <div class="row mt-1">
         <div class="col d-flex justify-content-center">
-          <p-image src="https://localhost:44393/api/app/storage/image?fileName=3a1aebaa-ba3c-b51a-3ad4-dfa59ead5679.jfif" alt="Image" height="400px" />
+          <img style="display: block;-webkit-user-select: none;margin: auto;cursor: zoom-in;background-color: hsl(0, 0%, 90%);transition: background-color 300ms;" src="https://localhost:44393/api/app/storage/image?fileName=3a1af148-b083-53bb-df6d-35d1fb219040.jpg" width="632" height="791">
+          <p-image
+            [src]="this.thumbnailUrl"
+            alt="Image" height="400px" />
         </div>
       </div>
 

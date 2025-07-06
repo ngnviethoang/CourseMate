@@ -6,11 +6,13 @@ import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
 import { CourseService } from '../../proxy/services/courses';
 import { CourseDto } from '../../proxy/services/dtos/courses';
 import { CurrencyType, currencyTypeOptions, LevelType, levelTypeOptions } from '../../proxy/entities/courses';
-import { CategoryService } from '../../proxy/services/categories';
-import type { CategoryDto } from '../../proxy/services/dtos/categories';
-import { FileSelectEvent, FileUploadEvent, UploadEvent } from 'primeng/fileupload';
+import { FileSelectEvent } from 'primeng/fileupload';
 import { MessageService } from 'primeng/api';
 import { StorageService } from '../../proxy/services/storages';
+import { Router } from '@angular/router';
+import { LookupDto } from '../../proxy/services/dtos/lookups';
+import { LookupService } from '../../proxy/services/lookups';
+import { StorageConstants } from '../../shared/storage-constant';
 
 @Component({
   standalone: false,
@@ -25,30 +27,36 @@ export class CourseComponent implements OnInit {
   currencyTypes = currencyTypeOptions;
   levelTypes = levelTypeOptions;
   isModalOpen = false;
-  categories: CategoryDto[] = [];
+  categories: LookupDto[] = [];
   thumbnailFile: File;
+  thumbnailUrl: string;
 
   constructor(
     public readonly list: ListService,
     private courseService: CourseService,
     private fb: FormBuilder,
     private confirmation: ConfirmationService,
-    private categoryService: CategoryService,
+    private lookupService: LookupService,
     private messageService: MessageService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private router: Router
   ) {
   }
 
   ngOnInit() {
     const courseStreamCreator = (query) => this.courseService.getList(query);
 
-    this.list.hookToQuery(courseStreamCreator).subscribe((response) => {
-      this.courses = response;
-    });
+    this.list
+      .hookToQuery(courseStreamCreator)
+      .subscribe((response) => {
+        this.courses = response;
+      });
 
-    this.categoryService.getList({ sorting: null, maxResultCount: null, skipCount: null }).subscribe((response) => {
-      this.categories = response.items;
-    });
+    this.lookupService
+      .getCategories({ maxResultCount: null, skipCount: null })
+      .subscribe((response) => {
+        this.categories = response.items;
+      });
   }
 
   create() {
@@ -58,8 +66,8 @@ export class CourseComponent implements OnInit {
   }
 
   edit(id: string) {
-    this.courseService.get(id).subscribe((book) => {
-      this.selectedCourse = book;
+    this.courseService.get(id).subscribe((response) => {
+      this.selectedCourse = response;
       this.buildForm();
       this.isModalOpen = true;
     });
@@ -77,7 +85,7 @@ export class CourseComponent implements OnInit {
     this.form = this.fb.group({
       title: [this.selectedCourse.title || '', [Validators.required, Validators.maxLength(1024)]],
       description: [this.selectedCourse.description || '', [Validators.maxLength(1024)]],
-      thumbnailUrl: [this.selectedCourse.thumbnailUrl || '', [Validators.maxLength(1024)]],
+      thumbnailFile: [this.selectedCourse.thumbnailFile || '', [Validators.maxLength(1024)]],
       price: [this.selectedCourse.price || null, [Validators.required, Validators.min(0)]],
       currency: [this.selectedCourse.currency || CurrencyType.Usd, [Validators.required]],
       levelType: [this.selectedCourse.levelType || LevelType.Beginner, [Validators.required]],
@@ -103,8 +111,6 @@ export class CourseComponent implements OnInit {
   }
 
   onSelect(event: FileSelectEvent) {
-
-
     const file = event.files[0];
     if (!file) {
       return;
@@ -114,11 +120,15 @@ export class CourseComponent implements OnInit {
 
   async onUpload() {
     try {
+      if (this.thumbnailFile === null || this.thumbnailFile === undefined) {
+        return;
+      }
       const formData = new FormData();
       formData.append('streamContent', this.thumbnailFile);
       this.storageService.uploadImage(formData).subscribe(response => {
-        this.selectedCourse.thumbnailUrl = response.id;
-        this.form.controls['thumbnailUrl'].setValue(response.id);
+        this.thumbnailUrl = `${StorageConstants.IMAGE_API}?fileName=${response.name}`;
+        this.selectedCourse.thumbnailFile = response.name;
+        this.form.controls['thumbnailFile'].setValue(response.name);
       });
 
       this.messageService.add({
@@ -134,5 +144,9 @@ export class CourseComponent implements OnInit {
         detail: 'There was a problem uploading your file.'
       });
     }
+  }
+
+  async onClickChapterManagement(courseId: string) {
+    await this.router.navigateByUrl(`/chapters?courseId=${courseId}`);
   }
 }

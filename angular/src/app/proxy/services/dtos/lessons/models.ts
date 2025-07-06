@@ -1,10 +1,9 @@
 import type { AuditedEntityDto } from '@abp/ng.core';
 
 export interface CreateUpdateLessonDto {
-  id?: string;
   title?: string;
   contentText?: string;
-  videoUrl?: string;
+  videoFile?: string;
   duration?: string;
   chapterId?: string;
 }
@@ -12,7 +11,7 @@ export interface CreateUpdateLessonDto {
 export interface LessonDto extends AuditedEntityDto<string> {
   title?: string;
   contentText?: string;
-  videoUrl?: string;
+  videoFile?: string;
   duration?: string;
   chapterId?: string;
 }

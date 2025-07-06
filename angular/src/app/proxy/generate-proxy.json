@@ -873,6 +873,54 @@
       "rootPath": "app",
       "remoteServiceName": "Default",
       "controllers": {
+        "CourseMate.Controllers.StorageController": {
+          "controllerName": "Storage",
+          "controllerGroupName": null,
+          "isRemoteService": false,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "CourseMate.Controllers.StorageController",
+          "interfaces": [],
+          "actions": {
+            "GetVideoByFileName": {
+              "uniqueName": "GetVideoByFileName",
+              "name": "GetVideo",
+              "httpMethod": "GET",
+              "url": "api/app/storage/video",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "fileName",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "fileName",
+                  "name": "fileName",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "Microsoft.AspNetCore.Mvc.FileStreamResult",
+                "typeSimple": "Microsoft.AspNetCore.Mvc.FileStreamResult"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "CourseMate.Controllers.StorageController"
+            }
+          }
+        },
         "CourseMate.Services.Books.BookAppService": {
           "controllerName": "Book",
           "controllerGroupName": "Book",
@@ -3253,6 +3301,258 @@
             }
           }
         },
+        "CourseMate.Services.Lookups.LookupAppService": {
+          "controllerName": "Lookup",
+          "controllerGroupName": "Lookup",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "CourseMate.Services.Lookups.LookupAppService",
+          "interfaces": [
+            {
+              "type": "CourseMate.Services.Lookups.ILookupAppService",
+              "name": "ILookupAppService",
+              "methods": [
+                {
+                  "name": "GetCategoriesAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "CourseMate.Services.Dtos.Lookups.LookupRequestDto, CourseMate",
+                      "type": "CourseMate.Services.Dtos.Lookups.LookupRequestDto",
+                      "typeSimple": "CourseMate.Services.Dtos.Lookups.LookupRequestDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Lookups.LookupDto>",
+                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Lookups.LookupDto>"
+                  }
+                },
+                {
+                  "name": "GetCoursesAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "CourseMate.Services.Dtos.Lookups.LookupRequestDto, CourseMate",
+                      "type": "CourseMate.Services.Dtos.Lookups.LookupRequestDto",
+                      "typeSimple": "CourseMate.Services.Dtos.Lookups.LookupRequestDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Lookups.LookupDto>",
+                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Lookups.LookupDto>"
+                  }
+                },
+                {
+                  "name": "GetChaptersAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "CourseMate.Services.Dtos.Lookups.LookupRequestDto, CourseMate",
+                      "type": "CourseMate.Services.Dtos.Lookups.LookupRequestDto",
+                      "typeSimple": "CourseMate.Services.Dtos.Lookups.LookupRequestDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Lookups.LookupDto>",
+                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Lookups.LookupDto>"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "GetCategoriesAsyncByInput": {
+              "uniqueName": "GetCategoriesAsyncByInput",
+              "name": "GetCategoriesAsync",
+              "httpMethod": "GET",
+              "url": "api/app/lookup/categories",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "CourseMate.Services.Dtos.Lookups.LookupRequestDto, CourseMate",
+                  "type": "CourseMate.Services.Dtos.Lookups.LookupRequestDto",
+                  "typeSimple": "CourseMate.Services.Dtos.Lookups.LookupRequestDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "SkipCount",
+                  "jsonName": null,
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "MaxResultCount",
+                  "jsonName": null,
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Filter",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                }
+              ],
+              "returnValue": {
+                "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Lookups.LookupDto>",
+                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Lookups.LookupDto>"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "CourseMate.Services.Lookups.ILookupAppService"
+            },
+            "GetCoursesAsyncByInput": {
+              "uniqueName": "GetCoursesAsyncByInput",
+              "name": "GetCoursesAsync",
+              "httpMethod": "GET",
+              "url": "api/app/lookup/courses",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "CourseMate.Services.Dtos.Lookups.LookupRequestDto, CourseMate",
+                  "type": "CourseMate.Services.Dtos.Lookups.LookupRequestDto",
+                  "typeSimple": "CourseMate.Services.Dtos.Lookups.LookupRequestDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "SkipCount",
+                  "jsonName": null,
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "MaxResultCount",
+                  "jsonName": null,
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Filter",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                }
+              ],
+              "returnValue": {
+                "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Lookups.LookupDto>",
+                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Lookups.LookupDto>"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "CourseMate.Services.Lookups.ILookupAppService"
+            },
+            "GetChaptersAsyncByInput": {
+              "uniqueName": "GetChaptersAsyncByInput",
+              "name": "GetChaptersAsync",
+              "httpMethod": "GET",
+              "url": "api/app/lookup/chapters",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "CourseMate.Services.Dtos.Lookups.LookupRequestDto, CourseMate",
+                  "type": "CourseMate.Services.Dtos.Lookups.LookupRequestDto",
+                  "typeSimple": "CourseMate.Services.Dtos.Lookups.LookupRequestDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "SkipCount",
+                  "jsonName": null,
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "MaxResultCount",
+                  "jsonName": null,
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Filter",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                }
+              ],
+              "returnValue": {
+                "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Lookups.LookupDto>",
+                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Lookups.LookupDto>"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "CourseMate.Services.Lookups.ILookupAppService"
+            }
+          }
+        },
         "CourseMate.Services.Orders.OrderAppService": {
           "controllerName": "Order",
           "controllerGroupName": "Order",
@@ -4303,23 +4603,6 @@
                   }
                 },
                 {
-                  "name": "StreamVideoAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "fileId",
-                      "typeAsString": "System.Guid, System.Private.CoreLib",
-                      "type": "System.Guid",
-                      "typeSimple": "string",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "Volo.Abp.Content.IRemoteStreamContent",
-                    "typeSimple": "Volo.Abp.Content.IRemoteStreamContent"
-                  }
-                },
-                {
                   "name": "UploadImageAsync",
                   "parametersOnMethod": [
                     {
@@ -4340,9 +4623,9 @@
                   "name": "GetImageAsync",
                   "parametersOnMethod": [
                     {
-                      "name": "fileId",
-                      "typeAsString": "System.Guid, System.Private.CoreLib",
-                      "type": "System.Guid",
+                      "name": "fileName",
+                      "typeAsString": "System.String, System.Private.CoreLib",
+                      "type": "System.String",
                       "typeSimple": "string",
                       "isOptional": false,
                       "defaultValue": null
@@ -4357,9 +4640,9 @@
                   "name": "DeleteAsync",
                   "parametersOnMethod": [
                     {
-                      "name": "fileId",
-                      "typeAsString": "System.Guid, System.Private.CoreLib",
-                      "type": "System.Guid",
+                      "name": "fileName",
+                      "typeAsString": "System.String, System.Private.CoreLib",
+                      "type": "System.String",
                       "typeSimple": "string",
                       "isOptional": false,
                       "defaultValue": null
@@ -4408,44 +4691,7 @@
                 "type": "CourseMate.Services.Dtos.Storages.FileDto",
                 "typeSimple": "CourseMate.Services.Dtos.Storages.FileDto"
               },
-              "allowAnonymous": null,
-              "implementFrom": "CourseMate.Services.Storages.IStorageAppService"
-            },
-            "StreamVideoAsyncByFileId": {
-              "uniqueName": "StreamVideoAsyncByFileId",
-              "name": "StreamVideoAsync",
-              "httpMethod": "POST",
-              "url": "api/app/storage/stream-video/{fileId}",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "fileId",
-                  "typeAsString": "System.Guid, System.Private.CoreLib",
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "fileId",
-                  "name": "fileId",
-                  "jsonName": null,
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "Volo.Abp.Content.IRemoteStreamContent",
-                "typeSimple": "Volo.Abp.Content.IRemoteStreamContent"
-              },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "CourseMate.Services.Storages.IStorageAppService"
             },
             "UploadImageAsyncByStreamContent": {
@@ -4482,20 +4728,20 @@
                 "type": "CourseMate.Services.Dtos.Storages.FileDto",
                 "typeSimple": "CourseMate.Services.Dtos.Storages.FileDto"
               },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "CourseMate.Services.Storages.IStorageAppService"
             },
-            "GetImageAsyncByFileId": {
-              "uniqueName": "GetImageAsyncByFileId",
+            "GetImageAsyncByFileName": {
+              "uniqueName": "GetImageAsyncByFileName",
               "name": "GetImageAsync",
               "httpMethod": "GET",
-              "url": "api/app/storage/image/{fileId}",
+              "url": "api/app/storage/image",
               "supportedVersions": [],
               "parametersOnMethod": [
                 {
-                  "name": "fileId",
-                  "typeAsString": "System.Guid, System.Private.CoreLib",
-                  "type": "System.Guid",
+                  "name": "fileName",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
                   "typeSimple": "string",
                   "isOptional": false,
                   "defaultValue": null
@@ -4503,15 +4749,15 @@
               ],
               "parameters": [
                 {
-                  "nameOnMethod": "fileId",
-                  "name": "fileId",
+                  "nameOnMethod": "fileName",
+                  "name": "fileName",
                   "jsonName": null,
-                  "type": "System.Guid",
+                  "type": "System.String",
                   "typeSimple": "string",
                   "isOptional": false,
                   "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
                   "descriptorName": ""
                 }
               ],
@@ -4519,20 +4765,20 @@
                 "type": "Volo.Abp.Content.IRemoteStreamContent",
                 "typeSimple": "Volo.Abp.Content.IRemoteStreamContent"
               },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "CourseMate.Services.Storages.IStorageAppService"
             },
-            "DeleteAsyncByFileId": {
-              "uniqueName": "DeleteAsyncByFileId",
+            "DeleteAsyncByFileName": {
+              "uniqueName": "DeleteAsyncByFileName",
               "name": "DeleteAsync",
               "httpMethod": "DELETE",
               "url": "api/app/storage",
               "supportedVersions": [],
               "parametersOnMethod": [
                 {
-                  "name": "fileId",
-                  "typeAsString": "System.Guid, System.Private.CoreLib",
-                  "type": "System.Guid",
+                  "name": "fileName",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
                   "typeSimple": "string",
                   "isOptional": false,
                   "defaultValue": null
@@ -4540,10 +4786,10 @@
               ],
               "parameters": [
                 {
-                  "nameOnMethod": "fileId",
-                  "name": "fileId",
+                  "nameOnMethod": "fileName",
+                  "name": "fileName",
                   "jsonName": null,
-                  "type": "System.Guid",
+                  "type": "System.String",
                   "typeSimple": "string",
                   "isOptional": false,
                   "defaultValue": null,
@@ -4556,7 +4802,7 @@
                 "type": "System.Void",
                 "typeSimple": "System.Void"
               },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "CourseMate.Services.Storages.IStorageAppService"
             }
           }
@@ -7270,7 +7516,7 @@
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 1024,
+          "maxLength": null,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -7279,6 +7525,18 @@
           "name": "CourseId",
           "jsonName": null,
           "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CourseTitle",
+          "jsonName": null,
+          "type": "System.String",
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
@@ -7354,7 +7612,7 @@
           "regex": null
         },
         {
-          "name": "ThumbnailUrl",
+          "name": "ThumbnailFile",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
@@ -7471,13 +7729,13 @@
           "regex": null
         },
         {
-          "name": "ThumbnailUrl",
+          "name": "ThumbnailFile",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 1024,
+          "maxLength": 50,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -7687,18 +7945,6 @@
       "genericArguments": null,
       "properties": [
         {
-          "name": "Id",
-          "jsonName": null,
-          "type": "System.Guid",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
           "name": "Title",
           "jsonName": null,
           "type": "System.String",
@@ -7717,19 +7963,19 @@
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 1024,
+          "maxLength": 2048,
           "minimum": null,
           "maximum": null,
           "regex": null
         },
         {
-          "name": "VideoUrl",
+          "name": "VideoFile",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 1024,
+          "maxLength": 50,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -7792,7 +8038,7 @@
           "regex": null
         },
         {
-          "name": "VideoUrl",
+          "name": "VideoFile",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
@@ -7819,6 +8065,96 @@
           "name": "ChapterId",
           "jsonName": null,
           "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Lookups.LookupDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Id",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Name",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CreatorId",
+          "jsonName": null,
+          "type": "System.Guid?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Lookups.LookupRequestDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "SkipCount",
+          "jsonName": null,
+          "type": "System.Int32?",
+          "typeSimple": "number?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "0",
+          "maximum": "2147483647",
+          "regex": null
+        },
+        {
+          "name": "MaxResultCount",
+          "jsonName": null,
+          "type": "System.Int32?",
+          "typeSimple": "number?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "0",
+          "maximum": "1000",
+          "regex": null
+        },
+        {
+          "name": "Filter",
+          "jsonName": null,
+          "type": "System.String",
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
@@ -8097,6 +8433,331 @@
           "regex": null
         }
       ]
+    },
+    "Microsoft.AspNetCore.Mvc.ActionResult": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": []
+    },
+    "Microsoft.AspNetCore.Mvc.FileResult": {
+      "baseType": "Microsoft.AspNetCore.Mvc.ActionResult",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "ContentType",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "FileDownloadName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "LastModified",
+          "jsonName": null,
+          "type": "System.DateTimeOffset?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "EntityTag",
+          "jsonName": null,
+          "type": "Microsoft.Net.Http.Headers.EntityTagHeaderValue",
+          "typeSimple": "Microsoft.Net.Http.Headers.EntityTagHeaderValue",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "EnableRangeProcessing",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "Microsoft.AspNetCore.Mvc.FileStreamResult": {
+      "baseType": "Microsoft.AspNetCore.Mvc.FileResult",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "FileStream",
+          "jsonName": null,
+          "type": "System.IO.Stream",
+          "typeSimple": "System.IO.Stream",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "Microsoft.Extensions.Primitives.StringSegment": {
+      "baseType": "System.ValueType",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Buffer",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Offset",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Length",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Value",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "HasValue",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Item",
+          "jsonName": null,
+          "type": "System.Char",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "Microsoft.Net.Http.Headers.EntityTagHeaderValue": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Tag",
+          "jsonName": null,
+          "type": "Microsoft.Extensions.Primitives.StringSegment",
+          "typeSimple": "Microsoft.Extensions.Primitives.StringSegment",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "IsWeak",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "System.IO.Stream": {
+      "baseType": "System.MarshalByRefObject",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "CanRead",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CanWrite",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CanSeek",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CanTimeout",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Length",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Position",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ReadTimeout",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "WriteTimeout",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "System.MarshalByRefObject": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": []
     },
     "Volo.Abp.Account.ChangePasswordInput": {
       "baseType": null,

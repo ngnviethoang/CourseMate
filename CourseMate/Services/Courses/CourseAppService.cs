@@ -25,7 +25,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
                 Id = course.Id,
                 Title = course.Title,
                 Description = course.Description,
-                ThumbnailUrl = course.ThumbnailUrl,
+                ThumbnailFile = course.ThumbnailFile,
                 Price = course.Price,
                 Currency = course.Currency,
                 LevelType = course.LevelType,
@@ -49,7 +49,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
                 Id = course.Id,
                 Title = course.Title,
                 Description = course.Description,
-                ThumbnailUrl = course.ThumbnailUrl,
+                ThumbnailFile = course.ThumbnailFile,
                 Price = course.Price,
                 Currency = course.Currency,
                 LevelType = course.LevelType,
@@ -94,7 +94,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
             GuidGenerator.Create(),
             input.Title,
             input.Description,
-            input.ThumbnailUrl,
+            input.ThumbnailFile,
             input.Price,
             input.Currency,
             input.LevelType,
@@ -108,12 +108,18 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
     [Authorize(CourseMatePermissions.Courses.Edit)]
     public async Task<CourseDto> UpdateAsync(Guid id, CreateUpdateCourseDto input)
     {
+        bool isDuplicateTitle = await CourseRepo.AnyAsync(i => i.Title == input.Title && i.Id != id);
+        if (isDuplicateTitle)
+        {
+            throw new UserFriendlyException("Duplicate course title");
+        }
+
         await CategoryRepo.EnsureExistsAsync(input.CategoryId);
         Course course = await CourseRepo.GetAsync(id);
 
         course.Title = input.Title;
         course.Description = input.Description;
-        course.ThumbnailUrl = input.ThumbnailUrl;
+        course.ThumbnailFile = input.ThumbnailFile;
         course.Price = input.Price;
         course.Currency = input.Currency;
         course.LevelType = input.LevelType;
@@ -125,7 +131,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
             Id = course.Id,
             Title = course.Title,
             Description = course.Description,
-            ThumbnailUrl = course.ThumbnailUrl,
+            ThumbnailFile = course.ThumbnailFile,
             Price = course.Price,
             Currency = course.Currency,
             LevelType = course.LevelType,

@@ -70,4 +70,8 @@
         <Compile Remove="Migrations\20250702035920_V1.cs" />
         <Compile Remove="Migrations\20250702035920_V1.Designer.cs" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="coursemate-files\" />
+    </ItemGroup>
 </Project>

@@ -39,20 +39,6 @@ function configureRoutes() {
       requiredPolicy: 'CourseMate.Courses'
     },
     {
-      path: '/chapters',
-      name: '::Menu:Chapters',
-      iconClass: 'fas fa-book',
-      layout: eLayoutType.application,
-      requiredPolicy: 'CourseMate.Chapters'
-    },
-    {
-      path: '/lessons',
-      name: '::Menu:Lessons',
-      iconClass: 'fas fa-book',
-      layout: eLayoutType.application,
-      requiredPolicy: 'CourseMate.Lessons'
-    },
-    {
       path: '/instructions',
       name: '::Menu:Instructions',
       iconClass: 'fas fa-user',

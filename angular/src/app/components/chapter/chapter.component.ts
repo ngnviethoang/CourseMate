@@ -1,4 +1,4 @@
-import { ListService, PagedResultDto } from '@abp/ng.core';
+import { getShortTimeFormat, ListService, PagedResultDto, ShortTimePipe } from '@abp/ng.core';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
@@ -6,6 +6,11 @@ import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
 import { BookService } from '../../proxy/services/books';
 import { BookDto } from '../../proxy/services/dtos/books';
 import { bookTypeOptions } from '../../proxy/entities/books';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CourseService } from '../../proxy/services/courses';
+import { CourseDto } from '../../proxy/services/dtos/courses';
+import { ChapterService } from '../../proxy/services/chapters';
+import { ChapterDto } from '../../proxy/services/dtos/chapters';
 
 @Component({
   standalone: false,
@@ -14,41 +19,53 @@ import { bookTypeOptions } from '../../proxy/entities/books';
   providers: [ListService, { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }]
 })
 export class ChapterComponent implements OnInit {
-  book = { items: [], totalCount: 0 } as PagedResultDto<BookDto>;
-
-  selectedBook = {} as BookDto; // declare selectedBook
-
+  chapters = { items: [], totalCount: 0 } as PagedResultDto<ChapterDto>;
+  selectedChapter = {} as ChapterDto;
   form: FormGroup;
-
   bookTypes = bookTypeOptions;
-
   isModalOpen = false;
+  course: CourseDto = {} as CourseDto;
+  private courseId: string;
 
   constructor(
     public readonly list: ListService,
-    private bookService: BookService,
+    private chapterService: ChapterService,
     private fb: FormBuilder,
-    private confirmation: ConfirmationService // inject the ConfirmationService
+    private confirmation: ConfirmationService,
+    private route: ActivatedRoute,
+    private courseService: CourseService,
+    private router: Router
   ) {
   }
 
   ngOnInit() {
-    const bookStreamCreator = (query) => this.bookService.getList(query);
+    this.courseId = this.route.snapshot.queryParamMap.get('courseId');
+    if (this.courseId === null) {
+      this.router.navigateByUrl('/courses');
+    }
 
-    this.list.hookToQuery(bookStreamCreator).subscribe((response) => {
-      this.book = response;
+    this.courseService.get(this.courseId).subscribe(response => {
+      this.course = response;
+    }, error => {
+      this.router.navigateByUrl('/courses');
+    });
+
+    const chapterStreamCreator = (query) => this.chapterService.getList(query);
+
+    this.list.hookToQuery(chapterStreamCreator).subscribe((response) => {
+      this.chapters = response;
     });
   }
 
-  createBook() {
-    this.selectedBook = {} as BookDto; // reset the selected book
+  create() {
+    this.selectedChapter = {} as BookDto;
     this.buildForm();
     this.isModalOpen = true;
   }
 
-  editBook(id: string) {
-    this.bookService.get(id).subscribe((book) => {
-      this.selectedBook = book;
+  edit(id: string) {
+    this.chapterService.get(id).subscribe((book) => {
+      this.selectedChapter = book;
       this.buildForm();
       this.isModalOpen = true;
     });
@@ -57,37 +74,35 @@ export class ChapterComponent implements OnInit {
   delete(id: string) {
     this.confirmation.warn('::AreYouSureToDelete', '::AreYouSure').subscribe((status) => {
       if (status === Confirmation.Status.confirm) {
-        this.bookService.delete(id).subscribe(() => this.list.get());
+        this.chapterService.delete(id).subscribe(() => this.list.get());
       }
     });
   }
 
   buildForm() {
     this.form = this.fb.group({
-      name: [this.selectedBook.name || '', Validators.required],
-      type: [this.selectedBook.type || null, Validators.required],
-      publishDate: [
-        this.selectedBook.publishDate ? new Date(this.selectedBook.publishDate) : null,
-        Validators.required
-      ],
-      price: [this.selectedBook.price || null, Validators.required]
+      title: [this.selectedChapter.title || null, Validators.required],
+      courseId: [this.selectedChapter.courseId || this.courseId, Validators.required]
     });
   }
 
-  // change the save method
   save() {
     if (this.form.invalid) {
       return;
     }
 
-    const request = this.selectedBook.id
-      ? this.bookService.update(this.selectedBook.id, this.form.value)
-      : this.bookService.create(this.form.value);
+    const request = this.selectedChapter.id
+      ? this.chapterService.update(this.selectedChapter.id, this.form.value)
+      : this.chapterService.create(this.form.value);
 
     request.subscribe(() => {
       this.isModalOpen = false;
       this.form.reset();
       this.list.get();
     });
+  }
+
+  async onClickLessonManagement(chapterId: string) {
+    await this.router.navigateByUrl(`/lessons?courseId=${this.courseId}&chapterId=${chapterId}`);
   }
 }

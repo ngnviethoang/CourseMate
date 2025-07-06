@@ -25,7 +25,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
                 ChapterId = lesson.ChapterId,
                 ContentText = lesson.ContentText,
                 Duration = lesson.Duration,
-                VideoUrl = lesson.VideoUrl,
+                VideoFile = lesson.VideoFile,
                 CreationTime = lesson.CreationTime,
                 CreatorId = lesson.CreatorId,
                 LastModificationTime = lesson.LastModificationTime,
@@ -45,14 +45,14 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
                 ChapterId = lesson.ChapterId,
                 ContentText = lesson.ContentText,
                 Duration = lesson.Duration,
-                VideoUrl = lesson.VideoUrl,
+                VideoFile = lesson.VideoFile,
                 CreationTime = lesson.CreationTime,
                 CreatorId = lesson.CreatorId,
                 LastModificationTime = lesson.LastModificationTime,
                 LastModifierId = lesson.LastModifierId
             };
         queryable = queryable
-            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "Name" : input.Sorting)
+            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(Lesson.Title) : input.Sorting)
             .Skip(input.SkipCount)
             .Take(input.MaxResultCount);
 
@@ -64,7 +64,15 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
     [Authorize(CourseMatePermissions.Lessons.Create)]
     public async Task<ResultObjectDto> CreateAsync(CreateUpdateLessonDto input)
     {
-        Lesson lesson = new(GuidGenerator.Create(), input.Title, input.ContentText, input.VideoUrl, input.Duration, input.ChapterId);
+        bool isDuplicateName = await LessonRepo.AnyAsync(i => i.Title == input.Title);
+        if (isDuplicateName)
+        {
+            throw new UserFriendlyException("Duplicate lesson name");
+        }
+
+        await ChapterRepo.EnsureExistsAsync(input.ChapterId);
+
+        Lesson lesson = new(GuidGenerator.Create(), input.Title, input.ContentText, input.VideoFile, input.Duration, input.ChapterId);
         await LessonRepo.InsertAsync(lesson);
         return new ResultObjectDto(lesson.Id);
     }
@@ -72,12 +80,18 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
     [Authorize(CourseMatePermissions.Lessons.Edit)]
     public async Task<LessonDto> UpdateAsync(Guid id, CreateUpdateLessonDto input)
     {
+        bool isDuplicateName = await LessonRepo.AnyAsync(i => i.Title == input.Title && i.Id != id);
+        if (isDuplicateName)
+        {
+            throw new UserFriendlyException("Duplicate lesson name");
+        }
+
         await ChapterRepo.EnsureExistsAsync(input.ChapterId);
         Lesson lesson = await LessonRepo.GetAsync(id);
 
         lesson.Title = input.Title;
         lesson.ContentText = input.ContentText;
-        lesson.VideoUrl = input.VideoUrl;
+        lesson.VideoFile = input.VideoFile;
         lesson.Duration = input.Duration;
         lesson.ChapterId = input.ChapterId;
 
@@ -89,7 +103,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
             ChapterId = lesson.ChapterId,
             ContentText = lesson.ContentText,
             Duration = lesson.Duration,
-            VideoUrl = lesson.VideoUrl,
+            VideoFile = lesson.VideoFile,
             CreationTime = lesson.CreationTime,
             CreatorId = lesson.CreatorId,
             LastModificationTime = lesson.LastModificationTime,

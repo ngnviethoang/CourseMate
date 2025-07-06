@@ -19,6 +19,8 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
     {
         IQueryable<ChapterDto> queryable =
             from chapter in await ChapterRepo.GetQueryableAsync()
+            join course in await CourseRepo.GetQueryableAsync()
+                on chapter.CourseId equals course.Id
             where chapter.Id == id
             select new ChapterDto
             {
@@ -27,7 +29,9 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
                 CreationTime = chapter.CreationTime,
                 CreatorId = chapter.CreatorId,
                 LastModificationTime = chapter.LastModificationTime,
-                LastModifierId = chapter.LastModifierId
+                LastModifierId = chapter.LastModifierId,
+                CourseId = chapter.CourseId,
+                CourseTitle = course.Title,
             };
         return await AsyncExecuter.FirstOrDefaultAsync(queryable) ?? new ChapterDto();
     }
@@ -36,6 +40,8 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
     {
         IQueryable<ChapterDto> queryable =
             from chapter in await ChapterRepo.GetQueryableAsync()
+            join course in await CourseRepo.GetQueryableAsync()
+                on chapter.CourseId equals course.Id
             select new ChapterDto
             {
                 Id = chapter.Id,
@@ -43,7 +49,9 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
                 CreationTime = chapter.CreationTime,
                 CreatorId = chapter.CreatorId,
                 LastModificationTime = chapter.LastModificationTime,
-                LastModifierId = chapter.LastModifierId
+                LastModifierId = chapter.LastModifierId,
+                CourseId = chapter.CourseId,
+                CourseTitle = course.Title,
             };
 
         if (input.SkipCount.HasValue)
@@ -64,7 +72,14 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
     [Authorize(CourseMatePermissions.Chapters.Create)]
     public async Task<ResultObjectDto> CreateAsync(CreateUpdateChapterDto input)
     {
+        bool isDuplicateName = await ChapterRepo.AnyAsync(i => i.Title == input.Title);
+        if (isDuplicateName)
+        {
+            throw new UserFriendlyException("Duplicate chapter name");
+        }
+
         await CourseRepo.EnsureExistsAsync(input.CourseId);
+
         Chapter chapter = new(GuidGenerator.Create(), input.Title, input.CourseId);
         await ChapterRepo.InsertAsync(chapter);
         return new ResultObjectDto(chapter.Id);
@@ -73,6 +88,12 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
     [Authorize(CourseMatePermissions.Chapters.Edit)]
     public async Task<ChapterDto> UpdateAsync(Guid id, CreateUpdateChapterDto input)
     {
+        bool isDuplicateName = await ChapterRepo.AnyAsync(i => i.Title == input.Title && i.Id != id);
+        if (isDuplicateName)
+        {
+            throw new UserFriendlyException("Duplicate chapter name");
+        }
+
         await CourseRepo.EnsureExistsAsync(input.CourseId);
         Chapter chapter = await ChapterRepo.GetAsync(id);
 

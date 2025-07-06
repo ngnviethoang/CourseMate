@@ -81,7 +81,7 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
     [Authorize(CourseMatePermissions.Categories.Edit)]
     public async Task<CategoryDto> UpdateAsync(Guid id, CreateUpdateCategoryDto input)
     {
-        bool isDuplicateName = await CategoryRepo.AnyAsync(i => i.Name == input.Name);
+        bool isDuplicateName = await CategoryRepo.AnyAsync(i => i.Name == input.Name && i.Id != id);
         if (isDuplicateName)
         {
             throw new UserFriendlyException("Duplicate category name");

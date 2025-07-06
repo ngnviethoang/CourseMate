@@ -1,24 +1,25 @@
 <div class="card">
   <div class="card-header">
-    <div class="row">
+    <div class="row mt-2">
       <div class="col col-md-6">
         <h5 class="card-title">
-          {{ '::Menu:Books' | abpLocalization }}
+          {{ '::Menu:Lessons' | abpLocalization }}
         </h5>
       </div>
       <div class="text-end col col-md-6">
 
         <div class="text-lg-end pt-2">
-          <button *abpPermission="'CourseMate.Books.Create'" id="create" class="btn btn-primary" type="button" (click)="createBook()">
+          <button *abpPermission="'CourseMate.Lessons.Create'" id="create" class="btn btn-primary" type="button"
+                  (click)="this.create()">
             <i class="fa fa-plus me-1"></i>
-            <span>{{ '::NewBook' | abpLocalization }}</span>
+            <span>{{ '::Create' | abpLocalization }}</span>
           </button>
         </div>
       </div>
     </div>
   </div>
   <div class="card-body">
-    <ngx-datatable [rows]="book.items" [count]="book.totalCount" [list]="list" default>
+    <ngx-datatable [rows]="this.lessons.items" [count]="this.lessons.totalCount" [list]="this.list" default>
       <ngx-datatable-column
         [name]="'::Actions' | abpLocalization"
         [maxWidth]="150"
@@ -35,72 +36,81 @@
               <i class="fa fa-cog me-1"></i>{{ '::Actions' | abpLocalization }}
             </button>
             <div ngbDropdownMenu>
-              <button *abpPermission="'CourseMate.Books.Edit'" ngbDropdownItem (click)="editBook(row.id)">
+              <button *abpPermission="'CourseMate.Lessons.Edit'" ngbDropdownItem (click)="this.edit(row.id)">
                 {{ '::Edit' | abpLocalization }}
               </button>
-              <button *abpPermission="'CourseMate.Books.Delete'" ngbDropdownItem (click)="delete(row.id)">
+              <button *abpPermission="'CourseMate.Lessons.Delete'" ngbDropdownItem (click)="this.delete(row.id)">
                 {{ '::Delete' | abpLocalization }}
               </button>
             </div>
           </div>
         </ng-template>
       </ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Name' | abpLocalization" prop="name"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Type' | abpLocalization" prop="type">
+      <ngx-datatable-column [name]="'::Title' | abpLocalization" prop="title"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Description' | abpLocalization" prop="description"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Description' | abpLocalization" prop="price"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::LevelType' | abpLocalization" prop="levelType">
         <ng-template let-row="row" ngx-datatable-cell-template>
-          {{ '::Enum:BookType.' + row.type | abpLocalization }}
+          {{ '::Enum:LevelType.' + row.levelType | abpLocalization }}
         </ng-template>
       </ngx-datatable-column>
-      <ngx-datatable-column [name]="'::PublishDate' | abpLocalization" prop="publishDate">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          {{ row.publishDate | date }}
-        </ng-template>
-      </ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Price' | abpLocalization" prop="price">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          {{ row.price | currency }}
-        </ng-template>
-      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::CreationTime' | abpLocalization" prop="creationTime"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::LastModificationTime' | abpLocalization"
+                            prop="lastModificationTime"></ngx-datatable-column>
     </ngx-datatable>
   </div>
 </div>
 
 <!-- Add the modal here -->
-<abp-modal [(visible)]="isModalOpen">
+<abp-modal [(visible)]="this.isModalOpen" [options]="{ fullscreen:true}">
   <ng-template #abpHeader>
-    <h3>{{ (selectedBook.id ? '::Edit' : '::NewBook' ) | abpLocalization }}</h3>
+    <h3>{{ (this.selectedLesson.id ? '::Edit' : '::Create') | abpLocalization }}</h3>
   </ng-template>
 
   <ng-template #abpBody>
-    <form [formGroup]="form" (ngSubmit)="save()">
-      <div class="mt-2">
-        <label for="book-name">Name</label><span> * </span>
-        <input type="text" id="book-name" class="form-control" formControlName="name" autofocus />
+    <form [formGroup]="this.form" (ngSubmit)="this.save()">
+      <div class="row mt-2">
+        <div class="col ">
+          <label for="title">Title</label><span class="text-danger">*</span>
+          <input type="text" id="title" class="form-control" formControlName="title" autofocus />
+        </div>
       </div>
 
-      <div class="mt-2">
-        <label for="book-price">Price</label><span> * </span>
-        <input type="number" id="book-price" class="form-control" formControlName="price" />
+      <div class="row mt-2">
+        <div class="col">
+          <label for="contentText">Content</label>
+          <p-editor id="contentText" formControlName="contentText" [style]="{ height: '320px' }"
+                    (invalid)="this.isInvalid('contentText')"
+                    [validateOnSubmit]="true">
+            @if (this.isInvalid('contentText')) {
+              <p-message severity="error" size="small" variant="simple">Content is required.</p-message>
+            }
+          </p-editor>
+        </div>
       </div>
 
-      <div class="mt-2">
-        <label for="book-type">Type</label><span> * </span>
-        <select class="form-control" id="book-type" formControlName="type">
-          <option [ngValue]="null">Select a book type</option>
-          <option [ngValue]="type.value" *ngFor="let type of bookTypes"> {{ '::Enum:BookType.' + type.value | abpLocalization }}</option>
-        </select>
+      <div class="row mt-2">
+        <div class="col">
+          <label>Video</label>
+          <div class="flex gap-6 items-center justify-between">
+            <p-fileupload #fu mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="demo[]"
+                          accept="video/mp4" [maxFileSize]="maxFileSize"
+                          [fileLimit]="1"
+                          (onSelect)="this.onSelect($event)"
+                          [chooseButtonProps]="{ size: 'small', styleClass: 'p-1' }" />
+            <p-button label="Upload" (onClick)="this.onUpload()" severity="secondary" size="small" class="p-1"
+                      [disabled]="this.videoFile === null || this.videoFile === undefined" />
+          </div>
+        </div>
       </div>
 
-      <div class="mt-2">
-        <label>Publish date</label><span> * </span>
-        <input
-          #datepicker="ngbDatepicker"
-          class="form-control"
-          name="datepicker"
-          formControlName="publishDate"
-          ngbDatepicker
-          (click)="datepicker.toggle()"
-        />
+      <div class="row mt-1">
+        <div class="col d-flex justify-content-center">
+          <video width="640" height="360"
+                 [src]="this.videoFileUrl"
+                 controls>
+          </video>
+        </div>
       </div>
     </form>
   </ng-template>
@@ -111,7 +121,7 @@
     </button>
 
     <!--added save button-->
-    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
+    <button class="btn btn-primary" (click)="this.save()" [disabled]="this.form.invalid" type="submit">
       <i class="fa fa-check mr-1"></i>
       {{ '::Save' | abpLocalization }}
     </button>
