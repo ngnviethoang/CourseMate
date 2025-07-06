@@ -52,6 +52,7 @@ public class StorageAppService : CourseMateAppService, IStorageAppService
         };
     }
 
+    [AllowAnonymous]
     public async Task<IRemoteStreamContent> GetImageAsync(string fileName)
     {
         IBlobContainer imageContainer = _blobContainerFactory.Create<ImageContainer>();
