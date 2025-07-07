@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CourseMate.Entities.Books;
 using CourseMate.Entities.Categories;
 using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
@@ -8,7 +7,6 @@ using CourseMate.Entities.Lessons;
 using CourseMate.Entities.Orders;
 using CourseMate.Entities.PaymentRequests;
 using CourseMate.Entities.Reviews;
-using CourseMate.Services.Dtos.Books;
 using CourseMate.Services.Dtos.Categories;
 using CourseMate.Services.Dtos.Chapters;
 using CourseMate.Services.Dtos.Courses;
@@ -24,10 +22,6 @@ public class CourseMateAutoMapperProfile : Profile
 {
     public CourseMateAutoMapperProfile()
     {
-        CreateMap<Book, BookDto>();
-        CreateMap<CreateUpdateBookDto, Book>();
-        CreateMap<BookDto, CreateUpdateBookDto>();
-
         CreateMap<Category, CategoryDto>();
         CreateMap<CreateUpdateCategoryDto, Category>();
         CreateMap<CategoryDto, CreateUpdateCategoryDto>();

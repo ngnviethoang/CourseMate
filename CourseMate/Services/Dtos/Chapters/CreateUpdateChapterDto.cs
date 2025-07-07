@@ -8,4 +8,7 @@ public class CreateUpdateChapterDto
     public string Title { get; set; } = string.Empty;
 
     public Guid CourseId { get; set; }
+
+    [Range(0, int.MaxValue)]
+    public int SortNumber { get; set; }
 }

@@ -1,6 +1,7 @@
 ﻿using CourseMate.Services.Dtos.Lookups;
 using CourseMate.Shared.Constants;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.Domain.Repositories;
 
 namespace CourseMate.Services.Lookups;
 
@@ -8,11 +9,12 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
 {
     public async Task<PagedResultDto<LookupDto>> GetCategoriesAsync(LookupRequestDto input)
     {
-        IQueryable<LookupDto> queryable = from course in await CourseRepo.GetQueryableAsync()
+        IQueryable<LookupDto> queryable =
+            from course in await CategoryRepo.GetQueryableAsync()
             select new LookupDto
             {
                 Id = course.Id,
-                Name = course.Title,
+                Name = course.Name,
                 CreatorId = course.CreatorId
             };
 
@@ -21,11 +23,12 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
 
     public async Task<PagedResultDto<LookupDto>> GetCoursesAsync(LookupRequestDto input)
     {
-        IQueryable<LookupDto> queryable = from category in await CategoryRepo.GetQueryableAsync()
+        IQueryable<LookupDto> queryable =
+            from category in await CourseRepo.GetQueryableAsync()
             select new LookupDto
             {
                 Id = category.Id,
-                Name = category.Name,
+                Name = category.Title,
                 CreatorId = category.CreatorId
             };
 
@@ -34,7 +37,8 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
 
     public async Task<PagedResultDto<LookupDto>> GetChaptersAsync(LookupRequestDto input)
     {
-        IQueryable<LookupDto> queryable = from chapter in await ChapterRepo.GetQueryableAsync()
+        IQueryable<LookupDto> queryable =
+            from chapter in await ChapterRepo.GetQueryableAsync()
             select new LookupDto
             {
                 Id = chapter.Id,
@@ -65,5 +69,25 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
 
         List<LookupDto> items = await AsyncExecuter.ToListAsync(queryable);
         return new PagedResultDto<LookupDto>(totalCount, items);
+    }
+
+    public async Task<int> GetMaxSortNumberChaptersAsync(Guid courseId)
+    {
+        IQueryable<int> query =
+            from chapter in await ChapterRepo.GetQueryableAsync()
+            where chapter.CourseId == courseId
+            select chapter.SortNumber;
+        List<int> sortNumber = await AsyncExecuter.ToListAsync(query);
+        return sortNumber.Count != 0 ? sortNumber.Max() : 0;
+    }
+
+    public async Task<int> GetMaxSortNumberLessonsAsync(Guid chapterId)
+    {
+        IQueryable<int> query =
+            from lesson in await LessonRepo.GetQueryableAsync()
+            where lesson.ChapterId == chapterId
+            select lesson.SortNumber;
+        List<int> sortNumber = await AsyncExecuter.ToListAsync(query);
+        return sortNumber.Count != 0 ? sortNumber.Max() : 0;
     }
 }

@@ -164,6 +164,9 @@ namespace CourseMate.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("LastModifierId");
 
+                    b.Property<int>("SortNumber")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(1024)
@@ -351,6 +354,9 @@ namespace CourseMate.Migrations
                     b.Property<Guid?>("LastModifierId")
                         .HasColumnType("uuid")
                         .HasColumnName("LastModifierId");
+
+                    b.Property<int>("SortNumber")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()

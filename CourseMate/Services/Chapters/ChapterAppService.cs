@@ -48,6 +48,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
                 Title = chapter.Title,
                 CreationTime = chapter.CreationTime,
                 CreatorId = chapter.CreatorId,
+                SortNumber = chapter.SortNumber,
                 LastModificationTime = chapter.LastModificationTime,
                 LastModifierId = chapter.LastModifierId,
                 CourseId = chapter.CourseId,
@@ -78,9 +79,15 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
             throw new UserFriendlyException("Duplicate chapter name");
         }
 
+        bool isDuplicateSortNumber = await ChapterRepo.AnyAsync(i => i.SortNumber == input.SortNumber);
+        if (input.SortNumber != 0 && isDuplicateSortNumber)
+        {
+            throw new UserFriendlyException("Duplicate chapter sort number");
+        }
+
         await CourseRepo.EnsureExistsAsync(input.CourseId);
 
-        Chapter chapter = new(GuidGenerator.Create(), input.Title, input.CourseId);
+        Chapter chapter = new(GuidGenerator.Create(), input.Title, input.CourseId, input.SortNumber);
         await ChapterRepo.InsertAsync(chapter);
         return new ResultObjectDto(chapter.Id);
     }
@@ -94,11 +101,18 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
             throw new UserFriendlyException("Duplicate chapter name");
         }
 
+        bool isDuplicateSortNumber = await ChapterRepo.AnyAsync(i => i.SortNumber == input.SortNumber && i.Id != id);
+        if (input.SortNumber != 0 && isDuplicateSortNumber)
+        {
+            throw new UserFriendlyException("Duplicate chapter sort number");
+        }
+
         await CourseRepo.EnsureExistsAsync(input.CourseId);
         Chapter chapter = await ChapterRepo.GetAsync(id);
 
         chapter.Title = input.Title;
         chapter.CourseId = input.CourseId;
+        chapter.SortNumber = input.SortNumber;
 
         await ChapterRepo.UpdateAsync(chapter);
         return new ChapterDto
@@ -107,6 +121,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
             Title = chapter.Title,
             CreationTime = chapter.CreationTime,
             CreatorId = chapter.CreatorId,
+            SortNumber = chapter.SortNumber,
             LastModificationTime = chapter.LastModificationTime,
             LastModifierId = chapter.LastModifierId
         };

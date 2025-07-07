@@ -70,6 +70,7 @@ export class CourseComponent implements OnInit {
       this.selectedCourse = response;
       this.buildForm();
       this.isModalOpen = true;
+      this.thumbnailUrl = `${StorageConstants.IMAGE_API}?fileName=${response.thumbnailFile}`;
     });
   }
 
@@ -90,7 +91,7 @@ export class CourseComponent implements OnInit {
       currency: [this.selectedCourse.currency || CurrencyType.Usd, [Validators.required]],
       levelType: [this.selectedCourse.levelType || LevelType.Beginner, [Validators.required]],
       isPublished: [this.selectedCourse.isPublished || true, [Validators.required]],
-      categoryId: [this.selectedCourse.categoryId || '', [Validators.required, Validators.maxLength(100)]]
+      categoryId: [this.selectedCourse.categoryId || '', [Validators.required, Validators.maxLength(100)]],
     });
   }
 

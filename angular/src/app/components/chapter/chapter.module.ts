@@ -3,7 +3,8 @@ import { SharedModule } from '../../shared/shared.module';
 import { ChapterRoutingModule } from './chapter-routing.module';
 import { ChapterComponent } from './chapter.component';
 import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
-import { Select } from 'primeng/select'; // add this line
+import { Select } from 'primeng/select';
+import { Button } from 'primeng/button'; // add this line
 
 @NgModule({
   declarations: [ChapterComponent],
@@ -11,7 +12,8 @@ import { Select } from 'primeng/select'; // add this line
     ChapterRoutingModule,
     SharedModule,
     NgbDatepickerModule,
-    Select
+    Select,
+    Button
     // add this line
   ]
 })

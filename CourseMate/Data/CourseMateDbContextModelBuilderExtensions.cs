@@ -1,5 +1,4 @@
-﻿using CourseMate.Entities.Books;
-using CourseMate.Entities.Categories;
+﻿using CourseMate.Entities.Categories;
 using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
 using CourseMate.Entities.Enrollments;
@@ -7,6 +6,7 @@ using CourseMate.Entities.Lessons;
 using CourseMate.Entities.Orders;
 using CourseMate.Entities.PaymentRequests;
 using CourseMate.Entities.Reviews;
+using CourseMate.Entities.VideoProgresses;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.Identity;
@@ -19,13 +19,6 @@ public static class CourseMateDbContextModelBuilderExtensions
 
     public static void ConfigureCourseMateEntities(this ModelBuilder builder)
     {
-        builder.Entity<Book>(b =>
-        {
-            b.ToTable("Books", DbSchema);
-            b.ConfigureByConvention();
-            b.Property(x => x.Name).IsRequired().HasMaxLength(128);
-        });
-
         builder.Entity<Course>(b =>
         {
             b.ToTable("Courses", DbSchema);
@@ -89,6 +82,14 @@ public static class CourseMateDbContextModelBuilderExtensions
         builder.Entity<PaymentRequest>(b =>
         {
             b.ToTable("PaymentRequests", DbSchema);
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<VideoProgress>(b =>
+        {
+            b.ToTable("VideoProgresses", DbSchema);
+            b.HasOne<Lesson>().WithOne().HasForeignKey<VideoProgress>(i => i.LessonId).IsRequired();
+            b.HasOne<IdentityUser>().WithMany().HasForeignKey(i => i.UserId).IsRequired();
             b.ConfigureByConvention();
         });
     }

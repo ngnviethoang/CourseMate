@@ -1,5 +1,4 @@
-﻿using CourseMate.Entities.Books;
-using CourseMate.Entities.Categories;
+﻿using CourseMate.Entities.Categories;
 using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
 using CourseMate.Entities.Enrollments;
@@ -27,7 +26,6 @@ public class CourseMateDbContext : AbpDbContext<CourseMateDbContext>
     {
     }
 
-    public DbSet<Book> Books { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Chapter> Chapters { get; set; }
     public DbSet<Course> Courses { get; set; }

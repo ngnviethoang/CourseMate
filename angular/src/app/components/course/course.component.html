@@ -50,17 +50,31 @@
           </div>
         </ng-template>
       </ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Name' | abpLocalization" prop="name"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Title' | abpLocalization" prop="title"></ngx-datatable-column>
       <ngx-datatable-column [name]="'::Description' | abpLocalization" prop="description"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Description' | abpLocalization" prop="price"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Price' | abpLocalization" prop="price"></ngx-datatable-column>
       <ngx-datatable-column [name]="'::LevelType' | abpLocalization" prop="levelType">
         <ng-template let-row="row" ngx-datatable-cell-template>
           {{ '::Enum:LevelType.' + row.levelType | abpLocalization }}
         </ng-template>
       </ngx-datatable-column>
-      <ngx-datatable-column [name]="'::CreationTime' | abpLocalization" prop="creationTime"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::IsPublished' | abpLocalization" prop="isPublished">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <i *ngIf="row.isPublished" class="bi bi-check-circle-fill text-success"></i>
+          <i *ngIf="!row.isPublished" class="bi bi-x-circle-fill text-danger"></i>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::CreationTime' | abpLocalization" prop="creationTime">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.creationTime | shortDateTime }}
+        </ng-template>
+      </ngx-datatable-column>
       <ngx-datatable-column [name]="'::LastModificationTime' | abpLocalization"
-                            prop="lastModificationTime"></ngx-datatable-column>
+                            prop="lastModificationTime">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.lastModificationTime | shortDateTime }}
+        </ng-template>
+      </ngx-datatable-column>
     </ngx-datatable>
   </div>
 </div>
@@ -154,15 +168,14 @@
   </ng-template>
 
   <ng-template #abpFooter>
-    <button type="button" class="btn btn-secondary" abpClose>
+    <p-button severity="secondary" abpClose>
       {{ '::Close' | abpLocalization }}
-    </button>
+    </p-button>
 
-    <!--added save button-->
-    <button class="btn btn-primary" (click)="this.save()" [disabled]="this.form.invalid">
+    <p-button (click)="this.save()" [disabled]="this.form.invalid">
       <i class="fa fa-check mr-1"></i>
       {{ '::Save' | abpLocalization }}
-    </button>
+    </p-button>
   </ng-template>
 
 </abp-modal>

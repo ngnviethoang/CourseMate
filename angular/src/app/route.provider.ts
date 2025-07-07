@@ -18,13 +18,6 @@ function configureRoutes() {
       layout: eLayoutType.application
     },
     {
-      path: '/books',
-      name: '::Menu:Books',
-      iconClass: 'fas fa-book',
-      layout: eLayoutType.application,
-      requiredPolicy: 'CourseMate.Books'
-    },
-    {
       path: '/categories',
       name: '::Menu:Categories',
       iconClass: 'fas fa-book',
@@ -34,21 +27,9 @@ function configureRoutes() {
     {
       path: '/courses',
       name: '::Menu:Courses',
-      iconClass: 'fas fa-book',
+      iconClass: 'fas fa-graduation-cap',
       layout: eLayoutType.application,
       requiredPolicy: 'CourseMate.Courses'
-    },
-    {
-      path: '/instructions',
-      name: '::Menu:Instructions',
-      iconClass: 'fas fa-user',
-      layout: eLayoutType.application
-    },
-    {
-      path: '/students',
-      name: '::Menu:Students',
-      iconClass: 'fas fa-graduation-cap',
-      layout: eLayoutType.application
     },
     {
       path: '/orders',

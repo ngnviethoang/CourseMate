@@ -9,4 +9,5 @@ public class LessonDto : AuditedEntityDto<Guid>
     public string VideoFile { get; set; } = string.Empty;
     public TimeSpan Duration { get; set; }
     public Guid ChapterId { get; set; }
+    public int SortNumber { get; set; }
 }

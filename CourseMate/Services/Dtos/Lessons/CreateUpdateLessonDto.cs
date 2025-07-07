@@ -16,4 +16,7 @@ public class CreateUpdateLessonDto
 
     public TimeSpan Duration { get; set; }
     public Guid ChapterId { get; set; }
+
+    [Range(0, int.MaxValue)]
+    public int SortNumber { get; set; }
 }

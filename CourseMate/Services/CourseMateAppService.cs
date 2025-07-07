@@ -1,4 +1,3 @@
-using CourseMate.Entities.Books;
 using CourseMate.Entities.Categories;
 using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
@@ -23,7 +22,6 @@ public abstract class CourseMateAppService : ApplicationService
     }
 
     protected IRepository<IdentityUser, Guid> UserRepo => LazyServiceProvider.GetRequiredService<IRepository<IdentityUser, Guid>>();
-    protected IRepository<Book, Guid> BookRepo => LazyServiceProvider.GetRequiredService<IRepository<Book, Guid>>();
     protected IRepository<Category, Guid> CategoryRepo => LazyServiceProvider.GetRequiredService<IRepository<Category, Guid>>();
     protected IRepository<Chapter, Guid> ChapterRepo => LazyServiceProvider.GetRequiredService<IRepository<Chapter, Guid>>();
     protected IRepository<Course, Guid> CourseRepo => LazyServiceProvider.GetRequiredService<IRepository<Course, Guid>>();

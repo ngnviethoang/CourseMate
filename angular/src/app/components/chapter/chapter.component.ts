@@ -1,16 +1,14 @@
-import { getShortTimeFormat, ListService, PagedResultDto, ShortTimePipe } from '@abp/ng.core';
+import { ListService, PagedResultDto } from '@abp/ng.core';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
-import { BookService } from '../../proxy/services/books';
-import { BookDto } from '../../proxy/services/dtos/books';
-import { bookTypeOptions } from '../../proxy/entities/books';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CourseService } from '../../proxy/services/courses';
 import { CourseDto } from '../../proxy/services/dtos/courses';
 import { ChapterService } from '../../proxy/services/chapters';
 import { ChapterDto } from '../../proxy/services/dtos/chapters';
+import { LookupService } from '../../proxy/services/lookups';
 
 @Component({
   standalone: false,
@@ -22,7 +20,6 @@ export class ChapterComponent implements OnInit {
   chapters = { items: [], totalCount: 0 } as PagedResultDto<ChapterDto>;
   selectedChapter = {} as ChapterDto;
   form: FormGroup;
-  bookTypes = bookTypeOptions;
   isModalOpen = false;
   course: CourseDto = {} as CourseDto;
   private courseId: string;
@@ -34,6 +31,7 @@ export class ChapterComponent implements OnInit {
     private confirmation: ConfirmationService,
     private route: ActivatedRoute,
     private courseService: CourseService,
+    private lookupService: LookupService,
     private router: Router
   ) {
   }
@@ -58,8 +56,9 @@ export class ChapterComponent implements OnInit {
   }
 
   create() {
-    this.selectedChapter = {} as BookDto;
+    this.selectedChapter = {} as ChapterDto;
     this.buildForm();
+    this.generateSortNumber();
     this.isModalOpen = true;
   }
 
@@ -82,6 +81,7 @@ export class ChapterComponent implements OnInit {
   buildForm() {
     this.form = this.fb.group({
       title: [this.selectedChapter.title || null, Validators.required],
+      sortNumber: [this.selectedChapter.sortNumber || 0, [Validators.required, Validators.min(0)]],
       courseId: [this.selectedChapter.courseId || this.courseId, Validators.required]
     });
   }
@@ -104,5 +104,13 @@ export class ChapterComponent implements OnInit {
 
   async onClickLessonManagement(chapterId: string) {
     await this.router.navigateByUrl(`/lessons?courseId=${this.courseId}&chapterId=${chapterId}`);
+  }
+
+  generateSortNumber() {
+    this.lookupService.getMaxSortNumberChapters(this.courseId).subscribe(response => {
+      this.selectedChapter.sortNumber = response + 1;
+      this.form.controls['sortNumber'].setValue(response + 1);
+
+    });
   }
 }

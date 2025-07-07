@@ -14,6 +14,7 @@ import { ChapterDto } from '../../proxy/services/dtos/chapters';
 import { LessonDto } from '../../proxy/services/dtos/lessons';
 import { LessonService } from '../../proxy/services/lessons';
 import { StorageConstants } from '../../shared/storage-constant';
+import { ChapterService } from '../../proxy/services/chapters';
 
 @Component({
   standalone: false,
@@ -36,6 +37,7 @@ export class LessonComponent implements OnInit {
   constructor(
     public readonly list: ListService,
     private lessonService: LessonService,
+    private chapterService: ChapterService,
     private fb: FormBuilder,
     private confirmation: ConfirmationService,
     private lookupService: LookupService,
@@ -53,7 +55,7 @@ export class LessonComponent implements OnInit {
       this.router.navigateByUrl(`/chapters?courseId=${courseId}`);
     }
 
-    this.lessonService.get(this.chapterId).subscribe(response => {
+    this.chapterService.get(this.chapterId).subscribe(response => {
       this.chapter = response;
     }, _ => {
       this.router.navigateByUrl(`/chapters?courseId=${courseId}`);
@@ -81,7 +83,7 @@ export class LessonComponent implements OnInit {
   }
 
   create() {
-    this.selectedLesson = {} as CourseDto;
+    this.selectedLesson = {} as LessonDto;
     this.buildForm();
     this.isModalOpen = true;
   }
@@ -90,6 +92,7 @@ export class LessonComponent implements OnInit {
     this.lessonService.get(id).subscribe((repsonse) => {
       this.selectedLesson = repsonse;
       this.buildForm();
+      this.videoFileUrl = `${StorageConstants.VIDEO_API}?fileName=${repsonse.videoFile}`;
       this.isModalOpen = true;
     });
   }
@@ -105,6 +108,7 @@ export class LessonComponent implements OnInit {
   buildForm() {
     this.form = this.fb.group({
       title: [this.selectedLesson.title || null, [Validators.required, Validators.maxLength(1024)]],
+      sortNumber: [this.selectedLesson.sortNumber || 0, [Validators.required, Validators.min(0)]],
       contentText: [this.selectedLesson.contentText || null, [Validators.required, Validators.maxLength(1024)]],
       videoFile: [this.selectedLesson.videoFile || null, [Validators.required, Validators.maxLength(1024)]],
       chapterId: [this.selectedLesson.chapterId || this.chapterId, [Validators.required, Validators.maxLength(100)]]
@@ -166,5 +170,12 @@ export class LessonComponent implements OnInit {
   isInvalid(controlName: string) {
     const control = this.form.get(controlName);
     return control?.invalid && (control.touched);
+  }
+
+  generateSortNumber() {
+    this.lookupService.getMaxSortNumberLessons(this.chapterId).subscribe(response => {
+      this.selectedLesson.sortNumber = response + 1;
+      this.form.controls['sortNumber'].setValue(response + 1);
+    });
   }
 }

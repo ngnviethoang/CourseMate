@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col col-md-6">
         <h5 class="card-title">
-          {{ this.course.title }}  {{ '::Menu:Chapters' | abpLocalization }}
+          {{ this.course.title }} - {{ '::Menu:Chapters' | abpLocalization }}
         </h5>
       </div>
       <div class="text-end col col-md-6">
@@ -51,10 +51,18 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column [name]="'::Title' | abpLocalization" prop="title"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::CourseTitle' | abpLocalization" prop="courseTitle"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::CreationTime' | abpLocalization" prop="creationTime"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::SortNumber' | abpLocalization" prop="sortNumber"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::CreationTime' | abpLocalization" prop="creationTime">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.creationTime | shortDateTime }}
+        </ng-template>
+      </ngx-datatable-column>
       <ngx-datatable-column [name]="'::LastModificationTime' | abpLocalization"
-                            prop="lastModificationTime"></ngx-datatable-column>
+                            prop="lastModificationTime">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.lastModificationTime | shortDateTime }}
+        </ng-template>
+      </ngx-datatable-column>
     </ngx-datatable>
   </div>
 </div>
@@ -68,6 +76,11 @@
   <ng-template #abpBody>
     <form [formGroup]="form" (ngSubmit)="this.save()">
       <div class="mt-2">
+        <label for="sortNumber">Sort number</label><span class="text-danger">*</span>
+        <input type="number" id="sortNumber" class="form-control" formControlName="sortNumber" />
+      </div>
+
+      <div class="mt-2">
         <label for="title">Title</label><span class="text-danger">*</span>
         <input type="text" id="title" class="form-control" formControlName="title" autofocus />
       </div>
@@ -75,15 +88,13 @@
   </ng-template>
 
   <ng-template #abpFooter>
-    <button type="button" class="btn btn-secondary" abpClose>
-      {{ '::Close' | abpLocalization }}
-    </button>
+    <p-button (onClick)="this.generateSortNumber()">Generate sort number</p-button>
 
-    <!--added save button-->
-    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
-      <i class="fa fa-check mr-1"></i>
-      {{ '::Save' | abpLocalization }}
-    </button>
+    <p-button severity="secondary" abpClose>{{ '::Close' | abpLocalization }}</p-button>
+
+    <p-button (click)="this.save()" [disabled]="this.form.invalid"><i
+      class="fa fa-check mr-1"></i>{{ '::Save' | abpLocalization }}
+    </p-button>
   </ng-template>
 
 </abp-modal>

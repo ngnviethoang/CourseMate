@@ -108,7 +108,7 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
     {
         if (await CourseRepo.AnyAsync(i => i.CategoryId == id))
         {
-            throw new AbpValidationException(ExceptionConst.InvalidRequest);
+            throw new UserFriendlyException("Cannot delete category because it is being used by one or more course.");
         }
 
         await CategoryRepo.DeleteAsync(id);

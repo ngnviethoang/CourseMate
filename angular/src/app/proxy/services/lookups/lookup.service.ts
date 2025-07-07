@@ -35,6 +35,22 @@ export class LookupService {
       params: { skipCount: input.skipCount, maxResultCount: input.maxResultCount, filter: input.filter },
     },
     { apiName: this.apiName,...config });
+  
+
+  getMaxSortNumberChapters = (courseId: string, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, number>({
+      method: 'GET',
+      url: `/api/app/lookup/max-sort-number-chapters/${courseId}`,
+    },
+    { apiName: this.apiName,...config });
+  
+
+  getMaxSortNumberLessons = (chapterId: string, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, number>({
+      method: 'GET',
+      url: `/api/app/lookup/max-sort-number-lessons/${chapterId}`,
+    },
+    { apiName: this.apiName,...config });
 
   constructor(private restService: RestService) {}
 }

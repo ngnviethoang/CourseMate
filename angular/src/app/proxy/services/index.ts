@@ -1,15 +1,12 @@
-import * as Books from './books';
 import * as Categories from './categories';
 import * as Chapters from './chapters';
 import * as Courses from './courses';
 import * as Dtos from './dtos';
 import * as Enrollments from './enrollments';
-import * as Instructions from './instructions';
 import * as Lessons from './lessons';
 import * as Lookups from './lookups';
 import * as Orders from './orders';
 import * as PaymentRequests from './payment-requests';
 import * as Reviews from './reviews';
 import * as Storages from './storages';
-import * as Students from './students';
-export { Books, Categories, Chapters, Courses, Dtos, Enrollments, Instructions, Lessons, Lookups, Orders, PaymentRequests, Reviews, Storages, Students };
+export { Categories, Chapters, Courses, Dtos, Enrollments, Lessons, Lookups, Orders, PaymentRequests, Reviews, Storages };

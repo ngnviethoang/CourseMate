@@ -1,6 +1,6 @@
-﻿using System.Linq.Dynamic.Core;
-using CourseMate.Entities.Orders;
+﻿using CourseMate.Entities.Orders;
 using CourseMate.Permissions;
+using CourseMate.Services.Dtos;
 using CourseMate.Services.Dtos.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Application.Dtos;
@@ -17,22 +17,30 @@ public class OrderAppService : CourseMateAppService, IOrderAppService
         return ObjectMapper.Map<Order, OrderDto>(order);
     }
 
-    public async Task<PagedResultDto<OrderDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+    public async Task<PagedResultDto<OrderDto>> GetListAsync(GetListRequestDto input)
     {
-        IQueryable<Order> queryable = await OrderRepo.GetQueryableAsync();
-        IQueryable<Order> query = queryable
-            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "Name" : input.Sorting)
-            .Skip(input.SkipCount)
-            .Take(input.MaxResultCount);
+        IQueryable<OrderDto> queryable =
+            from order in await OrderRepo.GetQueryableAsync()
+            select new OrderDto();
 
-        List<Order> orders = await AsyncExecuter.ToListAsync(query);
+        if (input.SkipCount.HasValue)
+        {
+            queryable = queryable.Skip(input.SkipCount.Value);
+        }
+
+        if (input.MaxResultCount.HasValue)
+        {
+            queryable = queryable.Take(input.MaxResultCount.Value);
+        }
+
+        var orders = await AsyncExecuter.ToListAsync(queryable);
         int totalCount = await AsyncExecuter.CountAsync(queryable);
 
-        return new PagedResultDto<OrderDto>(totalCount, ObjectMapper.Map<List<Order>, List<OrderDto>>(orders));
+        return new PagedResultDto<OrderDto>(totalCount, orders);
     }
 
     [Authorize(CourseMatePermissions.Orders.Create)]
-    public async Task<OrderDto> CreateAsync(CreateUpdateOrderDto input)
+    public async Task<ResultObjectDto> CreateAsync(CreateUpdateOrderDto input)
     {
         await UserRepo.EnsureExistsAsync(input.StudentId);
         await PaymentRequestRepo.EnsureExistsAsync(input.PaymentRequestId);
@@ -45,7 +53,7 @@ public class OrderAppService : CourseMateAppService, IOrderAppService
         List<OrderItem> orderItems = ObjectMapper.Map<List<CreateUpdateOrderItemDto>, List<OrderItem>>(input.Items);
         await OrderRepo.InsertAsync(order);
         await OrderItemRepo.InsertManyAsync(orderItems);
-        return ObjectMapper.Map<Order, OrderDto>(order);
+        return new ResultObjectDto(order.Id);
     }
 
     [Authorize(CourseMatePermissions.Orders.Edit)]
