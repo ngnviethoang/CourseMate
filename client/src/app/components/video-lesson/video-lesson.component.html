@@ -1,0 +1,41 @@
+<div class="course-container">
+    <div class="course-main">
+        <video #videoPlayer *ngIf="currentLesson?.videoUrl" width="100%" controls>
+            <source [src]="getVideoSrc(currentLesson.videoUrl)" type="video/mp4" />
+            Trình duyệt của bạn không hỗ trợ video.
+        </video>
+
+        @if (currentLesson !== null) {
+            <div class="lesson-detail">
+                <h2>{{ currentLesson.name }}</h2>
+                <div class="lesson-meta">
+                    <span class="lesson-duration">{{ currentLesson.duration }}</span>
+                </div>
+                <p class="lesson-description">{{ currentLesson.description }}</p>
+                <div class="lesson-content-full">
+                    <h3>Nội dung bài học</h3>
+                    <div class="lesson-content-html" [innerHTML]="currentLesson.description"></div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="course-sidebar">
+        <h3>Nội dung khóa học</h3>
+        @for (chapter of course.chapters; track chapter; let index = $index) {
+            <div class="section">
+                <h4>Chương {{ index + 1 }}: {{ chapter.name }}</h4>
+                <ul class="lesson-list">
+                    @for (lesson of chapter.lessons; track lesson) {
+                        <li
+                            (click)="selectLesson(lesson)"
+                            [class.active]="lesson.id === currentLessonId">
+                            <div class="lesson-title">{{ lesson.name }}</div>
+                            <div class="lesson-duration">{{ lesson.duration }}</div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+</div>

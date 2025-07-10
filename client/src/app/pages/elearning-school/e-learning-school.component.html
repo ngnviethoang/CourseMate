@@ -1,0 +1,20 @@
+<app-elearning-banner></app-elearning-banner>
+
+<div class="partner-area pt-100 pb-70 border-bottom">
+    <div class="container">
+        <app-partner [listPartner]="homeDataOfProject?.partners"></app-partner>
+    </div>
+</div>
+
+<div class="courses-area ptb-50">
+    <app-courses *ngFor="let item of homeDataOfProject?.listContentData" [listCourse]="item"></app-courses>
+</div>
+
+<app-funfacts-feedback></app-funfacts-feedback>
+
+<div class="premium-access-area ptb-100">
+    <app-premium-access></app-premium-access>
+    <div class="shape3"><img alt="image" ngSrc="assets/img/shape3.png" height="150" width="150"></div>
+    <div class="shape4"><img alt="image" ngSrc="assets/img/shape4.png" height="62" width="62"></div>
+    <div class="shape8"><img alt="image" ngSrc="assets/img/shape7.png" height="125" width="105"></div>
+</div>

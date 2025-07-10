@@ -1,0 +1,151 @@
+.membership-levels-table {
+    .table {
+        margin-bottom: 0;
+
+        thead {
+            th {
+                vertical-align: middle;
+                background-color: var(--mainColor);
+                white-space: nowrap;
+                padding: 20px;
+                text-align: center;
+                color: rgba(255, 255, 255, .9);
+                border: {
+                    left: 1px solid #e98f8f;
+                    bottom: none;
+                    right: 1px solid #e98f8f;
+                };
+
+                h2 {
+                    color: var(--whiteColor);
+                    margin-bottom: 0;
+                    font: {
+                        size: 35px;
+                        weight: 800;
+                    };
+                }
+
+                h3 {
+                    color: var(--whiteColor);
+                    text-transform: uppercase;
+                    margin: {
+                        top: 8px;
+                        bottom: 5px;
+                    };
+                    font: {
+                        size: var(--fontSize);
+                        weight: 700;
+                    };
+                }
+
+                &:first-child {
+                    border-left: none;
+                }
+
+                &:last-child {
+                    border-right: none;
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                td {
+                    padding: 15px 20px;
+                    white-space: nowrap;
+                    vertical-align: middle;
+                    border: none;
+                    text-align: center;
+                    font: {
+                        size: var(--fontSize);
+                        weight: 600;
+                    };
+
+                    &:first-child {
+                        text-align: start;
+                    }
+
+                    &.item-check {
+                        i {
+                            width: 20px;
+                            height: 20px;
+                            line-height: 20px;
+                            border-radius: 100%;
+                            background-color: #0eb582;
+                            color: var(--whiteColor);
+                            display: block;
+                            margin: 0 auto;
+                        }
+                    }
+
+                    &.item-none {
+                        i {
+                            width: 20px;
+                            height: 20px;
+                            line-height: 20px;
+                            border-radius: 100%;
+                            background-color: #d85554;
+                            color: var(--whiteColor);
+                            display: block;
+                            margin: 0 auto;
+                        }
+                    }
+
+                    .select-btn {
+                        display: inline-block;
+                        color: var(--blackColor);
+                        background-color: #efefef;
+                        padding: 13px 30px;
+                        border-radius: 5px;
+                        margin-top: 10px;
+                        font: {
+                            size: var(--fontSize);
+                            weight: 700;
+                        };
+
+                        &:hover {
+                            color: var(--whiteColor);
+                            background-color: var(--mainColor);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 767px) {
+
+    .membership-levels-table {
+        .table {
+            thead {
+                th {
+                    h2 {
+                        font-size: 25px;
+                    }
+
+                    h3 {
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+
+}
+
+@media only screen and (min-width: 1200px) and (max-width: 1355px) {
+
+}

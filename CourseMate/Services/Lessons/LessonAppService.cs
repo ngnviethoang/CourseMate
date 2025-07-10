@@ -26,7 +26,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
                 ContentText = lesson.ContentText,
                 Duration = lesson.Duration,
                 VideoFile = lesson.VideoFile,
-                SortNumber = lesson.SortNumber,
+                Position = lesson.Position,
                 CreationTime = lesson.CreationTime,
                 CreatorId = lesson.CreatorId,
                 LastModificationTime = lesson.LastModificationTime,
@@ -47,7 +47,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
                 ContentText = lesson.ContentText,
                 Duration = lesson.Duration,
                 VideoFile = lesson.VideoFile,
-                SortNumber = lesson.SortNumber,
+                Position = lesson.Position,
                 CreationTime = lesson.CreationTime,
                 CreatorId = lesson.CreatorId,
                 LastModificationTime = lesson.LastModificationTime,
@@ -72,15 +72,15 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
             throw new UserFriendlyException("Duplicate lesson name");
         }
 
-        bool isDuplicateSortNumber = await LessonRepo.AnyAsync(i => i.SortNumber == input.SortNumber);
-        if (input.SortNumber != 0 && isDuplicateSortNumber)
+        bool isDuplicateSortNumber = await LessonRepo.AnyAsync(i => i.Position == input.Position);
+        if (input.Position != 0 && isDuplicateSortNumber)
         {
             throw new UserFriendlyException("Duplicate lesson sort number");
         }
 
         await ChapterRepo.EnsureExistsAsync(input.ChapterId);
 
-        Lesson lesson = new(GuidGenerator.Create(), input.Title, input.ContentText, input.VideoFile, input.Duration, input.ChapterId, input.SortNumber);
+        Lesson lesson = new(GuidGenerator.Create(), input.Title, input.ContentText, input.VideoFile, input.Duration, input.ChapterId, input.Position);
         await LessonRepo.InsertAsync(lesson);
         return new ResultObjectDto(lesson.Id);
     }
@@ -94,8 +94,8 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
             throw new UserFriendlyException("Duplicate lesson name");
         }
 
-        bool isDuplicateSortNumber = await LessonRepo.AnyAsync(i => i.SortNumber == input.SortNumber && i.Id != id);
-        if (input.SortNumber != 0 && isDuplicateSortNumber)
+        bool isDuplicateSortNumber = await LessonRepo.AnyAsync(i => i.Position == input.Position && i.Id != id);
+        if (input.Position != 0 && isDuplicateSortNumber)
         {
             throw new UserFriendlyException("Duplicate lesson sort number");
         }
@@ -118,7 +118,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
             ContentText = lesson.ContentText,
             Duration = lesson.Duration,
             VideoFile = lesson.VideoFile,
-            SortNumber = lesson.SortNumber,
+            Position = lesson.Position,
             CreationTime = lesson.CreationTime,
             CreatorId = lesson.CreatorId,
             LastModificationTime = lesson.LastModificationTime,

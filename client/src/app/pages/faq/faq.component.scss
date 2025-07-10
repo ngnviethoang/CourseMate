@@ -1,0 +1,116 @@
+.faq-accordion {
+    .accordion {
+        .accordion-section {
+            margin-bottom: 15px;
+            background-color: var(--whiteColor);
+            box-shadow: 2px 8px 20px 0 rgba(25, 42, 70, 0.13);
+
+            .accordion-header {
+                cursor: pointer;
+                position: relative;
+                font: {
+                    size: 18px;
+                    weight: 700;
+                };
+                padding: {
+                    top: 20px;
+                    left: 20px;
+                    right: 60px;
+                    bottom: 20px;
+                };
+
+                &::before {
+                    top: 50%;
+                    right: 20px;
+                    content: "\ea4a";
+                    position: absolute;
+                    transition: var(--transition);
+                    transform: translateY(-50%) rotate(0);
+                    font: {
+                        family: 'boxicons';
+                        size: 20px;
+                    };
+                }
+
+                &.open {
+                    &::before {
+                        transform: translateY(-50%) rotate(180deg);
+                    }
+                }
+            }
+
+            .accordion-content {
+                border-top: 1px solid #eeeeee;
+                display: none;
+                padding: 20px;
+
+                ul {
+                    margin-bottom: 15px;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    li {
+                        margin-bottom: 12px;
+                        color: var(--optionalColor);
+
+                        &:last-child {
+                            margin-bottom: 0;
+                        }
+                    }
+                }
+
+                &.open {
+                    display: block;
+                }
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 767px) {
+
+    .faq-accordion {
+        .accordion {
+            .accordion-section {
+                .accordion-header {
+                    font-size: 15px;
+                    padding: {
+                        top: 15px;
+                        bottom: 15px;
+                        left: 15px;
+                        right: 30px;
+                    };
+
+                    &::before {
+                        right: 10px;
+                    }
+                }
+
+                .accordion-content {
+                    padding: 15px;
+                }
+            }
+        }
+    }
+
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+
+    .faq-accordion {
+        .accordion {
+            .accordion-section {
+                .accordion-header {
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+
+}

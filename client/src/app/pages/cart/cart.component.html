@@ -1,0 +1,95 @@
+<div class="page-title-area">
+    <div class="container">
+        <div class="page-title-content">
+            <ul>
+                <li><a routerLink="/">Home</a></li>
+                <li>Cart</li>
+            </ul>
+            <h2>Cart</h2>
+        </div>
+    </div>
+    <div class="shape9"><img alt="image" src="assets/img/shape8.svg" /></div>
+</div>
+
+<div *ngIf="!isAuthenticated" class="header-cart-payment">
+    <div class="user-actions">
+        <i class="bx bx-log-in"></i>
+        <span>Are you a member?
+              <a (click)="loginAccount()" href="javascript:void(0)">Click for login</a>
+              <a (click)="loginAccount()" href="javascript:void(0)">/ Register for continues</a>
+        </span>
+    </div>
+</div>
+<div class="container pt-5 pb-5">
+
+    <div class="col-xxl-9 col-xl-9 col-lg-8 col-md-12 col-sm-12 col-12">
+        <div class="cart-table table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Course</th>
+                    <th scope="col">Amount</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @for (item of basketDto.items; track item.sortNumber) {
+                        <tr>
+                            <td class="product-thumbnail">
+                                <a routerLink="/training-online/{{item.courseId}}">
+                                    <img alt="item" [src]="item.thumbnail" />
+                                </a>
+                            </td>
+                            <td class="product-name">
+                                <a routerLink="/training-online/{{item.courseId}}">{{ item.name }}</a><br />
+                                <a routerLink="/training-online/{{item.courseId}}">{{ item.authorName }}</a><br />
+                                <div class="rating">
+                                    <span>4.0</span>&nbsp;
+                                    <span class="bx bxs-star checked"></span>
+                                    <span class="bx bxs-star checked"></span>
+                                    <span class="bx bxs-star checked"></span>
+                                    <span class="bx bxs-star checked"></span>
+                                    <span class="bx bxs-star checked"></span>&nbsp;
+                                    <span>({{ item.totalVote }} rating)</span>
+                                </div>
+                                <div>
+                                    <ul class="detail-courses-cart">
+                                        <li>{{ item.duration }} giờ học</li>
+                                        <li>{{ item.totalChapter }} bài học</li>
+                                        <li>{{ item.categoryName }}</li>
+                                    </ul>
+                                </div>
+                            </td>
+                            <td class="product-subtotal">
+                                <!-- @if( item.isDiscount == true)
+                                 {}}-->
+                                <span
+                                    class="subtotal-amount">{{ 0 == 0 ? (item?.price | currency: 'VND':'symbol':'1.0-0') : (item.price | currency: 'VND':'symbol':'1.0-0') }}</span>
+                                <a (click)="removeItemOnCart(item.courseId)" class="remove" href="javascript:void(0)"><i
+                                    class="bx bx-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-xxl-3 col-xl-3 col-lg-4 col-md-12 col-sm-12 col-12">
+        <div class="cart-totals">
+            <h3>Information Of Order</h3>
+            <ul>
+                <li>Total bill Order <span>{{ basketDto.totalBill | currency: 'VND':'symbol':'1.0-0' }}</span></li>
+                <li>Discount <span></span></li>
+                <li>Total Amount <span>{{ basketDto.totalAmount | currency: 'VND':'symbol':'1.0-0' }}</span></li>
+            </ul>
+
+            <div class="shopping-coupon-code">
+                <input class="form-control" id="coupon-code" name="coupon-code" placeholder="Promotion Code"
+                       type="text" />
+                <button type="submit">Promotion code</button>
+            </div>
+            <a (click)="goToPaymentForCourse()" class="default-btn with-btn-login" href="javascript:void(0)"><i
+                class="flaticon-shopping-cart"></i>Continues to payment<span></span></a>
+        </div>
+    </div>
+</div>

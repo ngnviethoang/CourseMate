@@ -1,0 +1,100 @@
+<div class="page-title-area">
+    <div class="container">
+        <div class="page-title-content">
+            <ul>
+                <li><a routerLink="/">Home</a></li>
+                <li>Payment</li>
+            </ul>
+            <h2>Tranfer for payment</h2>
+        </div>
+    </div>
+    <div class="shape9"><img alt="image" src="assets/img/shape8.svg" /></div>
+</div>
+
+<div class="checkout-area pt-3 pb-5">
+    <div class="container">
+        <div class="user-actions">
+            <i class="bx bx-log-in"></i>
+            <span>Are you not member?<a routerLink="/dang-ky">Click for register</a></span>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 col-md-12">
+                <div class="billing-details">
+                    <h3 class="title">Tranfer banking by QR Code</h3>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 select-box">
+                            <img alt=""
+                                 src="https://res.cloudinary.com/myperson/image/upload/v1701510036/ViQR_ziiwxs.jpg" />
+                        </div>
+                    </div>
+                    <h5>Open Banking App for scan QR Code</h5>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-12">
+                <div class="order-details">
+                    <h3 class="title">Tranfer manual banking with the infomation</h3>
+                    <div class="order-table table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th scope="col" style="font-weight: normal">Name Banking</th>
+                                <th scope="col">{{ infomationBanking?.nameBanking }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="product-name">
+                                    <a routerLink="/details-products">Account Name</a>
+                                </td>
+                                <td class="order-subtotal-price">
+                                    <span class="order-subtotal-amount">{{ infomationBanking?.accountName }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="product-name">
+                                    <a routerLink="/details-products">Number Account</a>
+                                </td>
+                                <td class="order-subtotal-price">
+                                    <span class="order-subtotal-amount">{{ infomationBanking?.numberBanking }}</span>
+                                    <a href="javascript:void(0)"><span (click)="copyMessenger('6883688')"
+                                                                       class="copy-number-checkout">Copy</span></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="product-name">
+                                    <a routerLink="/details-products">Amount</a>
+                                </td>
+                                <td class="order-subtotal-price">
+                                    <span
+                                        class="order-subtotal-amount">{{ totalValue | currency: 'VND':'symbol':'1.0-0' }}</span>
+                                    <a href="javascript:void(0)"><span (click)="copyMessenger('6883688')"
+                                                                       class="copy-number-checkout">Copy</span></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="product-name">
+                                    <a routerLink="/details-products">Content Tranfer</a>
+                                </td>
+                                <td class="order-subtotal-price">
+                                    <span class="order-subtotal-amount">{{ purchaseCode }}</span>
+                                    <a href="javascript:void(0)"><span (click)="copyMessenger('6883688')"
+                                                                       class="copy-number-checkout">Copy</span></a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="payment-box">
+                        <a (click)="paymentPurchaseCourse(tranferPayment)" class="secondary-btn"
+                           href="javascript:void(0)"
+                           style="width: 100%">Payment With Tranfer Bank Account</a>
+                        <a (click)="paymentPurchaseCourse(stripePayment)" class="secondary-btn"
+                           href="javascript:void(0)"
+                           style="width: 100%">Payment with Stripe</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

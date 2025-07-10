@@ -1,0 +1,24 @@
+<div class="page-title-area">
+    <div class="container">
+        <div class="page-title-content">
+            <ul>
+                <li><a routerLink="/">Home</a></li>
+                <li>Gallery</li>
+            </ul>
+            <h2>Gallery</h2>
+        </div>
+    </div>
+    <div class="shape9"><img alt="image" src="assets/img/shape8.svg"></div>
+</div>
+
+<div class="gallery-area pt-100 pb-70">
+    <div class="container">
+        <div class="row">
+            <div *ngFor="let image of _album; let i=index;" class="col-lg-4 col-md-6 col-sm-6">
+                <div class="single-gallery-item">
+                    <img (click)="open(i)" [src]="image.thumb" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

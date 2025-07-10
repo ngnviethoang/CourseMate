@@ -1,0 +1,73 @@
+<div
+    [ngClass]="{'d-none': router.url === '/online-art' || router.url === '/single-instructor'}"
+    class="subscribe-content"
+>
+    <span class="sub-title">Go At Your Own Pace</span>
+    <h2>Subscribe To Our Newsletter</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+        magna aliqua.</p>
+    <form class="newsletter-form">
+        <input autocomplete="off" class="input-newsletter" name="EMAIL" placeholder="Enter your email address" required
+               type="text">
+        <button class="default-btn" type="submit"><i class="flaticon-user"></i>Subscribe Now<span></span></button>
+    </form>
+</div>
+
+<!-- This section for Online Art Demo -->
+<div
+    [ngClass]="{'d-block': router.url === '/online-art'}"
+    class="oa-subscribe-area d-none"
+>
+    <div class="container">
+        <div class="oa-inner-subscribe ptb-100">
+            <div class="subscribe-content">
+                <span class="sub-title">Newsletter</span>
+                <h2 class="font-weight-black">Subscribe To Our Newsletter</h2>
+                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et
+                    dolore magna aliqua.</p>
+                <form class="newsletter-form">
+                    <input autocomplete="off" class="input-newsletter" placeholder="Enter your email address" required
+                           type="text">
+                    <button class="default-btn" type="submit"><i class="flaticon-user"></i>Subscribe Now<span></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- This section for Single Instructor Demo -->
+<div
+    [ngClass]="{'d-block': router.url === '/single-instructor'}"
+    class="instructor-subscribe-area ptb-100 d-none"
+>
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-6 col-md-12">
+                <div class="instructor-subscribe-content">
+                    <span>NEWSLETTER</span>
+                    <h3 class="el-messiri-font">Subscribe To Our Newsletter</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore
+                        et dolore magna aliqua.</p>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-12">
+                <div class="instructor-subscribe-form">
+                    <form class="newsletter-form">
+                        <input autocomplete="off" class="input-newsletter" name="EMAIL"
+                               placeholder="Enter your email address"
+                               required type="text">
+                        <button class="default-btn" type="submit"><i class="flaticon-user"></i>Subscribe
+                            Now<span></span></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="instructor-subscribe-shape-1">
+        <img alt="image" src="assets/img/instructor-home/subscribe-shape1.png">
+    </div>
+    <div class="instructor-subscribe-shape-2">
+        <img alt="image" src="assets/img/instructor-home/subscribe-shape2.png">
+    </div>
+</div>

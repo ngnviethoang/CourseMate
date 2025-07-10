@@ -6,11 +6,11 @@ namespace CourseMate.Entities.Chapters;
 
 public class Chapter : FullAuditedEntity<Guid>
 {
-    public Chapter(Guid id, string title, Guid courseId, int sortNumber) : base(id)
+    public Chapter(Guid id, string title, Guid courseId, int position) : base(id)
     {
         Title = title;
         CourseId = courseId;
-        SortNumber = sortNumber;
+        Position = position;
     }
 
     [MaxLength(1024)]
@@ -19,5 +19,5 @@ public class Chapter : FullAuditedEntity<Guid>
     public Guid CourseId { get; set; }
 
     [Range(0, int.MaxValue)]
-    public int SortNumber { get; set; }
+    public int Position { get; set; }
 }

@@ -1,0 +1,30 @@
+<div *ngFor="let Image of bgImage;" class="coming-soon-area" style="background-image: url({{Image.img}});">
+    <div class="d-table">
+        <div class="d-table-cell">
+            <div class="coming-soon-content">
+                <a class="logo" routerLink="/"><img alt="image" src="assets/img/logo.png"></a>
+                <h2>We Are Launching Soon</h2>
+                <div class="flex-wrap d-flex justify-content-center" id="timer">
+                    <div class="align-items-center flex-column d-flex justify-content-center" id="days">{{ days }}
+                        <span>Days</span></div>
+                    <div class="align-items-center flex-column d-flex justify-content-center" id="hours">{{ hours }}
+                        <span>Hours</span></div>
+                    <div class="align-items-center flex-column d-flex justify-content-center" id="minutes">{{ minutes }}
+                        <span>Minutes</span></div>
+                    <div class="align-items-center flex-column d-flex justify-content-center" id="seconds">{{ seconds }}
+                        <span>Seconds</span></div>
+                </div>
+                <form class="newsletter-form">
+                    <div class="form-group">
+                        <input class="input-newsletter" name="EMAIL" placeholder="Enter your email" required
+                               type="email">
+                        <span class="label-title"><i class='bx bx-envelope'></i></span>
+                    </div>
+                    <button class="default-btn" type="submit"><i class="flaticon-user"></i>Subscribe<span></span>
+                    </button>
+                    <p>If you would like to be notified when your app is live, Please subscribe to our mailing list.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

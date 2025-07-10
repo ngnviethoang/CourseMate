@@ -1,0 +1,1133 @@
+<div class="page-title-area">
+    <div class="container">
+        <div class="page-title-content">
+            <ul>
+                <li><a routerLink="/">Home</a></li>
+                <li>Profile</li>
+            </ul>
+            <h2>Profile</h2>
+        </div>
+    </div>
+    <div class="shape9"><img alt="image" src="assets/img/shape8.svg"></div>
+</div>
+
+<div class="profile-area pt-100 pb-70">
+    <div class="container">
+        <div class="profile-box">
+            <div class="row align-items-center">
+                <div class="col-lg-4 col-md-4">
+                    <div class="image">
+                        <img alt="image" src="assets/img/advisor/img10.jpg">
+                    </div>
+                </div>
+                <div class="col-lg-8 col-md-8">
+                    <div class="content">
+                        <h3>Sarah Taylor</h3>
+                        <span class="sub-title">Agile Project Expert</span>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                            labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus commodo
+                            viverra maecenas accumsan lacus vel facilisis. Lorem ipsum dolor sit amet, consectetur
+                            adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                        <ul class="info">
+                            <li><span>Phone Number:</span> <a href="tel:+44254588689">(+44) -2545 - 88689</a></li>
+                            <li><span>Email:</span> <a href="mailto:hello@sarahtaylor.com">hello&#64;sarahtaylor.com</a>
+                            </li>
+                        </ul>
+                        <ul class="social-link">
+                            <li><a class="d-block" href="#" target="_blank"><i class='bx bxl-facebook'></i></a></li>
+                            <li><a class="d-block" href="#" target="_blank"><i class='bx bxl-twitter'></i></a></li>
+                            <li><a class="d-block" href="#" target="_blank"><i class='bx bxl-instagram'></i></a></li>
+                            <li><a class="d-block" href="#" target="_blank"><i class='bx bxl-linkedin'></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="profile-courses-quizzes">
+            <ul class="nav-tabset">
+                <li [ngClass]="{'active': currentTab === 'tab1'}" class="nav-tab">
+                    <span (click)="switchTab($event, 'tab1')">
+                        Courses
+                    </span>
+                </li>
+                <li [ngClass]="{'active': currentTab === 'tab2'}" class="nav-tab">
+                    <span (click)="switchTab($event, 'tab2')">
+                        Quizzes
+                    </span>
+                </li>
+            </ul>
+            <div class="tabs-container">
+                <div *ngIf="currentTab === 'tab1'" class="pane" id="tab1">
+                    <ul class="nav-tabset">
+                        <li [ngClass]="{'active': currentTab2 === 'tab-pane1'}" class="nav-tab">
+                            <span (click)="switchTab2($event, 'tab-pane1')">
+                                Owned
+                            </span>
+                        </li>
+                        <li [ngClass]="{'active': currentTab2 === 'tab-pane2'}" class="nav-tab">
+                            <span (click)="switchTab2($event, 'tab-pane2')">
+                                Purchased
+                            </span>
+                        </li>
+                    </ul>
+                    <div class="tabs-container">
+                        <div *ngIf="currentTab2 === 'tab-pane1'" class="pane" id="tab-pane1">
+                            <ul class="nav-tabset">
+                                <li [ngClass]="{'active': currentTab3 === 'tab-pane-pane1'}" class="nav-tab">
+                                    <span (click)="switchTab3($event, 'tab-pane-pane1')">
+                                        All
+                                    </span>
+                                </li>
+                                <li [ngClass]="{'active': currentTab3 === 'tab-pane-pane2'}" class="nav-tab">
+                                    <span (click)="switchTab3($event, 'tab-pane-pane2')">
+                                        Published
+                                    </span>
+                                </li>
+                                <li [ngClass]="{'active': currentTab3 === 'tab-pane-pane3'}" class="nav-tab">
+                                    <span (click)="switchTab3($event, 'tab-pane-pane3')">
+                                        Pending
+                                    </span>
+                                </li>
+                            </ul>
+                            <div class="tabs-container">
+                                <div *ngIf="currentTab3 === 'tab-pane-pane1'" class="pane" id="tab-pane-pane1">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img1.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$39</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <div class="course-author d-flex align-items-center">
+                                                        <img alt="image" class="rounded-circle"
+                                                             src="assets/img/user1.jpg">
+                                                        <span>Alex Morgan</span>
+                                                    </div>
+                                                    <h3><a routerLink="/single-courses-1">The Data Science Course 2020:
+                                                        Complete Data Science Bootcamp</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 15 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 145 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img2.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$49</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <div class="course-author d-flex align-items-center">
+                                                        <img alt="image" class="rounded-circle"
+                                                             src="assets/img/user2.jpg">
+                                                        <span>Sarah Taylor</span>
+                                                    </div>
+                                                    <h3><a routerLink="/single-courses-1">Java Programming Masterclass
+                                                        for Software Developers</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 100 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img3.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$59</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <div class="course-author d-flex align-items-center">
+                                                        <img alt="image" class="rounded-circle"
+                                                             src="assets/img/user3.jpg">
+                                                        <span>David Warner</span>
+                                                    </div>
+                                                    <h3><a routerLink="/single-courses-1">Deep Learning A-Z™: Hands-On
+                                                        Artificial Neural Networks</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 150 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img6.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$39</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Machine Learning
+                                                        Practical:Real world Projects in Healthcare</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 15 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 145 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img7.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$49</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Teach Your Kids to Code: Learn
+                                                        Python Programming at Any Age</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 100 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img8.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$59</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Data Science 2020 : Complete
+                                                        Data Science & Machine Learning</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 150 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12">
+                                            <div class="pagination-area text-center">
+                                                <a class="prev page-numbers" routerLink="/profile"><i
+                                                    class='bx bx-chevrons-left'></i></a>
+                                                <span aria-current="page" class="page-numbers current">1</span>
+                                                <a class="page-numbers" routerLink="/profile">2</a>
+                                                <a class="page-numbers" routerLink="/profile">3</a>
+                                                <a class="page-numbers" routerLink="/profile">4</a>
+                                                <a class="page-numbers" routerLink="/profile">5</a>
+                                                <a class="next page-numbers" routerLink="/profile"><i
+                                                    class='bx bx-chevrons-right'></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="currentTab3 === 'tab-pane-pane2'" class="pane" id="tab-pane-pane2">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img1.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$39</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <div class="course-author d-flex align-items-center">
+                                                        <img alt="image" class="rounded-circle"
+                                                             src="assets/img/user1.jpg">
+                                                        <span>Alex Morgan</span>
+                                                    </div>
+                                                    <h3><a routerLink="/single-courses-1">The Data Science Course 2020:
+                                                        Complete Data Science Bootcamp</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 15 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 145 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img2.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$49</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <div class="course-author d-flex align-items-center">
+                                                        <img alt="image" class="rounded-circle"
+                                                             src="assets/img/user2.jpg">
+                                                        <span>Sarah Taylor</span>
+                                                    </div>
+                                                    <h3><a routerLink="/single-courses-1">Java Programming Masterclass
+                                                        for Software Developers</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 100 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img3.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$59</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <div class="course-author d-flex align-items-center">
+                                                        <img alt="image" class="rounded-circle"
+                                                             src="assets/img/user3.jpg">
+                                                        <span>David Warner</span>
+                                                    </div>
+                                                    <h3><a routerLink="/single-courses-1">Deep Learning A-Z™: Hands-On
+                                                        Artificial Neural Networks</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 150 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img6.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$39</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Machine Learning
+                                                        Practical:Real world Projects in Healthcare</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 15 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 145 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img7.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$49</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Teach Your Kids to Code: Learn
+                                                        Python Programming at Any Age</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 100 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img8.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$59</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Data Science 2020 : Complete
+                                                        Data Science & Machine Learning</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 150 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="currentTab3 === 'tab-pane-pane3'" class="pane" id="tab-pane-pane3">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img6.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$39</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Machine Learning
+                                                        Practical:Real world Projects in Healthcare</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 15 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 145 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img7.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$49</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Teach Your Kids to Code: Learn
+                                                        Python Programming at Any Age</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 100 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img8.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$59</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Data Science 2020 : Complete
+                                                        Data Science & Machine Learning</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 150 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="currentTab2 === 'tab-pane2'" class="pane" id="tab-pane2">
+                            <ul class="nav-tabset">
+                                <li [ngClass]="{'active': currentTab3 === 'tab-pane-pane1'}" class="nav-tab">
+                                    <span (click)="switchTab3($event, 'tab-pane-pane1')">
+                                        All
+                                    </span>
+                                </li>
+                                <li [ngClass]="{'active': currentTab3 === 'tab-pane-pane2'}" class="nav-tab">
+                                    <span (click)="switchTab3($event, 'tab-pane-pane2')">
+                                        Published
+                                    </span>
+                                </li>
+                                <li [ngClass]="{'active': currentTab3 === 'tab-pane-pane3'}" class="nav-tab">
+                                    <span (click)="switchTab3($event, 'tab-pane-pane3')">
+                                        Pending
+                                    </span>
+                                </li>
+                            </ul>
+                            <div class="tabs-container">
+                                <div *ngIf="currentTab3 === 'tab-pane-pane1'" class="pane" id="tab-pane-pane1">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img1.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$39</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <div class="course-author d-flex align-items-center">
+                                                        <img alt="image" class="rounded-circle"
+                                                             src="assets/img/user1.jpg">
+                                                        <span>Alex Morgan</span>
+                                                    </div>
+                                                    <h3><a routerLink="/single-courses-1">The Data Science Course 2020:
+                                                        Complete Data Science Bootcamp</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 15 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 145 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img2.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$49</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <div class="course-author d-flex align-items-center">
+                                                        <img alt="image" class="rounded-circle"
+                                                             src="assets/img/user2.jpg">
+                                                        <span>Sarah Taylor</span>
+                                                    </div>
+                                                    <h3><a routerLink="/single-courses-1">Java Programming Masterclass
+                                                        for Software Developers</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 100 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img3.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$59</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <div class="course-author d-flex align-items-center">
+                                                        <img alt="image" class="rounded-circle"
+                                                             src="assets/img/user3.jpg">
+                                                        <span>David Warner</span>
+                                                    </div>
+                                                    <h3><a routerLink="/single-courses-1">Deep Learning A-Z™: Hands-On
+                                                        Artificial Neural Networks</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 150 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img6.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$39</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Machine Learning
+                                                        Practical:Real world Projects in Healthcare</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 15 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 145 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img7.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$49</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Teach Your Kids to Code: Learn
+                                                        Python Programming at Any Age</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 100 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img8.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$59</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Data Science 2020 : Complete
+                                                        Data Science & Machine Learning</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 150 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12">
+                                            <div class="pagination-area text-center">
+                                                <a class="prev page-numbers" routerLink="/profile"><i
+                                                    class='bx bx-chevrons-left'></i></a>
+                                                <span aria-current="page" class="page-numbers current">1</span>
+                                                <a class="page-numbers" routerLink="/profile">2</a>
+                                                <a class="page-numbers" routerLink="/profile">3</a>
+                                                <a class="page-numbers" routerLink="/profile">4</a>
+                                                <a class="page-numbers" routerLink="/profile">5</a>
+                                                <a class="next page-numbers" routerLink="/profile"><i
+                                                    class='bx bx-chevrons-right'></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="currentTab3 === 'tab-pane-pane2'" class="pane" id="tab-pane-pane2">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img1.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$39</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <div class="course-author d-flex align-items-center">
+                                                        <img alt="image" class="rounded-circle"
+                                                             src="assets/img/user1.jpg">
+                                                        <span>Alex Morgan</span>
+                                                    </div>
+                                                    <h3><a routerLink="/single-courses-1">The Data Science Course 2020:
+                                                        Complete Data Science Bootcamp</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 15 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 145 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img2.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$49</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <div class="course-author d-flex align-items-center">
+                                                        <img alt="image" class="rounded-circle"
+                                                             src="assets/img/user2.jpg">
+                                                        <span>Sarah Taylor</span>
+                                                    </div>
+                                                    <h3><a routerLink="/single-courses-1">Java Programming Masterclass
+                                                        for Software Developers</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 100 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img3.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$59</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <div class="course-author d-flex align-items-center">
+                                                        <img alt="image" class="rounded-circle"
+                                                             src="assets/img/user3.jpg">
+                                                        <span>David Warner</span>
+                                                    </div>
+                                                    <h3><a routerLink="/single-courses-1">Deep Learning A-Z™: Hands-On
+                                                        Artificial Neural Networks</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 150 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img6.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$39</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Machine Learning
+                                                        Practical:Real world Projects in Healthcare</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 15 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 145 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img7.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$49</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Teach Your Kids to Code: Learn
+                                                        Python Programming at Any Age</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 100 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img8.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$59</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Data Science 2020 : Complete
+                                                        Data Science & Machine Learning</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 150 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="currentTab3 === 'tab-pane-pane3'" class="pane" id="tab-pane-pane3">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img6.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$39</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Machine Learning
+                                                        Practical:Real world Projects in Healthcare</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 15 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 145 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img7.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$49</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Teach Your Kids to Code: Learn
+                                                        Python Programming at Any Age</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 100 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="single-courses-box">
+                                                <div class="courses-image">
+                                                    <a class="d-block image" routerLink="/single-courses-1">
+                                                        <img alt="image" src="assets/img/courses/img8.jpg">
+                                                    </a>
+                                                    <a class="fav" routerLink="/single-courses-1"><i
+                                                        class="flaticon-heart"></i></a>
+                                                    <div class="price shadow">$59</div>
+                                                </div>
+                                                <div class="courses-content">
+                                                    <h3><a routerLink="/single-courses-1">Data Science 2020 : Complete
+                                                        Data Science & Machine Learning</a></h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                        eiusmod tempor incididunt ut labore et dolore.</p>
+                                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                                        <li><i class='flaticon-people'></i> 150 Students</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="currentTab === 'tab2'" class="pane" id="tab2">
+                    <ul class="nav-tabset">
+                        <li [ngClass]="{'active': currentTab2 === 'tab-pane1'}" class="nav-tab">
+                            <span (click)="switchTab2($event, 'tab-pane1')">
+                                All
+                            </span>
+                        </li>
+                        <li [ngClass]="{'active': currentTab2 === 'tab-pane2'}" class="nav-tab">
+                            <span (click)="switchTab2($event, 'tab-pane2')">
+                                Finished
+                            </span>
+                        </li>
+                        <li [ngClass]="{'active': currentTab2 === 'tab-pane3'}" class="nav-tab">
+                            <span (click)="switchTab2($event, 'tab-pane3')">
+                                Passed
+                            </span>
+                        </li>
+                        <li [ngClass]="{'active': currentTab2 === 'tab-pane4'}" class="nav-tab">
+                            <span (click)="switchTab2($event, 'tab-pane4')">
+                                Failed
+                            </span>
+                        </li>
+                    </ul>
+                    <div class="tabs-container">
+                        <div *ngIf="currentTab2 === 'tab-pane1'" class="pane" id="tab-pane1">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Course</th>
+                                        <th>Quiz</th>
+                                        <th>Date</th>
+                                        <th>Progress</th>
+                                        <th>Interval</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">Introduction to Python for Beginners</a>
+                                        </td>
+                                        <td>Lesson 1 Term Test</td>
+                                        <td>May 20, 2020</td>
+                                        <td>25% <span class="progress">In Progress</span></td>
+                                        <td>15:30</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">Python for Data Science and Machine
+                                            Learning Bootcamp</a></td>
+                                        <td>Lesson 2 Term Test</td>
+                                        <td>May 21, 2020</td>
+                                        <td>0% <span class="progress pending">Pending</span></td>
+                                        <td>20:20</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">The Modern Python 3 Bootcamp</a></td>
+                                        <td>Lesson 5 Term Test</td>
+                                        <td>May 22, 2020</td>
+                                        <td>100% <span class="progress completed">Completed</span></td>
+                                        <td>10:10</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">REST APIs with Flask and Python</a></td>
+                                        <td>Lesson 1 Term Test</td>
+                                        <td>May 23, 2020</td>
+                                        <td>30% <span class="progress">In Progress</span></td>
+                                        <td>15:30</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">Reinforcement Learning in Python</a></td>
+                                        <td>Lesson 1 Term Test</td>
+                                        <td>May 24, 2020</td>
+                                        <td>35% <span class="progress failed">Failed</span></td>
+                                        <td>15:30</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div *ngIf="currentTab2 === 'tab-pane2'" class="pane" id="tab-pane2">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Course</th>
+                                        <th>Quiz</th>
+                                        <th>Date</th>
+                                        <th>Progress</th>
+                                        <th>Interval</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">Introduction to Python for Beginners</a>
+                                        </td>
+                                        <td>Lesson 1 Term Test</td>
+                                        <td>May 20, 2020</td>
+                                        <td>100% <span class="progress completed">Completed</span></td>
+                                        <td>15:30</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">Python for Data Science and Machine
+                                            Learning Bootcamp</a></td>
+                                        <td>Lesson 2 Term Test</td>
+                                        <td>May 21, 2020</td>
+                                        <td>100% <span class="progress completed">Completed</span></td>
+                                        <td>20:20</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">The Modern Python 3 Bootcamp</a></td>
+                                        <td>Lesson 5 Term Test</td>
+                                        <td>May 22, 2020</td>
+                                        <td>100% <span class="progress completed">Completed</span></td>
+                                        <td>10:10</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">REST APIs with Flask and Python</a></td>
+                                        <td>Lesson 1 Term Test</td>
+                                        <td>May 23, 2020</td>
+                                        <td>100% <span class="progress completed">Completed</span></td>
+                                        <td>15:30</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">Reinforcement Learning in Python</a></td>
+                                        <td>Lesson 1 Term Test</td>
+                                        <td>May 24, 2020</td>
+                                        <td>100% <span class="progress completed">Completed</span></td>
+                                        <td>15:30</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div *ngIf="currentTab2 === 'tab-pane3'" class="pane" id="tab-pane3">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Course</th>
+                                        <th>Quiz</th>
+                                        <th>Date</th>
+                                        <th>Progress</th>
+                                        <th>Interval</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">Introduction to Python for Beginners</a>
+                                        </td>
+                                        <td>Lesson 1 Term Test</td>
+                                        <td>May 20, 2020</td>
+                                        <td>95% <span class="progress passed">Passed</span></td>
+                                        <td>15:30</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">Python for Data Science and Machine
+                                            Learning Bootcamp</a></td>
+                                        <td>Lesson 2 Term Test</td>
+                                        <td>May 21, 2020</td>
+                                        <td>90% <span class="progress passed">Passed</span></td>
+                                        <td>20:20</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">The Modern Python 3 Bootcamp</a></td>
+                                        <td>Lesson 5 Term Test</td>
+                                        <td>May 22, 2020</td>
+                                        <td>92% <span class="progress passed">Passed</span></td>
+                                        <td>10:10</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">REST APIs with Flask and Python</a></td>
+                                        <td>Lesson 1 Term Test</td>
+                                        <td>May 23, 2020</td>
+                                        <td>98% <span class="progress passed">Passed</span></td>
+                                        <td>15:30</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">Reinforcement Learning in Python</a></td>
+                                        <td>Lesson 1 Term Test</td>
+                                        <td>May 24, 2020</td>
+                                        <td>99% <span class="progress passed">Passed</span></td>
+                                        <td>15:30</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div *ngIf="currentTab2 === 'tab-pane4'" class="pane" id="tab-pane4">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Course</th>
+                                        <th>Quiz</th>
+                                        <th>Date</th>
+                                        <th>Progress</th>
+                                        <th>Interval</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">Introduction to Python for Beginners</a>
+                                        </td>
+                                        <td>Lesson 1 Term Test</td>
+                                        <td>May 20, 2020</td>
+                                        <td>0% <span class="progress failed">Failed</span></td>
+                                        <td>15:30</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">Python for Data Science and Machine
+                                            Learning Bootcamp</a></td>
+                                        <td>Lesson 2 Term Test</td>
+                                        <td>May 21, 2020</td>
+                                        <td>5% <span class="progress failed">Failed</span></td>
+                                        <td>20:20</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">The Modern Python 3 Bootcamp</a></td>
+                                        <td>Lesson 5 Term Test</td>
+                                        <td>May 22, 2020</td>
+                                        <td>7% <span class="progress failed">Failed</span></td>
+                                        <td>10:10</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">REST APIs with Flask and Python</a></td>
+                                        <td>Lesson 1 Term Test</td>
+                                        <td>May 23, 2020</td>
+                                        <td>3% <span class="progress failed">Failed</span></td>
+                                        <td>15:30</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a routerLink="/single-courses-1">Reinforcement Learning in Python</a></td>
+                                        <td>Lesson 1 Term Test</td>
+                                        <td>May 24, 2020</td>
+                                        <td>1% <span class="progress failed">Failed</span></td>
+                                        <td>15:30</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

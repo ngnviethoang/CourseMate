@@ -1,0 +1,116 @@
+<div class="modal-header">
+    <h4 class="modal-title">Đánh giá của học viên</h4>
+    <button (click)="activeModal.dismiss('Cross click')" aria-label="Close" class="btn-close" type="button"></button>
+</div>
+<div class="modal-body">
+    <div>
+        <div class="comment">
+            <div class="user-banner">
+                <div class="user">
+                    <div class="avatar" style="background-color: #fff5e9; border-color: #ffe0bd; color: #f98600">
+                        AF
+                        <span class="stat green"></span>
+                    </div>
+                    <h5>Albert Flores</h5>
+                </div>
+                <button class="btn dropdown"><i class="ri-more-line"></i></button>
+            </div>
+            <div class="content">
+                <p>Before installing this plugin please put back again your wordpress and site url back to http.</p>
+            </div>
+            <div class="footer">
+                <button class="btn"><i class="ri-emotion-line"></i></button>
+                <div class="reactions">
+                    <button class="btn react"><i class="bx bxs-like"></i>4</button>
+                    <button class="btn react"><i class="bx bxs-dislike"></i>1</button>
+                    <button class="btn react"><i class="bx bxs-conversation"></i>20</button>
+                </div>
+                <div class="divider"></div>
+                <a href="javascript:void(0)">Trả lời</a>
+                <div class="divider"></div>
+                <span class="is-mute">6 hour</span>
+            </div>
+            <div class="writing replay-comment">
+                <div autofocus class="textarea" contenteditable="true" spellcheck="false">
+                    <p>Hi <a class="tagged-user">&#64;Jo</a></p>
+                </div>
+                <div class="footer">
+                    <div class="text-format">
+                        <button class="btn"><i class="bx bx-bold"></i></button>
+                        <button class="btn"><i class="bx bx-italic"></i></button>
+                        <button class="btn"><i class="bx bx-underline"></i></button>
+                        <button class="btn"><i class="bx bx-list-ul"></i></button>
+                    </div>
+                    <div class="group-button">
+                        <button class="btn"><i class="bx bx-purchase-tag"></i></button>
+                        <button class="btn primary">Bình luận</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="reply comment">
+            <div class="user-banner">
+                <div class="user">
+                    <div class="avatar">
+                        <img
+                            alt=""
+                            src="https://images.unsplash.com/photo-1510227272981-87123e259b17?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=3759e09a5b9fbe53088b23c615b6312e"
+                        />
+                        <span class="stat green"></span>
+                    </div>
+                    <h5>Bessie Cooper</h5>
+                </div>
+                <button class="btn dropdown"><i class="ri-more-line"></i></button>
+            </div>
+            <div class="content">
+                <p>Hi <a class="tagged-user" href="#">&#64;Albert Flores</a>.Thanks for your reply.</p>
+            </div>
+            <div class="footer">
+                <button class="btn"><i class="ri-emotion-line"></i></button>
+                <div class="reactions">
+                    <button class="btn react"><i class="bx bxs-like"></i>4</button>
+                    <button class="btn react"><i class="bx bxs-dislike"></i>1</button>
+                </div>
+                <div class="divider"></div>
+                <a href="javascript:void(0)">Trả lời</a>
+                <div class="divider"></div>
+                <span class="is-mute">6 hour</span>
+            </div>
+        </div>
+        <div class="reply comment">
+            <div class="user-banner">
+                <div class="user">
+                    <div class="avatar">
+                        <img
+                            alt=""
+                            src="https://images.unsplash.com/photo-1510227272981-87123e259b17?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=3759e09a5b9fbe53088b23c615b6312e"
+                        />
+                        <span class="stat green"></span>
+                    </div>
+                    <h5>Bessie Cooper</h5>
+                </div>
+                <button class="btn dropdown"><i class="ri-more-line"></i></button>
+            </div>
+            <div class="content">
+                <p>Hi <a class="tagged-user" href="#">&#64;Albert Flores</a>.Thanks for your reply.</p>
+            </div>
+            <div class="footer">
+                <button class="btn"><i class="ri-emotion-line"></i></button>
+                <div class="reactions">
+                    <button class="btn react"><i class="bx bxs-like"></i>4</button>
+                    <button class="btn react"><i class="bx bxs-dislike"></i>1</button>
+                </div>
+                <div class="divider"></div>
+                <a href="javascript:void(0)">Trả lời</a>
+                <div class="divider"></div>
+                <span class="is-mute">6 hour</span>
+            </div>
+        </div>
+    </div>
+    <div class="load">
+        <button class="btn react"><i class="bx bx-refresh"></i>Tải thêm</button>
+    </div>
+</div>
+<div class="modal-footer">
+    <button (click)="activeModal.close('Close click')" class="default-btn" type="button">Đóng</button>
+</div>

@@ -76,7 +76,7 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
         IQueryable<int> query =
             from chapter in await ChapterRepo.GetQueryableAsync()
             where chapter.CourseId == courseId
-            select chapter.SortNumber;
+            select chapter.Position;
         List<int> sortNumber = await AsyncExecuter.ToListAsync(query);
         return sortNumber.Count != 0 ? sortNumber.Max() : 0;
     }
@@ -86,7 +86,7 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
         IQueryable<int> query =
             from lesson in await LessonRepo.GetQueryableAsync()
             where lesson.ChapterId == chapterId
-            select lesson.SortNumber;
+            select lesson.Position;
         List<int> sortNumber = await AsyncExecuter.ToListAsync(query);
         return sortNumber.Count != 0 ? sortNumber.Max() : 0;
     }

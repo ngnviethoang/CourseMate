@@ -1,0 +1,168 @@
+<div [ngClass]="{ sticky: isSticky }" class="navbar-area">
+    <div class="container-fluid">
+        <nav [class.active]="classApplied" class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" routerLink="/"><img alt="logo" ngSrc="assets/img/logo.png" height="800"
+                                                        width="800" /></a>
+            <button (click)="toggleClass()" class="navbar-toggler" type="button">
+                <span class="burger-menu">
+                    <span class="top-bar"></span>
+                    <span class="middle-bar"></span>
+                    <span class="bottom-bar"></span>
+                </span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <form class="search-box">
+                    <input class="input-search" placeholder="Find the course on the system" type="text" />
+                    <button type="submit">
+                        <i class="flaticon-search"></i>
+                    </button>
+                </form>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a [routerLinkActiveOptions]="{ exact: true }" class="nav-link" routerLink="/"
+                           routerLinkActive="active">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a [routerLinkActiveOptions]="{ exact: true }" class="nav-link" routerLink="/download-document"
+                           routerLinkActive="active">Documents</a>
+                    </li>
+                    <li class="nav-item">
+                        <a [routerLinkActiveOptions]="{ exact: true }" class="nav-link" routerLink="/news"
+                           routerLinkActive="active">News</a>
+                    </li>
+                    <li class="nav-item">
+                        <a [routerLinkActiveOptions]="{ exact: true }" class="nav-link" routerLink="/about"
+                           routerLinkActive="active">About Us</a>
+                    </li>
+                    <li class="nav-item border-animation" style="margin-left: 20px; margin-right: 20px;">
+                        <a [routerLinkActiveOptions]="{ exact: true }" class="nav-link" routerLink="/training-online"
+                           routerLinkActive="active">Training Online</a>
+                    </li>
+
+                    <div class="others-option d-flex align-items-center others-option d-flex align-items-center ms-3">
+                        <div class="option-item">
+                            <div class="cart-btn me-2">
+                                <a routerLink="/cart"><i class="bx bx-cart-alt"></i><span>{{ totalCartItem }}</span></a>
+                            </div>
+                        </div>
+
+                        <div class="option-item">
+                            <div class="notification-btn position-relative">
+                                <a [ngbPopover]="notificationPopover"
+                                   popoverClass="notification-popover"
+                                   container="body"
+                                   triggers="click"
+                                   placement="bottom"
+                                   [autoClose]="'outside'"
+                                   class="position-relative">
+                                    <i class="bx bx-bell fs-5"></i>
+                                    <span *ngIf="totalNotification > 0"
+                                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ totalNotification }}
+                                        <span class="visually-hidden">unread notifications</span>
+            </span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="option-item">
+                            <div class="cart-btn">
+                                @if (hasLoggedIn) {
+                                    <p class="lead text-muted mb-2"
+                                       [popover]="popoverContent"
+                                       outsideClick="true"
+                                       [adaptivePosition]="false"
+                                       placement="bottom right"
+                                       boundariesElement="viewport"
+                                       triggers="click">
+                                        {{ currentUser.userName }}
+                                    </p>
+                                } @else {
+                                    <a (click)="login()">
+                                        <i class="bx bx-log-in"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>
+
+<ng-template #notificationPopover>
+    <div class="popover-wrapper me-4">
+        <div class="popover-header">
+            <span>Thông báo</span>
+            <span *ngIf="totalNotification > 0" class="badge bg-warning text-dark ms-auto">
+        {{ totalNotification }} mới
+      </span>
+        </div>
+
+        <div class="popover-body scroll-area">
+            @for (notification of notifications$; track notification) {
+                <div class="notification-item">
+                    <div class="d-flex align-items-start">
+                        <i
+                            class="{{ notificationTypeMap[notification.type].icon }} me-2 fs-5"
+                            [ngClass]="notificationTypeMap[notification.type].color">
+                        </i>
+                        <div>
+                            <strong>{{ notificationTypeMap[notification.type].title }}</strong>
+                            <div class="small text-muted">{{ notification.message }}</div>
+                            <small class="text-muted">{{ notification.createdAt | date:'short' }}</small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="popover-footer d-flex justify-content-between p-2 border-top">
+            <button class="btn btn-outline-primary btn-sm">Đánh dấu đã đọc</button>
+            <a routerLink="/notifications" class="btn btn-primary btn-sm">Xem tất cả</a>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #popoverContent>
+    <div style="min-width: 200px;">
+        <div class="d-flex align-items-center mb-3">
+            <img ngSrc="assets/img/user1.jpg" alt="User Image" class="rounded-circle me-2"
+                 width="40" height="40"
+                 style="object-fit: cover;">
+            <div>
+                <h6 class="mb-0">{{ currentUser.userName }}</h6>
+                <small class="text-muted">Member</small>
+            </div>
+        </div>
+
+        <ul class="list-unstyled mb-0">
+            <li class="mb-2">
+                <a href="/profile"
+                   class="d-flex align-items-center text-decoration-none text-dark">
+                    <i class="bx bx-user me-2"></i> Profile
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#" class="d-flex align-items-center text-decoration-none text-dark">
+                    <i class="bx bx-cog me-2"></i> Settings
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#" class="d-flex align-items-center text-decoration-none text-dark">
+                    <i class="bx bx-bell me-2"></i> Help
+                </a>
+            </li>
+            <li>
+                <a (click)="logoutAccount()" href="javascript:void(0)"
+                   class="d-flex align-items-center text-decoration-none text-danger">
+                    <i class="bx bx-log-out-circle me-2"></i> Sign Out
+                </a>
+            </li>
+        </ul>
+    </div>
+</ng-template>
+
+
+

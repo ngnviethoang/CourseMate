@@ -1,0 +1,35 @@
+<div class="modal-header">
+    <h4 class="modal-title">Đánh giá của học viên</h4>
+    <button (click)="activeModal.dismiss('Cross click')" aria-label="Close" class="btn-close" type="button"></button>
+</div>
+<div class="modal-body">
+    <div class="display-comment-star">
+        <ngx-stars
+            (ratingOutput)="onRatingSet($event)"
+            [color]="'#ffd000'"
+            [maxStars]="5"
+            [readonly]="false"
+            [size]="3"
+        ></ngx-stars>
+        <br />
+        <span style="font-weight: bold; font-size: 20px; text-align: center"
+        >Bạn đang đánh giá {{ ratingDisplay }} trên 5</span
+        >
+    </div>
+    <div class="pt-4 col-lg-12 col-md-12">
+        <div class="form-group">
+            <textarea
+                [(ngModel)]="reviewOfUser"
+                class="form-control"
+                cols="30"
+                id="notes"
+                name="notes"
+                placeholder="Đánh giá khoá học"
+                rows="5"
+            ></textarea>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button (click)="saveComment()" class="default-btn" type="button">Lưu đánh giá</button>
+</div>

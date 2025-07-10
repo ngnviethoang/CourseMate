@@ -1,0 +1,115 @@
+<div class="coding-platform">
+    <div class="platform-header">
+        <div class="header-left">
+            <h1 class="exercise-title">{{ exerciseTitle || 'Coding Challenge' }}</h1>
+            <div class="exercise-tags">
+                <span class="tag difficulty-tag" [ngClass]="exerciseDifficulty">
+                    {{ exerciseDifficulty || 'medium' }}
+                </span>
+                <span class="tag language-tag">{{ selectedLanguage | uppercase }}</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="timer" *ngIf="showTimer">
+                <i class="fas fa-clock"></i>
+                {{ timeRemaining | number: '2.0' }}s
+            </div>
+            <div class="completion-badge" *ngIf="isCompleted">
+                <i class="fas fa-check-circle"></i>
+                Completed
+            </div>
+        </div>
+    </div>
+
+    <div class="platform-content">
+        <div class="problem-panel">
+            <div class="problem-description" [innerHTML]="exerciseQuestion"></div>
+
+            <div class="test-case-container">
+                <h3 class="test-case-title">Test Cases ({{ testResults.passed }}/{{ testCases.length }} passed)</h3>
+
+
+                <div class="compact-test-cases">
+                    <div class="test-case-row" *ngFor="let testCase of testCases.slice(0, 3); let i = index">
+                        <div class="case-header">
+                <span class="case-status" [class.passed]="testCase.passed" [class.failed]="!testCase.passed">
+                    {{ testCase.passed ? '✓' : '✗' }}
+                </span>
+                            <span class="case-number">Case {{i + 1}}</span>
+                        </div>
+                        <div class="case-content">
+                            <div class="case-io">
+                                <span class="io-label">Input:</span>
+                                <span class="io-value">{{testCase.input}}</span>
+                            </div>
+                            <div class="case-io">
+                                <span class="io-label">Expected:</span>
+                                <span class="io-value">{{testCase.expected}}</span>
+                            </div>
+                            <div class="case-io" *ngIf="testCase.output">
+                                <span class="io-label">Output:</span>
+                                <span class="io-value">{{testCase.output}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="editor-panel">
+            <div class="editor-toolbar">
+                <div class="language-selector">
+                    <label for="language-select">Language:</label>
+                    <select id="language-select" [(ngModel)]="selectedLanguage">
+                        <option *ngFor="let lang of availableLanguages" [value]="lang.value">{{ lang.name }}</option>
+                    </select>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn run-button" (click)="runCode()">
+                        <i class="fas fa-play"></i> Run
+                    </button>
+                    <button class="btn submit-button" (click)="submitCode()">
+                        <i class="fas fa-check-double"></i> Submit
+                    </button>
+                </div>
+            </div>
+
+            <div class="code-editor-wrapper">
+                <div class="editor-header">
+                    <span>solution.{{ getFileExtension() }}</span>
+                    <button class="editor-action" (click)="formatCode()" title="Format Code">
+                        <i class="fas fa-indent"></i>
+                    </button>
+                </div>
+                <textarea class="code-input" [(ngModel)]="userCode" placeholder="// Write your code here..."></textarea>
+                <div class="editor-footer">
+                    <span class="line-count">Lines: {{ getLineCount() }}</span>
+                </div>
+            </div>
+
+            <div class="output-panel" *ngIf="consoleOutput">
+                <div class="output-header">
+                    <h4><i class="fas fa-terminal"></i> Console Output</h4>
+                    <button class="clear-button" (click)="clearConsole()">
+                        <i class="fas fa-trash-alt"></i> Clear
+                    </button>
+                </div>
+                <div class="output-content">
+                    <pre>{{ consoleOutput }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="platform-footer">
+        <button class="nav-button prev-button" (click)="navigate('prev')" [disabled]="!hasPrevious">
+            <i class="fas fa-arrow-left"></i> Previous
+        </button>
+        <div class="progress-indicator">
+            Exercise {{ currentExerciseIndex + 1 }} of {{ totalExercises }}
+        </div>
+        <button class="nav-button next-button" (click)="navigate('next')" [disabled]="!hasNext">
+            Next <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+</div>

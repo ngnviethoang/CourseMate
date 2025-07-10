@@ -1,0 +1,54 @@
+<!-- Register -->
+<app-hdnx-loading [show]="isLoading">
+    <div class="user-area ptb-100">
+        <div class="container">
+            <div class="user-all-form">
+                <form [formGroup]="registerForm">
+                    <div class="form-group">
+                        <label>Tài khoản</label>
+                        <input class="form-control" formControlName="name" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label>Tài khoản Email</label>
+                        <input class="form-control" formControlName="email" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label>Mật khẩu</label>
+                        <input class="form-control" formControlName="password" type="password">
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại</label>
+                        <input class="form-control" formControlName="phone" type="text">
+                    </div>
+                    <div class="btn-box">
+                        <a (click)="registerUser()" class="default-btn with-btn-login" href="javascript:void(0)">Đăng ký<span></span></a>
+                    </div>
+                    <div class="sub-title">
+                        <span>Hoặc đăng nhập</span>
+                    </div>
+                    <div class="login-with-account">
+                        <ul>
+                            <li>
+                                <div class="login-social">
+                                    <a (click)="loginWithFaceBook()" href="javascript:void(0)">
+                                        <i class="bx bxl-facebook-circle"></i>
+                                        <span>Đăng nhập với Facebook</span>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="login-social">
+                                    <asl-google-signin-button shape="square" size='large' theme="filled_blue"
+                                                              type='standard'
+                                                              width="400"></asl-google-signin-button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <p>Bạn đã có tài khoản? <a routerLink="/login">Đăng nhập</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</app-hdnx-loading>
+

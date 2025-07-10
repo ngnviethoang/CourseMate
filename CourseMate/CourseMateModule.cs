@@ -53,6 +53,8 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
 using Volo.Abp.BlobStoring.FileSystem;
+using Volo.Abp.EventBus.RabbitMq;
+using Volo.Abp.RabbitMQ;
 
 namespace CourseMate;
 
@@ -105,7 +107,8 @@ namespace CourseMate;
 
     // Other modules
     typeof(AbpAspNetCoreSignalRModule),
-    typeof(AbpBlobStoringFileSystemModule)
+    typeof(AbpBlobStoringFileSystemModule),
+    typeof(AbpEventBusRabbitMqModule)
 )]
 public class CourseMateModule : AbpModule
 {
@@ -176,6 +179,23 @@ public class CourseMateModule : AbpModule
         ConfigureVirtualFiles(hostingEnvironment);
         ConfigureEfCore(context);
         ConfigureBlobStoring();
+        ConfigureRabbitMq(configuration);
+    }
+
+    private void ConfigureRabbitMq(IConfiguration configuration)
+    {
+        Configure<AbpRabbitMqOptions>(options =>
+        {
+            options.Connections.Default.UserName = configuration.GetValue<string>("RabbitMQ:Connections:Default:UserName");
+            options.Connections.Default.Password = configuration.GetValue<string>("RabbitMQ:Connections:Default:Password");
+            options.Connections.Default.HostName = configuration.GetValue<string>("RabbitMQ:Connections:Default:HostName");
+            options.Connections.Default.Port = configuration.GetValue<int>("RabbitMQ:Connections:Default:Port");
+        });
+        Configure<AbpRabbitMqEventBusOptions>(options =>
+        {
+            options.ClientName = configuration.GetValue<string>("RabbitMQ:EventBus:ClientName")!;
+            options.ExchangeName = configuration.GetValue<string>("RabbitMQ:EventBus:ExchangeName")!;
+        });
     }
 
     private void ConfigureHealthChecks(ServiceConfigurationContext context)
@@ -330,13 +350,7 @@ public class CourseMateModule : AbpModule
 
     private void ConfigureBlobStoring()
     {
-        Configure<AbpBlobStoringOptions>(options =>
-        {
-            options.Containers.ConfigureDefault(container =>
-            {
-                container.UseFileSystem(fileSystem => { fileSystem.BasePath = "./coursemate-files"; });
-            });
-        });
+        Configure<AbpBlobStoringOptions>(options => { options.Containers.ConfigureDefault(container => { container.UseFileSystem(fileSystem => { fileSystem.BasePath = "./coursemate-files"; }); }); });
     }
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)

@@ -1,0 +1,375 @@
+<div class="page-title-area">
+    <div class="container">
+        <div class="page-title-content">
+            <ul>
+                <li><a routerLink="/">Home</a></li>
+                <li>Motivational Book Cover</li>
+            </ul>
+            <h2>Products Details</h2>
+        </div>
+    </div>
+    <div class="shape9"><img alt="image" src="assets/img/shape8.svg"></div>
+</div>
+
+<div class="products-details-area ptb-100">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-5 col-md-12">
+                <div class="products-details-image">
+                    <img alt="image" src="assets/img/products/img2.jpg">
+                </div>
+            </div>
+            <div class="col-lg-7 col-md-12">
+                <div class="products-details-desc">
+                    <h3>Motivational Book Cover</h3>
+                    <div class="price">
+                        <span class="new-price">$200</span>
+                        <span class="old-price">$210</span>
+                    </div>
+                    <div class="products-review">
+                        <div class="rating">
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star-half'></i>
+                        </div>
+                        <a class="rating-count" routerLink="/details-products">3 reviews</a>
+                    </div>
+                    <p>This story, dazzling in its powerful simplicity and soul-stirring wisdom, is about an Andalusian
+                        shepherd boy named Santiago who travels from his homeland in Spain to the Egyptian desert in
+                        search of a treasure buried near the Pyramids. Lorem ipsum dolor sit amet, consectetur
+                        adipiscing elit, sed do eiusmod tempor incididunt ut labore et. Lorem ipsum dolor sit amet,
+                        consectetur adipiscing elit, sed do eiusmod tempor incididunt et.</p>
+                    <div class="products-meta">
+                        <span>SKU: <span class="sku">10</span></span>
+                        <span>Availability: <span class="in-stock">In Stock</span></span>
+                        <span>Category: <a routerLink="/details-products">Business</a></span>
+                        <span>Tag: <a routerLink="/details-products">Book</a></span>
+                    </div>
+                    <div class="products-add-to-cart">
+                        <div class="input-counter">
+                            <input min="1" type="number" value="1">
+                        </div>
+                        <button class="default-btn" type="submit"><i class="flaticon-user"></i>Add to Cart<span></span>
+                        </button>
+                    </div>
+                    <div class="products-share">
+                        <ul class="social">
+                            <li><span>Share:</span></li>
+                            <li><a class="facebook" href="#" target="_blank"><i class='bx bxl-facebook'></i></a></li>
+                            <li><a class="twitter" href="#" target="_blank"><i class='bx bxl-twitter'></i></a></li>
+                            <li><a class="linkedin" href="#" target="_blank"><i class='bx bxl-linkedin'></i></a></li>
+                            <li><a class="instagram" href="#" target="_blank"><i class='bx bxl-instagram'></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12">
+                <div class="products-details-tabs">
+                    <ul class="nav-tabset">
+                        <li [ngClass]="{'active': currentTab === 'tab1'}" class="nav-tab">
+                            <span (click)="switchTab($event, 'tab1')">
+                                Description
+                            </span>
+                        </li>
+                        <li [ngClass]="{'active': currentTab === 'tab2'}" class="nav-tab">
+                            <span (click)="switchTab($event, 'tab2')">
+                                Reviews (4)
+                            </span>
+                        </li>
+                    </ul>
+                    <div class="tabs-container">
+                        <div *ngIf="currentTab === 'tab1'" class="pane" id="tab1">
+                            <p>This story, dazzling in its powerful simplicity and soul-stirring wisdom, is about an
+                                Andalusian shepherd boy named Santiago who travels from his homeland in Spain to the
+                                Egyptian desert in search of a treasure buried near the Pyramids. Lorem ipsum dolor
+                                sit.</p>
+                            <ul>
+                                <li>Instant Odemy bestseller</li>
+                                <li>Translated into 18 languages</li>
+                                <li>#1 Most Recommended Book of the year.</li>
+                                <li>A neglected project, widely dismissed, its champion written off as unhinged.</li>
+                                <li>Yields a negative result in an experiment because of a flaw in the design of the
+                                    experiment.
+                                </li>
+                                <li>An Amazon, Bloomberg, Financial Times, Forbes, Inc., Newsweek, Strategy + Business,
+                                    Tech Crunch, Washington Post Best Business Book of the year
+                                </li>
+                            </ul>
+                        </div>
+                        <div *ngIf="currentTab === 'tab2'" class="pane" id="tab2">
+                            <div class="products-reviews">
+                                <h3>Products Rating</h3>
+                                <div class="rating">
+                                    <span class="bx bxs-star checked"></span>
+                                    <span class="bx bxs-star checked"></span>
+                                    <span class="bx bxs-star checked"></span>
+                                    <span class="bx bxs-star checked"></span>
+                                    <span class="bx bxs-star"></span>
+                                </div>
+                                <div class="rating-count">
+                                    <span>4.1 average based on 4 reviews.</span>
+                                </div>
+                                <div class="row">
+                                    <div class="side">
+                                        <div>5 star</div>
+                                    </div>
+                                    <div class="middle">
+                                        <div class="bar-container">
+                                            <div class="bar-5"></div>
+                                        </div>
+                                    </div>
+                                    <div class="side right">
+                                        <div>02</div>
+                                    </div>
+                                    <div class="side">
+                                        <div>4 star</div>
+                                    </div>
+                                    <div class="middle">
+                                        <div class="bar-container">
+                                            <div class="bar-4"></div>
+                                        </div>
+                                    </div>
+                                    <div class="side right">
+                                        <div>03</div>
+                                    </div>
+                                    <div class="side">
+                                        <div>3 star</div>
+                                    </div>
+                                    <div class="middle">
+                                        <div class="bar-container">
+                                            <div class="bar-3"></div>
+                                        </div>
+                                    </div>
+                                    <div class="side right">
+                                        <div>04</div>
+                                    </div>
+                                    <div class="side">
+                                        <div>2 star</div>
+                                    </div>
+                                    <div class="middle">
+                                        <div class="bar-container">
+                                            <div class="bar-2"></div>
+                                        </div>
+                                    </div>
+                                    <div class="side right">
+                                        <div>05</div>
+                                    </div>
+                                    <div class="side">
+                                        <div>1 star</div>
+                                    </div>
+                                    <div class="middle">
+                                        <div class="bar-container">
+                                            <div class="bar-1"></div>
+                                        </div>
+                                    </div>
+                                    <div class="side right">
+                                        <div>00</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="products-review-comments">
+                                <h3>3 Reviews</h3>
+                                <div class="user-review">
+                                    <img alt="image" src="assets/img/user1.jpg">
+                                    <div class="review-rating">
+                                        <div class="review-stars">
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star checked'></i>
+                                        </div>
+                                        <span class="d-inline-block">James Anderson</span>
+                                    </div>
+                                    <span class="d-block sub-comment">Excellent</span>
+                                    <p>Very well built theme, couldn't be happier with it. Can't wait for future updates
+                                        to see what else they add in.</p>
+                                </div>
+                                <div class="user-review">
+                                    <img alt="image" src="assets/img/user2.jpg">
+                                    <div class="review-rating">
+                                        <div class="review-stars">
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star'></i>
+                                            <i class='bx bxs-star'></i>
+                                        </div>
+                                        <span class="d-inline-block">Sarah Taylor</span>
+                                    </div>
+                                    <span class="d-block sub-comment">Video Quality!</span>
+                                    <p>Was really easy to implement and they quickly answer my additional questions!</p>
+                                </div>
+                                <div class="user-review">
+                                    <img alt="image" src="assets/img/user3.jpg">
+                                    <div class="review-rating">
+                                        <div class="review-stars">
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star checked'></i>
+                                        </div>
+                                        <span class="d-inline-block">David Warner</span>
+                                    </div>
+                                    <span class="d-block sub-comment">Perfect Coding!</span>
+                                    <p>Stunning design, very dedicated crew who welcome new ideas suggested by
+                                        customers, nice support.</p>
+                                </div>
+                                <div class="user-review">
+                                    <img alt="image" src="assets/img/user4.jpg">
+                                    <div class="review-rating">
+                                        <div class="review-stars">
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star checked'></i>
+                                            <i class='bx bxs-star'></i>
+                                        </div>
+                                        <span class="d-inline-block">King Kong</span>
+                                    </div>
+                                    <span class="d-block sub-comment">Perfect Video!</span>
+                                    <p>Stunning design, very dedicated crew who welcome new ideas suggested by
+                                        customers, nice support.</p>
+                                </div>
+                            </div>
+                            <div class="review-form-wrapper">
+                                <h3>Add a review</h3>
+                                <p class="comment-notes">Your email address will not be published. Required fields are
+                                    marked <span>*</span></p>
+                                <form>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12">
+                                            <div class="rating">
+                                                <input id="star5" name="rating" type="radio" value="5" /><label
+                                                for="star5"></label>
+                                                <input id="star4" name="rating" type="radio" value="4" /><label
+                                                for="star4"></label>
+                                                <input id="star3" name="rating" type="radio" value="3" /><label
+                                                for="star3"></label>
+                                                <input id="star2" name="rating" type="radio" value="2" /><label
+                                                for="star2"></label>
+                                                <input id="star1" name="rating" type="radio" value="1" /><label
+                                                for="star1"></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6">
+                                            <div class="form-group">
+                                                <input class="form-control" placeholder="Name *" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6">
+                                            <div class="form-group">
+                                                <input class="form-control" placeholder="Email *" type="email">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12">
+                                            <div class="form-group">
+                                                <textarea class="form-control" cols="30" placeholder="Your review"
+                                                          rows="6"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12">
+                                            <p class="comment-form-cookies-consent">
+                                                <input id="test1" type="checkbox">
+                                                <label for="test1">Save my name, email, and website in this browser for
+                                                    the next time I comment.</label>
+                                            </p>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12">
+                                            <button type="submit">Submit</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="products-area pt-100 pb-70 bg-f5f1ed">
+    <div class="container">
+        <div class="section-title">
+            <span class="sub-title">Our Shop</span>
+            <h2>Related Products</h2>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="details-products-box">
+                    <div class="products-image">
+                        <a href="#">
+                            <img alt="image" class="main-image" src="assets/img/products/img4.jpg">
+                        </a>
+                    </div>
+                    <div class="products-content">
+                        <h3><a routerLink="/details-products">Stop and Take a Second</a></h3>
+                        <div class="price">
+                            <span class="new-price">$150</span>
+                        </div>
+                        <div class="star-rating">
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                        </div>
+                        <a class="add-to-cart" routerLink="/cart">Thêm giỏ hàng</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="details-products-box">
+                    <div class="products-image">
+                        <a routerLink="/details-products">
+                            <img alt="image" class="main-image" src="assets/img/products/img5.jpg">
+                        </a>
+                    </div>
+                    <div class="products-content">
+                        <h3><a routerLink="/details-products">Real Life Fairytale</a></h3>
+                        <div class="price">
+                            <span class="new-price">$240</span>
+                        </div>
+                        <div class="star-rating">
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                        </div>
+                        <a class="add-to-cart" routerLink="/cart">Add to cart</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="details-products-box">
+                    <div class="products-image">
+                        <a routerLink="/details-products">
+                            <img alt="image" class="main-image" src="assets/img/products/img6.jpg">
+                        </a>
+                        <div class="new-tag">New!</div>
+                    </div>
+                    <div class="products-content">
+                        <h3><a routerLink="/details-products">Running From Me</a></h3>
+                        <div class="price">
+                            <span class="old-price">$150</span>
+                            <span class="new-price">$100</span>
+                        </div>
+                        <div class="star-rating">
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                            <i class='bx bxs-star'></i>
+                        </div>
+                        <a class="add-to-cart" routerLink="/cart">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

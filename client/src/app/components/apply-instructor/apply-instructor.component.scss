@@ -1,0 +1,142 @@
+.apply-instructor-image {
+    h2 {
+        margin-bottom: 18px;
+        font: {
+            size: 36px;
+            weight: 800;
+        };
+    }
+
+    img {
+        border-radius: 5px;
+    }
+}
+
+.apply-instructor-content {
+    background-color: #f8f9f8;
+    border-radius: 5px;
+    padding: 30px;
+
+    h3 {
+        margin-bottom: 13px;
+        font: {
+            size: 24px;
+            weight: 800;
+        };
+
+        &:not(:first-child) {
+            margin-top: 30px;
+        }
+    }
+}
+
+@media only screen and (max-width: 767px) {
+
+    .apply-instructor-image {
+        text-align: center;
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 25px;
+        }
+
+        img {
+            width: 100%;
+        }
+    }
+    .apply-instructor-content {
+        padding: 10px 20px 20px;
+        margin-top: 30px;
+
+        .nav-tabset {
+            margin-bottom: 30px;
+
+            .nav-tab {
+                margin: {
+                    right: 15px;
+                    top: 10px;
+                };
+
+                span {
+                    padding: 0 0 5px;
+                    font-size: 15px;
+                }
+            }
+        }
+
+        h3 {
+            font-size: 18px;
+        }
+    }
+
+}
+
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+
+    .apply-instructor-image {
+        h2 {
+            margin-bottom: 25px;
+            font-size: 30px;
+            text-align: center;
+        }
+
+        img {
+            width: 100%;
+        }
+    }
+    .apply-instructor-content {
+        padding: 25px;
+        margin-top: 30px;
+
+        .nav-tabset {
+            .nav-tab {
+                margin-right: 35px;
+
+                span {
+                    font-size: 17px;
+                }
+            }
+        }
+
+        h3 {
+            font-size: 20px;
+        }
+    }
+
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+
+    .apply-instructor-image {
+        h2 {
+            font-size: 30px;
+        }
+    }
+    .apply-instructor-content {
+        padding: 20px;
+
+        .nav {
+            .nav-item {
+                margin-right: 30px;
+
+                .nav-link {
+                    padding: 0 0 8px;
+                    font-size: 16px;
+                }
+            }
+        }
+
+        h3 {
+            font-size: 20px;
+        }
+    }
+
+}
+
+@media only screen and (min-width: 1200px) and (max-width: 1355px) {
+
+}
