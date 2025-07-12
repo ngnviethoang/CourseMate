@@ -1,13 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { NavigationCancel, NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs';
+import { filter, Observable } from 'rxjs';
+import { AuthService } from '@abp/ng.core';
+import { LoadingIndicatorService } from './services/loading-indicator.service';
 
 @Component({
     selector: 'app-root',
     template: `
-        <abp-loader-bar></abp-loader-bar>
-        <app-indicator-loading />
+        @if (loading$ | async) {
+            <div class="fixed h-screen w-screen z-9999 flex justify-center items-center bg-black bg-opacity-50">
+                <p-progress-spinner ariaLabel="loading" />
+            </div>
+        }
         <app-navbar *ngIf="!(location === '/coming-soon')"></app-navbar>
         <router-outlet></router-outlet>
         <app-footer *ngIf="!(location === '/coming-soon')"></app-footer>
@@ -24,8 +29,12 @@ import { filter } from 'rxjs';
 export class AppComponent implements OnInit {
     location: any;
     routerSubscription: any;
+    loading$: Observable<boolean>;
 
-    constructor(private router: Router){
+    constructor(
+        private loadingService: LoadingIndicatorService,
+        private router: Router) {
+        this.loading$ = this.loadingService.loading$;
     }
 
     ngOnInit() {
