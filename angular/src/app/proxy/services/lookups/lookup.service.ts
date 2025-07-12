@@ -37,18 +37,18 @@ export class LookupService {
     { apiName: this.apiName,...config });
   
 
-  getMaxSortNumberChapters = (courseId: string, config?: Partial<Rest.Config>) =>
+  getMaxPositionChapters = (courseId: string, config?: Partial<Rest.Config>) =>
     this.restService.request<any, number>({
       method: 'GET',
-      url: `/api/app/lookup/max-sort-number-chapters/${courseId}`,
+      url: `/api/app/lookup/max-position-chapters/${courseId}`,
     },
     { apiName: this.apiName,...config });
   
 
-  getMaxSortNumberLessons = (chapterId: string, config?: Partial<Rest.Config>) =>
+  getMaxPositionLessons = (chapterId: string, config?: Partial<Rest.Config>) =>
     this.restService.request<any, number>({
       method: 'GET',
-      url: `/api/app/lookup/max-sort-number-lessons/${chapterId}`,
+      url: `/api/app/lookup/max-position-lessons/${chapterId}`,
     },
     { apiName: this.apiName,...config });
 

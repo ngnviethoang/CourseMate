@@ -124,6 +124,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
         course.Currency = input.Currency;
         course.LevelType = input.LevelType;
         course.IsPublished = input.IsPublished;
+        course.CategoryId = input.CategoryId;
 
         await CourseRepo.UpdateAsync(course);
         return new CourseDto

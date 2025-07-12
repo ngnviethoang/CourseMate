@@ -5,7 +5,7 @@ const baseUrl = 'http://localhost:4200';
 const oAuthConfig = {
   issuer: 'https://localhost:44393/',
   redirectUri: baseUrl,
-  clientId: 'CourseMate_App',
+  clientId: 'CourseMate_AdminWeb',
   responseType: 'code',
   scope: 'offline_access CourseMate',
   requireHttps: true,

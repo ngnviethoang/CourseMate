@@ -22,6 +22,7 @@ import { providePrimeNG } from 'primeng/config';
 import Lara from '@primeng/themes/lara';
 import { definePreset } from '@primeng/themes';
 import { MessageService } from 'primeng/api';
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 const CourseMatePreset = definePreset(Lara, {
   semantic: {
@@ -50,7 +51,8 @@ const CourseMatePreset = definePreset(Lara, {
     ThemeSharedModule,
     CoreModule,
     ThemeLeptonXModule.forRoot(),
-    SideMenuLayoutModule.forRoot()
+    SideMenuLayoutModule.forRoot(),
+    ProgressSpinner
   ],
   providers: [APP_ROUTE_PROVIDER,
     provideAbpCore(

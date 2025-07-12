@@ -1,7 +1,6 @@
 ﻿using CourseMate.Services.Dtos.Lookups;
 using CourseMate.Shared.Constants;
 using Volo.Abp.Application.Dtos;
-using Volo.Abp.Domain.Repositories;
 
 namespace CourseMate.Services.Lookups;
 
@@ -71,22 +70,22 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
         return new PagedResultDto<LookupDto>(totalCount, items);
     }
 
-    public async Task<int> GetMaxSortNumberChaptersAsync(Guid courseId)
+    public async Task<int> GetMaxPositionChaptersAsync(Guid courseId)
     {
         IQueryable<int> query =
             from chapter in await ChapterRepo.GetQueryableAsync()
             where chapter.CourseId == courseId
-            select chapter.SortNumber;
+            select chapter.Position;
         List<int> sortNumber = await AsyncExecuter.ToListAsync(query);
         return sortNumber.Count != 0 ? sortNumber.Max() : 0;
     }
 
-    public async Task<int> GetMaxSortNumberLessonsAsync(Guid chapterId)
+    public async Task<int> GetMaxPositionLessonsAsync(Guid chapterId)
     {
         IQueryable<int> query =
             from lesson in await LessonRepo.GetQueryableAsync()
             where lesson.ChapterId == chapterId
-            select lesson.SortNumber;
+            select lesson.Position;
         List<int> sortNumber = await AsyncExecuter.ToListAsync(query);
         return sortNumber.Count != 0 ? sortNumber.Max() : 0;
     }

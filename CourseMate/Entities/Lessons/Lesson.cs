@@ -7,14 +7,14 @@ namespace CourseMate.Entities.Lessons;
 
 public class Lesson : FullAuditedEntity<Guid>
 {
-    public Lesson(Guid id, string title, string contentText, string videoFile, TimeSpan duration, Guid chapterId, int sortNumber) : base(id)
+    public Lesson(Guid id, string title, string contentText, string videoFile, TimeSpan duration, Guid chapterId, int position) : base(id)
     {
         Title = title;
         ContentText = contentText;
         VideoFile = videoFile;
         Duration = duration;
         ChapterId = chapterId;
-        SortNumber = sortNumber;
+        Position = position;
     }
 
     [MaxLength(1024)]
@@ -31,6 +31,6 @@ public class Lesson : FullAuditedEntity<Guid>
     public Guid ChapterId { get; set; }
     
     [Range(0, int.MaxValue)]
-    public int SortNumber { get; set; }
+    public int Position { get; set; }
 
 }

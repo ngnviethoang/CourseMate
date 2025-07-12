@@ -2,7 +2,6 @@
 using CourseMate.Permissions;
 using CourseMate.Services.Dtos.Storages;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.BlobStoring;
 using Volo.Abp.Content;
 

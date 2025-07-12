@@ -9,6 +9,6 @@ public interface ILookupAppService : IApplicationService
     Task<PagedResultDto<LookupDto>> GetCategoriesAsync(LookupRequestDto input);
     Task<PagedResultDto<LookupDto>> GetCoursesAsync(LookupRequestDto input);
     Task<PagedResultDto<LookupDto>> GetChaptersAsync(LookupRequestDto input);
-    Task<int> GetMaxSortNumberChaptersAsync(Guid courseId);
-    Task<int> GetMaxSortNumberLessonsAsync(Guid chapterId);
+    Task<int> GetMaxPositionChaptersAsync(Guid courseId);
+    Task<int> GetMaxPositionLessonsAsync(Guid chapterId);
 }

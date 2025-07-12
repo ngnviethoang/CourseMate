@@ -1,27 +1,29 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
-import { CourseRoutingModule } from './course-routing.module';
-import { CourseComponent } from './course.component';
+import { OrderRoutingModule } from './order-routing.module';
+import { OrderComponent } from './order.component';
 import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { Image } from 'primeng/image';
 import { FileUpload } from 'primeng/fileupload';
 import { Button } from 'primeng/button';
-import { NgOptimizedImage } from '@angular/common';
-import { Select } from 'primeng/select'; // add this line
+import { Editor } from 'primeng/editor';
+import { Message } from 'primeng/message';
+import { Toast } from 'primeng/toast'; // add this line
 
 @NgModule({
-  declarations: [CourseComponent],
+  declarations: [OrderComponent],
   imports: [
-    CourseRoutingModule,
+    OrderRoutingModule,
     SharedModule,
     NgbDatepickerModule,
     Image,
     FileUpload,
     Button,
-    NgOptimizedImage,
-    Select
+    Editor,
+    Message,
+    Toast
     // add this line
   ]
 })
-export class CourseModule {
+export class OrderModule {
 }

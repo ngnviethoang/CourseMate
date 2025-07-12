@@ -18,5 +18,5 @@ public class CreateUpdateLessonDto
     public Guid ChapterId { get; set; }
 
     [Range(0, int.MaxValue)]
-    public int SortNumber { get; set; }
+    public int Position { get; set; }
 }

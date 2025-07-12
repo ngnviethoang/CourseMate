@@ -87,6 +87,7 @@ public class Program
 
     private static bool IsMigrateDatabase(string[] args)
     {
+        // return true;
         return args.Any(x => x.Contains("--migrate-database", StringComparison.OrdinalIgnoreCase));
     }
 }

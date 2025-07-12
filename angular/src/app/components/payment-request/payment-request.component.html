@@ -3,14 +3,14 @@
     <div class="row mt-2">
       <div class="col col-md-6">
         <h5 class="card-title">
-          {{ chapter.title }} - {{ '::Menu:Lessons' | abpLocalization }}
+          {{ this.chapter.title }} - {{ '::Menu:Lessons' | abpLocalization }}
         </h5>
       </div>
       <div class="text-end col col-md-6">
 
         <div class="text-lg-end pt-2">
           <button *abpPermission="'CourseMate.Lessons.Create'" id="create" class="btn btn-primary" type="button"
-                  (click)="create()">
+                  (click)="this.create()">
             <i class="fa fa-plus me-1"></i>
             <span>{{ '::Create' | abpLocalization }}</span>
           </button>
@@ -19,7 +19,7 @@
     </div>
   </div>
   <div class="card-body">
-    <ngx-datatable [rows]="lessons.items" [count]="lessons.totalCount" [list]="list" default>
+    <ngx-datatable [rows]="this.lessons.items" [count]="this.lessons.totalCount" [list]="this.list" default>
       <ngx-datatable-column
         [name]="'::Actions' | abpLocalization"
         [maxWidth]="150"
@@ -36,10 +36,10 @@
               <i class="fa fa-cog me-1"></i>{{ '::Actions' | abpLocalization }}
             </button>
             <div ngbDropdownMenu>
-              <button *abpPermission="'CourseMate.Lessons.Edit'" ngbDropdownItem (click)="edit(row.id)">
+              <button *abpPermission="'CourseMate.Lessons.Edit'" ngbDropdownItem (click)="this.edit(row.id)">
                 {{ '::Edit' | abpLocalization }}
               </button>
-              <button *abpPermission="'CourseMate.Lessons.Delete'" ngbDropdownItem (click)="delete(row.id)">
+              <button *abpPermission="'CourseMate.Lessons.Delete'" ngbDropdownItem (click)="this.delete(row.id)">
                 {{ '::Delete' | abpLocalization }}
               </button>
             </div>
@@ -47,7 +47,7 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column [name]="'::Title' | abpLocalization" prop="title"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Position' | abpLocalization" prop="position"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::SortNumber' | abpLocalization" prop="position"></ngx-datatable-column>
       <ngx-datatable-column [name]="'::CreationTime' | abpLocalization" prop="creationTime">
         <ng-template let-row="row" ngx-datatable-cell-template>
           {{ row.creationTime | shortDateTime }}
@@ -64,22 +64,22 @@
 </div>
 
 <!-- Add the modal here -->
-<abp-modal [(visible)]="isModalOpen" [options]="{ fullscreen:true}">
+<abp-modal [(visible)]="this.isModalOpen" [options]="{ fullscreen:true}">
   <ng-template #abpHeader>
-    <h3>{{ (selectedLesson.id ? '::Edit' : '::Create') | abpLocalization }}</h3>
+    <h3>{{ (this.selectedLesson.id ? '::Edit' : '::Create') | abpLocalization }}</h3>
   </ng-template>
 
   <ng-template #abpBody>
-    <form [formGroup]="form" (ngSubmit)="save()">
-      <div class="row mt-2">
-        <div class="col-2">
-          <label for="position">Position</label><span class="text-danger">*</span>
-          <input type="number" id="position" class="form-control" formControlName="position" autofocus />
-        </div>
+    <form [formGroup]="this.form" (ngSubmit)="this.save()">
+      <div class="mt-2">
+        <label for="position">Sort number</label><span class="text-danger">*</span>
+        <input type="number" id="position" class="form-control" formControlName="position" />
+      </div>
 
+      <div class="row mt-2">
         <div class="col ">
           <label for="title">Title</label><span class="text-danger">*</span>
-          <input type="text" id="title" class="form-control" formControlName="title" />
+          <input type="text" id="title" class="form-control" formControlName="title" autofocus />
         </div>
       </div>
 
@@ -87,59 +87,47 @@
         <div class="col">
           <label for="contentText">Content</label>
           <p-editor id="contentText" formControlName="contentText" [style]="{ height: '320px' }"
-                    (invalid)="isInvalid('contentText')"
+                    (invalid)="this.isInvalid('contentText')"
                     [validateOnSubmit]="true">
-            @if (isInvalid('contentText')) {
+            @if (this.isInvalid('contentText')) {
               <p-message severity="error" size="small" variant="simple">Content is required.</p-message>
             }
           </p-editor>
         </div>
       </div>
 
-      @if (videoFileUrl === undefined || videoFileUrl === null || videoFileUrl === '') {
-        <div class="row mt-2">
-          <div class="col">
-            <label>Video</label>
-            <div class="flex gap-6 items-center justify-between">
-              <p-fileupload #fu mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="demo[]"
-                            accept="video/mp4" [maxFileSize]="maxFileSize"
-                            [fileLimit]="1"
-                            (onSelect)="onSelect($event)"
-                            [chooseButtonProps]="{ size: 'small', styleClass: 'p-1' }" />
-              <p-button label="Upload" (onClick)="onUpload()" severity="secondary" size="small" class="p-1"
-                        [disabled]="videoFile === null || videoFile === undefined" />
-            </div>
+      <div class="row mt-2">
+        <div class="col">
+          <label>Video</label>
+          <div class="flex gap-6 items-center justify-between">
+            <p-fileupload #fu mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="demo[]"
+                          accept="video/mp4" [maxFileSize]="maxFileSize"
+                          [fileLimit]="1"
+                          (onSelect)="this.onSelect($event)"
+                          [chooseButtonProps]="{ size: 'small', styleClass: 'p-1' }" />
+            <p-button label="Upload" (onClick)="this.onUpload()" severity="secondary" size="small" class="p-1"
+                      [disabled]="this.videoFile === null || this.videoFile === undefined" />
           </div>
         </div>
-      } @else {
-        <div class="row mt-1">
-          <div class="col flex flex-column justify-content-center">
-            <label>Video</label>
-            <div class="flex justify-center">
-              <div class="relative inline-block">
-                <video width="640" height="360"
-                       [src]="videoFileUrl"
-                       controls>
-                </video>
+      </div>
 
-                <p-button icon="pi pi-times" class="absolute top-2 right-2" [rounded]="true" [text]="true"
-                          severity="danger" (click)="onRemoveVideo()" />
-              </div>
-            </div>
-          </div>
+      <div class="row mt-1">
+        <div class="col d-flex justify-content-center">
+          <video width="640" height="360"
+                 [src]="this.videoFileUrl"
+                 controls>
+          </video>
         </div>
-      }
+      </div>
     </form>
   </ng-template>
 
   <ng-template #abpFooter>
-    <p-button (onClick)="generatePosition()">Generate last position</p-button>
+    <p-button (onClick)="this.generateSortNumber()">Generate sort number</p-button>
 
-    <p-button severity="secondary" (click)="onClickClose()">
-      {{ '::Close' | abpLocalization }}
-    </p-button>
+    <p-button severity="secondary" abpClose>{{ '::Close' | abpLocalization }}</p-button>
 
-    <p-button (click)="save()" [disabled]="form.invalid"><i
+    <p-button (click)="this.save()" [disabled]="this.form.invalid"><i
       class="fa fa-check mr-1"></i>{{ '::Save' | abpLocalization }}
     </p-button>
   </ng-template>

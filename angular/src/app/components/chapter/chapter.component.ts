@@ -58,7 +58,7 @@ export class ChapterComponent implements OnInit {
   create() {
     this.selectedChapter = {} as ChapterDto;
     this.buildForm();
-    this.generateSortNumber();
+    this.generatePosition();
     this.isModalOpen = true;
   }
 
@@ -81,7 +81,7 @@ export class ChapterComponent implements OnInit {
   buildForm() {
     this.form = this.fb.group({
       title: [this.selectedChapter.title || null, Validators.required],
-      sortNumber: [this.selectedChapter.sortNumber || 0, [Validators.required, Validators.min(0)]],
+      position: [this.selectedChapter.position || 0, [Validators.required, Validators.min(0)]],
       courseId: [this.selectedChapter.courseId || this.courseId, Validators.required]
     });
   }
@@ -106,11 +106,12 @@ export class ChapterComponent implements OnInit {
     await this.router.navigateByUrl(`/lessons?courseId=${this.courseId}&chapterId=${chapterId}`);
   }
 
-  generateSortNumber() {
-    this.lookupService.getMaxSortNumberChapters(this.courseId).subscribe(response => {
-      this.selectedChapter.sortNumber = response + 1;
-      this.form.controls['sortNumber'].setValue(response + 1);
-
-    });
+  generatePosition() {
+    this.lookupService
+      .getMaxPositionChapters(this.courseId)
+      .subscribe(response => {
+        this.selectedChapter.position = response + 1;
+        this.form.controls['position'].setValue(response + 1);
+      });
   }
 }

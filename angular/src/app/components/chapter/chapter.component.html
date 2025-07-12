@@ -3,14 +3,14 @@
     <div class="row">
       <div class="col col-md-6">
         <h5 class="card-title">
-          {{ this.course.title }} - {{ '::Menu:Chapters' | abpLocalization }}
+          {{ course.title }} - {{ '::Menu:Chapters' | abpLocalization }}
         </h5>
       </div>
       <div class="text-end col col-md-6">
 
         <div class="text-lg-end pt-2">
           <button *abpPermission="'CourseMate.Chapters.Create'" id="create" class="btn btn-primary" type="button"
-                  (click)="this.create()">
+                  (click)="create()">
             <i class="fa fa-plus me-1"></i>
             <span>{{ '::Create' | abpLocalization }}</span>
           </button>
@@ -36,14 +36,14 @@
               <i class="fa fa-cog me-1"></i>{{ '::Actions' | abpLocalization }}
             </button>
             <div ngbDropdownMenu>
-              <button *abpPermission="'CourseMate.Chapters.Edit'" ngbDropdownItem (click)="this.edit(row.id)">
+              <button *abpPermission="'CourseMate.Chapters.Edit'" ngbDropdownItem (click)="edit(row.id)">
                 {{ '::Edit' | abpLocalization }}
               </button>
-              <button *abpPermission="'CourseMate.Chapters.Delete'" ngbDropdownItem (click)="this.delete(row.id)">
+              <button *abpPermission="'CourseMate.Chapters.Delete'" ngbDropdownItem (click)="delete(row.id)">
                 {{ '::Delete' | abpLocalization }}
               </button>
               <button *abpPermission="'CourseMate.Lessons'" ngbDropdownItem
-                      (click)="this.onClickLessonManagement(row.id)">
+                      (click)="onClickLessonManagement(row.id)">
                 {{ '::Lessons' | abpLocalization }}
               </button>
             </div>
@@ -51,7 +51,7 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column [name]="'::Title' | abpLocalization" prop="title"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::SortNumber' | abpLocalization" prop="sortNumber"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Position' | abpLocalization" prop="position"></ngx-datatable-column>
       <ngx-datatable-column [name]="'::CreationTime' | abpLocalization" prop="creationTime">
         <ng-template let-row="row" ngx-datatable-cell-template>
           {{ row.creationTime | shortDateTime }}
@@ -74,10 +74,10 @@
   </ng-template>
 
   <ng-template #abpBody>
-    <form [formGroup]="form" (ngSubmit)="this.save()">
+    <form [formGroup]="form" (ngSubmit)="save()">
       <div class="mt-2">
-        <label for="sortNumber">Sort number</label><span class="text-danger">*</span>
-        <input type="number" id="sortNumber" class="form-control" formControlName="sortNumber" />
+        <label for="position">Position</label><span class="text-danger">*</span>
+        <input type="number" id="position" class="form-control" formControlName="position" />
       </div>
 
       <div class="mt-2">
@@ -88,11 +88,11 @@
   </ng-template>
 
   <ng-template #abpFooter>
-    <p-button (onClick)="this.generateSortNumber()">Generate sort number</p-button>
+    <p-button (onClick)="generatePosition()">Generate last position</p-button>
 
     <p-button severity="secondary" abpClose>{{ '::Close' | abpLocalization }}</p-button>
 
-    <p-button (click)="this.save()" [disabled]="this.form.invalid"><i
+    <p-button (click)="save()" [disabled]="form.invalid"><i
       class="fa fa-check mr-1"></i>{{ '::Save' | abpLocalization }}
     </p-button>
   </ng-template>

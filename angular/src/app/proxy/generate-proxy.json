@@ -2685,7 +2685,7 @@
                   }
                 },
                 {
-                  "name": "GetMaxSortNumberChaptersAsync",
+                  "name": "GetMaxPositionChaptersAsync",
                   "parametersOnMethod": [
                     {
                       "name": "courseId",
@@ -2702,7 +2702,7 @@
                   }
                 },
                 {
-                  "name": "GetMaxSortNumberLessonsAsync",
+                  "name": "GetMaxPositionLessonsAsync",
                   "parametersOnMethod": [
                     {
                       "name": "chapterId",
@@ -2905,11 +2905,11 @@
               "allowAnonymous": null,
               "implementFrom": "CourseMate.Services.Lookups.ILookupAppService"
             },
-            "GetMaxSortNumberChaptersAsyncByCourseId": {
-              "uniqueName": "GetMaxSortNumberChaptersAsyncByCourseId",
-              "name": "GetMaxSortNumberChaptersAsync",
+            "GetMaxPositionChaptersAsyncByCourseId": {
+              "uniqueName": "GetMaxPositionChaptersAsyncByCourseId",
+              "name": "GetMaxPositionChaptersAsync",
               "httpMethod": "GET",
-              "url": "api/app/lookup/max-sort-number-chapters/{courseId}",
+              "url": "api/app/lookup/max-position-chapters/{courseId}",
               "supportedVersions": [],
               "parametersOnMethod": [
                 {
@@ -2942,11 +2942,11 @@
               "allowAnonymous": null,
               "implementFrom": "CourseMate.Services.Lookups.ILookupAppService"
             },
-            "GetMaxSortNumberLessonsAsyncByChapterId": {
-              "uniqueName": "GetMaxSortNumberLessonsAsyncByChapterId",
-              "name": "GetMaxSortNumberLessonsAsync",
+            "GetMaxPositionLessonsAsyncByChapterId": {
+              "uniqueName": "GetMaxPositionLessonsAsyncByChapterId",
+              "name": "GetMaxPositionLessonsAsync",
               "httpMethod": "GET",
-              "url": "api/app/lookup/max-sort-number-lessons/{chapterId}",
+              "url": "api/app/lookup/max-position-lessons/{chapterId}",
               "supportedVersions": [],
               "parametersOnMethod": [
                 {
@@ -3015,9 +3015,9 @@
                   "parametersOnMethod": [
                     {
                       "name": "input",
-                      "typeAsString": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto, Volo.Abp.Ddd.Application.Contracts",
-                      "type": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
-                      "typeSimple": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
+                      "typeAsString": "CourseMate.Services.Dtos.GetListRequestDto, CourseMate",
+                      "type": "CourseMate.Services.Dtos.GetListRequestDto",
+                      "typeSimple": "CourseMate.Services.Dtos.GetListRequestDto",
                       "isOptional": false,
                       "defaultValue": null
                     }
@@ -3040,8 +3040,8 @@
                     }
                   ],
                   "returnValue": {
-                    "type": "CourseMate.Services.Dtos.Orders.OrderDto",
-                    "typeSimple": "CourseMate.Services.Dtos.Orders.OrderDto"
+                    "type": "CourseMate.Services.Dtos.ResultObjectDto",
+                    "typeSimple": "CourseMate.Services.Dtos.ResultObjectDto"
                   }
                 },
                 {
@@ -3125,7 +3125,7 @@
                 "typeSimple": "CourseMate.Services.Dtos.Orders.OrderDto"
               },
               "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<CourseMate.Services.Dtos.Orders.OrderDto,CourseMate.Services.Dtos.Orders.OrderDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
+              "implementFrom": "CourseMate.Services.Orders.IOrderAppService"
             },
             "GetListAsyncByInput": {
               "uniqueName": "GetListAsyncByInput",
@@ -3136,9 +3136,9 @@
               "parametersOnMethod": [
                 {
                   "name": "input",
-                  "typeAsString": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto, Volo.Abp.Ddd.Application.Contracts",
-                  "type": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
-                  "typeSimple": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
+                  "typeAsString": "CourseMate.Services.Dtos.GetListRequestDto, CourseMate",
+                  "type": "CourseMate.Services.Dtos.GetListRequestDto",
+                  "typeSimple": "CourseMate.Services.Dtos.GetListRequestDto",
                   "isOptional": false,
                   "defaultValue": null
                 }
@@ -3160,8 +3160,8 @@
                   "nameOnMethod": "input",
                   "name": "SkipCount",
                   "jsonName": null,
-                  "type": "System.Int32",
-                  "typeSimple": "number",
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
                   "isOptional": false,
                   "defaultValue": null,
                   "constraintTypes": null,
@@ -3172,8 +3172,8 @@
                   "nameOnMethod": "input",
                   "name": "MaxResultCount",
                   "jsonName": null,
-                  "type": "System.Int32",
-                  "typeSimple": "number",
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
                   "isOptional": false,
                   "defaultValue": null,
                   "constraintTypes": null,
@@ -3186,7 +3186,7 @@
                 "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Orders.OrderDto>"
               },
               "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<CourseMate.Services.Dtos.Orders.OrderDto,CourseMate.Services.Dtos.Orders.OrderDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
+              "implementFrom": "CourseMate.Services.Orders.IOrderAppService"
             },
             "CreateAsyncByInput": {
               "uniqueName": "CreateAsyncByInput",
@@ -3219,11 +3219,11 @@
                 }
               ],
               "returnValue": {
-                "type": "CourseMate.Services.Dtos.Orders.OrderDto",
-                "typeSimple": "CourseMate.Services.Dtos.Orders.OrderDto"
+                "type": "CourseMate.Services.Dtos.ResultObjectDto",
+                "typeSimple": "CourseMate.Services.Dtos.ResultObjectDto"
               },
               "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.ICreateAppService<CourseMate.Services.Dtos.Orders.OrderDto,CourseMate.Services.Dtos.Orders.CreateUpdateOrderDto>"
+              "implementFrom": "CourseMate.Services.Orders.IOrderAppService"
             },
             "UpdateAsyncByIdAndInput": {
               "uniqueName": "UpdateAsyncByIdAndInput",
@@ -3280,7 +3280,7 @@
                 "typeSimple": "CourseMate.Services.Dtos.Orders.OrderDto"
               },
               "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IUpdateAppService<CourseMate.Services.Dtos.Orders.OrderDto,System.Guid,CourseMate.Services.Dtos.Orders.CreateUpdateOrderDto>"
+              "implementFrom": "CourseMate.Services.Orders.IOrderAppService"
             },
             "DeleteAsyncById": {
               "uniqueName": "DeleteAsyncById",
@@ -3317,7 +3317,7 @@
                 "typeSimple": "System.Void"
               },
               "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IDeleteAppService<System.Guid>"
+              "implementFrom": "CourseMate.Services.Orders.IOrderAppService"
             }
           }
         },

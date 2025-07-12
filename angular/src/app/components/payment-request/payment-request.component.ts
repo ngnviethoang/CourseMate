@@ -19,10 +19,10 @@ import { ChapterService } from '../../proxy/services/chapters';
 @Component({
   standalone: false,
   selector: 'app-course',
-  templateUrl: './lesson.component.html',
+  templateUrl: './payment-request.component.html',
   providers: [ListService, { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }]
 })
-export class LessonComponent implements OnInit {
+export class PaymentRequestComponent implements OnInit {
   lessons = { items: [], totalCount: 0 } as PagedResultDto<LessonDto>;
   chapter = {} as ChapterDto;
   selectedLesson = {} as LessonDto;
@@ -31,7 +31,6 @@ export class LessonComponent implements OnInit {
   categories: LookupDto[] = [];
   videoFile: File;
   videoFileUrl: string;
-  prevVideoFile: string;
   private chapterId: string;
   maxFileSize = 10 * 1024 * 1024 * 1024; // 10Gb
 
@@ -56,21 +55,17 @@ export class LessonComponent implements OnInit {
       this.router.navigateByUrl(`/chapters?courseId=${courseId}`);
     }
 
-    this.chapterService
-      .get(this.chapterId)
-      .subscribe(response => {
-        this.chapter = response;
-      }, _ => {
-        this.router.navigateByUrl(`/chapters?courseId=${courseId}`);
-      });
+    this.chapterService.get(this.chapterId).subscribe(response => {
+      this.chapter = response;
+    }, _ => {
+      this.router.navigateByUrl(`/chapters?courseId=${courseId}`);
+    });
 
     const lessonStreamCreator = (query) => this.lessonService.getList(query);
 
-    this.list
-      .hookToQuery(lessonStreamCreator)
-      .subscribe((response) => {
-        this.lessons = response;
-      });
+    this.list.hookToQuery(lessonStreamCreator).subscribe((response) => {
+      this.lessons = response;
+    });
 
     const courseStreamCreator = (query) => this.lessonService.getList(query);
 
@@ -90,7 +85,6 @@ export class LessonComponent implements OnInit {
   create() {
     this.selectedLesson = {} as LessonDto;
     this.buildForm();
-    this.generatePosition();
     this.isModalOpen = true;
   }
 
@@ -98,11 +92,7 @@ export class LessonComponent implements OnInit {
     this.lessonService.get(id).subscribe((repsonse) => {
       this.selectedLesson = repsonse;
       this.buildForm();
-      if (repsonse.videoFile !== null && repsonse.videoFile !== '') {
-        this.videoFileUrl = `${StorageConstants.VIDEO_API}?fileName=${repsonse.videoFile}`;
-      } else {
-        this.videoFileUrl = null;
-      }
+      this.videoFileUrl = `${StorageConstants.VIDEO_API}?fileName=${repsonse.videoFile}`;
       this.isModalOpen = true;
     });
   }
@@ -135,7 +125,6 @@ export class LessonComponent implements OnInit {
       : this.lessonService.create(this.form.value);
 
     request.subscribe(() => {
-      this.handleDeleteVideo();
       this.isModalOpen = false;
       this.form.reset();
       this.list.get();
@@ -150,7 +139,7 @@ export class LessonComponent implements OnInit {
     this.videoFile = file;
   }
 
-  onUpload() {
+  async onUpload() {
     try {
       if (this.videoFile === null || this.videoFile === undefined) {
         return;
@@ -183,33 +172,10 @@ export class LessonComponent implements OnInit {
     return control?.invalid && (control.touched);
   }
 
-  generatePosition() {
-    this.lookupService
-      .getMaxPositionLessons(this.chapterId)
-      .subscribe(response => {
-        this.selectedLesson.position = response + 1;
-        this.form.controls['position'].setValue(response + 1);
-      });
-  }
-
-  onRemoveVideo() {
-    this.prevVideoFile = this.selectedLesson.videoFile;
-    this.videoFile = null;
-    this.videoFileUrl = null;
-    this.form.controls['videoFile'].setValue('');
-  }
-
-  handleDeleteVideo() {
-    if (this.selectedLesson.id === undefined ||
-      this.selectedLesson.id === null ||
-      this.selectedLesson.videoFile !== this.prevVideoFile) {
-      this.storageService.delete(this.prevVideoFile).subscribe(response => {
-      });
-    }
-  }
-
-  onClickClose() {
-    this.handleDeleteVideo();
-    this.isModalOpen = false;
+  generateSortNumber() {
+    this.lookupService.getMaxPositionLessons(this.chapterId).subscribe(response => {
+      this.selectedLesson.position = response + 1;
+      this.form.controls['position'].setValue(response + 1);
+    });
   }
 }

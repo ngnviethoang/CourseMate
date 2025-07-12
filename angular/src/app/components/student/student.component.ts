@@ -17,13 +17,12 @@ import { StorageConstants } from '../../shared/storage-constant';
 @Component({
   standalone: false,
   selector: 'app-course',
-  templateUrl: './course.component.html',
+  templateUrl: './student.component.html',
   providers: [ListService, { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }]
 })
-export class CourseComponent implements OnInit {
+export class StudentComponent implements OnInit {
   courses = { items: [], totalCount: 0 } as PagedResultDto<CourseDto>;
-  selectedCourse = {} as CourseDto;
-
+  selectedCourse = {} as CourseDto; // declare selectedBook
   form: FormGroup;
   currencyTypes = currencyTypeOptions;
   levelTypes = levelTypeOptions;
@@ -31,7 +30,6 @@ export class CourseComponent implements OnInit {
   categories: LookupDto[] = [];
   thumbnailFile: File;
   thumbnailUrl: string;
-  prevThumbnailFile: string;
 
   constructor(
     public readonly list: ListService,
@@ -62,27 +60,18 @@ export class CourseComponent implements OnInit {
   }
 
   create() {
-    this.selectedCourse = {} as CourseDto;
+    this.selectedCourse = {} as CourseDto; // reset the selected book
     this.buildForm();
-    this.thumbnailFile = null;
-    this.thumbnailUrl = null;
-    this.prevThumbnailFile = null;
     this.isModalOpen = true;
   }
 
   edit(id: string) {
-    this.courseService
-      .get(id)
-      .subscribe(response => {
-        this.selectedCourse = response;
-        this.buildForm();
-        if (response.thumbnailFile !== null && response.thumbnailFile !== '') {
-          this.thumbnailUrl = `${StorageConstants.IMAGE_API}?fileName=${response.thumbnailFile}`;
-        } else {
-          this.thumbnailUrl = '';
-        }
-        this.isModalOpen = true;
-      });
+    this.courseService.get(id).subscribe((response) => {
+      this.selectedCourse = response;
+      this.buildForm();
+      this.isModalOpen = true;
+      this.thumbnailUrl = `${StorageConstants.IMAGE_API}?fileName=${response.thumbnailFile}`;
+    });
   }
 
   delete(id: string) {
@@ -102,7 +91,7 @@ export class CourseComponent implements OnInit {
       currency: [this.selectedCourse.currency || CurrencyType.Usd, [Validators.required]],
       levelType: [this.selectedCourse.levelType || LevelType.Beginner, [Validators.required]],
       isPublished: [this.selectedCourse.isPublished || true, [Validators.required]],
-      categoryId: [this.selectedCourse.categoryId || '', [Validators.required, Validators.maxLength(100)]]
+      categoryId: [this.selectedCourse.categoryId || '', [Validators.required, Validators.maxLength(100)]],
     });
   }
 
@@ -116,7 +105,6 @@ export class CourseComponent implements OnInit {
       : this.courseService.create(this.form.value);
 
     request.subscribe(() => {
-      this.handleDeleteThumbnail();
       this.isModalOpen = false;
       this.form.reset();
       this.list.get();
@@ -131,20 +119,18 @@ export class CourseComponent implements OnInit {
     this.thumbnailFile = file;
   }
 
-  onUpload() {
+  async onUpload() {
     try {
       if (this.thumbnailFile === null || this.thumbnailFile === undefined) {
         return;
       }
       const formData = new FormData();
       formData.append('streamContent', this.thumbnailFile);
-      this.storageService
-        .uploadImage(formData)
-        .subscribe(response => {
-          this.thumbnailUrl = `${StorageConstants.IMAGE_API}?fileName=${response.name}`;
-          this.selectedCourse.thumbnailFile = response.name;
-          this.form.controls['thumbnailFile'].setValue(response.name);
-        });
+      this.storageService.uploadImage(formData).subscribe(response => {
+        this.thumbnailUrl = `${StorageConstants.IMAGE_API}?fileName=${response.name}`;
+        this.selectedCourse.thumbnailFile = response.name;
+        this.form.controls['thumbnailFile'].setValue(response.name);
+      });
 
       this.messageService.add({
         severity: 'info',
@@ -163,31 +149,5 @@ export class CourseComponent implements OnInit {
 
   async onClickChapterManagement(courseId: string) {
     await this.router.navigateByUrl(`/chapters?courseId=${courseId}`);
-  }
-
-  async onClickStudentManagement(courseId: string) {
-    await this.router.navigateByUrl(`/students?courseId=${courseId}`);
-  }
-
-  onRemoveThumbnail() {
-    this.prevThumbnailFile = this.selectedCourse.thumbnailFile;
-
-    this.thumbnailFile = null;
-    this.thumbnailUrl = null;
-    this.form.controls['thumbnailFile'].setValue('');
-  }
-
-  handleDeleteThumbnail() {
-    if (this.selectedCourse.id === undefined ||
-      this.selectedCourse.id === null ||
-      this.selectedCourse.thumbnailFile !== this.prevThumbnailFile) {
-      this.storageService.delete(this.prevThumbnailFile).subscribe(response => {
-      });
-    }
-  }
-
-  onClickClose() {
-    this.handleDeleteThumbnail();
-    this.isModalOpen = false;
   }
 }

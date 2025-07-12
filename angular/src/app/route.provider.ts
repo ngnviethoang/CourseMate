@@ -32,15 +32,24 @@ function configureRoutes() {
       requiredPolicy: 'CourseMate.Courses'
     },
     {
-      path: '/orders',
-      name: '::Menu:Orders',
-      iconClass: 'fas fa-shopping-cart',
+      path: '/students',
+      name: '::Menu:Students',
+      iconClass: 'fas fa-users',
+      requiredPolicy: 'CourseMate.Students',
       layout: eLayoutType.application
     },
     {
-      path: '/paymentRequests',
+      path: '/orders',
+      name: '::Menu:Orders',
+      iconClass: 'fas fa-shopping-cart',
+      requiredPolicy: 'CourseMate.Orders',
+      layout: eLayoutType.application
+    },
+    {
+      path: '/payment-requests',
       name: '::Menu:PaymentRequest',
       iconClass: 'fas fa-credit-card',
+      requiredPolicy: 'CourseMate.PaymentRequests',
       layout: eLayoutType.application
     }
   ]);

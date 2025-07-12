@@ -59,6 +59,11 @@ public class CourseMatePermissionDefinitionProvider : PermissionDefinitionProvid
         filesPermission.AddChild(CourseMatePermissions.Files.Create, L("Permission:Files.Create"));
         filesPermission.AddChild(CourseMatePermissions.Files.Edit, L("Permission:Files.Edit"));
         filesPermission.AddChild(CourseMatePermissions.Files.Delete, L("Permission:Files.Delete"));
+
+        PermissionDefinition studentsPermission = myGroup.AddPermission(CourseMatePermissions.Students.Default, L("Permission:Students"));
+        studentsPermission.AddChild(CourseMatePermissions.Students.Create, L("Permission:Students.Create"));
+        studentsPermission.AddChild(CourseMatePermissions.Students.Edit, L("Permission:Students.Edit"));
+        studentsPermission.AddChild(CourseMatePermissions.Students.Delete, L("Permission:Students.Delete"));
     }
 
     private static LocalizableString L(string name)

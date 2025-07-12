@@ -6,7 +6,7 @@ export interface CreateUpdateLessonDto {
   videoFile?: string;
   duration?: string;
   chapterId?: string;
-  sortNumber: number;
+  position: number;
 }
 
 export interface LessonDto extends AuditedEntityDto<string> {
@@ -15,5 +15,5 @@ export interface LessonDto extends AuditedEntityDto<string> {
   videoFile?: string;
   duration?: string;
   chapterId?: string;
-  sortNumber: number;
+  position: number;
 }

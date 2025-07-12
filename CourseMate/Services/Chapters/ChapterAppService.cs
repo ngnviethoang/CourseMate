@@ -48,7 +48,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
                 Title = chapter.Title,
                 CreationTime = chapter.CreationTime,
                 CreatorId = chapter.CreatorId,
-                SortNumber = chapter.SortNumber,
+                Position = chapter.Position,
                 LastModificationTime = chapter.LastModificationTime,
                 LastModifierId = chapter.LastModifierId,
                 CourseId = chapter.CourseId,
@@ -79,15 +79,15 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
             throw new UserFriendlyException("Duplicate chapter name");
         }
 
-        bool isDuplicateSortNumber = await ChapterRepo.AnyAsync(i => i.SortNumber == input.SortNumber);
-        if (input.SortNumber != 0 && isDuplicateSortNumber)
+        bool isDuplicateSortNumber = await ChapterRepo.AnyAsync(i => i.Position == input.Position);
+        if (input.Position != 0 && isDuplicateSortNumber)
         {
             throw new UserFriendlyException("Duplicate chapter sort number");
         }
 
         await CourseRepo.EnsureExistsAsync(input.CourseId);
 
-        Chapter chapter = new(GuidGenerator.Create(), input.Title, input.CourseId, input.SortNumber);
+        Chapter chapter = new(GuidGenerator.Create(), input.Title, input.CourseId, input.Position);
         await ChapterRepo.InsertAsync(chapter);
         return new ResultObjectDto(chapter.Id);
     }
@@ -101,8 +101,8 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
             throw new UserFriendlyException("Duplicate chapter name");
         }
 
-        bool isDuplicateSortNumber = await ChapterRepo.AnyAsync(i => i.SortNumber == input.SortNumber && i.Id != id);
-        if (input.SortNumber != 0 && isDuplicateSortNumber)
+        bool isDuplicateSortNumber = await ChapterRepo.AnyAsync(i => i.Position == input.Position && i.Id != id);
+        if (input.Position != 0 && isDuplicateSortNumber)
         {
             throw new UserFriendlyException("Duplicate chapter sort number");
         }
@@ -112,7 +112,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
 
         chapter.Title = input.Title;
         chapter.CourseId = input.CourseId;
-        chapter.SortNumber = input.SortNumber;
+        chapter.Position = input.Position;
 
         await ChapterRepo.UpdateAsync(chapter);
         return new ChapterDto
@@ -121,7 +121,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
             Title = chapter.Title,
             CreationTime = chapter.CreationTime,
             CreatorId = chapter.CreatorId,
-            SortNumber = chapter.SortNumber,
+            Position = chapter.Position,
             LastModificationTime = chapter.LastModificationTime,
             LastModifierId = chapter.LastModifierId
         };

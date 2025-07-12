@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 using OpenIddict.Abstractions;
 using Volo.Abp;
 using Volo.Abp.Authorization.Permissions;
@@ -61,42 +60,67 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
 
     private async Task CreateApplicationsAsync()
     {
-        List<string> commonScopes = new()
-        {
+        List<string> commonScopes =
+        [
             OpenIddictConstants.Permissions.Scopes.Address,
             OpenIddictConstants.Permissions.Scopes.Email,
             OpenIddictConstants.Permissions.Scopes.Phone,
             OpenIddictConstants.Permissions.Scopes.Profile,
             OpenIddictConstants.Permissions.Scopes.Roles,
             "CourseMate"
-        };
+        ];
 
         IConfigurationSection configurationSection = _configuration.GetSection("OpenIddict:Applications");
 
-        // Angular Client
-        string? consoleAndAngularClientId = configurationSection["CourseMate_App:ClientId"];
-        if (!consoleAndAngularClientId.IsNullOrWhiteSpace())
+        // Angular Admin Web
+        string? adminWebClientId = configurationSection["CourseMate_AdminWeb:ClientId"];
+        if (!adminWebClientId.IsNullOrWhiteSpace())
         {
-            string? webClientRootUrl = configurationSection["CourseMate_App:RootUrl"]?.TrimEnd('/');
+            string adminWebRootUrl = configurationSection["CourseMate_AdminWeb:RootUrl"]!.TrimEnd('/');
             await CreateApplicationAsync(
                 OpenIddictConstants.ApplicationTypes.Web,
-                consoleAndAngularClientId,
+                adminWebClientId,
                 OpenIddictConstants.ClientTypes.Public,
                 OpenIddictConstants.ConsentTypes.Implicit,
-                "Console Test / Angular Application",
+                "Admin Web",
                 null,
-                new List<string>
-                {
+                [
                     OpenIddictConstants.GrantTypes.AuthorizationCode,
                     OpenIddictConstants.GrantTypes.Password,
                     OpenIddictConstants.GrantTypes.ClientCredentials,
                     OpenIddictConstants.GrantTypes.RefreshToken,
                     "LinkLogin",
                     "Impersonation"
-                },
+                ],
                 commonScopes,
-                new List<string> { webClientRootUrl },
-                new List<string> { webClientRootUrl }
+                [adminWebRootUrl],
+                [adminWebRootUrl]
+            );
+        }
+
+        // Angular client Web
+        string? clientWebClientId = configurationSection["CourseMate_ClientWeb:ClientId"];
+        if (!clientWebClientId.IsNullOrWhiteSpace())
+        {
+            string webClientRootUrl = configurationSection["CourseMate_ClientWeb:RootUrl"]!.TrimEnd('/');
+            await CreateApplicationAsync(
+                OpenIddictConstants.ApplicationTypes.Web,
+                clientWebClientId,
+                OpenIddictConstants.ClientTypes.Public,
+                OpenIddictConstants.ConsentTypes.Implicit,
+                "Client Web",
+                null,
+                [
+                    OpenIddictConstants.GrantTypes.AuthorizationCode,
+                    OpenIddictConstants.GrantTypes.Password,
+                    OpenIddictConstants.GrantTypes.ClientCredentials,
+                    OpenIddictConstants.GrantTypes.RefreshToken,
+                    "LinkLogin",
+                    "Impersonation"
+                ],
+                commonScopes,
+                [webClientRootUrl],
+                [webClientRootUrl]
             );
         }
 
@@ -104,7 +128,7 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
         string? swaggerClientId = configurationSection["CourseMate_Swagger:ClientId"];
         if (!swaggerClientId.IsNullOrWhiteSpace())
         {
-            string swaggerRootUrl = configurationSection["CourseMate_Swagger:RootUrl"].TrimEnd('/');
+            string swaggerRootUrl = configurationSection["CourseMate_Swagger:RootUrl"]?.TrimEnd('/')!;
 
             await CreateApplicationAsync(
                 OpenIddictConstants.ApplicationTypes.Web,
@@ -113,28 +137,25 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 OpenIddictConstants.ConsentTypes.Implicit,
                 "Swagger Application",
                 null,
-                new List<string>
-                {
-                    OpenIddictConstants.GrantTypes.AuthorizationCode
-                },
+                [OpenIddictConstants.GrantTypes.AuthorizationCode],
                 commonScopes,
-                new List<string> { $"{swaggerRootUrl}/swagger/oauth2-redirect.html" }
+                [$"{swaggerRootUrl}/swagger/oauth2-redirect.html"]
             );
         }
     }
 
     private async Task CreateApplicationAsync(
-        [NotNull] string applicationType,
-        [NotNull] string name,
-        [NotNull] string type,
-        [NotNull] string consentType,
+        string applicationType,
+        string name,
+        string type,
+        string consentType,
         string displayName,
-        string secret,
+        string? secret,
         List<string> grantTypes,
         List<string> scopes,
         List<string>? redirectUris = null,
         List<string>? postLogoutRedirectUris = null,
-        List<string> permissions = null)
+        List<string>? permissions = null)
     {
         if (!string.IsNullOrEmpty(secret) && string.Equals(type, OpenIddictConstants.ClientTypes.Public, StringComparison.OrdinalIgnoreCase))
         {
@@ -184,15 +205,15 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 application.Permissions.Add(OpenIddictConstants.Permissions.Endpoints.EndSession);
             }
 
-            string[] buildInGrantTypes = new[]
-            {
+            string[] buildInGrantTypes =
+            [
                 OpenIddictConstants.GrantTypes.Implicit,
                 OpenIddictConstants.GrantTypes.Password,
                 OpenIddictConstants.GrantTypes.AuthorizationCode,
                 OpenIddictConstants.GrantTypes.ClientCredentials,
                 OpenIddictConstants.GrantTypes.DeviceCode,
                 OpenIddictConstants.GrantTypes.RefreshToken
-            };
+            ];
 
             foreach (string grantType in grantTypes)
             {
@@ -260,14 +281,14 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 }
             }
 
-            string[] buildInScopes = new[]
-            {
+            string[] buildInScopes =
+            [
                 OpenIddictConstants.Permissions.Scopes.Address,
                 OpenIddictConstants.Permissions.Scopes.Email,
                 OpenIddictConstants.Permissions.Scopes.Phone,
                 OpenIddictConstants.Permissions.Scopes.Profile,
                 OpenIddictConstants.Permissions.Scopes.Roles
-            };
+            ];
 
             foreach (string scope in scopes)
             {
