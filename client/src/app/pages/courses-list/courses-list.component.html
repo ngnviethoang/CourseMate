@@ -1,0 +1,88 @@
+<div class="page-title-area">
+    <div class="container">
+        <div class="page-title-content">
+            <ul>
+                <li><a routerLink="/">Home</a></li>
+                <li>CategoryName</li>
+            </ul>
+            <h2>CategoryName</h2>
+        </div>
+    </div>
+    <div class="shape9"><img alt="image" src="https://angular.envytheme.com/odemy-ng/assets/img/shape8.svg" /></div>
+</div>
+
+<app-hdnx-loading [show]="isLoading">
+    <div class="courses-area pt-50 pb-100">
+        <div class="container pt-4">
+            <div class="odemy-grid-sorting row align-items-center">
+                <div class="col-lg-6 col-md-6 result-count">
+                    <p>We found <span class="count">{{ listCourses.length }}</span> course for your</p>
+                </div>
+                <div class="col-lg-6 col-md-6 ordering">
+                    <div class="select-box">
+                        <label>Sort By:</label>
+                        <select>
+                            <option>Default</option>
+                            <option>Popularity</option>
+                            <option>Latest</option>
+                            <option>Price: low to high</option>
+                            <option>Price: high to low</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div *ngFor="let item of listCourses" class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="single-courses-box">
+                        <div class="courses-image">
+                            <a class="d-block image" routerLink="/detail-courses/{{item.id}}">
+                                <img alt="image" src="{{item.pictureUrl}}" />
+                            </a>
+                            <a class="fav" routerLink="/"><i class="flaticon-heart"></i></a>
+                            <div [hidden]="!item.isDiscount"
+                                 class="price shadow">{{ item.isDiscount == true ? (item.priceOfDiscount| currency) : (item.priceOfCourse | currency) }}
+                            </div>
+                        </div>
+                        <div class="courses-content">
+                            <div class="course-author d-flex align-items-center">
+                                <img alt="image"
+                                     class="rounded-circle"
+                                     src="https://angular.envytheme.com/odemy-ng/assets/img/user1.jpg" />
+                                <span>Alex Morgan</span>
+                            </div>
+                            <h3>
+                                <a routerLink="/detail-courses/{{item.id}}">{{ item.title }}</a>
+                            </h3>
+                            <p class="truncated-content">
+                                {{ item.shortDescription }}
+                            </p>
+                            <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                <li><i class="bx bx-money"></i><span
+                                    class="ps-2">{{ item.isDiscount == true ? (item.priceOfDiscount | currency) : (item.priceOfCourse | currency) }}</span>
+                                </li>
+                                <li>
+                                    <del><i class="bx bx-money"></i><span
+                                        class="ps-2">{{ item.isDiscount == true ? (item.priceOfCourse| currency) : (item.priceOfDiscount | currency) }}</span>
+                                    </del>
+                                </li>
+                            </ul>
+                            <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                <li><i class="flaticon-agenda"></i> {{ item.totalChapter }} Lessons</li>
+                                <li><i class="flaticon-people"></i> {{ item.totalVoteOfCourse }} Students</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 col-md-12">
+                    <div class="pagination-area text-center">
+                        <pagination (pagrChanged)="pageChanged($event)" [itemsPerPage]="10"
+                                    [totalItems]="listCourses?.length"
+                                    class="pagination-wrap hstack justify-content-center gap-2" nextText="Next Page"
+                                    previousText="Previous Page"></pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-hdnx-loading>

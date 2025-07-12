@@ -1,0 +1,147 @@
+<div class="profile-container">
+    <div class="profile-header">
+        <h2>Thông tin cá nhân</h2>
+        <nav class="breadcrumb">
+            <a routerLink="/">Trang chủ</a>
+            <span> / </span>
+            <span>Hồ sơ cá nhân</span>
+        </nav>
+    </div>
+
+    <div class="profile-content">
+        <div class="sidebar">
+            <div class="user-card">
+                <div class="avatar-container">
+                    <img [src]="student?.imageUrl || 'assets/images/default-avatar.png'" alt="Avatar" class="avatar">
+                </div>
+                <h3>{{ student?.name || 'Người dùng' }}</h3>
+                <p>{{ student?.email || 'email@example.com' }}</p>
+            </div>
+
+            <nav class="profile-menu">
+                <button (click)="switchTab('profile')" [class.active]="activeTab === 'profile'">
+                    <i class="icon-user"></i> Thông tin cá nhân
+                </button>
+                <button (click)="switchTab('password')" [class.active]="activeTab === 'password'">
+                    <i class="icon-lock"></i> Đổi mật khẩu
+                </button>
+                <button (click)="switchTab('courses')" [class.active]="activeTab === 'courses'">
+                    <i class="icon-book"></i> Khóa học của tôi
+                </button>
+            </nav>
+        </div>
+
+        <div class="main-content">
+            <!-- Thông tin cá nhân -->
+            <div *ngIf="activeTab === 'profile'" class="tab-content">
+                <h3>Cập nhật thông tin</h3>
+
+                <form [formGroup]="profileForm">
+                    <div class="form-group">
+                        <label>Họ và tên</label>
+                        <input type="text" formControlName="name" class="form-control">
+                        <div *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched" class="error-message">
+                            Vui lòng nhập họ tên
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" formControlName="email" class="form-control" [readonly]="true">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Số điện thoại</label>
+                        <input type="tel" formControlName="phone" class="form-control">
+                        <div *ngIf="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched" class="error-message">
+                            Số điện thoại không hợp lệ
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Giới tính</label>
+                        <select formControlName="gender" class="form-control">
+                            <option *ngFor="let gender of genders" [value]="gender.id">{{ gender.name }}</option>
+                        </select>
+                    </div>
+
+                    <button (click)="updateProfile()" class="btn-save" [disabled]="isLoading">
+                        <span *ngIf="!isLoading">Lưu thay đổi</span>
+                        <span *ngIf="isLoading">Đang xử lý...</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Đổi mật khẩu -->
+            <div *ngIf="activeTab === 'password'" class="tab-content">
+                <h3>Đổi mật khẩu</h3>
+
+                <form [formGroup]="passwordForm">
+                    <div class="form-group">
+                        <label>Mật khẩu hiện tại</label>
+                        <input type="password" formControlName="currentPassword" class="form-control">
+                        <div *ngIf="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched"
+                             class="error-message">
+                            Vui lòng nhập mật khẩu hiện tại
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mật khẩu mới</label>
+                        <input type="password" formControlName="newPassword" class="form-control">
+                        <div *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched"
+                             class="error-message">
+                            Mật khẩu phải có ít nhất 6 ký tự
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Xác nhận mật khẩu</label>
+                        <input type="password" formControlName="confirmPassword" class="form-control">
+                        <div *ngIf="passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched"
+                             class="error-message">
+                            Mật khẩu không khớp
+                        </div>
+                    </div>
+
+                    <button (click)="changePassword()" class="btn-save" [disabled]="isLoading">
+                        <span *ngIf="!isLoading">Đổi mật khẩu</span>
+                        <span *ngIf="isLoading">Đang xử lý...</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Khóa học đã đăng ký -->
+            <div *ngIf="activeTab === 'courses'" class="tab-content">
+                <h3>Khóa học của tôi</h3>
+
+                <div *ngIf="isLoading" class="loading-courses">
+                    <div class="spinner"></div>
+                    <p>Đang tải danh sách khóa học...</p>
+                </div>
+
+                <div *ngIf="!isLoading && registeredCourses.length === 0" class="no-courses">
+                    <p>Bạn chưa đăng ký khóa học nào.</p>
+                    <a routerLink="/courses" class="btn-explore">Khám phá khóa học</a>
+                </div>
+
+                <div *ngIf="!isLoading && registeredCourses.length > 0" class="course-list">
+                    <div *ngFor="let course of registeredCourses" class="course-card">
+                        <div class="course-info">
+                            <h4>{{ course.name }}</h4>
+                            <p>{{ course.description }}</p>
+                            <div class="course-meta">
+                <span class="progress">
+                  <span class="progress-bar" [style.width]="course.progress + '%'"></span>
+                  <span class="progress-text">{{ course.progress }}% hoàn thành</span>
+                </span>
+                                <span class="date">Đăng ký: {{ course.registrationDate | date:'dd/MM/yyyy' }}</span>
+                            </div>
+                            <a [routerLink]="['/course', course.id]" class="btn-continue">Tiếp tục học</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

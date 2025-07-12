@@ -1,0 +1,117 @@
+<!-- Page Banner -->
+<div class="inner-banner inner-bg5">
+    <div class="container">
+        <div class="inner-title text-center">
+            <h1>Bookmark Course</h1>
+            <ul>
+                <li>
+                    <a routerLink="/"> Home </a>
+                </li>
+                <li>Bookmark Course</li>
+            </ul>
+            <div class="inner-shape">
+                <img alt="shape" src="assets/images/inner-banner/inner-shape1.png" />
+                <img alt="shape" src="assets/images/inner-banner/inner-shape2.png" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Author Profile -->
+<div class="author-profile-area ptb-100">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-3 col-lg-4 col-md-12">
+                <div class="author-profile-sidebar">
+                    <div class="author-user">
+                        <img alt="author" src="{{user.pictureUrl}}" />
+                        <i class="bx bx-check-shield"></i>
+                    </div>
+                    <h3>{{ user.name }}</h3>
+                    <span>{{ user.email }}</span>
+                    <p>{{ user.phone }}</p>
+                    <div class="sp-title">HDNX {{ user.userId }} <i class="ri-folders-line"></i></div>
+                    <div class="author-content">
+                        <div class="content-left">
+                            <span>Follow</span>
+                            <h3>2941</h3>
+                        </div>
+                        <div class="content-right">
+                            <button type="submit">Follow</button>
+                        </div>
+                    </div>
+                    <ul class="social-link">
+                        <li>
+                            <a class="facebook" href="https://www.facebook.com/" target="_blank">
+                                <i class="bx bxl-facebook-circle"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="twitter" href="https://twitter.com/" target="_blank">
+                                <i class="bx bxl-twitter"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="linkedin" href="https://www.linkedin.com/" target="_blank">
+                                <i class="bx bxl-linkedin-square"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="instagram" href="https://www.instagram.com/" target="_blank">
+                                <i class="bx bxl-instagram"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xl-9 col-lg-8 col-md-12">
+                <div class="row">
+                    <div *ngFor="let item of course" class="col-xl-4 col-lg-4 col-md-6">
+                        <div class="single-courses-box">
+                            <div class="courses-image">
+                                <a class="d-block image" routerLink="/detail-courses/{{item.id}}">
+                                    <img alt="image" src="{{item.pictureUrl}}" />
+                                </a>
+                                <a class="fav" routerLink="/"><i class="flaticon-heart"></i></a>
+                            </div>
+                            <div class="courses-content">
+                                <div class="course-author d-flex align-items-center">
+                                    <img alt="image"
+                                         class="rounded-circle"
+                                         src="https://angular.envytheme.com/odemy-ng/assets/img/user1.jpg" />
+                                    <span>{{ item.userName }}</span>
+                                </div>
+                                <h3>
+                                    <a routerLink="/detail-courses/{{item.id}}">{{ item.title }}</a>
+                                </h3>
+                                <p>
+                                    {{ item.shortDescription }}
+                                </p>
+                                <div class="mt-2">
+                                    <a (click)="addCourseToCart(item.id)" [hidden]="item?.isPurchase"
+                                       class="default-btn"
+                                       href="javascript:void(0);" style="width: 100%;"><i
+                                        class="flaticon-shopping-cart"></i>Add to cart<span></span></a>
+                                    <a [hidden]="!item?.isPurchase" class="default-btn" href="javascript:void(0);"
+                                       style="width: 100%;"><i class="flaticon-certification"></i>Go to
+                                        Course<span></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12 col-md-12">
+                        <div class="pagination-area text-center">
+                            <a class="prev page-numbers" routerLink="/courses"><i class="bx bx-chevrons-left"></i></a>
+                            <span aria-current="page" class="page-numbers current">1</span>
+                            <a class="page-numbers" routerLink="/courses">2</a>
+                            <a class="page-numbers" routerLink="/courses">3</a>
+                            <a class="page-numbers" routerLink="/courses">4</a>
+                            <a class="next page-numbers" routerLink="/courses"><i class="bx bx-chevrons-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

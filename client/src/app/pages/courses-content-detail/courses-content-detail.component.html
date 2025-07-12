@@ -1,0 +1,402 @@
+<div class="course-container page-title-content">
+    <ul>
+        <li><a routerLink="/">Home</a></li>
+        <li>
+            <a routerLink="/">{{ contentCourseDetail?.categoryName }}</a>
+        </li>
+        <li>{{ contentCourseDetail?.title }}</li>
+    </ul>
+</div>
+
+<div class="video-player-padding">
+    <div class="col-xxl-9 col-xl-9 col-lg-8 col-md-12 col-sm-12 col-12">
+        <div class="ratio ratio-16x9">
+            <div #artplayer></div>
+        </div>
+
+        <div class="progress col-xl-12 col-lg-12 col-md-12 col-sm-12 mt-2">
+            <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="25" class="progress-bar progress-bar-striped"
+                 role="progressbar" style="width: 25%">
+                25%
+            </div>
+        </div>
+        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="courses-details-desc course-container-view">
+                <ul class="nav-tabset">
+                    <li [ngClass]="{ active: currentTab === 'tab1' }" class="nav-tab">
+                        <span (click)="switchTab($event, 'tab1')"> Thông tin khoá học </span>
+                    </li>
+                    <li [ngClass]="{ active: currentTab === 'tab2' }" class="nav-tab">
+                        <span (click)="switchTab($event, 'tab2')"> Tài liệu </span>
+                    </li>
+                    <li [ngClass]="{ active: currentTab === 'tab3' }" class="nav-tab">
+                        <span (click)="switchTab($event, 'tab3')"> Tác giả </span>
+                    </li>
+                    <li [ngClass]="{ active: currentTab === 'tab4' }" class="nav-tab">
+                        <span (click)="switchTab($event, 'tab4')"> Đánh giá khoá học </span>
+                    </li>
+                    <li [ngClass]="{ active: currentTab === 'tab5' }" class="nav-tab">
+                        <span (click)="switchTab($event, 'tab5')"> Câu hỏi khoá học </span>
+                    </li>
+                </ul>
+                <div class="tabs-container">
+                    <div *ngIf="currentTab === 'tab1'" class="pane" id="tab1">
+                        <div class="courses-overview">
+                            <div [innerHTML]="contentCourseDetail?.description"></div>
+                        </div>
+                    </div>
+                    <div *ngIf="currentTab === 'tab2'" class="pane" id="tab2">
+                        <div class="courses-curriculum">
+                            <h3>Tài liệu khoá học</h3>
+                            <ul>
+                                <li>
+                                    <a [routerLinkActiveOptions]="{
+                                            exact: true
+                                        }" class="popup-youtube d-flex justify-content-between align-items-center"
+                                       routerLink="/detail-content-course" routerLinkActive="active">
+                                        <span class="courses-name">Tài liệu số 1</span>
+                                        <div class="courses-meta">
+                                            <span class="status">Tải xuống</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a [routerLinkActiveOptions]="{
+                                            exact: true
+                                        }" class="popup-youtube d-flex justify-content-between align-items-center"
+                                       routerLink="/detail-content-course" routerLinkActive="active">
+                                        <span class="courses-name">Tài liệu số 1</span>
+                                        <div class="courses-meta">
+                                            <span class="status">Tải xuống</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a [routerLinkActiveOptions]="{
+                                            exact: true
+                                        }" class="popup-youtube d-flex justify-content-between align-items-center"
+                                       routerLink="/detail-content-course" routerLinkActive="active">
+                                        <span class="courses-name">Tài liệu số 1</span>
+                                        <div class="courses-meta">
+                                            <span class="status">Tải xuống</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a [routerLinkActiveOptions]="{
+                                            exact: true
+                                        }" class="popup-youtube d-flex justify-content-between align-items-center"
+                                       routerLink="/detail-content-course" routerLinkActive="active">
+                                        <span class="courses-name">Tài liệu số 1</span>
+                                        <div class="courses-meta">
+                                            <span class="status">Tải xuống</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a [routerLinkActiveOptions]="{
+                                            exact: true
+                                        }" class="popup-youtube d-flex justify-content-between align-items-center"
+                                       routerLink="/detail-content-course" routerLinkActive="active">
+                                        <span class="courses-name">Tài liệu số 1</span>
+                                        <div class="courses-meta">
+                                            <span class="status">Tải xuống</span>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div *ngIf="currentTab === 'tab3'" class="pane" id="tab3">
+                        <div class="courses-instructor">
+                            <div class="single-advisor-box">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-4 col-md-4">
+                                        <div class="advisor-image">
+                                            <img alt="image" src="{{contentCourseDetail?.author.pictureUrl}}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-8 col-md-8">
+                                        <div class="advisor-content">
+                                            <h3>{{ contentCourseDetail?.author.email }}</h3>
+                                            <span class="sub-title">{{ contentCourseDetail?.author.name }}</span>
+                                            <p>
+                                                {{ contentCourseDetail?.author.phone }}
+                                            </p>
+                                            <ul class="social-link">
+                                                <li>
+                                                    <a class="d-block" href="#" target="_blank"><i
+                                                        class="bx bxl-facebook"></i></a>
+                                                </li>
+                                                <li>
+                                                    <a class="d-block" href="#" target="_blank"><i
+                                                        class="bx bxl-twitter"></i></a>
+                                                </li>
+                                                <li>
+                                                    <a class="d-block" href="#" target="_blank"><i
+                                                        class="bx bxl-instagram"></i></a>
+                                                </li>
+                                                <li>
+                                                    <a class="d-block" href="#" target="_blank"><i
+                                                        class="bx bxl-linkedin"></i></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="currentTab === 'tab4'" class="pane" id="tab4">
+                        <div class="courses-reviews">
+                            <h3>Đánh giá</h3>
+                            <div class="rating">
+                                <ngx-stars [color]="'#ffd000'" [initialStars]="contentCourseDetail?.averageScore"
+                                           [maxStars]="5" [readonly]="true"
+                                           [size]="2"></ngx-stars>
+                            </div>
+                            <div class="rating-count">
+                                <span>Trung bình {{ contentCourseDetail?.averageScore }}
+                                    sao dựa trên {{ contentCourseDetail?.totalVoteOfCourse }} đánh giá.</span>
+                            </div>
+                            <div class="row">
+                                <div class="side">
+                                    <div>5 star</div>
+                                </div>
+                                <div class="middle">
+                                    <div class="bar-container progress">
+                                        <div class="bar-5"></div>
+                                    </div>
+                                </div>
+                                <div class="side right">
+                                    <div>{{ contentCourseDetail.vote5Star }}</div>
+                                </div>
+                                <div class="side">
+                                    <div>4 star</div>
+                                </div>
+                                <div class="middle">
+                                    <div class="bar-container">
+                                        <div class="bar-4"></div>
+                                    </div>
+                                </div>
+                                <div class="side right">
+                                    <div>{{ contentCourseDetail.vote4Star }}</div>
+                                </div>
+                                <div class="side">
+                                    <div>3 star</div>
+                                </div>
+                                <div class="middle">
+                                    <div class="bar-container">
+                                        <div class="bar-3"></div>
+                                    </div>
+                                </div>
+                                <div class="side right">
+                                    <div>{{ contentCourseDetail.vote3Star }}</div>
+                                </div>
+                                <div class="side">
+                                    <div>2 star</div>
+                                </div>
+                                <div class="middle">
+                                    <div class="bar-container">
+                                        <div class="bar-2"></div>
+                                    </div>
+                                </div>
+                                <div class="side right">
+                                    <div>{{ contentCourseDetail.vote2Star }}</div>
+                                </div>
+                                <div class="side">
+                                    <div>1 star</div>
+                                </div>
+                                <div class="middle">
+                                    <div class="bar-container">
+                                        <div class="bar-1"></div>
+                                    </div>
+                                </div>
+                                <div class="side right">
+                                    <div>{{ contentCourseDetail.vote1Star }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="courses-review-comments">
+                            <div>
+                                <h3>
+                                    {{ contentCourseDetail?.totalVoteOfCourse }} Đánh giá
+                                    <a (click)="openModalReviewCourses()" *ngIf="isComment; else commented"
+                                       href="javascript:void(0)"><i
+                                        class="bx bxs-conversation font-size-icon"></i></a>
+                                </h3>
+                            </div>
+
+                            <div *ngFor="let itemComment of commentOfCourse" class="user-review">
+                                <img alt="image" src="{{itemComment?.users?.pictureUrl}}" />
+                                <div class="review-rating">
+                                    <span class="d-inline-block">{{ itemComment?.users?.name }}</span>
+                                    <div class="review-stars">
+                                        <ngx-stars [color]="'#ffd000'" [initialStars]="itemComment?.voteStartNumber"
+                                                   [maxStars]="5" [readonly]="true"
+                                                   [size]="1"></ngx-stars>
+                                    </div>
+
+                                </div>
+                                <span class="d-block sub-comment">Excellent</span>
+                                <p>
+                                    {{ itemComment?.commentEvaluation }}
+                                </p>
+                                <div class="courses-review">
+                                    <div class="reactions">
+                                        <button (click)="likeForComment(itemComment.id)" class="btn react"><i
+                                            class="bx bxs-like"></i>{{ itemComment?.like }}
+                                        </button>
+                                        <button (click)="disLikeForComment(itemComment.id)" class="btn react"><i
+                                            class="bx bxs-dislike"></i>{{ itemComment?.disLike }}
+                                        </button>
+                                    </div>
+                                    <a (click)="replayComment()" href="javascript:void(0)">Trả lời</a>
+                                    <span class="is-mute">6 giờ</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="currentTab === 'tab5'" class="pane" id="tab5">
+                        <div class="courses-review-comments content-comment">
+                            <h3>{{ theadQuestionOfCourse?.length }} Câu hỏi</h3>
+                            <div class="block">
+                                <div class="block-header">
+                                    <div class="title">
+                                        <h2>Bình luận</h2>
+                                        <div class="tag">{{ theadQuestionOfCourse?.length }}</div>
+                                    </div>
+                                    <div class="group-radio">
+                                        <span class="button-radio">
+                                            <input checked id="latest" name="latest" type="radio" />
+                                            <label for="latest">Mới nhất</label>
+                                        </span>
+                                        <div class="divider"></div>
+                                        <span class="button-radio">
+                                            <input id="popular" name="latest" type="radio" />
+                                            <label for="popular">Phổ biến</label>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div *ngIf="!isDisplayReplay" class="writing">
+                                    <div [mention]="listNameRegister" autofocus class="textarea" contenteditable="true"
+                                         spellcheck="true">
+
+                                    </div>
+                                    <div class="footer">
+                                        <div class="text-format">
+                                            <button class="btn"><i class="bx bx-bold"></i></button>
+                                            <button class="btn"><i class="bx bx-italic"></i></button>
+                                            <button class="btn"><i class="bx bx-underline"></i></button>
+                                            <button class="btn"><i class="bx bx-list-ul"></i></button>
+                                        </div>
+                                        <div class="group-button">
+                                            <button class="btn"><i class="bx bx-purchase-tag"></i></button>
+                                            <button class="btn primary">Bình luận</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngFor="let item of theadQuestionOfCourse" class="comment">
+                                    <div class="user-banner">
+                                        <div class="user">
+                                            <div class="avatar">
+                                                <img src="{{item?.user?.pictureUrl}}" />
+                                                <span class="stat grey"></span>
+                                            </div>
+                                            <h5>{{ item?.user?.name }}</h5>
+                                        </div>
+                                        <button class="btn dropdown"><i class="ri-more-line"></i></button>
+                                    </div>
+                                    <div class="content">
+                                        <p>
+                                            {{ item?.comment }}
+                                        </p>
+                                    </div>
+                                    <div class="footer">
+                                        <button class="btn"><i class="ri-emotion-line"></i></button>
+                                        <div class="reactions">
+                                            <button class="btn react"><i class="bx bxs-like"></i>4</button>
+                                            <button class="btn react"><i class="bx bxs-dislike"></i>1</button>
+                                            <button (click)="openModalCommentUser()" class="btn react">
+                                                <i class="bx bxs-conversation"></i>{{ item?.totalCommentForThead }}
+                                            </button>
+                                        </div>
+                                        <div class="divider"></div>
+                                        <a (click)="replayComment()" href="javascript:void(0)">Trả lời</a>
+                                        <div class="divider"></div>
+                                        <span class="is-mute">6 giờ</span>
+                                    </div>
+                                    <div *ngIf="isDisplayReplay" class="writing replay-comment">
+                                        <div autofocus class="textarea" contenteditable="true" spellcheck="false">
+                                            <p>Hi <a class="tagged-user">&#64;Jo</a></p>
+                                        </div>
+                                        <div class="footer">
+                                            <div class="text-format">
+                                                <button class="btn"><i class="bx bx-bold"></i></button>
+                                                <button class="btn"><i class="bx bx-italic"></i></button>
+                                                <button class="btn"><i class="bx bx-underline"></i></button>
+                                                <button class="btn"><i class="bx bx-list-ul"></i></button>
+                                            </div>
+                                            <div class="group-button">
+                                                <button class="btn"><i class="bx bx-purchase-tag"></i></button>
+                                                <button class="btn primary">Gửi</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="load">
+                                    <button class="btn react"><i class="bx bx-refresh"></i>Tải thêm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xxl-3 col-xl-3 col-lg-4 col-md-12 col-sm-12 col-12">
+        <div class="list-container courses-curriculum-content-detail">
+            <div [closeOthers]="true" ngbAccordion>
+                <div *ngFor="let item of contentCourseDetail?.listContentCourseDetails" [collapsed]="item.id !== 0"
+                     ngbAccordionItem>
+                    <h2 ngbAccordionHeader>
+                        <button ngbAccordionButton>
+                            <div style="display: grid">
+                                <h3>{{ item?.name }}</h3>
+                                <h5>{{ contentCourseDetail?.listContentCourseDetails?.length }} bài học / 21 phút</h5>
+                            </div>
+                        </button>
+                    </h2>
+                    <div ngbAccordionCollapse>
+                        <div ngbAccordionBody>
+                            <ng-template>
+                                <ul>
+                                    <li (click)="onClickContentCourse(itemContent.id)"
+                                        (click)="getDataOfContentDetails(itemContent.id)"
+                                        *ngFor="let itemContent of item?.contentAndContentDetails"
+                                        [class.active]="itemContent.id === activeItemIndex"
+                                        class="list-group-content"
+                                        ngbTooltip="{{ itemContent?.nameSubContent }}">
+                                        <a class="locked popup-youtube d-flex justify-content-between align-items-center"
+                                           href="javascript:void(0)">
+                                            <span class="courses-name">{{ itemContent?.nameSubContent }}</span>
+                                            <div class="courses-meta">
+                                                <span class="duration">{{ itemContent?.timeOfContent }}</span>
+                                                <span class="status locked"><i class="flaticon-password"></i></span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #commented>
+    <a (click)="openModalReviewCourses()" href="javascript:void(0)"><i
+        class="bx bx-conversation font-size-icon"></i></a>
+</ng-template>

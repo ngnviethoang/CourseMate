@@ -1,0 +1,95 @@
+<div class="page-title-area">
+    <div class="container">
+        <div class="page-title-content">
+            <ul>
+                <li><a routerLink="/">Home</a></li>
+                <li>Course</li>
+            </ul>
+        </div>
+    </div>
+    <div class="shape9"><img alt="image" ngSrc="assets/img/shape8.svg" height="22" width="22"></div>
+</div>
+
+<div class="products-area pt-4 pb-4">
+    <div class="container">
+        <div class="odemy-grid-sorting row align-items-center">
+            <div class="col-lg-4 col-md-4 result-count">
+                <p>We found <span class="count">{{ pagedResult.totalCount }}</span> courses available for you</p>
+            </div>
+
+            <div class="col-lg-4 col-md-4 ordering">
+                <div class="select-box">
+                    <label>Category:</label>
+                    <select (change)="onChangeCategory($event)">
+                        <option [value]="''">Tất cả</option>
+                        @for (category of categories; track category.id) {
+                            <option [value]="category.id">{{ category.name }}</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-4 ordering">
+                <div class="select-box">
+                    <label>Sort By:</label>
+                    <select>
+                        <option>Default</option>
+                        <option>Popularity</option>
+                        <option>Latest</option>
+                        <option>Price: low to high</option>
+                        <option>Price: high to low</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            @for (item of pagedResult.items; track item.id) {
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="single-products-box">
+                        <div class="products-image">
+                            <a routerLink="/details-products">
+                                <img alt="image" class="main-image" [ngSrc]="item.thumbnail" height="800"
+                                     width="670">
+                            </a>
+                            <div class="sale-tag">Sale!</div>
+                        </div>
+                        <div class="products-content">
+                            <h3><a routerLink="/details-products">{{ item.name }}</a></h3>
+                            <div class="price">
+                                <span class="old-price">$100</span>
+                                <span class="new-price">$200</span>
+                            </div>
+                            <div class="star-rating">
+                                <i class='bx bxs-star'></i>
+                                <i class='bx bxs-star'></i>
+                                <i class='bx bxs-star'></i>
+                                <i class='bx bxs-star'></i>
+                                <i class='bx bxs-star'></i>
+                            </div>
+                            <a class="add-to-cart" routerLink="/cart">Add to cart</a>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="pagination-area text-center">
+                    <a class="prev page-numbers" (click)="changePage(currentPage - 1)"
+                       [ngClass]="{'disabled': currentPage === 1}">
+                        <i class='bx bx-chevrons-left'></i>
+                    </a>
+                    <span *ngFor="let page of pages" class="page-numbers"
+                          [class.current]="currentPage === page"
+                          (click)="changePage(page)">{{ page }}
+                    </span>
+                    <a class="next page-numbers" (click)="changePage(currentPage + 1)"
+                       [ngClass]="{'disabled': currentPage === totalPages}">
+                        <i class='bx bx-chevrons-right'></i>
+                    </a>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

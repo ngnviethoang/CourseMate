@@ -1,0 +1,409 @@
+<div class="page-title-area">
+    <div class="container">
+        <div class="page-title-content">
+            <ul>
+                <li><a routerLink="/">Home</a></li>
+                <li>Document</li>
+            </ul>
+            <h2>Documents</h2>
+        </div>
+    </div>
+    <div class="shape9"><img alt="image" src="assets/img/shape8.svg"></div>
+</div>
+
+<div class="events-area pt-4 pb-70">
+    <div class="container">
+        <div class="events-tabs">
+            <ul class="nav-tabset">
+                <li [ngClass]="{'active': currentTab === 'tab1'}" class="nav-tab">
+                    <span (click)="switchTab($event, 'tab1')">
+                        All
+                    </span>
+                </li>
+                <li [ngClass]="{'active': currentTab === 'tab2'}" class="nav-tab">
+                    <span (click)="switchTab($event, 'tab2')">
+                        Phần mềm kỹ thuật
+                    </span>
+                </li>
+                <li [ngClass]="{'active': currentTab === 'tab3'}" class="nav-tab">
+                    <span (click)="switchTab($event, 'tab3')">
+                        File 2D - 3D
+                    </span>
+                </li>
+                <li [ngClass]="{'active': currentTab === 'tab4'}" class="nav-tab">
+                    <span (click)="switchTab($event, 'tab4')">
+                        Tài liệu khuôn thước - TLM
+                    </span>
+                </li>
+                <li [ngClass]="{'active': currentTab === 'tab5'}" class="nav-tab">
+                    <span (click)="switchTab($event, 'tab5')">
+                        Tài liệu gia công lập trình - TLCNC
+                    </span>
+                </li>
+            </ul>
+            <div class="tabs-container">
+                <div *ngIf="currentTab === 'tab1'" class="pane" id="tab1">
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img1.jpg">
+                                    </a>
+                                    <span class="date">Wed, 20 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">Global Conference on Business Management</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img2.jpg">
+                                    </a>
+                                    <span class="date">Tue, 19 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">International Conference on Teacher Education</a>
+                                    </h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img2.jpg">
+                                    </a>
+                                    <span class="date">Mon, 18 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">International Conference on Special Needs
+                                        Education</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img3.jpg">
+                                    </a>
+                                    <span class="date">Sun, 17 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">International Conference on Literacy Teaching</a>
+                                    </h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img5.jpg">
+                                    </a>
+                                    <span class="date">Sat, 16 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">International Conference on Educational
+                                        Administration</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img6.jpg">
+                                    </a>
+                                    <span class="date">Fri, 15 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">International Conference on Education and
+                                        Pedagogy</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img7.jpg">
+                                    </a>
+                                    <span class="date">Thu, 14 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">Research Conference Aims and Objectives</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img8.jpg">
+                                    </a>
+                                    <span class="date">Wed, 13 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">Conference on Gender Discrimination in
+                                        Education</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img9.jpg">
+                                    </a>
+                                    <span class="date">Tue, 12 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">Quality and Improvement in Education
+                                        Conference</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="currentTab === 'tab2'" class="pane" id="tab2">
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img1.jpg">
+                                    </a>
+                                    <span class="date">Wed, 20 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">Global Conference on Business Management</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img3.jpg">
+                                    </a>
+                                    <span class="date">Mon, 18 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">International Conference on Special Needs
+                                        Education</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img8.jpg">
+                                    </a>
+                                    <span class="date">Wed, 13 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">Conference on Gender Discrimination in
+                                        Education</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="currentTab === 'tab3'" class="pane" id="tab3">
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img2.jpg">
+                                    </a>
+                                    <span class="date">Tue, 19 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">International Conference on Teacher Education</a>
+                                    </h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img5.jpg">
+                                    </a>
+                                    <span class="date">Sat, 16 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">International Conference on Educational
+                                        Administration</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img7.jpg">
+                                    </a>
+                                    <span class="date">Thu, 14 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">Research Conference Aims and Objectives</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="currentTab === 'tab4'" class="pane" id="tab3">
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img4.jpg">
+                                    </a>
+                                    <span class="date">Sun, 17 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">International Conference on Literacy Teaching</a>
+                                    </h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img6.jpg">
+                                    </a>
+                                    <span class="date">Fri, 15 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">International Conference on Education and
+                                        Pedagogy</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img9.jpg">
+                                    </a>
+                                    <span class="date">Tue, 12 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">Quality and Improvement in Education
+                                        Conference</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="currentTab === 'tab5'" class="pane" id="tab5">
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img1.jpg">
+                                    </a>
+                                    <span class="date">Wed, 20 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">Global Conference on Business Management</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img3.jpg">
+                                    </a>
+                                    <span class="date">Mon, 18 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">International Conference on Special Needs
+                                        Education</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-md-6">
+                            <div class="single-events-box">
+                                <div class="image">
+                                    <a class="d-block" routerLink="/single-events">
+                                        <img alt="image"
+                                             src="https://angular.envytheme.com/odemy-ng/assets/img/events/img8.jpg">
+                                    </a>
+                                    <span class="date">Wed, 13 May, 2020</span>
+                                </div>
+                                <div class="content">
+                                    <h3><a routerLink="/single-events">Conference on Gender Discrimination in
+                                        Education</a></h3>
+                                    <a class="location" href="#"><i class='bx bxs-cloud-download'></i>Tải tài liệu</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="subscribe-area bg-f9f9f9 ptb-100">
+    <div class="container">
+        <app-subscribe></app-subscribe>
+    </div>
+    <div class="shape4"><img alt="image" src="assets/img/shape4.png"></div>
+    <div class="shape13"><img alt="image" src="assets/img/shape12.png"></div>
+    <div class="shape14"><img alt="image" src="assets/img/shape13.png"></div>
+    <div class="shape15"><img alt="image" src="assets/img/shape14.png"></div>
+</div>

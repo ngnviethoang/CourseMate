@@ -69,6 +69,11 @@
     "Enum:CurrencyType.1": "VND",
     "Enum:LevelType.0": "Beginner",
     "Enum:LevelType.1": "Intermediate",
-    "Enum:LevelType.2": "Advanced"
+    "Enum:LevelType.2": "Advanced",
+
+    "Settings:Upload:AllowedImageExtensions": "AllowedImageExtensions",
+    "Settings:Upload:AllowedVideoExtensions": "AllowedVideoExtensions",
+    "Settings:Upload:MaxImageSizeInMB": "MaxImageSizeInMB",
+    "Settings:Upload:MaxVideoSizeInMB": "MaxVideoSizeInMB"
   }
 }

@@ -1,0 +1,144 @@
+.teacher-register-area {
+    background: {
+        image: url(https://angular.envytheme.com/odemy-ng/teacher-register-bg.jpg);
+        position: center center;
+        size: cover;
+        repeat: no-repeat;
+    };
+}
+
+.teacher-register-box {
+    overflow: hidden;
+    margin-left: auto;
+    max-width: 600px;
+    padding: 45px;
+    border-radius: 5px;
+    background: {
+        color: var(--mainColor);
+        image: url(../../../assets/img/register-shape.jpg);
+        position: center center;
+        size: cover;
+        repeat: no-repeat;
+    };
+
+    h2 {
+        margin-bottom: 0;
+        color: var(--whiteColor);
+        font: {
+            size: 33px;
+            weight: 800;
+        };
+    }
+
+    p {
+        color: var(--whiteColor);
+        margin: {
+            top: 10px;
+            bottom: 0;
+        };
+    }
+
+    form {
+        margin-top: 25px;
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        input, textarea {
+            display: block;
+            width: 100%;
+            border: none;
+            color: var(--whiteColor);
+            background-color: #c22b34;
+            height: 50px;
+            padding-left: 15px;
+            border-radius: 5px;
+            font: {
+                size: var(--fontSize);
+                weight: 600;
+            };
+
+            &::placeholder {
+                color: #cdcdcd;
+                transition: var(--transition);
+            }
+
+            &:focus {
+                &::placeholder {
+                    color: transparent;
+                }
+            }
+        }
+
+        textarea {
+            height: auto !important;
+            padding-top: 15px;
+        }
+
+        .default-btn {
+            background-color: var(--blackColor);
+            margin-top: 5px;
+            padding: 12px 30px;
+
+            span {
+                background-color: var(--whiteColor);
+            }
+
+            &:hover {
+                color: var(--mainColor);
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 767px) {
+
+    .teacher-register-box {
+        max-width: 100%;
+        padding: 20px;
+
+        h2 {
+            font-size: 25px;
+        }
+
+        form {
+            textarea, input {
+                height: 48px;
+                font-size: 14.5px;
+            }
+        }
+    }
+
+}
+
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+
+    .teacher-register-box {
+        max-width: 500px;
+        padding: 35px;
+
+        h2 {
+            font-size: 30px;
+        }
+    }
+
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+
+    .teacher-register-box {
+        h2 {
+            font-size: 30px;
+        }
+    }
+
+}
+
+@media only screen and (min-width: 1200px) and (max-width: 1355px) {
+
+}
