@@ -1,6 +1,7 @@
 ﻿using CourseMate.Services.Dtos.Lookups;
 using CourseMate.Shared.Constants;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.Domain.Repositories;
 
 namespace CourseMate.Services.Lookups;
 
@@ -17,7 +18,10 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
                 CreatorId = course.CreatorId
             };
 
-        return await BuildPagedResultAsync(queryable, input);
+        BuildPagedResultAsync(queryable, input);
+        List<LookupDto> items = await AsyncExecuter.ToListAsync(queryable);
+        int totalCount = await CategoryRepo.CountAsync();
+        return new PagedResultDto<LookupDto>(totalCount, items);
     }
 
     public async Task<PagedResultDto<LookupDto>> GetCoursesAsync(LookupRequestDto input)
@@ -31,7 +35,10 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
                 CreatorId = category.CreatorId
             };
 
-        return await BuildPagedResultAsync(queryable, input);
+        BuildPagedResultAsync(queryable, input);
+        List<LookupDto> items = await AsyncExecuter.ToListAsync(queryable);
+        int totalCount = await CourseRepo.CountAsync();
+        return new PagedResultDto<LookupDto>(totalCount, items);
     }
 
     public async Task<PagedResultDto<LookupDto>> GetChaptersAsync(LookupRequestDto input)
@@ -45,7 +52,10 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
                 CreatorId = chapter.CreatorId
             };
 
-        return await BuildPagedResultAsync(queryable, input);
+        BuildPagedResultAsync(queryable, input);
+        List<LookupDto> items = await AsyncExecuter.ToListAsync(queryable);
+        int totalCount = await ChapterRepo.CountAsync();
+        return new PagedResultDto<LookupDto>(totalCount, items);
     }
 
     public async Task<int> GetMaxPositionChaptersAsync(Guid courseId)
@@ -68,13 +78,11 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
         return sortNumber.Count != 0 ? sortNumber.Max() : 0;
     }
 
-    private async Task<PagedResultDto<LookupDto>> BuildPagedResultAsync(IQueryable<LookupDto> queryable, LookupRequestDto input)
+    private void BuildPagedResultAsync(IQueryable<LookupDto> queryable, LookupRequestDto input)
     {
         queryable = queryable
             .WhereIf(!CurrentUser.IsInRole(RoleConst.Admin), i => i.CreatorId == CurrentUser.Id)
             .WhereIf(!input.Filter.IsNullOrEmpty(), i => i.Name.Contains(input.Filter!));
-
-        int totalCount = await AsyncExecuter.CountAsync(queryable);
 
         if (input.SkipCount.HasValue)
         {
@@ -85,8 +93,5 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
         {
             queryable = queryable.Take(input.MaxResultCount.Value);
         }
-
-        List<LookupDto> items = await AsyncExecuter.ToListAsync(queryable);
-        return new PagedResultDto<LookupDto>(totalCount, items);
     }
 }

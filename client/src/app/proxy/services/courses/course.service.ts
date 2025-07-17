@@ -1,8 +1,8 @@
 import { RestService, Rest } from '@abp/ng.core';
 import type { PagedResultDto } from '@abp/ng.core';
 import { Injectable } from '@angular/core';
-import type { CourseDto, CreateUpdateCourseDto } from '../dtos/courses/models';
-import type { GetListRequestDto, ResultObjectDto } from '../dtos/models';
+import type { CourseDto, CreateUpdateCourseDto, GetListCourseRequestDto } from '../dtos/courses/models';
+import type { ResultObjectDto } from '../dtos/models';
 
 @Injectable({
   providedIn: 'root',
@@ -36,11 +36,11 @@ export class CourseService {
     { apiName: this.apiName,...config });
   
 
-  getList = (input: GetListRequestDto, config?: Partial<Rest.Config>) =>
+  getList = (input: GetListCourseRequestDto, config?: Partial<Rest.Config>) =>
     this.restService.request<any, PagedResultDto<CourseDto>>({
       method: 'GET',
       url: '/api/app/course',
-      params: { sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
+      params: { categoryId: input.categoryId, sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
     },
     { apiName: this.apiName,...config });
   

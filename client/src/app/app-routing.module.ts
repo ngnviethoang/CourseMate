@@ -32,7 +32,7 @@ import {
     SendEmailAfterRegisterComponent,
     TeacherComponent,
     TermsOfServiceComponent,
-    CourseComponent,
+    TrainingOnlineComponent,
     TrainingCourseDetailComponent,
     ProfileComponent,
     CourseListComponent,
@@ -44,9 +44,9 @@ import {
 
 const routes: Routes = [
     { path: '', component: HomeComponent },
-    { path: 'courses', component: CourseComponent },
-
+    { path: 'training-online', component: TrainingOnlineComponent },
     { path: 'training-online/:id', component: TrainingCourseDetailComponent },
+
     { path: 'profile', component: ProfileComponent },
     { path: 'about', component: AboutComponent },
     { path: 'teacher', component: TeacherComponent },
@@ -70,12 +70,12 @@ const routes: Routes = [
     { path: 'news', component: CoursesNewsComponent },
     { path: 'detail-news', component: BlogDetailsStyleTwoComponent },
     { path: 'contact', component: ContactUsComponent },
-    { path: 'detail-content-course/:id', component: CoursesContentDetailComponent },
+    { path: 'detail-content-training-online/:id', component: CoursesContentDetailComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterPagesComponent },
-    { path: 'my-course', component: AccountProfileCoursesComponent },
+    { path: 'my-training-online', component: AccountProfileCoursesComponent },
     { path: 'my-information', component: AccountProfileDetailsComponent },
-    { path: 'training-online', component: CourseComponent },
+    { path: 'training-online', component: TrainingOnlineComponent },
     { path: 'training-online/:id', component: TrainingCourseDetailComponent },
     { path: 'run-code/:id', component: RunCodeComponent },
     { path: 'video-lesson/:id', component: VideoLessonComponent },
@@ -84,7 +84,7 @@ const routes: Routes = [
     { path: 'register-error', component: RegisterErrorComponent },
     { path: 'send-email-register-success', component: SendEmailAfterRegisterComponent },
     { path: 'notification', component: NotificationUsersComponent },
-    { path: 'bookmark-course', component: AccountBookmarkCourseComponent },
+    { path: 'bookmark-training-online', component: AccountBookmarkCourseComponent },
     { path: 'payment-success', component: PaymentSuccessComponent },
     { path: 'payment-error', component: PaymentErrorComponent }
 ];

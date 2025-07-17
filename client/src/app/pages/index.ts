@@ -24,7 +24,7 @@ export * from './courses-content-detail/courses-content-detail.component';
 export * from './register-pages/register-pages.component';
 export * from './account-profile-courses/account-profile-courses.component';
 export * from './account-profile-details/account-profile-details.component';
-export * from '@pages/course/course.component';
+export * from './training-online/training-online.component';
 export * from './training-course-detail/training-course-detail.component';
 export * from './profile-teacher/profile-teacher.component';
 export * from './register-error/register-error.component';

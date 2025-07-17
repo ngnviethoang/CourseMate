@@ -59,7 +59,7 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
         }
 
         List<CategoryDto> categories = await AsyncExecuter.ToListAsync(queryable);
-        int totalCount = await AsyncExecuter.CountAsync(queryable);
+        int totalCount = await CategoryRepo.CountAsync();
         return new PagedResultDto<CategoryDto>(totalCount, categories);
     }
 

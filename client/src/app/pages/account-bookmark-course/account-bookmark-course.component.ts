@@ -7,7 +7,7 @@ import { Course } from '../../models/course';
 import { LoginRegister } from '../../models/response-models/login-register-respone';
 
 @Component({
-    selector: 'app-account-bookmark-course',
+    selector: 'app-account-bookmark-training-online',
     templateUrl: './account-bookmark-course.component.html',
     styleUrls: ['./account-bookmark-course.component.scss']
 })

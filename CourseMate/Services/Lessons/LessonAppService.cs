@@ -59,7 +59,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
             .Take(input.MaxResultCount);
 
         List<LessonDto> categories = await AsyncExecuter.ToListAsync(queryable);
-        int totalCount = await AsyncExecuter.CountAsync(queryable);
+        int totalCount = await LessonRepo.CountAsync();
         return new PagedResultDto<LessonDto>(totalCount, categories);
     }
 

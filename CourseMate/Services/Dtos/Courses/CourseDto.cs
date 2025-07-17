@@ -1,4 +1,5 @@
 ﻿using CourseMate.Entities.Courses;
+using CourseMate.Services.Dtos.Chapters;
 using Volo.Abp.Application.Dtos;
 
 namespace CourseMate.Services.Dtos.Courses;
@@ -14,4 +15,11 @@ public class CourseDto : AuditedEntityDto<Guid>
     public bool IsPublished { get; set; }
     public Guid InstructorId { get; set; }
     public Guid CategoryId { get; set; }
+
+    // ExtraProperties 
+    public AuthorDto? Author { get; set; }
+    public int? TotalLessons { get; set; }
+    public int? TotalStudents { get; set; }
+
+    public IEnumerable<ChapterDto>? Chapters { get; set; }
 }

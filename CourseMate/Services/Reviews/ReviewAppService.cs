@@ -36,7 +36,7 @@ public class ReviewAppService : CourseMateAppService, IReviewAppService
     public async Task<ReviewDto> CreateAsync(CreateUpdateReviewDto input)
     {
         await UserRepo.EnsureExistsAsync(input.StudentId);
-        await UserRepo.EnsureExistsAsync(input.CourseId);
+        await CourseRepo.EnsureExistsAsync(input.CourseId);
         Review review = ObjectMapper.Map<CreateUpdateReviewDto, Review>(input);
         await ReviewRepo.InsertAsync(review);
         return ObjectMapper.Map<Review, ReviewDto>(review);
@@ -47,7 +47,7 @@ public class ReviewAppService : CourseMateAppService, IReviewAppService
     {
         Review review = await ReviewRepo.GetAsync(id);
         await UserRepo.EnsureExistsAsync(input.StudentId);
-        await UserRepo.EnsureExistsAsync(input.CourseId);
+        await CourseRepo.EnsureExistsAsync(input.CourseId);
         ObjectMapper.Map(input, review);
         await ReviewRepo.UpdateAsync(review);
         return ObjectMapper.Map<Review, ReviewDto>(review);

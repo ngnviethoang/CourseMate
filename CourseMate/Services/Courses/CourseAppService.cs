@@ -1,10 +1,14 @@
 ﻿using System.Linq.Dynamic.Core;
+using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
 using CourseMate.Permissions;
 using CourseMate.Services.Dtos;
+using CourseMate.Services.Dtos.Chapters;
 using CourseMate.Services.Dtos.Courses;
+using CourseMate.Services.Dtos.Lessons;
 using CourseMate.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
@@ -37,13 +41,49 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
                 LastModificationTime = course.LastModificationTime,
                 LastModifierId = course.LastModifierId
             };
-        return await AsyncExecuter.FirstOrDefaultAsync(queryable) ?? new CourseDto();
+        CourseDto? courseDto = await AsyncExecuter.FirstOrDefaultAsync(queryable);
+        if (courseDto == null)
+        {
+            return new CourseDto();
+        }
+
+        IQueryable<ChapterDto> queryableChapter =
+            from chapter in await ChapterRepo.GetQueryableAsync()
+            join lesson in await LessonRepo.GetQueryableAsync()
+                on chapter.Id equals lesson.ChapterId
+            where chapter.CourseId == id
+            group lesson by chapter
+            into g
+            select new ChapterDto
+            {
+                Id = g.Key.Id,
+                Title = g.Key.Title,
+                Position = g.Key.Position,
+                CourseId = g.Key.CourseId,
+                CourseTitle = g.Key.Title,
+                Lessons = g.Select(i => new LessonDto
+                {
+                    Id = i.Id,
+                    Title = i.Title,
+                    ChapterId = i.ChapterId,
+                    ContentText = i.ContentText,
+                    Duration = i.Duration,
+                    VideoFile = i.VideoFile,
+                    Position = i.Position,
+                })
+            };
+
+        courseDto.Chapters = await AsyncExecuter.ToListAsync(queryableChapter);
+
+        return courseDto;
     }
 
-    public async Task<PagedResultDto<CourseDto>> GetListAsync(GetListRequestDto input)
+    public async Task<PagedResultDto<CourseDto>> GetListAsync(GetListCourseRequestDto input)
     {
         IQueryable<CourseDto> queryable =
             from course in await CourseRepo.GetQueryableAsync()
+            join user in await UserRepo.GetQueryableAsync()
+                on course.InstructorId equals user.Id
             select new CourseDto
             {
                 Id = course.Id,
@@ -59,9 +99,16 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
                 CreationTime = course.CreationTime,
                 CreatorId = course.CreatorId,
                 LastModificationTime = course.LastModificationTime,
-                LastModifierId = course.LastModifierId
+                LastModifierId = course.LastModifierId,
+                Author = new AuthorDto
+                {
+                    UserName = user.UserName,
+                    Avatar = user.Email
+                }
             };
-        queryable = queryable.OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(Course.Title) : input.Sorting);
+        queryable = queryable
+            .WhereIf(input.CategoryId.HasValue, i => i.CategoryId == input.CategoryId!.Value)
+            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(Course.Title) : input.Sorting);
 
         if (input.SkipCount.HasValue)
         {
@@ -73,8 +120,39 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
             queryable = queryable.Take(input.MaxResultCount.Value);
         }
 
-        List<CourseDto> courses = await AsyncExecuter.ToListAsync(queryable);
-        int totalCount = await AsyncExecuter.CountAsync(queryable);
+        List<CourseDto> courses = await AsyncExecuter.ToListAsync(queryable.AsNoTracking());
+        IEnumerable<Guid> courseIds = courses.Select(i => i.Id);
+
+        var enrollmentsPerCourseQuery =
+            from enrollment in await EnrollmentRepo.GetQueryableAsync()
+            where courseIds.Contains(enrollment.CourseId)
+            group enrollment by enrollment.CourseId
+            into g
+            select new { CourseId = g.Key, Count = g.Count() };
+        var enrollmentsPerCourse = await AsyncExecuter.ToListAsync(enrollmentsPerCourseQuery);
+        var enrollmentsPerCourseDict = enrollmentsPerCourse.ToDictionary(i => i.CourseId, i => i);
+
+        var lessonsPerCourseQuery =
+            from chapter in await ChapterRepo.GetQueryableAsync()
+            join lesson in await LessonRepo.GetQueryableAsync()
+                on chapter.Id equals lesson.ChapterId
+            where courseIds.Contains(chapter.CourseId)
+            group lesson by chapter.CourseId
+            into g
+            select new { CourseId = g.Key, Count = g.Count() };
+        var lessonsPerCourse = await AsyncExecuter.ToListAsync(lessonsPerCourseQuery);
+        var lessonsPerCourseDict = lessonsPerCourse.ToDictionary(i => i.CourseId, i => i);
+
+        foreach (CourseDto course in courses)
+        {
+            enrollmentsPerCourseDict.TryGetValue(course.Id, out var totalStudents);
+            course.TotalStudents = totalStudents?.Count;
+
+            lessonsPerCourseDict.TryGetValue(course.Id, out var totalLessons);
+            course.TotalLessons = totalLessons?.Count;
+        }
+
+        int totalCount = await CourseRepo.CountAsync();
         return new PagedResultDto<CourseDto>(totalCount, courses);
     }
 

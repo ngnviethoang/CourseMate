@@ -1635,9 +1635,9 @@
                   "parametersOnMethod": [
                     {
                       "name": "input",
-                      "typeAsString": "CourseMate.Services.Dtos.GetListRequestDto, CourseMate",
-                      "type": "CourseMate.Services.Dtos.GetListRequestDto",
-                      "typeSimple": "CourseMate.Services.Dtos.GetListRequestDto",
+                      "typeAsString": "CourseMate.Services.Dtos.Courses.GetListCourseRequestDto, CourseMate",
+                      "type": "CourseMate.Services.Dtos.Courses.GetListCourseRequestDto",
+                      "typeSimple": "CourseMate.Services.Dtos.Courses.GetListCourseRequestDto",
                       "isOptional": false,
                       "defaultValue": null
                     }
@@ -1756,14 +1756,26 @@
               "parametersOnMethod": [
                 {
                   "name": "input",
-                  "typeAsString": "CourseMate.Services.Dtos.GetListRequestDto, CourseMate",
-                  "type": "CourseMate.Services.Dtos.GetListRequestDto",
-                  "typeSimple": "CourseMate.Services.Dtos.GetListRequestDto",
+                  "typeAsString": "CourseMate.Services.Dtos.Courses.GetListCourseRequestDto, CourseMate",
+                  "type": "CourseMate.Services.Dtos.Courses.GetListCourseRequestDto",
+                  "typeSimple": "CourseMate.Services.Dtos.Courses.GetListCourseRequestDto",
                   "isOptional": false,
                   "defaultValue": null
                 }
               ],
               "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "CategoryId",
+                  "jsonName": null,
+                  "type": "System.Guid?",
+                  "typeSimple": "string?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
                 {
                   "nameOnMethod": "input",
                   "name": "Sorting",
@@ -6700,6 +6712,39 @@
         }
       ]
     },
+    "CourseMate.Services.Dtos.Courses.AuthorDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "UserName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Avatar",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
     "CourseMate.Services.Dtos.Courses.CourseDto": {
       "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
       "isEnum": false,
@@ -6814,6 +6859,42 @@
           "minimum": null,
           "maximum": null,
           "regex": null
+        },
+        {
+          "name": "Author",
+          "jsonName": null,
+          "type": "CourseMate.Services.Dtos.Courses.AuthorDto",
+          "typeSimple": "CourseMate.Services.Dtos.Courses.AuthorDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TotalLessons",
+          "jsonName": null,
+          "type": "System.Int32?",
+          "typeSimple": "number?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TotalStudents",
+          "jsonName": null,
+          "type": "System.Int32?",
+          "typeSimple": "number?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
         }
       ]
     },
@@ -6855,7 +6936,7 @@
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 50,
+          "maxLength": 1024,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -6913,6 +6994,27 @@
           "jsonName": null,
           "type": "System.Guid",
           "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Courses.GetListCourseRequestDto": {
+      "baseType": "CourseMate.Services.Dtos.GetListRequestDto",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "CategoryId",
+          "jsonName": null,
+          "type": "System.Guid?",
+          "typeSimple": "string?",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,
@@ -7095,7 +7197,7 @@
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 50,
+          "maxLength": 1024,
           "minimum": null,
           "maximum": null,
           "regex": null

@@ -6,9 +6,10 @@ import { MessengerServices } from '../../core/services-old/messenger.service';
 import { AuthService, Rest } from '@abp/ng.core';
 import Params = Rest.Params;
 import { CourseService } from '@proxy/services/courses';
+import { CourseDto } from '@proxy/services/dtos/courses';
 
 @Component({
-    selector: 'app-training-course-detail',
+    selector: 'app-training-training-online-detail',
     templateUrl: './training-course-detail.component.html',
     styleUrls: ['./training-course-detail.component.scss'],
     standalone: false
@@ -20,7 +21,7 @@ export class TrainingCourseDetailComponent implements OnInit {
     };
 
     currentTab = 'tab1';
-    courseDto: any;
+    courseDto: CourseDto = {} as CourseDto;
     actionText = '';
 
     constructor(private courseService: CourseService,
@@ -32,10 +33,11 @@ export class TrainingCourseDetailComponent implements OnInit {
 
     ngOnInit(): void {
         const id = this.route.snapshot.paramMap.get('id');
-        this.courseService.get(id, null).subscribe((courseDto) => {
-            this.courseDto = courseDto;
-            // this.checkExistInCart();
-        });
+        this.courseService
+            .get(id)
+            .subscribe((courseDto) => {
+                this.courseDto = courseDto;
+            });
     }
 
     onBeforeSlide = (detail: BeforeSlideDetail): void => {
@@ -58,21 +60,21 @@ export class TrainingCourseDetailComponent implements OnInit {
             this.authService.navigateToLogin(queryParams);
         }
 
-     /*   this.basketService.addItemsByCourseIds([this.courseDto.id]).subscribe(async () => {
-            await this.messengerService.success('Thông báo', 'Thêm vào giỏ hàng thành công');
-        });*/
+        /*   this.basketService.addItemsByCourseIds([this.courseDto.id]).subscribe(async () => {
+               await this.messengerService.success('Thông báo', 'Thêm vào giỏ hàng thành công');
+           });*/
     }
 
     checkExistInCart() {
         let result = false;
-       /* this.basketService.checkExitsInCartByCourseId(this.courseDto.id).subscribe(response => {
-            if (response == true) {
-                this.actionText = 'Đã thêm vào giỏ hàng';
-            } else {
-                this.actionText = 'Thêm vào giỏ hàng';
-            }
-            result = response;
-        });*/
+        /* this.basketService.checkExitsInCartByCourseId(this.courseDto.id).subscribe(response => {
+             if (response == true) {
+                 this.actionText = 'Đã thêm vào giỏ hàng';
+             } else {
+                 this.actionText = 'Thêm vào giỏ hàng';
+             }
+             result = response;
+         });*/
 
         return result;
     }

@@ -65,7 +65,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
         }
 
         List<ChapterDto> chapters = await AsyncExecuter.ToListAsync(queryable);
-        int totalCount = await AsyncExecuter.CountAsync(queryable);
+        int totalCount = await ChapterRepo.CountAsync();
         return new PagedResultDto<ChapterDto>(totalCount, chapters);
     }
 

@@ -1,423 +1,425 @@
 <div class="courses-details-area ptb-50">
     <div class="container">
-        <div class="page-title-content">
+        <div class="page-title-content d-flex flex-column">
             <ul>
                 <li><a routerLink="/">Home</a></li>
-                <li><a routerLink="/">Development</a></li>
-                <li>{{ courseDto.name }}</li>
+                <li><a routerLink="/training-online">Training Online</a></li>
+                <li>{{ courseDto.title }}</li>
             </ul>
-            <h2>{{ courseDto.name }}</h2>
-            <div class="rating">
-                <i class="bx bxs-star"></i>
-                <i class="bx bxs-star"></i>
-                <i class="bx bxs-star"></i>
-                <i class="bx bxs-star"></i>
-                <i class="bx bxs-star"></i>
-                <div class="rating-count me-2">
-                    <span>4.0 (1 rating)</span>
+
+            <div class="d-flex justify-content-start mt-3">
+                <p-image [src]="courseDto.thumbnailFile" alt="Image" width="250" imageClass="rounded" />
+                <div>
+                    <h2 class="ms-2">{{ courseDto.title }}</h2>
+                    <div class="rating ms-2">
+                        <i class="bx bxs-star"></i>
+                        <i class="bx bxs-star"></i>
+                        <i class="bx bxs-star"></i>
+                        <i class="bx bxs-star"></i>
+                        <i class="bx bxs-star"></i>
+                        <div class="rating-count me-2">
+                            <span>4.0 (1 rating)</span>
+                        </div>
+                        <i class="bx bx-equalizer"></i>
+                        <div class="rating-count me-2">{{ courseDto.author?.userName }}</div>
+                        <i class="bx bx-equalizer"></i>
+                        <div class="rating-count">1000 Học viên</div>
+                    </div>
                 </div>
-                <i class="bx bx-equalizer"></i>
-                <div class="rating-count me-2">{{ courseDto.author?.userName }}</div>
-                <i class="bx bx-equalizer"></i>
-                <div class="rating-count">1000 Học viên</div>
             </div>
         </div>
     </div>
-    <div class="container pt-5">
-        <div class="row">
-            <div class="col-lg-9 col-md-12 pb-4">
-                <div class="courses-details-desc pb-5">
-                    <ul class="nav-tabset">
-                        <li [ngClass]="{ active: currentTab === 'tab1' }" class="nav-tab">
-                            <span (click)="switchTab($event, 'tab1')">Tổng quan</span>
-                        </li>
-                        <li [ngClass]="{ active: currentTab === 'tab2' }" class="nav-tab">
-                            <span (click)="switchTab($event, 'tab2')">Nội dung</span>
-                        </li>
-                        <li [ngClass]="{ active: currentTab === 'tab3' }" class="nav-tab">
-                            <span (click)="switchTab($event, 'tab3')">Giảng viên</span>
-                        </li>
-                        <li [ngClass]="{ active: currentTab === 'tab4' }" class="nav-tab">
-                            <span (click)="switchTab($event, 'tab4')">Reviews</span>
-                        </li>
-                    </ul>
-                    <div class="tabs-container">
-                        <div *ngIf="currentTab === 'tab1'" class="pane" id="tab1">
-                            <div class="courses-overview">
-                                <h3>Mô tả</h3>
-                                <p>
-                                    {{ courseDto.description }}
-                                </p>
-                                <p>
-                                    Khóa học cung cấp kiến thức toàn diện từ cơ bản đến nâng cao, giúp người học nắm
-                                    vững kiến thức chuyên môn và kỹ năng thực tiễn. Nội dung được trình bày rõ ràng, dễ
-                                    hiểu với sự hướng dẫn từ các giảng viên giàu kinh nghiệm.
-                                </p>
-                                <h3>Chứng chỉ</h3>
-                                <p>
-                                    Sau khi hoàn thành khóa học, học viên sẽ nhận được chứng chỉ hoàn tất do hệ thống
-                                    cấp. Chứng chỉ có thể được sử dụng để bổ sung vào hồ sơ xin việc hoặc chứng minh
-                                    năng lực trong công việc hiện tại.
-                                </p>
-                                <h3>Khóa học này dành cho ai?</h3>
-                                <p>
-                                    Khóa học phù hợp với sinh viên, người đi làm, và bất kỳ ai muốn nâng cao kỹ năng
-                                    chuyên môn hoặc chuyển ngành. Không yêu cầu kiến thức nền tảng, mọi nội dung đều
-                                    được xây dựng từ căn bản.
-                                </p>
-                            </div>
-                        </div>
-                        <div *ngIf="currentTab === 'tab2'" class="pane" id="tab2">
-                            <div class="courses-curriculum">
-                                @for (chapter of courseDto.chapters; track chapter.id) {
-                                    <h3>{{ chapter.name }}</h3>
-                                    <ul>
-                                        @for (lesson of chapter.lessons; track lesson.id) {
-                                            <li>
-                                                <a [routerLinkActiveOptions]="{  exact: true }"
-                                                   class="popup-youtube d-flex justify-content-between align-items-center"
-                                                   [routerLink]="['/video-lesson', courseDto.id]"
-                                                   [queryParams]="{ lessonId: lesson.id }"
-                                                   routerLinkActive="active">
-                                                    <span class="courses-name">{{ lesson.name }}</span>
-                                                    <div class="courses-meta">
-                                                        <span class="questions">5 questions</span>
-                                                        <span class="duration"> {{ lesson.duration }} Minutes</span>
-                                                        <span class="status">Preview</span>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                        }
-                                    </ul>
-                                }
-                            </div>
-                        </div>
-                        <div *ngIf="currentTab === 'tab3'" class="pane" id="tab3">
-                            <div class="courses-instructor">
-                                <div class="single-advisor-box">
-                                    <div class="row align-items-center">
-                                        <div class="col-lg-4 col-md-4">
-                                            <div class="advisor-image">
-                                                <img
-                                                    alt="image"
-                                                    [src]="courseDto.author?.avatar"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-8 col-md-8">
-                                            <div class="advisor-content">
-                                                <h3>{{ courseDto.author?.userName }}</h3>
-                                                <span class="sub-title">Agile Project Expert</span>
-                                                <p>
-                                                    {{ courseDto.author?.bio }}
-                                                </p>
-                                                <ul class="social-link">
-                                                    <li>
-                                                        <a class="d-block" href="#" target="_blank"
-                                                        ><i class="bx bxl-facebook"></i
-                                                        ></a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="d-block" href="#" target="_blank"
-                                                        ><i class="bx bxl-twitter"></i
-                                                        ></a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="d-block" href="#" target="_blank"
-                                                        ><i class="bx bxl-instagram"></i
-                                                        ></a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="d-block" href="#" target="_blank"
-                                                        ><i class="bx bxl-linkedin"></i
-                                                        ></a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div *ngIf="currentTab === 'tab4'" class="pane" id="tab4">
-                            <div class="courses-reviews">
-                                <h3>Đánh giá</h3>
-                                <div class="rating">
-                                    <span class="bx bxs-star checked"></span>
-                                    <span class="bx bxs-star checked"></span>
-                                    <span class="bx bxs-star checked"></span>
-                                    <span class="bx bxs-star checked"></span>
-                                    <span class="bx bxs-star"></span>
-                                </div>
-                                <div class="rating-count">
-                                    <span>Trung bình 4.1 dựa trên 1000 đánh giá.</span>
-                                </div>
-                                <div class="row">
-                                    <div class="side">
-                                        <div>5 star</div>
-                                    </div>
-                                    <div class="middle">
-                                        <div class="bar-container">
-                                            <div class="bar-5"></div>
-                                        </div>
-                                    </div>
-                                    <div class="side right">
-                                        <div>02</div>
-                                    </div>
-                                    <div class="side">
-                                        <div>4 star</div>
-                                    </div>
-                                    <div class="middle">
-                                        <div class="bar-container">
-                                            <div class="bar-4"></div>
-                                        </div>
-                                    </div>
-                                    <div class="side right">
-                                        <div>03</div>
-                                    </div>
-                                    <div class="side">
-                                        <div>3 star</div>
-                                    </div>
-                                    <div class="middle">
-                                        <div class="bar-container">
-                                            <div class="bar-3"></div>
-                                        </div>
-                                    </div>
-                                    <div class="side right">
-                                        <div>04</div>
-                                    </div>
-                                    <div class="side">
-                                        <div>2 star</div>
-                                    </div>
-                                    <div class="middle">
-                                        <div class="bar-container">
-                                            <div class="bar-2"></div>
-                                        </div>
-                                    </div>
-                                    <div class="side right">
-                                        <div>05</div>
-                                    </div>
-                                    <div class="side">
-                                        <div>1 star</div>
-                                    </div>
-                                    <div class="middle">
-                                        <div class="bar-container">
-                                            <div class="bar-1"></div>
-                                        </div>
-                                    </div>
-                                    <div class="side right">
-                                        <div>00</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="courses-review-comments">
-                                <h3>3 Reviews</h3>
-                                <div class="user-review">
-                                    <img
-                                        alt="image"
-                                        src="https://angular.envytheme.com/odemy-ng/assets/img/user1.jpg"
-                                    />
-                                    <div class="review-rating">
-                                        <div class="review-stars">
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star checked"></i>
-                                        </div>
-                                        <span class="d-inline-block">James Anderson</span>
-                                    </div>
-                                    <span class="d-block sub-comment">Excellent</span>
-                                    <p>
-                                        Very well built theme, couldn't be happier with it. Can't wait for future
-                                        updates to see what else they add in.
-                                    </p>
-                                </div>
-                                <div class="user-review">
-                                    <img
-                                        alt="image"
-                                        src="https://angular.envytheme.com/odemy-ng/assets/img/user2.jpg"
-                                    />
-                                    <div class="review-rating">
-                                        <div class="review-stars">
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star"></i>
-                                            <i class="bx bxs-star"></i>
-                                        </div>
-                                        <span class="d-inline-block">Sarah Taylor</span>
-                                    </div>
-                                    <span class="d-block sub-comment">Video Quality!</span>
-                                    <p>Was really easy to implement and they quickly answer my additional questions!</p>
-                                </div>
-                                <div class="user-review">
-                                    <img
-                                        alt="image"
-                                        src="https://angular.envytheme.com/odemy-ng/assets/img/user3.jpg"
-                                    />
-                                    <div class="review-rating">
-                                        <div class="review-stars">
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star checked"></i>
-                                        </div>
-                                        <span class="d-inline-block">David Warner</span>
-                                    </div>
-                                    <span class="d-block sub-comment">Perfect Coding!</span>
-                                    <p>
-                                        Stunning design, very dedicated crew who welcome new ideas suggested by
-                                        customers, nice support.
-                                    </p>
-                                </div>
-                                <div class="user-review">
-                                    <img
-                                        alt="image"
-                                        src="https://angular.envytheme.com/odemy-ng/assets/img/user4.jpg"
-                                    />
-                                    <div class="review-rating">
-                                        <div class="review-stars">
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star checked"></i>
-                                            <i class="bx bxs-star"></i>
-                                        </div>
-                                        <span class="d-inline-block">King Kong</span>
-                                    </div>
-                                    <span class="d-block sub-comment">Perfect Video!</span>
-                                    <p>
-                                        Stunning design, very dedicated crew who welcome new ideas suggested by
-                                        customers, nice support.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+</div>
 
-                <div class="courses-area bg-f8f9f8 p-3">
-                    <div class="section-title">
-                        <h2>Các khoá học liên quan</h2>
+<div class="container pt-2">
+    <div class="row">
+        <div class="col-lg-9 col-md-12 pb-4">
+            <div class="courses-details-desc pb-5">
+                <ul class="nav-tabset">
+                    <li [ngClass]="{ active: currentTab === 'tab1' }" class="nav-tab">
+                        <span (click)="switchTab($event, 'tab1')">Tổng quan</span>
+                    </li>
+                    <li [ngClass]="{ active: currentTab === 'tab2' }" class="nav-tab">
+                        <span (click)="switchTab($event, 'tab2')">Nội dung</span>
+                    </li>
+                    <li [ngClass]="{ active: currentTab === 'tab3' }" class="nav-tab">
+                        <span (click)="switchTab($event, 'tab3')">Giảng viên</span>
+                    </li>
+                    <li [ngClass]="{ active: currentTab === 'tab4' }" class="nav-tab">
+                        <span (click)="switchTab($event, 'tab4')">Reviews</span>
+                    </li>
+                </ul>
+                <div class="tabs-container">
+                    <div *ngIf="currentTab === 'tab1'" class="pane" id="tab1">
+                        <div class="courses-overview">
+                            <h3>Mô tả</h3>
+                            <p>
+                                {{ courseDto.description }}
+                            </p>
+                            <h3>Chứng chỉ</h3>
+                            <p>
+                                Sau khi hoàn thành khóa học, học viên sẽ nhận được chứng chỉ hoàn tất do hệ thống
+                                cấp. Chứng chỉ có thể được sử dụng để bổ sung vào hồ sơ xin việc hoặc chứng minh
+                                năng lực trong công việc hiện tại.
+                            </p>
+                            <h3>Khóa học này dành cho ai?</h3>
+                            <p>
+                                Khóa học phù hợp với sinh viên, người đi làm, và bất kỳ ai muốn nâng cao kỹ năng
+                                chuyên môn hoặc chuyển ngành. Không yêu cầu kiến thức nền tảng, mọi nội dung đều
+                                được xây dựng từ căn bản.
+                            </p>
+                        </div>
                     </div>
-                    <div class="row justify-content-center">
-                        @for (relativeCourse of courseDto.relativeCourses.slice(0, 4); track relativeCourse.id) {
-                            <div class="col-lg-3 col-md-6">
-                                <div class="single-courses-box">
-                                    <div class="courses-image">
-                                        <a class="d-block image" routerLink="/detail-courses">
+                    <div *ngIf="currentTab === 'tab2'" class="pane" id="tab2">
+                        <div class="courses-curriculum">
+                            <!--   @for (chapter of courseDto.chapters; track chapter.id) {
+                                   <h3>{{ chapter.name }}</h3>
+                                   <ul>
+                                       @for (lesson of chapter.lessons; track lesson.id) {
+                                           <li>
+                                               <a [routerLinkActiveOptions]="{  exact: true }"
+                                                  class="popup-youtube d-flex justify-content-between align-items-center"
+                                                  [routerLink]="['/video-lesson', courseDto.id]"
+                                                  [queryParams]="{ lessonId: lesson.id }"
+                                                  routerLinkActive="active">
+                                                   <span class="courses-name">{{ lesson.name }}</span>
+                                                   <div class="courses-meta">
+                                                       <span class="questions">5 questions</span>
+                                                       <span class="duration"> {{ lesson.duration }} Minutes</span>
+                                                       <span class="status">Preview</span>
+                                                   </div>
+                                               </a>
+                                           </li>
+                                       }
+                                   </ul>
+                               }-->
+                        </div>
+                    </div>
+                    <div *ngIf="currentTab === 'tab3'" class="pane" id="tab3">
+                        <div class="courses-instructor">
+                            <div class="single-advisor-box">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-4 col-md-4">
+                                        <div class="advisor-image">
                                             <img
                                                 alt="image"
-                                                [src]="relativeCourse.thumbnail"
+                                                [src]="courseDto.author?.avatar"
                                             />
-                                        </a>
-                                        <a class="fav" routerLink="/"><i class="flaticon-heart"></i></a>
-                                        <div class="price shadow">${{ relativeCourse.newPrice }}</div>
-                                    </div>
-                                    <div class="courses-content">
-                                        <div class="course-author d-flex align-items-center">
-                                            <img
-                                                alt="image"
-                                                class="rounded-circle"
-                                                [src]="relativeCourse.author?.avatar"
-                                            />
-                                            <span>{{ relativeCourse.author?.userName }}</span>
                                         </div>
-                                        <h3>
-                                            <a routerLink="/detail-courses"
-                                            >The Data Science Course 2020: Complete Data Science Bootcamp</a
-                                            >
-                                        </h3>
-                                        <ul class="courses-box-footer d-flex justify-content-between align-items-center">
-                                            <li><i class="flaticon-agenda"></i> 15 Lessons</li>
-                                            <li><i class="flaticon-people"></i> 145 Students</li>
-                                        </ul>
+                                    </div>
+                                    <div class="col-lg-8 col-md-8">
+                                        <div class="advisor-content">
+                                            <h3>{{ courseDto.author?.userName }}</h3>
+                                            <span class="sub-title">Agile Project Expert</span>
+                                            <p>
+                                                {{ courseDto.author?.bio }}
+                                            </p>
+                                            <ul class="social-link">
+                                                <li>
+                                                    <a class="d-block" href="#" target="_blank"
+                                                    ><i class="bx bxl-facebook"></i
+                                                    ></a>
+                                                </li>
+                                                <li>
+                                                    <a class="d-block" href="#" target="_blank"
+                                                    ><i class="bx bxl-twitter"></i
+                                                    ></a>
+                                                </li>
+                                                <li>
+                                                    <a class="d-block" href="#" target="_blank"
+                                                    ><i class="bx bxl-instagram"></i
+                                                    ></a>
+                                                </li>
+                                                <li>
+                                                    <a class="d-block" href="#" target="_blank"
+                                                    ><i class="bx bxl-linkedin"></i
+                                                    ></a>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        }
+                        </div>
+                    </div>
+                    <div *ngIf="currentTab === 'tab4'" class="pane" id="tab4">
+                        <div class="courses-reviews">
+                            <h3>Đánh giá</h3>
+                            <div class="rating">
+                                <span class="bx bxs-star checked"></span>
+                                <span class="bx bxs-star checked"></span>
+                                <span class="bx bxs-star checked"></span>
+                                <span class="bx bxs-star checked"></span>
+                                <span class="bx bxs-star"></span>
+                            </div>
+                            <div class="rating-count">
+                                <span>Trung bình 4.1 dựa trên 1000 đánh giá.</span>
+                            </div>
+                            <div class="row">
+                                <div class="side">
+                                    <div>5 star</div>
+                                </div>
+                                <div class="middle">
+                                    <div class="bar-container">
+                                        <div class="bar-5"></div>
+                                    </div>
+                                </div>
+                                <div class="side right">
+                                    <div>02</div>
+                                </div>
+                                <div class="side">
+                                    <div>4 star</div>
+                                </div>
+                                <div class="middle">
+                                    <div class="bar-container">
+                                        <div class="bar-4"></div>
+                                    </div>
+                                </div>
+                                <div class="side right">
+                                    <div>03</div>
+                                </div>
+                                <div class="side">
+                                    <div>3 star</div>
+                                </div>
+                                <div class="middle">
+                                    <div class="bar-container">
+                                        <div class="bar-3"></div>
+                                    </div>
+                                </div>
+                                <div class="side right">
+                                    <div>04</div>
+                                </div>
+                                <div class="side">
+                                    <div>2 star</div>
+                                </div>
+                                <div class="middle">
+                                    <div class="bar-container">
+                                        <div class="bar-2"></div>
+                                    </div>
+                                </div>
+                                <div class="side right">
+                                    <div>05</div>
+                                </div>
+                                <div class="side">
+                                    <div>1 star</div>
+                                </div>
+                                <div class="middle">
+                                    <div class="bar-container">
+                                        <div class="bar-1"></div>
+                                    </div>
+                                </div>
+                                <div class="side right">
+                                    <div>00</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="courses-review-comments">
+                            <h3>3 Reviews</h3>
+                            <div class="user-review">
+                                <img
+                                    alt="image"
+                                    src="https://angular.envytheme.com/odemy-ng/assets/img/user1.jpg"
+                                />
+                                <div class="review-rating">
+                                    <div class="review-stars">
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star checked"></i>
+                                    </div>
+                                    <span class="d-inline-block">James Anderson</span>
+                                </div>
+                                <span class="d-block sub-comment">Excellent</span>
+                                <p>
+                                    Very well built theme, couldn't be happier with it. Can't wait for future
+                                    updates to see what else they add in.
+                                </p>
+                            </div>
+                            <div class="user-review">
+                                <img
+                                    alt="image"
+                                    src="https://angular.envytheme.com/odemy-ng/assets/img/user2.jpg"
+                                />
+                                <div class="review-rating">
+                                    <div class="review-stars">
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star"></i>
+                                        <i class="bx bxs-star"></i>
+                                    </div>
+                                    <span class="d-inline-block">Sarah Taylor</span>
+                                </div>
+                                <span class="d-block sub-comment">Video Quality!</span>
+                                <p>Was really easy to implement and they quickly answer my additional questions!</p>
+                            </div>
+                            <div class="user-review">
+                                <img
+                                    alt="image"
+                                    src="https://angular.envytheme.com/odemy-ng/assets/img/user3.jpg"
+                                />
+                                <div class="review-rating">
+                                    <div class="review-stars">
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star checked"></i>
+                                    </div>
+                                    <span class="d-inline-block">David Warner</span>
+                                </div>
+                                <span class="d-block sub-comment">Perfect Coding!</span>
+                                <p>
+                                    Stunning design, very dedicated crew who welcome new ideas suggested by
+                                    customers, nice support.
+                                </p>
+                            </div>
+                            <div class="user-review">
+                                <img
+                                    alt="image"
+                                    src="https://angular.envytheme.com/odemy-ng/assets/img/user4.jpg"
+                                />
+                                <div class="review-rating">
+                                    <div class="review-stars">
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star checked"></i>
+                                        <i class="bx bxs-star"></i>
+                                    </div>
+                                    <span class="d-inline-block">King Kong</span>
+                                </div>
+                                <span class="d-block sub-comment">Perfect Video!</span>
+                                <p>
+                                    Stunning design, very dedicated crew who welcome new ideas suggested by
+                                    customers, nice support.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-3 col-md-12">
-                <div class="courses-details-info">
-                    <div class="image">
-                        <lightgallery [onBeforeSlide]="onBeforeSlide" [settings]="settings">
-                            <a
-                                class="d-block"
-                                data-lg-size="1280-720"
-                                data-src="https://www.youtube.com/watch?v=PWvPbGWVRrU"
-                                data-sub-html="<p>Watch Video</p>"
-                            >
-                                <img
-                                    alt="image"
-                                    src="assets/img/video-img2.jpg"
-                                />
-                                <div class="content">
-                                    <i class="flaticon-play"></i>
-                                    <span>Xem preview</span>
-                                </div>
-                            </a>
-                        </lightgallery>
-                    </div>
-                    <ul class="info">
-                        <li class="price">
-                            <div class="d-flex justify-content-center align-items-center">
-                                {{ courseDto.newPrice }} đ
-                                <span style="font-size: smaller"><del>  {{ courseDto.oldPrice }}đ đ</del></span>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span><i class="flaticon-teacher"></i> Tác giả</span>
-                                {{ courseDto.author?.userName }}đ
-                            </div>
-                        </li>
-                    </ul>
-
-                    <div class="btn-box">
-                        <div class="default-btn" (click)="onAddToCart()">
-                            <i class="flaticon-shopping-cart"></i>
-                            {{ actionText }}
-                        </div>
-                    </div>
-
-
-                    <div class="courses-share">
-                        <div>
-                            <a href=""><span><i class="flaticon-heart"></i>&nbsp;&nbsp;Yêu thích</span></a>
-                        </div>
-                        <div class="share-info">
-                            <ul class="social-link">
-                                <li>
-                                    <a class="d-block" href="#" target="_blank"><i class="bx bxl-facebook"></i></a>
-                                </li>
-                                <li>
-                                    <a class="d-block" href="#" target="_blank"><i class="bx bxl-instagram"></i></a>
-                                </li>
-                            </ul>
-                            <span>Chia sẻ khoá học&nbsp;<i class="flaticon-share"></i></span>
-                        </div>
-                    </div>
-
-                    <ul class="info">
-                        <li>
-                            <span><i class="bx bx-star"></i> Học tập chủ động và tương tác</span>
-                        </li>
-                        <li>
-                            <span><i class="bx bx-star"></i>Thực hành và đánh giá xuyên suốt</span>
-                        </li>
-                        <li>
-                            <span><i class="bx bx-star"></i>Hoạt động học tập đa dạng và hướng mục tiêu</span>
-                        </li>
-                        <li>
-                            <span><i class="bx bx-star"></i>Môi trường lập trình tương tác tại chỗ</span>
-                        </li>
-                    </ul>
+            <div class="courses-area bg-f8f9f8 p-3">
+                <div class="section-title">
+                    <h2>Các khoá học liên quan</h2>
                 </div>
+                <div class="row justify-content-center">
+                    <!-- @for (relativeCourse of courseDto.relativeCourses.slice(0, 4); track relativeCourse.id) {
+                         <div class="col-lg-3 col-md-6">
+                             <div class="single-courses-box">
+                                 <div class="courses-image">
+                                     <a class="d-block image" routerLink="/detail-courses">
+                                         <img
+                                             alt="image"
+                                             [src]="relativeCourse.thumbnail"
+                                         />
+                                     </a>
+                                     <a class="fav" routerLink="/"><i class="flaticon-heart"></i></a>
+                                     <div class="price shadow">${{ relativeCourse.newPrice }}</div>
+                                 </div>
+                                 <div class="courses-content">
+                                     <div class="course-author d-flex align-items-center">
+                                         <img
+                                             alt="image"
+                                             class="rounded-circle"
+                                             [src]="relativeCourse.author?.avatar"
+                                         />
+                                         <span>{{ relativeCourse.author?.userName }}</span>
+                                     </div>
+                                     <h3>
+                                         <a routerLink="/detail-courses"
+                                         >The Data Science Course 2020: Complete Data Science Bootcamp</a
+                                         >
+                                     </h3>
+                                     <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                         <li><i class="flaticon-agenda"></i> 15 Lessons</li>
+                                         <li><i class="flaticon-people"></i> 145 Students</li>
+                                     </ul>
+                                 </div>
+                             </div>
+                         </div>
+                     }-->
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-12">
+            <div class="courses-details-info">
+                <div class="image">
+                    <lightgallery [onBeforeSlide]="onBeforeSlide" [settings]="settings">
+                        <a
+                            class="d-block"
+                            data-lg-size="1280-720"
+                            data-src="https://www.youtube.com/watch?v=PWvPbGWVRrU"
+                            data-sub-html="<p>Watch Video</p>"
+                        >
+                            <img
+                                alt="image"
+                                src="assets/img/video-img2.jpg"
+                            />
+                            <div class="content">
+                                <i class="flaticon-play"></i>
+                                <span>Xem preview</span>
+                            </div>
+                        </a>
+                    </lightgallery>
+                </div>
+                <ul class="info">
+                    <li class="price">
+                        <div class="d-flex justify-content-center align-items-center">
+                            {{ courseDto.price }} đ
+                            <span style="font-size: smaller"><del>  {{ courseDto.price }}đ đ</del></span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span><i class="flaticon-teacher"></i> Tác giả</span>
+                            {{ courseDto.author?.userName }}đ
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="btn-box">
+                    <div class="default-btn" (click)="onAddToCart()">
+                        <i class="flaticon-shopping-cart"></i>
+                        {{ actionText }}
+                    </div>
+                </div>
+
+
+                <div class="courses-share">
+                    <div>
+                        <a href=""><span><i class="flaticon-heart"></i>&nbsp;&nbsp;Yêu thích</span></a>
+                    </div>
+                    <div class="share-info">
+                        <ul class="social-link">
+                            <li>
+                                <a class="d-block" href="#" target="_blank"><i class="bx bxl-facebook"></i></a>
+                            </li>
+                            <li>
+                                <a class="d-block" href="#" target="_blank"><i class="bx bxl-instagram"></i></a>
+                            </li>
+                        </ul>
+                        <span>Chia sẻ khoá học&nbsp;<i class="flaticon-share"></i></span>
+                    </div>
+                </div>
+
+                <ul class="info">
+                    <li>
+                        <span><i class="bx bx-star"></i> Học tập chủ động và tương tác</span>
+                    </li>
+                    <li>
+                        <span><i class="bx bx-star"></i>Thực hành và đánh giá xuyên suốt</span>
+                    </li>
+                    <li>
+                        <span><i class="bx bx-star"></i>Hoạt động học tập đa dạng và hướng mục tiêu</span>
+                    </li>
+                    <li>
+                        <span><i class="bx bx-star"></i>Môi trường lập trình tương tác tại chỗ</span>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
