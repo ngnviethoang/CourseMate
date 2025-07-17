@@ -14,11 +14,11 @@ namespace CourseMate.Data;
 
 public class CourseMateDataSeederContributor : IDataSeedContributor, ITransientDependency
 {
-    private readonly IdentityRoleManager _identityRoleManager;
-    private readonly PermissionManager _permissionManager;
-    private readonly IdentityUserManager _identityUserManager;
-    private readonly IRepository<Course, Guid> _courseRepo;
     private readonly IRepository<Category, Guid> _categoryRepo;
+    private readonly IRepository<Course, Guid> _courseRepo;
+    private readonly IdentityRoleManager _identityRoleManager;
+    private readonly IdentityUserManager _identityUserManager;
+    private readonly PermissionManager _permissionManager;
 
     public CourseMateDataSeederContributor(
         IdentityRoleManager identityRoleManager,

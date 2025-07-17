@@ -7,42 +7,65 @@
 
 -- Started on 2025-07-06 17:00:20
 
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
+SET
+statement_timeout = 0;
+SET
+lock_timeout = 0;
+SET
+idle_in_transaction_session_timeout = 0;
+SET
+transaction_timeout = 0;
+SET
+client_encoding = 'UTF8';
+SET
+standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
+SET
+check_function_bodies = false;
+SET
+xmloption = content;
+SET
+client_min_messages = warning;
+SET
+row_security = off;
 
-DROP DATABASE "CourseMate";
+DROP
+DATABASE "CourseMate";
 --
 -- TOC entry 5316 (class 1262 OID 25713)
 -- Name: CourseMate; Type: DATABASE; Schema: -; Owner: postgres
 --
 
-CREATE DATABASE "CourseMate" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'English_United States.1252';
+CREATE
+DATABASE "CourseMate" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'English_United States.1252';
 
 
-ALTER DATABASE "CourseMate" OWNER TO postgres;
+ALTER
+DATABASE "CourseMate" OWNER TO postgres;
 
-\connect "CourseMate"
+\connect
+"CourseMate"
 
 SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
+SET
+lock_timeout = 0;
+SET
+idle_in_transaction_session_timeout = 0;
+SET
+transaction_timeout = 0;
+SET
+client_encoding = 'UTF8';
+SET
+standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
+SET
+check_function_bodies = false;
+SET
+xmloption = content;
+SET
+client_min_messages = warning;
+SET
+row_security = off;
 
 --
 -- TOC entry 6 (class 2615 OID 25721)
@@ -52,29 +75,33 @@ SET row_security = off;
 CREATE SCHEMA app;
 
 
-ALTER SCHEMA app OWNER TO postgres;
+ALTER
+SCHEMA app OWNER TO postgres;
 
-SET default_tablespace = '';
+SET
+default_tablespace = '';
 
-SET default_table_access_method = heap;
+SET
+default_table_access_method = heap;
 
 --
 -- TOC entry 238 (class 1259 OID 25863)
 -- Name: Books; Type: TABLE; Schema: app; Owner: postgres
 --
 
-CREATE TABLE app."Books" (
-    "Id" uuid NOT NULL,
-    "Name" character varying(128) NOT NULL,
-    "Type" integer NOT NULL,
-    "PublishDate" timestamp without time zone NOT NULL,
-    "Price" real NOT NULL,
-    "ExtraProperties" text NOT NULL,
-    "ConcurrencyStamp" character varying(40) NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid,
+CREATE TABLE app."Books"
+(
+    "Id"                   uuid                   NOT NULL,
+    "Name"                 character varying(128) NOT NULL,
+    "Type"                 integer                NOT NULL,
+    "PublishDate"          timestamp without time zone NOT NULL,
+    "Price"                real                   NOT NULL,
+    "ExtraProperties"      text                   NOT NULL,
+    "ConcurrencyStamp"     character varying(40)  NOT NULL,
+    "CreationTime"         timestamp without time zone NOT NULL,
+    "CreatorId"            uuid,
     "LastModificationTime" timestamp without time zone,
-    "LastModifierId" uuid
+    "LastModifierId"       uuid
 );
 
 
@@ -85,17 +112,18 @@ ALTER TABLE app."Books" OWNER TO postgres;
 -- Name: Categories; Type: TABLE; Schema: app; Owner: postgres
 --
 
-CREATE TABLE app."Categories" (
-    "Id" uuid NOT NULL,
-    "Name" character varying(1024) NOT NULL,
-    "Description" character varying(1024) NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid,
+CREATE TABLE app."Categories"
+(
+    "Id"                   uuid                    NOT NULL,
+    "Name"                 character varying(1024) NOT NULL,
+    "Description"          character varying(1024) NOT NULL,
+    "CreationTime"         timestamp without time zone NOT NULL,
+    "CreatorId"            uuid,
     "LastModificationTime" timestamp without time zone,
-    "LastModifierId" uuid,
-    "IsDeleted" boolean DEFAULT false NOT NULL,
-    "DeleterId" uuid,
-    "DeletionTime" timestamp without time zone
+    "LastModifierId"       uuid,
+    "IsDeleted"            boolean DEFAULT false   NOT NULL,
+    "DeleterId"            uuid,
+    "DeletionTime"         timestamp without time zone
 );
 
 
@@ -106,17 +134,18 @@ ALTER TABLE app."Categories" OWNER TO postgres;
 -- Name: Chapters; Type: TABLE; Schema: app; Owner: postgres
 --
 
-CREATE TABLE app."Chapters" (
-    "Id" uuid NOT NULL,
-    "Title" character varying(1024) NOT NULL,
-    "CourseId" uuid NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid,
+CREATE TABLE app."Chapters"
+(
+    "Id"                   uuid                    NOT NULL,
+    "Title"                character varying(1024) NOT NULL,
+    "CourseId"             uuid                    NOT NULL,
+    "CreationTime"         timestamp without time zone NOT NULL,
+    "CreatorId"            uuid,
     "LastModificationTime" timestamp without time zone,
-    "LastModifierId" uuid,
-    "IsDeleted" boolean DEFAULT false NOT NULL,
-    "DeleterId" uuid,
-    "DeletionTime" timestamp without time zone
+    "LastModifierId"       uuid,
+    "IsDeleted"            boolean DEFAULT false   NOT NULL,
+    "DeleterId"            uuid,
+    "DeletionTime"         timestamp without time zone
 );
 
 
@@ -127,24 +156,25 @@ ALTER TABLE app."Chapters" OWNER TO postgres;
 -- Name: Courses; Type: TABLE; Schema: app; Owner: postgres
 --
 
-CREATE TABLE app."Courses" (
-    "Id" uuid NOT NULL,
-    "Title" character varying(1024) NOT NULL,
-    "Description" character varying(1024) NOT NULL,
-    "Price" numeric NOT NULL,
-    "Currency" integer NOT NULL,
-    "LevelType" integer NOT NULL,
-    "IsPublished" boolean NOT NULL,
-    "InstructorId" uuid NOT NULL,
-    "CategoryId" uuid NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid,
+CREATE TABLE app."Courses"
+(
+    "Id"                   uuid                                NOT NULL,
+    "Title"                character varying(1024)             NOT NULL,
+    "Description"          character varying(1024)             NOT NULL,
+    "Price"                numeric                             NOT NULL,
+    "Currency"             integer                             NOT NULL,
+    "LevelType"            integer                             NOT NULL,
+    "IsPublished"          boolean                             NOT NULL,
+    "InstructorId"         uuid                                NOT NULL,
+    "CategoryId"           uuid                                NOT NULL,
+    "CreationTime"         timestamp without time zone NOT NULL,
+    "CreatorId"            uuid,
     "LastModificationTime" timestamp without time zone,
-    "LastModifierId" uuid,
-    "IsDeleted" boolean DEFAULT false NOT NULL,
-    "DeleterId" uuid,
-    "DeletionTime" timestamp without time zone,
-    "ThumbnailFile" character varying(50) DEFAULT ''::character varying NOT NULL
+    "LastModifierId"       uuid,
+    "IsDeleted"            boolean               DEFAULT false NOT NULL,
+    "DeleterId"            uuid,
+    "DeletionTime"         timestamp without time zone,
+    "ThumbnailFile"        character varying(50) DEFAULT ''::character varying NOT NULL
 );
 
 
@@ -155,18 +185,19 @@ ALTER TABLE app."Courses" OWNER TO postgres;
 -- Name: Enrollments; Type: TABLE; Schema: app; Owner: postgres
 --
 
-CREATE TABLE app."Enrollments" (
-    "Id" uuid NOT NULL,
-    "StudentId" uuid NOT NULL,
-    "CourseId" uuid NOT NULL,
-    "IsCompleted" boolean NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid,
+CREATE TABLE app."Enrollments"
+(
+    "Id"                   uuid                  NOT NULL,
+    "StudentId"            uuid                  NOT NULL,
+    "CourseId"             uuid                  NOT NULL,
+    "IsCompleted"          boolean               NOT NULL,
+    "CreationTime"         timestamp without time zone NOT NULL,
+    "CreatorId"            uuid,
     "LastModificationTime" timestamp without time zone,
-    "LastModifierId" uuid,
-    "IsDeleted" boolean DEFAULT false NOT NULL,
-    "DeleterId" uuid,
-    "DeletionTime" timestamp without time zone
+    "LastModifierId"       uuid,
+    "IsDeleted"            boolean DEFAULT false NOT NULL,
+    "DeleterId"            uuid,
+    "DeletionTime"         timestamp without time zone
 );
 
 
@@ -177,20 +208,21 @@ ALTER TABLE app."Enrollments" OWNER TO postgres;
 -- Name: Lessons; Type: TABLE; Schema: app; Owner: postgres
 --
 
-CREATE TABLE app."Lessons" (
-    "Id" uuid NOT NULL,
-    "Title" character varying(1024) NOT NULL,
-    "ContentText" character varying(2048) NOT NULL,
+CREATE TABLE app."Lessons"
+(
+    "Id"                   uuid                                NOT NULL,
+    "Title"                character varying(1024)             NOT NULL,
+    "ContentText"          character varying(2048)             NOT NULL,
     "Duration" interval NOT NULL,
-    "ChapterId" uuid NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid,
+    "ChapterId"            uuid                                NOT NULL,
+    "CreationTime"         timestamp without time zone NOT NULL,
+    "CreatorId"            uuid,
     "LastModificationTime" timestamp without time zone,
-    "LastModifierId" uuid,
-    "IsDeleted" boolean DEFAULT false NOT NULL,
-    "DeleterId" uuid,
-    "DeletionTime" timestamp without time zone,
-    "VideoFile" character varying(50) DEFAULT ''::character varying NOT NULL
+    "LastModifierId"       uuid,
+    "IsDeleted"            boolean               DEFAULT false NOT NULL,
+    "DeleterId"            uuid,
+    "DeletionTime"         timestamp without time zone,
+    "VideoFile"            character varying(50) DEFAULT ''::character varying NOT NULL
 );
 
 
@@ -201,11 +233,12 @@ ALTER TABLE app."Lessons" OWNER TO postgres;
 -- Name: OrderItems; Type: TABLE; Schema: app; Owner: postgres
 --
 
-CREATE TABLE app."OrderItems" (
-    "Id" uuid NOT NULL,
-    "OrderId" uuid NOT NULL,
-    "CourseId" uuid NOT NULL,
-    "Price" numeric NOT NULL
+CREATE TABLE app."OrderItems"
+(
+    "Id"       uuid    NOT NULL,
+    "OrderId"  uuid    NOT NULL,
+    "CourseId" uuid    NOT NULL,
+    "Price"    numeric NOT NULL
 );
 
 
@@ -216,19 +249,20 @@ ALTER TABLE app."OrderItems" OWNER TO postgres;
 -- Name: Orders; Type: TABLE; Schema: app; Owner: postgres
 --
 
-CREATE TABLE app."Orders" (
-    "Id" uuid NOT NULL,
-    "StudentId" uuid NOT NULL,
-    "TotalAmount" numeric NOT NULL,
-    "Currency" character varying(24) NOT NULL,
-    "PaymentRequestId" uuid NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid,
+CREATE TABLE app."Orders"
+(
+    "Id"                   uuid                  NOT NULL,
+    "StudentId"            uuid                  NOT NULL,
+    "TotalAmount"          numeric               NOT NULL,
+    "Currency"             character varying(24) NOT NULL,
+    "PaymentRequestId"     uuid                  NOT NULL,
+    "CreationTime"         timestamp without time zone NOT NULL,
+    "CreatorId"            uuid,
     "LastModificationTime" timestamp without time zone,
-    "LastModifierId" uuid,
-    "IsDeleted" boolean DEFAULT false NOT NULL,
-    "DeleterId" uuid,
-    "DeletionTime" timestamp without time zone
+    "LastModifierId"       uuid,
+    "IsDeleted"            boolean DEFAULT false NOT NULL,
+    "DeleterId"            uuid,
+    "DeletionTime"         timestamp without time zone
 );
 
 
@@ -239,19 +273,20 @@ ALTER TABLE app."Orders" OWNER TO postgres;
 -- Name: PaymentRequests; Type: TABLE; Schema: app; Owner: postgres
 --
 
-CREATE TABLE app."PaymentRequests" (
-    "Id" uuid NOT NULL,
-    "State" integer NOT NULL,
-    "Currency" character varying(24) NOT NULL,
-    "Gateway" character varying(1024) NOT NULL,
-    "FailReason" character varying(1024) NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid,
+CREATE TABLE app."PaymentRequests"
+(
+    "Id"                   uuid                    NOT NULL,
+    "State"                integer                 NOT NULL,
+    "Currency"             character varying(24)   NOT NULL,
+    "Gateway"              character varying(1024) NOT NULL,
+    "FailReason"           character varying(1024) NOT NULL,
+    "CreationTime"         timestamp without time zone NOT NULL,
+    "CreatorId"            uuid,
     "LastModificationTime" timestamp without time zone,
-    "LastModifierId" uuid,
-    "IsDeleted" boolean DEFAULT false NOT NULL,
-    "DeleterId" uuid,
-    "DeletionTime" timestamp without time zone
+    "LastModifierId"       uuid,
+    "IsDeleted"            boolean DEFAULT false   NOT NULL,
+    "DeleterId"            uuid,
+    "DeletionTime"         timestamp without time zone
 );
 
 
@@ -262,19 +297,20 @@ ALTER TABLE app."PaymentRequests" OWNER TO postgres;
 -- Name: Reviews; Type: TABLE; Schema: app; Owner: postgres
 --
 
-CREATE TABLE app."Reviews" (
-    "Id" uuid NOT NULL,
-    "StudentId" uuid NOT NULL,
-    "CourseId" uuid NOT NULL,
-    "Rating" integer NOT NULL,
-    "Comment" character varying(1024) NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid,
+CREATE TABLE app."Reviews"
+(
+    "Id"                   uuid                    NOT NULL,
+    "StudentId"            uuid                    NOT NULL,
+    "CourseId"             uuid                    NOT NULL,
+    "Rating"               integer                 NOT NULL,
+    "Comment"              character varying(1024) NOT NULL,
+    "CreationTime"         timestamp without time zone NOT NULL,
+    "CreatorId"            uuid,
     "LastModificationTime" timestamp without time zone,
-    "LastModifierId" uuid,
-    "IsDeleted" boolean DEFAULT false NOT NULL,
-    "DeleterId" uuid,
-    "DeletionTime" timestamp without time zone
+    "LastModifierId"       uuid,
+    "IsDeleted"            boolean DEFAULT false   NOT NULL,
+    "DeleterId"            uuid,
+    "DeletionTime"         timestamp without time zone
 );
 
 
@@ -285,16 +321,17 @@ ALTER TABLE app."Reviews" OWNER TO postgres;
 -- Name: AbpAuditLogActions; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpAuditLogActions" (
-    "Id" uuid NOT NULL,
-    "TenantId" uuid,
-    "AuditLogId" uuid NOT NULL,
-    "ServiceName" character varying(256),
-    "MethodName" character varying(128),
-    "Parameters" character varying(2000),
-    "ExecutionTime" timestamp without time zone NOT NULL,
+CREATE TABLE public."AbpAuditLogActions"
+(
+    "Id"                uuid    NOT NULL,
+    "TenantId"          uuid,
+    "AuditLogId"        uuid    NOT NULL,
+    "ServiceName"       character varying(256),
+    "MethodName"        character varying(128),
+    "Parameters"        character varying(2000),
+    "ExecutionTime"     timestamp without time zone NOT NULL,
     "ExecutionDuration" integer NOT NULL,
-    "ExtraProperties" text
+    "ExtraProperties"   text
 );
 
 
@@ -305,31 +342,32 @@ ALTER TABLE public."AbpAuditLogActions" OWNER TO postgres;
 -- Name: AbpAuditLogs; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpAuditLogs" (
-    "Id" uuid NOT NULL,
-    "ApplicationName" character varying(96),
-    "UserId" uuid,
-    "UserName" character varying(256),
-    "TenantId" uuid,
-    "TenantName" character varying(64),
-    "ImpersonatorUserId" uuid,
-    "ImpersonatorUserName" character varying(256),
-    "ImpersonatorTenantId" uuid,
+CREATE TABLE public."AbpAuditLogs"
+(
+    "Id"                     uuid                  NOT NULL,
+    "ApplicationName"        character varying(96),
+    "UserId"                 uuid,
+    "UserName"               character varying(256),
+    "TenantId"               uuid,
+    "TenantName"             character varying(64),
+    "ImpersonatorUserId"     uuid,
+    "ImpersonatorUserName"   character varying(256),
+    "ImpersonatorTenantId"   uuid,
     "ImpersonatorTenantName" character varying(64),
-    "ExecutionTime" timestamp without time zone NOT NULL,
-    "ExecutionDuration" integer NOT NULL,
-    "ClientIpAddress" character varying(64),
-    "ClientName" character varying(128),
-    "ClientId" character varying(64),
-    "CorrelationId" character varying(64),
-    "BrowserInfo" character varying(512),
-    "HttpMethod" character varying(16),
-    "Url" character varying(256),
-    "Exceptions" text,
-    "Comments" character varying(256),
-    "HttpStatusCode" integer,
-    "ExtraProperties" text NOT NULL,
-    "ConcurrencyStamp" character varying(40) NOT NULL
+    "ExecutionTime"          timestamp without time zone NOT NULL,
+    "ExecutionDuration"      integer               NOT NULL,
+    "ClientIpAddress"        character varying(64),
+    "ClientName"             character varying(128),
+    "ClientId"               character varying(64),
+    "CorrelationId"          character varying(64),
+    "BrowserInfo"            character varying(512),
+    "HttpMethod"             character varying(16),
+    "Url"                    character varying(256),
+    "Exceptions"             text,
+    "Comments"               character varying(256),
+    "HttpStatusCode"         integer,
+    "ExtraProperties"        text                  NOT NULL,
+    "ConcurrencyStamp"       character varying(40) NOT NULL
 );
 
 
@@ -340,19 +378,20 @@ ALTER TABLE public."AbpAuditLogs" OWNER TO postgres;
 -- Name: AbpBackgroundJobs; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpBackgroundJobs" (
-    "Id" uuid NOT NULL,
-    "ApplicationName" character varying(96),
-    "JobName" character varying(128) NOT NULL,
-    "JobArgs" character varying(1048576) NOT NULL,
-    "TryCount" smallint DEFAULT 0 NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "NextTryTime" timestamp without time zone NOT NULL,
-    "LastTryTime" timestamp without time zone,
-    "IsAbandoned" boolean DEFAULT false NOT NULL,
-    "Priority" smallint DEFAULT 15 NOT NULL,
-    "ExtraProperties" text NOT NULL,
-    "ConcurrencyStamp" character varying(40) NOT NULL
+CREATE TABLE public."AbpBackgroundJobs"
+(
+    "Id"               uuid                       NOT NULL,
+    "ApplicationName"  character varying(96),
+    "JobName"          character varying(128)     NOT NULL,
+    "JobArgs"          character varying(1048576) NOT NULL,
+    "TryCount"         smallint DEFAULT 0         NOT NULL,
+    "CreationTime"     timestamp without time zone NOT NULL,
+    "NextTryTime"      timestamp without time zone NOT NULL,
+    "LastTryTime"      timestamp without time zone,
+    "IsAbandoned"      boolean  DEFAULT false     NOT NULL,
+    "Priority"         smallint DEFAULT 15        NOT NULL,
+    "ExtraProperties"  text                       NOT NULL,
+    "ConcurrencyStamp" character varying(40)      NOT NULL
 );
 
 
@@ -363,12 +402,13 @@ ALTER TABLE public."AbpBackgroundJobs" OWNER TO postgres;
 -- Name: AbpBlobContainers; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpBlobContainers" (
-    "Id" uuid NOT NULL,
-    "TenantId" uuid,
-    "Name" character varying(128) NOT NULL,
-    "ExtraProperties" text NOT NULL,
-    "ConcurrencyStamp" character varying(40) NOT NULL
+CREATE TABLE public."AbpBlobContainers"
+(
+    "Id"               uuid                   NOT NULL,
+    "TenantId"         uuid,
+    "Name"             character varying(128) NOT NULL,
+    "ExtraProperties"  text                   NOT NULL,
+    "ConcurrencyStamp" character varying(40)  NOT NULL
 );
 
 
@@ -379,14 +419,15 @@ ALTER TABLE public."AbpBlobContainers" OWNER TO postgres;
 -- Name: AbpBlobs; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpBlobs" (
-    "Id" uuid NOT NULL,
-    "ContainerId" uuid NOT NULL,
-    "TenantId" uuid,
-    "Name" character varying(256) NOT NULL,
-    "Content" bytea,
-    "ExtraProperties" text NOT NULL,
-    "ConcurrencyStamp" character varying(40) NOT NULL
+CREATE TABLE public."AbpBlobs"
+(
+    "Id"               uuid                   NOT NULL,
+    "ContainerId"      uuid                   NOT NULL,
+    "TenantId"         uuid,
+    "Name"             character varying(256) NOT NULL,
+    "Content"          bytea,
+    "ExtraProperties"  text                   NOT NULL,
+    "ConcurrencyStamp" character varying(40)  NOT NULL
 );
 
 
@@ -397,18 +438,19 @@ ALTER TABLE public."AbpBlobs" OWNER TO postgres;
 -- Name: AbpClaimTypes; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpClaimTypes" (
-    "Id" uuid NOT NULL,
-    "Name" character varying(256) NOT NULL,
-    "Required" boolean NOT NULL,
-    "IsStatic" boolean NOT NULL,
-    "Regex" character varying(512),
+CREATE TABLE public."AbpClaimTypes"
+(
+    "Id"               uuid                   NOT NULL,
+    "Name"             character varying(256) NOT NULL,
+    "Required"         boolean                NOT NULL,
+    "IsStatic"         boolean                NOT NULL,
+    "Regex"            character varying(512),
     "RegexDescription" character varying(128),
-    "Description" character varying(256),
-    "ValueType" integer NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "ExtraProperties" text NOT NULL,
-    "ConcurrencyStamp" character varying(40) NOT NULL
+    "Description"      character varying(256),
+    "ValueType"        integer                NOT NULL,
+    "CreationTime"     timestamp without time zone NOT NULL,
+    "ExtraProperties"  text                   NOT NULL,
+    "ConcurrencyStamp" character varying(40)  NOT NULL
 );
 
 
@@ -419,16 +461,17 @@ ALTER TABLE public."AbpClaimTypes" OWNER TO postgres;
 -- Name: AbpEntityChanges; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpEntityChanges" (
-    "Id" uuid NOT NULL,
-    "AuditLogId" uuid NOT NULL,
-    "TenantId" uuid,
-    "ChangeTime" timestamp without time zone NOT NULL,
-    "ChangeType" smallint NOT NULL,
-    "EntityTenantId" uuid,
-    "EntityId" character varying(128),
+CREATE TABLE public."AbpEntityChanges"
+(
+    "Id"                 uuid                   NOT NULL,
+    "AuditLogId"         uuid                   NOT NULL,
+    "TenantId"           uuid,
+    "ChangeTime"         timestamp without time zone NOT NULL,
+    "ChangeType"         smallint               NOT NULL,
+    "EntityTenantId"     uuid,
+    "EntityId"           character varying(128),
     "EntityTypeFullName" character varying(128) NOT NULL,
-    "ExtraProperties" text
+    "ExtraProperties"    text
 );
 
 
@@ -439,14 +482,15 @@ ALTER TABLE public."AbpEntityChanges" OWNER TO postgres;
 -- Name: AbpEntityPropertyChanges; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpEntityPropertyChanges" (
-    "Id" uuid NOT NULL,
-    "TenantId" uuid,
-    "EntityChangeId" uuid NOT NULL,
-    "NewValue" character varying(512),
-    "OriginalValue" character varying(512),
-    "PropertyName" character varying(128) NOT NULL,
-    "PropertyTypeFullName" character varying(64) NOT NULL
+CREATE TABLE public."AbpEntityPropertyChanges"
+(
+    "Id"                   uuid                   NOT NULL,
+    "TenantId"             uuid,
+    "EntityChangeId"       uuid                   NOT NULL,
+    "NewValue"             character varying(512),
+    "OriginalValue"        character varying(512),
+    "PropertyName"         character varying(128) NOT NULL,
+    "PropertyTypeFullName" character varying(64)  NOT NULL
 );
 
 
@@ -457,10 +501,11 @@ ALTER TABLE public."AbpEntityPropertyChanges" OWNER TO postgres;
 -- Name: AbpFeatureGroups; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpFeatureGroups" (
-    "Id" uuid NOT NULL,
-    "Name" character varying(128) NOT NULL,
-    "DisplayName" character varying(256) NOT NULL,
+CREATE TABLE public."AbpFeatureGroups"
+(
+    "Id"              uuid                   NOT NULL,
+    "Name"            character varying(128) NOT NULL,
+    "DisplayName"     character varying(256) NOT NULL,
     "ExtraProperties" text
 );
 
@@ -472,12 +517,13 @@ ALTER TABLE public."AbpFeatureGroups" OWNER TO postgres;
 -- Name: AbpFeatureValues; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpFeatureValues" (
-    "Id" uuid NOT NULL,
-    "Name" character varying(128) NOT NULL,
-    "Value" character varying(128) NOT NULL,
+CREATE TABLE public."AbpFeatureValues"
+(
+    "Id"           uuid                   NOT NULL,
+    "Name"         character varying(128) NOT NULL,
+    "Value"        character varying(128) NOT NULL,
     "ProviderName" character varying(64),
-    "ProviderKey" character varying(64)
+    "ProviderKey"  character varying(64)
 );
 
 
@@ -488,19 +534,20 @@ ALTER TABLE public."AbpFeatureValues" OWNER TO postgres;
 -- Name: AbpFeatures; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpFeatures" (
-    "Id" uuid NOT NULL,
-    "GroupName" character varying(128) NOT NULL,
-    "Name" character varying(128) NOT NULL,
-    "ParentName" character varying(128),
-    "DisplayName" character varying(256) NOT NULL,
-    "Description" character varying(256),
-    "DefaultValue" character varying(256),
-    "IsVisibleToClients" boolean NOT NULL,
-    "IsAvailableToHost" boolean NOT NULL,
-    "AllowedProviders" character varying(256),
-    "ValueType" character varying(2048),
-    "ExtraProperties" text
+CREATE TABLE public."AbpFeatures"
+(
+    "Id"                 uuid                   NOT NULL,
+    "GroupName"          character varying(128) NOT NULL,
+    "Name"               character varying(128) NOT NULL,
+    "ParentName"         character varying(128),
+    "DisplayName"        character varying(256) NOT NULL,
+    "Description"        character varying(256),
+    "DefaultValue"       character varying(256),
+    "IsVisibleToClients" boolean                NOT NULL,
+    "IsAvailableToHost"  boolean                NOT NULL,
+    "AllowedProviders"   character varying(256),
+    "ValueType"          character varying(2048),
+    "ExtraProperties"    text
 );
 
 
@@ -511,11 +558,12 @@ ALTER TABLE public."AbpFeatures" OWNER TO postgres;
 -- Name: AbpLinkUsers; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpLinkUsers" (
-    "Id" uuid NOT NULL,
-    "SourceUserId" uuid NOT NULL,
+CREATE TABLE public."AbpLinkUsers"
+(
+    "Id"             uuid NOT NULL,
+    "SourceUserId"   uuid NOT NULL,
     "SourceTenantId" uuid,
-    "TargetUserId" uuid NOT NULL,
+    "TargetUserId"   uuid NOT NULL,
     "TargetTenantId" uuid
 );
 
@@ -527,12 +575,13 @@ ALTER TABLE public."AbpLinkUsers" OWNER TO postgres;
 -- Name: AbpOrganizationUnitRoles; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpOrganizationUnitRoles" (
-    "RoleId" uuid NOT NULL,
+CREATE TABLE public."AbpOrganizationUnitRoles"
+(
+    "RoleId"             uuid NOT NULL,
     "OrganizationUnitId" uuid NOT NULL,
-    "TenantId" uuid,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid
+    "TenantId"           uuid,
+    "CreationTime"       timestamp without time zone NOT NULL,
+    "CreatorId"          uuid
 );
 
 
@@ -543,22 +592,23 @@ ALTER TABLE public."AbpOrganizationUnitRoles" OWNER TO postgres;
 -- Name: AbpOrganizationUnits; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpOrganizationUnits" (
-    "Id" uuid NOT NULL,
-    "TenantId" uuid,
-    "ParentId" uuid,
-    "Code" character varying(95) NOT NULL,
-    "DisplayName" character varying(128) NOT NULL,
-    "EntityVersion" integer NOT NULL,
-    "ExtraProperties" text NOT NULL,
-    "ConcurrencyStamp" character varying(40) NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid,
+CREATE TABLE public."AbpOrganizationUnits"
+(
+    "Id"                   uuid                   NOT NULL,
+    "TenantId"             uuid,
+    "ParentId"             uuid,
+    "Code"                 character varying(95)  NOT NULL,
+    "DisplayName"          character varying(128) NOT NULL,
+    "EntityVersion"        integer                NOT NULL,
+    "ExtraProperties"      text                   NOT NULL,
+    "ConcurrencyStamp"     character varying(40)  NOT NULL,
+    "CreationTime"         timestamp without time zone NOT NULL,
+    "CreatorId"            uuid,
     "LastModificationTime" timestamp without time zone,
-    "LastModifierId" uuid,
-    "IsDeleted" boolean DEFAULT false NOT NULL,
-    "DeleterId" uuid,
-    "DeletionTime" timestamp without time zone
+    "LastModifierId"       uuid,
+    "IsDeleted"            boolean DEFAULT false  NOT NULL,
+    "DeleterId"            uuid,
+    "DeletionTime"         timestamp without time zone
 );
 
 
@@ -569,12 +619,13 @@ ALTER TABLE public."AbpOrganizationUnits" OWNER TO postgres;
 -- Name: AbpPermissionGrants; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpPermissionGrants" (
-    "Id" uuid NOT NULL,
-    "TenantId" uuid,
-    "Name" character varying(128) NOT NULL,
-    "ProviderName" character varying(64) NOT NULL,
-    "ProviderKey" character varying(64) NOT NULL
+CREATE TABLE public."AbpPermissionGrants"
+(
+    "Id"           uuid                   NOT NULL,
+    "TenantId"     uuid,
+    "Name"         character varying(128) NOT NULL,
+    "ProviderName" character varying(64)  NOT NULL,
+    "ProviderKey"  character varying(64)  NOT NULL
 );
 
 
@@ -585,10 +636,11 @@ ALTER TABLE public."AbpPermissionGrants" OWNER TO postgres;
 -- Name: AbpPermissionGroups; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpPermissionGroups" (
-    "Id" uuid NOT NULL,
-    "Name" character varying(128) NOT NULL,
-    "DisplayName" character varying(256) NOT NULL,
+CREATE TABLE public."AbpPermissionGroups"
+(
+    "Id"              uuid                   NOT NULL,
+    "Name"            character varying(128) NOT NULL,
+    "DisplayName"     character varying(256) NOT NULL,
     "ExtraProperties" text
 );
 
@@ -600,17 +652,18 @@ ALTER TABLE public."AbpPermissionGroups" OWNER TO postgres;
 -- Name: AbpPermissions; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpPermissions" (
-    "Id" uuid NOT NULL,
-    "GroupName" character varying(128) NOT NULL,
-    "Name" character varying(128) NOT NULL,
-    "ParentName" character varying(128),
-    "DisplayName" character varying(256) NOT NULL,
-    "IsEnabled" boolean NOT NULL,
-    "MultiTenancySide" smallint NOT NULL,
-    "Providers" character varying(128),
-    "StateCheckers" character varying(256),
-    "ExtraProperties" text
+CREATE TABLE public."AbpPermissions"
+(
+    "Id"               uuid                   NOT NULL,
+    "GroupName"        character varying(128) NOT NULL,
+    "Name"             character varying(128) NOT NULL,
+    "ParentName"       character varying(128),
+    "DisplayName"      character varying(256) NOT NULL,
+    "IsEnabled"        boolean                NOT NULL,
+    "MultiTenancySide" smallint               NOT NULL,
+    "Providers"        character varying(128),
+    "StateCheckers"    character varying(256),
+    "ExtraProperties"  text
 );
 
 
@@ -621,11 +674,12 @@ ALTER TABLE public."AbpPermissions" OWNER TO postgres;
 -- Name: AbpRoleClaims; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpRoleClaims" (
-    "Id" uuid NOT NULL,
-    "RoleId" uuid NOT NULL,
-    "TenantId" uuid,
-    "ClaimType" character varying(256) NOT NULL,
+CREATE TABLE public."AbpRoleClaims"
+(
+    "Id"         uuid                   NOT NULL,
+    "RoleId"     uuid                   NOT NULL,
+    "TenantId"   uuid,
+    "ClaimType"  character varying(256) NOT NULL,
     "ClaimValue" character varying(1024)
 );
 
@@ -637,18 +691,19 @@ ALTER TABLE public."AbpRoleClaims" OWNER TO postgres;
 -- Name: AbpRoles; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpRoles" (
-    "Id" uuid NOT NULL,
-    "TenantId" uuid,
-    "Name" character varying(256) NOT NULL,
-    "NormalizedName" character varying(256) NOT NULL,
-    "IsDefault" boolean NOT NULL,
-    "IsStatic" boolean NOT NULL,
-    "IsPublic" boolean NOT NULL,
-    "EntityVersion" integer NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "ExtraProperties" text NOT NULL,
-    "ConcurrencyStamp" character varying(40) NOT NULL
+CREATE TABLE public."AbpRoles"
+(
+    "Id"               uuid                   NOT NULL,
+    "TenantId"         uuid,
+    "Name"             character varying(256) NOT NULL,
+    "NormalizedName"   character varying(256) NOT NULL,
+    "IsDefault"        boolean                NOT NULL,
+    "IsStatic"         boolean                NOT NULL,
+    "IsPublic"         boolean                NOT NULL,
+    "EntityVersion"    integer                NOT NULL,
+    "CreationTime"     timestamp without time zone NOT NULL,
+    "ExtraProperties"  text                   NOT NULL,
+    "ConcurrencyStamp" character varying(40)  NOT NULL
 );
 
 
@@ -659,21 +714,22 @@ ALTER TABLE public."AbpRoles" OWNER TO postgres;
 -- Name: AbpSecurityLogs; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpSecurityLogs" (
-    "Id" uuid NOT NULL,
-    "TenantId" uuid,
-    "ApplicationName" character varying(96),
-    "Identity" character varying(96),
-    "Action" character varying(96),
-    "UserId" uuid,
-    "UserName" character varying(256),
-    "TenantName" character varying(64),
-    "ClientId" character varying(64),
-    "CorrelationId" character varying(64),
-    "ClientIpAddress" character varying(64),
-    "BrowserInfo" character varying(512),
-    "CreationTime" timestamp without time zone NOT NULL,
-    "ExtraProperties" text NOT NULL,
+CREATE TABLE public."AbpSecurityLogs"
+(
+    "Id"               uuid                  NOT NULL,
+    "TenantId"         uuid,
+    "ApplicationName"  character varying(96),
+    "Identity"         character varying(96),
+    "Action"           character varying(96),
+    "UserId"           uuid,
+    "UserName"         character varying(256),
+    "TenantName"       character varying(64),
+    "ClientId"         character varying(64),
+    "CorrelationId"    character varying(64),
+    "ClientIpAddress"  character varying(64),
+    "BrowserInfo"      character varying(512),
+    "CreationTime"     timestamp without time zone NOT NULL,
+    "ExtraProperties"  text                  NOT NULL,
     "ConcurrencyStamp" character varying(40) NOT NULL
 );
 
@@ -685,17 +741,18 @@ ALTER TABLE public."AbpSecurityLogs" OWNER TO postgres;
 -- Name: AbpSessions; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpSessions" (
-    "Id" uuid NOT NULL,
-    "SessionId" character varying(128) NOT NULL,
-    "Device" character varying(64) NOT NULL,
-    "DeviceInfo" character varying(64),
-    "TenantId" uuid,
-    "UserId" uuid NOT NULL,
-    "ClientId" character varying(64),
-    "IpAddresses" character varying(2048),
-    "SignedIn" timestamp without time zone NOT NULL,
-    "LastAccessed" timestamp without time zone,
+CREATE TABLE public."AbpSessions"
+(
+    "Id"              uuid                   NOT NULL,
+    "SessionId"       character varying(128) NOT NULL,
+    "Device"          character varying(64)  NOT NULL,
+    "DeviceInfo"      character varying(64),
+    "TenantId"        uuid,
+    "UserId"          uuid                   NOT NULL,
+    "ClientId"        character varying(64),
+    "IpAddresses"     character varying(2048),
+    "SignedIn"        timestamp without time zone NOT NULL,
+    "LastAccessed"    timestamp without time zone,
     "ExtraProperties" text
 );
 
@@ -707,17 +764,18 @@ ALTER TABLE public."AbpSessions" OWNER TO postgres;
 -- Name: AbpSettingDefinitions; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpSettingDefinitions" (
-    "Id" uuid NOT NULL,
-    "Name" character varying(128) NOT NULL,
-    "DisplayName" character varying(256) NOT NULL,
-    "Description" character varying(512),
-    "DefaultValue" character varying(2048),
-    "IsVisibleToClients" boolean NOT NULL,
-    "Providers" character varying(1024),
-    "IsInherited" boolean NOT NULL,
-    "IsEncrypted" boolean NOT NULL,
-    "ExtraProperties" text
+CREATE TABLE public."AbpSettingDefinitions"
+(
+    "Id"                 uuid                   NOT NULL,
+    "Name"               character varying(128) NOT NULL,
+    "DisplayName"        character varying(256) NOT NULL,
+    "Description"        character varying(512),
+    "DefaultValue"       character varying(2048),
+    "IsVisibleToClients" boolean                NOT NULL,
+    "Providers"          character varying(1024),
+    "IsInherited"        boolean                NOT NULL,
+    "IsEncrypted"        boolean                NOT NULL,
+    "ExtraProperties"    text
 );
 
 
@@ -728,12 +786,13 @@ ALTER TABLE public."AbpSettingDefinitions" OWNER TO postgres;
 -- Name: AbpSettings; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpSettings" (
-    "Id" uuid NOT NULL,
-    "Name" character varying(128) NOT NULL,
-    "Value" character varying(2048) NOT NULL,
+CREATE TABLE public."AbpSettings"
+(
+    "Id"           uuid                    NOT NULL,
+    "Name"         character varying(128)  NOT NULL,
+    "Value"        character varying(2048) NOT NULL,
     "ProviderName" character varying(64),
-    "ProviderKey" character varying(64)
+    "ProviderKey"  character varying(64)
 );
 
 
@@ -744,11 +803,12 @@ ALTER TABLE public."AbpSettings" OWNER TO postgres;
 -- Name: AbpUserClaims; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpUserClaims" (
-    "Id" uuid NOT NULL,
-    "UserId" uuid NOT NULL,
-    "TenantId" uuid,
-    "ClaimType" character varying(256) NOT NULL,
+CREATE TABLE public."AbpUserClaims"
+(
+    "Id"         uuid                   NOT NULL,
+    "UserId"     uuid                   NOT NULL,
+    "TenantId"   uuid,
+    "ClaimType"  character varying(256) NOT NULL,
     "ClaimValue" character varying(1024)
 );
 
@@ -760,13 +820,14 @@ ALTER TABLE public."AbpUserClaims" OWNER TO postgres;
 -- Name: AbpUserDelegations; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpUserDelegations" (
-    "Id" uuid NOT NULL,
-    "TenantId" uuid,
+CREATE TABLE public."AbpUserDelegations"
+(
+    "Id"           uuid NOT NULL,
+    "TenantId"     uuid,
     "SourceUserId" uuid NOT NULL,
     "TargetUserId" uuid NOT NULL,
-    "StartTime" timestamp without time zone NOT NULL,
-    "EndTime" timestamp without time zone NOT NULL
+    "StartTime"    timestamp without time zone NOT NULL,
+    "EndTime"      timestamp without time zone NOT NULL
 );
 
 
@@ -777,11 +838,12 @@ ALTER TABLE public."AbpUserDelegations" OWNER TO postgres;
 -- Name: AbpUserLogins; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpUserLogins" (
-    "UserId" uuid NOT NULL,
-    "LoginProvider" character varying(64) NOT NULL,
-    "TenantId" uuid,
-    "ProviderKey" character varying(196) NOT NULL,
+CREATE TABLE public."AbpUserLogins"
+(
+    "UserId"              uuid                   NOT NULL,
+    "LoginProvider"       character varying(64)  NOT NULL,
+    "TenantId"            uuid,
+    "ProviderKey"         character varying(196) NOT NULL,
     "ProviderDisplayName" character varying(128)
 );
 
@@ -793,12 +855,13 @@ ALTER TABLE public."AbpUserLogins" OWNER TO postgres;
 -- Name: AbpUserOrganizationUnits; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpUserOrganizationUnits" (
-    "UserId" uuid NOT NULL,
+CREATE TABLE public."AbpUserOrganizationUnits"
+(
+    "UserId"             uuid NOT NULL,
     "OrganizationUnitId" uuid NOT NULL,
-    "TenantId" uuid,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid
+    "TenantId"           uuid,
+    "CreationTime"       timestamp without time zone NOT NULL,
+    "CreatorId"          uuid
 );
 
 
@@ -809,9 +872,10 @@ ALTER TABLE public."AbpUserOrganizationUnits" OWNER TO postgres;
 -- Name: AbpUserRoles; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpUserRoles" (
-    "UserId" uuid NOT NULL,
-    "RoleId" uuid NOT NULL,
+CREATE TABLE public."AbpUserRoles"
+(
+    "UserId"   uuid NOT NULL,
+    "RoleId"   uuid NOT NULL,
     "TenantId" uuid
 );
 
@@ -823,12 +887,13 @@ ALTER TABLE public."AbpUserRoles" OWNER TO postgres;
 -- Name: AbpUserTokens; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpUserTokens" (
-    "UserId" uuid NOT NULL,
-    "LoginProvider" character varying(64) NOT NULL,
-    "Name" character varying(128) NOT NULL,
-    "TenantId" uuid,
-    "Value" text
+CREATE TABLE public."AbpUserTokens"
+(
+    "UserId"        uuid                   NOT NULL,
+    "LoginProvider" character varying(64)  NOT NULL,
+    "Name"          character varying(128) NOT NULL,
+    "TenantId"      uuid,
+    "Value"         text
 );
 
 
@@ -839,38 +904,39 @@ ALTER TABLE public."AbpUserTokens" OWNER TO postgres;
 -- Name: AbpUsers; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."AbpUsers" (
-    "Id" uuid NOT NULL,
-    "TenantId" uuid,
-    "UserName" character varying(256) NOT NULL,
-    "NormalizedUserName" character varying(256) NOT NULL,
-    "Name" character varying(64),
-    "Surname" character varying(64),
-    "Email" character varying(256) NOT NULL,
-    "NormalizedEmail" character varying(256) NOT NULL,
-    "EmailConfirmed" boolean DEFAULT false NOT NULL,
-    "PasswordHash" character varying(256),
-    "SecurityStamp" character varying(256) NOT NULL,
-    "IsExternal" boolean DEFAULT false NOT NULL,
-    "PhoneNumber" character varying(16),
-    "PhoneNumberConfirmed" boolean DEFAULT false NOT NULL,
-    "IsActive" boolean NOT NULL,
-    "TwoFactorEnabled" boolean DEFAULT false NOT NULL,
-    "LockoutEnd" timestamp with time zone,
-    "LockoutEnabled" boolean DEFAULT false NOT NULL,
-    "AccessFailedCount" integer DEFAULT 0 NOT NULL,
-    "ShouldChangePasswordOnNextLogin" boolean NOT NULL,
-    "EntityVersion" integer NOT NULL,
-    "LastPasswordChangeTime" timestamp with time zone,
-    "ExtraProperties" text NOT NULL,
-    "ConcurrencyStamp" character varying(40) NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid,
-    "LastModificationTime" timestamp without time zone,
-    "LastModifierId" uuid,
-    "IsDeleted" boolean DEFAULT false NOT NULL,
-    "DeleterId" uuid,
-    "DeletionTime" timestamp without time zone
+CREATE TABLE public."AbpUsers"
+(
+    "Id"                              uuid                   NOT NULL,
+    "TenantId"                        uuid,
+    "UserName"                        character varying(256) NOT NULL,
+    "NormalizedUserName"              character varying(256) NOT NULL,
+    "Name"                            character varying(64),
+    "Surname"                         character varying(64),
+    "Email"                           character varying(256) NOT NULL,
+    "NormalizedEmail"                 character varying(256) NOT NULL,
+    "EmailConfirmed"                  boolean DEFAULT false  NOT NULL,
+    "PasswordHash"                    character varying(256),
+    "SecurityStamp"                   character varying(256) NOT NULL,
+    "IsExternal"                      boolean DEFAULT false  NOT NULL,
+    "PhoneNumber"                     character varying(16),
+    "PhoneNumberConfirmed"            boolean DEFAULT false  NOT NULL,
+    "IsActive"                        boolean                NOT NULL,
+    "TwoFactorEnabled"                boolean DEFAULT false  NOT NULL,
+    "LockoutEnd"                      timestamp with time zone,
+    "LockoutEnabled"                  boolean DEFAULT false  NOT NULL,
+    "AccessFailedCount"               integer DEFAULT 0      NOT NULL,
+    "ShouldChangePasswordOnNextLogin" boolean                NOT NULL,
+    "EntityVersion"                   integer                NOT NULL,
+    "LastPasswordChangeTime"          timestamp with time zone,
+    "ExtraProperties"                 text                   NOT NULL,
+    "ConcurrencyStamp"                character varying(40)  NOT NULL,
+    "CreationTime"                    timestamp without time zone NOT NULL,
+    "CreatorId"                       uuid,
+    "LastModificationTime"            timestamp without time zone,
+    "LastModifierId"                  uuid,
+    "IsDeleted"                       boolean DEFAULT false  NOT NULL,
+    "DeleterId"                       uuid,
+    "DeletionTime"                    timestamp without time zone
 );
 
 
@@ -881,33 +947,34 @@ ALTER TABLE public."AbpUsers" OWNER TO postgres;
 -- Name: OpenIddictApplications; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."OpenIddictApplications" (
-    "Id" uuid NOT NULL,
-    "ApplicationType" character varying(50),
-    "ClientId" character varying(100),
-    "ClientSecret" text,
-    "ClientType" character varying(50),
-    "ConsentType" character varying(50),
-    "DisplayName" text,
-    "DisplayNames" text,
-    "JsonWebKeySet" text,
-    "Permissions" text,
+CREATE TABLE public."OpenIddictApplications"
+(
+    "Id"                     uuid                  NOT NULL,
+    "ApplicationType"        character varying(50),
+    "ClientId"               character varying(100),
+    "ClientSecret"           text,
+    "ClientType"             character varying(50),
+    "ConsentType"            character varying(50),
+    "DisplayName"            text,
+    "DisplayNames"           text,
+    "JsonWebKeySet"          text,
+    "Permissions"            text,
     "PostLogoutRedirectUris" text,
-    "Properties" text,
-    "RedirectUris" text,
-    "Requirements" text,
-    "Settings" text,
-    "ClientUri" text,
-    "LogoUri" text,
-    "ExtraProperties" text NOT NULL,
-    "ConcurrencyStamp" character varying(40) NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid,
-    "LastModificationTime" timestamp without time zone,
-    "LastModifierId" uuid,
-    "IsDeleted" boolean DEFAULT false NOT NULL,
-    "DeleterId" uuid,
-    "DeletionTime" timestamp without time zone
+    "Properties"             text,
+    "RedirectUris"           text,
+    "Requirements"           text,
+    "Settings"               text,
+    "ClientUri"              text,
+    "LogoUri"                text,
+    "ExtraProperties"        text                  NOT NULL,
+    "ConcurrencyStamp"       character varying(40) NOT NULL,
+    "CreationTime"           timestamp without time zone NOT NULL,
+    "CreatorId"              uuid,
+    "LastModificationTime"   timestamp without time zone,
+    "LastModifierId"         uuid,
+    "IsDeleted"              boolean DEFAULT false NOT NULL,
+    "DeleterId"              uuid,
+    "DeletionTime"           timestamp without time zone
 );
 
 
@@ -918,16 +985,17 @@ ALTER TABLE public."OpenIddictApplications" OWNER TO postgres;
 -- Name: OpenIddictAuthorizations; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."OpenIddictAuthorizations" (
-    "Id" uuid NOT NULL,
-    "ApplicationId" uuid,
-    "CreationDate" timestamp without time zone,
-    "Properties" text,
-    "Scopes" text,
-    "Status" character varying(50),
-    "Subject" character varying(400),
-    "Type" character varying(50),
-    "ExtraProperties" text NOT NULL,
+CREATE TABLE public."OpenIddictAuthorizations"
+(
+    "Id"               uuid                  NOT NULL,
+    "ApplicationId"    uuid,
+    "CreationDate"     timestamp without time zone,
+    "Properties"       text,
+    "Scopes"           text,
+    "Status"           character varying(50),
+    "Subject"          character varying(400),
+    "Type"             character varying(50),
+    "ExtraProperties"  text                  NOT NULL,
     "ConcurrencyStamp" character varying(40) NOT NULL
 );
 
@@ -939,24 +1007,25 @@ ALTER TABLE public."OpenIddictAuthorizations" OWNER TO postgres;
 -- Name: OpenIddictScopes; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."OpenIddictScopes" (
-    "Id" uuid NOT NULL,
-    "Description" text,
-    "Descriptions" text,
-    "DisplayName" text,
-    "DisplayNames" text,
-    "Name" character varying(200),
-    "Properties" text,
-    "Resources" text,
-    "ExtraProperties" text NOT NULL,
-    "ConcurrencyStamp" character varying(40) NOT NULL,
-    "CreationTime" timestamp without time zone NOT NULL,
-    "CreatorId" uuid,
+CREATE TABLE public."OpenIddictScopes"
+(
+    "Id"                   uuid                  NOT NULL,
+    "Description"          text,
+    "Descriptions"         text,
+    "DisplayName"          text,
+    "DisplayNames"         text,
+    "Name"                 character varying(200),
+    "Properties"           text,
+    "Resources"            text,
+    "ExtraProperties"      text                  NOT NULL,
+    "ConcurrencyStamp"     character varying(40) NOT NULL,
+    "CreationTime"         timestamp without time zone NOT NULL,
+    "CreatorId"            uuid,
     "LastModificationTime" timestamp without time zone,
-    "LastModifierId" uuid,
-    "IsDeleted" boolean DEFAULT false NOT NULL,
-    "DeleterId" uuid,
-    "DeletionTime" timestamp without time zone
+    "LastModifierId"       uuid,
+    "IsDeleted"            boolean DEFAULT false NOT NULL,
+    "DeleterId"            uuid,
+    "DeletionTime"         timestamp without time zone
 );
 
 
@@ -967,20 +1036,21 @@ ALTER TABLE public."OpenIddictScopes" OWNER TO postgres;
 -- Name: OpenIddictTokens; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."OpenIddictTokens" (
-    "Id" uuid NOT NULL,
-    "ApplicationId" uuid,
-    "AuthorizationId" uuid,
-    "CreationDate" timestamp without time zone,
-    "ExpirationDate" timestamp without time zone,
-    "Payload" text,
-    "Properties" text,
-    "RedemptionDate" timestamp without time zone,
-    "ReferenceId" character varying(100),
-    "Status" character varying(50),
-    "Subject" character varying(400),
-    "Type" character varying(50),
-    "ExtraProperties" text NOT NULL,
+CREATE TABLE public."OpenIddictTokens"
+(
+    "Id"               uuid                  NOT NULL,
+    "ApplicationId"    uuid,
+    "AuthorizationId"  uuid,
+    "CreationDate"     timestamp without time zone,
+    "ExpirationDate"   timestamp without time zone,
+    "Payload"          text,
+    "Properties"       text,
+    "RedemptionDate"   timestamp without time zone,
+    "ReferenceId"      character varying(100),
+    "Status"           character varying(50),
+    "Subject"          character varying(400),
+    "Type"             character varying(50),
+    "ExtraProperties"  text                  NOT NULL,
     "ConcurrencyStamp" character varying(40) NOT NULL
 );
 
@@ -992,9 +1062,10 @@ ALTER TABLE public."OpenIddictTokens" OWNER TO postgres;
 -- Name: __EFMigrationsHistory; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."__EFMigrationsHistory" (
-    "MigrationId" character varying(150) NOT NULL,
-    "ProductVersion" character varying(32) NOT NULL
+CREATE TABLE public."__EFMigrationsHistory"
+(
+    "MigrationId"    character varying(150) NOT NULL,
+    "ProductVersion" character varying(32)  NOT NULL
 );
 
 
@@ -1007,7 +1078,11 @@ ALTER TABLE public."__EFMigrationsHistory" OWNER TO postgres;
 --
 
 COPY app."Books" ("Id", "Name", "Type", "PublishDate", "Price", "ExtraProperties", "ConcurrencyStamp", "CreationTime", "CreatorId", "LastModificationTime", "LastModifierId") FROM stdin;
-3a1ae17a-90ad-602d-3595-d2aee5edf533	1984	3	1949-06-08 00:00:00	19.84	{}	99c6be5405154702b2f57c3eb9ebf252	2025-07-03 15:01:06.744682	\N	\N	\N
+3a1ae17a
+-90ad-602d-3595-d2aee5edf533	1984	3	1949-06-08 00:00:00	19.84	{}	99c6be5405154702b2f57c3eb9ebf252	2025-07-03 15:01:06.744682
+\N
+\N
+\N
 3a1ae17a-90c3-2e7a-395c-2c3e0625a4b0	The Hitchhiker's Guide to the Galaxy	7	1995-09-27 00:00:00	42	{}	07dd674404264901b60ae2c60891f314	2025-07-03 15:01:06.755986	\N	\N	\N
 \.
 
@@ -2683,7 +2758,8 @@ COPY public."AbpAuditLogs" ("Id", "ApplicationName", "UserId", "UserName", "Tena
 3a1aec04-1461-7c22-6f5a-36f03d403007	CourseMate	3a1ae17a-8d7a-6ecd-e52f-257feabe6030	admin	\N	\N	\N	\N	\N	\N	2025-07-05 16:07:31.037936	3	::1	\N	CourseMate_App	7ab828323b0a4a8cb63f35ce0050ed47	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36	GET	/api/app/course/3a1aebee-c69b-08f5-6df9-5c15e499	[\r\n  {\r\n    "code": null,\r\n    "message": "Your request is not valid!",\r\n    "details": "The following errors were detected during validation.\\r\\n - The value '3a1aebee-c69b-08f5-6df9-5c15e499' is not valid.\\r\\n",\r\n    "data": null,\r\n    "validationErrors": [\r\n      {\r\n        "message": "The value '3a1aebee-c69b-08f5-6df9-5c15e499' is not valid.",\r\n        "members": [\r\n          "id"\r\n        ]\r\n      }\r\n    ]\r\n  }\r\n]		400	{}	2c2c2a467150441999571c57846928b1
 3a1aec04-4359-9fa2-9827-def5b0daaa0d	CourseMate	3a1ae17a-8d7a-6ecd-e52f-257feabe6030	admin	\N	\N	\N	\N	\N	\N	2025-07-05 16:07:43.059567	6	::1	\N	CourseMate_App	2f5514e6b4b54cfb9b12c94ff96858e5	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36	GET	/api/app/course/3a1aebee-c69b-08f5-6df9-5c1	[\r\n  {\r\n    "code": null,\r\n    "message": "Your request is not valid!",\r\n    "details": "The following errors were detected during validation.\\r\\n - The value '3a1aebee-c69b-08f5-6df9-5c1' is not valid.\\r\\n",\r\n    "data": null,\r\n    "validationErrors": [\r\n      {\r\n        "message": "The value '3a1aebee-c69b-08f5-6df9-5c1' is not valid.",\r\n        "members": [\r\n          "id"\r\n        ]\r\n      }\r\n    ]\r\n  }\r\n]		400	{}	2343772949324535b66b29bed6eab6dc
 3a1aec05-1d7c-66bb-e704-231c77f75e09	CourseMate	3a1ae17a-8d7a-6ecd-e52f-257feabe6030	admin	\N	\N	\N	\N	\N	\N	2025-07-05 16:08:38.903638	5	::1	\N	CourseMate_App	abb24f6edf8245398bb01f2309e4ce53	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36	GET	/api/app/course/3a1aebee-c69b	[\r\n  {\r\n    "code": null,\r\n    "message": "Your request is not valid!",\r\n    "details": "The following errors were detected during validation.\\r\\n - The value '3a1aebee-c69b' is not valid.\\r\\n",\r\n    "data": null,\r\n    "validationErrors": [\r\n      {\r\n        "message": "The value '3a1aebee-c69b' is not valid.",\r\n        "members": [\r\n          "id"\r\n        ]\r\n      }\r\n    ]\r\n  }\r\n]		400	{}	b698da59f995497cb769ba5226d97ed0
-3a1aec05-b352-da53-290e-0bd458efcad2	CourseMate	3a1ae17a-8d7a-6ecd-e52f-257feabe6030	admin	\N	\N	\N	\N	\N	\N	2025-07-05 16:09:17.263456	3	::1	\N	CourseMate_App	c33b8374d1ea4fbda694d61bf1b35c06	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36	GET	/api/app/course/3a1aebee-c69b-08f5-6df9-5	[\r\n  {\r\n    "code": null,\r\n    "message": "Your request is not valid!",\r\n    "details": "The following errors were detected during validation.\\r\\n - The value '3a1aebee-c69b-08f5-6df9-5' is not valid.\\r\\n",\r\n    "data": null,\r\n    "validationErrors": [\r\n      {\r\n        "message": "The value '3a1aebee-c69b-08f5-6df9-5' is not valid.",\r\n        "members": [\r\n          "id"\r\n        ]\r\n      }\r\n    ]\r\n  }\r\n]		400	{}	5f858b9446a34bbaa174098783fed3fe
+3a1aec05-b352-da53-290e-0bd458efcad2	CourseMate	3a1ae17a-8d7a-6ecd-e52f-257feabe6030	admin	\N	\N	\N	\N	\N	\N	2025-07-05 16:09:17.263456	3	::1	\N	CourseMate_App	c33b8374d1ea4fbda694d61bf1b35c06	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36	GET	/api/app/course/3a1aebee-c69b-08f5-6df9-5	[\r\n  {\r\n    "code": null,\r\n    "message": "Your request is not valid!",\r\n    "details": "The following errors were detected during validation.\\r\\n - The value '3a1aebee-c69b-08f5-6df9-5
+' is not valid.\\r\\n",\r\n    "data": null,\r\n    "validationErrors": [\r\n      {\r\n        "message": "The value '3a1aebee-c69b-08f5-6df9-5' is not valid.",\r\n        "members": [\r\n          "id"\r\n        ]\r\n      }\r\n    ]\r\n  }\r\n]		400	{}	5f858b9446a34bbaa174098783fed3fe
 3a1af02b-0c3a-3efd-45d4-8618964052be	CourseMate	\N	\N	\N	\N	\N	\N	\N	\N	2025-07-06 11:28:33.529699	185	::1	\N	\N	7a6e550d58284a279afdacf0abba695e	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36	POST	/connect/token	\N		200	{}	d551437314af42eb957b353b9897719f
 3a1af02b-0ddb-200e-043e-5e45ea0ccd9f	CourseMate	3a1ae17a-8d7a-6ecd-e52f-257feabe6030	admin	\N	\N	\N	\N	\N	\N	2025-07-06 11:28:33.88724	252	::1	\N	CourseMate_App	b20c935d59ff4b4b85dcf596cc38c630	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36	GET	/api/abp/application-configuration	[\r\n  {\r\n    "code": null,\r\n    "message": "An internal error occurred during your request!",\r\n    "details": null,\r\n    "data": null,\r\n    "validationErrors": null\r\n  }\r\n]		500	{}	ba53cd0a89a64fa7bc97db290dd072e2
 3a1af038-d062-0e38-3a71-135cccbd0e57	CourseMate	3a1ae17a-8d7a-6ecd-e52f-257feabe6030	admin	\N	\N	\N	\N	\N	\N	2025-07-06 11:43:35.86333	43	::1	\N	CourseMate_App	8416a900152f4a1e8d2a915d09d1b045	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36	POST	/connect/token	\N		200	{}	5be0b7fe479546b5bd20f48263f5020d

@@ -22,6 +22,6 @@ public class StorageController : AbpController
     {
         IBlobContainer videoContainer = _blobContainerFactory.Create<VideoContainer>();
         Stream fs = await videoContainer.GetAsync(fileName);
-        return File(fs, contentType: "video/mp4", enableRangeProcessing: true);
+        return File(fs, "video/mp4", true);
     }
 }

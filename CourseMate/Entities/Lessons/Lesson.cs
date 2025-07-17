@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CourseMate.Shared.Constants;
-using Pgvector;
 using Volo.Abp.Domain.Entities.Auditing;
 
 namespace CourseMate.Entities.Lessons;
@@ -27,10 +26,9 @@ public class Lesson : FullAuditedEntity<Guid>
     public string VideoFile { get; set; }
 
     public TimeSpan Duration { get; set; }
-   
+
     public Guid ChapterId { get; set; }
-    
+
     [Range(0, int.MaxValue)]
     public int Position { get; set; }
-
 }

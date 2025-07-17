@@ -33,7 +33,7 @@ public class OrderAppService : CourseMateAppService, IOrderAppService
             queryable = queryable.Take(input.MaxResultCount.Value);
         }
 
-        var orders = await AsyncExecuter.ToListAsync(queryable);
+        List<OrderDto> orders = await AsyncExecuter.ToListAsync(queryable);
         int totalCount = await AsyncExecuter.CountAsync(queryable);
 
         return new PagedResultDto<OrderDto>(totalCount, orders);

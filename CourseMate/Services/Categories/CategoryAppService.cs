@@ -1,16 +1,12 @@
 ﻿using System.Linq.Dynamic.Core;
-using CourseMate.Data.Seeds;
-using CourseMate.Data.Seeds.Models;
 using CourseMate.Entities.Categories;
 using CourseMate.Permissions;
 using CourseMate.Services.Dtos;
 using CourseMate.Services.Dtos.Categories;
-using CourseMate.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
-using Volo.Abp.Validation;
 using CategoryDto = CourseMate.Services.Dtos.Categories.CategoryDto;
 
 namespace CourseMate.Services.Categories;

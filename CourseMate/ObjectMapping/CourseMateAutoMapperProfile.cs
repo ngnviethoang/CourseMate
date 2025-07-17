@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CourseMate.Data.Seeds.Models;
 using CourseMate.Entities.Categories;
 using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
@@ -22,8 +23,8 @@ public class CourseMateAutoMapperProfile : Profile
 {
     public CourseMateAutoMapperProfile()
     {
-        CreateMap<Data.Seeds.Models.CourseModel, CategoryDto>();
-        CreateMap<CreateUpdateCategoryDto, Data.Seeds.Models.CourseModel>();
+        CreateMap<Category, CategoryDto>();
+        CreateMap<CreateUpdateCategoryDto, Category>();
         CreateMap<CategoryDto, CreateUpdateCategoryDto>();
 
         CreateMap<Chapter, ChapterDto>();

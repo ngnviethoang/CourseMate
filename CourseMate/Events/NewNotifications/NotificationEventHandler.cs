@@ -10,9 +10,9 @@ namespace CourseMate.Events.NewNotifications;
 
 public class NotificationEventHandler : IDistributedEventHandler<NewNotificationEto>, ITransientDependency
 {
-    private readonly IRepository<Notification, Guid> _notificationRepo;
-    private readonly IHubContext<NotificationHub> _hubContext;
     private readonly IGuidGenerator _guidGenerator;
+    private readonly IHubContext<NotificationHub> _hubContext;
+    private readonly IRepository<Notification, Guid> _notificationRepo;
 
     public NotificationEventHandler(
         IRepository<Notification, Guid> notificationRepo,
@@ -28,13 +28,13 @@ public class NotificationEventHandler : IDistributedEventHandler<NewNotification
     {
         List<Notification> notifications = eventData.ReceiverUserIds
             .Select(userId => new Notification(
-                id: _guidGenerator.Create(),
-                receiverUserId: userId,
-                title: eventData.Title,
-                content: eventData.Content,
-                isRead: false))
+                _guidGenerator.Create(),
+                userId,
+                eventData.Title,
+                eventData.Content,
+                false))
             .ToList();
-        await _notificationRepo.InsertManyAsync(notifications, autoSave: true);
+        await _notificationRepo.InsertManyAsync(notifications, true);
 
         foreach (Notification notify in notifications)
         {

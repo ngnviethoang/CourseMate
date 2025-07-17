@@ -1,5 +1,4 @@
-﻿using System.Linq.Dynamic.Core;
-using CourseMate.Entities.Chapters;
+﻿using CourseMate.Entities.Chapters;
 using CourseMate.Permissions;
 using CourseMate.Services.Dtos;
 using CourseMate.Services.Dtos.Chapters;
@@ -31,7 +30,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
                 LastModificationTime = chapter.LastModificationTime,
                 LastModifierId = chapter.LastModifierId,
                 CourseId = chapter.CourseId,
-                CourseTitle = course.Title,
+                CourseTitle = course.Title
             };
         return await AsyncExecuter.FirstOrDefaultAsync(queryable) ?? new ChapterDto();
     }
@@ -52,7 +51,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
                 LastModificationTime = chapter.LastModificationTime,
                 LastModifierId = chapter.LastModifierId,
                 CourseId = chapter.CourseId,
-                CourseTitle = course.Title,
+                CourseTitle = course.Title
             };
 
         if (input.SkipCount.HasValue)

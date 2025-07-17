@@ -48,6 +48,26 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
         return await BuildPagedResultAsync(queryable, input);
     }
 
+    public async Task<int> GetMaxPositionChaptersAsync(Guid courseId)
+    {
+        IQueryable<int> query =
+            from chapter in await ChapterRepo.GetQueryableAsync()
+            where chapter.CourseId == courseId
+            select chapter.Position;
+        List<int> sortNumber = await AsyncExecuter.ToListAsync(query);
+        return sortNumber.Count != 0 ? sortNumber.Max() : 0;
+    }
+
+    public async Task<int> GetMaxPositionLessonsAsync(Guid chapterId)
+    {
+        IQueryable<int> query =
+            from lesson in await LessonRepo.GetQueryableAsync()
+            where lesson.ChapterId == chapterId
+            select lesson.Position;
+        List<int> sortNumber = await AsyncExecuter.ToListAsync(query);
+        return sortNumber.Count != 0 ? sortNumber.Max() : 0;
+    }
+
     private async Task<PagedResultDto<LookupDto>> BuildPagedResultAsync(IQueryable<LookupDto> queryable, LookupRequestDto input)
     {
         queryable = queryable
@@ -68,25 +88,5 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
 
         List<LookupDto> items = await AsyncExecuter.ToListAsync(queryable);
         return new PagedResultDto<LookupDto>(totalCount, items);
-    }
-
-    public async Task<int> GetMaxPositionChaptersAsync(Guid courseId)
-    {
-        IQueryable<int> query =
-            from chapter in await ChapterRepo.GetQueryableAsync()
-            where chapter.CourseId == courseId
-            select chapter.Position;
-        List<int> sortNumber = await AsyncExecuter.ToListAsync(query);
-        return sortNumber.Count != 0 ? sortNumber.Max() : 0;
-    }
-
-    public async Task<int> GetMaxPositionLessonsAsync(Guid chapterId)
-    {
-        IQueryable<int> query =
-            from lesson in await LessonRepo.GetQueryableAsync()
-            where lesson.ChapterId == chapterId
-            select lesson.Position;
-        List<int> sortNumber = await AsyncExecuter.ToListAsync(query);
-        return sortNumber.Count != 0 ? sortNumber.Max() : 0;
     }
 }

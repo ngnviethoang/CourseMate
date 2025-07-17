@@ -10,8 +10,8 @@ namespace CourseMate.Services.Storages;
 [Authorize(CourseMatePermissions.Files.Default)]
 public class StorageAppService : CourseMateAppService, IStorageAppService
 {
-    private readonly IBlobContainerFactory _blobContainerFactory;
     private readonly IBlobContainer _blobContainer;
+    private readonly IBlobContainerFactory _blobContainerFactory;
 
     public StorageAppService(IBlobContainerFactory blobContainerFactory, IBlobContainer blobContainer)
     {

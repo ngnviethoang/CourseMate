@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CourseMate.Shared.Constants;
-using Pgvector;
 using Volo.Abp.Domain.Entities.Auditing;
 
 namespace CourseMate.Entities.Courses;

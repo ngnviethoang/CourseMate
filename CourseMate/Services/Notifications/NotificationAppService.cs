@@ -23,7 +23,7 @@ public class NotificationAppService : CourseMateAppService, INotificationAppServ
                 IsRead = notification.IsRead,
                 LastModificationTime = notification.LastModificationTime,
                 LastModifierId = notification.LastModifierId,
-                ReceiverUserId = notification.ReceiverUserId,
+                ReceiverUserId = notification.ReceiverUserId
             };
 
         if (input.SkipCount.HasValue)
