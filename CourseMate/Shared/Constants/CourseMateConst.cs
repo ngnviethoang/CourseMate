@@ -2,5 +2,5 @@
 
 public static class CourseMateConst
 {
-    public const int FileNameMaxLength = 50;
+    public const int FileNameMaxLength = 1024;
 }

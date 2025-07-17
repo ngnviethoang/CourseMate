@@ -3,6 +3,7 @@ using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
 using CourseMate.Entities.Enrollments;
 using CourseMate.Entities.Lessons;
+using CourseMate.Entities.Notifications;
 using CourseMate.Entities.Orders;
 using CourseMate.Entities.PaymentRequests;
 using CourseMate.Entities.Reviews;
@@ -35,6 +36,7 @@ public class CourseMateDbContext : AbpDbContext<CourseMateDbContext>
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<PaymentRequest> PaymentRequests { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

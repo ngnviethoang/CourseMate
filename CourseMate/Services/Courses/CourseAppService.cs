@@ -17,7 +17,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
 {
     public async Task<CourseDto> GetAsync(Guid id)
     {
-        var queryable =
+        IQueryable<CourseDto> queryable =
             from course in await CourseRepo.GetQueryableAsync()
             where course.Id == id
             select new CourseDto
@@ -73,7 +73,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
             queryable = queryable.Take(input.MaxResultCount.Value);
         }
 
-        var courses = await AsyncExecuter.ToListAsync(queryable);
+        List<CourseDto> courses = await AsyncExecuter.ToListAsync(queryable);
         int totalCount = await AsyncExecuter.CountAsync(queryable);
         return new PagedResultDto<CourseDto>(totalCount, courses);
     }

@@ -3,6 +3,7 @@ using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
 using CourseMate.Entities.Enrollments;
 using CourseMate.Entities.Lessons;
+using CourseMate.Entities.Notifications;
 using CourseMate.Entities.Orders;
 using CourseMate.Entities.PaymentRequests;
 using CourseMate.Entities.Reviews;
@@ -90,6 +91,12 @@ public static class CourseMateDbContextModelBuilderExtensions
             b.ToTable("VideoProgresses", DbSchema);
             b.HasOne<Lesson>().WithOne().HasForeignKey<VideoProgress>(i => i.LessonId).IsRequired();
             b.HasOne<IdentityUser>().WithMany().HasForeignKey(i => i.UserId).IsRequired();
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<Notification>(b =>
+        {
+            b.ToTable("Notifications", DbSchema);
             b.ConfigureByConvention();
         });
     }

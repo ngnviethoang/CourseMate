@@ -4,7 +4,6 @@ import { CartServices } from '../../core/services-old/cart.service';
 import { MessengerServices } from '../../core/services-old/messenger.service';
 import { PurchaseServices } from '../../core/services-old/purchase.service';
 import { AuthService } from '@abp/ng.core';
-import { BasketDto, BasketService } from '@proxy/cashiering-managements/baskets';
 
 @Component({
     selector: 'app-cart',
@@ -14,22 +13,21 @@ import { BasketDto, BasketService } from '@proxy/cashiering-managements/baskets'
 export class CartComponent implements OnInit {
 
     totalValue = 0;
-    basketDto: BasketDto;
+    basketDto: any;
 
     constructor(
         public readonly cartServices: CartServices,
         private readonly purchaseServices: PurchaseServices,
         private readonly router: Router,
         private readonly messengerServices: MessengerServices,
-        private readonly basketService: BasketService,
         private readonly authService: AuthService
     ) {
     }
 
     ngOnInit(): void {
-        this.basketService.getAll().subscribe((response) => {
+      /*  this.basketService.getAll().subscribe((response) => {
             this.basketDto = response;
-        });
+        });*/
     }
 
     removeItemOnCart(courseId: string) {

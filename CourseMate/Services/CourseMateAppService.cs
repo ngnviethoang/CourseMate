@@ -3,6 +3,7 @@ using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
 using CourseMate.Entities.Enrollments;
 using CourseMate.Entities.Lessons;
+using CourseMate.Entities.Notifications;
 using CourseMate.Entities.Orders;
 using CourseMate.Entities.PaymentRequests;
 using CourseMate.Entities.Reviews;
@@ -31,4 +32,5 @@ public abstract class CourseMateAppService : ApplicationService
     protected IRepository<OrderItem, Guid> OrderItemRepo => LazyServiceProvider.GetRequiredService<IRepository<OrderItem, Guid>>();
     protected IRepository<PaymentRequest, Guid> PaymentRequestRepo => LazyServiceProvider.GetRequiredService<IRepository<PaymentRequest, Guid>>();
     protected IRepository<Review, Guid> ReviewRepo => LazyServiceProvider.GetRequiredService<IRepository<Review, Guid>>();
+    protected IRepository<Notification, Guid> NotificationRepo => LazyServiceProvider.GetRequiredService<IRepository<Notification, Guid>>();
 }

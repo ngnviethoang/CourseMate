@@ -1,8 +1,6 @@
-import * as CashieringManagements from './cashiering-managements';
-import * as CatalogManagements from './catalog-managements';
 import * as Controllers from './controllers';
-import * as FileManagements from './file-managements';
+import * as Entities from './entities';
 import * as Microsoft from './microsoft';
-import * as Shared from './shared';
-import * as UserManagements from './user-managements';
-export { CashieringManagements, CatalogManagements, Controllers, FileManagements, Microsoft, Shared, UserManagements };
+import * as Services from './services';
+import * as System from './system';
+export { Controllers, Entities, Microsoft, Services, System };

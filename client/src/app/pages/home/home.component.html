@@ -1,326 +1,102 @@
-<div class="row mb-3">
-    <div class="col-xl-6 col-12 d-flex">
-        <div class="card h-lg-100 w-100 overflow-hidden">
-            <div class="card-body">
-                <div class="starting-content pe-5">
-                    @if (!hasLoggedIn) {
-                        <h3>Welcome</h3>
-                        <p class="lead text-muted mb-2">
-                            {{ '::LongWelcomeMessage' | abpLocalization }}
-                        </p>
-                        <a (click)="login()" class="px-4 btn btn-primary mb-4" role="button">
-                            <i class="fa fa-sign-in"></i>
-                            {{ 'AbpAccount::Login' | abpLocalization }}
-                        </a>
-                    }
-
-                    <h4>Getting Started</h4>
-                    <p class=" text-muted mb-2">
-                        Learn how to create and run a new web application using the application startup
-                        template.
-                    </p>
-                    <a
-                        class="btn  btn-primary mb-2"
-                        href="https://abp.io/docs/latest/getting-started"
-                        target="_blank"
-                    >
-                        Getting Started
-                    </a>
-
-                    <h4>Web Application Development Tutorial</h4>
-                    <p class=" text-muted mb-2">
-                        Learn how to build an ABP based web application named Acme.BookStore.
-                    </p>
-                    <a
-                        class="btn  btn-primary mb-2"
-                        href="https://abp.io/docs/latest/tutorials/book-store/part-01?UI=NG&DB=EF"
-                        target="_blank"
-                    >
-                        Explore Tutorial
-                    </a>
-
-                    <h4>Customize Lepton Theme</h4>
-                    <p class="text-muted mb-2">Learn how to customize LeptonX Theme as you wish.</p>
-                    <a
-                        class="btn btn-primary soft mb-5 mb-xl-0"
-                        href="https://abp.io/docs/commercial/latest/themes/lepton-x/index"
-                        target="_blank"
-                    >
-                        Customize Lepton
-                    </a>
+<div *ngFor="let Image of bgImage;" class="main-banner" style="background-image: url({{Image.img}});">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-lg-6 col-md-12">
+                <div class="main-banner-content">
+                    <h1>The world's leading provider of remote training services.</h1>
+                    <p>Flexible and easily accessible learning opportunities can bring about significant changes in
+                        individuals' learning preferences! Odemy can help you enjoy the beauty of online learning</p>
+                    <a class="default-btn" routerLink="/register"><i class="flaticon-user"></i>Fee for
+                        Register<span></span></a>
                 </div>
-                <img class="card-bg-image" src="../../../assets/images/getting-started/bg-01.png" />
             </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6 d-flex">
-        <div class="row">
-            <div class="col-12 d-flex">
-                <div class="card overflow-hidden mb-3">
-                    <div class="card-body d-flex flex-column">
-                        <div class="abp-support abp-logo mb-2"></div>
-                        <p class="text-muted mb-2">
-                            You can check for similar problems and solutions, or open a new topic to discuss your
-                            specific issue.
-                        </p>
-                        <a
-                            class="btn  btn-primary w-50"
-                            href="https://abp.io/support/questions"
-                            target="_blank"
-                        >
-                            Visit Support
-                        </a>
-                        <img
-                            class="w-100 mt-auto"
-                            src="../../../assets/images/getting-started/img-support.png"
-                            style="margin-bottom: -24px"
-                        />
+            <div class="col-lg-6 col-md-12">
+                <div class="main-banner-courses-list">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="single-courses-box">
+                                <div class="courses-image">
+                                    <a class="d-block image" routerLink="/detail-courses">
+                                        <img alt="image"
+                                             src="../../../../assets/img/courses/img4.jpg">
+                                    </a>
+                                    <a class="fav" routerLink="/"><i class="flaticon-heart"></i></a>
+                                    <div class="price shadow">$39</div>
+                                </div>
+                                <div class="courses-content">
+                                    <div class="course-author d-flex align-items-center">
+                                        <img alt="image"
+                                             class="rounded-circle"
+                                             src="../../../../assets/img/user3.jpg">
+                                        <span>Alex Morgan</span>
+                                    </div>
+                                    <h3><a routerLink="/detail-courses">Python for Finance: Fundamentals & Data
+                                        Analytics</a></h3>
+                                    <p>Lorem ipsum dolor sit amet, constetur adipiscing elit, sed do eiusmod tempor
+                                        incididunt ut labore et dolore.</p>
+                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                        <li><i class='flaticon-agenda'></i> 15 Lessons</li>
+                                        <li><i class='flaticon-people'></i> 145 Students</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="single-courses-box">
+                                <div class="courses-image">
+                                    <a class="d-block image" routerLink="/detail-courses">
+                                        <img alt="image"
+                                             src="../../../../assets/img/courses/img5.jpg">
+                                    </a>
+                                    <a class="fav" routerLink="/"><i class="flaticon-heart"></i></a>
+                                    <div class="price shadow">$49</div>
+                                </div>
+                                <div class="courses-content">
+                                    <div class="course-author d-flex align-items-center">
+                                        <img alt="image"
+                                             class="rounded-circle"
+                                             src="../../../../assets/img/user3.jpg">
+                                        <span>Sarah Taylor</span>
+                                    </div>
+                                    <h3><a routerLink="/detail-courses">Machine Learning A-Z™: Hands-On Python & R In
+                                        Data Science</a></h3>
+                                    <p>Lorem ipsum dolor sit amet, constetur adipiscing elit, sed do eiusmod tempor
+                                        incididunt ut labore et dolore.</p>
+                                    <ul class="courses-box-footer d-flex justify-content-between align-items-center">
+                                        <li><i class='flaticon-agenda'></i> 20 Lessons</li>
+                                        <li><i class='flaticon-people'></i> 100 Students</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <div class="banner-shape1"><img
+                        alt="image" src="../../../../assets/img/banner-shape1.png"></div>
+                    <div class="banner-shape2"><img
+                        alt="image" src="../../../../assets/img/banner-shape2.png"></div>
+                    <div class="banner-shape3"><img
+                        alt="image" src="../../../../assets/img/banner-shape3.png"></div>
                 </div>
             </div>
-            <div class="col-12 d-flex">
-                <div class="card h-md-100 overflow-hidden">
-                    <div class="card-body d-flex flex-column">
-                        <div class="abp-blog abp-logo mb-2"></div>
-                        <p class="text-muted mb-2">
-                            You can find content on .NET development, cross-platform, ASP.NET application
-                            templates, ABP-related news, and more.
-                        </p>
-                        <a
-                            class="btn  btn-primary w-50"
-                            href="https://abp.io/blog"
-                            target="_blank"
-                        >
-                            Visit Blog
-                        </a>
-                        <img
-                            class="w-100 mt-auto"
-                            src="../../../assets/images/getting-started/img-blog.png"
-                            style="margin-bottom: -24px"
-                        />
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6 d-flex">
-        <div class="card h-100 overflow-hidden">
-            <div class="card-body">
-                <div class="abp-community abp-logo mb-2"></div>
-                <p class="lead text-muted">
-                    A unique community platform for <span class="fw-bold">ABP Lovers!</span>
-                </p>
-                <p class="text-muted mb-2">
-                    Explore all ABP users' experiences with the ABP Framework, discover articles and videos on
-                    how to use ABP, and join raffles for a chance to win surprise gifts!
-                </p>
-                <a
-                    class="btn  btn-primary mb-3"
-                    href="https://abp.io/community/"
-                    target="_blank"
-                >
-                    Join ABP Community
-                </a>
-            </div>
-            <img class="mt-3 w-100" src="../../../assets/images/getting-started/img-community.png" />
         </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-xl-3 col-lg-4">
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title text-body">More from ABP.IO</div>
-            </div>
-            <div class="card-body pt-0">
-                <div>
-                    <table class="table mb-0">
-                        <tbody>
-                        <tr>
-                            <td class="ps-0 d-flex">
-                                <div
-                                    class="rounded-circle me-2 d-flex justify-content-center align-items-center bg-check-icon"
-                                >
-                                    <i class="fa fa-xs fa-check"></i>
-                                </div>
-                                <div>Latest Release Logs</div>
-                            </td>
-                            <td class="text-end pe-0 opacity-25">
-                                <a href="https://github.com/abpframework/abp/releases" target="_blank">
-                                    <i class=" fa fa-xs fa-external-link-alt text-dark"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="ps-0 d-flex">
-                                <div
-                                    class="rounded-circle me-2 d-flex justify-content-center align-items-center bg-check-icon"
-                                >
-                                    <i class="fa fa-xs fa-check"></i>
-                                </div>
-                                <div>Video Courses</div>
-                            </td>
-                            <td class="text-end pe-0 opacity-25">
-                                <a href="https://abp.io/video-courses/essentials" target="_blank">
-                                    <i class=" fa fa-xs fa-external-link-alt text-dark"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="ps-0 d-flex">
-                                <div
-                                    class="rounded-circle me-2 d-flex justify-content-center align-items-center bg-check-icon"
-                                >
-                                    <i class="fa fa-xs fa-check"></i>
-                                </div>
-                                <div>Samples</div>
-                            </td>
-                            <td class="text-end pe-0 opacity-25">
-                                <a href="https://abp.io/docs/latest/Samples/Index" target="_blank">
-                                    <i class=" fa fa-xs fa-external-link-alt text-dark"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="ps-0 d-flex">
-                                <div
-                                    class="rounded-circle me-2 d-flex justify-content-center align-items-center bg-check-icon"
-                                >
-                                    <i class="fa fa-xs fa-check"></i>
-                                </div>
-                                <div>Books</div>
-                            </td>
-                            <td class="text-end pe-0 opacity-25">
-                                <a href="https://abp.io/books" target="_blank">
-                                    <i class=" fa fa-xs fa-external-link-alt text-dark"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="ps-0 d-flex border-bottom-0">
-                                <div
-                                    class="rounded-circle me-2 d-flex justify-content-center align-items-center bg-check-icon"
-                                >
-                                    <i class="fa fa-xs fa-check"></i>
-                                </div>
-                                <div>FAQ</div>
-                            </td>
-                            <td class="text-end pe-0 opacity-25 border-bottom-0">
-                                <a href="https://abp.io/faq" target="_blank">
-                                    <i class=" fa fa-xs fa-external-link-alt text-dark"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+<div class="partner-area pt-100 pb-70 border-bottom">
+    <div class="container">
+        <app-partner [listPartner]="homeDataOfProject?.partners"></app-partner>
     </div>
-    <div class="col-xl-6 col-lg-8 d-flex">
-        <div class="card">
-            <div class="card-body d-flex">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <p class="text-muted mb-0">THE OFFICIAL GUIDE</p>
-                        <h3>Mastering ABP Framework</h3>
-                        <p class="text-muted">
-                            Written by the creator of the ABP Framework, this book will help you gain a complete
-                            understanding of the framework and modern web application development techniques.
-                        </p>
-                        <div class="d-md-flex mb-2 mb-md-0">
-                            <a
-                                class="btn btn-primary soft me-md-2 mb-2 mb-md-0"
-                                href="https://www.amazon.com/gp/product/B097Z2DM8Q"
-                                target="_blank"
-                            >
-                                Buy on Amazon US
-                            </a>
-                            <a
-                                class="btn btn-primary soft mb-2 mb-md-0"
-                                href="https://www.packtpub.com/product/mastering-abp-framework/9781801079242"
-                                target="_blank"
-                            >
-                                Buy on PACKT
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <img class="w-100" src="../../../assets/images/getting-started/book.png" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-lg-4">
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title text-body">Follow us on Social Media</div>
-            </div>
-            <div class="card-body pt-0">
-                <div>
-                    <table class="table mb-0">
-                        <tbody>
-                        <tr>
-                            <td class="ps-0 d-flex">
-                                <div class="logo-x me-2"></div>
-                                <div>X.com</div>
-                            </td>
-                            <td class="text-end pe-0 opacity-25">
-                                <a href="https://twitter.com/abpframework" target="_blank">
-                                    <i class=" fa fa-xs fa-external-link-alt text-dark"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="ps-0 d-flex">
-                                <img class="me-2" src="../../../assets/images/getting-started/discord.svg" />
-                                <div>Discord</div>
-                            </td>
-                            <td class="text-end pe-0 opacity-25">
-                                <a href="https://abp.io/community/discord" target="_blank">
-                                    <i class=" fa fa-xs fa-external-link-alt text-dark"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="ps-0 d-flex">
-                                <img class="me-2" src="../../../assets/images/getting-started/stack-overflow.svg" />
-                                <div>Stack Overflow</div>
-                            </td>
-                            <td class="text-end pe-0 opacity-25">
-                                <a href="https://stackoverflow.com/questions/tagged/abp" target="_blank">
-                                    <i class=" fa fa-xs fa-external-link-alt text-dark"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="ps-0 d-flex">
-                                <img class="me-2" src="../../../assets/images/getting-started/youtube.svg" />
-                                <div>YouTube</div>
-                            </td>
-                            <td class="text-end pe-0 opacity-25">
-                                <a href="https://www.youtube.com/@Volosoft" target="_blank">
-                                    <i class=" fa fa-xs fa-external-link-alt text-dark"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="ps-0 d-flex border-bottom-0">
-                                <img class="me-2" src="../../../assets/images/getting-started/instagram.svg" />
-                                <div>Instagram</div>
-                            </td>
-                            <td class="text-end pe-0 opacity-25 border-bottom-0">
-                                <a href="https://www.instagram.com/abpframework/" target="_blank">
-                                    <i class=" fa fa-xs fa-external-link-alt text-dark"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+</div>
+
+<div class="courses-area ptb-50">
+    <app-courses *ngFor="let item of homeDataOfProject?.listContentData" [listCourse]="item"></app-courses>
+</div>
+
+<app-funfacts-feedback></app-funfacts-feedback>
+
+<div class="premium-access-area ptb-100">
+    <app-premium-access></app-premium-access>
+    <div class="shape3"><img alt="image" ngSrc="../../../assets/img/shape3.png" height="150" width="150"></div>
+    <div class="shape4"><img alt="image" ngSrc="../../../assets/img/shape4.png" height="62" width="62"></div>
+    <div class="shape8"><img alt="image" ngSrc="../../../assets/img/shape7.png" height="125" width="105"></div>
 </div>

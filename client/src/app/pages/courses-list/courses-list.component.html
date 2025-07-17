@@ -40,7 +40,7 @@
                             </a>
                             <a class="fav" routerLink="/"><i class="flaticon-heart"></i></a>
                             <div [hidden]="!item.isDiscount"
-                                 class="price shadow">{{ item.isDiscount == true ? (item.priceOfDiscount| currency) : (item.priceOfCourse | currency) }}
+                                 class="price shadow">{{ item.isDiscount === true ? (item.priceOfDiscount| currency) : (item.priceOfCourse | currency) }}
                             </div>
                         </div>
                         <div class="courses-content">
@@ -58,11 +58,11 @@
                             </p>
                             <ul class="courses-box-footer d-flex justify-content-between align-items-center">
                                 <li><i class="bx bx-money"></i><span
-                                    class="ps-2">{{ item.isDiscount == true ? (item.priceOfDiscount | currency) : (item.priceOfCourse | currency) }}</span>
+                                    class="ps-2">{{ item.isDiscount === true ? (item.priceOfDiscount | currency) : (item.priceOfCourse | currency) }}</span>
                                 </li>
                                 <li>
                                     <del><i class="bx bx-money"></i><span
-                                        class="ps-2">{{ item.isDiscount == true ? (item.priceOfCourse| currency) : (item.priceOfDiscount | currency) }}</span>
+                                        class="ps-2">{{ item.isDiscount === true ? (item.priceOfCourse| currency) : (item.priceOfDiscount | currency) }}</span>
                                     </del>
                                 </li>
                             </ul>
@@ -76,7 +76,7 @@
 
                 <div class="col-lg-12 col-md-12">
                     <div class="pagination-area text-center">
-                        <pagination (pagrChanged)="pageChanged($event)" [itemsPerPage]="10"
+                        <pagination (pageChanged)="pageChanged($event)" [itemsPerPage]="10"
                                     [totalItems]="listCourses?.length"
                                     class="pagination-wrap hstack justify-content-center gap-2" nextText="Next Page"
                                     previousText="Previous Page"></pagination>

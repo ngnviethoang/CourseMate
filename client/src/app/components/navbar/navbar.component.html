@@ -35,54 +35,57 @@
                            routerLinkActive="active">About Us</a>
                     </li>
                     <li class="nav-item border-animation" style="margin-left: 20px; margin-right: 20px;">
-                        <a [routerLinkActiveOptions]="{ exact: true }" class="nav-link" routerLink="/training-online"
+                        <a [routerLinkActiveOptions]="{ exact: true }" class="nav-link" routerLink="/courses"
                            routerLinkActive="active">Training Online</a>
                     </li>
 
                     <div class="others-option d-flex align-items-center others-option d-flex align-items-center ms-3">
                         <div class="option-item">
-                            <div class="cart-btn me-2">
-                                <a routerLink="/cart"><i class="bx bx-cart-alt"></i><span>{{ totalCartItem }}</span></a>
-                            </div>
+                            <p-button routerLink="/cart" icon="pi pi-shopping-cart" [rounded]="true" [text]="true"
+                                      severity="secondary"
+                                      [badge]="totalCartItem" />
                         </div>
 
                         <div class="option-item">
-                            <div class="notification-btn position-relative">
-                                <a [ngbPopover]="notificationPopover"
-                                   popoverClass="notification-popover"
-                                   container="body"
-                                   triggers="click"
-                                   placement="bottom"
-                                   [autoClose]="'outside'"
-                                   class="position-relative">
-                                    <i class="bx bx-bell fs-5"></i>
-                                    <span *ngIf="totalNotification > 0"
-                                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                {{ totalNotification }}
-                                        <span class="visually-hidden">unread notifications</span>
-            </span>
-                                </a>
-                            </div>
+                            <p-button (click)="op.toggle($event)" icon="pi pi-bell" [rounded]="true" [text]="true"
+                                      severity="secondary"
+                                      badge="2" />
+                            <p-popover #op>
+                                <div class="tw-flex tw-flex-col tw-gap-4 tw-w-[25rem]">
+                                    <div class="tw-flex tw-flex-col tw-gap-4 tw-w-[25rem]">
+                                        <span
+                                            class="tw-font-medium tw-text-surface-900 dark:tw-text-surface-0 tw-block tw-mb-2">Notifications</span>
+                                        <ul class="tw-list-none tw-p-0 tw-m-0 tw-flex tw-flex-col tw-gap-4 tw-divide-y">
+                                            @for (notification of notifications; track notification) {
+                                                <li class="tw-flex tw-items-start tw-gap-2 tw-bg-white tw-rounded-lg tw-p-2">
+                                                    <i class="pi pi-check-circle tw-text-emerald-500 tw-text-xl tw-mt-1"></i>
+                                                    <div class="tw-flex-1">
+                                                        <div class="tw-font-semibold">
+                                                            {{ notification.title }}
+                                                        </div>
+                                                        <div class="tw-text-sm tw-text-muted-color">
+                                                            {{ notification.content }}
+                                                        </div>
+                                                    </div>
+                                                    <span
+                                                        class="tw-text-xs tw-text-muted-color tw-whitespace-nowrap">{{ notification.creationTime | shortDateTime }}</span>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </p-popover>
                         </div>
 
                         <div class="option-item">
-                            <div class="cart-btn">
-                                @if (hasLoggedIn) {
-                                    <p class="lead text-muted mb-2"
-                                       [popover]="popoverContent"
-                                       outsideClick="true"
-                                       [adaptivePosition]="false"
-                                       placement="bottom right"
-                                       boundariesElement="viewport"
-                                       triggers="click">
-                                        {{ currentUser.userName }}
-                                    </p>
-                                } @else {
-                                    <a (click)="login()">
-                                        <i class="bx bx-log-in"></i>
-                                    </a>
-                                }
-                            </div>
+                            @if (hasLoggedIn) {
+                                <p-button (click)="login()" [label]="currentUser.userName" icon="pi pi-user"
+                                          [rounded]="true" [text]="true"
+                                          severity="secondary" variant="text" />
+                            } @else {
+                                <p-button (click)="login()" icon="pi pi-sign-in" [rounded]="true" [text]="true"
+                                          severity="secondary" />
+                            }
                         </div>
                     </div>
                 </ul>
@@ -90,40 +93,6 @@
         </nav>
     </div>
 </div>
-
-<ng-template #notificationPopover>
-    <div class="popover-wrapper me-4">
-        <div class="popover-header">
-            <span>Thông báo</span>
-            <span *ngIf="totalNotification > 0" class="badge bg-warning text-dark ms-auto">
-        {{ totalNotification }} mới
-      </span>
-        </div>
-
-        <div class="popover-body scroll-area">
-            @for (notification of notifications$; track notification) {
-                <div class="notification-item">
-                    <div class="d-flex align-items-start">
-                        <i
-                            class="{{ notificationTypeMap[notification.type].icon }} me-2 fs-5"
-                            [ngClass]="notificationTypeMap[notification.type].color">
-                        </i>
-                        <div>
-                            <strong>{{ notificationTypeMap[notification.type].title }}</strong>
-                            <div class="small text-muted">{{ notification.message }}</div>
-                            <small class="text-muted">{{ notification.createdAt | date:'short' }}</small>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-
-        <div class="popover-footer d-flex justify-content-between p-2 border-top">
-            <button class="btn btn-outline-primary btn-sm">Đánh dấu đã đọc</button>
-            <a routerLink="/notifications" class="btn btn-primary btn-sm">Xem tất cả</a>
-        </div>
-    </div>
-</ng-template>
 
 <ng-template #popoverContent>
     <div style="min-width: 200px;">

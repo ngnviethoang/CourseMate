@@ -22,8 +22,8 @@ public class CourseMateAutoMapperProfile : Profile
 {
     public CourseMateAutoMapperProfile()
     {
-        CreateMap<Category, CategoryDto>();
-        CreateMap<CreateUpdateCategoryDto, Category>();
+        CreateMap<Data.Seeds.Models.CourseModel, CategoryDto>();
+        CreateMap<CreateUpdateCategoryDto, Data.Seeds.Models.CourseModel>();
         CreateMap<CategoryDto, CreateUpdateCategoryDto>();
 
         CreateMap<Chapter, ChapterDto>();

@@ -22,6 +22,18 @@
             ],
             "@proxy/*": [
                 "src/app/proxy/*"
+            ],
+            "@pages/*": [
+                "src/app/pages/*"
+            ],
+            "@pages": [
+                "src/app/pages/index.ts"
+            ],
+            "@components/*": [
+                "src/app/components/*"
+            ],
+            "@components": [
+                "src/app/components/index.ts"
             ]
         },
         "useDefineForClassFields": false,

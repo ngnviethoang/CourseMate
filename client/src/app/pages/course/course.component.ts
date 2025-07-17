@@ -1,38 +1,40 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { NgClass, NgForOf, NgOptimizedImage } from '@angular/common';
+import { PagedResultDto } from '@abp/ng.core';
+import { CategoryDto } from '@proxy/services/dtos/categories';
+import { GetListCourseRequestDto } from '../../models/request.models';
+import { CourseDto } from '@proxy/services/dtos/courses';
 import { CourseService } from '@proxy/services/courses';
+import { CategoryService } from '@proxy/services/categories';
 
 @Component({
-    selector: 'app-products-list',
-    templateUrl: './course-list.component.html',
-    styleUrls: ['./course-list.component.scss'],
-    imports: [
-        RouterLink,
-        NgOptimizedImage,
-        NgForOf,
-        NgClass
-    ],
-    standalone: true
+    selector: 'app-course',
+    templateUrl: './course.component.html',
+    styleUrls: ['./course.component.scss']
 })
-export class CourseListComponent implements OnInit {
-    pagedResult: any;
-    getListCourseReq: any;
-    categories: any;
+export class CourseComponent implements OnInit {
+    pagedResult: PagedResultDto<CourseDto> = new PagedResultDto<CourseDto>();
+    getListCourseReq: GetListCourseRequestDto = {
+        maxResultCount: 12,
+        categoryId: null,
+        skipCount: 0,
+        sorting: 'name'
+    };
+    categories: CategoryDto[] = [];
     currentPage: number = 1;
     totalPages: number = 1;
     pages: number[] = [];
 
     constructor(private courseService: CourseService,
-                private categoryService: CourseService) {
+                private categoryService: CategoryService) {
     }
+
 
     ngOnInit(): void {
         this.categoryService
             .getList({})
-            .subscribe(response => this.categories = response);
+            .subscribe(response => this.categories = response.items);
 
-        this.getListCourseReq.maxResultCount = 16;
+        this.getListCourseReq.maxResultCount = 2;
         this.getListCourse();
     }
 
@@ -69,3 +71,5 @@ export class CourseListComponent implements OnInit {
         this.getListCourse();
     }
 }
+
+

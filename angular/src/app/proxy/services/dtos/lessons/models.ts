@@ -15,5 +15,5 @@ export interface LessonDto extends AuditedEntityDto<string> {
   videoFile?: string;
   duration?: string;
   chapterId?: string;
-  sortpositionNumber: number;
+  position: number;
 }

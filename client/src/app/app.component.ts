@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { NavigationCancel, NavigationEnd, Router } from '@angular/router';
 import { filter, Observable } from 'rxjs';
-import { AuthService } from '@abp/ng.core';
 import { LoadingIndicatorService } from './services/loading-indicator.service';
 
 @Component({
