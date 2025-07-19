@@ -9,7 +9,7 @@ public class CreateUpdateCourseDto
     [MaxLength(1024)]
     public string Title { get; set; } = string.Empty;
 
-    [MaxLength(1024)]
+    [MaxLength(32768)] // 2^15
     public string Description { get; set; } = string.Empty;
 
     [MaxLength(CourseMateConst.FileNameMaxLength)]

@@ -14,6 +14,6 @@ public class Category : FullAuditedEntity<Guid>
     [MaxLength(1024)]
     public string Name { get; set; }
 
-    [MaxLength(1024)]
+    [MaxLength(32768)] // 2^15
     public string Description { get; set; }
 }

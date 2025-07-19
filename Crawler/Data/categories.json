@@ -1,0 +1,440 @@
+﻿{
+  "success": true,
+  "message": "",
+  "code": 200,
+  "callBackFunction": null,
+  "data": [
+    {
+      "id": 26,
+      "name": "Thuật toán",
+      "description": null,
+      "priority": 0,
+      "multiLangData": [
+        {
+          "key": "vn",
+          "title": "Thuật toán",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "en",
+          "title": "Algorithm",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 6,
+      "deleted": false,
+      "createdOn": "2024-05-13T10:53:38.724195Z",
+      "modifiedOn": "2024-05-13T10:53:38.724195Z"
+    },
+    {
+      "id": 20,
+      "name": "Mặc định",
+      "description": null,
+      "priority": 19,
+      "multiLangData": [
+        {
+          "key": "en",
+          "title": "Default",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "vn",
+          "title": "Mặc định",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 0,
+      "deleted": false,
+      "createdOn": "2022-02-20T21:31:05.799512Z",
+      "modifiedOn": "2022-02-20T21:31:05.799512Z"
+    },
+    {
+      "id": 18,
+      "name": "Khóa học chung FA",
+      "description": null,
+      "priority": 17,
+      "multiLangData": [
+        {
+          "key": "en",
+          "title": "FA Common Course",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "vn",
+          "title": "Khóa học chung FA",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 0,
+      "deleted": false,
+      "createdOn": "2023-04-10T22:50:28.405266Z",
+      "modifiedOn": "2023-04-10T22:50:28.405266Z"
+    },
+    {
+      "id": 16,
+      "name": "Fsoft Training with Fee",
+      "description": null,
+      "priority": 15,
+      "multiLangData": [
+        {
+          "key": "vn",
+          "title": "Fsoft Training with Fee",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "en",
+          "title": "Fsoft Training with Fee",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 0,
+      "deleted": false,
+      "createdOn": "2023-04-10T22:50:14.747581Z",
+      "modifiedOn": "2023-04-10T22:50:14.747582Z"
+    },
+    {
+      "id": 15,
+      "name": "Fresher",
+      "description": null,
+      "priority": 14,
+      "multiLangData": [
+        {
+          "key": "vn",
+          "title": "Fresher",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "en",
+          "title": "Fresher",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 0,
+      "deleted": false,
+      "createdOn": "2023-04-10T22:50:07.342653Z",
+      "modifiedOn": "2023-04-10T22:50:07.342653Z"
+    },
+    {
+      "id": 12,
+      "name": "Liên kết trường",
+      "description": null,
+      "priority": 11,
+      "multiLangData": [
+        {
+          "key": "en",
+          "title": "Campuslink",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "vn",
+          "title": "Liên kết trường",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 0,
+      "deleted": false,
+      "createdOn": "2023-04-10T22:49:42.786726Z",
+      "modifiedOn": "2023-04-10T22:49:42.786726Z"
+    },
+    {
+      "id": 11,
+      "name": "EDN Testing",
+      "description": null,
+      "priority": 10,
+      "multiLangData": [
+        {
+          "key": "vn",
+          "title": "EDN Testing",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "en",
+          "title": "EDN Testing",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 0,
+      "deleted": false,
+      "createdOn": "2022-02-21T03:34:36.444785Z",
+      "modifiedOn": "2022-02-21T03:34:36.444785Z"
+    },
+    {
+      "id": 10,
+      "name": "EDN Academy",
+      "description": null,
+      "priority": 9,
+      "multiLangData": [
+        {
+          "key": "vn",
+          "title": "EDN Academy",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "en",
+          "title": "EDN Academy",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 0,
+      "deleted": false,
+      "createdOn": "2022-02-22T20:50:10.169551Z",
+      "modifiedOn": "2022-02-22T20:50:10.169551Z"
+    },
+    {
+      "id": 9,
+      "name": "EDN Team",
+      "description": null,
+      "priority": 8,
+      "multiLangData": [
+        {
+          "key": "vn",
+          "title": "EDN Team",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "en",
+          "title": "EDN Team",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 0,
+      "deleted": false,
+      "createdOn": "2022-02-21T03:21:24.304717Z",
+      "modifiedOn": "2022-02-21T03:21:24.304717Z"
+    },
+    {
+      "id": 8,
+      "name": "Kiến thức khác",
+      "description": null,
+      "priority": 7,
+      "multiLangData": [
+        {
+          "key": "vn",
+          "title": "Kiến thức khác",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "en",
+          "title": "Other knowledge",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 1,
+      "deleted": false,
+      "createdOn": "2023-09-29T21:28:36.547148Z",
+      "modifiedOn": "2023-09-29T21:28:36.547148Z"
+    },
+    {
+      "id": 7,
+      "name": "Lập trình ứng dụng web",
+      "description": null,
+      "priority": 6,
+      "multiLangData": [
+        {
+          "key": "vn",
+          "title": "Lập trình ứng dụng web",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "en",
+          "title": "Web application programming",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 0,
+      "deleted": false,
+      "createdOn": "2023-09-29T21:28:36.547138Z",
+      "modifiedOn": "2023-09-29T21:28:36.547138Z"
+    },
+    {
+      "id": 6,
+      "name": "Chương trình khung",
+      "description": null,
+      "priority": 5,
+      "multiLangData": [
+        {
+          "key": "en",
+          "title": "Frameworks",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "vn",
+          "title": "Chương trình khung",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 0,
+      "deleted": false,
+      "createdOn": "2023-09-29T21:28:36.54713Z",
+      "modifiedOn": "2023-09-29T21:28:36.54713Z"
+    },
+    {
+      "id": 5,
+      "name": "Kiến thức cơ sở",
+      "description": null,
+      "priority": 0,
+      "multiLangData": [
+        {
+          "key": "vn",
+          "title": "Kiến thức cơ sở",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "en",
+          "title": "Basic knowledge",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 4,
+      "deleted": false,
+      "createdOn": "2023-09-29T21:28:36.502151Z",
+      "modifiedOn": "2023-09-29T21:28:36.502151Z"
+    },
+    {
+      "id": 4,
+      "name": "Lập trình nâng cao",
+      "description": null,
+      "priority": 2,
+      "multiLangData": [
+        {
+          "key": "vn",
+          "title": "Lập trình nâng cao",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "en",
+          "title": "Advanced programming",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 9,
+      "deleted": false,
+      "createdOn": "2023-09-29T21:28:36.547099Z",
+      "modifiedOn": "2023-09-29T21:28:36.5471Z"
+    },
+    {
+      "id": 3,
+      "name": "Giải quyết vấn đề",
+      "description": null,
+      "priority": 3,
+      "multiLangData": [
+        {
+          "key": "vn",
+          "title": "Giải quyết vấn đề",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "en",
+          "title": "Problem solving",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 2,
+      "deleted": false,
+      "createdOn": "2023-09-29T21:28:36.547113Z",
+      "modifiedOn": "2023-09-29T21:28:36.547113Z"
+    },
+    {
+      "id": 2,
+      "name": "Kỹ năng nâng cao",
+      "description": null,
+      "priority": 4,
+      "multiLangData": [
+        {
+          "key": "vn",
+          "title": "Kỹ năng nâng cao",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "en",
+          "title": "Advanced skill",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 1,
+      "deleted": false,
+      "createdOn": "2023-09-29T21:28:36.547122Z",
+      "modifiedOn": "2023-09-29T21:28:36.547123Z"
+    },
+    {
+      "id": 1,
+      "name": "Lập trình cơ sở",
+      "description": null,
+      "priority": 1,
+      "multiLangData": [
+        {
+          "key": "vn",
+          "title": "Lập trình cơ sở",
+          "description": null,
+          "content": null
+        },
+        {
+          "key": "en",
+          "title": "Basic programming",
+          "description": null,
+          "content": null
+        }
+      ],
+      "parentId": 0,
+      "countCourse": 16,
+      "deleted": false,
+      "createdOn": "2023-09-29T21:28:36.547023Z",
+      "modifiedOn": "2023-09-29T21:28:36.547023Z"
+    }
+  ],
+  "metaData": {
+    "total": 17,
+    "pageTotal": 1,
+    "pageSize": 50,
+    "pageIndex": 1,
+    "data": null
+  }
+}

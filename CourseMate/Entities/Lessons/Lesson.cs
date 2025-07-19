@@ -19,7 +19,7 @@ public class Lesson : FullAuditedEntity<Guid>
     [MaxLength(1024)]
     public string Title { get; set; }
 
-    [MaxLength(2048)]
+    [MaxLength(10000)]
     public string ContentText { get; set; }
 
     [MaxLength(CourseMateConst.FileNameMaxLength)]

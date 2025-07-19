@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CourseMate.Data.Seeds.Models;
 using CourseMate.Entities.Categories;
 using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;

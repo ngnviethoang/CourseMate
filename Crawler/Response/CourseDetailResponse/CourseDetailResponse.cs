@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using Crawler.Response.CourseListReponse;
 
 namespace Crawler.Response.CourseDetailResponse;
 
@@ -60,7 +59,7 @@ public class Activity
     public bool? AllowPreview { get; set; }
 
     [JsonPropertyName("multiLangData")]
-    public object MultiLangData { get; set; }
+    public List<MultiLangDatum> MultiLangData { get; set; }
 }
 
 public class CourseSchedule
@@ -364,4 +363,34 @@ public class StatisticSchedule
 
     [JsonPropertyName("totalLesson")]
     public int? TotalLesson { get; set; }
+}
+
+public class MetaData
+{
+    [JsonPropertyName("total")]
+    public int? Total { get; set; }
+
+    [JsonPropertyName("pageTotal")]
+    public int? PageTotal { get; set; }
+
+    [JsonPropertyName("pageSize")]
+    public int? PageSize { get; set; }
+
+    [JsonPropertyName("pageIndex")]
+    public int? PageIndex { get; set; }
+
+    [JsonPropertyName("data")]
+    public object Data { get; set; }
+}
+
+public class Owner
+{
+    [JsonPropertyName("userId")]
+    public int? UserId { get; set; }
+
+    [JsonPropertyName("userName")]
+    public string UserName { get; set; }
+
+    [JsonPropertyName("displayName")]
+    public string DisplayName { get; set; }
 }

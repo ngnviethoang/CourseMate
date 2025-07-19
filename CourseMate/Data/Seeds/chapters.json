@@ -1,0 +1,614 @@
+[
+  {
+    "Id": "24b1ec39-ed6a-4141-9164-236e1266f16a",
+    "Title": "Gi\u1EDBi thi\u1EC7u Scratch",
+    "CourseId": "21f0c4fe-ab76-40f2-99f0-0cbd6dfb8045",
+    "Position": 1
+  },
+  {
+    "Id": "84eb5428-e237-4147-b804-c822938fe663",
+    "Title": "T\u1EA1o c\u00E1c tr\u00F2 ch\u01A1i theo nh\u00F3m kh\u1ED1i l\u1EC7nh",
+    "CourseId": "21f0c4fe-ab76-40f2-99f0-0cbd6dfb8045",
+    "Position": 2
+  },
+  {
+    "Id": "433b5035-7629-4ab9-a67e-d70d9deb6df2",
+    "Title": "S\u1EA3n ph\u1EA9m cu\u1ED1i kh\u00F3a",
+    "CourseId": "21f0c4fe-ab76-40f2-99f0-0cbd6dfb8045",
+    "Position": 3
+  },
+  {
+    "Id": "61899a17-8b26-45a9-a67f-a2fedcadaa64",
+    "Title": "T\u1ED5ng quan v\u1EC1 l\u1EADp tr\u00ECnh C\u002B\u002B",
+    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Position": 1
+  },
+  {
+    "Id": "8dbbe80f-37ab-4b67-a44e-67058718d2f0",
+    "Title": "C\u00E1c kh\u00E1i ni\u1EC7m c\u01A1 b\u1EA3n",
+    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Position": 2
+  },
+  {
+    "Id": "8dd80c39-472f-4639-b8bd-e2e5548777c3",
+    "Title": "Nh\u1EADp - xu\u1EA5t d\u1EEF li\u1EC7u t\u1EEB b\u00E0n ph\u00EDm",
+    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Position": 3
+  },
+  {
+    "Id": "1d280e8f-ad83-4407-9ecb-68f4ecb0b9be",
+    "Title": "To\u00E1n t\u1EED trong c\u002B\u002B",
+    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Position": 4
+  },
+  {
+    "Id": "a217d1af-1094-43a4-a476-9c9a93b21072",
+    "Title": "C\u1EA5u tr\u00FAc r\u1EBD nh\u00E1nh",
+    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Position": 5
+  },
+  {
+    "Id": "a161bdf2-a4e8-4a5a-89b1-7da5014992fa",
+    "Title": "V\u00F2ng l\u1EB7p",
+    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Position": 6
+  },
+  {
+    "Id": "0ed2b2ae-4ce0-45d0-b02c-7d9ef1a0d6db",
+    "Title": "M\u1EA3ng",
+    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Position": 7
+  },
+  {
+    "Id": "d757de9b-a435-4505-80e9-1e31da19686f",
+    "Title": "String",
+    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Position": 8
+  },
+  {
+    "Id": "a943296a-6e12-46d1-8ccd-64b56c0d8c8d",
+    "Title": "H\u00E0m",
+    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Position": 9
+  },
+  {
+    "Id": "e763d3bd-8615-4dfa-b147-5caa6cd410c2",
+    "Title": "\u1EE8ng d\u1EE5ng AI trong c\u00F4ng vi\u00EA\u0323c",
+    "CourseId": "5db9a916-272c-405a-964a-294d75417c09",
+    "Position": 1
+  },
+  {
+    "Id": "e1c32d27-ac29-4d94-8579-e18e60f2ebe3",
+    "Title": "T\u1ED5ng quan v\u1EC1 l\u1EADp tr\u00ECnh Java",
+    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Position": 1
+  },
+  {
+    "Id": "b8896505-13d8-405f-869a-1171b715fb59",
+    "Title": "C\u00E1c kh\u00E1i ni\u1EC7m c\u01A1 b\u1EA3n",
+    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Position": 2
+  },
+  {
+    "Id": "a11a77ce-c3c1-4f1e-b838-aaa3b326d797",
+    "Title": "Nh\u1EADp - xu\u1EA5t d\u1EEF li\u1EC7u t\u1EEB b\u00E0n ph\u00EDm",
+    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Position": 3
+  },
+  {
+    "Id": "2f5ac533-00cc-406a-9738-c99f01404d9a",
+    "Title": "To\u00E1n t\u1EED trong Java",
+    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Position": 4
+  },
+  {
+    "Id": "58768958-c4b0-4979-8e15-fe5c46b6ae69",
+    "Title": "C\u1EA5u tr\u00FAc r\u1EBD nh\u00E1nh",
+    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Position": 5
+  },
+  {
+    "Id": "669cf6c7-6c93-43a2-aff8-bb10f4959631",
+    "Title": "V\u00F2ng l\u1EB7p",
+    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Position": 6
+  },
+  {
+    "Id": "39718b98-b66d-46f4-937c-1a487753e60b",
+    "Title": "M\u1EA3ng",
+    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Position": 7
+  },
+  {
+    "Id": "c5856dff-879f-476e-a215-da8ce7009949",
+    "Title": "String",
+    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Position": 8
+  },
+  {
+    "Id": "7ab80c15-aea4-43b4-a133-e8ef1baf79eb",
+    "Title": "H\u00E0m",
+    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Position": 9
+  },
+  {
+    "Id": "252cc833-80f5-4816-ac0a-510db117236b",
+    "Title": "Gi\u1EDBi thi\u1EC7u chung",
+    "CourseId": "80775727-455c-4a58-9584-421d56d128de",
+    "Position": 1
+  },
+  {
+    "Id": "427fa94c-a182-4f10-8ac6-82ec9d0caef5",
+    "Title": "Ch\u1EE9c n\u0103ng qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng",
+    "CourseId": "80775727-455c-4a58-9584-421d56d128de",
+    "Position": 2
+  },
+  {
+    "Id": "48839da8-3311-4b4b-bee7-2ef883a2af7b",
+    "Title": "Ch\u1EE9c n\u0103ng qu\u1EA3n l\u00FD c\u00F4ng vi\u1EC7c",
+    "CourseId": "80775727-455c-4a58-9584-421d56d128de",
+    "Position": 3
+  },
+  {
+    "Id": "7637831d-966a-470b-bc6a-df6d3b96c6ab",
+    "Title": "Tri\u1EC3n khai d\u1EF1 \u00E1n",
+    "CourseId": "80775727-455c-4a58-9584-421d56d128de",
+    "Position": 4
+  },
+  {
+    "Id": "a1764ea3-e190-48ca-a47d-46dc66e7a770",
+    "Title": "Gi\u1EDBi thi\u1EC7u chung v\u1EC1 Python",
+    "CourseId": "c3500613-2ced-424d-a75d-db4526c1284e",
+    "Position": 1
+  },
+  {
+    "Id": "fc8963fb-96e5-4d76-911c-1265fe361da7",
+    "Title": "C\u00E1c kh\u00E1i ni\u1EC7m c\u01A1 b\u1EA3n",
+    "CourseId": "c3500613-2ced-424d-a75d-db4526c1284e",
+    "Position": 2
+  },
+  {
+    "Id": "0b3dd095-3ae2-4dea-b9b0-871556dea7c7",
+    "Title": "S\u1ED1 v\u00E0 to\u00E1n h\u1ECDc",
+    "CourseId": "c3500613-2ced-424d-a75d-db4526c1284e",
+    "Position": 3
+  },
+  {
+    "Id": "0d34a609-1b4f-4453-92bf-af2dca4cfafb",
+    "Title": "C\u1EA5u tr\u00FAc \u0111i\u1EC1u khi\u1EC3n",
+    "CourseId": "c3500613-2ced-424d-a75d-db4526c1284e",
+    "Position": 4
+  },
+  {
+    "Id": "17e20322-8a79-42d5-bf77-e6738da234f1",
+    "Title": "Chu\u1ED7i v\u00E0 ph\u01B0\u01A1ng th\u1EE9c chu\u1ED7i",
+    "CourseId": "c3500613-2ced-424d-a75d-db4526c1284e",
+    "Position": 5
+  },
+  {
+    "Id": "60939c9d-f91f-4ff2-8054-1cbbf1e1c8fe",
+    "Title": "H\u00E0m",
+    "CourseId": "c3500613-2ced-424d-a75d-db4526c1284e",
+    "Position": 6
+  },
+  {
+    "Id": "2a896fc5-40be-46b5-9e1c-d95f3abc1101",
+    "Title": "X\u00E2y d\u1EF1ng game",
+    "CourseId": "5e872ca5-6685-4b64-800d-4698c9b28cb9",
+    "Position": 1
+  },
+  {
+    "Id": "1b6795e9-dbe2-4d2c-8ba8-4d48a1b4fca0",
+    "Title": "To\u00E1n h\u1ECDc",
+    "CourseId": "5e872ca5-6685-4b64-800d-4698c9b28cb9",
+    "Position": 2
+  },
+  {
+    "Id": "aba725b5-b9e2-40ee-ad42-5d4ecbb02a2c",
+    "Title": "Gi\u1EDBi thi\u1EC7u v\u1EC1 HTML v\u00E0 Web",
+    "CourseId": "c5480e6d-c26a-4792-a186-3ac147f69686",
+    "Position": 1
+  },
+  {
+    "Id": "0f14008c-2cb1-465c-b9d8-b7f88e42d3f7",
+    "Title": "L\u00E0m quen v\u1EDBi CSS",
+    "CourseId": "c5480e6d-c26a-4792-a186-3ac147f69686",
+    "Position": 2
+  },
+  {
+    "Id": "ef6d42fc-1bfb-4a07-a617-2e7a12c3df42",
+    "Title": "\u0110\u1ECBnh d\u1EA1ng v\u0103n b\u1EA3n v\u00E0 b\u1ED1 c\u1EE5c c\u01A1 b\u1EA3n",
+    "CourseId": "c5480e6d-c26a-4792-a186-3ac147f69686",
+    "Position": 3
+  },
+  {
+    "Id": "d3883a16-6b8e-4306-b773-3f8e75bff8e1",
+    "Title": "B\u1ED1 c\u1EE5c hi\u1EC7n \u0111\u1EA1i v\u1EDBi Flexbox v\u00E0 Grid",
+    "CourseId": "c5480e6d-c26a-4792-a186-3ac147f69686",
+    "Position": 4
+  },
+  {
+    "Id": "30637658-fdf1-401f-85ff-795af77fdc06",
+    "Title": "CSS n\u00E2ng cao v\u00E0 responsive",
+    "CourseId": "c5480e6d-c26a-4792-a186-3ac147f69686",
+    "Position": 5
+  },
+  {
+    "Id": "aa9fc04a-54bf-4a6b-9e6e-c5b5641d7305",
+    "Title": "Th\u1EF1c h\u00E0nh d\u1EF1 \u00E1n",
+    "CourseId": "c5480e6d-c26a-4792-a186-3ac147f69686",
+    "Position": 6
+  },
+  {
+    "Id": "9dabdc17-9604-42e4-a568-c9e541df403e",
+    "Title": "Gi\u1EDBi thi\u1EC7u",
+    "CourseId": "bfd14165-bd84-4221-bf18-8ba2d47763e5",
+    "Position": 1
+  },
+  {
+    "Id": "d40632fb-e9a2-4826-83a9-ba408e290d76",
+    "Title": "C# c\u01A1 b\u1EA3n",
+    "CourseId": "bfd14165-bd84-4221-bf18-8ba2d47763e5",
+    "Position": 2
+  },
+  {
+    "Id": "f9f269bd-cea2-42b9-9173-7932d86d2523",
+    "Title": "C\u1EA5u tr\u00FAc \u0111i\u1EC1u khi\u1EC3n",
+    "CourseId": "bfd14165-bd84-4221-bf18-8ba2d47763e5",
+    "Position": 3
+  },
+  {
+    "Id": "95849d5c-546f-4cbe-a250-2e4e9ffaa087",
+    "Title": "Ph\u01B0\u01A1ng th\u1EE9c, l\u1EDBp trong C#",
+    "CourseId": "bfd14165-bd84-4221-bf18-8ba2d47763e5",
+    "Position": 4
+  },
+  {
+    "Id": "49094872-e74d-45ff-989b-7392016d531b",
+    "Title": "T\u1ED5ng k\u1EBFt",
+    "CourseId": "bfd14165-bd84-4221-bf18-8ba2d47763e5",
+    "Position": 5
+  },
+  {
+    "Id": "04cb8233-240f-433a-9acf-e5dc010cfaba",
+    "Title": "Gi\u1EDBi thi\u1EC7u",
+    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Position": 1
+  },
+  {
+    "Id": "3bdc7414-6ee1-4778-b68e-3c51e6599fdb",
+    "Title": "Bi\u1EBFn v\u00E0 c\u00E1c ki\u1EC3u d\u1EEF li\u1EC7u",
+    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Position": 2
+  },
+  {
+    "Id": "514f6a58-31f4-40cc-82f3-639e0fec9c15",
+    "Title": "Thao t\u00E1c v\u1EDBi d\u1EEF li\u1EC7u",
+    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Position": 3
+  },
+  {
+    "Id": "794825fa-a925-44be-8577-d07abea84bf0",
+    "Title": "C\u1EA5u tr\u00FAc \u0111i\u1EC1u khi\u1EC3n, h\u00E0m",
+    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Position": 4
+  },
+  {
+    "Id": "35e31081-489e-46ea-9c4d-0f8ee8a7679c",
+    "Title": "\u0110\u1ED1i t\u01B0\u1EE3ng trong Javascript",
+    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Position": 5
+  },
+  {
+    "Id": "7727e2a7-c26e-4bda-bf4d-2df07cc83432",
+    "Title": "L\u00E0m vi\u1EC7c v\u1EDBi DOM \u0026 BOM",
+    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Position": 6
+  },
+  {
+    "Id": "0a11bf37-7a8f-47d6-a310-022b637bd24e",
+    "Title": "B\u1EA5t \u0111\u1ED3ng b\u1ED9 trong JavaScript",
+    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Position": 7
+  },
+  {
+    "Id": "457d11f9-b441-468c-ba16-385fd91a9d65",
+    "Title": "T\u1ED5ng k\u1EBFt",
+    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Position": 8
+  },
+  {
+    "Id": "0bb683c1-9cd2-4aa9-9308-92ab599dd206",
+    "Title": "Python Automation Mastery",
+    "CourseId": "eedbea5e-b141-44b2-aa79-eec442d53d78",
+    "Position": 1
+  },
+  {
+    "Id": "cbce330c-80b7-4d4d-b759-167675a118ee",
+    "Title": "\u00D4n t\u1EADp c\u00E1c ki\u1EBFn th\u1EE9c c\u01A1 b\u1EA3n",
+    "CourseId": "a13e9a72-cae4-42cf-97de-92ff8bbd3ae6",
+    "Position": 1
+  },
+  {
+    "Id": "4a3c9f45-dd96-45fa-936f-49c0dae00300",
+    "Title": "C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u t\u00EDch h\u1EE3p s\u1EB5n",
+    "CourseId": "a13e9a72-cae4-42cf-97de-92ff8bbd3ae6",
+    "Position": 2
+  },
+  {
+    "Id": "f90522fd-e44c-451f-bf2a-77921976402a",
+    "Title": "L\u1EADp tr\u00ECnh h\u01B0\u1EDBng \u0111\u1ED1i t\u01B0\u1EE3ng",
+    "CourseId": "a13e9a72-cae4-42cf-97de-92ff8bbd3ae6",
+    "Position": 3
+  },
+  {
+    "Id": "3f5b9893-6de7-4c7e-8195-11865a980e28",
+    "Title": "X\u1EED l\u00FD l\u1ED7i v\u00E0 ngo\u1EA1i l\u1EC7",
+    "CourseId": "a13e9a72-cae4-42cf-97de-92ff8bbd3ae6",
+    "Position": 4
+  },
+  {
+    "Id": "a2ecc9d6-2d85-46cf-aa00-34325f6bbbd0",
+    "Title": "X\u1EED l\u00FD File",
+    "CourseId": "a13e9a72-cae4-42cf-97de-92ff8bbd3ae6",
+    "Position": 5
+  },
+  {
+    "Id": "486d8258-4390-4840-aab3-446f038b6251",
+    "Title": "Modules v\u00E0 Packages",
+    "CourseId": "a13e9a72-cae4-42cf-97de-92ff8bbd3ae6",
+    "Position": 6
+  },
+  {
+    "Id": "0b0c5c31-739d-420b-aef3-fb5328329894",
+    "Title": "Gi\u1EDBi thi\u1EC7u chung",
+    "CourseId": "ee9d66f5-6456-40bb-8230-bb77a4567838",
+    "Position": 1
+  },
+  {
+    "Id": "374d6bf2-2218-4ec4-bb23-f58f315c7bbd",
+    "Title": "C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u",
+    "CourseId": "ee9d66f5-6456-40bb-8230-bb77a4567838",
+    "Position": 2
+  },
+  {
+    "Id": "1cb5029e-2525-4805-936a-f62e3a6fa82f",
+    "Title": "Thu\u1EADt to\u00E1n s\u1EAFp x\u1EBFp",
+    "CourseId": "ee9d66f5-6456-40bb-8230-bb77a4567838",
+    "Position": 3
+  },
+  {
+    "Id": "ff292c7a-6fe3-4d65-ae0c-4df75e0dd8a8",
+    "Title": "Thu\u1EADt to\u00E1n t\u00ECm ki\u1EBFm v\u00E0 chia \u0111\u1EC3 tr\u1ECB",
+    "CourseId": "ee9d66f5-6456-40bb-8230-bb77a4567838",
+    "Position": 4
+  },
+  {
+    "Id": "9f549844-bb09-4762-ad94-b04909e50c8d",
+    "Title": "Thu\u1EADt to\u00E1n quy ho\u1EA1ch \u0111\u1ED9ng v\u00E0 quay lui",
+    "CourseId": "ee9d66f5-6456-40bb-8230-bb77a4567838",
+    "Position": 5
+  },
+  {
+    "Id": "3d46dc14-636d-46f0-8b2f-53d00ee41c8c",
+    "Title": "Thu\u1EADt to\u00E1n \u0111\u1ED3 th\u1ECB",
+    "CourseId": "ee9d66f5-6456-40bb-8230-bb77a4567838",
+    "Position": 6
+  },
+  {
+    "Id": "62c071a7-fe50-45c1-adbd-5c4f8d1a9bd3",
+    "Title": "\u0110\u1ECCC GHI FILE",
+    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Position": 1
+  },
+  {
+    "Id": "ce20f6cb-0b1b-4dbd-99b2-1830aee9c896",
+    "Title": "H\u00C0M TO\u00C1N H\u1ECCC",
+    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Position": 2
+  },
+  {
+    "Id": "44e9b4f2-c5f0-4fee-a8aa-d989a05b91fc",
+    "Title": "CON TR\u1ECE",
+    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Position": 3
+  },
+  {
+    "Id": "98ef7fe4-f5cc-478c-bbc0-a3d9e3bf95f9",
+    "Title": "\u0110\u1EC6 QUY",
+    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Position": 4
+  },
+  {
+    "Id": "31f03dea-d100-446b-8000-6053686d4cdb",
+    "Title": "L\u1EDAP TRONG C\u002B\u002B",
+    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Position": 5
+  },
+  {
+    "Id": "059b7422-ba9b-43ce-9f95-219e1dfc9dcf",
+    "Title": "NAMESPACE , TEMPLATE",
+    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Position": 6
+  },
+  {
+    "Id": "39a453f5-f4ba-48d4-98fb-7f5e336ffa82",
+    "Title": "X\u1EEC L\u00DD NGO\u1EA0I L\u1EC6",
+    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Position": 7
+  },
+  {
+    "Id": "5270d226-d354-4c8d-94f2-106a157d4697",
+    "Title": "C\u00C1C TH\u01AF VI\u1EC6N CHU\u1EA8N TRONG C\u002B\u002B",
+    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Position": 8
+  },
+  {
+    "Id": "84604212-57e0-4a25-8034-8d26745996ab",
+    "Title": "SQL n\u00E2ng cao",
+    "CourseId": "323224e6-61c1-463b-83d1-158cd15302da",
+    "Position": 1
+  },
+  {
+    "Id": "1d0f394b-de93-46e1-bf6c-c699228b5bbe",
+    "Title": "Nh\u1EADp m\u00F4n SQL",
+    "CourseId": "af1027b5-fd78-4445-bf87-c1c05c0d05d8",
+    "Position": 1
+  },
+  {
+    "Id": "6f42c3d4-5b2f-481e-be6c-e429e5e11bbc",
+    "Title": "Th\u1EF1c h\u00E0nh v\u1EDBi SQL",
+    "CourseId": "4281a275-7a77-4145-bbdf-5863595e7d8c",
+    "Position": 1
+  },
+  {
+    "Id": "654a150e-a415-437e-a3a2-be4e8ab919a3",
+    "Title": "L\u1EADp tr\u00ECnh h\u01B0\u1EDBng \u0111\u1ED1i t\u01B0\u1EE3ng trong C\u002B\u002B",
+    "CourseId": "8010c4da-c550-4c96-ad00-017d5f77d53e",
+    "Position": 1
+  },
+  {
+    "Id": "c59156f8-52a6-4b89-adc6-79221605182e",
+    "Title": "C\u002B\u002B n\u00E2ng cao",
+    "CourseId": "ff785ba0-016f-43d7-a0e0-0cd16e17bec9",
+    "Position": 1
+  },
+  {
+    "Id": "8948db47-5128-4049-800c-8e894c22159a",
+    "Title": "L\u1EADp tr\u00ECnh h\u01B0\u1EDBng \u0111\u1ED1i t\u01B0\u1EE3ng trong java",
+    "CourseId": "fe5effd0-3439-4ea5-adde-03e855959ad0",
+    "Position": 1
+  },
+  {
+    "Id": "4a61e9e4-494b-4f07-8359-b34c6193efab",
+    "Title": "C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u v\u00E0 gi\u1EA3i thu\u1EADt",
+    "CourseId": "4cbf29f3-75e3-493e-9e49-05bfe2eb0105",
+    "Position": 1
+  },
+  {
+    "Id": "d79dcf09-0433-4255-8d7d-7723bf7931d0",
+    "Title": "L\u00E0m quen v\u1EDBi SQL",
+    "CourseId": "569ddad2-d67c-4900-bedb-ccc79bf37cf1",
+    "Position": 1
+  },
+  {
+    "Id": "5f188bd4-3437-44dc-aa93-682e707c0cc3",
+    "Title": "C# c\u01A1 b\u1EA3n",
+    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Position": 1
+  },
+  {
+    "Id": "d12065d2-180f-48e6-9b49-8ad7ea4a136b",
+    "Title": "X\u1EED l\u00FD x\u00E2u",
+    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Position": 2
+  },
+  {
+    "Id": "9ca791e4-0760-4f1a-b471-6536953f96a3",
+    "Title": "H\u00E0m trong C#",
+    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Position": 3
+  },
+  {
+    "Id": "2adb9099-0d47-465d-b992-00d3dd911c79",
+    "Title": "Bi\u1EBFn",
+    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Position": 4
+  },
+  {
+    "Id": "76060d72-7a39-4a65-82f6-01057b01345f",
+    "Title": "C\u00E1c to\u00E1n t\u1EED",
+    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Position": 5
+  },
+  {
+    "Id": "8ee8ae9a-2564-4dd3-8bab-8f9cadb062b1",
+    "Title": "C\u00E1c c\u00E2u l\u1EC7nh \u0111i\u1EC1u ki\u1EC7n",
+    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Position": 6
+  },
+  {
+    "Id": "d8a4e639-6ea9-477d-a44b-7f256b9cebe5",
+    "Title": "V\u00F2ng l\u1EB7p",
+    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Position": 7
+  },
+  {
+    "Id": "ba128e0d-e0f9-45e0-8c1f-1c87a166e81e",
+    "Title": "M\u1EA3ng",
+    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Position": 8
+  },
+  {
+    "Id": "7f341ea6-53f3-4c17-a16b-439af3ddc173",
+    "Title": "Ph\u1EA7n m\u1EC1m m\u00E1y t\u00EDnh",
+    "CourseId": "9a6d4dde-c342-4ee8-8ff9-6bdc7b3d73f7",
+    "Position": 1
+  },
+  {
+    "Id": "2614d9a7-3dd4-445d-b5d5-83382bb9fdca",
+    "Title": "JavaScript c\u01A1 b\u1EA3n",
+    "CourseId": "92d67d54-db66-49c9-9c70-999dad95b7e2",
+    "Position": 1
+  },
+  {
+    "Id": "a7bee6aa-681e-4fca-9a79-f0f22cb52714",
+    "Title": "C cho ng\u01B0\u1EDDi m\u1EDBi b\u1EAFt \u0111\u1EA7u",
+    "CourseId": "37a0ce38-f2e7-4e1b-bf0e-5331a9c52c64",
+    "Position": 1
+  },
+  {
+    "Id": "44b0987c-890e-4028-b78a-f456b6b3f797",
+    "Title": "Thu\u1EADt to\u00E1n n\u00E2ng cao",
+    "CourseId": "0d20787c-dc53-402a-a726-98b9233960d3",
+    "Position": 1
+  },
+  {
+    "Id": "78977fec-9566-41d7-a938-ad38c19dd0e7",
+    "Title": "Thu\u1EADt to\u00E1n c\u0103n b\u1EA3n",
+    "CourseId": "d5f80f60-c00d-4ceb-ab47-b8e74314f3ad",
+    "Position": 1
+  },
+  {
+    "Id": "b956c129-7d70-442d-a129-d4f2d9aadfd3",
+    "Title": "Truy\u1EC1n th\u00F4ng v\u00E0 M\u1EA1ng m\u00E1y t\u00EDnh",
+    "CourseId": "204ea8be-97fd-4e1f-a432-8a5c4b28eb12",
+    "Position": 1
+  },
+  {
+    "Id": "4f86cb25-aa2c-4197-86ef-e0e034c4d49f",
+    "Title": "Th\u01B0 vi\u1EC7n chu\u1EA9n C\u002B\u002B",
+    "CourseId": "34c83e86-f2bf-480b-a6dd-afbddbbfe913",
+    "Position": 1
+  },
+  {
+    "Id": "59c25c9e-e5ea-42f4-872c-769fb6c04c18",
+    "Title": "\u0110i\u1EC7n to\u00E1n \u0111\u00E1m m\u00E2y",
+    "CourseId": "c8a9b067-d788-4450-bed7-fc812610202d",
+    "Position": 1
+  },
+  {
+    "Id": "6aa270a7-4d03-4d8c-acaa-66755ed82fbd",
+    "Title": "Ph\u1EA7n c\u1EE9ng m\u00E1y t\u00EDnh",
+    "CourseId": "0d8db463-6988-421b-b8f4-5c39f80fb5d4",
+    "Position": 1
+  },
+  {
+    "Id": "b61488a4-001d-46fc-a871-535e620411fe",
+    "Title": "Python c\u01A1 b\u1EA3n",
+    "CourseId": "134ecef3-9d80-4467-9506-4c8b8ec61116",
+    "Position": 1
+  },
+  {
+    "Id": "27b89390-d3b8-4b3a-8109-5e88f5152a7f",
+    "Title": "C\u002B\u002B cho ng\u01B0\u1EDDi m\u1EDBi b\u1EAFt \u0111\u1EA7u",
+    "CourseId": "dfa6cd0d-ea18-45be-a6f3-113d92fb53b9",
+    "Position": 1
+  },
+  {
+    "Id": "694a2a62-c43a-491b-afa2-5ec240fde4d9",
+    "Title": "Java c\u01A1 b\u1EA3n",
+    "CourseId": "e1390226-9bbc-4f61-98f8-7fe4c43b1bb3",
+    "Position": 1
+  }
+]

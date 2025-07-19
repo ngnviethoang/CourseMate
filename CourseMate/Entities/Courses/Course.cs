@@ -22,7 +22,7 @@ public class Course : FullAuditedEntity<Guid>
     [MaxLength(1024)]
     public string Title { get; set; }
 
-    [MaxLength(1024)]
+    [MaxLength(32768)] // 2^15
     public string Description { get; set; }
 
     [MaxLength(CourseMateConst.FileNameMaxLength)]

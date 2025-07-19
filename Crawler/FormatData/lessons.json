@@ -1,0 +1,4160 @@
+[
+  {
+    "Id": "6678974a-279f-4003-826c-5c6f8279ce45",
+    "Title": "Gi\u1EDBi thi\u1EC7u chung v\u1EC1 l\u1EADp tr\u00ECnh Scratch",
+    "ContentText": "Tham kh\u1EA3o s\u1EA3n ph\u1EA9m sau khi ho\u00E0n th\u00E0nh kho\u00E1 h\u1ECDc n\u00E0y",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "24b1ec39-ed6a-4141-9164-236e1266f16a",
+    "Position": 1
+  },
+  {
+    "Id": "77319153-cb35-48b3-af79-aad886e66eec",
+    "Title": "Gi\u1EDBi thi\u1EC7u v\u1EC1 giao di\u1EC7n c\u1EE7a Scratch",
+    "ContentText": "C\u00E0i \u0111\u1EB7t m\u00F4i tr\u01B0\u1EDDng l\u1EADp tr\u00ECnh",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "24b1ec39-ed6a-4141-9164-236e1266f16a",
+    "Position": 2
+  },
+  {
+    "Id": "1359e507-3093-4db3-bfe7-92f3566ecb2a",
+    "Title": "Tr\u00F2 ch\u01A1i m\u00E8o b\u1EAFt c\u00E1",
+    "ContentText": "Tr\u00F2 ch\u01A1i m\u00E8o b\u1EAFt c\u00E1",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "84eb5428-e237-4147-b804-c822938fe663",
+    "Position": 1
+  },
+  {
+    "Id": "b2f22e95-311f-4104-8cc5-3eea4a39eba8",
+    "Title": "Tr\u00F2 ch\u01A1i Ch\u00FA g\u1EA5u phi\u00EAu l\u01B0u",
+    "ContentText": "Tr\u00F2 ch\u01A1i Ch\u00FA g\u1EA5u phi\u00EAu l\u01B0u",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "84eb5428-e237-4147-b804-c822938fe663",
+    "Position": 2
+  },
+  {
+    "Id": "37a4500e-2467-4b3f-beb9-143bb1aee34a",
+    "Title": "Tr\u00F2 ch\u01A1i Ch\u00FA g\u1EA5u phi\u00EAu l\u01B0u (ti\u1EBFp theo)",
+    "ContentText": "Tr\u00F2 ch\u01A1i Ch\u00FA g\u1EA5u phi\u00EAu l\u01B0u (ti\u1EBFp theo)",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "84eb5428-e237-4147-b804-c822938fe663",
+    "Position": 3
+  },
+  {
+    "Id": "a5f1fc0c-4c13-4b08-92d2-8026eca983db",
+    "Title": "Tr\u00F2 ch\u01A1i M\u00E8o ch\u1EA1y \u0111ua",
+    "ContentText": "Tr\u00F2 ch\u01A1i M\u00E8o ch\u1EA1y \u0111ua",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "84eb5428-e237-4147-b804-c822938fe663",
+    "Position": 4
+  },
+  {
+    "Id": "96aebfea-d7a0-4344-a701-adcad8f25903",
+    "Title": "Tr\u00F2 ch\u01A1i Th\u1EA3m h\u1ECDa thi\u00EAn th\u1EA1ch",
+    "ContentText": "Tr\u00F2 ch\u01A1i Th\u1EA3m h\u1ECDa thi\u00EAn th\u1EA1ch",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "84eb5428-e237-4147-b804-c822938fe663",
+    "Position": 5
+  },
+  {
+    "Id": "77371ef2-7577-4e6c-ab2e-c7cfd58c5add",
+    "Title": "Tr\u00F2 ch\u01A1i M\u00E8o v\u00E0 chu\u1ED9t",
+    "ContentText": "Tr\u00F2 ch\u01A1i M\u00E8o v\u00E0 chu\u1ED9t",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "84eb5428-e237-4147-b804-c822938fe663",
+    "Position": 6
+  },
+  {
+    "Id": "63a9638b-754a-4a4a-8553-6a1fae54c2f3",
+    "Title": "L\u1EADp tr\u00ECnh thu\u1EADt to\u00E1n t\u00ECm s\u1ED1 nguy\u00EAn t\u1ED1",
+    "ContentText": "L\u1EADp tr\u00ECnh thu\u1EADt to\u00E1n t\u00ECm s\u1ED1 nguy\u00EAn t\u1ED1",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "84eb5428-e237-4147-b804-c822938fe663",
+    "Position": 7
+  },
+  {
+    "Id": "5db1b33c-d4af-441d-aff7-3500bc1032ad",
+    "Title": "Tr\u00F2 ch\u01A1i H\u00E1i sao",
+    "ContentText": "Tr\u00F2 ch\u01A1i H\u00E1i sao",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "84eb5428-e237-4147-b804-c822938fe663",
+    "Position": 8
+  },
+  {
+    "Id": "73e5d594-430e-49d3-b6b7-d973b8b818b4",
+    "Title": "V\u1EBD l\u00E1 c\u1EDD Vi\u1EC7t Nam b\u1EB1ng B\u00FAt v\u1EBD",
+    "ContentText": "V\u1EBD l\u00E1 c\u1EDD Vi\u1EC7t Nam b\u1EB1ng B\u00FAt v\u1EBD",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "84eb5428-e237-4147-b804-c822938fe663",
+    "Position": 9
+  },
+  {
+    "Id": "4de88dc8-7501-4e52-adaf-7f1fdfe76fdc",
+    "Title": "Gi\u1EDBi thi\u1EC7u game G\u00E0 qua \u0111\u01B0\u1EDDng",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u game G\u00E0 qua \u0111\u01B0\u1EDDng",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "433b5035-7629-4ab9-a67e-d70d9deb6df2",
+    "Position": 1
+  },
+  {
+    "Id": "7354a056-3db3-4782-bd20-cfb91882339d",
+    "Title": "L\u00E0m game G\u00E0 qua \u0111\u01B0\u1EDDng",
+    "ContentText": "T\u1EA1o c\u00E1c nh\u00E2n v\u1EADt v\u00E0 l\u1EADp tr\u00ECnh g\u00E0 ch\u1EA1y b\u1EB1ng c\u00E1c ph\u00EDm m\u0169i t\u00EAn",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "433b5035-7629-4ab9-a67e-d70d9deb6df2",
+    "Position": 2
+  },
+  {
+    "Id": "8981ad20-6e78-4fe2-b128-2bcde3231090",
+    "Title": "1.1 Gi\u1EDBi thi\u1EC7u v\u1EC1 L\u1EADp tr\u00ECnh v\u00E0 C\u002B\u002B",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "61899a17-8b26-45a9-a67f-a2fedcadaa64",
+    "Position": 1
+  },
+  {
+    "Id": "499272d4-19b9-46dd-8153-bb812e958785",
+    "Title": "1.2 Thi\u1EBFt l\u1EADp m\u00F4i tr\u01B0\u1EDDng ph\u00E1t tri\u1EC3n",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn c\u00E0i \u0111\u1EB7t m\u00F4i tr\u01B0\u1EDDng",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "61899a17-8b26-45a9-a67f-a2fedcadaa64",
+    "Position": 2
+  },
+  {
+    "Id": "82b6f336-13cc-4beb-af14-6571dee1f7a6",
+    "Title": "1.3 C\u1EA5u tr\u00FAc chung ch\u01B0\u01A1ng tr\u00ECnh C\u002B\u002B",
+    "ContentText": "B\u00E0i gi\u1EA3ng ch\u01B0\u01A1ng tr\u00ECnh C\u002B\u002B c\u01A1 b\u1EA3n",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "61899a17-8b26-45a9-a67f-a2fedcadaa64",
+    "Position": 3
+  },
+  {
+    "Id": "10f0f277-ef52-47eb-a9a4-acc77076d082",
+    "Title": "1.4 Ch\u01B0\u01A1ng tr\u00ECnh \u0111\u1EA7u ti\u00EAn",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn vi\u1EBFt ch\u01B0\u01A1ng tr\u00ECnh \u0111\u1EA7u ti\u00EAn",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "61899a17-8b26-45a9-a67f-a2fedcadaa64",
+    "Position": 4
+  },
+  {
+    "Id": "41f1812a-eb21-489c-b24c-59974e9d26e7",
+    "Title": "1.5 T\u1ED5ng k\u1EBFt",
+    "ContentText": "Tr\u1EAFc nghi\u1EC7m t\u1ED5ng h\u1EE3p",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "61899a17-8b26-45a9-a67f-a2fedcadaa64",
+    "Position": 5
+  },
+  {
+    "Id": "ee750d9c-f506-41be-a1ef-50af89f47c61",
+    "Title": "2.1 Ch\u00FA th\u00EDch trong C\u002B\u002B",
+    "ContentText": "B\u00E0i gi\u1EA3ng ch\u00FA th\u00EDch trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "8dbbe80f-37ab-4b67-a44e-67058718d2f0",
+    "Position": 1
+  },
+  {
+    "Id": "5b49d4dd-cdc6-4ea0-9498-e9d4b6b818a1",
+    "Title": "2.2 Ki\u1EC3u d\u1EEF li\u1EC7u",
+    "ContentText": "B\u00E0i gi\u1EA3ng c\u00E1c ki\u1EC3u d\u1EEF li\u1EC7u c\u01A1 b\u1EA3n",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "8dbbe80f-37ab-4b67-a44e-67058718d2f0",
+    "Position": 2
+  },
+  {
+    "Id": "f010d9d1-813a-467c-876e-6760c89cdf72",
+    "Title": "2.3 Bi\u1EBFn",
+    "ContentText": "B\u00E0i gi\u1EA3ng bi\u1EBFn trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "8dbbe80f-37ab-4b67-a44e-67058718d2f0",
+    "Position": 3
+  },
+  {
+    "Id": "ef7939a1-3870-4102-a023-d652c6059e3f",
+    "Title": "2.4 \u00C9p ki\u1EC3u d\u1EEF li\u1EC7u",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn c\u00E1ch \u00E9p ki\u1EC3u d\u1EEF li\u1EC7u trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "8dbbe80f-37ab-4b67-a44e-67058718d2f0",
+    "Position": 4
+  },
+  {
+    "Id": "d2bf5ce6-0beb-4af2-a0f5-06300cd57dc7",
+    "Title": "2.5 Ph\u1EA1m vi c\u1EE7a bi\u1EBFn",
+    "ContentText": "B\u00E0i gi\u1EA3ng v\u1EC1 ph\u1EA1m vi c\u1EE7a bi\u1EBFn",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "8dbbe80f-37ab-4b67-a44e-67058718d2f0",
+    "Position": 5
+  },
+  {
+    "Id": "64e61d12-f10e-49a4-9152-ac9b19132fd1",
+    "Title": "2.6 T\u1ED5ng k\u1EBFt",
+    "ContentText": "T\u1ED5ng \u00F4n ch\u01B0\u01A1ng 2",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "8dbbe80f-37ab-4b67-a44e-67058718d2f0",
+    "Position": 6
+  },
+  {
+    "Id": "b6761840-2c8e-4602-bc13-7fa2e17b9875",
+    "Title": "3.1 C\u00FA ph\u00E1p nh\u1EADp - xu\u1EA5t d\u1EEF li\u1EC7u",
+    "ContentText": "B\u00E0i gi\u1EA3ng nh\u1EADp xu\u1EA5t d\u1EEF li\u1EC7u trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "8dd80c39-472f-4639-b8bd-e2e5548777c3",
+    "Position": 1
+  },
+  {
+    "Id": "45f68810-31fd-405d-9103-c2426ed9e91d",
+    "Title": "3.2 Print newline",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn in xu\u1ED1ng d\u00F2ng trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "8dd80c39-472f-4639-b8bd-e2e5548777c3",
+    "Position": 2
+  },
+  {
+    "Id": "f684db37-651f-4f73-ae6c-e7157d813036",
+    "Title": "3.3 In s\u1ED1 th\u1EF1c trong C\u002B\u002B",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn c\u00E1ch in s\u1ED1 th\u1EF1c trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "8dd80c39-472f-4639-b8bd-e2e5548777c3",
+    "Position": 3
+  },
+  {
+    "Id": "112cdec0-1777-4262-8812-a7273bf1a30a",
+    "Title": "3.4 T\u1ED5ng k\u1EBFt",
+    "ContentText": "T\u1ED5ng \u00F4n ch\u01B0\u01A1ng 3",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "8dd80c39-472f-4639-b8bd-e2e5548777c3",
+    "Position": 4
+  },
+  {
+    "Id": "1ee5f878-2102-47d7-826a-01359f7e44ef",
+    "Title": "4.1 C\u00E1c lo\u1EA1i to\u00E1n t\u1EED trong C\u002B\u002B",
+    "ContentText": "B\u00E0i gi\u1EA3ng c\u00E1c lo\u1EA1i to\u00E1n t\u1EED trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "1d280e8f-ad83-4407-9ecb-68f4ecb0b9be",
+    "Position": 1
+  },
+  {
+    "Id": "473110af-cf0e-4723-bd2b-2f3386822367",
+    "Title": "4.2 S\u1EF1 kh\u00E1c bi\u1EC7t gi\u1EEFa i\u002B\u002B v\u00E0 \u002B\u002Bi trong C\u002B\u002B",
+    "ContentText": "B\u00E0i gi\u1EA3ng ph\u00E2n bi\u1EC7t gi\u1EEFa i\u002B\u002B v\u00E0 \u002B\u002Bi",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "1d280e8f-ad83-4407-9ecb-68f4ecb0b9be",
+    "Position": 2
+  },
+  {
+    "Id": "fd3640cb-6f9d-4c7d-9b8a-b06b501a14f2",
+    "Title": "4.3 T\u1ED5ng k\u1EBFt",
+    "ContentText": "T\u1ED5ng \u00F4n ch\u01B0\u01A1ng 4",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "1d280e8f-ad83-4407-9ecb-68f4ecb0b9be",
+    "Position": 3
+  },
+  {
+    "Id": "f9b2e5f6-ab72-4c59-8399-8e1287bf43f8",
+    "Title": "5.1 C\u1EA5u tr\u00FAc if-else",
+    "ContentText": "B\u00E0i gi\u1EA3ng c\u1EA5u tr\u00FAc r\u1EBD nh\u00E1nh",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "a217d1af-1094-43a4-a476-9c9a93b21072",
+    "Position": 1
+  },
+  {
+    "Id": "262ad92b-b4b1-463e-a292-cb551a0e8aa5",
+    "Title": "5.2 Switch case",
+    "ContentText": "B\u00E0i gi\u1EA3ng Switch case",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "a217d1af-1094-43a4-a476-9c9a93b21072",
+    "Position": 2
+  },
+  {
+    "Id": "2db37f64-f8dd-4420-b315-0af45a114100",
+    "Title": "5.3 T\u1ED5ng k\u1EBFt",
+    "ContentText": "Ng\u00E0y trong tu\u1EA7n",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "a217d1af-1094-43a4-a476-9c9a93b21072",
+    "Position": 3
+  },
+  {
+    "Id": "b713820a-8eac-4fe5-afdf-93002bab7d84",
+    "Title": "6.1 Gi\u1EDBi thi\u1EC7u v\u00F2ng l\u1EB7p",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 v\u00F2ng l\u1EB7p",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "a161bdf2-a4e8-4a5a-89b1-7da5014992fa",
+    "Position": 1
+  },
+  {
+    "Id": "b9d97385-3330-4b41-961c-fc62e8d8ce37",
+    "Title": "6.2 V\u00F2ng l\u1EB7p l\u1ED3ng nhau",
+    "ContentText": "B\u00E0i gi\u1EA3ng v\u00F2ng l\u1EB7p l\u1ED3ng nhau",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "a161bdf2-a4e8-4a5a-89b1-7da5014992fa",
+    "Position": 2
+  },
+  {
+    "Id": "ca913c5f-d420-4bda-ac9f-a057a9b00eeb",
+    "Title": "6.3 C\u00E2u l\u1EC7nh break v\u00E0 continue",
+    "ContentText": "B\u00E0i gi\u1EA3ng v\u1EC1 c\u00E2u l\u1EC7nh break v\u00E0 continue",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "a161bdf2-a4e8-4a5a-89b1-7da5014992fa",
+    "Position": 3
+  },
+  {
+    "Id": "c748c968-5351-4ffe-8311-334f873f112f",
+    "Title": "6.4 T\u1ED5ng k\u1EBFt",
+    "ContentText": "T\u1ED5ng \u00F4n ch\u01B0\u01A1ng 6",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "a161bdf2-a4e8-4a5a-89b1-7da5014992fa",
+    "Position": 4
+  },
+  {
+    "Id": "a3c9f587-972c-4178-bffa-4fbae9a5c978",
+    "Title": "7.1 Kh\u00E1i ni\u1EC7m v\u00E0 c\u00E1ch khai b\u00E1o m\u1EA3ng 1 chi\u1EC1u",
+    "ContentText": "B\u00E0i gi\u1EA3ng c\u00E1ch khai b\u00E1o m\u1EA3ng 1 chi\u1EC1u",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "0ed2b2ae-4ce0-45d0-b02c-7d9ef1a0d6db",
+    "Position": 1
+  },
+  {
+    "Id": "eef4fbc4-1cc3-4e8c-b210-c3cec572277a",
+    "Title": "7.2 C\u00E1c thao t\u00E1c c\u01A1 b\u1EA3n tr\u00EAn m\u1EA3ng",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn m\u1ED9t s\u1ED1 thao t\u00E1c tr\u00EAn m\u1EA3ng 1 chi\u1EC1u",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "0ed2b2ae-4ce0-45d0-b02c-7d9ef1a0d6db",
+    "Position": 2
+  },
+  {
+    "Id": "a8eed298-752d-4700-9ba5-80e69982274d",
+    "Title": "7.3 H\u00E0m sort m\u1EA3ng 1 chi\u1EC1u",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn c\u00E1ch s\u1EED d\u1EE5ng h\u00E0m sort",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "0ed2b2ae-4ce0-45d0-b02c-7d9ef1a0d6db",
+    "Position": 3
+  },
+  {
+    "Id": "b70c1fd0-c626-45ca-a8d8-529328d6e513",
+    "Title": "7.4 M\u1EA3ng 2 chi\u1EC1u",
+    "ContentText": "B\u00E0i gi\u1EA3ng m\u1EA3ng 2 chi\u1EC1u",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "0ed2b2ae-4ce0-45d0-b02c-7d9ef1a0d6db",
+    "Position": 4
+  },
+  {
+    "Id": "f7714641-6fbd-45b2-8b98-2e5804ec4627",
+    "Title": "7.5 T\u1ED5ng k\u1EBFt",
+    "ContentText": "T\u1ED5ng \u00F4n ch\u01B0\u01A1ng 7",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "0ed2b2ae-4ce0-45d0-b02c-7d9ef1a0d6db",
+    "Position": 5
+  },
+  {
+    "Id": "7be7a3f9-546f-4174-b570-9a1dc96db121",
+    "Title": "8.1 Gi\u1EDBi thi\u1EC7u v\u1EC1 string",
+    "ContentText": "B\u00E0i gi\u1EA3ng v\u1EC1 x\u00E2u k\u00ED t\u1EF1",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "d757de9b-a435-4505-80e9-1e31da19686f",
+    "Position": 1
+  },
+  {
+    "Id": "149a78e9-955c-45ea-8a9a-cb56fd246101",
+    "Title": "8.2 C\u00E1c thao t\u00E1c tr\u00EAn chu\u1ED7i",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn c\u00E1c thao t\u00E1c tr\u00EAn chu\u1ED7i",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "d757de9b-a435-4505-80e9-1e31da19686f",
+    "Position": 2
+  },
+  {
+    "Id": "9ba55227-a82e-4a73-939a-a4194f54009a",
+    "Title": "8.3 T\u1ED5ng k\u1EBFt",
+    "ContentText": "\u0110\u1ECDc th\u00EAm: b\u1EA3n m\u00E3 Ascii",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "d757de9b-a435-4505-80e9-1e31da19686f",
+    "Position": 3
+  },
+  {
+    "Id": "01b17d75-7bd4-452b-9117-741aca792f70",
+    "Title": "9.1 Gi\u1EDBi thi\u1EC7u v\u1EC1 h\u00E0m trong C\u002B\u002B",
+    "ContentText": "B\u00E0i gi\u1EA3ng gi\u1EDBi thi\u1EC7u h\u00E0m trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "a943296a-6e12-46d1-8ccd-64b56c0d8c8d",
+    "Position": 1
+  },
+  {
+    "Id": "46722f91-3540-4db7-b9ca-69672d4614cb",
+    "Title": "9.2 \u0110\u1ED1i s\u1ED1 v\u00E0 tham s\u1ED1, tham tr\u1ECB v\u00E0 tham chi\u1EBFu",
+    "ContentText": "B\u00E0i gi\u1EA3ng v\u1EC1 \u0111\u1ED1i s\u1ED1 v\u00E0 tham s\u1ED1, tham tr\u1ECB v\u00E0 tham chi\u1EBFu",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "a943296a-6e12-46d1-8ccd-64b56c0d8c8d",
+    "Position": 2
+  },
+  {
+    "Id": "4e5fc362-fb82-4295-8c43-05e03ec81b20",
+    "Title": "9.3 T\u1ED5ng k\u1EBFt",
+    "ContentText": "Vi\u1EBFt h\u00E0m ki\u1EC3m tra s\u1ED1 ch\u00EDnh ph\u01B0\u01A1ng",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "a943296a-6e12-46d1-8ccd-64b56c0d8c8d",
+    "Position": 3
+  },
+  {
+    "Id": "b0dd8f26-edf6-45db-8e69-6fb6bb1328ab",
+    "Title": "Gi\u1EDBi thi\u1EC7u AI v\u00E0 \u1EE9ng d\u1EE5ng",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u kh\u00F3a h\u1ECDc",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "e763d3bd-8615-4dfa-b147-5caa6cd410c2",
+    "Position": 1
+  },
+  {
+    "Id": "462dad34-cf78-4169-94c1-be2cc50af580",
+    "Title": "AI v\u00E0 ti\u1EC7n \u00EDch v\u0103n b\u1EA3n",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn \u0111\u0103ng k\u00FD v\u00E0 s\u1EED d\u1EE5ng ChatGPT",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "e763d3bd-8615-4dfa-b147-5caa6cd410c2",
+    "Position": 2
+  },
+  {
+    "Id": "b92d68f3-e855-4d81-80d7-7726e26e38b8",
+    "Title": "\u1EE8ng d\u1EE5ng AI trong vi\u1EC7c t\u1EA1o v\u00E0 x\u1EED l\u00FD \u1EA3nh",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u Dall-E 3 v\u00E0 c\u00E1ch truy c\u1EADp qua ChatGPT",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "e763d3bd-8615-4dfa-b147-5caa6cd410c2",
+    "Position": 3
+  },
+  {
+    "Id": "cc112bcf-c695-41ac-be00-9d6b35697f24",
+    "Title": "\u1EE8ng d\u1EE5ng AI trong vi\u1EC7c x\u1EED l\u00FD \u00E2m thanh",
+    "ContentText": "H\u01B0\u01A1\u0301ng d\u00E2\u0303n ca\u0300i \u0111\u0103\u0323t va\u0300 la\u0300m quen v\u01A1\u0301i giao di\u00EA\u0323n CapCut",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "e763d3bd-8615-4dfa-b147-5caa6cd410c2",
+    "Position": 4
+  },
+  {
+    "Id": "5a952bcb-3865-4923-afaf-d05eca83e079",
+    "Title": "\u1EE8ng d\u1EE5ng AI trong vi\u1EC7c x\u1EED l\u00FD video",
+    "ContentText": "T\u1EA1o video ho\u1EA1t h\u00ECnh v\u1EDBi AI",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "e763d3bd-8615-4dfa-b147-5caa6cd410c2",
+    "Position": 5
+  },
+  {
+    "Id": "6bd901d3-8fc5-4dca-92f5-b6e2c7b2d7e5",
+    "Title": "\u01AF\u0301ng du\u0323ng AI trong ta\u0323o slide thuy\u00EA\u0301t tri\u0300nh",
+    "ContentText": "Ta\u0323o slide t\u01B0\u0300 m\u00F4\u0323t do\u0300ng g\u01A1\u0323i y\u0301",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "e763d3bd-8615-4dfa-b147-5caa6cd410c2",
+    "Position": 6
+  },
+  {
+    "Id": "6979cb9b-40a5-4435-ba82-64be7114f653",
+    "Title": "D\u1EF1 \u00E1n cu\u1ED1i kh\u00F3a",
+    "ContentText": "Demo s\u1EA3n ph\u1EA9m",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "e763d3bd-8615-4dfa-b147-5caa6cd410c2",
+    "Position": 7
+  },
+  {
+    "Id": "61f42976-bc20-446b-ad22-fff134b8d4fa",
+    "Title": "1.1 Gi\u1EDBi thi\u1EC7u v\u1EC1 l\u1EADp tr\u00ECnh v\u00E0 Java",
+    "ContentText": "Ng\u00F4n ng\u1EEF l\u1EADp tr\u00ECnh Java",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "e1c32d27-ac29-4d94-8579-e18e60f2ebe3",
+    "Position": 1
+  },
+  {
+    "Id": "ce05a1b0-015c-432e-8e8c-9beb7d2f6021",
+    "Title": "1.2 Thi\u1EBFt l\u1EADp m\u00F4i tr\u01B0\u1EDDng ph\u00E1t tri\u1EC3n",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn c\u00E0i \u0111\u1EB7t m\u00F4i tr\u01B0\u1EDDng",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "e1c32d27-ac29-4d94-8579-e18e60f2ebe3",
+    "Position": 2
+  },
+  {
+    "Id": "e65b8214-6ac5-4e18-8708-f42b270c7cf0",
+    "Title": "1.3 C\u1EA5u tr\u00FAc chung ch\u01B0\u01A1ng tr\u00ECnh Java",
+    "ContentText": "B\u00E0i gi\u1EA3ng ch\u01B0\u01A1ng tr\u00ECnh Java c\u01A1 b\u1EA3n",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "e1c32d27-ac29-4d94-8579-e18e60f2ebe3",
+    "Position": 3
+  },
+  {
+    "Id": "af4b265a-6b22-44d2-a090-9e1a329bd6fc",
+    "Title": "1.4 Ch\u01B0\u01A1ng tr\u00ECnh \u0111\u1EA7u ti\u00EAn",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn vi\u1EBFt ch\u01B0\u01A1ng tr\u00ECnh \u0111\u1EA7u ti\u00EAn",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "e1c32d27-ac29-4d94-8579-e18e60f2ebe3",
+    "Position": 4
+  },
+  {
+    "Id": "75b5e2c8-3090-4be4-9448-b71eb881f6e9",
+    "Title": "1.5 T\u1ED5ng k\u1EBFt",
+    "ContentText": "T\u1ED5ng \u00F4n ch\u01B0\u01A1ng 1",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "e1c32d27-ac29-4d94-8579-e18e60f2ebe3",
+    "Position": 5
+  },
+  {
+    "Id": "b85200b2-8d2f-4ab0-b261-801bfcf0c6c5",
+    "Title": "2.1 Ch\u00FA th\u00EDch trong Java",
+    "ContentText": "B\u00E0i gi\u1EA3ng ch\u00FA th\u00EDch trong Java",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "b8896505-13d8-405f-869a-1171b715fb59",
+    "Position": 1
+  },
+  {
+    "Id": "927a81b7-3de4-45c7-9de7-3c9b1434f87a",
+    "Title": "2.2 Ki\u1EC3u d\u1EEF li\u1EC7u",
+    "ContentText": "B\u00E0i gi\u1EA3ng c\u00E1c ki\u1EC3u d\u1EEF li\u1EC7u c\u01A1 b\u1EA3n",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "b8896505-13d8-405f-869a-1171b715fb59",
+    "Position": 2
+  },
+  {
+    "Id": "8c484771-080c-4d77-a082-336af7cb5fe6",
+    "Title": "2.3 Bi\u1EBFn",
+    "ContentText": "B\u00E0i gi\u1EA3ng bi\u1EBFn trong Java",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "b8896505-13d8-405f-869a-1171b715fb59",
+    "Position": 3
+  },
+  {
+    "Id": "a6f4327c-d38d-4d05-a377-4f73cdf1049b",
+    "Title": "2.4 \u00C9p ki\u1EC3u d\u1EEF li\u1EC7u",
+    "ContentText": "B\u00E0i gi\u1EA3ng \u00E9p ki\u1EC3u d\u1EEF li\u1EC7u trong Java",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "b8896505-13d8-405f-869a-1171b715fb59",
+    "Position": 4
+  },
+  {
+    "Id": "02af0595-e3ff-4296-a89a-37821c9ce47e",
+    "Title": "2.5 Ph\u1EA1m vi c\u1EE7a bi\u1EBFn",
+    "ContentText": "B\u00E0i gi\u1EA3ng v\u1EC1 ph\u1EA1m vi c\u1EE7a bi\u1EBFn",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "b8896505-13d8-405f-869a-1171b715fb59",
+    "Position": 5
+  },
+  {
+    "Id": "c36b95e7-2f80-4eec-ad87-28cd5ea9b8c2",
+    "Title": "2.6 T\u1ED5ng k\u1EBFt",
+    "ContentText": "T\u1ED5ng \u00F4n ch\u01B0\u01A1ng 2",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "b8896505-13d8-405f-869a-1171b715fb59",
+    "Position": 6
+  },
+  {
+    "Id": "4c23de75-7f9d-4922-b7fe-305c0a128711",
+    "Title": "3.1 C\u00FA ph\u00E1p nh\u1EADp - xu\u1EA5t d\u1EEF li\u1EC7u",
+    "ContentText": "Nh\u1EADp-xu\u1EA5t d\u1EEF li\u1EC7u",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "a11a77ce-c3c1-4f1e-b838-aaa3b326d797",
+    "Position": 1
+  },
+  {
+    "Id": "04b7306f-e4b4-4887-bee3-256ff193df18",
+    "Title": "3.2 Print Newline",
+    "ContentText": "C\u00E1c c\u00E1ch in xu\u1ED1ng d\u00F2ng trong Java",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "a11a77ce-c3c1-4f1e-b838-aaa3b326d797",
+    "Position": 2
+  },
+  {
+    "Id": "c32a1874-9dc0-4b82-ae27-eeffa8c45e53",
+    "Title": "3.3 In s\u1ED1 th\u1EF1c trong Java",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn c\u00E1ch in s\u1ED1 th\u1EF1c trong Java",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "a11a77ce-c3c1-4f1e-b838-aaa3b326d797",
+    "Position": 3
+  },
+  {
+    "Id": "5f51fa48-6bcd-4581-908a-4534558d79b4",
+    "Title": "3.4 T\u1ED5ng k\u1EBFt",
+    "ContentText": "T\u1ED5ng \u00F4n ch\u01B0\u01A1ng 3",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "a11a77ce-c3c1-4f1e-b838-aaa3b326d797",
+    "Position": 4
+  },
+  {
+    "Id": "45bf137a-00fb-4703-be37-edf8a90103eb",
+    "Title": "4.1 C\u00E1c lo\u1EA1i to\u00E1n t\u1EED trong Java",
+    "ContentText": "B\u00E0i gi\u1EA3ng c\u00E1c lo\u1EA1i to\u00E1n t\u1EED trong Java",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "2f5ac533-00cc-406a-9738-c99f01404d9a",
+    "Position": 1
+  },
+  {
+    "Id": "8e5f5c65-0394-43f5-ba24-4d8f59018f0e",
+    "Title": "4.2 S\u1EF1 kh\u00E1c bi\u1EC7t gi\u1EEFa i\u002B\u002B v\u00E0 \u002B\u002Bi trong Java",
+    "ContentText": "B\u00E0i gi\u1EA3ng ph\u00E2n bi\u1EC7t gi\u1EEFa i\u002B\u002B v\u00E0 \u002B\u002Bi trong Java",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "2f5ac533-00cc-406a-9738-c99f01404d9a",
+    "Position": 2
+  },
+  {
+    "Id": "c8c23563-01a6-4885-883d-0afde9728317",
+    "Title": "4.3 T\u1ED5ng k\u1EBFt",
+    "ContentText": "T\u1ED5ng \u00F4n ch\u01B0\u01A1ng 4",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "2f5ac533-00cc-406a-9738-c99f01404d9a",
+    "Position": 3
+  },
+  {
+    "Id": "4b3c0e0c-8efb-4a9f-8eb1-95fda7cf5302",
+    "Title": "5.1 C\u1EA5u tr\u00FAc if-else",
+    "ContentText": "B\u00E0i gi\u1EA3ng c\u1EA5u tr\u00FAc r\u1EBB nh\u00E1nh",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "58768958-c4b0-4979-8e15-fe5c46b6ae69",
+    "Position": 1
+  },
+  {
+    "Id": "fa0f3318-636a-4c2c-875c-66e42741799e",
+    "Title": "5.2 Switch case",
+    "ContentText": "B\u00E0i gi\u1EA3ng Switch case",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "58768958-c4b0-4979-8e15-fe5c46b6ae69",
+    "Position": 2
+  },
+  {
+    "Id": "d7d29b52-eaeb-4932-aca1-418ade2f6a4d",
+    "Title": "5.3 T\u1ED5ng k\u1EBFt",
+    "ContentText": "X\u1EBFp h\u1EA1ng h\u1ECDc l\u1EF1c c\u1EE7a h\u1ECDc sinh",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "58768958-c4b0-4979-8e15-fe5c46b6ae69",
+    "Position": 3
+  },
+  {
+    "Id": "381d0c1a-f1af-4941-83ef-590e63177dda",
+    "Title": "6.1 Gi\u1EDBi thi\u1EC7u v\u00F2ng l\u1EB7p",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 v\u00F2ng l\u1EB7p",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "669cf6c7-6c93-43a2-aff8-bb10f4959631",
+    "Position": 1
+  },
+  {
+    "Id": "c62e156d-3e51-4e19-b001-0a4bcbd37972",
+    "Title": "6.2 V\u00F2ng l\u1EB7p l\u1ED3ng nhau",
+    "ContentText": "B\u00E0i gi\u1EA3ng v\u00F2ng l\u1EB7p l\u1ED3ng nhau",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "669cf6c7-6c93-43a2-aff8-bb10f4959631",
+    "Position": 2
+  },
+  {
+    "Id": "fa3c0f98-d3aa-4afb-b5fb-642e8c5b798b",
+    "Title": "6.3 C\u00E2u l\u1EC7nh break v\u00E0 continue",
+    "ContentText": "B\u00E0i gi\u1EA3ng v\u1EC1 c\u00E2u l\u1EC7nh break v\u00E0 continue",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "669cf6c7-6c93-43a2-aff8-bb10f4959631",
+    "Position": 3
+  },
+  {
+    "Id": "1b4a9319-e3e0-4f3b-9bfa-7a0b1ff927d6",
+    "Title": "6.4 T\u1ED5ng k\u1EBFt",
+    "ContentText": "T\u1ED5ng \u00F4n ch\u01B0\u01A1ng 6",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "669cf6c7-6c93-43a2-aff8-bb10f4959631",
+    "Position": 4
+  },
+  {
+    "Id": "f7c34731-8235-47b1-a42a-e6ecaed8f229",
+    "Title": "7.1 Kh\u00E1i ni\u1EC7m v\u00E0 c\u00E1ch khai b\u00E1o m\u1EA3ng m\u1ED9t chi\u1EC1u",
+    "ContentText": "B\u00E0i gi\u1EA3ng c\u00E1ch khai b\u00E1o m\u1EA3ng m\u1ED9t chi\u1EC1u",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "39718b98-b66d-46f4-937c-1a487753e60b",
+    "Position": 1
+  },
+  {
+    "Id": "fa03b217-3afb-4127-809a-fbc8c893acf8",
+    "Title": "7.2 C\u00E1c thao t\u00E1c c\u01A1 b\u1EA3n tr\u00EAn m\u1EA3ng",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn m\u1ED9t s\u1ED1 thao t\u00E1c tr\u00EAn m\u1EA3ng m\u1ED9t chi\u1EC1u",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "39718b98-b66d-46f4-937c-1a487753e60b",
+    "Position": 2
+  },
+  {
+    "Id": "7f9b3125-476f-4b41-ac7f-daf030b79b8f",
+    "Title": "7.3 H\u00E0m sort m\u1EA3ng m\u1ED9t chi\u1EC1u",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn s\u1EED d\u1EE5ng h\u00E0m sort",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "39718b98-b66d-46f4-937c-1a487753e60b",
+    "Position": 3
+  },
+  {
+    "Id": "e060fdc4-cf44-46f4-b7d9-88ebecf668e8",
+    "Title": "7.4 M\u1EA3ng 2 chi\u1EC1u",
+    "ContentText": "B\u00E0i gi\u1EA3ng m\u1EA3ng 2 chi\u1EC1u",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "39718b98-b66d-46f4-937c-1a487753e60b",
+    "Position": 4
+  },
+  {
+    "Id": "8835ccfc-c1b4-4d0f-b4a9-6646972cf435",
+    "Title": "7.5 T\u1ED5ng k\u1EBFt",
+    "ContentText": "T\u1ED5ng \u00F4n ch\u01B0\u01A1ng 7",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "39718b98-b66d-46f4-937c-1a487753e60b",
+    "Position": 5
+  },
+  {
+    "Id": "960be05d-2d5d-465d-b60a-d3e1a32f48b0",
+    "Title": "8.1 Gi\u1EDBi thi\u1EC7u v\u1EC1 String",
+    "ContentText": "B\u00E0i gi\u1EA3ng v\u1EC1 x\u00E2u k\u00ED t\u1EF1",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "c5856dff-879f-476e-a215-da8ce7009949",
+    "Position": 1
+  },
+  {
+    "Id": "c8703722-d804-4d5c-8b18-4acb8c6a2589",
+    "Title": "8.2 C\u00E1c thao t\u00E1c tr\u00EAn chu\u1ED7i",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn c\u00E1c thao t\u00E1c tr\u00EAn chu\u1ED7i",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "c5856dff-879f-476e-a215-da8ce7009949",
+    "Position": 2
+  },
+  {
+    "Id": "0dfafde6-69b9-4c36-9fde-94e666e108e8",
+    "Title": "8.3 T\u1ED5ng k\u1EBFt",
+    "ContentText": "\u0110\u1ECDc th\u00EAm: B\u1EA3ng m\u00E3 ASCII",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "c5856dff-879f-476e-a215-da8ce7009949",
+    "Position": 3
+  },
+  {
+    "Id": "852d1d6b-bbc5-4acc-b4d0-b7d479abb53a",
+    "Title": "9.1 Gi\u1EDBi thi\u1EC7u v\u1EC1 h\u00E0m trong Java",
+    "ContentText": "B\u00E0i gi\u1EA3ng gi\u1EDBi thi\u1EC7u h\u00E0m trong Java",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "7ab80c15-aea4-43b4-a133-e8ef1baf79eb",
+    "Position": 1
+  },
+  {
+    "Id": "6a4a18a4-62bd-40a7-9ead-db69960320f7",
+    "Title": "9.2 \u0110\u1ED1i s\u1ED1 v\u00E0 tham s\u1ED1, tham tr\u1ECB v\u00E0 tham chi\u1EBFu",
+    "ContentText": "B\u00E0i gi\u1EA3ng v\u1EC1 \u0111\u1ED1i s\u1ED1 v\u00E0 tham s\u1ED1, tham tr\u1ECB v\u00E0 tham chi\u1EBFu",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "7ab80c15-aea4-43b4-a133-e8ef1baf79eb",
+    "Position": 2
+  },
+  {
+    "Id": "8b004483-94f6-45b3-a241-6e842728d0eb",
+    "Title": "9.3 T\u1ED5ng k\u1EBFt",
+    "ContentText": "Vi\u1EBFt h\u00E0m ki\u1EC3m tra s\u1ED1 ch\u00EDnh ph\u01B0\u01A1ng",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "7ab80c15-aea4-43b4-a133-e8ef1baf79eb",
+    "Position": 3
+  },
+  {
+    "Id": "0ee0c622-2507-4c5d-8f5b-2145f3c61cb2",
+    "Title": "M\u1EE5c ti\u00EAu kh\u00F3a h\u1ECDc",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u kh\u00F3a h\u1ECDc",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "252cc833-80f5-4816-ac0a-510db117236b",
+    "Position": 1
+  },
+  {
+    "Id": "e82b9440-6a64-4bc4-84e5-3c51ee7bf6b4",
+    "Title": "C\u1EA5u tr\u00FAc d\u1EF1 \u00E1n",
+    "ContentText": "M\u00F4 h\u00ECnh ki\u1EBFn tr\u00FAc gi\u1EA3i ph\u00E1p",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "252cc833-80f5-4816-ac0a-510db117236b",
+    "Position": 2
+  },
+  {
+    "Id": "9c244c02-dc55-4b12-ba6d-3e0d554c7f92",
+    "Title": "C\u00E0i \u0111\u1EB7t m\u00F4i tr\u01B0\u1EDDng",
+    "ContentText": "C\u00E0i \u0111\u1EB7t m\u00F4i tr\u01B0\u1EDDng l\u1EADp tr\u00ECnh SQL - PostgreSQL",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "252cc833-80f5-4816-ac0a-510db117236b",
+    "Position": 3
+  },
+  {
+    "Id": "20059438-11e8-4ab1-a4c6-d16d3e1109eb",
+    "Title": "T\u1EA1o d\u1EF1 \u00E1n",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn t\u1EA1o d\u1EF1 \u00E1n d\u1ECBch v\u1EE5 \u0111\u0103ng nh\u1EADp",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "427fa94c-a182-4f10-8ac6-82ec9d0caef5",
+    "Position": 1
+  },
+  {
+    "Id": "10ea61bb-c3f4-4d9c-8ce6-e0f8aa06ff56",
+    "Title": "K\u1EBFt n\u1ED1i c\u01A1 s\u1EDF d\u1EEF li\u1EC7u",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u m\u00F4 h\u00ECnh database first",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "427fa94c-a182-4f10-8ac6-82ec9d0caef5",
+    "Position": 2
+  },
+  {
+    "Id": "d608431a-21d4-4ec7-af2f-c32fe272bbaf",
+    "Title": "Khai ba\u0301o c\u00E2\u0301u hi\u0300nh, h\u1EB1ng s\u1ED1",
+    "ContentText": "C\u1EA5u h\u00ECnh k\u1EBFt n\u1ED1i c\u01A1 s\u1EDF d\u1EEF li\u1EC7u",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "427fa94c-a182-4f10-8ac6-82ec9d0caef5",
+    "Position": 3
+  },
+  {
+    "Id": "de605774-c6f7-4382-9e57-7aea6b463fd5",
+    "Title": "\u0110\u0103ng nh\u00E2\u0323p, \u0111\u0103ng xu\u00E2\u0301t",
+    "ContentText": "T\u1EA1o d\u1EF1 \u00E1n hi\u1EC3n th\u1ECB",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "427fa94c-a182-4f10-8ac6-82ec9d0caef5",
+    "Position": 4
+  },
+  {
+    "Id": "d8a19f06-1245-4783-8a57-94e58f34e04f",
+    "Title": "Qua\u0309n ly\u0301 ng\u01B0\u1EDDi d\u00F9ng",
+    "ContentText": "X\u00E1c \u0111\u1ECBnh, ph\u00E2n t\u00EDch c\u00E1c ch\u1EE9c n\u0103ng qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "427fa94c-a182-4f10-8ac6-82ec9d0caef5",
+    "Position": 5
+  },
+  {
+    "Id": "4301e12f-0e30-4320-ab7e-aa368ac16a19",
+    "Title": "Redis Cache",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u b\u1ED9 nh\u1EDB \u0111\u1EC7m Redis Cache",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "427fa94c-a182-4f10-8ac6-82ec9d0caef5",
+    "Position": 6
+  },
+  {
+    "Id": "3fd12a73-caf9-4bbd-b074-2e463856c68d",
+    "Title": "Ta\u0323o d\u01B0\u0323 a\u0301n",
+    "ContentText": "T\u1EA1o d\u1EF1 \u00E1n qu\u1EA3n l\u00FD c\u00F4ng vi\u1EC7c",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "48839da8-3311-4b4b-bee7-2ef883a2af7b",
+    "Position": 1
+  },
+  {
+    "Id": "7386f5d3-e8cc-4333-9863-e529cf5c9128",
+    "Title": "Qu\u1EA3n l\u00FD c\u00F4ng vi\u1EC7c",
+    "ContentText": "X\u00E1c \u0111\u1ECBnh, ph\u00E2n t\u00EDch c\u00E1c ch\u1EE9c n\u0103ng qu\u1EA3n l\u00FD c\u00F4ng vi\u1EC7c",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "48839da8-3311-4b4b-bee7-2ef883a2af7b",
+    "Position": 2
+  },
+  {
+    "Id": "efee888d-4f40-4eb5-87a5-ac466b869ee3",
+    "Title": "Tri\u1EC3n khai \u1EE9ng d\u1EE5ng",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 Git v\u00E0 GitHub",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "7637831d-966a-470b-bc6a-df6d3b96c6ab",
+    "Position": 1
+  },
+  {
+    "Id": "939dca06-1285-46ad-8b81-387c214e0af5",
+    "Title": "1.1 Gi\u1EDBi thi\u1EC7u chung",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 kh\u00F3a h\u1ECDc",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "a1764ea3-e190-48ca-a47d-46dc66e7a770",
+    "Position": 1
+  },
+  {
+    "Id": "e38502ba-4f63-4be4-b724-869175a9095e",
+    "Title": "1.2 C\u00E0i \u0111\u1EB7t m\u00F4i tr\u01B0\u1EDDng l\u1EADp tr\u00ECnh",
+    "ContentText": "C\u00E0i \u0111\u1EB7t m\u00F4i tr\u01B0\u1EDDng l\u1EADp tr\u00ECnh",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "a1764ea3-e190-48ca-a47d-46dc66e7a770",
+    "Position": 2
+  },
+  {
+    "Id": "e773881b-ddf9-451d-96ae-08a835d0c5f5",
+    "Title": "1.3 Ch\u01B0\u01A1ng tr\u00ECnh \u0111\u1EA7u ti\u00EAn \u0022Hello World\u0022",
+    "ContentText": "Ch\u01B0\u01A1ng tr\u00ECnh Python \u0111\u1EA7u ti\u00EAn",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "a1764ea3-e190-48ca-a47d-46dc66e7a770",
+    "Position": 3
+  },
+  {
+    "Id": "aa209984-a814-4a23-bffb-49c2f65e0554",
+    "Title": "1.4 K\u00ED t\u1EF1 tho\u00E1t trong Python",
+    "ContentText": "K\u00ED t\u1EF1 tho\u00E1t trong Python",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "a1764ea3-e190-48ca-a47d-46dc66e7a770",
+    "Position": 4
+  },
+  {
+    "Id": "fdb00919-34c2-48e1-ae2c-44403df0c5df",
+    "Title": "1.5 T\u1ED5ng k\u1EBFt",
+    "ContentText": "B\u00E0i ki\u1EC3m tra tr\u1EAFc nghi\u1EC7m s\u1ED1 1",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "a1764ea3-e190-48ca-a47d-46dc66e7a770",
+    "Position": 5
+  },
+  {
+    "Id": "507b51d8-21c1-414a-aabd-e0e958e76f14",
+    "Title": "2.1 Ch\u00FA th\u00EDch",
+    "ContentText": "Ch\u00FA th\u00EDch trong Python",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "fc8963fb-96e5-4d76-911c-1265fe361da7",
+    "Position": 1
+  },
+  {
+    "Id": "a743c78b-8312-44e0-8dc9-33e93ef5c045",
+    "Title": "2.2 Bi\u1EBFn",
+    "ContentText": "Bi\u1EBFn trong Python",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "fc8963fb-96e5-4d76-911c-1265fe361da7",
+    "Position": 2
+  },
+  {
+    "Id": "12ac41f4-fd70-42fa-809c-570596f6810c",
+    "Title": "2.3 Ki\u1EC3u d\u1EEF li\u1EC7u",
+    "ContentText": "Ki\u1EC3u d\u1EEF li\u1EC7u trong Python",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "fc8963fb-96e5-4d76-911c-1265fe361da7",
+    "Position": 3
+  },
+  {
+    "Id": "313bb27b-6202-4a89-b1d0-d8979a9d5bd5",
+    "Title": "2.4 Nh\u1EADp xu\u1EA5t d\u1EEF li\u1EC7u",
+    "ContentText": "Nh\u1EADp xu\u1EA5t d\u1EEF li\u1EC7u trong Python",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "fc8963fb-96e5-4d76-911c-1265fe361da7",
+    "Position": 4
+  },
+  {
+    "Id": "856003db-8589-4b21-b173-b18c6ac097bc",
+    "Title": "2.5 \u0110\u1ECBnh d\u1EA1ng chu\u1ED7i",
+    "ContentText": "S\u1EAFp x\u1EBFp th\u00F4ng tin hi\u1EC3n th\u1ECB c\u00E2u l\u1EC7nh print",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "fc8963fb-96e5-4d76-911c-1265fe361da7",
+    "Position": 5
+  },
+  {
+    "Id": "3446983f-4deb-4f0d-ad6e-b887e9750602",
+    "Title": "2.6 T\u1ED5ng k\u1EBFt",
+    "ContentText": "B\u00E0i ki\u1EC3m tra tr\u1EAFc nghi\u1EC7m s\u1ED1 2",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "fc8963fb-96e5-4d76-911c-1265fe361da7",
+    "Position": 6
+  },
+  {
+    "Id": "cc671385-17ea-4c1e-bf59-db89fe8ed864",
+    "Title": "3.1 Ki\u1EC3u d\u1EEF li\u1EC7u s\u1ED1",
+    "ContentText": "Ki\u1EC3u s\u1ED1 trong Python",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "0b3dd095-3ae2-4dea-b9b0-871556dea7c7",
+    "Position": 1
+  },
+  {
+    "Id": "c7cf32c3-2ff3-40b6-8da1-c60ebce0403e",
+    "Title": "3.2 To\u00E1n t\u1EED s\u1ED1 h\u1ECDc",
+    "ContentText": "To\u00E1n t\u1EED v\u00E0 bi\u1EC3u th\u1EE9c s\u1ED1 h\u1ECDc",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "0b3dd095-3ae2-4dea-b9b0-871556dea7c7",
+    "Position": 2
+  },
+  {
+    "Id": "6d5ead02-b03c-46a1-b92e-2f80f03813e1",
+    "Title": "3.3 To\u00E1n t\u1EED g\u00E1n",
+    "ContentText": "To\u00E1n t\u1EED g\u00E1n trong Python",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "0b3dd095-3ae2-4dea-b9b0-871556dea7c7",
+    "Position": 3
+  },
+  {
+    "Id": "c004c649-9eda-43a8-bbca-abb6e9d0e7ca",
+    "Title": "3.4 H\u00E0m to\u00E1n h\u1ECDc ph\u1ED5 bi\u1EBFn",
+    "ContentText": "M\u1ED9t s\u1ED1 h\u00E0m to\u00E1n h\u1ECDc trong Python",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "0b3dd095-3ae2-4dea-b9b0-871556dea7c7",
+    "Position": 4
+  },
+  {
+    "Id": "94705446-350d-41ce-949f-292abeeb8180",
+    "Title": "3.5 \u0110\u1ECBnh d\u1EA1ng ki\u1EC3u s\u1ED1",
+    "ContentText": "\u0110\u1ECBnh d\u1EA1ng ki\u1EC3u s\u1ED1 trong Python",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "0b3dd095-3ae2-4dea-b9b0-871556dea7c7",
+    "Position": 5
+  },
+  {
+    "Id": "1781abb2-744d-489c-99ee-ae8a0009354c",
+    "Title": "3.6 T\u1ED5ng k\u1EBFt",
+    "ContentText": "B\u00E0i ki\u1EC3m tra tr\u1EAFc nghi\u1EC7m s\u1ED1 3",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "0b3dd095-3ae2-4dea-b9b0-871556dea7c7",
+    "Position": 6
+  },
+  {
+    "Id": "d79e8683-0351-44b5-9789-bb00c2645ea5",
+    "Title": "4.1 To\u00E1n t\u1EED so s\u00E1nh",
+    "ContentText": "To\u00E1n t\u1EED so s\u00E1nh trong Python",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "0d34a609-1b4f-4453-92bf-af2dca4cfafb",
+    "Position": 1
+  },
+  {
+    "Id": "43d5d827-789d-4cfa-8478-4743e0eae4ae",
+    "Title": "4.2 To\u00E1n t\u1EED logic",
+    "ContentText": "To\u00E1n t\u1EED logic trong Python",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "0d34a609-1b4f-4453-92bf-af2dca4cfafb",
+    "Position": 2
+  },
+  {
+    "Id": "74a41d11-0d69-4289-b2d8-ba86fb6218a7",
+    "Title": "4.3 C\u1EA5u tr\u00FAc r\u1EBD nh\u00E1nh",
+    "ContentText": "C\u00E2u l\u1EC7nh r\u1EBD nh\u00E1nh trong Python",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "0d34a609-1b4f-4453-92bf-af2dca4cfafb",
+    "Position": 3
+  },
+  {
+    "Id": "d1e782ec-4fac-444b-8046-fc6db57d9e5d",
+    "Title": "4.4 V\u00F2ng l\u1EB7p",
+    "ContentText": "V\u00F2ng l\u1EB7p trong Python",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "0d34a609-1b4f-4453-92bf-af2dca4cfafb",
+    "Position": 4
+  },
+  {
+    "Id": "50694d1f-52ff-4c8f-bfdb-ccdbdf077617",
+    "Title": "4.5 Tho\u00E1t kh\u1ECFi lu\u1ED3ng \u0111i\u1EC1u khi\u1EC3n",
+    "ContentText": "Ki\u1EC3m so\u00E1t lu\u1ED3ng \u0111i\u1EC1u khi\u1EC3n",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "0d34a609-1b4f-4453-92bf-af2dca4cfafb",
+    "Position": 5
+  },
+  {
+    "Id": "b82ecf01-3d64-4f24-8075-a5ddf89b7d0c",
+    "Title": "4.6 T\u1ED5ng k\u1EBFt",
+    "ContentText": "B\u00E0i ki\u1EC3m tra tr\u1EAFc nghi\u1EC7m s\u1ED1 4",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "0d34a609-1b4f-4453-92bf-af2dca4cfafb",
+    "Position": 6
+  },
+  {
+    "Id": "444aec07-eb45-4ada-9907-547999f04cc2",
+    "Title": "5.1 Chu\u1ED7i k\u00ED t\u1EF1",
+    "ContentText": "Ki\u1EC3u chu\u1ED7i trong Python",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "17e20322-8a79-42d5-bf77-e6738da234f1",
+    "Position": 1
+  },
+  {
+    "Id": "79a9f9a3-b5b6-4a06-a455-f5d02acb695e",
+    "Title": "5.2 C\u00E1c ph\u00E9p to\u00E1n chu\u1ED7i c\u01A1 b\u1EA3n",
+    "ContentText": "M\u1ED9t s\u1ED1 thao t\u00E1c v\u1EDBi chu\u1ED7i",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "17e20322-8a79-42d5-bf77-e6738da234f1",
+    "Position": 2
+  },
+  {
+    "Id": "150feb72-9958-4422-934d-db291682ce0a",
+    "Title": "5.3 M\u1ED9t s\u1ED1 ph\u01B0\u01A1ng th\u1EE9c chu\u1ED7i",
+    "ContentText": "M\u1ED9t s\u1ED1 ph\u01B0\u01A1ng th\u1EE9c chu\u1ED7i",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "17e20322-8a79-42d5-bf77-e6738da234f1",
+    "Position": 3
+  },
+  {
+    "Id": "405e6d60-53d6-435b-a3d1-76876ca487a0",
+    "Title": "5.4 Chu\u1ED7i n\u1EB1m trong chu\u1ED7i kh\u00E1c",
+    "ContentText": "Chu\u1ED7i n\u1EB1m trong chu\u1ED7i kh\u00E1c",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "17e20322-8a79-42d5-bf77-e6738da234f1",
+    "Position": 4
+  },
+  {
+    "Id": "c604bf0f-3b59-4b7d-825e-9b9539d95c87",
+    "Title": "5.5 T\u1ED5ng k\u1EBFt",
+    "ContentText": "B\u00E0i ki\u1EC3m tra tr\u1EAFc nghi\u1EC7m s\u1ED1 5",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "17e20322-8a79-42d5-bf77-e6738da234f1",
+    "Position": 5
+  },
+  {
+    "Id": "dcb33329-332a-4fba-8560-9fe92f55ef53",
+    "Title": "6.1 T\u1EA1o h\u00E0m \u0111\u01A1n gi\u1EA3n",
+    "ContentText": "\u0110\u1ECBnh ngh\u0129a v\u00E0 c\u00E1ch t\u1EA1o h\u00E0m",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "60939c9d-f91f-4ff2-8054-1cbbf1e1c8fe",
+    "Position": 1
+  },
+  {
+    "Id": "bba38862-68fa-4179-96e4-eb584ae32bd6",
+    "Title": "6.2 Tham s\u1ED1 v\u00E0 \u0111\u1ED1i s\u1ED1",
+    "ContentText": "Tham s\u1ED1 v\u00E0 \u0111\u1ED1i s\u1ED1 trong Python",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "60939c9d-f91f-4ff2-8054-1cbbf1e1c8fe",
+    "Position": 2
+  },
+  {
+    "Id": "65f615da-c444-4024-b3f0-9a85ad8714ef",
+    "Title": "6.3 C\u00E1c ki\u1EC3u h\u00E0m",
+    "ContentText": "C\u00E1c ki\u1EC3u h\u00E0m trong Python",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "60939c9d-f91f-4ff2-8054-1cbbf1e1c8fe",
+    "Position": 3
+  },
+  {
+    "Id": "378154f8-8924-4ad1-be1f-881dadf5ca04",
+    "Title": "6.4 Ph\u1EA1m vi c\u1EE7a bi\u1EBFn",
+    "ContentText": "Ph\u1EA1m vi c\u1EE7a bi\u1EBFn trong Python",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "60939c9d-f91f-4ff2-8054-1cbbf1e1c8fe",
+    "Position": 4
+  },
+  {
+    "Id": "6528b736-2b0d-4b6d-9edf-7436d5baa641",
+    "Title": "6.5 T\u1ED5ng k\u1EBFt",
+    "ContentText": "B\u00E0i ki\u1EC3m tra tr\u1EAFc nghi\u1EC7m s\u1ED1 6",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "60939c9d-f91f-4ff2-8054-1cbbf1e1c8fe",
+    "Position": 5
+  },
+  {
+    "Id": "51fd4ae4-6915-41b8-9653-dcf480c07541",
+    "Title": "Game C\u00E1 l\u1EDBn nu\u1ED1t c\u00E1 b\u00E9",
+    "ContentText": "T\u1EADp l\u00E0m game v\u1EDBi Scratch",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "2a896fc5-40be-46b5-9e1c-d95f3abc1101",
+    "Position": 1
+  },
+  {
+    "Id": "84ccfe3d-4a88-4781-ad2d-ba699a63bcd3",
+    "Title": "Game m\u00E8o b\u1EAFt chu\u1ED9t",
+    "ContentText": "Thi\u1EBFt k\u1EBF h\u00ECnh n\u1EC1n, \u0111\u1ED1i t\u01B0\u1EE3ng, nh\u00E2n v\u1EADt",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "2a896fc5-40be-46b5-9e1c-d95f3abc1101",
+    "Position": 2
+  },
+  {
+    "Id": "80824232-f4c4-4277-9cd9-f29a7969966d",
+    "Title": "\u0110\u01B0\u1EDDng l\u00EAn \u0111\u1EC9nh Olympia",
+    "ContentText": "T\u1EA1o t\u00E0i kho\u1EA3n Scratch",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "2a896fc5-40be-46b5-9e1c-d95f3abc1101",
+    "Position": 3
+  },
+  {
+    "Id": "09a64299-4f54-4c73-96ec-f7f8b1c47d35",
+    "Title": "Game \u0111ua xe",
+    "ContentText": "X\u00E2y d\u1EF1ng k\u1ECBch b\u1EA3n, thi\u1EBFt k\u1EBF h\u00ECnh n\u1EC1n, t\u1EA1o bi\u1EBFn \u0111i\u1EC3m",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "2a896fc5-40be-46b5-9e1c-d95f3abc1101",
+    "Position": 4
+  },
+  {
+    "Id": "f1600df4-0391-426f-bf2d-fbcbeb600495",
+    "Title": "Game b\u1EA3o v\u1EC7 t\u1ED5 qu\u1ED1c",
+    "ContentText": "X\u00E2y d\u1EF1ng k\u1ECBch b\u1EA3n, thi\u1EBFt k\u1EBF h\u00ECnh n\u1EC1n cho tr\u00F2 ch\u01A1i (1)",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "2a896fc5-40be-46b5-9e1c-d95f3abc1101",
+    "Position": 5
+  },
+  {
+    "Id": "feaac01a-7a86-44db-b9f0-f740c1c3f509",
+    "Title": "B\u00E0i ki\u1EC3m tra s\u1ED1 1",
+    "ContentText": "B\u00E0i ki\u1EC3m tra s\u1ED1 1",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "2a896fc5-40be-46b5-9e1c-d95f3abc1101",
+    "Position": 6
+  },
+  {
+    "Id": "2bdc92bb-d41d-45dc-ac17-b71ae32a5eb1",
+    "Title": "V\u1EBD h\u00ECnh",
+    "ContentText": "V\u1EBD h\u00ECnh tam gi\u00E1c v\u00E0 c\u00E1c h\u00ECnh \u0111\u01B0\u1EE3c h\u1EE3p th\u00E0nh t\u1EEB c\u00E1c h\u00ECnh tam gi\u00E1c",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "1b6795e9-dbe2-4d2c-8ba8-4d48a1b4fca0",
+    "Position": 1
+  },
+  {
+    "Id": "fcc5c339-1a6a-4b11-a49e-53aad093b188",
+    "Title": "Gi\u1EA3i to\u00E1n",
+    "ContentText": "Gi\u1EA3i b\u00E0i to\u00E1n: T\u00ECm s\u1ED1 l\u1EDBn nh\u1EA5t, nh\u1ECF nh\u1EA5t trong d\u00E3y s\u1ED1?",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "1b6795e9-dbe2-4d2c-8ba8-4d48a1b4fca0",
+    "Position": 2
+  },
+  {
+    "Id": "ade6edd7-0590-400a-b5da-33e02856d174",
+    "Title": "B\u00E0i ki\u1EC3m tra s\u1ED1 2",
+    "ContentText": "B\u00E0i ki\u1EC3m tra s\u1ED1 2",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "1b6795e9-dbe2-4d2c-8ba8-4d48a1b4fca0",
+    "Position": 3
+  },
+  {
+    "Id": "326c4ef1-a43c-40b3-a434-99d4742eaecc",
+    "Title": "Kh\u00E1i ni\u1EC7m c\u01A1 b\u1EA3n v\u1EC1 HTML",
+    "ContentText": "HTML, CSS l\u00E0 g\u00EC? L\u1ECBch s\u1EED v\u00E0 vai tr\u00F2 c\u1EE7a HTML trong ph\u00E1t tri\u1EC3n web",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "aba725b5-b9e2-40ee-ad42-5d4ecbb02a2c",
+    "Position": 1
+  },
+  {
+    "Id": "021c39ee-4568-45d1-bbc1-932d5e49b9d2",
+    "Title": "L\u00E0m vi\u1EC7c v\u1EDBi HTML",
+    "ContentText": "Comment trong HTML",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "aba725b5-b9e2-40ee-ad42-5d4ecbb02a2c",
+    "Position": 2
+  },
+  {
+    "Id": "3236417f-c7bd-4fa0-a933-117b8540ee18",
+    "Title": "H\u00ECnh \u1EA3nh trong HTML",
+    "ContentText": "T\u00ECm hi\u1EC3u v\u1EC1 th\u1EBB Image",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "aba725b5-b9e2-40ee-ad42-5d4ecbb02a2c",
+    "Position": 3
+  },
+  {
+    "Id": "95566ebc-a2ad-4882-bde2-37b1e9b0c1cb",
+    "Title": "L\u00E0m quen v\u1EDBi CSS",
+    "ContentText": "S\u1EED d\u1EE5ng CSS trong HTML",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "0f14008c-2cb1-465c-b9d8-b7f88e42d3f7",
+    "Position": 1
+  },
+  {
+    "Id": "212814ba-064e-41dc-86d8-f0a8507c4cf9",
+    "Title": "CSS selectors",
+    "ContentText": "CSS selectors",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "0f14008c-2cb1-465c-b9d8-b7f88e42d3f7",
+    "Position": 2
+  },
+  {
+    "Id": "4b3781c2-eb9f-43a7-894b-a19d799ed194",
+    "Title": "\u0110\u01A1n v\u1ECB trong CSS",
+    "ContentText": "\u0110\u01A1n v\u1ECB trong CSS",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "0f14008c-2cb1-465c-b9d8-b7f88e42d3f7",
+    "Position": 3
+  },
+  {
+    "Id": "9c1dcdc5-e615-47fc-8f23-1cf658020683",
+    "Title": "Vi\u1EC1n, \u0111\u1EC7m, l\u1EC1 trong CSS",
+    "ContentText": "Selector, Margin, Padding, Border trong CSS",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "0f14008c-2cb1-465c-b9d8-b7f88e42d3f7",
+    "Position": 4
+  },
+  {
+    "Id": "ecef7093-57a8-443f-bbf1-a3dcce0fec9b",
+    "Title": "Background trong CSS",
+    "ContentText": "Thu\u1ED9c t\u00EDnh background-color",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "0f14008c-2cb1-465c-b9d8-b7f88e42d3f7",
+    "Position": 5
+  },
+  {
+    "Id": "f3ee27d1-0539-47df-a1d5-34b569b83bea",
+    "Title": "Font ch\u1EEF trong CSS",
+    "ContentText": "T\u1ED5ng quan v\u1EC1 font ch\u1EEF",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "ef6d42fc-1bfb-4a07-a617-2e7a12c3df42",
+    "Position": 1
+  },
+  {
+    "Id": "042761aa-7062-4604-992f-f9706059a334",
+    "Title": "Thu\u1ED9c t\u00EDnh Position",
+    "ContentText": "T\u1ED5ng quan v\u1EC1 position trong CSS",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "ef6d42fc-1bfb-4a07-a617-2e7a12c3df42",
+    "Position": 2
+  },
+  {
+    "Id": "6835173b-40ee-451c-8798-ebd69c990d31",
+    "Title": "Flexbox trong CSS",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 Flexbox",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "d3883a16-6b8e-4306-b773-3f8e75bff8e1",
+    "Position": 1
+  },
+  {
+    "Id": "965653e4-9e48-4287-87c5-e240834f4d23",
+    "Title": "Grid trong CSS",
+    "ContentText": "Tim hi\u1EC3u Grid trong CSS",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "d3883a16-6b8e-4306-b773-3f8e75bff8e1",
+    "Position": 2
+  },
+  {
+    "Id": "b41344da-af19-4e81-8279-9895ea90f0a4",
+    "Title": "Pseudo element trong CSS",
+    "ContentText": "T\u00ECm hi\u1EC3u v\u1EC1 Pseudo Elements",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "30637658-fdf1-401f-85ff-795af77fdc06",
+    "Position": 1
+  },
+  {
+    "Id": "aecdb215-1cd9-469d-bb64-b6585e8309a3",
+    "Title": "Responsive trong CSS",
+    "ContentText": "T\u00ECm hi\u1EC3u v\u1EC1 Responsive",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "30637658-fdf1-401f-85ff-795af77fdc06",
+    "Position": 2
+  },
+  {
+    "Id": "d7dfc83a-31b4-496c-9f57-0ba77c5be754",
+    "Title": "D\u1EF1 \u00E1n cu\u1ED1i kh\u00F3a",
+    "ContentText": "D\u1EF1 \u00E1n cu\u1ED1i kh\u00F3a",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "aa9fc04a-54bf-4a6b-9e6e-c5b5641d7305",
+    "Position": 1
+  },
+  {
+    "Id": "ef808a93-4882-4d2e-a020-15fa87a01879",
+    "Title": "Gi\u1EDBi thi\u1EC7u kh\u00F3a h\u1ECDc v\u00E0 n\u1ED9i dung",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u kh\u00F3a h\u1ECDc",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "9dabdc17-9604-42e4-a568-c9e541df403e",
+    "Position": 1
+  },
+  {
+    "Id": "f93b8ccb-6422-490f-a3ff-c90625f4e1f9",
+    "Title": "Ch\u00FA th\u00EDch",
+    "ContentText": "Ch\u00FA th\u00EDch trong C#",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "d40632fb-e9a2-4826-83a9-ba408e290d76",
+    "Position": 1
+  },
+  {
+    "Id": "e65e4276-1a04-4bc5-87da-bcd065d18164",
+    "Title": "Ki\u1EC3u d\u1EEF li\u1EC7u",
+    "ContentText": "Ki\u1EC3u d\u1EEF li\u1EC7u trong C#",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "d40632fb-e9a2-4826-83a9-ba408e290d76",
+    "Position": 2
+  },
+  {
+    "Id": "11461577-1f56-4413-a276-3fba064ae53b",
+    "Title": "Bi\u1EBFn",
+    "ContentText": "Bi\u1EBFn trong C#",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "d40632fb-e9a2-4826-83a9-ba408e290d76",
+    "Position": 3
+  },
+  {
+    "Id": "55d7514f-8fc7-4a94-a294-2901a4af6f22",
+    "Title": "Nh\u1EADp xu\u1EA5t d\u1EEF li\u1EC7u",
+    "ContentText": "Nh\u1EADp xu\u1EA5t d\u1EEF li\u1EC7u trong C#",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "d40632fb-e9a2-4826-83a9-ba408e290d76",
+    "Position": 4
+  },
+  {
+    "Id": "0d2cf030-8409-43b4-a4f8-5994dfa0aefe",
+    "Title": "T\u1ED5ng k\u1EBFt",
+    "ContentText": "T\u1ED5ng h\u1EE3p n\u1ED9i dung b\u00E0i h\u1ECDc ph\u1EA7n 2",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "d40632fb-e9a2-4826-83a9-ba408e290d76",
+    "Position": 5
+  },
+  {
+    "Id": "2de6b62b-fc3e-429f-8973-03779469acea",
+    "Title": "To\u00E1n t\u1EED trong C#",
+    "ContentText": "To\u00E1n t\u1EED s\u1ED1 h\u1ECDc",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "f9f269bd-cea2-42b9-9173-7932d86d2523",
+    "Position": 1
+  },
+  {
+    "Id": "3d3e025b-21b4-403a-b772-c114704c27d0",
+    "Title": "C\u1EA5u tr\u00FAc r\u1EBD nh\u00E1nh",
+    "ContentText": "if-else",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "f9f269bd-cea2-42b9-9173-7932d86d2523",
+    "Position": 2
+  },
+  {
+    "Id": "60e26f7d-7c69-4506-b341-acdb0ce428d8",
+    "Title": "V\u00F2ng l\u1EB7p",
+    "ContentText": "V\u00F2ng l\u1EB7p while",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "f9f269bd-cea2-42b9-9173-7932d86d2523",
+    "Position": 3
+  },
+  {
+    "Id": "6eb51fbe-4463-4bb3-8bc8-581d7efa178c",
+    "Title": "T\u1ED5ng k\u1EBFt",
+    "ContentText": "T\u1ED5ng h\u1EE3p n\u1ED9i dung b\u00E0i h\u1ECDc ph\u1EA7n 3",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "f9f269bd-cea2-42b9-9173-7932d86d2523",
+    "Position": 4
+  },
+  {
+    "Id": "3e69f1c7-7c74-4d8c-bca4-83938e9c1777",
+    "Title": "Ph\u01B0\u01A1ng th\u1EE9c trong C#",
+    "ContentText": "Kh\u00E1i ni\u1EC7m v\u1EC1 ph\u01B0\u01A1ng th\u1EE9c",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "95849d5c-546f-4cbe-a250-2e4e9ffaa087",
+    "Position": 1
+  },
+  {
+    "Id": "c7f4cd64-c79e-417f-a19d-caf15675824a",
+    "Title": "L\u1EDBp Math trong C#",
+    "ContentText": "C\u00E1c ph\u01B0\u01A1ng th\u1EE9c trong l\u1EDBp Math",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "95849d5c-546f-4cbe-a250-2e4e9ffaa087",
+    "Position": 2
+  },
+  {
+    "Id": "9dad710b-6dbc-4147-8246-dc60076ccc64",
+    "Title": "B\u00E0i t\u1EADp v\u00E0 ki\u1EC3m tra cu\u1ED1i kh\u00F3a",
+    "ContentText": "S\u1ED5 tay t\u1ED5ng h\u1EE3p",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "49094872-e74d-45ff-989b-7392016d531b",
+    "Position": 1
+  },
+  {
+    "Id": "3ac8b888-93e3-463a-b431-765c9284a228",
+    "Title": "Gi\u1EDBi thi\u1EC7u kh\u00F3a h\u1ECDc v\u00E0 n\u1ED9i dung",
+    "ContentText": "Javascript l\u00E0 g\u00EC? T\u1EA1i sao l\u1EA1i c\u1EA7n h\u1ECDc Javascript?",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "04cb8233-240f-433a-9acf-e5dc010cfaba",
+    "Position": 1
+  },
+  {
+    "Id": "7242849a-2154-4c09-bced-e329cbeae570",
+    "Title": "C\u1EA5u tr\u00FAc m\u00E3 JavaScript",
+    "ContentText": "C\u1EA5u tr\u00FAc m\u00E3 JavaScript",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "04cb8233-240f-433a-9acf-e5dc010cfaba",
+    "Position": 2
+  },
+  {
+    "Id": "241257f4-a35e-48cb-b0e7-f5e616905317",
+    "Title": "Bi\u1EBFn trong Javascript",
+    "ContentText": "Variable - Bi\u1EBFn trong JavaScript",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "3bdc7414-6ee1-4778-b68e-3c51e6599fdb",
+    "Position": 1
+  },
+  {
+    "Id": "3d126de8-87c9-42ed-90fd-6505794d30d3",
+    "Title": "C\u00E1c ki\u1EC3u d\u1EEF li\u1EC7u c\u01A1 b\u1EA3n c\u1EE7a JavaScript",
+    "ContentText": "String - Chu\u1ED7i trong JavaScript",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "3bdc7414-6ee1-4778-b68e-3c51e6599fdb",
+    "Position": 2
+  },
+  {
+    "Id": "ecba3c1c-f183-4f5c-81a8-b8c36f2ae712",
+    "Title": "Chuy\u1EC3n \u0111\u1ED5i ki\u1EC3u v\u00E0 \u00E9p ki\u1EC3u d\u1EEF li\u1EC7u",
+    "ContentText": "Chuy\u1EC3n \u0111\u1ED5i ki\u1EC3u d\u1EEF li\u1EC7u trong JavaScript",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "3bdc7414-6ee1-4778-b68e-3c51e6599fdb",
+    "Position": 3
+  },
+  {
+    "Id": "17d22c98-62c8-4061-af11-2669bc74f0c1",
+    "Title": "To\u00E1n t\u1EED trong Javascript",
+    "ContentText": "To\u00E1n t\u1EED s\u1ED1 h\u1ECDc trong JavaScript",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "514f6a58-31f4-40cc-82f3-639e0fec9c15",
+    "Position": 1
+  },
+  {
+    "Id": "19f1be82-705f-446a-b62c-d058f1187ea1",
+    "Title": "M\u1EA3ng trong Javascript",
+    "ContentText": "V\u1ECB tr\u00ED ch\u1EC9 m\u1EE5c m\u1EA3ng trong JavaScript",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "514f6a58-31f4-40cc-82f3-639e0fec9c15",
+    "Position": 2
+  },
+  {
+    "Id": "e9da1e43-12d9-4034-b105-5537c32718d5",
+    "Title": "C\u00E2u \u0111i\u1EC1u ki\u1EC7n trong Javascript",
+    "ContentText": "C\u00E2u l\u1EC7nh if...else trong JavaScript",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "794825fa-a925-44be-8577-d07abea84bf0",
+    "Position": 1
+  },
+  {
+    "Id": "025d96ad-e226-4d00-b439-0158243fd23c",
+    "Title": "V\u00F2ng l\u1EB7p trong Javascript",
+    "ContentText": "V\u00F2ng l\u1EB7p \u0027for\u0027 v\u00E0 \u0027while\u0027 trong JavaScript",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "794825fa-a925-44be-8577-d07abea84bf0",
+    "Position": 2
+  },
+  {
+    "Id": "f650e46c-b4c5-49ac-9fd3-2275034ed5c8",
+    "Title": "H\u00E0m trong Javascript",
+    "ContentText": "C\u00E1ch t\u1EA1o h\u00E0m trong JavaScript",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "794825fa-a925-44be-8577-d07abea84bf0",
+    "Position": 3
+  },
+  {
+    "Id": "1d870b38-f0fa-45d3-9f5f-7a0af5782a4c",
+    "Title": "S\u1EED d\u1EE5ng \u0111\u1ED1i t\u01B0\u1EE3ng trong Javascript",
+    "ContentText": "T\u1EA1o \u0111\u1ED1i t\u01B0\u1EE3ng trong JavaScript",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "35e31081-489e-46ea-9c4d-0f8ee8a7679c",
+    "Position": 1
+  },
+  {
+    "Id": "82341317-a949-46fc-8097-62c8ba434ef5",
+    "Title": "Gi\u1EDBi thi\u1EC7u v\u1EC1 DOM",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 DOM",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "7727e2a7-c26e-4bda-bf4d-2df07cc83432",
+    "Position": 1
+  },
+  {
+    "Id": "ede1113e-585c-4f44-b418-f92daf6972af",
+    "Title": "Gi\u1EDBi thi\u1EC7u v\u1EC1 BOM",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 BOM",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "7727e2a7-c26e-4bda-bf4d-2df07cc83432",
+    "Position": 2
+  },
+  {
+    "Id": "115e6114-e627-4dc7-8795-58251956d1c9",
+    "Title": "Gi\u1EDBi thi\u1EC7u v\u1EC1 b\u1EA5t \u0111\u1ED3ng b\u1ED9",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 b\u1EA5t \u0111\u1ED3ng b\u1ED9",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "0a11bf37-7a8f-47d6-a310-022b637bd24e",
+    "Position": 1
+  },
+  {
+    "Id": "1a77714c-b0c6-4a64-ae37-ead2bf137876",
+    "Title": "B\u00E0i t\u1EADp v\u00E0 ki\u1EC3m tra cu\u1ED1i kh\u00F3a",
+    "ContentText": "S\u1ED5 tay t\u1ED5ng h\u1EE3p",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "457d11f9-b441-468c-ba16-385fd91a9d65",
+    "Position": 1
+  },
+  {
+    "Id": "841c0c16-66b1-41fa-a7b0-47a8dd09a26e",
+    "Title": "T\u1ED5ng quan v\u1EC1 kh\u00F3a h\u1ECDc",
+    "ContentText": "T\u1EA1i sao Python l\u1EA1i \u0111\u01B0\u1EE3c \u01B0a chu\u1ED9ng trong t\u1EF1 \u0111\u1ED9ng h\u00F3a",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "0bb683c1-9cd2-4aa9-9308-92ab599dd206",
+    "Position": 1
+  },
+  {
+    "Id": "06ad5f48-8503-414d-9097-d4bc8b49f3b1",
+    "Title": "Ki\u1EBFn th\u1EE9c c\u1EA7n chu\u1EA9n b\u1ECB",
+    "ContentText": "B\u00E0i ki\u1EC3m tra \u0111\u1EA7u v\u00E0o",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "0bb683c1-9cd2-4aa9-9308-92ab599dd206",
+    "Position": 2
+  },
+  {
+    "Id": "6ed8a23d-62c1-43f2-8356-89f795f24683",
+    "Title": "C\u00F4ng c\u1EE5 t\u1EF1 \u0111\u1ED9ng h\u00F3a 1: Qu\u1EA3n l\u00FD file v\u00E0 th\u01B0 m\u1EE5c",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 th\u01B0 vi\u1EC7n Pathlib",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "0bb683c1-9cd2-4aa9-9308-92ab599dd206",
+    "Position": 3
+  },
+  {
+    "Id": "c071c61c-0dff-483c-924f-55659138763a",
+    "Title": "C\u00F4ng c\u1EE5 t\u1EF1 \u0111\u1ED9ng h\u00F3a 2: T\u1EF1 \u0111\u1ED9ng g\u1EEDi mail",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 th\u01B0 vi\u1EC7n SMTP",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "0bb683c1-9cd2-4aa9-9308-92ab599dd206",
+    "Position": 4
+  },
+  {
+    "Id": "d1f0de91-69c3-41a3-843a-d8af66ebf7e0",
+    "Title": "C\u00F4ng c\u1EE5 t\u1EF1 \u0111\u1ED9ng h\u00F3a 3: T\u1EF1 \u0111\u1ED9ng h\u00F3a tr\u00ECnh duy\u1EC7t",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 th\u01B0 vi\u1EC7n Selenium",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "0bb683c1-9cd2-4aa9-9308-92ab599dd206",
+    "Position": 5
+  },
+  {
+    "Id": "ab3d64da-c322-4d33-8f4d-daab59ff994b",
+    "Title": "C\u00F4ng c\u1EE5 t\u1EF1 \u0111\u1ED9ng h\u00F3a 4: Thu th\u1EADp d\u1EEF li\u1EC7u t\u1EEB web",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 Web Scraping v\u00E0 c\u00E1ch ho\u1EA1t \u0111\u1ED9ng c\u1EE7a n\u00F3",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "0bb683c1-9cd2-4aa9-9308-92ab599dd206",
+    "Position": 6
+  },
+  {
+    "Id": "3a17843b-3adf-4ed7-9e24-d94a22bb5348",
+    "Title": "C\u00F4ng c\u1EE5 t\u1EF1 \u0111\u1ED9ng h\u00F3a 5: T\u00EDch h\u1EE3p API",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u API v\u00E0 c\u00E1ch th\u1EE9c ho\u1EA1t \u0111\u1ED9ng",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "0bb683c1-9cd2-4aa9-9308-92ab599dd206",
+    "Position": 7
+  },
+  {
+    "Id": "79eb1cc5-468a-478a-9b8e-b4e7f8932609",
+    "Title": "C\u00F4ng c\u1EE5 t\u1EF1 \u0111\u1ED9ng h\u00F3a 6: T\u1EF1 \u0111\u1ED9ng h\u00F3a l\u1EADp l\u1ECBch, th\u00F4ng b\u00E1o",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u th\u01B0 vi\u1EC7n \u0111\u1EC3 l\u1EADp l\u1ECBch",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "0bb683c1-9cd2-4aa9-9308-92ab599dd206",
+    "Position": 8
+  },
+  {
+    "Id": "1d4b31ff-2070-4413-9f35-c5d53e0fc107",
+    "Title": "\u0110\u00F3ng g\u00F3i v\u00E0 Release tr\u00EAn GitHub",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 PyInstaller",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "0bb683c1-9cd2-4aa9-9308-92ab599dd206",
+    "Position": 9
+  },
+  {
+    "Id": "7e06159c-1e38-45a5-a379-e482962ffc28",
+    "Title": "T\u1ED5ng k\u1EBFt",
+    "ContentText": "S\u1ED5 tay t\u1ED5ng h\u1EE3p",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "0bb683c1-9cd2-4aa9-9308-92ab599dd206",
+    "Position": 10
+  },
+  {
+    "Id": "74d7039e-67ee-4226-86e9-b20831518bcc",
+    "Title": "Gi\u1EDBi thi\u1EC7u kh\u00F3a h\u1ECDc",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 kh\u00F3a h\u1ECDc",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "cbce330c-80b7-4d4d-b759-167675a118ee",
+    "Position": 1
+  },
+  {
+    "Id": "e2f37947-43fd-4b2f-b8c8-17fd82790ea7",
+    "Title": "C\u00E0i \u0111\u1EB7t m\u00F4i tr\u01B0\u1EDDng l\u1EADp tr\u00ECnh Visual Studio Code",
+    "ContentText": "C\u00E0i \u0111\u1EB7t Visual Studio Code v\u00E0 Python",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "cbce330c-80b7-4d4d-b759-167675a118ee",
+    "Position": 2
+  },
+  {
+    "Id": "c0dbfaae-cafb-469b-8b0d-4f9caebbd275",
+    "Title": "\u00D4n t\u1EADp ki\u1EBFn th\u1EE9c c\u01A1 b\u1EA3n",
+    "ContentText": "\u00D4n t\u1EADp ki\u1EBFn th\u1EE9c c\u01A1 b\u1EA3n",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "cbce330c-80b7-4d4d-b759-167675a118ee",
+    "Position": 3
+  },
+  {
+    "Id": "e129ef6f-9247-484d-8fe8-d7665afb9f94",
+    "Title": "Danh s\u00E1ch",
+    "ContentText": "List trong Python",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "4a3c9f45-dd96-45fa-936f-49c0dae00300",
+    "Position": 1
+  },
+  {
+    "Id": "186c7e3e-9aa9-4ab3-ba6e-ca5c507edeee",
+    "Title": "Tuple",
+    "ContentText": "Tuple trong Python",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "4a3c9f45-dd96-45fa-936f-49c0dae00300",
+    "Position": 2
+  },
+  {
+    "Id": "ecc32107-2321-46aa-a2f9-5de39801b188",
+    "Title": "T\u1EADp h\u1EE3p",
+    "ContentText": "Set trong Python",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "4a3c9f45-dd96-45fa-936f-49c0dae00300",
+    "Position": 3
+  },
+  {
+    "Id": "6eae6574-7b30-4c3d-b247-d4f34f158887",
+    "Title": "T\u1EEB \u0111i\u1EC3n",
+    "ContentText": "Dictionary trong Python",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "4a3c9f45-dd96-45fa-936f-49c0dae00300",
+    "Position": 4
+  },
+  {
+    "Id": "1064edc3-ffc4-4c09-aa25-9efaf88af930",
+    "Title": "T\u1ED5ng k\u1EBFt",
+    "ContentText": "C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "4a3c9f45-dd96-45fa-936f-49c0dae00300",
+    "Position": 5
+  },
+  {
+    "Id": "f3429a7f-4050-40f2-9d1f-4e4a43cae166",
+    "Title": "L\u1EDBp v\u00E0 \u0111\u1ED1i t\u01B0\u1EE3ng",
+    "ContentText": "L\u1EDBp v\u00E0 \u0111\u1ED1i t\u01B0\u1EE3ng",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "f90522fd-e44c-451f-bf2a-77921976402a",
+    "Position": 1
+  },
+  {
+    "Id": "8169d2be-d47d-4327-b558-daaf6412c4c1",
+    "Title": "K\u1EBF th\u1EEBa v\u00E0 \u0111a h\u00ECnh",
+    "ContentText": "K\u1EBF th\u1EEBa trong Python",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "f90522fd-e44c-451f-bf2a-77921976402a",
+    "Position": 2
+  },
+  {
+    "Id": "ec1b6cc1-fbc8-4a73-a120-e1331db6fe3c",
+    "Title": "T\u1ED5ng k\u1EBFt",
+    "ContentText": "L\u1EADp tr\u00ECnh h\u01B0\u1EDBng \u0111\u1ED1i t\u01B0\u1EE3ng",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "f90522fd-e44c-451f-bf2a-77921976402a",
+    "Position": 3
+  },
+  {
+    "Id": "6bb5a704-8c38-4ef3-8196-931b7d649bfa",
+    "Title": "Nh\u1EEFng l\u1ED7i ph\u1ED5 bi\u1EBFn khi b\u1EAFt \u0111\u1EA7u l\u1EADp tr\u00ECnh Python",
+    "ContentText": "Nh\u1EEFng l\u1ED7i ph\u1ED5 bi\u1EBFn khi b\u1EAFt \u0111\u1EA7u h\u1ECDc l\u1EADp tr\u00ECnh",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "3f5b9893-6de7-4c7e-8195-11865a980e28",
+    "Position": 1
+  },
+  {
+    "Id": "284ec5b8-5f21-46d0-9d11-d0f87e915bb5",
+    "Title": "X\u1EED l\u00FD ngo\u1EA1i l\u1EC7 trong Python",
+    "ContentText": "X\u1EED l\u00FD ngo\u1EA1i l\u1EC7 trong Python",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "3f5b9893-6de7-4c7e-8195-11865a980e28",
+    "Position": 2
+  },
+  {
+    "Id": "7d768def-9d8f-4de5-abe9-dee69adfb7c8",
+    "Title": "T\u1ED5ng k\u1EBFt",
+    "ContentText": "X\u1EED l\u00FD ngo\u1EA1i l\u1EC7",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "3f5b9893-6de7-4c7e-8195-11865a980e28",
+    "Position": 3
+  },
+  {
+    "Id": "dce14e7e-a473-4b30-98d4-e49fc1b47e0f",
+    "Title": "T\u1EC7p tin v\u00E0 h\u1EC7 th\u1ED1ng t\u1EC7p tin",
+    "ContentText": "X\u1EED l\u00FD t\u1EC7p tin (1)",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "a2ecc9d6-2d85-46cf-aa00-34325f6bbbd0",
+    "Position": 1
+  },
+  {
+    "Id": "1ed5a4f3-f08b-4fba-bde0-e4c943e9d15d",
+    "Title": "T\u1ED5ng k\u1EBFt",
+    "ContentText": "File Input and Output",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "a2ecc9d6-2d85-46cf-aa00-34325f6bbbd0",
+    "Position": 2
+  },
+  {
+    "Id": "e0614937-25e5-47db-853c-3b78fa44b10f",
+    "Title": "L\u00E0m vi\u1EC7c v\u1EDBi Module",
+    "ContentText": "Module trong Python",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "486d8258-4390-4840-aab3-446f038b6251",
+    "Position": 1
+  },
+  {
+    "Id": "ec33d832-319e-4304-8f48-d8272b84895b",
+    "Title": "L\u00E0m vi\u1EC7c v\u1EDBi Package",
+    "ContentText": "Package trong Python",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "486d8258-4390-4840-aab3-446f038b6251",
+    "Position": 2
+  },
+  {
+    "Id": "4f05839d-1f73-4088-b1ef-6527f487fe38",
+    "Title": "T\u1ED5ng k\u1EBFt",
+    "ContentText": "Module v\u00E0 Package Trong Python",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "486d8258-4390-4840-aab3-446f038b6251",
+    "Position": 3
+  },
+  {
+    "Id": "068d5900-d214-4941-9f5e-bd4b3af3417d",
+    "Title": "Gi\u1EDBi thi\u1EC7u kh\u00F3a h\u1ECDc",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 kh\u00F3a h\u1ECDc",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "0b0c5c31-739d-420b-aef3-fb5328329894",
+    "Position": 1
+  },
+  {
+    "Id": "790a5107-15fa-4451-a10f-a6c11ca1224a",
+    "Title": "C\u00E1c thu\u1EADt ng\u1EEF c\u01A1 b\u1EA3n",
+    "ContentText": "C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u l\u00E0 g\u00EC",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "0b0c5c31-739d-420b-aef3-fb5328329894",
+    "Position": 2
+  },
+  {
+    "Id": "807dfa2e-3875-4bc6-8a15-b9cb3594b80a",
+    "Title": "Ph\u00E2n t\u00EDch \u0111\u1ED9 ph\u1EE9c t\u1EA1p",
+    "ContentText": "BigO l\u00E0 g\u00EC?",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "0b0c5c31-739d-420b-aef3-fb5328329894",
+    "Position": 3
+  },
+  {
+    "Id": "ac6931fc-1514-49d5-8b99-986c40ef32dc",
+    "Title": "Array",
+    "ContentText": "M\u1EA3ng",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "374d6bf2-2218-4ec4-bb23-f58f315c7bbd",
+    "Position": 1
+  },
+  {
+    "Id": "6e9b1978-b0c8-4dd8-87ea-22d3bdf0371d",
+    "Title": "Linked List",
+    "ContentText": "Danh s\u00E1ch li\u00EAn k\u1EBFt \u0111\u01A1n (Singly Linked List)",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "374d6bf2-2218-4ec4-bb23-f58f315c7bbd",
+    "Position": 2
+  },
+  {
+    "Id": "eb40d355-b606-4e1c-a89b-5674cb296b9b",
+    "Title": "Stack",
+    "ContentText": "Stack",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "374d6bf2-2218-4ec4-bb23-f58f315c7bbd",
+    "Position": 3
+  },
+  {
+    "Id": "8f4dbdbf-caff-420a-a28e-75e76e97aa46",
+    "Title": "Queue",
+    "ContentText": "Queue",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "374d6bf2-2218-4ec4-bb23-f58f315c7bbd",
+    "Position": 4
+  },
+  {
+    "Id": "9a527a90-a8bc-437b-88eb-5fea98b86c7e",
+    "Title": "Tree",
+    "ContentText": "Tree",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "374d6bf2-2218-4ec4-bb23-f58f315c7bbd",
+    "Position": 5
+  },
+  {
+    "Id": "24e69f2e-203e-4e8c-ab04-bb54766aea9b",
+    "Title": "Thu\u1EADt to\u00E1n s\u1EAFp x\u1EBFp",
+    "ContentText": "T\u1EA1i sao h\u1ECDc Thu\u1EADt to\u00E1n s\u1EAFp x\u1EBFp v\u00E0 \u1EE9ng d\u1EE5ng c\u1EE7a thu\u1EADt to\u00E1n s\u1EAFp x\u1EBFp",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "1cb5029e-2525-4805-936a-f62e3a6fa82f",
+    "Position": 1
+  },
+  {
+    "Id": "9cf41f7e-2c37-497a-8c27-01942e1d760d",
+    "Title": "Thu\u1EADt to\u00E1n s\u1EAFp x\u1EBFp n\u00E2ng cao",
+    "ContentText": "Merge Sort",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "1cb5029e-2525-4805-936a-f62e3a6fa82f",
+    "Position": 2
+  },
+  {
+    "Id": "a6b61c6b-60cd-457e-99e0-82c8763de5d3",
+    "Title": "Thu\u1EADt to\u00E1n t\u00ECm ki\u1EBFm",
+    "ContentText": "Linear Search",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "ff292c7a-6fe3-4d65-ae0c-4df75e0dd8a8",
+    "Position": 1
+  },
+  {
+    "Id": "f0f71797-a260-466a-9a5a-b2b8708fd78e",
+    "Title": "Thu\u1EADt to\u00E1n chia \u0111\u1EC3 tr\u1ECB",
+    "ContentText": "Thu\u1EADt to\u00E1n chia \u0111\u1EC3 tr\u1ECB l\u00E0 g\u00EC?",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "ff292c7a-6fe3-4d65-ae0c-4df75e0dd8a8",
+    "Position": 2
+  },
+  {
+    "Id": "53188a36-3ee6-4244-b1b4-94c13d3842c6",
+    "Title": "Dynamic Programing",
+    "ContentText": "Quy ho\u1EA1ch \u0111\u1ED9ng",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "9f549844-bb09-4762-ad94-b04909e50c8d",
+    "Position": 1
+  },
+  {
+    "Id": "5da49033-62ef-4080-b36a-db856e44b03f",
+    "Title": "Backtracking",
+    "ContentText": "Backtracking",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "9f549844-bb09-4762-ad94-b04909e50c8d",
+    "Position": 2
+  },
+  {
+    "Id": "5547681c-7c50-41d1-9c84-1bdb855f8b22",
+    "Title": "Graph",
+    "ContentText": "L\u00FD thuy\u1EBFt \u0111\u1ED3 th\u1ECB",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "3d46dc14-636d-46f0-8b2f-53d00ee41c8c",
+    "Position": 1
+  },
+  {
+    "Id": "e658e0a4-0f1e-4b9e-ae01-ee92cc09a3ea",
+    "Title": "Graph Traversal",
+    "ContentText": "Duy\u1EC7t theo chi\u1EC1u r\u1ED9ng (Breadth-First Search)",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "3d46dc14-636d-46f0-8b2f-53d00ee41c8c",
+    "Position": 2
+  },
+  {
+    "Id": "b5534773-6d94-44f3-8cba-ef69c0969be2",
+    "Title": "Shortest Path",
+    "ContentText": "Dijkstra",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "3d46dc14-636d-46f0-8b2f-53d00ee41c8c",
+    "Position": 3
+  },
+  {
+    "Id": "95ac93ba-3211-402a-af38-ab4003ae46ff",
+    "Title": "1.1 \u0110\u1ECCC FILE",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn c\u00E1ch \u0111\u1ECDc file",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "62c071a7-fe50-45c1-adbd-5c4f8d1a9bd3",
+    "Position": 1
+  },
+  {
+    "Id": "ffa9ed06-8248-4dcb-b2c0-cee6c512b962",
+    "Title": "1.2 GHI FILE",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn c\u00E1ch ghi file",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "62c071a7-fe50-45c1-adbd-5c4f8d1a9bd3",
+    "Position": 2
+  },
+  {
+    "Id": "6555f147-24a1-473c-a544-fe1c1ab96c7c",
+    "Title": "1.3 T\u1ED4NG K\u1EBET",
+    "ContentText": "\u0110\u1ECDc th\u00EAm: M\u1ED9t s\u1ED1 ch\u1EBF \u0111\u1ED9 khi m\u1EDF File",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "62c071a7-fe50-45c1-adbd-5c4f8d1a9bd3",
+    "Position": 3
+  },
+  {
+    "Id": "c721e8ce-d0df-4a63-a506-ca1348ab28a0",
+    "Title": "2.1 GI\u1EDAI THI\u1EC6U V\u1EC0 M\u1ED8T S\u1ED0 H\u00C0M TO\u00C1N H\u1ECCC",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn s\u1EED d\u1EE5ng c\u00E1c h\u00E0m to\u00E1n h\u1ECDc c\u01A1 b\u1EA3n",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "ce20f6cb-0b1b-4dbd-99b2-1830aee9c896",
+    "Position": 1
+  },
+  {
+    "Id": "94e78665-c6f5-40a1-bac2-b7339cbf9fc2",
+    "Title": "2.2 C\u00C1C H\u00C0M L\u00C0M TR\u00D2N S\u1ED0 TH\u1EF0C",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn s\u1EED d\u1EE5ng c\u00E1c h\u00E0m l\u00E0m tr\u00F2n",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "ce20f6cb-0b1b-4dbd-99b2-1830aee9c896",
+    "Position": 2
+  },
+  {
+    "Id": "03f753c9-94cf-48bc-999c-1d85d314db60",
+    "Title": "2.3 T\u1ED4NG K\u1EBET",
+    "ContentText": "B\u00E0i ki\u1EC3m tra s\u1ED1 2",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "ce20f6cb-0b1b-4dbd-99b2-1830aee9c896",
+    "Position": 3
+  },
+  {
+    "Id": "c723c79d-ab58-44fa-87dc-1d2332afab10",
+    "Title": "3.1 GI\u1EDAI THI\u1EC6U V\u1EC0 CON TR\u1ECE",
+    "ContentText": "Kh\u00E1i ni\u1EC7m con tr\u1ECF v\u00E0 qu\u1EA3n l\u00FD b\u1ED9 nh\u1EDB b\u1EB1ng con tr\u1ECF C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "44e9b4f2-c5f0-4fee-a8aa-d989a05b91fc",
+    "Position": 1
+  },
+  {
+    "Id": "7069af56-cb08-4783-be6b-142ec5f23bf6",
+    "Title": "3.2 C\u00C1CH S\u1EEC D\u1EE4NG CON TR\u1ECE",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn s\u1EED d\u1EE5ng con tr\u1ECF",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "44e9b4f2-c5f0-4fee-a8aa-d989a05b91fc",
+    "Position": 2
+  },
+  {
+    "Id": "128ae458-4e6f-411c-bfeb-4d8ac98dd911",
+    "Title": "3.3 CON TR\u1ECE TR\u1ECE T\u1EDAI M\u1EA2NG",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn c\u00E1ch s\u1EED d\u1EE5ng m\u1EA3ng \u0111\u1ED9ng",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "44e9b4f2-c5f0-4fee-a8aa-d989a05b91fc",
+    "Position": 3
+  },
+  {
+    "Id": "aa66f232-3755-4a02-951b-0ec629227ba9",
+    "Title": "3.4 TRUY\u1EC0N CON TR\u1ECE T\u1EDAI H\u00C0M TRONG C\u002B\u002B",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn c\u00E1ch truy\u1EC1n con tr\u1ECF t\u1EDBi h\u00E0m",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "44e9b4f2-c5f0-4fee-a8aa-d989a05b91fc",
+    "Position": 4
+  },
+  {
+    "Id": "215cd142-47de-4cdd-8305-e7d78e911b5c",
+    "Title": "3.5 CON TR\u1ECE TR\u1ECE T\u1EDAI CON TR\u1ECE",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn v\u1EC1 con tr\u1ECF tr\u1ECF t\u1EDBi con tr\u1ECF",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "44e9b4f2-c5f0-4fee-a8aa-d989a05b91fc",
+    "Position": 5
+  },
+  {
+    "Id": "c3c033ee-63c2-46dc-bdde-b65ee592db2c",
+    "Title": "3.6 THAM CHI\u1EBEU",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 tham chi\u1EBFu",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "44e9b4f2-c5f0-4fee-a8aa-d989a05b91fc",
+    "Position": 6
+  },
+  {
+    "Id": "47df5128-ace5-4798-b75f-22b1aa697f4f",
+    "Title": "3.7 T\u1ED4NG K\u1EBET",
+    "ContentText": "B\u00E0i ki\u1EC3m tra s\u1ED1 3",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "44e9b4f2-c5f0-4fee-a8aa-d989a05b91fc",
+    "Position": 7
+  },
+  {
+    "Id": "731b7605-9148-46ab-93da-209e056a9d4c",
+    "Title": "4.1 K\u1EF8 THU\u1EACT \u0110\u1EC6 QUY",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 \u0111\u1EC7 quy",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "98ef7fe4-f5cc-478c-bbc0-a3d9e3bf95f9",
+    "Position": 1
+  },
+  {
+    "Id": "b244a5d1-7089-4844-978a-067e6b5ef0ec",
+    "Title": "4.2 M\u1ED8T S\u1ED0 B\u00C0I T\u1EACP V\u1EC0 \u0110\u1EC6 QUY",
+    "ContentText": "B\u00E0i t\u1EADp t\u00EDnh giai th\u1EEBa",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "98ef7fe4-f5cc-478c-bbc0-a3d9e3bf95f9",
+    "Position": 2
+  },
+  {
+    "Id": "b6afe9a9-60f6-4e41-b5a5-4a5bcd49187d",
+    "Title": "4.3 T\u1ED4NG K\u1EBET",
+    "ContentText": "B\u00E0i ki\u1EC3m tra s\u1ED1 4",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "98ef7fe4-f5cc-478c-bbc0-a3d9e3bf95f9",
+    "Position": 3
+  },
+  {
+    "Id": "26bbfdc9-1757-4776-9313-a5432cd1d2eb",
+    "Title": "5.1 STRUCT",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 struct",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "31f03dea-d100-446b-8000-6053686d4cdb",
+    "Position": 1
+  },
+  {
+    "Id": "c12d2554-513c-49c3-86e3-9846989c811a",
+    "Title": "5.2 UNION",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 union",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "31f03dea-d100-446b-8000-6053686d4cdb",
+    "Position": 2
+  },
+  {
+    "Id": "a01828da-53ee-4101-a2a0-89f55fae6271",
+    "Title": "5.3 PAIR",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 pair",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "31f03dea-d100-446b-8000-6053686d4cdb",
+    "Position": 3
+  },
+  {
+    "Id": "3d6bcc7e-70eb-4dc2-9fd3-fb81b95293ee",
+    "Title": "5.4 T\u1ED4NG K\u1EBET",
+    "ContentText": "B\u00E0i ki\u1EC3m tra s\u1ED1 5",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "31f03dea-d100-446b-8000-6053686d4cdb",
+    "Position": 4
+  },
+  {
+    "Id": "17215289-177c-4ded-aba3-7e6964a274dc",
+    "Title": "6.1 NAMESPACE TRONG C\u002B\u002B",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn c\u00E1ch s\u1EED d\u1EE5ng namespace",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "059b7422-ba9b-43ce-9f95-219e1dfc9dcf",
+    "Position": 1
+  },
+  {
+    "Id": "92bb5d20-e458-45e7-bd21-100daa4c2d82",
+    "Title": "6.2 FUNCTION TEMPLATE",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn c\u00E1ch s\u1EED d\u1EE5ng function template",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "059b7422-ba9b-43ce-9f95-219e1dfc9dcf",
+    "Position": 2
+  },
+  {
+    "Id": "1bf511c5-f11e-49e0-b0dc-a555006a6609",
+    "Title": "6.3 T\u1ED4NG K\u1EBET",
+    "ContentText": "B\u00E0i ki\u1EC3m tra s\u1ED1 6",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "059b7422-ba9b-43ce-9f95-219e1dfc9dcf",
+    "Position": 3
+  },
+  {
+    "Id": "a951d7c3-45a2-490f-888a-2f0cf340b025",
+    "Title": "7.1 X\u1EEC L\u00DD NGO\u1EA0I L\u1EC6 C\u002B\u002B",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn x\u1EED l\u00FD ngo\u1EA1i l\u1EC7",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "39a453f5-f4ba-48d4-98fb-7f5e336ffa82",
+    "Position": 1
+  },
+  {
+    "Id": "1296414c-3f6e-44bb-8ad3-96986109f72b",
+    "Title": "7.2 T\u1ED4NG K\u1EBET",
+    "ContentText": "B\u00E0i ki\u1EC3m tra s\u1ED1 7",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "39a453f5-f4ba-48d4-98fb-7f5e336ffa82",
+    "Position": 2
+  },
+  {
+    "Id": "0d86f0a6-61ce-4c3c-8e47-dcc2cf5bef4e",
+    "Title": "8.1 KH\u00C1I QU\u00C1T V\u1EC0 TIME V\u00C0 SPACE COMPLEXITY",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u \u0111\u1ED9 ph\u1EE9c t\u1EA1p thu\u1EADt to\u00E1n",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "5270d226-d354-4c8d-94f2-106a157d4697",
+    "Position": 1
+  },
+  {
+    "Id": "474b3ccd-9930-41da-9c9a-51bc94b4b49d",
+    "Title": "8.2 VECTOR",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn s\u1EED d\u1EE5ng vector",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "5270d226-d354-4c8d-94f2-106a157d4697",
+    "Position": 2
+  },
+  {
+    "Id": "d67ef182-f888-4d5a-a367-3cb2eac58448",
+    "Title": "8.3 STACK",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn s\u1EED d\u1EE5ng stack",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "5270d226-d354-4c8d-94f2-106a157d4697",
+    "Position": 3
+  },
+  {
+    "Id": "2f04d3e8-117c-4381-b781-ed3a294cc1f8",
+    "Title": "8.4 QUEUE V\u00C0 DEQUEUE",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn s\u1EED d\u1EE5ng queue v\u00E0 dequeue",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "5270d226-d354-4c8d-94f2-106a157d4697",
+    "Position": 4
+  },
+  {
+    "Id": "9faca88b-214d-4db4-8302-acf17566417d",
+    "Title": "8.5 LIST",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn s\u1EED d\u1EE5ng list",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "5270d226-d354-4c8d-94f2-106a157d4697",
+    "Position": 5
+  },
+  {
+    "Id": "89797a08-5903-4cba-8c69-002c18ba6f25",
+    "Title": "8.6 MAP",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn s\u1EED d\u1EE5ng map",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "5270d226-d354-4c8d-94f2-106a157d4697",
+    "Position": 6
+  },
+  {
+    "Id": "7de03c6c-1106-4b9a-806f-6e0a57c52e9b",
+    "Title": "8.7 SET",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn s\u1EED d\u1EE5ng set",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "5270d226-d354-4c8d-94f2-106a157d4697",
+    "Position": 7
+  },
+  {
+    "Id": "caf24458-7917-411c-ade1-c64404452f0d",
+    "Title": "8.8 PRIORITY-QUEUE",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn s\u1EED d\u1EE5ng priority-queue",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "5270d226-d354-4c8d-94f2-106a157d4697",
+    "Position": 8
+  },
+  {
+    "Id": "87591875-3b3b-49fc-ada3-c97e6a250dec",
+    "Title": "8.9 T\u1ED4NG K\u1EBET",
+    "ContentText": "B\u00E0i ki\u1EC3m tra s\u1ED1 8",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "5270d226-d354-4c8d-94f2-106a157d4697",
+    "Position": 9
+  },
+  {
+    "Id": "3b39342c-3911-4744-b989-098a433d668a",
+    "Title": "Gi\u1EDBi thi\u1EC7u kh\u00F3a h\u1ECDc v\u00E0 n\u1ED9i dung",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u kh\u00F3a h\u1ECDc",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "84604212-57e0-4a25-8034-8d26745996ab",
+    "Position": 1
+  },
+  {
+    "Id": "5041a9d2-8773-415c-9530-b69ff62ff6c1",
+    "Title": "Chu\u1EA9n h\u00F3a c\u01A1 s\u1EDF d\u1EEF li\u1EC7u",
+    "ContentText": "Chu\u1EA9n h\u00F3a d\u1EEF li\u1EC7u l\u00E0 g\u00EC",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "84604212-57e0-4a25-8034-8d26745996ab",
+    "Position": 2
+  },
+  {
+    "Id": "53564500-86a4-4ea5-b60d-2ee140b492a8",
+    "Title": "Qu\u1EA3n l\u00FD b\u1EA3ng",
+    "ContentText": "T\u1EA1o View CREATE VIEW",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "84604212-57e0-4a25-8034-8d26745996ab",
+    "Position": 3
+  },
+  {
+    "Id": "7e3ddae0-179e-4d56-84b5-9da05910becd",
+    "Title": "Thao t\u00E1c v\u1EDBi d\u1EEF li\u1EC7u trong b\u1EA3ng",
+    "ContentText": "C\u00E2u l\u1EC7nh INSERT INTO ... SELECT",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "84604212-57e0-4a25-8034-8d26745996ab",
+    "Position": 4
+  },
+  {
+    "Id": "6b2ae047-52e3-465d-bbbe-99cf2fdfb155",
+    "Title": "R\u00E0ng bu\u1ED9c trong SQL",
+    "ContentText": "R\u00E0ng bu\u1ED9c NOT NULL",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "84604212-57e0-4a25-8034-8d26745996ab",
+    "Position": 5
+  },
+  {
+    "Id": "bbd10151-5f82-4c77-8ad2-9ee114da43a5",
+    "Title": "C\u00E1c h\u00E0m to\u00E1n h\u1ECDc",
+    "ContentText": "H\u00E0m ROUND",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "84604212-57e0-4a25-8034-8d26745996ab",
+    "Position": 6
+  },
+  {
+    "Id": "c98f363d-9836-4368-8987-1439d5dfe052",
+    "Title": "Thao t\u00E1c v\u1EDBi v\u0103n b\u1EA3n",
+    "ContentText": "H\u00E0m LENGTH",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "84604212-57e0-4a25-8034-8d26745996ab",
+    "Position": 7
+  },
+  {
+    "Id": "ba761f6b-c169-4d7c-ad3f-ec65b860389f",
+    "Title": "L\u00E0m vi\u1EC7c v\u1EDBi ng\u00E0y/gi\u1EDD",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u lo\u1EA1i d\u1EEF li\u1EC7u Date/Time",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "84604212-57e0-4a25-8034-8d26745996ab",
+    "Position": 8
+  },
+  {
+    "Id": "5aa3e736-15fa-4196-8bbf-00c1b03538e9",
+    "Title": "K\u1EBFt h\u1EE3p d\u1EEF li\u1EC7u",
+    "ContentText": "To\u00E1n t\u1EED UNION",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "84604212-57e0-4a25-8034-8d26745996ab",
+    "Position": 9
+  },
+  {
+    "Id": "bbe169ff-9798-4064-aef5-79b9ed045089",
+    "Title": "Truy v\u1EA5n con",
+    "ContentText": "K\u1EF9 thu\u1EADt truy v\u1EA5n con sub-query (1)",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "84604212-57e0-4a25-8034-8d26745996ab",
+    "Position": 10
+  },
+  {
+    "Id": "2ef99f98-2e04-482e-a46c-635d0d84bbc4",
+    "Title": "M\u1EDF r\u1ED9ng",
+    "ContentText": "Store procedure",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "84604212-57e0-4a25-8034-8d26745996ab",
+    "Position": 11
+  },
+  {
+    "Id": "f86bcc81-5b33-4d19-88fe-cdb331ee94c1",
+    "Title": "B\u00E0i t\u1EADp v\u00E0 ki\u1EC3m tra",
+    "ContentText": "B\u00E0i t\u1EADp cu\u1ED1i kh\u00F3a",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "84604212-57e0-4a25-8034-8d26745996ab",
+    "Position": 12
+  },
+  {
+    "Id": "8aab442c-6c1e-4dab-a63f-0d4a634dda50",
+    "Title": "Gi\u1EDBi thi\u1EC7u kh\u00F3a h\u1ECDc v\u00E0 n\u1ED9i dung",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u kh\u00F3a h\u1ECDc",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "1d0f394b-de93-46e1-bf6c-c699228b5bbe",
+    "Position": 1
+  },
+  {
+    "Id": "189abdf6-94dd-45f5-9a51-91cf07f677a1",
+    "Title": "C\u00F4ng c\u1EE5 l\u1EADp tr\u00ECnh",
+    "ContentText": "C\u00E0i \u0111\u1EB7t m\u00F4i tr\u01B0\u1EDDng l\u1EADp tr\u00ECnh SQL - PostgreSQL tr\u00EAn Window",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "1d0f394b-de93-46e1-bf6c-c699228b5bbe",
+    "Position": 2
+  },
+  {
+    "Id": "57ad5988-5f4f-4651-a275-7efdb5997b2e",
+    "Title": "C\u00E1c c\u00FA ph\u00E1p SQL c\u01A1 b\u1EA3n",
+    "ContentText": "Thao t\u00E1c v\u1EDBi c\u01A1 s\u1EDF d\u1EEF li\u1EC7u: DATABASE",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "1d0f394b-de93-46e1-bf6c-c699228b5bbe",
+    "Position": 3
+  },
+  {
+    "Id": "86380af3-515b-41a3-b5da-97eeeffa2859",
+    "Title": "C\u00E1c ki\u1EC3u d\u1EEF li\u1EC7u trong SQL",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 ki\u1EC3u d\u1EEF li\u1EC7u",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "1d0f394b-de93-46e1-bf6c-c699228b5bbe",
+    "Position": 4
+  },
+  {
+    "Id": "e9bdaafa-9566-49f5-9ba9-44cb08d19a62",
+    "Title": "Qu\u1EA3n l\u00FD B\u1EA3ng",
+    "ContentText": "C\u00E2u l\u1EC7nh CREATE TABLE",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "1d0f394b-de93-46e1-bf6c-c699228b5bbe",
+    "Position": 5
+  },
+  {
+    "Id": "16e49f60-aa0e-4663-bcc0-d30e5111d6bb",
+    "Title": "Thao t\u00E1c v\u1EDBi d\u1EEF li\u1EC7u trong b\u1EA3ng",
+    "ContentText": "C\u00E2u l\u1EC7nh INSERT INTO",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "1d0f394b-de93-46e1-bf6c-c699228b5bbe",
+    "Position": 6
+  },
+  {
+    "Id": "b78c8c70-5aca-4960-9dbc-816f8e8f302b",
+    "Title": "R\u00E0ng bu\u1ED9c trong SQL",
+    "ContentText": "Kh\u00F3a ch\u00EDnh (Primary Key)",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "1d0f394b-de93-46e1-bf6c-c699228b5bbe",
+    "Position": 7
+  },
+  {
+    "Id": "751a5b06-19b8-44d1-8010-95ad4c0b2e80",
+    "Title": "K\u1EBFt h\u1EE3p B\u1EA3ng",
+    "ContentText": "K\u1EBFt h\u1EE3p b\u1EA3ng v\u1EDBi INNER JOIN",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "1d0f394b-de93-46e1-bf6c-c699228b5bbe",
+    "Position": 8
+  },
+  {
+    "Id": "ae7505c5-800b-46f5-b832-612620fae9d4",
+    "Title": "Ph\u00E2n nh\u00F3m d\u1EEF li\u1EC7u",
+    "ContentText": "C\u00E1c h\u00E0m t\u1ED5ng h\u1EE3p c\u01A1 b\u1EA3n: SUM, AVG, COUNT, MAX, MIN",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "1d0f394b-de93-46e1-bf6c-c699228b5bbe",
+    "Position": 9
+  },
+  {
+    "Id": "8cecc5df-bf7e-4daa-bfa0-fe6055f1c50e",
+    "Title": "B\u00E0i t\u1EADp v\u00E0 ki\u1EC3m tra",
+    "ContentText": "B\u00E0i t\u1EADp cu\u1ED1i kh\u00F3a",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "1d0f394b-de93-46e1-bf6c-c699228b5bbe",
+    "Position": 10
+  },
+  {
+    "Id": "c4c0f55e-fdd6-44d0-b531-6088389d22d1",
+    "Title": "C\u00E1c h\u00E0m to\u00E1n h\u1ECDc",
+    "ContentText": "SQL Round function",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "6f42c3d4-5b2f-481e-be6c-e429e5e11bbc",
+    "Position": 1
+  },
+  {
+    "Id": "38cbca72-28cf-4e26-b8ff-285579cf1461",
+    "Title": "Thao t\u00E1c v\u1EDBi v\u0103n b\u1EA3n",
+    "ContentText": "SQL Length function",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "6f42c3d4-5b2f-481e-be6c-e429e5e11bbc",
+    "Position": 2
+  },
+  {
+    "Id": "84bf5b65-977a-44f9-9c7d-df8945ac7577",
+    "Title": "L\u00E0m vi\u1EC7c v\u1EDBi ng\u00E0y/gi\u1EDD",
+    "ContentText": "Date/time data types review",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "6f42c3d4-5b2f-481e-be6c-e429e5e11bbc",
+    "Position": 3
+  },
+  {
+    "Id": "e83f5bd8-d03f-4e27-9b05-364b4b6e4bfe",
+    "Title": "C\u00E1c m\u1EC7nh \u0111\u1EC1 SET",
+    "ContentText": "SQL Union Operator (1)",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "6f42c3d4-5b2f-481e-be6c-e429e5e11bbc",
+    "Position": 4
+  },
+  {
+    "Id": "3db91dd3-1efb-4be6-8473-72914814a895",
+    "Title": "Bi\u1EC3u th\u1EE9c \u0111i\u1EC1u ki\u1EC7n",
+    "ContentText": "Basic CASE statement",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "6f42c3d4-5b2f-481e-be6c-e429e5e11bbc",
+    "Position": 5
+  },
+  {
+    "Id": "7fb10f5b-87ec-4157-ac37-965dbe90ae06",
+    "Title": "Truy v\u1EA5n con",
+    "ContentText": "Building on subqueries review (1)",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "6f42c3d4-5b2f-481e-be6c-e429e5e11bbc",
+    "Position": 6
+  },
+  {
+    "Id": "9987c0fd-182a-4908-a6c8-f7693ea17caa",
+    "Title": "Bi\u1EC3u th\u1EE9c b\u1EA3ng chung",
+    "ContentText": "CTE syntax",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "6f42c3d4-5b2f-481e-be6c-e429e5e11bbc",
+    "Position": 7
+  },
+  {
+    "Id": "56efa655-2a21-42f6-9eff-36c021ac0992",
+    "Title": "C\u00E1c h\u00E0m windown",
+    "ContentText": "Window functions vs GROUP BY",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "6f42c3d4-5b2f-481e-be6c-e429e5e11bbc",
+    "Position": 8
+  },
+  {
+    "Id": "3b691073-9331-42d0-8fbd-94df78395931",
+    "Title": "L\u1EDBp v\u00E0 \u0111\u1ED1i t\u01B0\u1EE3ng",
+    "ContentText": "L\u1EADp tr\u00ECnh h\u01B0\u1EDBng \u0111\u1ED1i t\u01B0\u1EE3ng trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "654a150e-a415-437e-a3a2-be4e8ab919a3",
+    "Position": 1
+  },
+  {
+    "Id": "afa8033e-0608-464a-90ca-a04014246616",
+    "Title": "Bi\u1EBFn t\u0129nh, ph\u01B0\u01A1ng th\u1EE9c t\u0129nh",
+    "ContentText": "Bi\u1EBFn t\u0129nh v\u00E0 ph\u01B0\u01A1ng th\u1EE9c t\u0129nh trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "654a150e-a415-437e-a3a2-be4e8ab919a3",
+    "Position": 2
+  },
+  {
+    "Id": "83a7701f-a0a1-4c17-90b6-f2e09191808c",
+    "Title": "T\u00EDnh \u0111\u00F3ng g\u00F3i",
+    "ContentText": "T\u00EDnh \u0111\u00F3ng g\u00F3i trong l\u1EADp tr\u00ECnh h\u01B0\u1EDBng \u0111\u1ED1i t\u01B0\u1EE3ng C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "654a150e-a415-437e-a3a2-be4e8ab919a3",
+    "Position": 3
+  },
+  {
+    "Id": "6981d1ee-f1f6-4ac3-b03a-12df77140105",
+    "Title": "T\u00EDnh k\u1EBF th\u1EEBa",
+    "ContentText": "T\u00EDnh k\u1EBF th\u1EEBa trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "654a150e-a415-437e-a3a2-be4e8ab919a3",
+    "Position": 4
+  },
+  {
+    "Id": "fc4931ab-ebfc-4273-9cd3-25aaded005a5",
+    "Title": "T\u00EDnh \u0111a h\u00ECnh v\u00E0 tr\u1EEBu t\u01B0\u1EE3ng",
+    "ContentText": "T\u00EDnh \u0111a h\u00ECnh trong l\u1EADp tr\u00ECnh h\u01B0\u1EDBng \u0111\u1ED1i t\u01B0\u1EE3ng C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "654a150e-a415-437e-a3a2-be4e8ab919a3",
+    "Position": 5
+  },
+  {
+    "Id": "c573c7c0-e586-49df-9046-78add64bcec8",
+    "Title": "M\u1ED1i quan h\u1EC7 gi\u1EEFa c\u00E1c \u0111\u1ED1i t\u01B0\u1EE3ng",
+    "ContentText": "L\u1EADp tr\u00ECnh h\u01B0\u1EDBng \u0111\u1ED1i t\u01B0\u1EE3ng C\u002B\u002B: m\u1ED1i quan h\u1EC7 gi\u1EEFa c\u00E1c \u0111\u1ED1i t\u01B0\u1EE3ng.",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "654a150e-a415-437e-a3a2-be4e8ab919a3",
+    "Position": 6
+  },
+  {
+    "Id": "86ba19d4-82d9-4eeb-9438-0440cc9cbb60",
+    "Title": "B\u00E0i t\u1EADp tr\u1EAFc nghi\u1EC7m",
+    "ContentText": "Tr\u1EAFc nghi\u1EC7m v\u1EC1 l\u1EDBp",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "654a150e-a415-437e-a3a2-be4e8ab919a3",
+    "Position": 7
+  },
+  {
+    "Id": "8d32d389-312f-4de5-92a9-6c97257db92e",
+    "Title": "B\u00E0i t\u1EADp r\u00E8n luy\u1EC7n",
+    "ContentText": "T\u1EA1o l\u1EDBp Card qu\u1EA3n l\u00ED s\u00E1ch th\u01B0 vi\u1EC7n",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "654a150e-a415-437e-a3a2-be4e8ab919a3",
+    "Position": 8
+  },
+  {
+    "Id": "ef4f48de-5bc8-4f59-9be0-f92d1d0a0a53",
+    "Title": "Con tr\u1ECF",
+    "ContentText": "[Cpp Advanced] pointer1",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "c59156f8-52a6-4b89-adc6-79221605182e",
+    "Position": 1
+  },
+  {
+    "Id": "2c5c522c-e00c-4c67-8d43-46c6f1d5d029",
+    "Title": "M\u1EA3ng",
+    "ContentText": "[Cpp Advanced] array1",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "c59156f8-52a6-4b89-adc6-79221605182e",
+    "Position": 2
+  },
+  {
+    "Id": "9383237f-3aa8-44f9-967b-b5e03854889b",
+    "Title": "C\u00E1c ph\u00E9p to\u00E1n thao t\u00E1c bit",
+    "ContentText": "[Cpp Advanced] bitwise1",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "c59156f8-52a6-4b89-adc6-79221605182e",
+    "Position": 3
+  },
+  {
+    "Id": "f49049ba-693e-4253-85b7-e6d949fe4838",
+    "Title": "Ki\u1EC3u c\u1EA5u tr\u00FAc",
+    "ContentText": "[Cpp Advanced] struct1",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "c59156f8-52a6-4b89-adc6-79221605182e",
+    "Position": 4
+  },
+  {
+    "Id": "4828ddb5-f329-4924-9b71-79f1d1008e1d",
+    "Title": "L\u1EDBp v\u00E0 \u0111\u1ED1i t\u01B0\u1EE3ng",
+    "ContentText": "L\u1EADp tr\u00ECnh h\u01B0\u1EDBng \u0111\u1ED1i t\u01B0\u1EE3ng trong Java: l\u1EDBp v\u00E0 \u0111\u1ED1i t\u01B0\u1EE3ng",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "8948db47-5128-4049-800c-8e894c22159a",
+    "Position": 1
+  },
+  {
+    "Id": "40fdffb5-57c4-4f07-9b21-d1dc8fadf01c",
+    "Title": "Bi\u1EBFn t\u0129nh, ph\u01B0\u01A1ng th\u1EE9c t\u0129nh",
+    "ContentText": "Bi\u1EBFn t\u0129nh v\u00E0 ph\u01B0\u01A1ng th\u1EE9c t\u0129nh trong Java",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "8948db47-5128-4049-800c-8e894c22159a",
+    "Position": 2
+  },
+  {
+    "Id": "f5d7683f-8cbf-4ff7-8750-787fb0bdb3eb",
+    "Title": "T\u00EDnh \u0111\u00F3ng g\u00F3i",
+    "ContentText": "T\u00EDnh \u0111\u00F3ng g\u00F3i trong l\u1EADp tr\u00ECnh h\u01B0\u1EDBng \u0111\u1ED1i t\u01B0\u1EE3ng Java",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "8948db47-5128-4049-800c-8e894c22159a",
+    "Position": 3
+  },
+  {
+    "Id": "cf539dc1-76e2-4c3a-9341-cbc4894c261a",
+    "Title": "T\u00EDnh k\u1EBF th\u1EEBa",
+    "ContentText": "K\u1EBF th\u1EEBa trong Java",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "8948db47-5128-4049-800c-8e894c22159a",
+    "Position": 4
+  },
+  {
+    "Id": "91d0cf81-f2b4-4b29-a798-f17243a37ab4",
+    "Title": "T\u00EDnh \u0111a h\u00ECnh v\u00E0 tr\u1EEBu t\u01B0\u1EE3ng",
+    "ContentText": "T\u00EDnh \u0111a h\u00ECnh trong Java",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "8948db47-5128-4049-800c-8e894c22159a",
+    "Position": 5
+  },
+  {
+    "Id": "29eaad1d-7b63-422d-8ad0-45e0edc930c6",
+    "Title": "M\u1ED1i quan h\u1EC7 gi\u1EEFa c\u00E1c \u0111\u1ED1i t\u01B0\u1EE3ng",
+    "ContentText": "L\u1EADp tr\u00ECnh h\u01B0\u1EDBng \u0111\u1ED1i t\u01B0\u1EE3ng Java: m\u1ED1i quan h\u1EC7 gi\u1EEFa c\u00E1c \u0111\u1ED1i t\u01B0\u1EE3ng.",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "8948db47-5128-4049-800c-8e894c22159a",
+    "Position": 6
+  },
+  {
+    "Id": "7c21779c-2d7a-4d09-a36a-3bbabbe51323",
+    "Title": "B\u00E0i t\u1EADp tr\u1EAFc nghi\u1EC7m",
+    "ContentText": "Tr\u1EAFc nghi\u1EC7m method hiding",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "8948db47-5128-4049-800c-8e894c22159a",
+    "Position": 7
+  },
+  {
+    "Id": "84e03c13-424b-4226-8b60-4a4d64aba316",
+    "Title": "C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u m\u1EA3ng",
+    "ContentText": "[Basic_DSAA] H\u01B0\u1EDBng d\u1EABn to\u00E0n t\u1EADp.",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "4a61e9e4-494b-4f07-8359-b34c6193efab",
+    "Position": 1
+  },
+  {
+    "Id": "fb4dc121-81e6-4846-8017-1ca2b2e7e1a9",
+    "Title": "Ng\u0103n x\u1EBFp v\u00E0 h\u00E0ng \u0111\u1EE3i",
+    "ContentText": "[Basic-DSAA] C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u ng\u0103n x\u1EBFp.",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "4a61e9e4-494b-4f07-8359-b34c6193efab",
+    "Position": 2
+  },
+  {
+    "Id": "bd0b1ea7-7464-46fd-ac74-aaae15942035",
+    "Title": "Danh s\u00E1ch li\u00EAn k\u1EBFt",
+    "ContentText": "[Basic-DSAA] Danh s\u00E1ch li\u00EAn k\u1EBFt - Danh s\u00E1ch li\u00EAn k\u1EBFt \u0111\u01A1n.",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "4a61e9e4-494b-4f07-8359-b34c6193efab",
+    "Position": 3
+  },
+  {
+    "Id": "1f9b7a03-7ce2-41a8-b420-8f1672a9b428",
+    "Title": "Gi\u1EA3i thu\u1EADt t\u00ECm ki\u1EBFm",
+    "ContentText": "[Basic-DSAA] Gi\u1EA3i thu\u1EADt t\u00ECm ki\u1EBFm - T\u00ECm ki\u1EBFm tuy\u1EBFn t\u00EDnh.",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "4a61e9e4-494b-4f07-8359-b34c6193efab",
+    "Position": 4
+  },
+  {
+    "Id": "73275f4c-106a-484d-aaa7-e1e3ad179220",
+    "Title": "Gi\u1EA3i thu\u1EADt s\u1EAFp x\u1EBFp",
+    "ContentText": "[Basic-DSAA] Gi\u1EA3i thu\u1EADt s\u1EAFp x\u1EBFp - S\u1EAFp x\u1EBFp n\u1ED5i b\u1ECDt.",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "4a61e9e4-494b-4f07-8359-b34c6193efab",
+    "Position": 5
+  },
+  {
+    "Id": "5cea882d-b16a-4b1f-86d5-50caab159e95",
+    "Title": "Gi\u1EA3i thu\u1EADt \u0111\u1EC7 quy",
+    "ContentText": "[Basic-DSAA] Gi\u1EA3i thu\u1EADt \u0111\u1EC7 quy.",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "4a61e9e4-494b-4f07-8359-b34c6193efab",
+    "Position": 6
+  },
+  {
+    "Id": "7eb56a5d-17b8-4b0c-b0c3-357a8720b320",
+    "Title": "C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u c\u00E2y",
+    "ContentText": "[Basic-DSAA] C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u c\u00E2y.",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "4a61e9e4-494b-4f07-8359-b34c6193efab",
+    "Position": 7
+  },
+  {
+    "Id": "925f51e0-7aee-42d2-a6fe-ec88dc93bab7",
+    "Title": "M\u1ED9t s\u1ED1 kh\u00E1i ni\u1EC7m v\u1EC1 gi\u1EA3i thu\u1EADt",
+    "ContentText": "[Basic-DSAA] M\u1ED9t s\u1ED1 kh\u00E1i ni\u1EC7m v\u1EC1 gi\u1EA3i thu\u1EADt - Ph\u00E2n t\u00EDch ti\u1EC7m c\u1EADn.",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "4a61e9e4-494b-4f07-8359-b34c6193efab",
+    "Position": 8
+  },
+  {
+    "Id": "6a477630-76a1-4709-9786-50a429d7ef80",
+    "Title": "C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u \u0111\u1ED3 th\u1ECB",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u.",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "4a61e9e4-494b-4f07-8359-b34c6193efab",
+    "Position": 9
+  },
+  {
+    "Id": "bc8a9a58-4f91-494e-bca9-8dac0f6e7059",
+    "Title": "Gi\u1EDBi thi\u1EC7u v\u1EC1 c\u01A1 s\u1EDF d\u1EEF li\u1EC7u",
+    "ContentText": "[SQL] What is in the database?",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "d79dcf09-0433-4255-8d7d-7723bf7931d0",
+    "Position": 1
+  },
+  {
+    "Id": "ca06638c-f266-419f-b46f-a1370b6244f3",
+    "Title": "Kh\u1EDFi t\u1EA1o b\u1EA3ng",
+    "ContentText": "[SQL] Create Table Statement",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "d79dcf09-0433-4255-8d7d-7723bf7931d0",
+    "Position": 2
+  },
+  {
+    "Id": "96fc16bc-e7b8-49e9-94a2-017ce9c05aca",
+    "Title": "Hi\u1EC3u bi\u1EBFt v\u1EC1 nh\u1EEFng r\u00E0ng bu\u1ED9c",
+    "ContentText": "[SQL] Database constraints (1)",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "d79dcf09-0433-4255-8d7d-7723bf7931d0",
+    "Position": 3
+  },
+  {
+    "Id": "cf9cc88c-aa8f-404a-89c2-8fd42c600906",
+    "Title": "S\u1EEDa \u0111\u1ED5i d\u1EEF li\u1EC7u",
+    "ContentText": "[SQL] Update Statement (1)",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "d79dcf09-0433-4255-8d7d-7723bf7931d0",
+    "Position": 4
+  },
+  {
+    "Id": "10a44b0c-503b-4856-aa53-152a566e1f86",
+    "Title": "Chu\u1EA9n h\u00F3a c\u01A1 s\u1EDF d\u1EEF li\u1EC7u",
+    "ContentText": "[SQL] Data normalization (1)",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "d79dcf09-0433-4255-8d7d-7723bf7931d0",
+    "Position": 5
+  },
+  {
+    "Id": "a3f16b8a-3ab5-47aa-bd89-f2e3d064a4db",
+    "Title": "Truy v\u1EA5n d\u1EEF li\u1EC7u",
+    "ContentText": "[SQL] Select Statement (1)",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "d79dcf09-0433-4255-8d7d-7723bf7931d0",
+    "Position": 6
+  },
+  {
+    "Id": "3eb3e93f-b63c-480c-a199-d1f16fff73e8",
+    "Title": "L\u1ECDc d\u1EEF li\u1EC7u",
+    "ContentText": "[SQL] Where Clause (1)",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "d79dcf09-0433-4255-8d7d-7723bf7931d0",
+    "Position": 7
+  },
+  {
+    "Id": "710e676d-603c-4f5c-bc0c-0f4d6a6af29d",
+    "Title": "G\u1ED9p nhi\u1EC1u b\u1EA3ng",
+    "ContentText": "[SQL] Inner Join Clause",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "d79dcf09-0433-4255-8d7d-7723bf7931d0",
+    "Position": 8
+  },
+  {
+    "Id": "7ae6c526-edae-455e-be98-75c4c5001a91",
+    "Title": "Ph\u00E2n nh\u00F3m d\u1EEF li\u1EC7u",
+    "ContentText": "[SQL] Sum Function",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "d79dcf09-0433-4255-8d7d-7723bf7931d0",
+    "Position": 9
+  },
+  {
+    "Id": "38288b6d-155f-4fce-bf57-8c0774a7375e",
+    "Title": "Truy v\u1EA5n con",
+    "ContentText": "[SQL] Subquery Technique (1)",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "d79dcf09-0433-4255-8d7d-7723bf7931d0",
+    "Position": 10
+  },
+  {
+    "Id": "6ddebd77-0938-40ff-b174-4022e856cc00",
+    "Title": "First C# Program",
+    "ContentText": "Vi\u1EBFt ch\u01B0\u01A1ng tr\u00ECnh Hello World \u0111\u1EA7u ti\u00EAn trong C#",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "5f188bd4-3437-44dc-aa93-682e707c0cc3",
+    "Position": 1
+  },
+  {
+    "Id": "2577436a-7a6b-48b8-8724-0760bc534807",
+    "Title": "X\u1EED l\u00FD x\u00E2u",
+    "ContentText": "B\u00E0i t\u1EADp C# c\u01A1 b\u1EA3n: hi\u1EC3n th\u1ECB k\u00FD t\u1EF1 th\u1EE9 k trong string",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "d12065d2-180f-48e6-9b49-8ad7ea4a136b",
+    "Position": 1
+  },
+  {
+    "Id": "442cb151-7c82-4212-adc3-6445737fa4e4",
+    "Title": "H\u00E0m trong C#",
+    "ContentText": "H\u00E0m trong C#: C\u00E1ch vi\u1EBFt v\u00E0 g\u1ECDi h\u00E0m",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "9ca791e4-0760-4f1a-b471-6536953f96a3",
+    "Position": 1
+  },
+  {
+    "Id": "0d71bb8c-a38f-4e7e-b88b-a4ad4cdbd775",
+    "Title": "Bi\u1EBFn v\u00E0 c\u00E1ch khai b\u00E1o",
+    "ContentText": "Bi\u1EBFn v\u00E0 c\u00E1ch khai b\u00E1o bi\u1EBFn trong C#",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "2adb9099-0d47-465d-b992-00d3dd911c79",
+    "Position": 1
+  },
+  {
+    "Id": "a9d4feeb-12d8-433f-a0f2-815e0eeae6e1",
+    "Title": "C\u00E1c ki\u1EC3u d\u1EEF li\u1EC7u",
+    "ContentText": "Ki\u1EC3u d\u1EEF li\u1EC7u chu\u1ED7i k\u00FD t\u1EF1 (string) trong C#",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "2adb9099-0d47-465d-b992-00d3dd911c79",
+    "Position": 2
+  },
+  {
+    "Id": "1dfd48a1-415e-4885-9cfc-cbed76e83df3",
+    "Title": "C\u00E1c to\u00E1n t\u1EED",
+    "ContentText": "Nh\u1EADp xu\u1EA5t d\u1EEF li\u1EC7u c\u01A1 b\u1EA3n trong C#",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "76060d72-7a39-4a65-82f6-01057b01345f",
+    "Position": 1
+  },
+  {
+    "Id": "237e20a6-f34b-4425-818f-bad2129d6bc8",
+    "Title": "M\u1EC7nh \u0111\u1EC1 if else",
+    "ContentText": "M\u1EC7nh \u0111\u1EC1 if else trong C#",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "8ee8ae9a-2564-4dd3-8bab-8f9cadb062b1",
+    "Position": 1
+  },
+  {
+    "Id": "56cb43aa-c3c7-4779-9dba-5d10258d07d5",
+    "Title": "M\u1EC7nh \u0111\u1EC1 if else ph\u1EE9c t\u1EA1p",
+    "ContentText": "M\u1EC7nh \u0111\u1EC1 if-else v\u00E0 to\u00E1n t\u1EED AND trong C#",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "8ee8ae9a-2564-4dd3-8bab-8f9cadb062b1",
+    "Position": 2
+  },
+  {
+    "Id": "487c5580-00ab-4308-b76f-66d09ef0b840",
+    "Title": "V\u00F2ng l\u1EB7p for",
+    "ContentText": "V\u00F2ng l\u1EB7p for trong C#",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "d8a4e639-6ea9-477d-a44b-7f256b9cebe5",
+    "Position": 1
+  },
+  {
+    "Id": "bf111ebb-e2b0-4f22-8f40-e63cdb2f8bea",
+    "Title": "V\u00F2ng l\u1EB7p while, do-while",
+    "ContentText": "V\u00F2ng l\u1EB7p while trong C#",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "d8a4e639-6ea9-477d-a44b-7f256b9cebe5",
+    "Position": 2
+  },
+  {
+    "Id": "e1b9f668-bcab-4110-aa3f-0466e1f96501",
+    "Title": "M\u1EA3ng trong C#",
+    "ContentText": "M\u1EA3ng (array) trong C#",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "ba128e0d-e0f9-45e0-8c1f-1c87a166e81e",
+    "Position": 1
+  },
+  {
+    "Id": "7bcc6e4e-9627-42ac-81ba-cb7322e8d9e6",
+    "Title": "M\u1EA3ng 2 chi\u1EC1u",
+    "ContentText": "M\u1EA3ng 2 chi\u1EC1u trong C#",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "ba128e0d-e0f9-45e0-8c1f-1c87a166e81e",
+    "Position": 2
+  },
+  {
+    "Id": "6610e737-9398-424c-a8b2-a0ddf8bee34e",
+    "Title": "Gi\u1EDBi thi\u1EC7u v\u1EC1 ph\u1EA7n m\u1EC1m",
+    "ContentText": "Kh\u00E1i ni\u1EC7m v\u1EC1 ph\u1EA7n m\u1EC1m",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "7f341ea6-53f3-4c17-a16b-439af3ddc173",
+    "Position": 1
+  },
+  {
+    "Id": "4c27978b-5719-4430-8e65-2365b3f728bd",
+    "Title": "Ph\u1EA7n m\u1EC1m h\u1EC7 th\u1ED1ng",
+    "ContentText": "H\u1EC7 \u0111i\u1EC1u h\u00E0nh",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "7f341ea6-53f3-4c17-a16b-439af3ddc173",
+    "Position": 2
+  },
+  {
+    "Id": "0035ffd8-ace1-43db-b773-6a928e26d430",
+    "Title": "Gi\u1EDBi thi\u1EC7u v\u1EC1 h\u1EC7 \u0111i\u1EC1u h\u00E0nh",
+    "ContentText": "L\u1ECBch s\u1EED ph\u00E1t tri\u1EC3n h\u1EC7 \u0111i\u1EC1u h\u00E0nh",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "7f341ea6-53f3-4c17-a16b-439af3ddc173",
+    "Position": 3
+  },
+  {
+    "Id": "135c5153-33cb-4937-a33c-72bb2d6c7b3e",
+    "Title": "Ph\u1EA7n m\u1EC1m \u1EE9ng d\u1EE5ng: Tr\u00ECnh duy\u1EC7t web",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 tr\u00ECnh duy\u1EC7t web",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "7f341ea6-53f3-4c17-a16b-439af3ddc173",
+    "Position": 4
+  },
+  {
+    "Id": "03200092-3c6e-4051-8c58-96469037c943",
+    "Title": "Ph\u1EA7n m\u1EC1m \u1EE9ng d\u1EE5ng: Ph\u1EA7n m\u1EC1m v\u0103n ph\u00F2ng",
+    "ContentText": "\u1EE8ng d\u1EE5ng v\u0103n ph\u00F2ng Microsoft Office",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "7f341ea6-53f3-4c17-a16b-439af3ddc173",
+    "Position": 5
+  },
+  {
+    "Id": "025f7719-0125-4bc4-aece-2a0cf5a9df14",
+    "Title": "Ph\u1EA7n m\u1EC1m \u1EE9ng d\u1EE5ng: Tr\u00ECnh so\u1EA1n th\u1EA3o v\u00E0 l\u1EADp tr\u00ECnh",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 c\u00E1c ph\u1EA7n m\u1EC1m l\u1EADp tr\u00ECnh",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "7f341ea6-53f3-4c17-a16b-439af3ddc173",
+    "Position": 6
+  },
+  {
+    "Id": "0dfd7b1a-4928-476f-9c03-600cbf90a82e",
+    "Title": "Ph\u1EA7n m\u1EC1m \u1EE9ng d\u1EE5ng: Ph\u1EA7n m\u1EC1m ti\u1EC7n \u00EDch 1",
+    "ContentText": "Ph\u1EA7n m\u1EC1m v\u1EBD k\u1EF9 thu\u1EADt - AutoCad",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "7f341ea6-53f3-4c17-a16b-439af3ddc173",
+    "Position": 7
+  },
+  {
+    "Id": "c4ac43dd-0600-42b0-ae15-50978cd6a077",
+    "Title": "Ph\u1EA7n m\u1EC1m \u1EE9ng d\u1EE5ng: Ph\u1EA7n m\u1EC1m ti\u1EC7n \u00EDch 2",
+    "ContentText": "Ph\u1EA7n m\u1EC1m ti\u1EC7n \u00EDch - Ph\u1EA7n m\u1EC1m h\u1ED7 tr\u1EE3 t\u1EEB xa",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "7f341ea6-53f3-4c17-a16b-439af3ddc173",
+    "Position": 8
+  },
+  {
+    "Id": "5b89b63b-aa68-4c9a-8caf-9cb73006bb37",
+    "Title": "T\u1ED5ng quan, console.log v\u00E0 ch\u00FA th\u00EDch",
+    "ContentText": "What\u0027s JavaScript ?",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "2614d9a7-3dd4-445d-b5d5-83382bb9fdca",
+    "Position": 1
+  },
+  {
+    "Id": "eec9a736-be5d-4a90-af29-20325b1763e2",
+    "Title": "Bi\u1EBFn",
+    "ContentText": "JS 2.2  Variables",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "2614d9a7-3dd4-445d-b5d5-83382bb9fdca",
+    "Position": 2
+  },
+  {
+    "Id": "a8a5fb4e-0dd7-4599-b446-37586f891188",
+    "Title": "C\u00E1c to\u00E1n t\u1EED",
+    "ContentText": "JS 3.1 Operators - Arithmetic Operators",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "2614d9a7-3dd4-445d-b5d5-83382bb9fdca",
+    "Position": 3
+  },
+  {
+    "Id": "6de2db04-80e5-4f91-815c-0cdf2ce0c48e",
+    "Title": "C\u00E1c h\u00E0m",
+    "ContentText": "JavaScript Functions",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "2614d9a7-3dd4-445d-b5d5-83382bb9fdca",
+    "Position": 4
+  },
+  {
+    "Id": "0e1b48d2-0d15-4748-abcc-ee062747c0b7",
+    "Title": "L\u1EC7nh If - Else v\u00E0 Switch - Case",
+    "ContentText": "JS 5.1 If",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "2614d9a7-3dd4-445d-b5d5-83382bb9fdca",
+    "Position": 5
+  },
+  {
+    "Id": "15a5958d-d96b-4872-b3a0-de3679834f68",
+    "Title": "V\u00F2ng l\u1EB7p",
+    "ContentText": "JS 6.1 Loops - for loop",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "2614d9a7-3dd4-445d-b5d5-83382bb9fdca",
+    "Position": 6
+  },
+  {
+    "Id": "6855bd15-52eb-4b33-b787-4450f3bb1fb8",
+    "Title": "Ph\u01B0\u01A1ng th\u1EE9c object",
+    "ContentText": "Object and Methods of the Object",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "2614d9a7-3dd4-445d-b5d5-83382bb9fdca",
+    "Position": 7
+  },
+  {
+    "Id": "d9ef53a1-099d-4ad4-a6b7-dfc5f72c1554",
+    "Title": "Ph\u01B0\u01A1ng th\u1EE9c m\u1EA3ng",
+    "ContentText": "Array and Array Methods",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "2614d9a7-3dd4-445d-b5d5-83382bb9fdca",
+    "Position": 8
+  },
+  {
+    "Id": "c2b6b9e5-15d2-4d57-a865-262fcd299393",
+    "Title": "Ph\u01B0\u01A1ng th\u1EE9c chu\u1ED7i",
+    "ContentText": "String Properties",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "2614d9a7-3dd4-445d-b5d5-83382bb9fdca",
+    "Position": 9
+  },
+  {
+    "Id": "ae0853e0-7598-462a-96a7-71f0dd424342",
+    "Title": "Ph\u01B0\u01A1ng th\u1EE9c d\u1EEF li\u1EC7u",
+    "ContentText": "Creates a JavaScript Date instance",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "2614d9a7-3dd4-445d-b5d5-83382bb9fdca",
+    "Position": 10
+  },
+  {
+    "Id": "9ac384fc-b99b-40cd-bcfe-32fa66702511",
+    "Title": "Ph\u01B0\u01A1ng th\u1EE9c to\u00E1n h\u1ECDc",
+    "ContentText": "Math Methods",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "2614d9a7-3dd4-445d-b5d5-83382bb9fdca",
+    "Position": 11
+  },
+  {
+    "Id": "7a74fa15-0999-4da0-b7c4-dc54f71df1c8",
+    "Title": "Ph\u01B0\u01A1ng th\u1EE9c s\u1ED1",
+    "ContentText": "Number Methods",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "2614d9a7-3dd4-445d-b5d5-83382bb9fdca",
+    "Position": 12
+  },
+  {
+    "Id": "d07219ae-d2b3-4b4d-a3d8-ab58f595899a",
+    "Title": "Ch\u01B0\u01A1ng tr\u00ECnh C \u0111\u1EA7u ti\u00EAn",
+    "ContentText": "C\u00E0i \u0111\u1EB7t m\u00F4i tr\u01B0\u1EDDng l\u1EADp tr\u00ECnh C",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "a7bee6aa-681e-4fca-9a79-f0f22cb52714",
+    "Position": 1
+  },
+  {
+    "Id": "b88a47e5-12c2-415d-b78d-caa90c08b860",
+    "Title": "Bi\u1EBFn",
+    "ContentText": "Bi\u1EBFn v\u00E0 c\u00E1ch khai b\u00E1o bi\u1EBFn trong C",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "a7bee6aa-681e-4fca-9a79-f0f22cb52714",
+    "Position": 2
+  },
+  {
+    "Id": "56bb7658-31e0-4777-9222-686254722794",
+    "Title": "\u0110\u1EA7u v\u00E0o",
+    "ContentText": "B\u00E0i t\u1EADp C c\u01A1 b\u1EA3n: t\u00EDnh t\u1ED5ng 2 s\u1ED1 \u0111\u01B0\u1EE3c nh\u1EADp v\u00E0o t\u1EEB b\u00E0n ph\u00EDm",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "a7bee6aa-681e-4fca-9a79-f0f22cb52714",
+    "Position": 3
+  },
+  {
+    "Id": "d7c71c6c-025c-4764-8a5a-a6281c995a6c",
+    "Title": "C\u1EA5u tr\u00FAc r\u1EBD nh\u00E1nh",
+    "ContentText": "M\u1EC7nh \u0111\u1EC1 if else trong C",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "a7bee6aa-681e-4fca-9a79-f0f22cb52714",
+    "Position": 4
+  },
+  {
+    "Id": "9e0d0d71-2d97-43f3-9e8f-98b184a2fdb5",
+    "Title": "V\u00F2ng l\u1EB7p",
+    "ContentText": "V\u00F2ng l\u1EB7p for trong C",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "a7bee6aa-681e-4fca-9a79-f0f22cb52714",
+    "Position": 5
+  },
+  {
+    "Id": "357727fb-0155-4e64-ae1b-88ae2c7ebaca",
+    "Title": "V\u00F2ng l\u1EB7p: while v\u00E0 do-while",
+    "ContentText": "V\u00F2ng l\u1EB7p while trong C",
+    "VideoFile": "",
+    "Duration": "00:04:00",
+    "ChapterId": "a7bee6aa-681e-4fca-9a79-f0f22cb52714",
+    "Position": 6
+  },
+  {
+    "Id": "8002a2f5-37a7-4aa1-acff-056ecb5100fb",
+    "Title": "M\u1EA3ng",
+    "ContentText": "M\u1EA3ng (Array) trong C",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "a7bee6aa-681e-4fca-9a79-f0f22cb52714",
+    "Position": 7
+  },
+  {
+    "Id": "6120628b-edaf-473e-a4d1-27757b61d2c4",
+    "Title": "Chu\u1ED7i",
+    "ContentText": "Ki\u1EC3u d\u1EEF li\u1EC7u x\u00E2u (string) trong C",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "a7bee6aa-681e-4fca-9a79-f0f22cb52714",
+    "Position": 8
+  },
+  {
+    "Id": "82a49053-0f19-41b1-8cc7-d891531b0687",
+    "Title": "H\u00E0m",
+    "ContentText": "T\u00ECm hi\u1EC3u v\u1EC1 h\u00E0m trong C",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "a7bee6aa-681e-4fca-9a79-f0f22cb52714",
+    "Position": 9
+  },
+  {
+    "Id": "55de6378-d5ce-442a-a41b-34f0f39e7d97",
+    "Title": "H\u00E0m \u0111\u1EC7 quy",
+    "ContentText": "H\u00E0m \u0111\u1EC7 quy trong C",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "a7bee6aa-681e-4fca-9a79-f0f22cb52714",
+    "Position": 10
+  },
+  {
+    "Id": "a927d21f-a3fb-49a3-8fa2-1a511f61ea36",
+    "Title": "Tham lam",
+    "ContentText": "numberOfToys",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "44b0987c-890e-4028-b78a-f456b6b3f797",
+    "Position": 1
+  },
+  {
+    "Id": "42d475ac-0cdd-4207-9198-92e70d8e013a",
+    "Title": "Quay lui",
+    "ContentText": "Backtracking #1: maximalMultiple",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "44b0987c-890e-4028-b78a-f456b6b3f797",
+    "Position": 2
+  },
+  {
+    "Id": "1e712326-e837-4e59-bd5b-d1d2ceb1372b",
+    "Title": "Quy ho\u1EA1ch \u0111\u1ED9ng",
+    "ContentText": "[#1 DP] fib",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "44b0987c-890e-4028-b78a-f456b6b3f797",
+    "Position": 3
+  },
+  {
+    "Id": "9471c285-1b1a-4046-a789-c2d61b9d51e9",
+    "Title": "Chia \u0111\u1EC3 tr\u1ECB",
+    "ContentText": "countInversions",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "44b0987c-890e-4028-b78a-f456b6b3f797",
+    "Position": 4
+  },
+  {
+    "Id": "cb72fa5d-09cb-4119-a4be-c13d788bef6a",
+    "Title": "DFS \u0026 BFS",
+    "ContentText": "[Advanced algorithm] 1",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "44b0987c-890e-4028-b78a-f456b6b3f797",
+    "Position": 5
+  },
+  {
+    "Id": "33844c8b-a2f5-4bf3-9638-bc75367198f9",
+    "Title": "\u0110\u1ED3 th\u1ECB c\u00E2y",
+    "ContentText": "[tree] lca",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "44b0987c-890e-4028-b78a-f456b6b3f797",
+    "Position": 6
+  },
+  {
+    "Id": "f274d4bb-880c-43dc-9b54-9cad58bc6eb2",
+    "Title": "S\u1ED1 h\u1ECDc",
+    "ContentText": "isPrime",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "78977fec-9566-41d7-a938-ad38c19dd0e7",
+    "Position": 1
+  },
+  {
+    "Id": "341803ad-0dbf-4890-bdb4-630056ec3f59",
+    "Title": "X\u1EED l\u00FD x\u00E2u",
+    "ContentText": "checkStrongPassword",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "78977fec-9566-41d7-a938-ad38c19dd0e7",
+    "Position": 2
+  },
+  {
+    "Id": "f8b820d0-9d6d-4202-99c3-a1bf1c102bcf",
+    "Title": "\u0110\u1EBFm",
+    "ContentText": "commonCharacterCount",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "78977fec-9566-41d7-a938-ad38c19dd0e7",
+    "Position": 3
+  },
+  {
+    "Id": "d6ea6df6-ffb8-4eec-8b68-f0ee96fb7ab4",
+    "Title": "Ma tr\u1EADn",
+    "ContentText": "chessBoardCellColor",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "78977fec-9566-41d7-a938-ad38c19dd0e7",
+    "Position": 4
+  },
+  {
+    "Id": "68d605de-2734-4eb0-b5a3-3532ab176142",
+    "Title": "H\u00ECnh h\u1ECDc",
+    "ContentText": "findSquareSide",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "78977fec-9566-41d7-a938-ad38c19dd0e7",
+    "Position": 5
+  },
+  {
+    "Id": "534da643-7e80-49f5-a6f1-5da7d41784bc",
+    "Title": "D\u00E3y s\u1ED1",
+    "ContentText": "isMonotonous",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "78977fec-9566-41d7-a938-ad38c19dd0e7",
+    "Position": 6
+  },
+  {
+    "Id": "ff966c2e-8ea6-48cc-af66-f28ffbc2a655",
+    "Title": "\u0110\u1ED3 th\u1ECB",
+    "ContentText": "isTournament",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "78977fec-9566-41d7-a938-ad38c19dd0e7",
+    "Position": 7
+  },
+  {
+    "Id": "ec5420a1-01ac-4b00-80b2-c615f46f371f",
+    "Title": "S\u1EAFp x\u1EBFp",
+    "ContentText": "#Sort : SortArray",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "78977fec-9566-41d7-a938-ad38c19dd0e7",
+    "Position": 8
+  },
+  {
+    "Id": "0a4cddd1-22a5-4f8c-96ca-bd258e1783ac",
+    "Title": "T\u00ECm ki\u1EBFm",
+    "ContentText": "#Search : searchElement",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "78977fec-9566-41d7-a938-ad38c19dd0e7",
+    "Position": 9
+  },
+  {
+    "Id": "898d151c-19f7-43ee-af06-62eae905e21a",
+    "Title": "Truy\u1EC1n th\u00F4ng d\u1EEF li\u1EC7u v\u00E0 m\u1EA1ng m\u00E1y t\u00EDnh",
+    "ContentText": "Kh\u00E1i ni\u1EC7m Truy\u1EC1n th\u00F4ng D\u1EEF li\u1EC7u",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "b956c129-7d70-442d-a129-d4f2d9aadfd3",
+    "Position": 1
+  },
+  {
+    "Id": "06b21fef-7f0e-4d91-b71b-99348960447f",
+    "Title": "C\u00E1p m\u1EA1ng v\u00E0 ph\u00E2n lo\u1EA1i",
+    "ContentText": "C\u00E1p m\u1EA1ng l\u00E0 g\u00EC?",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "b956c129-7d70-442d-a129-d4f2d9aadfd3",
+    "Position": 2
+  },
+  {
+    "Id": "87c6e366-9d63-4382-ac06-1b9aa6ad2a23",
+    "Title": "Thi\u1EBFt b\u1ECB chuy\u1EC3n m\u1EA1ch, \u0111\u1ECBnh tuy\u1EBFn v\u00E0 m\u00F4 h\u00ECnh \u0111\u1EA5u n\u1ED1i",
+    "ContentText": "Router",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "b956c129-7d70-442d-a129-d4f2d9aadfd3",
+    "Position": 3
+  },
+  {
+    "Id": "8b6ffdc9-2815-4cda-8061-91d5edeb23ee",
+    "Title": "C\u00E1c lo\u1EA1i h\u00ECnh m\u1EA1ng v\u00E0 ph\u00E2n lo\u1EA1i",
+    "ContentText": "C\u00E1c lo\u1EA1i m\u1EA1ng",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "b956c129-7d70-442d-a129-d4f2d9aadfd3",
+    "Position": 4
+  },
+  {
+    "Id": "7e98aec9-7faf-4868-ae88-117bbbb539ad",
+    "Title": "C\u00E1c c\u00F4ng ngh\u1EC7 ph\u1ED5 bi\u1EBFn trong truy\u1EC1n t\u1EA3i m\u1EA1ng",
+    "ContentText": "C\u00E1p Ethernet",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "b956c129-7d70-442d-a129-d4f2d9aadfd3",
+    "Position": 5
+  },
+  {
+    "Id": "5af0487e-d74d-4848-94fe-6eca810d4e3e",
+    "Title": "C\u00E1c th\u00F4ng s\u1ED1 trong truy\u1EC1n t\u1EA3i m\u1EA1ng",
+    "ContentText": "Truy\u1EC1n d\u1EEF li\u1EC7u qua internet v\u00E0 c\u00E1ch \u0111\u1ECDc th\u00F4ng s\u1ED1",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "b956c129-7d70-442d-a129-d4f2d9aadfd3",
+    "Position": 6
+  },
+  {
+    "Id": "bb0f5965-4e38-4d90-977b-eec98cd962e7",
+    "Title": "C\u00E1c kh\u00E1i ni\u1EC7m v\u00E0 m\u1ED9t s\u1ED1 \u0111i\u1EC1u c\u1EA7n bi\u1EBFt v\u1EC1 m\u1EA1ng",
+    "ContentText": "IP l\u00E0 g\u00EC?",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "b956c129-7d70-442d-a129-d4f2d9aadfd3",
+    "Position": 7
+  },
+  {
+    "Id": "cc2ffd9f-83e4-44d1-8096-ca435b387dc2",
+    "Title": "M\u1ED9t s\u1ED1 \u1EE9ng d\u1EE5ng c\u1EE7a network",
+    "ContentText": "Web browser",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "b956c129-7d70-442d-a129-d4f2d9aadfd3",
+    "Position": 8
+  },
+  {
+    "Id": "a9d9756e-b9ff-4fa4-aa49-9d0e4239b27b",
+    "Title": "C\u00E1c v\u1EA5n \u0111\u1EC1 th\u01B0\u1EDDng g\u1EB7p",
+    "ContentText": "C\u00E1ch ch\u1ECDn g\u00F3i internet ph\u00F9 h\u1EE3p",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "b956c129-7d70-442d-a129-d4f2d9aadfd3",
+    "Position": 9
+  },
+  {
+    "Id": "20acf698-2bd8-4173-b0ee-532a94dc0071",
+    "Title": "C\u00E2u h\u1ECFi cu\u1ED1i kh\u00F3a 1",
+    "ContentText": "Quiz 1.1",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "b956c129-7d70-442d-a129-d4f2d9aadfd3",
+    "Position": 10
+  },
+  {
+    "Id": "ecf54ad6-66b1-4e22-bce1-4f886e84ad32",
+    "Title": "C\u00E2u h\u1ECFi cu\u1ED1i kh\u00F3a 2",
+    "ContentText": "Quiz 5.1",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "b956c129-7d70-442d-a129-d4f2d9aadfd3",
+    "Position": 11
+  },
+  {
+    "Id": "325121a6-4b51-42e2-9729-a016b3937e53",
+    "Title": "Vector",
+    "ContentText": "initializeVector",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "4f86cb25-aa2c-4197-86ef-e0e034c4d49f",
+    "Position": 1
+  },
+  {
+    "Id": "cf7fbc26-f06b-4e5e-80e3-ec1f4ae38f94",
+    "Title": "List",
+    "ContentText": "initList",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "4f86cb25-aa2c-4197-86ef-e0e034c4d49f",
+    "Position": 2
+  },
+  {
+    "Id": "21c6613d-0061-4ae6-8052-dcbb3ce79c1c",
+    "Title": "Set",
+    "ContentText": "differentNumbers",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "4f86cb25-aa2c-4197-86ef-e0e034c4d49f",
+    "Position": 3
+  },
+  {
+    "Id": "501ce372-1ee8-4a50-b5fd-aa59521c7dd2",
+    "Title": "Stack",
+    "ContentText": "[STL_C\u002B\u002BStack] reverseString",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "4f86cb25-aa2c-4197-86ef-e0e034c4d49f",
+    "Position": 4
+  },
+  {
+    "Id": "f7eddd63-62ec-4ea1-adf8-92b786c6f2fa",
+    "Title": "Queue",
+    "ContentText": "[Cpp-STL] queue1",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "4f86cb25-aa2c-4197-86ef-e0e034c4d49f",
+    "Position": 5
+  },
+  {
+    "Id": "f053f694-a4bf-4824-a88f-3f20ae34daea",
+    "Title": "Map",
+    "ContentText": "[Cpp-STL] Map1",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "4f86cb25-aa2c-4197-86ef-e0e034c4d49f",
+    "Position": 6
+  },
+  {
+    "Id": "77a8e5e9-8f4b-48c9-85f3-c77e3e6ec5f1",
+    "Title": "bitset",
+    "ContentText": "[Cpp-STL] Bitset- S\u1EED d\u1EE5ng bitset \u0111\u1EC3 t\u00EDnh 2^n",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "4f86cb25-aa2c-4197-86ef-e0e034c4d49f",
+    "Position": 7
+  },
+  {
+    "Id": "0d452d16-242f-4baa-a02b-b603bd5e1d3c",
+    "Title": "T\u1ED5ng quan v\u1EC1 \u0111i\u1EC7n to\u00E1n \u0111\u00E1m m\u00E2y",
+    "ContentText": "Overview v\u1EC1 Cloud Essentials",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "59c25c9e-e5ea-42f4-872c-769fb6c04c18",
+    "Position": 1
+  },
+  {
+    "Id": "432c6fad-7920-43bb-9081-e2fd52da1994",
+    "Title": "Ki\u1EBFn tr\u00FAc \u0111i\u1EC7n to\u00E1n \u0111\u00E1m m\u00E2y v\u00E0 c\u00E1c y\u00EAu c\u1EA7u, k\u1EF9 thu\u1EADt c\u01A1 b\u1EA3n",
+    "ContentText": "C2_Ki\u1EBFn tr\u00FAc c\u1EE7a \u0111i\u1EC7n to\u00E1n \u0111\u00E1m m\u00E2y",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "59c25c9e-e5ea-42f4-872c-769fb6c04c18",
+    "Position": 2
+  },
+  {
+    "Id": "7322735d-6ff9-446f-84e7-c728e829d844",
+    "Title": "C\u00E1ch t\u1EA1o c\u00E1c \u1EE9ng d\u1EE5ng v\u00E0 b\u00E1o c\u00E1o cho c\u00E1c \u0111\u1ED1i t\u01B0\u1EE3ng",
+    "ContentText": "C3_\u1EE8ng d\u1EE5ng web v\u00E0 tri\u1EC3n khai l\u00EAn d\u1ECBch v\u1EE5 c\u1EE7a Google AppEngine",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "59c25c9e-e5ea-42f4-872c-769fb6c04c18",
+    "Position": 3
+  },
+  {
+    "Id": "d1cc4737-c13f-4435-b89a-0cd3311c2a15",
+    "Title": "Gi\u1EDBi thi\u1EC7u chi ti\u1EBFt v\u1EC1 Amazon Web Services",
+    "ContentText": "Amazon v\u00E0 AWS",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "59c25c9e-e5ea-42f4-872c-769fb6c04c18",
+    "Position": 4
+  },
+  {
+    "Id": "bbc9b5c0-3428-4c87-9240-f4cc3bd852d5",
+    "Title": "Security \u0026 IAM",
+    "ContentText": "Amazon Web Services Security",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "59c25c9e-e5ea-42f4-872c-769fb6c04c18",
+    "Position": 5
+  },
+  {
+    "Id": "205a648d-0744-49cb-b8a2-3e79e8f36b78",
+    "Title": "AWS Services",
+    "ContentText": "T\u1ED5ng quan v\u1EC1 c\u00E1c d\u1ECBch v\u1EE5 c\u1EE7a Amazon Web Services",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "59c25c9e-e5ea-42f4-872c-769fb6c04c18",
+    "Position": 6
+  },
+  {
+    "Id": "ad84f029-119f-407f-97ba-dcb50dce10a4",
+    "Title": "Compute Services",
+    "ContentText": "Amazon Web Services EC2",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "59c25c9e-e5ea-42f4-872c-769fb6c04c18",
+    "Position": 7
+  },
+  {
+    "Id": "c78b9deb-c971-43ee-9362-2c491c8fe79b",
+    "Title": "Programmable Infrastructure",
+    "ContentText": "Amazon Web Services Cloud Formation",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "59c25c9e-e5ea-42f4-872c-769fb6c04c18",
+    "Position": 8
+  },
+  {
+    "Id": "eaf008fe-c7ce-4f90-9acf-5944a7da859f",
+    "Title": "C\u00E2u h\u1ECFi cu\u1ED1i kh\u00F3a",
+    "ContentText": "Final quiz: Benefits of utility based services.",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "59c25c9e-e5ea-42f4-872c-769fb6c04c18",
+    "Position": 9
+  },
+  {
+    "Id": "9246a26d-6c07-4f3d-9fa8-961c6353356a",
+    "Title": "Gi\u1EDBi thi\u1EC7u v\u1EC1 m\u00E1y t\u00EDnh",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 m\u00E1y t\u00EDnh",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "6aa270a7-4d03-4d8c-acaa-66755ed82fbd",
+    "Position": 1
+  },
+  {
+    "Id": "1641b601-1fcc-4328-ab7b-9ea1a8b4974c",
+    "Title": "\u0110\u01A1n v\u1ECB x\u1EED l\u00FD trung t\u00E2m ",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 CPU",
+    "VideoFile": "",
+    "Duration": "00:05:00",
+    "ChapterId": "6aa270a7-4d03-4d8c-acaa-66755ed82fbd",
+    "Position": 2
+  },
+  {
+    "Id": "da353eb1-6766-46f7-9c69-8c13c65d4db7",
+    "Title": "Ngu\u1ED3n \u0111i\u1EC7n",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u ngu\u1ED3n \u0111i\u1EC7n m\u00E1y t\u00EDnh",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "6aa270a7-4d03-4d8c-acaa-66755ed82fbd",
+    "Position": 3
+  },
+  {
+    "Id": "f3779ac8-a566-4773-97b0-3b5ce278c701",
+    "Title": "Bo m\u1EA1ch ch\u00EDnh ",
+    "ContentText": "Gi\u1EDBi thi\u1EC7u v\u1EC1 bo m\u1EA1ch ch\u00EDnh",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "6aa270a7-4d03-4d8c-acaa-66755ed82fbd",
+    "Position": 4
+  },
+  {
+    "Id": "7c2ee119-5bf9-41d5-a716-8df11d4c10bd",
+    "Title": "B\u1ED9 nh\u1EDB RAM/ROM",
+    "ContentText": "T\u1ED5ng quan b\u1ED9 nh\u1EDB",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "6aa270a7-4d03-4d8c-acaa-66755ed82fbd",
+    "Position": 5
+  },
+  {
+    "Id": "17e45e0d-e78b-468c-9b92-37faa00e08b0",
+    "Title": "C\u00E1c c\u1ED5ng k\u1EBFt n\u1ED1i",
+    "ContentText": "T\u1ED5ng quan v\u1EC1 c\u1ED5ng k\u1EBFt n\u1ED1i",
+    "VideoFile": "",
+    "Duration": "00:09:00",
+    "ChapterId": "6aa270a7-4d03-4d8c-acaa-66755ed82fbd",
+    "Position": 6
+  },
+  {
+    "Id": "78d9d702-0c2a-41a2-ad5c-835689be2e9b",
+    "Title": "Thi\u1EBFt b\u1ECB l\u01B0u tr\u1EEF d\u1EEF li\u1EC7u",
+    "ContentText": "\u1ED4 \u0111\u0129a c\u1EE9ng HDD",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "6aa270a7-4d03-4d8c-acaa-66755ed82fbd",
+    "Position": 7
+  },
+  {
+    "Id": "b793bafe-28ac-440d-95ce-3444f5f4fbae",
+    "Title": "Thi\u1EBFt b\u1ECB nh\u1EADp d\u1EEF li\u1EC7u",
+    "ContentText": "B\u00E0n ph\u00EDm m\u00E1y t\u00EDnh",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "6aa270a7-4d03-4d8c-acaa-66755ed82fbd",
+    "Position": 8
+  },
+  {
+    "Id": "8664f48a-7340-48b8-b7f2-b1f7376723ec",
+    "Title": "Thi\u1EBFt b\u1ECB xu\u1EA5t d\u1EEF li\u1EC7u",
+    "ContentText": "M\u00E0n h\u00ECnh",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "6aa270a7-4d03-4d8c-acaa-66755ed82fbd",
+    "Position": 9
+  },
+  {
+    "Id": "207c49dd-ec7b-4390-b82a-1cc67a30258e",
+    "Title": "B\u1EA3o qu\u1EA3n v\u00E0 s\u1EED d\u1EE5ng thi\u1EBFt b\u1ECB",
+    "ContentText": "H\u01B0\u1EDBng d\u1EABn l\u1EF1a ch\u1ECDn laptop",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "6aa270a7-4d03-4d8c-acaa-66755ed82fbd",
+    "Position": 10
+  },
+  {
+    "Id": "b1a5fa74-caef-413e-a43e-b9931ba2cb28",
+    "Title": "C\u00E2u h\u1ECFi cu\u1ED1i kh\u00F3a",
+    "ContentText": "C\u00E2u h\u1ECFi cu\u1ED1i kh\u00F3a 1",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "6aa270a7-4d03-4d8c-acaa-66755ed82fbd",
+    "Position": 11
+  },
+  {
+    "Id": "f8033848-1983-44a5-9ac1-7182e965fd4b",
+    "Title": "Ch\u01B0\u01A1ng tr\u00ECnh \u0111\u1EA7u ti\u00EAn v\u00E0 ch\u00FA th\u00EDch",
+    "ContentText": "Vi\u1EBFt ch\u01B0\u01A1ng tr\u00ECnh Hello World \u0111\u1EA7u ti\u00EAn trong Python",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "b61488a4-001d-46fc-a871-535e620411fe",
+    "Position": 1
+  },
+  {
+    "Id": "61da1682-3556-497f-9207-007c47303152",
+    "Title": "Ki\u1EC3u d\u1EEF li\u1EC7u, bi\u1EBFn v\u00E0 \u00E9p ki\u1EC3u",
+    "ContentText": "Khai b\u00E1o bi\u1EBFn trong Python",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "b61488a4-001d-46fc-a871-535e620411fe",
+    "Position": 2
+  },
+  {
+    "Id": "7f922dd5-24d7-44c9-886d-ae9b3c139e73",
+    "Title": "\u0110\u1EA7u v\u00E0o",
+    "ContentText": "Nh\u1EADp xu\u1EA5t d\u1EEF li\u1EC7u c\u01A1 b\u1EA3n trong Python",
+    "VideoFile": "",
+    "Duration": "00:03:00",
+    "ChapterId": "b61488a4-001d-46fc-a871-535e620411fe",
+    "Position": 3
+  },
+  {
+    "Id": "e048a260-5d07-4ac5-8dc1-1e21c130ead7",
+    "Title": "To\u00E1n t\u1EED c\u01A1 b\u1EA3n",
+    "ContentText": "To\u00E1n t\u1EED c\u01A1 b\u1EA3n trong Python",
+    "VideoFile": "",
+    "Duration": "00:12:00",
+    "ChapterId": "b61488a4-001d-46fc-a871-535e620411fe",
+    "Position": 4
+  },
+  {
+    "Id": "5072bb22-5ff7-49d6-b9b1-2ab0a87a8f26",
+    "Title": "C\u00E2u l\u1EC7nh l\u1EF1a ch\u1ECDn",
+    "ContentText": "C\u00E2u l\u1EC7nh if-else trong Python",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "b61488a4-001d-46fc-a871-535e620411fe",
+    "Position": 5
+  },
+  {
+    "Id": "78196050-57e2-4f47-b275-2a1cdaab9e88",
+    "Title": "V\u00F2ng l\u1EB7p",
+    "ContentText": "V\u00F2ng l\u1EB7p for trong Python",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "b61488a4-001d-46fc-a871-535e620411fe",
+    "Position": 6
+  },
+  {
+    "Id": "88b8a124-3057-46cf-b816-5b242e893a8a",
+    "Title": "M\u1EA3ng v\u00E0 li\u1EC7t k\u00EA",
+    "ContentText": "List trong Python",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "b61488a4-001d-46fc-a871-535e620411fe",
+    "Position": 7
+  },
+  {
+    "Id": "65e6f659-6ed0-4ebf-92e3-d3ce4865eac1",
+    "Title": "Chu\u1ED7i",
+    "ContentText": "Chu\u1ED7i (string) trong Python",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "b61488a4-001d-46fc-a871-535e620411fe",
+    "Position": 8
+  },
+  {
+    "Id": "cdde6503-fe3b-43af-8cc8-d38986b0b3c5",
+    "Title": "H\u00E0m Python",
+    "ContentText": "H\u00E0m trong Python",
+    "VideoFile": "",
+    "Duration": "00:14:00",
+    "ChapterId": "b61488a4-001d-46fc-a871-535e620411fe",
+    "Position": 9
+  },
+  {
+    "Id": "cbf4dc62-8b6b-4821-9b55-79d822000290",
+    "Title": "B\u00E0i luy\u1EC7n t\u1EADp I",
+    "ContentText": "B\u00E0i t\u1EADp Python c\u01A1 b\u1EA3n: t\u00ECm ra c\u00E1c ph\u1EA7n t\u1EED ch\u1EB5n trong list",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "b61488a4-001d-46fc-a871-535e620411fe",
+    "Position": 10
+  },
+  {
+    "Id": "a6208057-b4d4-4b87-94d2-348daf757aa8",
+    "Title": "B\u00E0i luy\u1EC7n t\u1EADp II",
+    "ContentText": "B\u00E0i t\u1EADp python c\u01A1 b\u1EA3n: t\u00ECm ra t\u1EEB c\u00F3 \u0111\u1ED9 d\u00E0i l\u1EDBn h\u01A1n 3",
+    "VideoFile": "",
+    "Duration": "00:16:00",
+    "ChapterId": "b61488a4-001d-46fc-a871-535e620411fe",
+    "Position": 11
+  },
+  {
+    "Id": "6519c175-3d4b-4349-ad54-6c47148e24ed",
+    "Title": "Ch\u01B0\u01A1ng tr\u00ECnh C\u002B\u002B \u0111\u1EA7u ti\u00EAn",
+    "ContentText": "C\u00E0i \u0111\u1EB7t m\u00F4i tr\u01B0\u1EDDng l\u1EADp tr\u00ECnh C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "27b89390-d3b8-4b3a-8109-5e88f5152a7f",
+    "Position": 1
+  },
+  {
+    "Id": "4a6467c6-802f-445d-9e7f-4faa1f2c74d0",
+    "Title": "Bi\u1EBFn v\u00E0 c\u00E1c ki\u1EC3u d\u1EEF li\u1EC7u",
+    "ContentText": "Bi\u1EBFn v\u00E0 c\u00E1ch khai b\u00E1o bi\u1EBFn trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "27b89390-d3b8-4b3a-8109-5e88f5152a7f",
+    "Position": 2
+  },
+  {
+    "Id": "e6ebdff2-c091-4452-ab37-0dc5c370304c",
+    "Title": "C\u00E1c to\u00E1n t\u1EED v\u00E0 \u0111\u1EA7u v\u00E0o",
+    "ContentText": "Nh\u1EADp xu\u1EA5t d\u1EEF li\u1EC7u c\u01A1 b\u1EA3n trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:02:00",
+    "ChapterId": "27b89390-d3b8-4b3a-8109-5e88f5152a7f",
+    "Position": 3
+  },
+  {
+    "Id": "f55a42b6-a3a1-431a-a8be-c293084b478d",
+    "Title": "C\u00E2u l\u1EC7 r\u1EBD nh\u00E1nh",
+    "ContentText": "M\u1EC7nh \u0111\u1EC1 if else trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "27b89390-d3b8-4b3a-8109-5e88f5152a7f",
+    "Position": 4
+  },
+  {
+    "Id": "5a30645c-ff76-4a82-81e8-404e55c6b920",
+    "Title": "V\u00F2ng l\u1EB7p: for",
+    "ContentText": "V\u00F2ng l\u1EB7p for trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:19:00",
+    "ChapterId": "27b89390-d3b8-4b3a-8109-5e88f5152a7f",
+    "Position": 5
+  },
+  {
+    "Id": "9a361dd4-2f4c-4b4d-8b94-cc298856926d",
+    "Title": "V\u00F2ng l\u1EB7p: while v\u00E0 do-while",
+    "ContentText": "V\u00F2ng l\u1EB7p while trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:17:00",
+    "ChapterId": "27b89390-d3b8-4b3a-8109-5e88f5152a7f",
+    "Position": 6
+  },
+  {
+    "Id": "ec117cd5-f821-4229-ae3d-09b2c3c2b62b",
+    "Title": "M\u1EA3ng",
+    "ContentText": "M\u1EA3ng (array) trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:10:00",
+    "ChapterId": "27b89390-d3b8-4b3a-8109-5e88f5152a7f",
+    "Position": 7
+  },
+  {
+    "Id": "0da7d2bd-1a38-40cd-8a38-defd64022aaa",
+    "Title": "Chu\u1ED7i",
+    "ContentText": "B\u00E0i t\u1EADp C\u002B\u002B c\u01A1 b\u1EA3n: hi\u1EC3n th\u1ECB k\u00FD t\u1EF1 th\u1EE9 k trong string | Codelearn",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "27b89390-d3b8-4b3a-8109-5e88f5152a7f",
+    "Position": 8
+  },
+  {
+    "Id": "3dcc6dc4-9b6f-4b9d-b2f0-f7750465ecb7",
+    "Title": "H\u00E0m",
+    "ContentText": "T\u00ECm hi\u1EC3u v\u1EC1 h\u00E0m trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:11:00",
+    "ChapterId": "27b89390-d3b8-4b3a-8109-5e88f5152a7f",
+    "Position": 9
+  },
+  {
+    "Id": "c0026a1c-d3bc-4ba1-8e05-5045220b81be",
+    "Title": "H\u00E0m \u0111\u1EC7 quy",
+    "ContentText": "H\u00E0m \u0111\u1EC7 quy trong C\u002B\u002B",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "27b89390-d3b8-4b3a-8109-5e88f5152a7f",
+    "Position": 10
+  },
+  {
+    "Id": "2f20af52-d21a-4155-8710-56fc3961519f",
+    "Title": "Ch\u01B0\u01A1ng tr\u00ECnh \u0111\u1EA7u ti\u00EAn v\u00E0 ch\u00FA th\u00EDch",
+    "ContentText": "Ch\u01B0\u01A1ng tr\u00ECnh HelloWorld \u0111\u1EA7u ti\u00EAn | Codelearn.io",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "694a2a62-c43a-491b-afa2-5ec240fde4d9",
+    "Position": 1
+  },
+  {
+    "Id": "172ff492-55e2-44ff-8296-b2325aae466a",
+    "Title": "Bi\u1EBFn v\u00E0 ki\u1EC3u d\u1EEF li\u1EC7u",
+    "ContentText": "Bi\u1EBFn v\u00E0 c\u00E1ch khai b\u00E1o bi\u1EBFn trong Java",
+    "VideoFile": "",
+    "Duration": "00:13:00",
+    "ChapterId": "694a2a62-c43a-491b-afa2-5ec240fde4d9",
+    "Position": 2
+  },
+  {
+    "Id": "1d2c7aaf-203f-4dcd-a59c-db98e72464fd",
+    "Title": "C\u00E1c to\u00E1n t\u1EED",
+    "ContentText": "Nh\u1EADp xu\u1EA5t d\u1EEF li\u1EC7u c\u01A1 b\u1EA3n trong Java | Codelearn.io",
+    "VideoFile": "",
+    "Duration": "00:08:00",
+    "ChapterId": "694a2a62-c43a-491b-afa2-5ec240fde4d9",
+    "Position": 3
+  },
+  {
+    "Id": "350d5ea4-34d9-45e5-944e-7343411183dc",
+    "Title": "C\u00E1c c\u00E2u l\u1EC7nh \u0111i\u1EC1u ki\u1EC7n",
+    "ContentText": "M\u1EC7nh \u0111\u1EC1 if else trong Java",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "694a2a62-c43a-491b-afa2-5ec240fde4d9",
+    "Position": 4
+  },
+  {
+    "Id": "ffe3c3f5-6584-4264-8013-511c12d96cb3",
+    "Title": "V\u00F2ng l\u1EB7p",
+    "ContentText": "V\u00F2ng l\u1EB7p for trong Java",
+    "VideoFile": "",
+    "Duration": "00:01:00",
+    "ChapterId": "694a2a62-c43a-491b-afa2-5ec240fde4d9",
+    "Position": 5
+  },
+  {
+    "Id": "b6794afd-c94e-45b6-b4eb-dbe996b4720e",
+    "Title": "V\u00F2ng l\u1EB7p: while v\u00E0 do-while",
+    "ContentText": "V\u00F2ng l\u1EB7p while trong Java",
+    "VideoFile": "",
+    "Duration": "00:07:00",
+    "ChapterId": "694a2a62-c43a-491b-afa2-5ec240fde4d9",
+    "Position": 6
+  },
+  {
+    "Id": "1616ca1c-baef-4293-8118-e03bca48fef4",
+    "Title": "M\u1EA3ng",
+    "ContentText": "M\u1EA3ng (array) trong Java",
+    "VideoFile": "",
+    "Duration": "00:15:00",
+    "ChapterId": "694a2a62-c43a-491b-afa2-5ec240fde4d9",
+    "Position": 7
+  },
+  {
+    "Id": "4185bf93-b093-4cbe-929b-5edf7472d62f",
+    "Title": "X\u1EED l\u00FD chu\u1ED7i",
+    "ContentText": "B\u00E0i t\u1EADp Java c\u01A1 b\u1EA3n: hi\u1EC3n th\u1ECB k\u00FD t\u1EF1 th\u1EE9 k trong string | Codelearn",
+    "VideoFile": "",
+    "Duration": "00:06:00",
+    "ChapterId": "694a2a62-c43a-491b-afa2-5ec240fde4d9",
+    "Position": 8
+  },
+  {
+    "Id": "ee161e37-f6c1-4bd3-8146-62c44fb1450f",
+    "Title": "Ph\u01B0\u01A1ng th\u1EE9c trong Java",
+    "ContentText": "T\u00ECm hi\u1EC3u v\u1EC1 h\u00E0m trong Java",
+    "VideoFile": "",
+    "Duration": "00:18:00",
+    "ChapterId": "694a2a62-c43a-491b-afa2-5ec240fde4d9",
+    "Position": 9
+  }
+]
