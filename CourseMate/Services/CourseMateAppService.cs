@@ -8,7 +8,6 @@ using CourseMate.Entities.Orders;
 using CourseMate.Entities.PaymentRequests;
 using CourseMate.Entities.Reviews;
 using CourseMate.Localization;
-using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Identity;
 

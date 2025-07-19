@@ -6,6 +6,7 @@ import { CourseService } from '@proxy/services/courses';
 import { CategoryService } from '@proxy/services/categories';
 import { PaginatorState } from 'primeng/paginator';
 import { SelectChangeEvent } from 'primeng/select';
+import { LoadingIndicatorService } from '../../services/loading-indicator.service';
 
 @Component({
     selector: 'app-training-online',
@@ -31,7 +32,8 @@ export class TrainingOnlineComponent implements OnInit {
     };
 
     constructor(private courseService: CourseService,
-                private categoryService: CategoryService) {
+                private categoryService: CategoryService,
+                private loadingService: LoadingIndicatorService) {
     }
 
     ngOnInit(): void {
@@ -48,10 +50,12 @@ export class TrainingOnlineComponent implements OnInit {
     }
 
     getListCourse(getListCourseReq: GetListCourseRequestDto) {
+        this.loadingService.turnOn();
         this.courseService
             .getList(getListCourseReq)
             .subscribe((response) => {
                 this.pagedResult = response;
+                this.loadingService.turnOff();
             });
     }
 

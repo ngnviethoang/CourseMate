@@ -1,6 +1,4 @@
-﻿using Volo.Abp.Application.Dtos;
-
-namespace CourseMate.Services.Dtos.Categories;
+﻿namespace CourseMate.Services.Dtos.Categories;
 
 public class CategoryDto : AuditedEntityDto<Guid>
 {

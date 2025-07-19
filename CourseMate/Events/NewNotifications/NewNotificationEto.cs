@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CourseMate.Events.NewNotifications;
+﻿namespace CourseMate.Events.NewNotifications;
 
 public class NewNotificationEto
 {

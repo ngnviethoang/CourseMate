@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CourseMate.Services.Dtos.Orders;
+﻿namespace CourseMate.Services.Dtos.Orders;
 
 public class CreateUpdateOrderDto
 {

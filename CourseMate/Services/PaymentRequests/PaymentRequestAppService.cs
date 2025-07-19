@@ -1,9 +1,7 @@
-﻿using System.Linq.Dynamic.Core;
-using CourseMate.Entities.PaymentRequests;
+﻿using CourseMate.Entities.PaymentRequests;
 using CourseMate.Permissions;
 using CourseMate.Services.Dtos.PaymentRequests;
 using Microsoft.AspNetCore.Authorization;
-using Volo.Abp.Application.Dtos;
 
 namespace CourseMate.Services.PaymentRequests;
 

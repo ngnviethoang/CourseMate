@@ -1,14 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using CourseMate.Shared.Constants;
-
-namespace CourseMate.Services.Dtos.Lessons;
+﻿namespace CourseMate.Services.Dtos.Lessons;
 
 public class CreateUpdateLessonDto
 {
     [MaxLength(1024)]
     public string Title { get; set; } = string.Empty;
 
-    [MaxLength(2048)]
+    [MaxLength(10000)]
     public string ContentText { get; set; } = string.Empty;
 
     [MaxLength(CourseMateConst.FileNameMaxLength)]

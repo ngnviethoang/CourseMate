@@ -1,7 +1,4 @@
-﻿using CourseMate.Services.Dtos;
-using CourseMate.Services.Dtos.Chapters;
-using Volo.Abp.Application.Dtos;
-using Volo.Abp.Application.Services;
+﻿using CourseMate.Services.Dtos.Chapters;
 
 namespace CourseMate.Services.Chapters;
 

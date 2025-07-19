@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Volo.Abp.Domain.Entities.Auditing;
-
-namespace CourseMate.Entities.Notifications;
+﻿namespace CourseMate.Entities.Notifications;
 
 public class Notification : FullAuditedEntity<Guid>
 {
@@ -15,10 +12,10 @@ public class Notification : FullAuditedEntity<Guid>
 
     public Guid ReceiverUserId { get; set; }
 
-    [MaxLength(1024)]
+    [MaxLength(CourseMateConst.DefaultMaxLength)]
     public string Title { get; set; }
 
-    [MaxLength(1024)]
+    [MaxLength(CourseMateConst.DefaultMaxLength)]
     public string Content { get; set; }
 
     public bool IsRead { get; set; }

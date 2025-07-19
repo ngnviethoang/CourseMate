@@ -1,16 +1,11 @@
-﻿using System.Linq.Dynamic.Core;
-using CourseMate.Entities.Chapters;
-using CourseMate.Entities.Courses;
+﻿using CourseMate.Entities.Courses;
 using CourseMate.Permissions;
-using CourseMate.Services.Dtos;
 using CourseMate.Services.Dtos.Chapters;
 using CourseMate.Services.Dtos.Courses;
 using CourseMate.Services.Dtos.Lessons;
-using CourseMate.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp;
-using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Validation;
 
@@ -54,6 +49,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
             where chapter.CourseId == id
             group lesson by chapter
             into g
+            orderby g.Key.Position
             select new ChapterDto
             {
                 Id = g.Key.Id,
@@ -61,7 +57,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
                 Position = g.Key.Position,
                 CourseId = g.Key.CourseId,
                 CourseTitle = g.Key.Title,
-                Lessons = g.Select(i => new LessonDto
+                Lessons = g.OrderBy(i => i.Position).Select(i => new LessonDto
                 {
                     Id = i.Id,
                     Title = i.Title,
@@ -88,7 +84,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
             {
                 Id = course.Id,
                 Title = course.Title,
-                Description = course.Description,
+                Description = string.Empty,
                 ThumbnailFile = course.ThumbnailFile,
                 Price = course.Price,
                 Currency = course.Currency,
@@ -177,8 +173,10 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
             input.Currency,
             input.LevelType,
             input.IsPublished,
+            input.Summary,
             instructorId,
-            input.CategoryId);
+            input.CategoryId
+        );
         await CourseRepo.InsertAsync(course);
         return new ResultObjectDto(course.Id);
     }

@@ -1,6 +1,4 @@
-﻿using Volo.Abp.Application.Dtos;
-
-namespace CourseMate.Services.Dtos.Lessons;
+﻿namespace CourseMate.Services.Dtos.Lessons;
 
 public class LessonDto : AuditedEntityDto<Guid>
 {

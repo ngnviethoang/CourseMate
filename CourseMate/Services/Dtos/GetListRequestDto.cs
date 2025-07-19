@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CourseMate.Services.Dtos;
+﻿namespace CourseMate.Services.Dtos;
 
 public class GetListRequestDto
 {

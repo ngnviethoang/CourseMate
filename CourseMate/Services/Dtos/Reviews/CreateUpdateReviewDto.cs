@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using CourseMate.Entities.Reviews;
+﻿using CourseMate.Entities.Reviews;
 
 namespace CourseMate.Services.Dtos.Reviews;
 

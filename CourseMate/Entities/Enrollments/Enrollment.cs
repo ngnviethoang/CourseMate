@@ -1,6 +1,4 @@
-﻿using Volo.Abp.Domain.Entities.Auditing;
-
-namespace CourseMate.Entities.Enrollments;
+﻿namespace CourseMate.Entities.Enrollments;
 
 public class Enrollment : FullAuditedEntity<Guid>
 {

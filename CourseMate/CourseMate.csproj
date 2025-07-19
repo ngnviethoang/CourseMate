@@ -68,11 +68,16 @@
         <None Remove="**\*.abppkg"/>
         <None Remove="**\*.abppkg.analyze.json"/>
         <Content Remove="$(UserProfile)\.nuget\packages\*\*\contentFiles\any\*\*.abppkg*"/>
-        <Compile Remove="Migrations\20250702035920_V1.cs"/>
-        <Compile Remove="Migrations\20250702035920_V1.Designer.cs"/>
     </ItemGroup>
 
     <ItemGroup>
         <Folder Include="coursemate-files\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="Data\Seeds\categories.json" />
+      <None Include="Data\Seeds\chapters.json" />
+      <None Include="Data\Seeds\courses.json" />
+      <None Include="Data\Seeds\lessons.json" />
     </ItemGroup>
 </Project>

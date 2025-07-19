@@ -1,6 +1,6 @@
 import type { AuditedEntityDto } from '@abp/ng.core';
 
-export interface CreateUpdateLessonDto {
+export interface LessonDto extends AuditedEntityDto<string> {
   title?: string;
   contentText?: string;
   videoFile?: string;
@@ -9,7 +9,7 @@ export interface CreateUpdateLessonDto {
   position: number;
 }
 
-export interface LessonDto extends AuditedEntityDto<string> {
+export interface CreateUpdateLessonDto {
   title?: string;
   contentText?: string;
   videoFile?: string;

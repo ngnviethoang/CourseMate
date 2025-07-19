@@ -1,12 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using CourseMate.Shared.Constants;
-using Volo.Abp.Domain.Entities.Auditing;
-
-namespace CourseMate.Entities.Courses;
+﻿namespace CourseMate.Entities.Courses;
 
 public class Course : FullAuditedEntity<Guid>
 {
-    public Course(Guid id, string title, string description, string thumbnailFile, decimal price, CurrencyType currency, LevelType levelType, bool isPublished, Guid instructorId, Guid categoryId) : base(id)
+    public Course(Guid id, string title, string description, string thumbnailFile, decimal price, CurrencyType currency, LevelType levelType, bool isPublished, string summary, Guid instructorId, Guid categoryId) : base(id)
     {
         Title = title;
         Description = description;
@@ -17,13 +13,17 @@ public class Course : FullAuditedEntity<Guid>
         IsPublished = isPublished;
         InstructorId = instructorId;
         CategoryId = categoryId;
+        Summary = summary;
     }
 
-    [MaxLength(1024)]
+    [MaxLength(CourseMateConst.DefaultMaxLength)]
     public string Title { get; set; }
 
-    [MaxLength(32768)] // 2^15
+    [MaxLength(CourseMateConst.DescriptionMaxLength)]
     public string Description { get; set; }
+
+    [MaxLength(CourseMateConst.DescriptionMaxLength)]
+    public string Summary { get; set; }
 
     [MaxLength(CourseMateConst.FileNameMaxLength)]
     public string ThumbnailFile { get; set; }

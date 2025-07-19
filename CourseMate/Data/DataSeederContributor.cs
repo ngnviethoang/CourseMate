@@ -4,7 +4,6 @@ using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
 using CourseMate.Entities.Lessons;
 using CourseMate.Permissions;
-using CourseMate.Shared.Constants;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;

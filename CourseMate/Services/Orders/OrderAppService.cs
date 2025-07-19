@@ -1,9 +1,7 @@
 ﻿using CourseMate.Entities.Orders;
 using CourseMate.Permissions;
-using CourseMate.Services.Dtos;
 using CourseMate.Services.Dtos.Orders;
 using Microsoft.AspNetCore.Authorization;
-using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 
 namespace CourseMate.Services.Orders;

@@ -1,16 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
-using CourseMate.Entities.Courses;
-using CourseMate.Shared.Constants;
+﻿using CourseMate.Entities.Courses;
 
 namespace CourseMate.Services.Dtos.Courses;
 
 public class CreateUpdateCourseDto
 {
-    [MaxLength(1024)]
+    [MaxLength(CourseMateConst.DefaultMaxLength)]
     public string Title { get; set; } = string.Empty;
 
-    [MaxLength(32768)] // 2^15
+    [MaxLength(CourseMateConst.DescriptionMaxLength)]
     public string Description { get; set; } = string.Empty;
+
+    [MaxLength(CourseMateConst.DescriptionMaxLength)]
+    public string Summary { get; set; } = string.Empty;
 
     [MaxLength(CourseMateConst.FileNameMaxLength)]
     public string ThumbnailFile { get; set; } = string.Empty;

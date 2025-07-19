@@ -6,15 +6,20 @@ import { LoadingIndicatorService } from './services/loading-indicator.service';
 
 @Component({
     selector: 'app-root',
+    styleUrls: ['./app.component.scss'],
     template: `
         @if (loading$ | async) {
-            <div class="fixed h-screen w-screen z-9999 flex justify-center items-center bg-black bg-opacity-50">
-                <p-progress-spinner ariaLabel="loading" />
+            <div id="loading-overlay" class="overlay">
+                <span class="loader"></span>
             </div>
         }
-        <app-navbar *ngIf="!(location === '/coming-soon')"></app-navbar>
-        <router-outlet></router-outlet>
-        <app-footer *ngIf="!(location === '/coming-soon')"></app-footer>
+        @if (!(location === '/coming-soon')) {
+            <app-navbar></app-navbar>
+            <router-outlet></router-outlet>
+            <app-footer></app-footer>
+        } @else {
+            <router-outlet></router-outlet>
+        }
         <ngx-scrolltop></ngx-scrolltop>
     `,
     providers: [

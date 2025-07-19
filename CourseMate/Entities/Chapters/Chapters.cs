@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Volo.Abp.Domain.Entities.Auditing;
-
-namespace CourseMate.Entities.Chapters;
+﻿namespace CourseMate.Entities.Chapters;
 
 public class Chapter : FullAuditedEntity<Guid>
 {
@@ -12,7 +9,7 @@ public class Chapter : FullAuditedEntity<Guid>
         Position = position;
     }
 
-    [MaxLength(1024)]
+    [MaxLength(CourseMateConst.DefaultMaxLength)]
     public string Title { get; set; }
 
     public Guid CourseId { get; set; }

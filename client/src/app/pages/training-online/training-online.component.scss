@@ -25,6 +25,7 @@
     box-shadow: 0px 8px 16px 0px rgba(146, 184, 255, 0.2);
 
     .courses-image {
+        height: 200px;
         border-radius: 5px 5px 0 0;
         position: relative;
         z-index: 1;
@@ -85,7 +86,7 @@
 
     .courses-content {
         border-radius: 0 0 5px 5px;
-        padding: 30px;
+        padding: 10px 30px 30px;
 
         .course-author {
             margin-bottom: 10px;
@@ -109,7 +110,7 @@
         h3 {
             margin-bottom: 12px;
             line-height: 1.3;
-            height: 50px;
+            height: 40px;
             font: {
                 size: 20px;
                 weight: 800;

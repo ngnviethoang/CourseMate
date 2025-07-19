@@ -1,6 +1,4 @@
-﻿using Volo.Abp.Application.Dtos;
-
-namespace CourseMate.Entities.VideoProgresses;
+﻿namespace CourseMate.Entities.VideoProgresses;
 
 public class VideoProgress : FullAuditedEntityDto<Guid>
 {

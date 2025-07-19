@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using CourseMate.Shared.Constants;
-using Volo.Abp.Domain.Entities.Auditing;
-
-namespace CourseMate.Entities.Lessons;
+﻿namespace CourseMate.Entities.Lessons;
 
 public class Lesson : FullAuditedEntity<Guid>
 {
@@ -16,10 +12,10 @@ public class Lesson : FullAuditedEntity<Guid>
         Position = position;
     }
 
-    [MaxLength(1024)]
+    [MaxLength(CourseMateConst.DefaultMaxLength)]
     public string Title { get; set; }
 
-    [MaxLength(10000)]
+    [MaxLength(CourseMateConst.DescriptionMaxLength)]
     public string ContentText { get; set; }
 
     [MaxLength(CourseMateConst.FileNameMaxLength)]

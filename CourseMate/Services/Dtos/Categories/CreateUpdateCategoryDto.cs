@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CourseMate.Services.Dtos.Categories;
+﻿namespace CourseMate.Services.Dtos.Categories;
 
 public class CreateUpdateCategoryDto
 {

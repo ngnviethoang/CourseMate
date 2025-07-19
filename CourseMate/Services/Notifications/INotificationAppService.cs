@@ -1,7 +1,4 @@
-﻿using CourseMate.Services.Dtos;
-using CourseMate.Services.Dtos.Notifications;
-using Volo.Abp.Application.Dtos;
-using Volo.Abp.Application.Services;
+﻿using CourseMate.Services.Dtos.Notifications;
 
 namespace CourseMate.Services.Notifications;
 

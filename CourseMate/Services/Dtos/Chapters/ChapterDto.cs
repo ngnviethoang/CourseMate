@@ -1,5 +1,4 @@
 ﻿using CourseMate.Services.Dtos.Lessons;
-using Volo.Abp.Application.Dtos;
 
 namespace CourseMate.Services.Dtos.Chapters;
 

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CourseMate.Services.Dtos.Chapters;
+﻿namespace CourseMate.Services.Dtos.Chapters;
 
 public class CreateUpdateChapterDto
 {

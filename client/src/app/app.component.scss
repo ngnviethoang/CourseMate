@@ -4,7 +4,7 @@
     display: flex;
     position: absolute;
     border: 3px solid;
-    border-color: #de3500 #0000 #fff #0000;
+    border-color: #de3500 #0000 #007bff #0000;
     border-radius: 50%;
     box-sizing: border-box;
     animation: 1s rotate linear infinite;
@@ -23,7 +23,7 @@
     display: flex;
     position: absolute;
     border: 10px solid transparent;
-    border-bottom-color: #fff;
+    border-bottom-color: #007bff;
     transform: translate(-10px, 19px) rotate(-35deg);
     justify-content: center;
     align-items: center;

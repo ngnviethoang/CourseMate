@@ -1,16 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Crawler.Models.Courses;
+﻿namespace Crawler.Models.Courses;
 
 public class Course
 {
     public Guid Id { get; set; }
 
-    [MaxLength(1024)]
     public string Title { get; set; }
 
-    [MaxLength(1024)]
     public string Description { get; set; }
+
+    public string Summary { get; set; }
 
     public string ThumbnailFile { get; set; }
 

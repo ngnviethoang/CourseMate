@@ -1,6 +1,4 @@
-﻿using Volo.Abp.Application.Dtos;
-
-namespace CourseMate.Services.Dtos.Notifications;
+﻿namespace CourseMate.Services.Dtos.Notifications;
 
 public class NotificationDto : AuditedEntityDto<Guid>
 {

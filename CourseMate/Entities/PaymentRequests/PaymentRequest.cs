@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Volo.Abp.Domain.Entities.Auditing;
-
-namespace CourseMate.Entities.PaymentRequests;
+﻿namespace CourseMate.Entities.PaymentRequests;
 
 public class PaymentRequest : FullAuditedEntity<Guid>
 {
@@ -15,12 +12,12 @@ public class PaymentRequest : FullAuditedEntity<Guid>
 
     public PaymentStateType State { get; set; }
 
-    [MaxLength(24)]
+    [MaxLength(CourseMateConst.DefaultMaxLength)]
     public string Currency { get; set; }
 
-    [MaxLength(1024)]
+    [MaxLength(CourseMateConst.DefaultMaxLength)]
     public string Gateway { get; set; }
 
-    [MaxLength(1024)]
+    [MaxLength(CourseMateConst.DefaultMaxLength)]
     public string FailReason { get; set; }
 }

@@ -6603,7 +6603,7 @@
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 1024,
+          "maxLength": 32768,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -6658,6 +6658,18 @@
           "jsonName": null,
           "type": "System.Int32",
           "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Lessons",
+          "jsonName": null,
+          "type": "[CourseMate.Services.Dtos.Lessons.LessonDto]",
+          "typeSimple": "[CourseMate.Services.Dtos.Lessons.LessonDto]",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,
@@ -6895,6 +6907,18 @@
           "minimum": null,
           "maximum": null,
           "regex": null
+        },
+        {
+          "name": "Chapters",
+          "jsonName": null,
+          "type": "[CourseMate.Services.Dtos.Chapters.ChapterDto]",
+          "typeSimple": "[CourseMate.Services.Dtos.Chapters.ChapterDto]",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
         }
       ]
     },
@@ -6924,7 +6948,7 @@
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 1024,
+          "maxLength": 32768,
           "minimum": null,
           "maximum": null,
           "regex": null

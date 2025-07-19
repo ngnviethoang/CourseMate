@@ -1,87 +1,87 @@
 [
   {
-    "Id": "3d84bdd6-6187-4b7a-96ae-03252d19f6f4",
-    "Name": "Thu\u1EADt to\u00E1n",
-    "Description": "Description \u002B 67f50c7d-444f-45d4-9809-f57bc430b43c"
+    "Id": "5ac3586c-394f-45c2-b000-9332d118b498",
+    "Name": "Thuật toán",
+    "Description": "Description + 7b3d64fd-bbe0-47dc-b9cf-2a3cb335a7fa"
   },
   {
-    "Id": "45bce25c-e37e-46f1-91a5-5519465d7589",
-    "Name": "M\u1EB7c \u0111\u1ECBnh",
-    "Description": "Description \u002B 1a57f413-a791-4ff1-a493-a08d15e93adf"
+    "Id": "26149d95-7274-487e-bb63-a8ea37218401",
+    "Name": "Mặc định",
+    "Description": "Description + e8a3a651-6343-4782-9345-c0e930af5f30"
   },
   {
-    "Id": "0695c56e-854f-4ffc-9be0-5ea4e56dbf96",
-    "Name": "Kh\u00F3a h\u1ECDc chung FA",
-    "Description": "Description \u002B 8245c0c2-25db-4bad-b246-42a9c53f5f3b"
+    "Id": "9ea850dd-96cb-4597-88d0-61e69eba6398",
+    "Name": "Khóa học chung FA",
+    "Description": "Description + 4d1775c9-0d21-467f-afc7-5d53d8deac28"
   },
   {
-    "Id": "38a771e5-60a7-41f3-a402-0b9981a09adb",
+    "Id": "69a051b3-727b-4b21-a49e-3111c43932e0",
     "Name": "Fsoft Training with Fee",
-    "Description": "Description \u002B d2267948-224f-403c-81bb-9c47c4221059"
+    "Description": "Description + 9645673c-17b0-451b-a24d-b36469001d69"
   },
   {
-    "Id": "24e3beb3-3c49-4501-86d7-4b42cc79d073",
+    "Id": "566e8bf1-4129-45ab-8831-abd162e23184",
     "Name": "Fresher",
-    "Description": "Description \u002B 347fca06-56ea-44b2-bbd8-d093732ced30"
+    "Description": "Description + 73f9aad3-b22f-40e2-859b-5da6021a3516"
   },
   {
-    "Id": "fd10b968-9300-4fef-beff-61bec6f97a7c",
-    "Name": "Li\u00EAn k\u1EBFt tr\u01B0\u1EDDng",
-    "Description": "Description \u002B a437c275-7000-489e-b5c7-57570e6479db"
+    "Id": "399afdd3-8313-41d8-8d15-cd3453bb6f47",
+    "Name": "Liên kết trường",
+    "Description": "Description + f29f9537-1d22-49fd-8311-c9ab3c5bf601"
   },
   {
-    "Id": "85af4350-8343-42a1-99ae-5638e52eaf54",
+    "Id": "246ae2be-a939-484c-9047-dfdf3bd05e08",
     "Name": "EDN Testing",
-    "Description": "Description \u002B 0da79186-53f6-46a5-9eaa-763e7f054477"
+    "Description": "Description + 91b0d03d-f3ab-4f50-9493-8bd88955694e"
   },
   {
-    "Id": "19818110-5217-4477-bc92-2621d9ed223f",
+    "Id": "0240ee3a-0061-4483-a9d2-735d91233f00",
     "Name": "EDN Academy",
-    "Description": "Description \u002B 85cc1175-69a3-4c88-8086-edb80815db48"
+    "Description": "Description + 459cc1d6-5383-4411-b401-54a6d17ef4d7"
   },
   {
-    "Id": "0826e330-9d5d-43a4-a325-7beba529814c",
+    "Id": "0da1e150-2e32-4264-845b-305a8840e2a7",
     "Name": "EDN Team",
-    "Description": "Description \u002B 625d3d16-16e2-4ec6-98cd-e95238f26a54"
+    "Description": "Description + c3497a03-96bd-43a8-bf06-4a27d8cd177b"
   },
   {
-    "Id": "365cc056-7190-4cb1-b3ba-98b4d9bf0dae",
-    "Name": "Ki\u1EBFn th\u1EE9c kh\u00E1c",
-    "Description": "Description \u002B a4892252-0bbc-49c9-a28b-aa9cb4968251"
+    "Id": "b0522acc-c5e1-49b2-a340-440724cdeca8",
+    "Name": "Kiến thức khác",
+    "Description": "Description + a5e553ff-a7e9-44aa-86f2-3fd43c5db0d7"
   },
   {
-    "Id": "8da063f5-c8db-48ab-92b3-31b61281efff",
-    "Name": "L\u1EADp tr\u00ECnh \u1EE9ng d\u1EE5ng web",
-    "Description": "Description \u002B eb6ac734-8cb0-4241-b7ca-ecc90772254a"
+    "Id": "0ea5a97b-320a-4193-bca0-b964a22e3685",
+    "Name": "Lập trình ứng dụng web",
+    "Description": "Description + 8e00fb8a-c7e8-47b3-9da1-d8259b1cf4c2"
   },
   {
-    "Id": "c85cdf8b-6009-44c0-bd0f-a066f59d6894",
-    "Name": "Ch\u01B0\u01A1ng tr\u00ECnh khung",
-    "Description": "Description \u002B 358f576e-9184-4832-8eeb-4a97831162ee"
+    "Id": "317641f0-a185-4c35-9637-4e965bf4b06e",
+    "Name": "Chương trình khung",
+    "Description": "Description + c5ac2601-1745-4287-a559-0bfd30ec706e"
   },
   {
-    "Id": "72cfdd64-b5ec-48e6-ad9d-cb43865ef444",
-    "Name": "Ki\u1EBFn th\u1EE9c c\u01A1 s\u1EDF",
-    "Description": "Description \u002B 0b20d3bc-b6cf-442c-ba01-70c03f593cf5"
+    "Id": "01ebd503-5522-4871-81a4-ec12bd80cdf3",
+    "Name": "Kiến thức cơ sở",
+    "Description": "Description + 68568572-eccd-4042-ba1b-a04ca44d9daf"
   },
   {
-    "Id": "1e1fda41-69ea-4748-a6b6-b445897750e6",
-    "Name": "L\u1EADp tr\u00ECnh n\u00E2ng cao",
-    "Description": "Description \u002B e8dc0b76-273f-4cb2-8a1b-d1dbf58075e2"
+    "Id": "80e95633-2022-4c78-ab94-57c9d3d51e2d",
+    "Name": "Lập trình nâng cao",
+    "Description": "Description + b78913ac-8eeb-48b0-bc17-4c7ebeb5409a"
   },
   {
-    "Id": "91e692aa-5b83-40fd-9c8d-271c4b687e8a",
-    "Name": "Gi\u1EA3i quy\u1EBFt v\u1EA5n \u0111\u1EC1",
-    "Description": "Description \u002B 4cef536c-717f-4146-bdc0-0647929cf5f0"
+    "Id": "087499f3-3cc2-4d25-8ad5-8c63c6b74c44",
+    "Name": "Giải quyết vấn đề",
+    "Description": "Description + de72109c-cf34-40cb-9369-9462282f7073"
   },
   {
-    "Id": "cf86de08-b3e5-4642-90f7-e472cd00826d",
-    "Name": "K\u1EF9 n\u0103ng n\u00E2ng cao",
-    "Description": "Description \u002B 66896bff-797c-4463-bbb5-29e06a6626f4"
+    "Id": "9483a3b6-2fc1-4536-9792-d998b843da73",
+    "Name": "Kỹ năng nâng cao",
+    "Description": "Description + 7aad55c9-1e16-4f51-87b5-9b49d0bcbbad"
   },
   {
-    "Id": "defb2636-bf62-4c0f-9d09-dbacf34686ad",
-    "Name": "L\u1EADp tr\u00ECnh c\u01A1 s\u1EDF",
-    "Description": "Description \u002B 9351fa32-443f-400c-95d3-7671c01ca719"
+    "Id": "fbb5c2ee-0724-4bbc-a075-450004d1f20c",
+    "Name": "Lập trình cơ sở",
+    "Description": "Description + 094182d0-2f50-4d60-93c9-6b11cdd02161"
   }
 ]

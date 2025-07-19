@@ -1,7 +1,11 @@
-﻿using CourseMate.Entities.Categories;
+﻿using System.Text.Json;
+using CourseMate.Entities.Categories;
 using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
 using CourseMate.Entities.Enrollments;
+using CourseMate.Entities.Exercises;
+using CourseMate.Entities.Exercises.CodingExercises;
+using CourseMate.Entities.Exercises.MultipleChoiceExercises;
 using CourseMate.Entities.Lessons;
 using CourseMate.Entities.Notifications;
 using CourseMate.Entities.Orders;
@@ -97,6 +101,45 @@ public static class CourseMateDbContextModelBuilderExtensions
         builder.Entity<Notification>(b =>
         {
             b.ToTable("Notifications", DbSchema);
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<Exercise>(b =>
+        {
+            b.ToTable("Exercises", DbSchema);
+            b.HasOne<Lesson>().WithMany().HasForeignKey(i => i.LessonId).IsRequired();
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<CodingExercise>(b =>
+        {
+            b.ToTable("CodingExercises", DbSchema);
+            b.HasOne<Exercise>().WithOne().HasForeignKey<CodingExercise>(i => i.ExerciseId).IsRequired();
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<TestCase>(b =>
+        {
+            b.ToTable("TestCases", DbSchema);
+            b.HasOne<CodingExercise>().WithMany().HasForeignKey(i => i.CodingExerciseId).IsRequired();
+            b.ConfigureByConvention();
+        });
+
+        JsonSerializerOptions options = new()
+        {
+            WriteIndented = false,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+        builder.Entity<MultipleChoiceExercise>(b =>
+        {
+            b.ToTable("MultipleChoiceExercises", DbSchema);
+            b.HasOne<Exercise>().WithMany().HasForeignKey(i => i.ExerciseId).IsRequired();
+            b.Property(x => x.Options)
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, options),
+                    v => JsonSerializer.Deserialize<Dictionary<int, string>>(v, options) ?? new Dictionary<int, string>()
+                )
+                .HasMaxLength(CourseMateConst.DescriptionMaxLength);
             b.ConfigureByConvention();
         });
     }

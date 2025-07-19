@@ -1,8 +1,6 @@
 ﻿using CourseMate.Entities.Notifications;
-using CourseMate.Services.Dtos;
 using CourseMate.Services.Dtos.Notifications;
 using Microsoft.AspNetCore.Authorization;
-using Volo.Abp.Application.Dtos;
 
 namespace CourseMate.Services.Notifications;
 

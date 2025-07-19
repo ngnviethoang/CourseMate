@@ -1,614 +1,614 @@
 [
   {
-    "Id": "24b1ec39-ed6a-4141-9164-236e1266f16a",
-    "Title": "Gi\u1EDBi thi\u1EC7u Scratch",
-    "CourseId": "21f0c4fe-ab76-40f2-99f0-0cbd6dfb8045",
+    "Id": "fe89c338-a561-45e8-be2e-6465e6ef8552",
+    "Title": "Giới thiệu Scratch",
+    "CourseId": "e3e2c06a-408b-4330-a30f-6b9df6c5b61a",
     "Position": 1
   },
   {
-    "Id": "84eb5428-e237-4147-b804-c822938fe663",
-    "Title": "T\u1EA1o c\u00E1c tr\u00F2 ch\u01A1i theo nh\u00F3m kh\u1ED1i l\u1EC7nh",
-    "CourseId": "21f0c4fe-ab76-40f2-99f0-0cbd6dfb8045",
+    "Id": "25171d97-2651-4502-bc58-40cbd572aadf",
+    "Title": "Tạo các trò chơi theo nhóm khối lệnh",
+    "CourseId": "e3e2c06a-408b-4330-a30f-6b9df6c5b61a",
     "Position": 2
   },
   {
-    "Id": "433b5035-7629-4ab9-a67e-d70d9deb6df2",
-    "Title": "S\u1EA3n ph\u1EA9m cu\u1ED1i kh\u00F3a",
-    "CourseId": "21f0c4fe-ab76-40f2-99f0-0cbd6dfb8045",
+    "Id": "255b3c07-c453-4783-96ef-ae10698fbabd",
+    "Title": "Sản phẩm cuối khóa",
+    "CourseId": "e3e2c06a-408b-4330-a30f-6b9df6c5b61a",
     "Position": 3
   },
   {
-    "Id": "61899a17-8b26-45a9-a67f-a2fedcadaa64",
-    "Title": "T\u1ED5ng quan v\u1EC1 l\u1EADp tr\u00ECnh C\u002B\u002B",
-    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Id": "d8e5d8e5-7b6c-4c5b-9209-821e9a533c7a",
+    "Title": "Tổng quan về lập trình C++",
+    "CourseId": "3cfe0502-a9d6-4353-b87f-ed417a83124f",
     "Position": 1
   },
   {
-    "Id": "8dbbe80f-37ab-4b67-a44e-67058718d2f0",
-    "Title": "C\u00E1c kh\u00E1i ni\u1EC7m c\u01A1 b\u1EA3n",
-    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Id": "0673c3cb-8017-4f8e-aba4-b60f0ef797a1",
+    "Title": "Các khái niệm cơ bản",
+    "CourseId": "3cfe0502-a9d6-4353-b87f-ed417a83124f",
     "Position": 2
   },
   {
-    "Id": "8dd80c39-472f-4639-b8bd-e2e5548777c3",
-    "Title": "Nh\u1EADp - xu\u1EA5t d\u1EEF li\u1EC7u t\u1EEB b\u00E0n ph\u00EDm",
-    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Id": "a1f7c649-c30c-4be2-9541-d51de4712954",
+    "Title": "Nhập - xuất dữ liệu từ bàn phím",
+    "CourseId": "3cfe0502-a9d6-4353-b87f-ed417a83124f",
     "Position": 3
   },
   {
-    "Id": "1d280e8f-ad83-4407-9ecb-68f4ecb0b9be",
-    "Title": "To\u00E1n t\u1EED trong c\u002B\u002B",
-    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Id": "e119e517-1a3c-4756-bc71-8124ede492e7",
+    "Title": "Toán tử trong c++",
+    "CourseId": "3cfe0502-a9d6-4353-b87f-ed417a83124f",
     "Position": 4
   },
   {
-    "Id": "a217d1af-1094-43a4-a476-9c9a93b21072",
-    "Title": "C\u1EA5u tr\u00FAc r\u1EBD nh\u00E1nh",
-    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Id": "cbb65694-0ff7-4070-9e58-999596582272",
+    "Title": "Cấu trúc rẽ nhánh",
+    "CourseId": "3cfe0502-a9d6-4353-b87f-ed417a83124f",
     "Position": 5
   },
   {
-    "Id": "a161bdf2-a4e8-4a5a-89b1-7da5014992fa",
-    "Title": "V\u00F2ng l\u1EB7p",
-    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Id": "5f970759-175f-48ea-bcfe-c27c4409bb13",
+    "Title": "Vòng lặp",
+    "CourseId": "3cfe0502-a9d6-4353-b87f-ed417a83124f",
     "Position": 6
   },
   {
-    "Id": "0ed2b2ae-4ce0-45d0-b02c-7d9ef1a0d6db",
-    "Title": "M\u1EA3ng",
-    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Id": "0f705c03-0eed-485b-a440-caf811670cb5",
+    "Title": "Mảng",
+    "CourseId": "3cfe0502-a9d6-4353-b87f-ed417a83124f",
     "Position": 7
   },
   {
-    "Id": "d757de9b-a435-4505-80e9-1e31da19686f",
+    "Id": "60d3e2b3-b6e9-41c7-a44c-8139e7b1662d",
     "Title": "String",
-    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "CourseId": "3cfe0502-a9d6-4353-b87f-ed417a83124f",
     "Position": 8
   },
   {
-    "Id": "a943296a-6e12-46d1-8ccd-64b56c0d8c8d",
-    "Title": "H\u00E0m",
-    "CourseId": "6a946916-8c7a-4baf-9c85-8df283825f8a",
+    "Id": "c3bb7a1a-a6e1-4471-a71b-ff9a4eb042dd",
+    "Title": "Hàm",
+    "CourseId": "3cfe0502-a9d6-4353-b87f-ed417a83124f",
     "Position": 9
   },
   {
-    "Id": "e763d3bd-8615-4dfa-b147-5caa6cd410c2",
-    "Title": "\u1EE8ng d\u1EE5ng AI trong c\u00F4ng vi\u00EA\u0323c",
-    "CourseId": "5db9a916-272c-405a-964a-294d75417c09",
+    "Id": "32c7970e-d889-47c5-ba13-1bf59309402d",
+    "Title": "Ứng dụng AI trong công việc",
+    "CourseId": "e79d99e5-6325-4f50-833d-ee7de5bc43c1",
     "Position": 1
   },
   {
-    "Id": "e1c32d27-ac29-4d94-8579-e18e60f2ebe3",
-    "Title": "T\u1ED5ng quan v\u1EC1 l\u1EADp tr\u00ECnh Java",
-    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Id": "e3aa1c57-0005-4713-8b26-9a125169bc56",
+    "Title": "Tổng quan về lập trình Java",
+    "CourseId": "743dd717-48b2-45b1-b9c0-8ded60965ecb",
     "Position": 1
   },
   {
-    "Id": "b8896505-13d8-405f-869a-1171b715fb59",
-    "Title": "C\u00E1c kh\u00E1i ni\u1EC7m c\u01A1 b\u1EA3n",
-    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Id": "ef55e99a-89af-4040-8547-3ce1ed99aeea",
+    "Title": "Các khái niệm cơ bản",
+    "CourseId": "743dd717-48b2-45b1-b9c0-8ded60965ecb",
     "Position": 2
   },
   {
-    "Id": "a11a77ce-c3c1-4f1e-b838-aaa3b326d797",
-    "Title": "Nh\u1EADp - xu\u1EA5t d\u1EEF li\u1EC7u t\u1EEB b\u00E0n ph\u00EDm",
-    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Id": "27aa88e7-a021-49a0-82cb-32c2bfd28f02",
+    "Title": "Nhập - xuất dữ liệu từ bàn phím",
+    "CourseId": "743dd717-48b2-45b1-b9c0-8ded60965ecb",
     "Position": 3
   },
   {
-    "Id": "2f5ac533-00cc-406a-9738-c99f01404d9a",
-    "Title": "To\u00E1n t\u1EED trong Java",
-    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Id": "8a812c9d-4a4d-4c66-8e9b-6d0784ceba7f",
+    "Title": "Toán tử trong Java",
+    "CourseId": "743dd717-48b2-45b1-b9c0-8ded60965ecb",
     "Position": 4
   },
   {
-    "Id": "58768958-c4b0-4979-8e15-fe5c46b6ae69",
-    "Title": "C\u1EA5u tr\u00FAc r\u1EBD nh\u00E1nh",
-    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Id": "045487cf-89ba-4503-b6e1-20e2e03144b7",
+    "Title": "Cấu trúc rẽ nhánh",
+    "CourseId": "743dd717-48b2-45b1-b9c0-8ded60965ecb",
     "Position": 5
   },
   {
-    "Id": "669cf6c7-6c93-43a2-aff8-bb10f4959631",
-    "Title": "V\u00F2ng l\u1EB7p",
-    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Id": "0e36950e-fe57-40da-b564-9ef4866b2c24",
+    "Title": "Vòng lặp",
+    "CourseId": "743dd717-48b2-45b1-b9c0-8ded60965ecb",
     "Position": 6
   },
   {
-    "Id": "39718b98-b66d-46f4-937c-1a487753e60b",
-    "Title": "M\u1EA3ng",
-    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Id": "2737e6c4-1a69-419a-9532-8914175c527d",
+    "Title": "Mảng",
+    "CourseId": "743dd717-48b2-45b1-b9c0-8ded60965ecb",
     "Position": 7
   },
   {
-    "Id": "c5856dff-879f-476e-a215-da8ce7009949",
+    "Id": "36860b84-ee67-4b15-9533-1c53d00c48b8",
     "Title": "String",
-    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "CourseId": "743dd717-48b2-45b1-b9c0-8ded60965ecb",
     "Position": 8
   },
   {
-    "Id": "7ab80c15-aea4-43b4-a133-e8ef1baf79eb",
-    "Title": "H\u00E0m",
-    "CourseId": "8c1335a9-01fb-4440-ac00-57d3523a6238",
+    "Id": "f5d36d9c-624b-4648-b875-190a2aa9f400",
+    "Title": "Hàm",
+    "CourseId": "743dd717-48b2-45b1-b9c0-8ded60965ecb",
     "Position": 9
   },
   {
-    "Id": "252cc833-80f5-4816-ac0a-510db117236b",
-    "Title": "Gi\u1EDBi thi\u1EC7u chung",
-    "CourseId": "80775727-455c-4a58-9584-421d56d128de",
+    "Id": "eb1f6aea-2cd3-4885-8897-a096ac15981f",
+    "Title": "Giới thiệu chung",
+    "CourseId": "00f1a774-5bca-44a5-b0ba-255b1d5047d3",
     "Position": 1
   },
   {
-    "Id": "427fa94c-a182-4f10-8ac6-82ec9d0caef5",
-    "Title": "Ch\u1EE9c n\u0103ng qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng",
-    "CourseId": "80775727-455c-4a58-9584-421d56d128de",
+    "Id": "16dc7e8b-24cc-4338-bcde-f3532389ad36",
+    "Title": "Chức năng quản lý người dùng",
+    "CourseId": "00f1a774-5bca-44a5-b0ba-255b1d5047d3",
     "Position": 2
   },
   {
-    "Id": "48839da8-3311-4b4b-bee7-2ef883a2af7b",
-    "Title": "Ch\u1EE9c n\u0103ng qu\u1EA3n l\u00FD c\u00F4ng vi\u1EC7c",
-    "CourseId": "80775727-455c-4a58-9584-421d56d128de",
+    "Id": "63bed55c-0803-48b3-96fb-6cfcbb613ade",
+    "Title": "Chức năng quản lý công việc",
+    "CourseId": "00f1a774-5bca-44a5-b0ba-255b1d5047d3",
     "Position": 3
   },
   {
-    "Id": "7637831d-966a-470b-bc6a-df6d3b96c6ab",
-    "Title": "Tri\u1EC3n khai d\u1EF1 \u00E1n",
-    "CourseId": "80775727-455c-4a58-9584-421d56d128de",
+    "Id": "1056efbd-e7bc-4f8a-ad52-e9a317b88640",
+    "Title": "Triển khai dự án",
+    "CourseId": "00f1a774-5bca-44a5-b0ba-255b1d5047d3",
     "Position": 4
   },
   {
-    "Id": "a1764ea3-e190-48ca-a47d-46dc66e7a770",
-    "Title": "Gi\u1EDBi thi\u1EC7u chung v\u1EC1 Python",
-    "CourseId": "c3500613-2ced-424d-a75d-db4526c1284e",
+    "Id": "f0fdd269-aacf-41ee-9086-c74c6337b50e",
+    "Title": "Giới thiệu chung về Python",
+    "CourseId": "d1839060-39f5-4877-a610-7036e35dbcaa",
     "Position": 1
   },
   {
-    "Id": "fc8963fb-96e5-4d76-911c-1265fe361da7",
-    "Title": "C\u00E1c kh\u00E1i ni\u1EC7m c\u01A1 b\u1EA3n",
-    "CourseId": "c3500613-2ced-424d-a75d-db4526c1284e",
+    "Id": "4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645",
+    "Title": "Các khái niệm cơ bản",
+    "CourseId": "d1839060-39f5-4877-a610-7036e35dbcaa",
     "Position": 2
   },
   {
-    "Id": "0b3dd095-3ae2-4dea-b9b0-871556dea7c7",
-    "Title": "S\u1ED1 v\u00E0 to\u00E1n h\u1ECDc",
-    "CourseId": "c3500613-2ced-424d-a75d-db4526c1284e",
+    "Id": "eb01ed8f-8fe0-40da-a6cf-db9d34076dd5",
+    "Title": "Số và toán học",
+    "CourseId": "d1839060-39f5-4877-a610-7036e35dbcaa",
     "Position": 3
   },
   {
-    "Id": "0d34a609-1b4f-4453-92bf-af2dca4cfafb",
-    "Title": "C\u1EA5u tr\u00FAc \u0111i\u1EC1u khi\u1EC3n",
-    "CourseId": "c3500613-2ced-424d-a75d-db4526c1284e",
+    "Id": "07cc1c31-5bff-416c-9a73-ff7d44b0650b",
+    "Title": "Cấu trúc điều khiển",
+    "CourseId": "d1839060-39f5-4877-a610-7036e35dbcaa",
     "Position": 4
   },
   {
-    "Id": "17e20322-8a79-42d5-bf77-e6738da234f1",
-    "Title": "Chu\u1ED7i v\u00E0 ph\u01B0\u01A1ng th\u1EE9c chu\u1ED7i",
-    "CourseId": "c3500613-2ced-424d-a75d-db4526c1284e",
+    "Id": "603a9390-65b8-43fd-9678-42382611037b",
+    "Title": "Chuỗi và phương thức chuỗi",
+    "CourseId": "d1839060-39f5-4877-a610-7036e35dbcaa",
     "Position": 5
   },
   {
-    "Id": "60939c9d-f91f-4ff2-8054-1cbbf1e1c8fe",
-    "Title": "H\u00E0m",
-    "CourseId": "c3500613-2ced-424d-a75d-db4526c1284e",
+    "Id": "d4001112-3495-4491-8523-3a632ebb407b",
+    "Title": "Hàm",
+    "CourseId": "d1839060-39f5-4877-a610-7036e35dbcaa",
     "Position": 6
   },
   {
-    "Id": "2a896fc5-40be-46b5-9e1c-d95f3abc1101",
-    "Title": "X\u00E2y d\u1EF1ng game",
-    "CourseId": "5e872ca5-6685-4b64-800d-4698c9b28cb9",
+    "Id": "0c187fb6-d795-4387-aa3f-21f1cbf01a7c",
+    "Title": "Xây dựng game",
+    "CourseId": "6097a7ef-548b-4542-8c60-5ee180d2dd96",
     "Position": 1
   },
   {
-    "Id": "1b6795e9-dbe2-4d2c-8ba8-4d48a1b4fca0",
-    "Title": "To\u00E1n h\u1ECDc",
-    "CourseId": "5e872ca5-6685-4b64-800d-4698c9b28cb9",
+    "Id": "a9a98c85-d92a-4980-a5fe-514d1b8b50a3",
+    "Title": "Toán học",
+    "CourseId": "6097a7ef-548b-4542-8c60-5ee180d2dd96",
     "Position": 2
   },
   {
-    "Id": "aba725b5-b9e2-40ee-ad42-5d4ecbb02a2c",
-    "Title": "Gi\u1EDBi thi\u1EC7u v\u1EC1 HTML v\u00E0 Web",
-    "CourseId": "c5480e6d-c26a-4792-a186-3ac147f69686",
+    "Id": "753659d3-4545-4b7e-a74c-6bdc7335fe3e",
+    "Title": "Giới thiệu về HTML và Web",
+    "CourseId": "d1c12cca-e6b1-40a0-b899-d19e62f3fa84",
     "Position": 1
   },
   {
-    "Id": "0f14008c-2cb1-465c-b9d8-b7f88e42d3f7",
-    "Title": "L\u00E0m quen v\u1EDBi CSS",
-    "CourseId": "c5480e6d-c26a-4792-a186-3ac147f69686",
+    "Id": "bda31c86-19c9-4da5-9a73-152e6c900589",
+    "Title": "Làm quen với CSS",
+    "CourseId": "d1c12cca-e6b1-40a0-b899-d19e62f3fa84",
     "Position": 2
   },
   {
-    "Id": "ef6d42fc-1bfb-4a07-a617-2e7a12c3df42",
-    "Title": "\u0110\u1ECBnh d\u1EA1ng v\u0103n b\u1EA3n v\u00E0 b\u1ED1 c\u1EE5c c\u01A1 b\u1EA3n",
-    "CourseId": "c5480e6d-c26a-4792-a186-3ac147f69686",
+    "Id": "bfc8c9f6-6861-47e7-b8e9-7395048353a4",
+    "Title": "Định dạng văn bản và bố cục cơ bản",
+    "CourseId": "d1c12cca-e6b1-40a0-b899-d19e62f3fa84",
     "Position": 3
   },
   {
-    "Id": "d3883a16-6b8e-4306-b773-3f8e75bff8e1",
-    "Title": "B\u1ED1 c\u1EE5c hi\u1EC7n \u0111\u1EA1i v\u1EDBi Flexbox v\u00E0 Grid",
-    "CourseId": "c5480e6d-c26a-4792-a186-3ac147f69686",
+    "Id": "6f250039-b2e7-45ed-a610-01c4f9f2c518",
+    "Title": "Bố cục hiện đại với Flexbox và Grid",
+    "CourseId": "d1c12cca-e6b1-40a0-b899-d19e62f3fa84",
     "Position": 4
   },
   {
-    "Id": "30637658-fdf1-401f-85ff-795af77fdc06",
-    "Title": "CSS n\u00E2ng cao v\u00E0 responsive",
-    "CourseId": "c5480e6d-c26a-4792-a186-3ac147f69686",
+    "Id": "bd6222e5-280f-4779-b6b7-1a845f8d4495",
+    "Title": "CSS nâng cao và responsive",
+    "CourseId": "d1c12cca-e6b1-40a0-b899-d19e62f3fa84",
     "Position": 5
   },
   {
-    "Id": "aa9fc04a-54bf-4a6b-9e6e-c5b5641d7305",
-    "Title": "Th\u1EF1c h\u00E0nh d\u1EF1 \u00E1n",
-    "CourseId": "c5480e6d-c26a-4792-a186-3ac147f69686",
+    "Id": "84c29e11-da4c-472d-8034-527a88725a96",
+    "Title": "Thực hành dự án",
+    "CourseId": "d1c12cca-e6b1-40a0-b899-d19e62f3fa84",
     "Position": 6
   },
   {
-    "Id": "9dabdc17-9604-42e4-a568-c9e541df403e",
-    "Title": "Gi\u1EDBi thi\u1EC7u",
-    "CourseId": "bfd14165-bd84-4221-bf18-8ba2d47763e5",
+    "Id": "e061903f-9d59-4a06-9953-7800b61be90a",
+    "Title": "Giới thiệu",
+    "CourseId": "fa7b1920-a356-48af-b27e-46550a64a8dc",
     "Position": 1
   },
   {
-    "Id": "d40632fb-e9a2-4826-83a9-ba408e290d76",
-    "Title": "C# c\u01A1 b\u1EA3n",
-    "CourseId": "bfd14165-bd84-4221-bf18-8ba2d47763e5",
+    "Id": "82938d8a-fa31-4c7d-9122-12be8dce501e",
+    "Title": "C# cơ bản",
+    "CourseId": "fa7b1920-a356-48af-b27e-46550a64a8dc",
     "Position": 2
   },
   {
-    "Id": "f9f269bd-cea2-42b9-9173-7932d86d2523",
-    "Title": "C\u1EA5u tr\u00FAc \u0111i\u1EC1u khi\u1EC3n",
-    "CourseId": "bfd14165-bd84-4221-bf18-8ba2d47763e5",
+    "Id": "95b06f40-f331-47fc-be32-89793d374830",
+    "Title": "Cấu trúc điều khiển",
+    "CourseId": "fa7b1920-a356-48af-b27e-46550a64a8dc",
     "Position": 3
   },
   {
-    "Id": "95849d5c-546f-4cbe-a250-2e4e9ffaa087",
-    "Title": "Ph\u01B0\u01A1ng th\u1EE9c, l\u1EDBp trong C#",
-    "CourseId": "bfd14165-bd84-4221-bf18-8ba2d47763e5",
+    "Id": "eea6930e-4a28-42b9-846f-80f642087f1d",
+    "Title": "Phương thức, lớp trong C#",
+    "CourseId": "fa7b1920-a356-48af-b27e-46550a64a8dc",
     "Position": 4
   },
   {
-    "Id": "49094872-e74d-45ff-989b-7392016d531b",
-    "Title": "T\u1ED5ng k\u1EBFt",
-    "CourseId": "bfd14165-bd84-4221-bf18-8ba2d47763e5",
+    "Id": "33b1eabc-e72c-44d1-9fc1-a5a9c6dab3dc",
+    "Title": "Tổng kết",
+    "CourseId": "fa7b1920-a356-48af-b27e-46550a64a8dc",
     "Position": 5
   },
   {
-    "Id": "04cb8233-240f-433a-9acf-e5dc010cfaba",
-    "Title": "Gi\u1EDBi thi\u1EC7u",
-    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Id": "1d71ef9c-b28e-4f0b-8439-544d893fb0be",
+    "Title": "Giới thiệu",
+    "CourseId": "eef4fafb-022a-430f-aad0-9416d37d656c",
     "Position": 1
   },
   {
-    "Id": "3bdc7414-6ee1-4778-b68e-3c51e6599fdb",
-    "Title": "Bi\u1EBFn v\u00E0 c\u00E1c ki\u1EC3u d\u1EEF li\u1EC7u",
-    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Id": "f867c55e-29ee-420a-8bcc-c45012ea43a9",
+    "Title": "Biến và các kiểu dữ liệu",
+    "CourseId": "eef4fafb-022a-430f-aad0-9416d37d656c",
     "Position": 2
   },
   {
-    "Id": "514f6a58-31f4-40cc-82f3-639e0fec9c15",
-    "Title": "Thao t\u00E1c v\u1EDBi d\u1EEF li\u1EC7u",
-    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Id": "b7ccd7f8-b737-4d9b-9bd3-4faec5567b37",
+    "Title": "Thao tác với dữ liệu",
+    "CourseId": "eef4fafb-022a-430f-aad0-9416d37d656c",
     "Position": 3
   },
   {
-    "Id": "794825fa-a925-44be-8577-d07abea84bf0",
-    "Title": "C\u1EA5u tr\u00FAc \u0111i\u1EC1u khi\u1EC3n, h\u00E0m",
-    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Id": "b1ba46fe-75f1-4447-8cb0-d4a6c81e1b51",
+    "Title": "Cấu trúc điều khiển, hàm",
+    "CourseId": "eef4fafb-022a-430f-aad0-9416d37d656c",
     "Position": 4
   },
   {
-    "Id": "35e31081-489e-46ea-9c4d-0f8ee8a7679c",
-    "Title": "\u0110\u1ED1i t\u01B0\u1EE3ng trong Javascript",
-    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Id": "4ebff68e-c0dd-43c1-a2a4-1aeb0f4ae5d2",
+    "Title": "Đối tượng trong Javascript",
+    "CourseId": "eef4fafb-022a-430f-aad0-9416d37d656c",
     "Position": 5
   },
   {
-    "Id": "7727e2a7-c26e-4bda-bf4d-2df07cc83432",
-    "Title": "L\u00E0m vi\u1EC7c v\u1EDBi DOM \u0026 BOM",
-    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Id": "77199784-d6bf-44b0-ba03-6da9d4198d33",
+    "Title": "Làm việc với DOM & BOM",
+    "CourseId": "eef4fafb-022a-430f-aad0-9416d37d656c",
     "Position": 6
   },
   {
-    "Id": "0a11bf37-7a8f-47d6-a310-022b637bd24e",
-    "Title": "B\u1EA5t \u0111\u1ED3ng b\u1ED9 trong JavaScript",
-    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Id": "f7883cb8-eb35-47c0-a110-4fa5b40f4c1f",
+    "Title": "Bất đồng bộ trong JavaScript",
+    "CourseId": "eef4fafb-022a-430f-aad0-9416d37d656c",
     "Position": 7
   },
   {
-    "Id": "457d11f9-b441-468c-ba16-385fd91a9d65",
-    "Title": "T\u1ED5ng k\u1EBFt",
-    "CourseId": "06d53571-d7ba-4892-9e6e-fda05a3ec96e",
+    "Id": "1a75260f-329e-4b1a-963e-6f0856b59bcd",
+    "Title": "Tổng kết",
+    "CourseId": "eef4fafb-022a-430f-aad0-9416d37d656c",
     "Position": 8
   },
   {
-    "Id": "0bb683c1-9cd2-4aa9-9308-92ab599dd206",
+    "Id": "330b22e5-bd9d-4b61-bed6-aaab65c123cf",
     "Title": "Python Automation Mastery",
-    "CourseId": "eedbea5e-b141-44b2-aa79-eec442d53d78",
+    "CourseId": "3dd82fcf-1316-40d6-85bb-a05fc30471db",
     "Position": 1
   },
   {
-    "Id": "cbce330c-80b7-4d4d-b759-167675a118ee",
-    "Title": "\u00D4n t\u1EADp c\u00E1c ki\u1EBFn th\u1EE9c c\u01A1 b\u1EA3n",
-    "CourseId": "a13e9a72-cae4-42cf-97de-92ff8bbd3ae6",
+    "Id": "e4a52d5e-e0a5-458e-9eb7-252490f0dcc9",
+    "Title": "Ôn tập các kiến thức cơ bản",
+    "CourseId": "3600145f-dbec-412b-94f1-08942f6afa16",
     "Position": 1
   },
   {
-    "Id": "4a3c9f45-dd96-45fa-936f-49c0dae00300",
-    "Title": "C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u t\u00EDch h\u1EE3p s\u1EB5n",
-    "CourseId": "a13e9a72-cae4-42cf-97de-92ff8bbd3ae6",
+    "Id": "d0d53c61-e27e-4450-960c-429ea63d5893",
+    "Title": "Cấu trúc dữ liệu tích hợp sẵn",
+    "CourseId": "3600145f-dbec-412b-94f1-08942f6afa16",
     "Position": 2
   },
   {
-    "Id": "f90522fd-e44c-451f-bf2a-77921976402a",
-    "Title": "L\u1EADp tr\u00ECnh h\u01B0\u1EDBng \u0111\u1ED1i t\u01B0\u1EE3ng",
-    "CourseId": "a13e9a72-cae4-42cf-97de-92ff8bbd3ae6",
+    "Id": "01f76acf-40d6-4601-92f5-c23bc6625a5f",
+    "Title": "Lập trình hướng đối tượng",
+    "CourseId": "3600145f-dbec-412b-94f1-08942f6afa16",
     "Position": 3
   },
   {
-    "Id": "3f5b9893-6de7-4c7e-8195-11865a980e28",
-    "Title": "X\u1EED l\u00FD l\u1ED7i v\u00E0 ngo\u1EA1i l\u1EC7",
-    "CourseId": "a13e9a72-cae4-42cf-97de-92ff8bbd3ae6",
+    "Id": "55e1b573-f06f-421d-881f-9ba3575ddcec",
+    "Title": "Xử lý lỗi và ngoại lệ",
+    "CourseId": "3600145f-dbec-412b-94f1-08942f6afa16",
     "Position": 4
   },
   {
-    "Id": "a2ecc9d6-2d85-46cf-aa00-34325f6bbbd0",
-    "Title": "X\u1EED l\u00FD File",
-    "CourseId": "a13e9a72-cae4-42cf-97de-92ff8bbd3ae6",
+    "Id": "a9f074bb-55b6-4325-b93e-58eaefe41551",
+    "Title": "Xử lý File",
+    "CourseId": "3600145f-dbec-412b-94f1-08942f6afa16",
     "Position": 5
   },
   {
-    "Id": "486d8258-4390-4840-aab3-446f038b6251",
-    "Title": "Modules v\u00E0 Packages",
-    "CourseId": "a13e9a72-cae4-42cf-97de-92ff8bbd3ae6",
+    "Id": "4245ba29-529d-4739-bc2b-b774082f6c58",
+    "Title": "Modules và Packages",
+    "CourseId": "3600145f-dbec-412b-94f1-08942f6afa16",
     "Position": 6
   },
   {
-    "Id": "0b0c5c31-739d-420b-aef3-fb5328329894",
-    "Title": "Gi\u1EDBi thi\u1EC7u chung",
-    "CourseId": "ee9d66f5-6456-40bb-8230-bb77a4567838",
+    "Id": "7e5584ec-4af7-405e-aa5b-7bac9149303a",
+    "Title": "Giới thiệu chung",
+    "CourseId": "3ffa0664-7966-4aa4-9557-049c00d033b7",
     "Position": 1
   },
   {
-    "Id": "374d6bf2-2218-4ec4-bb23-f58f315c7bbd",
-    "Title": "C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u",
-    "CourseId": "ee9d66f5-6456-40bb-8230-bb77a4567838",
+    "Id": "a06f1f45-b23e-427c-b114-aa4444c4c111",
+    "Title": "Cấu trúc dữ liệu",
+    "CourseId": "3ffa0664-7966-4aa4-9557-049c00d033b7",
     "Position": 2
   },
   {
-    "Id": "1cb5029e-2525-4805-936a-f62e3a6fa82f",
-    "Title": "Thu\u1EADt to\u00E1n s\u1EAFp x\u1EBFp",
-    "CourseId": "ee9d66f5-6456-40bb-8230-bb77a4567838",
+    "Id": "579b2a4f-6031-4429-b244-2061c4e519e0",
+    "Title": "Thuật toán sắp xếp",
+    "CourseId": "3ffa0664-7966-4aa4-9557-049c00d033b7",
     "Position": 3
   },
   {
-    "Id": "ff292c7a-6fe3-4d65-ae0c-4df75e0dd8a8",
-    "Title": "Thu\u1EADt to\u00E1n t\u00ECm ki\u1EBFm v\u00E0 chia \u0111\u1EC3 tr\u1ECB",
-    "CourseId": "ee9d66f5-6456-40bb-8230-bb77a4567838",
+    "Id": "fc11ed6e-e4ae-480e-b12f-67aec809ce17",
+    "Title": "Thuật toán tìm kiếm và chia để trị",
+    "CourseId": "3ffa0664-7966-4aa4-9557-049c00d033b7",
     "Position": 4
   },
   {
-    "Id": "9f549844-bb09-4762-ad94-b04909e50c8d",
-    "Title": "Thu\u1EADt to\u00E1n quy ho\u1EA1ch \u0111\u1ED9ng v\u00E0 quay lui",
-    "CourseId": "ee9d66f5-6456-40bb-8230-bb77a4567838",
+    "Id": "dbadb58f-5618-4ab1-be7d-ab0067c665a2",
+    "Title": "Thuật toán quy hoạch động và quay lui",
+    "CourseId": "3ffa0664-7966-4aa4-9557-049c00d033b7",
     "Position": 5
   },
   {
-    "Id": "3d46dc14-636d-46f0-8b2f-53d00ee41c8c",
-    "Title": "Thu\u1EADt to\u00E1n \u0111\u1ED3 th\u1ECB",
-    "CourseId": "ee9d66f5-6456-40bb-8230-bb77a4567838",
+    "Id": "ee5bbb65-4634-4c64-b289-9229a42a313b",
+    "Title": "Thuật toán đồ thị",
+    "CourseId": "3ffa0664-7966-4aa4-9557-049c00d033b7",
     "Position": 6
   },
   {
-    "Id": "62c071a7-fe50-45c1-adbd-5c4f8d1a9bd3",
-    "Title": "\u0110\u1ECCC GHI FILE",
-    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Id": "5e695d8e-500f-40cf-b5ac-2fd1501381d7",
+    "Title": "ĐỌC GHI FILE",
+    "CourseId": "961ac01c-382c-4aa5-bae1-d1429f27f06a",
     "Position": 1
   },
   {
-    "Id": "ce20f6cb-0b1b-4dbd-99b2-1830aee9c896",
-    "Title": "H\u00C0M TO\u00C1N H\u1ECCC",
-    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Id": "ff613291-f29e-4aba-a90f-43566082e70f",
+    "Title": "HÀM TOÁN HỌC",
+    "CourseId": "961ac01c-382c-4aa5-bae1-d1429f27f06a",
     "Position": 2
   },
   {
-    "Id": "44e9b4f2-c5f0-4fee-a8aa-d989a05b91fc",
-    "Title": "CON TR\u1ECE",
-    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Id": "233919f7-09cc-41bc-b45e-f5f4fdcd6e17",
+    "Title": "CON TRỎ",
+    "CourseId": "961ac01c-382c-4aa5-bae1-d1429f27f06a",
     "Position": 3
   },
   {
-    "Id": "98ef7fe4-f5cc-478c-bbc0-a3d9e3bf95f9",
-    "Title": "\u0110\u1EC6 QUY",
-    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Id": "eaf42478-1f56-4402-9c5d-272beaa42f7c",
+    "Title": "ĐỆ QUY",
+    "CourseId": "961ac01c-382c-4aa5-bae1-d1429f27f06a",
     "Position": 4
   },
   {
-    "Id": "31f03dea-d100-446b-8000-6053686d4cdb",
-    "Title": "L\u1EDAP TRONG C\u002B\u002B",
-    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Id": "434104ff-0f72-45b9-853d-dba6e936bea2",
+    "Title": "LỚP TRONG C++",
+    "CourseId": "961ac01c-382c-4aa5-bae1-d1429f27f06a",
     "Position": 5
   },
   {
-    "Id": "059b7422-ba9b-43ce-9f95-219e1dfc9dcf",
+    "Id": "00056a9e-d5ba-4913-b44e-db626b329749",
     "Title": "NAMESPACE , TEMPLATE",
-    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "CourseId": "961ac01c-382c-4aa5-bae1-d1429f27f06a",
     "Position": 6
   },
   {
-    "Id": "39a453f5-f4ba-48d4-98fb-7f5e336ffa82",
-    "Title": "X\u1EEC L\u00DD NGO\u1EA0I L\u1EC6",
-    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Id": "6724d6fa-d2b4-4a7d-9123-0fc06dab0123",
+    "Title": "XỬ LÝ NGOẠI LỆ",
+    "CourseId": "961ac01c-382c-4aa5-bae1-d1429f27f06a",
     "Position": 7
   },
   {
-    "Id": "5270d226-d354-4c8d-94f2-106a157d4697",
-    "Title": "C\u00C1C TH\u01AF VI\u1EC6N CHU\u1EA8N TRONG C\u002B\u002B",
-    "CourseId": "706a13c7-ac2d-4939-8225-152a1451f952",
+    "Id": "4ee9c053-98a1-45c5-8422-1448d19346dc",
+    "Title": "CÁC THƯ VIỆN CHUẨN TRONG C++",
+    "CourseId": "961ac01c-382c-4aa5-bae1-d1429f27f06a",
     "Position": 8
   },
   {
-    "Id": "84604212-57e0-4a25-8034-8d26745996ab",
-    "Title": "SQL n\u00E2ng cao",
-    "CourseId": "323224e6-61c1-463b-83d1-158cd15302da",
+    "Id": "2f98161f-7782-444c-aa95-799b88d59c60",
+    "Title": "SQL nâng cao",
+    "CourseId": "f9713740-694e-444f-98f3-d506f13c7914",
     "Position": 1
   },
   {
-    "Id": "1d0f394b-de93-46e1-bf6c-c699228b5bbe",
-    "Title": "Nh\u1EADp m\u00F4n SQL",
-    "CourseId": "af1027b5-fd78-4445-bf87-c1c05c0d05d8",
+    "Id": "426c56a8-b491-42e1-a02a-2cb6f1a9b1cb",
+    "Title": "Nhập môn SQL",
+    "CourseId": "97f41add-6aa0-4c20-8ad1-aba7ce768046",
     "Position": 1
   },
   {
-    "Id": "6f42c3d4-5b2f-481e-be6c-e429e5e11bbc",
-    "Title": "Th\u1EF1c h\u00E0nh v\u1EDBi SQL",
-    "CourseId": "4281a275-7a77-4145-bbdf-5863595e7d8c",
+    "Id": "761b448f-6f63-4f8a-914c-c5fb8fb69c7b",
+    "Title": "Thực hành với SQL",
+    "CourseId": "dc53780b-eb7a-4b88-8a8a-9aed47590056",
     "Position": 1
   },
   {
-    "Id": "654a150e-a415-437e-a3a2-be4e8ab919a3",
-    "Title": "L\u1EADp tr\u00ECnh h\u01B0\u1EDBng \u0111\u1ED1i t\u01B0\u1EE3ng trong C\u002B\u002B",
-    "CourseId": "8010c4da-c550-4c96-ad00-017d5f77d53e",
+    "Id": "67b842a2-8bcc-45b6-ad31-73c0d0e09801",
+    "Title": "Lập trình hướng đối tượng trong C++",
+    "CourseId": "3a705a75-7389-4e97-aeb8-58a58616032b",
     "Position": 1
   },
   {
-    "Id": "c59156f8-52a6-4b89-adc6-79221605182e",
-    "Title": "C\u002B\u002B n\u00E2ng cao",
-    "CourseId": "ff785ba0-016f-43d7-a0e0-0cd16e17bec9",
+    "Id": "2f8f6d1a-4c46-40a8-a903-1bbadba79247",
+    "Title": "C++ nâng cao",
+    "CourseId": "f996fe4f-4ab1-4979-9193-3881a8a806c9",
     "Position": 1
   },
   {
-    "Id": "8948db47-5128-4049-800c-8e894c22159a",
-    "Title": "L\u1EADp tr\u00ECnh h\u01B0\u1EDBng \u0111\u1ED1i t\u01B0\u1EE3ng trong java",
-    "CourseId": "fe5effd0-3439-4ea5-adde-03e855959ad0",
+    "Id": "f80b3a58-34c2-4ae7-9d20-6ec19d70b402",
+    "Title": "Lập trình hướng đối tượng trong java",
+    "CourseId": "acdafa98-5779-491b-b172-a6aeb14c5af1",
     "Position": 1
   },
   {
-    "Id": "4a61e9e4-494b-4f07-8359-b34c6193efab",
-    "Title": "C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u v\u00E0 gi\u1EA3i thu\u1EADt",
-    "CourseId": "4cbf29f3-75e3-493e-9e49-05bfe2eb0105",
+    "Id": "752843c7-42af-4fb1-9dd8-a8f9398847c4",
+    "Title": "Cấu trúc dữ liệu và giải thuật",
+    "CourseId": "3d68c61e-6eec-4416-8214-21930ae35f02",
     "Position": 1
   },
   {
-    "Id": "d79dcf09-0433-4255-8d7d-7723bf7931d0",
-    "Title": "L\u00E0m quen v\u1EDBi SQL",
-    "CourseId": "569ddad2-d67c-4900-bedb-ccc79bf37cf1",
+    "Id": "d29a8eb3-c15c-483a-8689-db85f3561079",
+    "Title": "Làm quen với SQL",
+    "CourseId": "7e7c3458-5caa-43c3-84d7-383ac98097f1",
     "Position": 1
   },
   {
-    "Id": "5f188bd4-3437-44dc-aa93-682e707c0cc3",
-    "Title": "C# c\u01A1 b\u1EA3n",
-    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Id": "d6a96253-4181-4a55-a304-1be89ba51175",
+    "Title": "C# cơ bản",
+    "CourseId": "737b5551-e148-4e64-aa54-2e85f82a30ff",
     "Position": 1
   },
   {
-    "Id": "d12065d2-180f-48e6-9b49-8ad7ea4a136b",
-    "Title": "X\u1EED l\u00FD x\u00E2u",
-    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Id": "32aa5bd2-27bf-4235-8887-ac9195a06a74",
+    "Title": "Xử lý xâu",
+    "CourseId": "737b5551-e148-4e64-aa54-2e85f82a30ff",
     "Position": 2
   },
   {
-    "Id": "9ca791e4-0760-4f1a-b471-6536953f96a3",
-    "Title": "H\u00E0m trong C#",
-    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Id": "291d0934-6ac5-48ef-944d-cdc06b84b300",
+    "Title": "Hàm trong C#",
+    "CourseId": "737b5551-e148-4e64-aa54-2e85f82a30ff",
     "Position": 3
   },
   {
-    "Id": "2adb9099-0d47-465d-b992-00d3dd911c79",
-    "Title": "Bi\u1EBFn",
-    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Id": "cbabfde1-dc78-4d4b-8615-285b122b9937",
+    "Title": "Biến",
+    "CourseId": "737b5551-e148-4e64-aa54-2e85f82a30ff",
     "Position": 4
   },
   {
-    "Id": "76060d72-7a39-4a65-82f6-01057b01345f",
-    "Title": "C\u00E1c to\u00E1n t\u1EED",
-    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Id": "69b1070f-85d6-478e-912a-eb0188b372ec",
+    "Title": "Các toán tử",
+    "CourseId": "737b5551-e148-4e64-aa54-2e85f82a30ff",
     "Position": 5
   },
   {
-    "Id": "8ee8ae9a-2564-4dd3-8bab-8f9cadb062b1",
-    "Title": "C\u00E1c c\u00E2u l\u1EC7nh \u0111i\u1EC1u ki\u1EC7n",
-    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Id": "ab47bae5-87c4-46ff-8959-2e40badedc8c",
+    "Title": "Các câu lệnh điều kiện",
+    "CourseId": "737b5551-e148-4e64-aa54-2e85f82a30ff",
     "Position": 6
   },
   {
-    "Id": "d8a4e639-6ea9-477d-a44b-7f256b9cebe5",
-    "Title": "V\u00F2ng l\u1EB7p",
-    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Id": "19f37cb6-945b-493e-8771-835627a148d0",
+    "Title": "Vòng lặp",
+    "CourseId": "737b5551-e148-4e64-aa54-2e85f82a30ff",
     "Position": 7
   },
   {
-    "Id": "ba128e0d-e0f9-45e0-8c1f-1c87a166e81e",
-    "Title": "M\u1EA3ng",
-    "CourseId": "2f90487a-328f-4779-8603-721d0d571145",
+    "Id": "652b916f-f7aa-4fe9-b699-a3b563d1e3bf",
+    "Title": "Mảng",
+    "CourseId": "737b5551-e148-4e64-aa54-2e85f82a30ff",
     "Position": 8
   },
   {
-    "Id": "7f341ea6-53f3-4c17-a16b-439af3ddc173",
-    "Title": "Ph\u1EA7n m\u1EC1m m\u00E1y t\u00EDnh",
-    "CourseId": "9a6d4dde-c342-4ee8-8ff9-6bdc7b3d73f7",
+    "Id": "b8cf0954-df72-4697-a3aa-c511c27460b4",
+    "Title": "Phần mềm máy tính",
+    "CourseId": "a9238453-835c-4c08-96e3-7a6b41bb2b76",
     "Position": 1
   },
   {
-    "Id": "2614d9a7-3dd4-445d-b5d5-83382bb9fdca",
-    "Title": "JavaScript c\u01A1 b\u1EA3n",
-    "CourseId": "92d67d54-db66-49c9-9c70-999dad95b7e2",
+    "Id": "59858042-cdb4-4568-a0cf-4d96777c7703",
+    "Title": "JavaScript cơ bản",
+    "CourseId": "820b7ae8-fcf9-46f4-b206-36d3bc57a496",
     "Position": 1
   },
   {
-    "Id": "a7bee6aa-681e-4fca-9a79-f0f22cb52714",
-    "Title": "C cho ng\u01B0\u1EDDi m\u1EDBi b\u1EAFt \u0111\u1EA7u",
-    "CourseId": "37a0ce38-f2e7-4e1b-bf0e-5331a9c52c64",
+    "Id": "b517837e-dbf8-444f-b273-a735897c1894",
+    "Title": "C cho người mới bắt đầu",
+    "CourseId": "4cd5c8a1-4784-4e9d-a965-c8aed969e868",
     "Position": 1
   },
   {
-    "Id": "44b0987c-890e-4028-b78a-f456b6b3f797",
-    "Title": "Thu\u1EADt to\u00E1n n\u00E2ng cao",
-    "CourseId": "0d20787c-dc53-402a-a726-98b9233960d3",
+    "Id": "fc87a170-547a-4ced-81ae-3274a87caa0d",
+    "Title": "Thuật toán nâng cao",
+    "CourseId": "e2b33def-af48-4e4c-b6cd-863a630f8ee7",
     "Position": 1
   },
   {
-    "Id": "78977fec-9566-41d7-a938-ad38c19dd0e7",
-    "Title": "Thu\u1EADt to\u00E1n c\u0103n b\u1EA3n",
-    "CourseId": "d5f80f60-c00d-4ceb-ab47-b8e74314f3ad",
+    "Id": "11c9763a-b933-4cd2-b044-23b0606040c3",
+    "Title": "Thuật toán căn bản",
+    "CourseId": "fbd63a54-b48e-417a-afd7-351c843d39f8",
     "Position": 1
   },
   {
-    "Id": "b956c129-7d70-442d-a129-d4f2d9aadfd3",
-    "Title": "Truy\u1EC1n th\u00F4ng v\u00E0 M\u1EA1ng m\u00E1y t\u00EDnh",
-    "CourseId": "204ea8be-97fd-4e1f-a432-8a5c4b28eb12",
+    "Id": "613cf8e9-fef7-4c87-8dbf-94eb65106cbe",
+    "Title": "Truyền thông và Mạng máy tính",
+    "CourseId": "beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc",
     "Position": 1
   },
   {
-    "Id": "4f86cb25-aa2c-4197-86ef-e0e034c4d49f",
-    "Title": "Th\u01B0 vi\u1EC7n chu\u1EA9n C\u002B\u002B",
-    "CourseId": "34c83e86-f2bf-480b-a6dd-afbddbbfe913",
+    "Id": "1aa80bc2-8195-4d96-b3c1-852a22d3c8cc",
+    "Title": "Thư viện chuẩn C++",
+    "CourseId": "ce685ee8-dca7-4304-befd-139a5700bc68",
     "Position": 1
   },
   {
-    "Id": "59c25c9e-e5ea-42f4-872c-769fb6c04c18",
-    "Title": "\u0110i\u1EC7n to\u00E1n \u0111\u00E1m m\u00E2y",
-    "CourseId": "c8a9b067-d788-4450-bed7-fc812610202d",
+    "Id": "2e41e951-16a4-4ee6-b352-0f635f1e1fa5",
+    "Title": "Điện toán đám mây",
+    "CourseId": "a4058b75-8386-431f-89a8-a28fa65ca6bf",
     "Position": 1
   },
   {
-    "Id": "6aa270a7-4d03-4d8c-acaa-66755ed82fbd",
-    "Title": "Ph\u1EA7n c\u1EE9ng m\u00E1y t\u00EDnh",
-    "CourseId": "0d8db463-6988-421b-b8f4-5c39f80fb5d4",
+    "Id": "1e0449c7-0839-4125-bf49-5f94c0267a03",
+    "Title": "Phần cứng máy tính",
+    "CourseId": "5de9e63d-fd88-4f4a-9a99-cd2051fdcad4",
     "Position": 1
   },
   {
-    "Id": "b61488a4-001d-46fc-a871-535e620411fe",
-    "Title": "Python c\u01A1 b\u1EA3n",
-    "CourseId": "134ecef3-9d80-4467-9506-4c8b8ec61116",
+    "Id": "34ecd2f4-c353-492a-8b7c-3f9be403f03d",
+    "Title": "Python cơ bản",
+    "CourseId": "efe114f7-dc5d-4059-a97b-4bbe5615ff4b",
     "Position": 1
   },
   {
-    "Id": "27b89390-d3b8-4b3a-8109-5e88f5152a7f",
-    "Title": "C\u002B\u002B cho ng\u01B0\u1EDDi m\u1EDBi b\u1EAFt \u0111\u1EA7u",
-    "CourseId": "dfa6cd0d-ea18-45be-a6f3-113d92fb53b9",
+    "Id": "f0ab2743-49da-46c1-b881-2862ba77471a",
+    "Title": "C++ cho người mới bắt đầu",
+    "CourseId": "e166a9f1-6df5-4b31-86b6-66b419634bd9",
     "Position": 1
   },
   {
-    "Id": "694a2a62-c43a-491b-afa2-5ec240fde4d9",
-    "Title": "Java c\u01A1 b\u1EA3n",
-    "CourseId": "e1390226-9bbc-4f61-98f8-7fe4c43b1bb3",
+    "Id": "dcbad372-bc1b-409c-b580-36efeab930a2",
+    "Title": "Java cơ bản",
+    "CourseId": "3a7e4e2a-395f-4213-81c5-03d945e1852f",
     "Position": 1
   }
 ]

@@ -37,7 +37,7 @@
             <div class="courses-details-desc pb-5">
                 <ul class="nav-tabset">
                     <li [ngClass]="{ active: currentTab === 'tab1' }" class="nav-tab">
-                        <span (click)="switchTab($event, 'tab1')">Tổng quan</span>
+                        <span (click)="switchTab($event, 'tab1')">Giới thiệu</span>
                     </li>
                     <li [ngClass]="{ active: currentTab === 'tab2' }" class="nav-tab">
                         <span (click)="switchTab($event, 'tab2')">Nội dung</span>
@@ -51,48 +51,32 @@
                 </ul>
                 <div class="tabs-container">
                     <div *ngIf="currentTab === 'tab1'" class="pane" id="tab1">
-                        <div class="courses-overview">
-                            <h3>Mô tả</h3>
-                            <p>
-                                {{ courseDto.description }}
-                            </p>
-                            <h3>Chứng chỉ</h3>
-                            <p>
-                                Sau khi hoàn thành khóa học, học viên sẽ nhận được chứng chỉ hoàn tất do hệ thống
-                                cấp. Chứng chỉ có thể được sử dụng để bổ sung vào hồ sơ xin việc hoặc chứng minh
-                                năng lực trong công việc hiện tại.
-                            </p>
-                            <h3>Khóa học này dành cho ai?</h3>
-                            <p>
-                                Khóa học phù hợp với sinh viên, người đi làm, và bất kỳ ai muốn nâng cao kỹ năng
-                                chuyên môn hoặc chuyển ngành. Không yêu cầu kiến thức nền tảng, mọi nội dung đều
-                                được xây dựng từ căn bản.
-                            </p>
+                        <div class="courses-overview" [innerHTML]="courseDto.description">
                         </div>
                     </div>
                     <div *ngIf="currentTab === 'tab2'" class="pane" id="tab2">
                         <div class="courses-curriculum">
-                            <!--   @for (chapter of courseDto.chapters; track chapter.id) {
-                                   <h3>{{ chapter.name }}</h3>
-                                   <ul>
-                                       @for (lesson of chapter.lessons; track lesson.id) {
-                                           <li>
-                                               <a [routerLinkActiveOptions]="{  exact: true }"
-                                                  class="popup-youtube d-flex justify-content-between align-items-center"
-                                                  [routerLink]="['/video-lesson', courseDto.id]"
-                                                  [queryParams]="{ lessonId: lesson.id }"
-                                                  routerLinkActive="active">
-                                                   <span class="courses-name">{{ lesson.name }}</span>
-                                                   <div class="courses-meta">
-                                                       <span class="questions">5 questions</span>
-                                                       <span class="duration"> {{ lesson.duration }} Minutes</span>
-                                                       <span class="status">Preview</span>
-                                                   </div>
-                                               </a>
-                                           </li>
-                                       }
-                                   </ul>
-                               }-->
+                            @for (chapter of courseDto.chapters; track chapter.id) {
+                                <h3>{{ chapter.title }}</h3>
+                                <ul>
+                                    @for (lesson of chapter.lessons; track lesson.id) {
+                                        <li>
+                                            <a [routerLinkActiveOptions]="{  exact: true }"
+                                               class="popup-youtube d-flex justify-content-between align-items-center"
+                                               [routerLink]="['/video-lesson', courseDto.id]"
+                                               [queryParams]="{ lessonId: lesson.id }"
+                                               routerLinkActive="active">
+                                                <span class="courses-name">{{ lesson.title }}</span>
+                                                <div class="courses-meta">
+                                                    <span class="questions">5 questions</span>
+                                                    <span class="duration"> {{ lesson.duration }} Minutes</span>
+                                                    <span class="status">Preview</span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
                         </div>
                     </div>
                     <div *ngIf="currentTab === 'tab3'" class="pane" id="tab3">

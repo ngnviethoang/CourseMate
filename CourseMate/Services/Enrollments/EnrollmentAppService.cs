@@ -1,9 +1,7 @@
-﻿using System.Linq.Dynamic.Core;
-using CourseMate.Entities.Enrollments;
+﻿using CourseMate.Entities.Enrollments;
 using CourseMate.Permissions;
 using CourseMate.Services.Dtos.Enrollments;
 using Microsoft.AspNetCore.Authorization;
-using Volo.Abp.Application.Dtos;
 
 namespace CourseMate.Services.Enrollments;
 
