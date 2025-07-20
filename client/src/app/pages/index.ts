@@ -37,3 +37,4 @@ export * from './login/login.component';
 export * from './payment-success/payment-success.component';
 export * from './run-code/run-code.component';
 export * from './video-lesson/video-lesson.component';
+export * from './lesson/lesson.component';

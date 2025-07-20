@@ -8,17 +8,18 @@ import { LoadingIndicatorService } from './services/loading-indicator.service';
     selector: 'app-root',
     styleUrls: ['./app.component.scss'],
     template: `
+
         @if (loading$ | async) {
             <div id="loading-overlay" class="overlay">
                 <span class="loader"></span>
             </div>
         }
-        @if (!(location === '/coming-soon')) {
+        @if (isEmptyLayoutPage()) {
+            <router-outlet></router-outlet>
+        } @else {
             <app-navbar></app-navbar>
             <router-outlet></router-outlet>
             <app-footer></app-footer>
-        } @else {
-            <router-outlet></router-outlet>
         }
         <ngx-scrolltop></ngx-scrolltop>
     `,
@@ -34,6 +35,10 @@ export class AppComponent implements OnInit {
     location: any;
     routerSubscription: any;
     loading$: Observable<boolean>;
+    emptyLayoutPages: string[] = [
+        '/coming-soon',
+        '/lesson'
+    ];
 
     constructor(
         private loadingService: LoadingIndicatorService,
@@ -55,5 +60,9 @@ export class AppComponent implements OnInit {
                 }
                 window.scrollTo(0, 0);
             });
+    }
+
+    isEmptyLayoutPage(): boolean {
+        return this.emptyLayoutPages.includes(this.location);
     }
 }

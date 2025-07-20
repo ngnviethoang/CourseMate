@@ -6,7 +6,7 @@ public class CreateUpdateLessonDto
     public string Title { get; set; } = string.Empty;
 
     [MaxLength(10000)]
-    public string ContentText { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
 
     [MaxLength(CourseMateConst.FileNameMaxLength)]
     public string VideoFile { get; set; } = string.Empty;

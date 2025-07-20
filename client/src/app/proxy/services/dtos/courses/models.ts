@@ -28,6 +28,7 @@ export interface CourseDto extends AuditedEntityDto<string> {
 export interface CreateUpdateCourseDto {
   title?: string;
   description?: string;
+  summary?: string;
   thumbnailFile?: string;
   price: number;
   currency?: CurrencyType;

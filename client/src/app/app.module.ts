@@ -61,7 +61,8 @@ import {
     TeacherComponent,
     TermsOfServiceComponent,
     TrainingOnlineComponent,
-    TrainingCourseDetailComponent
+    TrainingCourseDetailComponent,
+    LessonComponent
 } from '@pages';
 import {
     ApplyInstructorComponent,
@@ -93,6 +94,16 @@ import { Popover } from 'primeng/popover';
 import { Select } from 'primeng/select';
 import { Paginator } from 'primeng/paginator';
 import { Image } from 'primeng/image';
+import { SplitterModule } from 'primeng/splitter';
+import { TabsModule } from 'primeng/tabs';
+import { InputIcon } from 'primeng/inputicon';
+import { Divider } from 'primeng/divider';
+
+import { MonacoEditorModule, NgxMonacoEditorConfig } from 'ngx-monaco-editor-v2';
+import { Card } from 'primeng/card';
+import { MessagesModule } from 'primeng/messages';
+import { TableModule } from 'primeng/table';
+import { Message } from 'primeng/message';
 
 const CourseMatePreset = definePreset(Lara, {
     semantic: {
@@ -111,6 +122,16 @@ const CourseMatePreset = definePreset(Lara, {
         }
     }
 });
+
+const monacoConfig: NgxMonacoEditorConfig = {
+    baseUrl: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs',
+    defaultOptions: { scrollBeyondLastLine: false },
+    onMonacoLoad: () => {
+        console.log((<any>window).monaco);
+    },
+    requireConfig: { preferScriptTags: true },
+    monacoRequire: (<any>window).monacoRequire
+};
 
 @NgModule({
     declarations: [
@@ -165,7 +186,8 @@ const CourseMatePreset = definePreset(Lara, {
         SendEmailAfterRegisterComponent,
         NotificationUsersComponent,
         AccountBookmarkCourseComponent,
-        CartComponent
+        CartComponent,
+        LessonComponent
     ],
     imports: [
         BrowserModule,
@@ -202,7 +224,16 @@ const CourseMatePreset = definePreset(Lara, {
         Popover,
         Select,
         Paginator,
-        Image
+        Image,
+        SplitterModule,
+        TabsModule,
+        InputIcon,
+        Divider,
+        MonacoEditorModule.forRoot(monacoConfig),
+        Card,
+        MessagesModule,
+        TableModule,
+        Message
     ],
     providers: [
         provideAbpCore(

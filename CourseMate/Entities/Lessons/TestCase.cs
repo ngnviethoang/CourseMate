@@ -1,4 +1,4 @@
-﻿namespace CourseMate.Entities.Exercises.CodingExercises;
+﻿namespace CourseMate.Entities.Lessons;
 
 public class TestCase : FullAuditedEntity<Guid>
 {
@@ -10,13 +10,13 @@ public class TestCase : FullAuditedEntity<Guid>
 
     public bool IsHidden { get; set; }
 
-    public Guid CodingExerciseId { get; set; }
+    public Guid LessonId { get; set; }
 
-    public TestCase(Guid id, string input, string expectedOutput, bool isHidden, Guid codingExerciseId) : base(id)
+    public TestCase(Guid id, string input, string expectedOutput, bool isHidden, Guid lessonId) : base(id)
     {
         Input = input;
         ExpectedOutput = expectedOutput;
         IsHidden = isHidden;
-        CodingExerciseId = codingExerciseId;
+        LessonId = lessonId;
     }
 }

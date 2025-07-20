@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Crawler;
+using Crawler.Response.ActivityResponse;
 using Crawler.Response.CourseDetailResponse;
 using Crawler.Response.CourseListReponse;
 
@@ -35,7 +36,7 @@ if (courseList == null || courseList.Data == null)
 
 // Khai báo list để lưu dữ liệu
 List<CourseDetailResponse> courseDetails = new();
-
+List<ActivityResponse> activities = new();
 int index = 1;
 foreach (var datum in courseList.Data)
 {
@@ -68,13 +69,11 @@ foreach (var datum in courseList.Data)
 
             Console.WriteLine($"🧩  > Tổng số activity: {activityIds.Count}");
 
-            /*List<ActivityResponse> activities = new();
-
             foreach (int? activityId in activityIds)
             {
                 try
                 {
-                    response = await client.GetAsync($"https://api.codelearn.io/learn/course/get-personal-courses-detail?permalink={datum.Permalink}&activityId={activityId}");
+                    response = await client.GetAsync($"https://api.codelearn.io/learn/coding/getusercodeactivity?activityId={activityId}&permalink={datum.Permalink}&contextType=1");
                     response.EnsureSuccessStatusCode();
                     string json2 = await response.Content.ReadAsStringAsync();
                     ActivityResponse? activity = JsonSerializer.Deserialize<ActivityResponse>(json2, new JsonSerializerOptions
@@ -106,7 +105,7 @@ foreach (var datum in courseList.Data)
                 string activityJson = JsonSerializer.Serialize(activities, new JsonSerializerOptions { WriteIndented = true });
                 await File.WriteAllTextAsync(filePath, activityJson);
                 Console.WriteLine($"📁 Đã ghi activities của {datum.Permalink} vào: {filePath}");
-            }*/
+            }
         }
         else
         {
@@ -126,3 +125,8 @@ string courseDetailsPath = Path.Combine(baseDir, "courseDetails.json");
 string detailsJson = JsonSerializer.Serialize(courseDetails, new JsonSerializerOptions { WriteIndented = true });
 await File.WriteAllTextAsync(courseDetailsPath, detailsJson);
 Console.WriteLine($"📁 Đã ghi toàn bộ courseDetails vào: {courseDetailsPath}");
+
+string activityPath = Path.Combine(baseDir, "activities.json");
+string activitiesJson = JsonSerializer.Serialize(activities, new JsonSerializerOptions { WriteIndented = true });
+await File.WriteAllTextAsync(activityPath, activitiesJson);
+Console.WriteLine($"📁 Đã ghi toàn bộ activities vào: {activityPath}");

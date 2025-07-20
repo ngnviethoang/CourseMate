@@ -6524,6 +6524,24 @@
       "genericArguments": null,
       "properties": null
     },
+    "CourseMate.Entities.Lessons.LessonType": {
+      "baseType": "System.Enum",
+      "isEnum": true,
+      "enumNames": [
+        "Video",
+        "Document",
+        "Quiz",
+        "Coding"
+      ],
+      "enumValues": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "genericArguments": null,
+      "properties": null
+    },
     "CourseMate.Entities.Reviews.RatingType": {
       "baseType": "System.Enum",
       "isEnum": true,
@@ -6954,6 +6972,18 @@
           "regex": null
         },
         {
+          "name": "Summary",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": 32768,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
           "name": "ThumbnailFile",
           "jsonName": null,
           "type": "System.String",
@@ -7203,13 +7233,13 @@
           "regex": null
         },
         {
-          "name": "ContentText",
+          "name": "Content",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 2048,
+          "maxLength": 10000,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -7272,6 +7302,42 @@
       "genericArguments": null,
       "properties": [
         {
+          "name": "Type",
+          "jsonName": null,
+          "type": "CourseMate.Entities.Lessons.LessonType",
+          "typeSimple": "enum",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ChapterId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Position",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
           "name": "Title",
           "jsonName": null,
           "type": "System.String",
@@ -7284,7 +7350,7 @@
           "regex": null
         },
         {
-          "name": "ContentText",
+          "name": "Content",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
@@ -7320,9 +7386,9 @@
           "regex": null
         },
         {
-          "name": "ChapterId",
+          "name": "CodeSampleJson",
           "jsonName": null,
-          "type": "System.Guid",
+          "type": "System.String",
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
@@ -7332,10 +7398,34 @@
           "regex": null
         },
         {
-          "name": "Position",
+          "name": "OptionsJson",
           "jsonName": null,
-          "type": "System.Int32",
-          "typeSimple": "number",
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CorrectAnswerJson",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Explanation",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,

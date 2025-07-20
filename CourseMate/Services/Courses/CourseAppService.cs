@@ -62,10 +62,15 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
                     Id = i.Id,
                     Title = i.Title,
                     ChapterId = i.ChapterId,
-                    ContentText = i.ContentText,
+                    Content = null,
                     Duration = i.Duration,
                     VideoFile = i.VideoFile,
                     Position = i.Position,
+                    CodeSampleJson = null,
+                    CorrectAnswerJson = null,
+                    Explanation = null,
+                    OptionsJson = null,
+                    Type = i.Type
                 })
             };
 

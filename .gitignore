@@ -266,3 +266,8 @@ CourseMate/Logs/*
 
 # Storage files
 */coursemate-files/*
+
+# Json files
+./Crawler/Data/*
+./Crawler/FormatData/*
+./CourseMate/Data/Seeds/*

@@ -1,7 +1,9 @@
-﻿using Crawler.Models.Categories;
+﻿using System.Diagnostics.SymbolStore;
+using Crawler.Models.Categories;
 using Crawler.Models.Chapters;
 using Crawler.Models.Courses;
 using Crawler.Models.Lessons;
+using Crawler.Response.ActivityResponse;
 using Crawler.Response.CategoryResponse;
 using Crawler.Response.CourseDetailResponse;
 using Crawler.Response.CourseListReponse;
@@ -23,10 +25,10 @@ public static class FormatJson
         string baseDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "Data"));
 
         string categoryResponseString = await File.ReadAllTextAsync(Path.Combine(baseDir, "categories.json"));
-        CategoryResponse categoryJson = JsonConvert.DeserializeObject<CategoryResponse>(categoryResponseString, settings)!;
+        CategoryResponse categoryObj = JsonConvert.DeserializeObject<CategoryResponse>(categoryResponseString, settings)!;
         Dictionary<int, Guid> cateDict = new();
         List<Category> categories = new();
-        foreach (Datum categoryResponse in categoryJson.Data)
+        foreach (Datum categoryResponse in categoryObj.Data)
         {
             Category category = new()
             {
@@ -44,6 +46,7 @@ public static class FormatJson
         List<Course> courses = new();
         List<Chapter> chapters = new();
         List<Lesson> lessons = new();
+        Dictionary<int, Guid> activityDict = new();
 
         string courseList = await File.ReadAllTextAsync(Path.Combine(baseDir, "courseList.json"));
         CourseListReponse courseListJson = JsonConvert.DeserializeObject<CourseListReponse>(courseList, settings)!;
@@ -72,34 +75,63 @@ public static class FormatJson
             };
             courses.Add(course);
             int postitionChapter = 1;
-            foreach (CourseScheduleList courseScheduleList in courseDetailResponse.Data.CourseSchedule.CourseScheduleList)
+            var sections = courseDetailResponse.Data.CourseSchedule.CourseScheduleList.SelectMany(i => i.Sections) ?? [];
+            foreach (var section in sections)
             {
                 Chapter chapter = new()
                 {
                     Id = Guid.NewGuid(),
-                    Title = courseScheduleList.ScheduleTitle,
+                    Title = section.SectionName,
                     CourseId = course.Id,
                     Position = postitionChapter++
                 };
                 chapters.Add(chapter);
                 int postitionLesson = 1;
-                foreach (Section section in courseScheduleList.Sections)
+                foreach (var activity in section.Activities)
                 {
                     Lesson lesson = new()
                     {
                         Id = Guid.NewGuid(),
-                        Title = section.SectionName,
+                        Title = activity.ActivityTitle,
                         Position = postitionLesson++,
                         ChapterId = chapter.Id,
-                        ContentText = section.Activities.FirstOrDefault()?.ActivityTitle ?? string.Empty,
-                        Duration = TimeSpan.FromMinutes(random.Next(1, 20)),
-                        VideoFile = string.Empty
+                        Content = string.Empty,
+                        Duration = TimeSpan.FromMinutes(activity.Duration ?? 0),
+                        VideoFile = null,
+                        CodeSampleJson = null,
+                        CorrectAnswerJson = null,
+                        Explanation = null,
+                        OptionsJson = null,
+                        Type = LessonType.Coding,
                     };
                     lessons.Add(lesson);
+                    activityDict.Add(activity.ActivityId!.Value, lesson.Id);
                 }
             }
         }
 
+        var lessonDict = lessons.ToDictionary(l => l.Id);
+        string activityResponseString = await File.ReadAllTextAsync(Path.Combine(baseDir, "activities.json"));
+        var activityObj = JsonConvert.DeserializeObject<List<ActivityResponse>>(activityResponseString, settings)!;
+        foreach (ActivityResponse activityResponse in activityObj)
+        {
+            var activity = activityResponse.Data?.CodeActivity?.Activity;
+            if (activity != null)
+            {
+                activityDict.TryGetValue(activity.Id!.Value, out Guid activityId);
+                lessonDict.TryGetValue(activityId, out Lesson? lesson);
+                if (lesson != null)
+                {
+                    lesson.Content = activity.MultiLangData.FirstOrDefault(i => i.Key == "vn")?.Description ?? string.Empty;
+                    lesson.VideoFile = null;
+                    lesson.CodeSampleJson = null;
+                    lesson.CorrectAnswerJson = null;
+                    lesson.Explanation = null;
+                    lesson.OptionsJson = null;
+                    lesson.Type = LessonType.Coding;
+                }
+            }
+        }
 
         baseDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "FormatData"));
         Directory.CreateDirectory(baseDir);

@@ -39,13 +39,15 @@ import {
     LoginComponent,
     RunCodeComponent,
     VideoLessonComponent,
-    PaymentSuccessComponent
+    PaymentSuccessComponent,
+    LessonComponent
 } from '@pages';
 
 const routes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'training-online', component: TrainingOnlineComponent },
     { path: 'training-online/:id', component: TrainingCourseDetailComponent },
+    { path: 'lesson', component: LessonComponent },
 
     { path: 'profile', component: ProfileComponent },
     { path: 'about', component: AboutComponent },
