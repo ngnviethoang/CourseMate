@@ -1,106 +1,244 @@
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/editor/editor.main.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/editor/editor.main.min.css" rel="stylesheet">
 
-<div class="tw-grid tw-grid-cols-12 tw-gap-2 tw-bg-[#f0f0f0] tw-h-[100vh] tw-p-2">
-    <!-- Left Column -->
-    <p-card class="tw-col-span-5 tw-h-full px-1">
-        <p-tabs value="0">
-            <p-tablist>
-                <p-tab value="0">
-                    <p-inputicon class="pi pi-file" />
-                    <span class="tw-font-bold tw-whitespace-nowrap">Description</span>
-                </p-tab>
-                <p-tab value="1">
-                    <p-inputicon class="pi pi-history" />
-                    <span class="tw-font-bold tw-whitespace-nowrap">Submissions</span>
-                </p-tab>
-                <p-tab value="2">
-                    <p-inputicon class="pi pi-comments" />
-                    <span class="tw-font-bold tw-whitespace-nowrap">Discuss</span>
-                </p-tab>
-            </p-tablist>
-
-            <p-tabpanels class="py-0 px-0">
-                <p-tabpanel value="0">
-                    <div class="tw-h-[85vh] tw-overflow-y-auto" [innerHTML]="lessonDto.content"></div>
-                </p-tabpanel>
-                <p-tabpanel value="1">
-                    <div class="tw-h-[85vh] tw-overflow-y-auto">
-                        <p-table [value]="submissions">
-                            <ng-template pTemplate="header">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Status</th>
-                                    <th>Runtime</th>
-                                    <th>Submitted At</th>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-sub let-i="rowIndex">
-                                <tr>
-                                    <td>{{ i + 1 }}</td>
-                                    <td>{{ sub.status }}</td>
-                                    <td>{{ sub.runtime }}</td>
-                                    <td>{{ sub.time | date:'short' }}</td>
-                                </tr>
-                            </ng-template>
-                        </p-table>
-                    </div>
-                </p-tabpanel>
-                <p-tabpanel value="2">
-                    <div class="tw-h-[85vh] tw-overflow-y-auto">
-                        <p-message [(value)]="discussions"></p-message>
-                    </div>
-                </p-tabpanel>
-            </p-tabpanels>
-        </p-tabs>
-    </p-card>
-
-    <!-- Right Column -->
-    <p-card class="tw-col-span-7 tw-h-full px-1">
-        <!-- Toolbar -->
-        <div class="tw-flex tw-items-center tw-justify-between tw-bg-white tw-p-2 tw-border-b tw-rounded-t">
-            <div class="tw-flex tw-items-center tw-gap-2 tw-mb-4">
-                <label for="language" class="tw-font-semibold">Language:</label>
-                <p-select id="language" [options]="languages" [(ngModel)]="selectedLanguage" optionLabel="name"
-                          placeholder="Select Language" />
-            </div>
-            <div class="tw-flex tw-gap-2">
-                <p-button icon="pi pi-play" [rounded]="true" [text]="true" severity="success" (click)="runCode()" />
-                <p-button icon="pi pi-refresh" [rounded]="true" [text]="true" severity="secondary"
-                          (click)="resetCode()" />
-            </div>
+<p-drawer [(visible)]="visible" position="left" [closable]="false"
+          [style]="{width: '400px'}">
+    <ng-template #header>
+        <div class="tw-flex tw-flex-col">
+            <p-breadcrumb [model]="items" />
+            <h1 class="tw-text-2xl tw-font-bold tw-pl-4">
+                Nội dung khóa học
+            </h1>
         </div>
+    </ng-template>
+    <p-accordion [value]="0">
+        @for (chapter of courseProgressDto.chapters; track chapter.chapterId) {
+            <p-accordion-panel [value]="chapter.chapterId">
+                <p-accordion-header>{{ chapter.title }}</p-accordion-header>
+                <p-accordion-content>
+                    @for (lesson of chapter.lessons; track lesson.lessonId) {
+                        <div class="tw-p-2 tw-flex tw-flex-col tw-gap-1 tw-cursor-pointer"
+                             (click)="onChangeLesson(lesson.lessonId)"
+                             [ngClass]="{
+    'tw-bg-rose-100': lesson.lessonId === currentLessonId,
+    'hover:tw-bg-rose-200': lesson.lessonId !== currentLessonId
+  }">
+                            <div class="tw-flex tw-items-center tw-gap-2">
+                                <p-checkbox [value]="lesson.isCompleted" [binary]="true" class="tw-accent-rose-500" />
+                                <span>{{ lesson.title }}</span>
+                            </div>
+                            <div class="tw-text-xs tw-text-rose-400 tw-pl-8">
+                                @switch (lesson.type) {
+                                    @case (LessonType.Video) {
+                                        <i class="pi pi-video tw-mr-1"></i>
+                                    }
+                                    @case (LessonType.Document) {
+                                        <i class="pi pi-book tw-mr-1"></i>
+                                    }
+                                    @case (LessonType.Quiz) {
+                                        <i class="pi pi-question tw-mr-1"></i>
+                                    }
+                                    @case (LessonType.Coding) {
+                                        <i class="pi pi-code tw-mr-1"></i>
+                                    }
+                                }
+                                {{ lesson.duration }}
+                            </div>
+                        </div>
+                    }
+                </p-accordion-content>
+            </p-accordion-panel>
+        }
+    </p-accordion>
+</p-drawer>
 
-        <!-- Editor -->
-        <ngx-monaco-editor
-            [options]="editorOptions"
-            [(ngModel)]="code"
-            style="width: 100%; height: 60vh"
-        ></ngx-monaco-editor>
+<div class="tw-grid tw-grid-cols-12 tw-gap-2 tw-bg-[#f0f0f0] tw-h-[100vh] tw-p-2 tw-relative">
+    <p-button (click)="visible = true" icon="pi pi-arrow-right" class="tw-fixed tw-top-1/4 tw-p-1"></p-button>
+    @switch (lessonDto.type) {
+        @case (LessonType.Video) {
+            <!-- Left Column -->
+            <p-card class="tw-col-span-4 tw-h-full">
+                <p-tabs value="0">
+                    <p-tablist>
+                        <p-tab value="0">
+                            <p-inputicon class="pi pi-file" />
+                            <span class="tw-font-bold tw-whitespace-nowrap">Description</span>
+                        </p-tab>
+                        <p-tab value="1">
+                            <p-inputicon class="pi pi-comments" />
+                            <span class="tw-font-bold tw-whitespace-nowrap">Discuss</span>
+                        </p-tab>
+                        <p-tab value="2">
+                            <p-inputicon class="pi pi-pen-to-square" />
+                            <span class="tw-font-bold tw-whitespace-nowrap">Note</span>
+                        </p-tab>
+                    </p-tablist>
 
-        <!-- Test case + Output -->
-        <div class="tw-p-2 tw-bg-white tw-rounded tw-shadow">
-            <h4 class="tw-font-bold mb-2">TestCase</h4>
-            <p-table [value]="submissions" scrollable="true" scrollHeight="135px">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>#</th>
-                        <th>Status</th>
-                        <th>Runtime</th>
-                        <th>Submitted At</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-sub let-i="rowIndex">
-                    <tr>
-                        <td>{{ i + 1 }}</td>
-                        <td>{{ sub.status }}</td>
-                        <td>{{ sub.runtime }}</td>
-                        <td>{{ sub.time | date:'short' }}</td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div>
-    </p-card>
+                    <p-tabpanels class="py-0 px-0">
+                        <p-tabpanel value="0">
+                            <div class="tw-h-[85vh] tw-overflow-y-auto" [innerHTML]="lessonDto.content"></div>
+                        </p-tabpanel>
+                        <p-tabpanel value="1">
+                            <div class="tw-h-[85vh] tw-overflow-y-auto">
+                                <p-message [(value)]="discussions"></p-message>
+                            </div>
+                        </p-tabpanel>
+                        <p-tabpanel value="2">
+                            <div class="tw-h-[85vh] tw-overflow-y-auto">
+                                <p-table [value]="submissions">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Status</th>
+                                            <th>Runtime</th>
+                                            <th>Submitted At</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-sub let-i="rowIndex">
+                                        <tr>
+                                            <td>{{ i + 1 }}</td>
+                                            <td>{{ sub.status }}</td>
+                                            <td>{{ sub.runtime }}</td>
+                                            <td>{{ sub.time | date:'short' }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabpanel>
+                    </p-tabpanels>
+                </p-tabs>
+            </p-card>
+
+            <!-- Right Column -->
+            <p-card class="tw-col-span-8 px-1 tw-h-full">
+                <div class="tw-grid tw-grid-flow-col tw-grid-rows-5 tw-gap-4 tw-h-full">
+                    <div class="tw-row-span-4">
+                        <iframe class="tw-h-full tw-w-full"
+                                src="https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=1&mute=1"></iframe>
+                    </div>
+                    <div class="tw-row-span-1">
+                        <p-panel header="Transcript">
+                            <p class="m-0">
+                                Lorem ipsum dolor sit amet...
+                            </p>
+                        </p-panel>
+                    </div>
+                </div>
+            </p-card>
+        }
+        @case (LessonType.Coding) {
+            <!-- Left Column -->
+            <p-card class="tw-col-span-6 tw-h-full">
+                <p-tabs value="0">
+                    <p-tablist>
+                        <p-tab value="0">
+                            <p-inputicon class="pi pi-file" />
+                            <span class="tw-font-bold tw-whitespace-nowrap">Description</span>
+                        </p-tab>
+                        <p-tab value="1">
+                            <p-inputicon class="pi pi-comments" />
+                            <span class="tw-font-bold tw-whitespace-nowrap">Discuss</span>
+                        </p-tab>
+                        <p-tab value="2">
+                            <p-inputicon class="pi pi-history" />
+                            <span class="tw-font-bold tw-whitespace-nowrap">Submissions</span>
+                        </p-tab>
+                    </p-tablist>
+
+                    <p-tabpanels class="py-0 px-0">
+                        <p-tabpanel value="0">
+                            <div class="tw-h-[85vh] tw-overflow-y-auto" [innerHTML]="lessonDto.content"></div>
+                        </p-tabpanel>
+                        <p-tabpanel value="1">
+                            <div class="tw-h-[85vh] tw-overflow-y-auto">
+                                <p-message [(value)]="discussions"></p-message>
+                            </div>
+                        </p-tabpanel>
+                        <p-tabpanel value="2">
+                            <div class="tw-h-[85vh] tw-overflow-y-auto">
+                                <p-table [value]="submissions">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Status</th>
+                                            <th>Runtime</th>
+                                            <th>Submitted At</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-sub let-i="rowIndex">
+                                        <tr>
+                                            <td>{{ i + 1 }}</td>
+                                            <td>{{ sub.status }}</td>
+                                            <td>{{ sub.runtime }}</td>
+                                            <td>{{ sub.time | date:'short' }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabpanel>
+                    </p-tabpanels>
+                </p-tabs>
+            </p-card>
+
+            <!-- Right Column -->
+            <p-card class="tw-col-span-6 tw-h-full px-1">
+                <!-- Toolbar -->
+                <div class="tw-flex tw-items-center tw-justify-between tw-bg-white tw-p-2 tw-border-b tw-rounded-t">
+                    <div class="tw-flex tw-items-center tw-gap-2 tw-mb-4">
+                        <label for="language" class="tw-font-semibold">Language:</label>
+                        <p-select id="language" [options]="languages" [(ngModel)]="selectedLanguage"
+                                  optionLabel="name"
+                                  placeholder="Select Language" />
+                    </div>
+                    <div class="tw-flex tw-gap-2">
+                        <p-button icon="pi pi-play" [rounded]="true" [text]="true" severity="success"
+                                  (click)="runCode()" />
+                        <p-button icon="pi pi-refresh" [rounded]="true" [text]="true" severity="secondary"
+                                  (click)="resetCode()" />
+                    </div>
+                </div>
+
+                <!-- Editor -->
+                <ngx-monaco-editor
+                    [options]="editorOptions"
+                    [(ngModel)]="code"
+                    style="width: 100%; height: 60vh"
+                ></ngx-monaco-editor>
+
+                <!-- Test case + Output -->
+                <div class="tw-p-2 tw-bg-white tw-rounded tw-shadow">
+                    <h4 class="tw-font-bold mb-2">TestCase</h4>
+                    <p-table [value]="submissions" scrollable="true" scrollHeight="135px" size="small">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>#</th>
+                                <th>Status</th>
+                                <th>Runtime</th>
+                                <th>Submitted At</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-sub let-i="rowIndex">
+                            <tr>
+                                <td>{{ i + 1 }}</td>
+                                <td>{{ sub.status }}</td>
+                                <td>{{ sub.runtime }}</td>
+                                <td>{{ sub.time | date:'short' }}</td>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template pTemplate="body" let-sub let-i="rowIndex">
+                            <tr>
+                                <td>{{ i + 1 }}</td>
+                                <td>{{ sub.status }}</td>
+                                <td>{{ sub.runtime }}</td>
+                                <td>{{ sub.time | date:'short' }}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </p-card>
+        }
+    }
 </div>
 
 

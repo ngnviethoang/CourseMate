@@ -79,7 +79,9 @@ import {
     TrainingComponent,
     UserCommentCoursesComponent, UserReviewCoursesComponent,
     VideoComponent,
-    VideoStyleTwoComponent
+    VideoStyleTwoComponent,
+    DefaultLayoutComponent,
+    EmptyLayoutComponent
 } from '@components';
 
 //primeng-ui
@@ -104,6 +106,11 @@ import { Card } from 'primeng/card';
 import { MessagesModule } from 'primeng/messages';
 import { TableModule } from 'primeng/table';
 import { Message } from 'primeng/message';
+import { Drawer } from 'primeng/drawer';
+import { Accordion, AccordionContent, AccordionHeader, AccordionPanel } from 'primeng/accordion';
+import { Checkbox } from 'primeng/checkbox';
+import { Panel } from 'primeng/panel';
+import { Breadcrumb } from 'primeng/breadcrumb';
 
 const CourseMatePreset = definePreset(Lara, {
     semantic: {
@@ -187,7 +194,9 @@ const monacoConfig: NgxMonacoEditorConfig = {
         NotificationUsersComponent,
         AccountBookmarkCourseComponent,
         CartComponent,
-        LessonComponent
+        LessonComponent,
+        DefaultLayoutComponent,
+        EmptyLayoutComponent
     ],
     imports: [
         BrowserModule,
@@ -233,7 +242,15 @@ const monacoConfig: NgxMonacoEditorConfig = {
         Card,
         MessagesModule,
         TableModule,
-        Message
+        Message,
+        Drawer,
+        Accordion,
+        AccordionPanel,
+        AccordionHeader,
+        AccordionContent,
+        Checkbox,
+        Panel,
+        Breadcrumb
     ],
     providers: [
         provideAbpCore(

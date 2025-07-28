@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import {
     AboutComponent,
     AccountBookmarkCourseComponent,
@@ -43,52 +44,64 @@ import {
     LessonComponent
 } from '@pages';
 
+import { DefaultLayoutComponent, EmptyLayoutComponent } from '@components';
+
 const routes: Routes = [
-    { path: '', component: HomeComponent },
-    { path: 'training-online', component: TrainingOnlineComponent },
-    { path: 'training-online/:id', component: TrainingCourseDetailComponent },
-    { path: 'lesson', component: LessonComponent },
+    {
+        path: '',
+        component: DefaultLayoutComponent,
+        children: [
+            { path: '', component: HomeComponent },
+            { path: 'training-online', component: TrainingOnlineComponent },
+            { path: 'training-online/:id', component: TrainingCourseDetailComponent },
 
-    { path: 'profile', component: ProfileComponent },
-    { path: 'about', component: AboutComponent },
-    { path: 'teacher', component: TeacherComponent },
-    { path: 'information-teacher', component: ProfileTeacherComponent },
-    { path: 'faq', component: FaqComponent },
-    { path: 'coming-soon', component: ComingSoonComponent },
-    { path: 'purchase-guide', component: PurchaseGuideComponent },
-    { path: 'privacy-policy', component: PrivacyPolicyComponent },
-    { path: 'terms-of-service', component: TermsOfServiceComponent },
-    // { path: 'courses/:id', component: CoursesListComponent },
-    // { path: 'detail-courses/:id', component: CoursesDetailsComponent },
-    { path: 'membership-levels', component: MembershipLevelsComponent },
-    { path: 'become-teacher', component: BecomeATeacherComponent },
-    { path: 'categories', component: CategoriesComponent },
-    { path: 'download-document', component: DownLoadRecoursesComponent },
-    // { path: 'courses', component: CourseListComponent },
-    { path: 'cart', component: CartComponent },
-    { path: 'payment/:purchaseCode', component: CheckoutComponent },
-    { path: 'details-products', component: ProductsDetailsComponent },
-    { path: 'gallery', component: GalleryComponent },
-    { path: 'news', component: CoursesNewsComponent },
-    { path: 'detail-news', component: BlogDetailsStyleTwoComponent },
-    { path: 'contact', component: ContactUsComponent },
-    { path: 'detail-content-training-online/:id', component: CoursesContentDetailComponent },
-    { path: 'login', component: LoginComponent },
-    { path: 'register', component: RegisterPagesComponent },
-    { path: 'my-training-online', component: AccountProfileCoursesComponent },
-    { path: 'my-information', component: AccountProfileDetailsComponent },
-    { path: 'training-online', component: TrainingOnlineComponent },
-    { path: 'training-online/:id', component: TrainingCourseDetailComponent },
-    { path: 'run-code/:id', component: RunCodeComponent },
-    { path: 'video-lesson/:id', component: VideoLessonComponent },
+            { path: 'profile', component: ProfileComponent },
+            { path: 'about', component: AboutComponent },
+            { path: 'teacher', component: TeacherComponent },
+            { path: 'information-teacher', component: ProfileTeacherComponent },
+            { path: 'faq', component: FaqComponent },
+            { path: 'coming-soon', component: ComingSoonComponent },
+            { path: 'purchase-guide', component: PurchaseGuideComponent },
+            { path: 'privacy-policy', component: PrivacyPolicyComponent },
+            { path: 'terms-of-service', component: TermsOfServiceComponent },
+            // { path: 'courses/:id', component: CoursesListComponent },
+            // { path: 'detail-courses/:id', component: CoursesDetailsComponent },
+            { path: 'membership-levels', component: MembershipLevelsComponent },
+            { path: 'become-teacher', component: BecomeATeacherComponent },
+            { path: 'categories', component: CategoriesComponent },
+            { path: 'download-document', component: DownLoadRecoursesComponent },
+            // { path: 'courses', component: CourseListComponent },
+            { path: 'cart', component: CartComponent },
+            { path: 'payment/:purchaseCode', component: CheckoutComponent },
+            { path: 'details-products', component: ProductsDetailsComponent },
+            { path: 'gallery', component: GalleryComponent },
+            { path: 'news', component: CoursesNewsComponent },
+            { path: 'detail-news', component: BlogDetailsStyleTwoComponent },
+            { path: 'contact', component: ContactUsComponent },
+            { path: 'detail-content-training-online/:id', component: CoursesContentDetailComponent },
+            { path: 'login', component: LoginComponent },
+            { path: 'register', component: RegisterPagesComponent },
+            { path: 'my-training-online', component: AccountProfileCoursesComponent },
+            { path: 'my-information', component: AccountProfileDetailsComponent },
+            { path: 'training-online', component: TrainingOnlineComponent },
+            { path: 'training-online/:id', component: TrainingCourseDetailComponent },
+            { path: 'run-code/:id', component: RunCodeComponent },
+            { path: 'video-lesson/:id', component: VideoLessonComponent },
 
-    // Here add new pages component
-    { path: 'register-error', component: RegisterErrorComponent },
-    { path: 'send-email-register-success', component: SendEmailAfterRegisterComponent },
-    { path: 'notification', component: NotificationUsersComponent },
-    { path: 'bookmark-training-online', component: AccountBookmarkCourseComponent },
-    { path: 'payment-success', component: PaymentSuccessComponent },
-    { path: 'payment-error', component: PaymentErrorComponent }
+            // Here add new pages component
+            { path: 'register-error', component: RegisterErrorComponent },
+            { path: 'send-email-register-success', component: SendEmailAfterRegisterComponent },
+            { path: 'notification', component: NotificationUsersComponent },
+            { path: 'bookmark-training-online', component: AccountBookmarkCourseComponent },
+            { path: 'payment-success', component: PaymentSuccessComponent },
+            { path: 'payment-error', component: PaymentErrorComponent }
+        ]
+    },
+    {
+        path: '',
+        component: EmptyLayoutComponent,
+        children: [{ path: 'course/:courseId', component: LessonComponent }]
+    }
 ];
 
 @NgModule({

@@ -1,4 +1,5 @@
-﻿using CourseMate.Entities.Categories;
+﻿using CourseMate.Entities.Carts;
+using CourseMate.Entities.Categories;
 using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
 using CourseMate.Entities.Enrollments;
@@ -7,6 +8,7 @@ using CourseMate.Entities.Notifications;
 using CourseMate.Entities.Orders;
 using CourseMate.Entities.PaymentRequests;
 using CourseMate.Entities.Reviews;
+using CourseMate.Entities.UserProgresses;
 using CourseMate.Entities.VideoProgresses;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.Modeling;
@@ -104,6 +106,22 @@ public static class CourseMateDbContextModelBuilderExtensions
         builder.Entity<Notification>(b =>
         {
             b.ToTable("Notifications", DbSchema);
+            b.ConfigureByConvention();
+        });
+
+        builder.Entity<UserProgress>(b =>
+        {
+            b.ToTable("UserProgresses", DbSchema);
+            b.HasOne<IdentityUser>().WithMany().HasForeignKey(i => i.UserId).IsRequired();
+            b.HasOne<Lesson>().WithMany().HasForeignKey(i => i.LessonId).IsRequired();
+            b.ConfigureByConvention();
+        });
+        
+        builder.Entity<Cart>(b =>
+        {
+            b.ToTable("Carts", DbSchema);
+            b.HasOne<IdentityUser>().WithMany().HasForeignKey(i => i.UserId).IsRequired();
+            b.HasOne<Course>().WithMany().HasForeignKey(i => i.CourseId).IsRequired();
             b.ConfigureByConvention();
         });
     }

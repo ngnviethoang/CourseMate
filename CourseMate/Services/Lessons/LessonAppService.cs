@@ -14,6 +14,10 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
     {
         IQueryable<LessonDto> queryable =
             from lesson in await LessonRepo.GetQueryableAsync()
+            join chapter in await ChapterRepo.GetQueryableAsync()
+                on lesson.ChapterId equals chapter.Id
+            join course in await CourseRepo.GetQueryableAsync()
+                on chapter.CourseId equals course.Id
             where lesson.Id == id
             select new LessonDto
             {
@@ -33,6 +37,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
                 CorrectAnswerJson = lesson.CorrectAnswerJson,
                 Explanation = lesson.Explanation,
                 OptionsJson = lesson.OptionsJson,
+                CourseId = course.Id,
             };
         return await AsyncExecuter.FirstOrDefaultAsync(queryable) ?? new LessonDto();
     }

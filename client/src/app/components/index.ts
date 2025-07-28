@@ -14,3 +14,5 @@ export * from './teacher-register/teacher-register.component';
 export * from './video-style-two/video-style-two.component';
 export * from './modals/user-comment-courses/user-comment-courses.component';
 export * from './modals/user-review-courses/user-review-courses.component';
+export * from './layouts/empty-layout.component';
+export * from './layouts/default-layout.component';

@@ -10,4 +10,5 @@ import * as Orders from './orders';
 import * as PaymentRequests from './payment-requests';
 import * as Reviews from './reviews';
 import * as Storages from './storages';
-export { Categories, Chapters, Courses, Dtos, Enrollments, Lessons, Lookups, Notifications, Orders, PaymentRequests, Reviews, Storages };
+import * as UserProgresses from './user-progresses';
+export { Categories, Chapters, Courses, Dtos, Enrollments, Lessons, Lookups, Notifications, Orders, PaymentRequests, Reviews, Storages, UserProgresses };

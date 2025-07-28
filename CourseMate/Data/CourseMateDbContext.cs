@@ -1,4 +1,5 @@
-﻿using CourseMate.Entities.Categories;
+﻿using CourseMate.Entities.Carts;
+using CourseMate.Entities.Categories;
 using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
 using CourseMate.Entities.Enrollments;
@@ -7,6 +8,7 @@ using CourseMate.Entities.Notifications;
 using CourseMate.Entities.Orders;
 using CourseMate.Entities.PaymentRequests;
 using CourseMate.Entities.Reviews;
+using CourseMate.Entities.UserProgresses;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -40,6 +42,8 @@ public class CourseMateDbContext : AbpDbContext<CourseMateDbContext>, IIdentityD
     public DbSet<PaymentRequest> PaymentRequests { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<UserProgress> UserProgresses { get; set; }
+    public DbSet<Cart> Carts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

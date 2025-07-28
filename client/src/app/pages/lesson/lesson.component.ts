@@ -4,12 +4,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MessengerServices } from '../../core/services-old/messenger.service';
 import { AuthService } from '@abp/ng.core';
 import { LessonDto } from '@proxy/services/dtos/lessons';
+import { CourseProgressDto } from '@proxy/services/dtos/user-progresses';
+import { UserProgressService } from '@proxy/services/user-progresses';
+import { LessonType } from '@proxy/entities/lessons';
+import { LoadingIndicatorService } from '../../services/loading-indicator.service';
 
 @Component({
     selector: 'app-lesson',
-    templateUrl: './lesson.component.html'
+    templateUrl: './lesson.component.html',
+    styleUrls: ['./lesson.component.scss']
 })
 export class LessonComponent implements OnInit {
+    readonly LessonType = LessonType;
+    items: { label: string, icon: string, routerLink: string }[] = [];
+    courseProgressDto: CourseProgressDto = {} as CourseProgressDto;
+    visible: boolean = false;
     lessonDto: LessonDto = {} as LessonDto;
     languages = [
         { name: 'JavaScript', value: 'javascript' },
@@ -40,21 +49,41 @@ export class LessonComponent implements OnInit {
         { severity: 'info', summary: 'Tip', detail: 'You can use split("").reverse().join("") to reverse string.' }
     ];
 
+    currentLessonId: string = '';
 
     constructor(private lessonService: LessonService,
                 private route: ActivatedRoute,
-                private messengerService: MessengerServices,
-                private authService: AuthService,
-                private router: Router) {
+                private loadingService: LoadingIndicatorService,
+                private userProgressService: UserProgressService) {
     }
 
     ngOnInit(): void {
-        // const id = this.route.snapshot.paramMap.get('id');
+        const courseId = this.route.snapshot.paramMap.get('courseId');
 
-        this.lessonService
-            .get('02f4c74f-1d34-41b7-afc3-eb9d76175e21')
+        if (!courseId) return;
+
+        this.items = [
+            { label: '', icon: 'pi pi-home', routerLink: '/' },
+            { label: 'Course', icon: '', routerLink: '/training-online' }
+        ];
+
+        this.loadingService.turnOn();
+        this.userProgressService
+            .get(courseId)
             .subscribe(response => {
-                this.lessonDto = response;
+                this.courseProgressDto = response;
+                this.items.push({
+                    label: response.title,
+                    icon: '',
+                    routerLink: `/training-online/${response.courseId}`
+                });
+                this.currentLessonId = response.chapters[0].lessons[0].lessonId;
+                this.lessonService
+                    .get(this.currentLessonId)
+                    .subscribe(lessonDto => {
+                        this.lessonDto = lessonDto;
+                        this.loadingService.turnOff();
+                    });
             });
     }
 
@@ -76,7 +105,18 @@ export class LessonComponent implements OnInit {
     }
 
     resetCode() {
-        this.code = ''; // or preload default template based on selectedLanguage
+        this.code = '';
         this.output = '';
+    }
+
+    onChangeLesson(lessonId: string) {
+        this.loadingService.turnOn();
+        this.lessonService.get(lessonId).subscribe(response => {
+            this.lessonDto = response;
+            this.currentLessonId = response.id;
+            this.loadingService.turnOff();
+            // fake api
+            this.lessonDto.type = LessonType.Video;
+        });
     }
 }

@@ -28,4 +28,6 @@ public class LessonDto : AuditedEntityDto<Guid>
     public string? CorrectAnswerJson { get; set; }
 
     public string? Explanation { get; set; }
+
+    public Guid CourseId { get; set; }
 }

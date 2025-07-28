@@ -9,5 +9,6 @@ import * as Orders from './orders';
 import * as PaymentRequests from './payment-requests';
 import * as Reviews from './reviews';
 import * as Storages from './storages';
+import * as UserProgresses from './user-progresses';
 export * from './models';
-export { Categories, Chapters, Courses, Enrollments, Lessons, Lookups, Notifications, Orders, PaymentRequests, Reviews, Storages };
+export { Categories, Chapters, Courses, Enrollments, Lessons, Lookups, Notifications, Orders, PaymentRequests, Reviews, Storages, UserProgresses };

@@ -1,3 +1,4 @@
+using CourseMate.Entities.Carts;
 using CourseMate.Entities.Categories;
 using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
@@ -7,6 +8,7 @@ using CourseMate.Entities.Notifications;
 using CourseMate.Entities.Orders;
 using CourseMate.Entities.PaymentRequests;
 using CourseMate.Entities.Reviews;
+using CourseMate.Entities.UserProgresses;
 using CourseMate.Localization;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Identity;
@@ -32,4 +34,6 @@ public abstract class CourseMateAppService : ApplicationService
     protected IRepository<PaymentRequest, Guid> PaymentRequestRepo => LazyServiceProvider.GetRequiredService<IRepository<PaymentRequest, Guid>>();
     protected IRepository<Review, Guid> ReviewRepo => LazyServiceProvider.GetRequiredService<IRepository<Review, Guid>>();
     protected IRepository<Notification, Guid> NotificationRepo => LazyServiceProvider.GetRequiredService<IRepository<Notification, Guid>>();
+    protected IRepository<UserProgress, Guid> UserProgressRepo => LazyServiceProvider.GetRequiredService<IRepository<UserProgress, Guid>>();
+    protected IRepository<Cart, Guid> CartRepo => LazyServiceProvider.GetRequiredService<IRepository<Cart, Guid>>();
 }

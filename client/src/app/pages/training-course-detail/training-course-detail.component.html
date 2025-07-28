@@ -63,8 +63,7 @@
                                         <li>
                                             <a [routerLinkActiveOptions]="{  exact: true }"
                                                class="popup-youtube d-flex justify-content-between align-items-center"
-                                               [routerLink]="['/video-lesson', courseDto.id]"
-                                               [queryParams]="{ lessonId: lesson.id }"
+                                               [routerLink]="['/course', courseDto.id]"
                                                routerLinkActive="active">
                                                 <span class="courses-name">{{ lesson.title }}</span>
                                                 <div class="courses-meta">
@@ -368,10 +367,9 @@
                 <div class="btn-box">
                     <div class="default-btn" (click)="onAddToCart()">
                         <i class="flaticon-shopping-cart"></i>
-                        {{ actionText }}
+                        Ghi danh
                     </div>
                 </div>
-
 
                 <div class="courses-share">
                     <div>

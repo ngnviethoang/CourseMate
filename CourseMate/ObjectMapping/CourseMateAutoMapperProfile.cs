@@ -7,10 +7,10 @@ using CourseMate.Entities.Lessons;
 using CourseMate.Entities.Orders;
 using CourseMate.Entities.PaymentRequests;
 using CourseMate.Entities.Reviews;
+using CourseMate.Services.Dtos.Carts;
 using CourseMate.Services.Dtos.Categories;
 using CourseMate.Services.Dtos.Chapters;
 using CourseMate.Services.Dtos.Courses;
-using CourseMate.Services.Dtos.Enrollments;
 using CourseMate.Services.Dtos.Lessons;
 using CourseMate.Services.Dtos.Orders;
 using CourseMate.Services.Dtos.PaymentRequests;
@@ -34,9 +34,9 @@ public class CourseMateAutoMapperProfile : Profile
         CreateMap<CreateUpdateCourseDto, Course>();
         CreateMap<CourseDto, CreateUpdateCourseDto>();
 
-        CreateMap<Enrollment, EnrollmentDto>();
-        CreateMap<CreateUpdateEnrollmentDto, Enrollment>();
-        CreateMap<EnrollmentDto, CreateUpdateEnrollmentDto>();
+        CreateMap<Enrollment, CartDto>();
+        CreateMap<CreateCartDto, Enrollment>();
+        CreateMap<CartDto, CreateCartDto>();
 
         CreateMap<Lesson, LessonDto>();
         CreateMap<CreateUpdateLessonDto, Lesson>();
