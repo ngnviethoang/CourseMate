@@ -40,15 +40,18 @@ public class OrderAppService : CourseMateAppService, IOrderAppService
     [Authorize(CourseMatePermissions.Orders.Create)]
     public async Task<ResultObjectDto> CreateAsync(CreateUpdateOrderDto input)
     {
-        await UserRepo.EnsureExistsAsync(input.StudentId);
-        await PaymentRequestRepo.EnsureExistsAsync(input.PaymentRequestId);
-        foreach (CreateUpdateOrderItemDto item in input.Items)
+        Guid userId = CurrentUser.Id.GetValueOrDefault();
+        await UserRepo.EnsureExistsAsync(userId);
+        Guid orderId = GuidGenerator.Create();
+        List<OrderItem> orderItems = [];
+        foreach (Guid courseId in input.CourseIds)
         {
-            await CourseRepo.EnsureExistsAsync(item.CourseId);
+            await CourseRepo.EnsureExistsAsync(courseId);
+            orderItems.Add(new OrderItem(GuidGenerator.Create(), orderId, courseId, 0));
         }
 
-        Order order = ObjectMapper.Map<CreateUpdateOrderDto, Order>(input);
-        List<OrderItem> orderItems = ObjectMapper.Map<List<CreateUpdateOrderItemDto>, List<OrderItem>>(input.Items);
+        Order order = new(orderId, userId, 0, "VND", GuidGenerator.Create(), OrderStatusType.Draft, string.Empty);
+
         await OrderRepo.InsertAsync(order);
         await OrderItemRepo.InsertManyAsync(orderItems);
         return new ResultObjectDto(order.Id);
@@ -57,9 +60,20 @@ public class OrderAppService : CourseMateAppService, IOrderAppService
     [Authorize(CourseMatePermissions.Orders.Edit)]
     public async Task<OrderDto> UpdateAsync(Guid id, CreateUpdateOrderDto input)
     {
-        Order order = await OrderRepo.GetAsync(id);
-        await UserRepo.EnsureExistsAsync(input.StudentId);
-        await PaymentRequestRepo.EnsureExistsAsync(input.PaymentRequestId);
+        return null;
+        Guid userId = CurrentUser.Id.GetValueOrDefault();
+        await UserRepo.EnsureExistsAsync(userId);
+        Guid orderId = GuidGenerator.Create();
+        List<OrderItem> orderItems = [];
+        foreach (Guid courseId in input.CourseIds)
+        {
+            await CourseRepo.EnsureExistsAsync(courseId);
+            orderItems.Add(new OrderItem(GuidGenerator.Create(), orderId, courseId, 0));
+        }
+
+        Order order = new(orderId, userId, 0, "VND", GuidGenerator.Create(), OrderStatusType.Draft, string.Empty);
+        await OrderRepo.InsertAsync(order);
+        await OrderItemRepo.InsertManyAsync(orderItems);
         ObjectMapper.Map(input, order);
         await OrderRepo.UpdateAsync(order);
         return ObjectMapper.Map<Order, OrderDto>(order);

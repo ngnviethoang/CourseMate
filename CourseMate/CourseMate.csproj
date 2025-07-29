@@ -72,7 +72,6 @@
 
     <ItemGroup>
         <Folder Include="coursemate-files\"/>
-        <Folder Include="Services\VnPayServices\" />
     </ItemGroup>
 
     <ItemGroup>

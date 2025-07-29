@@ -47,8 +47,6 @@ public class CourseMateAutoMapperProfile : Profile
         CreateMap<OrderDto, CreateUpdateOrderDto>();
 
         CreateMap<OrderItem, OrderItemDto>();
-        CreateMap<CreateUpdateOrderItemDto, OrderItem>();
-        CreateMap<OrderItemDto, CreateUpdateOrderItemDto>();
 
         CreateMap<PaymentRequest, PaymentRequestDto>();
         CreateMap<CreateUpdatePaymentRequestDto, PaymentRequest>();

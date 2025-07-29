@@ -1,6 +1,7 @@
 using CourseMate.Data;
 using CourseMate.HealthChecks;
 using CourseMate.Localization;
+using CourseMate.Services.VnPay;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
@@ -180,8 +181,20 @@ public class CourseMateModule : AbpModule
         ConfigureEfCore(context);
         ConfigureBlobStoring();
         ConfigureRabbitMq(configuration);
+        ConfigureVnpay(configuration);
     }
 
+    private void ConfigureVnpay(IConfiguration configuration)
+    {
+        Configure<VnPayOptions>(options =>
+        {
+            options.VnpHashSecret = configuration.GetValue<string>("VnPayConfig:VnpHashSecret")!;
+            options.VnpReturnUrl = configuration.GetValue<string>("VnPayConfig:VnpReturnUrl")!;
+            options.VnpTmnCode = configuration.GetValue<string>("VnPayConfig:VnpTmnCode")!;
+            options.VnpUrl = configuration.GetValue<string>("VnPayConfig:VnpUrl")!;
+        });
+    }
+    
     private void ConfigureRabbitMq(IConfiguration configuration)
     {
         Configure<AbpRabbitMqOptions>(options =>
