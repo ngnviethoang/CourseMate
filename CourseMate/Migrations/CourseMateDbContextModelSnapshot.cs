@@ -24,6 +24,56 @@ namespace CourseMate.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("CourseMate.Entities.Carts.Cart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Carts", "app");
+                });
+
             modelBuilder.Entity("CourseMate.Entities.Categories.Category", b =>
                 {
                     b.Property<Guid>("Id")
@@ -232,9 +282,6 @@ namespace CourseMate.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("DeletionTime");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -486,6 +533,11 @@ namespace CourseMate.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("DeletionTime");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(32768)
+                        .HasColumnType("character varying(32768)");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -500,8 +552,8 @@ namespace CourseMate.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("LastModifierId");
 
-                    b.Property<Guid>("PaymentRequestId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uuid");
@@ -510,9 +562,6 @@ namespace CourseMate.Migrations
                         .HasColumnType("numeric");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PaymentRequestId")
-                        .IsUnique();
 
                     b.HasIndex("StudentId");
 
@@ -592,10 +641,20 @@ namespace CourseMate.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("LastModifierId");
 
-                    b.Property<int>("State")
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TransactionId")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
 
                     b.ToTable("PaymentRequests", "app");
                 });
@@ -2512,6 +2571,21 @@ namespace CourseMate.Migrations
                     b.ToTable("AbpSettingDefinitions", (string)null);
                 });
 
+            modelBuilder.Entity("CourseMate.Entities.Carts.Cart", b =>
+                {
+                    b.HasOne("CourseMate.Entities.Courses.Course", null)
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Volo.Abp.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CourseMate.Entities.Chapters.Chapter", b =>
                 {
                     b.HasOne("CourseMate.Entities.Courses.Course", null)
@@ -2571,12 +2645,6 @@ namespace CourseMate.Migrations
 
             modelBuilder.Entity("CourseMate.Entities.Orders.Order", b =>
                 {
-                    b.HasOne("CourseMate.Entities.PaymentRequests.PaymentRequest", null)
-                        .WithOne()
-                        .HasForeignKey("CourseMate.Entities.Orders.Order", "PaymentRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Volo.Abp.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("StudentId")
@@ -2592,6 +2660,15 @@ namespace CourseMate.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CourseMate.Entities.Orders.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CourseMate.Entities.PaymentRequests.PaymentRequest", b =>
+                {
                     b.HasOne("CourseMate.Entities.Orders.Order", null)
                         .WithMany()
                         .HasForeignKey("OrderId")

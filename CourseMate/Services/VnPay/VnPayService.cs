@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
+using System.Transactions;
 using CourseMate.Entities.Orders;
+using CourseMate.Entities.PaymentRequests;
 using CourseMate.Services.Dtos.VnPay;
 using CourseMate.Shared;
 using Microsoft.AspNetCore.Authorization;
@@ -56,72 +58,88 @@ public class VnPayService : CourseMateAppService, IVnPayService
 
         string paymentUrl = vnPayLibrary.CreateRequestUrl(_vnPayOptions.VnpUrl, _vnPayOptions.VnpHashSecret);
         Logger.LogInformation("Payment URL created for Order ID: {OrderId}, URL: {PaymentUrl}", orderId, paymentUrl);
+        PaymentRequest paymentRequest = new(GuidGenerator.Create(), PaymentStatusType.Pending, "VND", "VNPAY", string.Empty, orderId, string.Empty);
+        await PaymentRequestRepo.InsertAsync(paymentRequest);
         return paymentUrl;
     }
 
-    public async Task<VnPayResponseDto> ReturnUrlVnPay(ReturnUrlRequestDto input)
+    public VnPayResponseDto ReturnUrlVnPay(ReturnUrlRequestDto input)
     {
+        Guid.TryParse(input.vnp_TxnRef, out Guid orderId);
+        Enum.TryParse(input.vnp_TxnRef, out VnPayResponseCode vnPayResponseCode);
+        Enum.TryParse(input.vnp_TxnRef, out TransactionStatus vnpTransactionStatus);
+
         VnPayLibrary vnpay = new();
-        bool isValid = vnpay.ValidateSignature(input.vnp_SecureHash, _vnPayOptions.VnpHashSecret);
-        if (!isValid)
+        bool checkSignature = vnpay.ValidateSignature(input.vnp_SecureHash, _vnPayOptions.VnpHashSecret);
+        if (!checkSignature)
         {
             Logger.LogWarning("Invalid signature, InputData={ReturnUrlRequestDto}", input);
             return new VnPayResponseDto(VnPayResponseCode.InvalidSignature);
         }
 
-        Guid.TryParse(input.vnp_TxnRef, out Guid orderId);
-        Enum.TryParse(input.vnp_ResponseCode.ToString(), out VnPayResponseCode responseCode);
-        Enum.TryParse(input.vnp_TransactionStatus.ToString(), out VnPayResponseCode transactionStatus);
-
-        if (responseCode == VnPayResponseCode.Success && transactionStatus == VnPayResponseCode.Success)
+        if (vnPayResponseCode == VnPayResponseCode.Success && vnpTransactionStatus == TransactionStatus.Active)
         {
             Logger.LogInformation("Thanh toan thanh cong, OrderId={0}, VNPAY TranId={1}", orderId, input.vnp_TransactionNo);
-            return new VnPayResponseDto(responseCode);
+            return new VnPayResponseDto(vnPayResponseCode);
         }
 
-        Logger.LogInformation("Thanh toan loi, OrderId={0}, VNPAY TranId={1},ResponseCode={2}", orderId, input.vnp_TransactionNo, input.vnp_ResponseCode);
-        return new VnPayResponseDto(responseCode);
+        Logger.LogWarning("Thanh toan loi, OrderId={0}, VNPAY TranId={1},ResponseCode={2}", orderId, input.vnp_TransactionNo, input.vnp_ResponseCode);
+        return new VnPayResponseDto(vnPayResponseCode);
     }
 
     public async Task<VnPayResponseDto> InstantPaymentNotification(ReturnUrlRequestDto input)
     {
+        Guid.TryParse(input.vnp_TxnRef, out Guid orderId);
+        Enum.TryParse(input.vnp_TxnRef, out VnPayResponseCode vnPayResponseCode);
+        Enum.TryParse(input.vnp_TxnRef, out TransactionStatus vnpTransactionStatus);
+        long vnpAmount = Convert.ToInt64(input.vnp_Amount) / 100;
+        long vnpTransactionId = Convert.ToInt64(input.vnp_TransactionNo);
+
         VnPayLibrary vnpay = new();
-        bool isValid = vnpay.ValidateSignature(input.vnp_SecureHash, _vnPayOptions.VnpHashSecret);
-        if (!isValid)
+        bool checkSignature = vnpay.ValidateSignature(input.vnp_SecureHash, _vnPayOptions.VnpHashSecret);
+        if (!checkSignature)
         {
             Logger.LogWarning("Invalid signature, InputData={ReturnUrlRequestDto}", input);
             return new VnPayResponseDto(VnPayResponseCode.InvalidSignature);
         }
 
-        Guid.TryParse(input.vnp_TxnRef, out Guid orderId);
         Order? order = await OrderRepo.FindAsync(i => i.Id == orderId);
-        Enum.TryParse(input.vnp_ResponseCode.ToString(), out VnPayResponseCode responseCode);
-        Enum.TryParse(input.vnp_TransactionStatus.ToString(), out VnPayResponseCode transactionStatus);
 
         if (order is null)
         {
             Logger.LogWarning("Order not found for TxnRef: {InputVnpTxnRef}", input.vnp_TxnRef);
-            return new VnPayResponseDto(VnPayResponseCode.OtherErrors);
+            return new VnPayResponseDto(VnPayResponseCode.TransactionNotFound);
         }
 
-        if (Convert.ToInt32(order.TotalAmount) == input.vnp_Amount)
+        PaymentRequest? paymentRequest = await PaymentRequestRepo.FindAsync(x => x.OrderId == orderId);
+        if (paymentRequest is null)
+        {
+            Logger.LogWarning("PaymentRequest not found for TxnRef: {InputVnpTxnRef}", input.vnp_TxnRef);
+            return new VnPayResponseDto(VnPayResponseCode.TransactionNotFound);
+        }
+
+        if (order.TotalAmount != vnpAmount)
         {
             return new VnPayResponseDto(VnPayResponseCode.PartialRefundOnly);
         }
 
-        if (order.Status == OrderStatusType.AwaitingValidation)
+        if (order.Status != OrderStatusType.Submitted)
         {
-            return new VnPayResponseDto(VnPayResponseCode.TransactionNotFound);
+            return new VnPayResponseDto(VnPayResponseCode.InvalidMerchant);
         }
 
-        if (order.Status == OrderStatusType.Submitted && responseCode == VnPayResponseCode.Success && transactionStatus == VnPayResponseCode.Success)
+        if (vnPayResponseCode == VnPayResponseCode.Success &&
+            vnpTransactionStatus == TransactionStatus.Active)
         {
-            Logger.LogInformation("Payment successful  for Order ID: {OrderId}", order.Id);
+            Logger.LogInformation("Thanh toan thanh cong, OrderId={0}, VNPAY TranId={1}", orderId, vnpTransactionId);
             order.Status = OrderStatusType.Paid;
+            await OrderRepo.UpdateAsync(order);
             return new VnPayResponseDto(VnPayResponseCode.Success);
         }
 
-        Logger.LogInformation("Payment failed for Order ID: {OrderId}", order.Id);
-        return new VnPayResponseDto(VnPayResponseCode.OtherErrors);
+        Logger.LogWarning("Thanh toan loi, OrderId={0}, VNPAY TranId={1},ResponseCode={2}", orderId, vnpTransactionId, vnPayResponseCode);
+        order.Status = OrderStatusType.Cancelled;
+        await OrderRepo.UpdateAsync(order);
+        return new VnPayResponseDto(VnPayResponseCode.Success);
     }
 }

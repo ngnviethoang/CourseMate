@@ -2,15 +2,17 @@
 
 public class PaymentRequest : FullAuditedEntity<Guid>
 {
-    public PaymentRequest(Guid id, PaymentStateType state, string currency, string gateway, string failReason) : base(id)
+    public PaymentRequest(Guid id, PaymentStatusType status, string currency, string gateway, string failReason, Guid orderId, string transactionId) : base(id)
     {
-        State = state;
+        Status = status;
         Currency = currency;
         Gateway = gateway;
         FailReason = failReason;
+        OrderId = orderId;
+        TransactionId = transactionId;
     }
 
-    public PaymentStateType State { get; set; }
+    public PaymentStatusType Status { get; set; }
 
     [MaxLength(CourseMateConst.DefaultMaxLength)]
     public string Currency { get; set; }
@@ -20,4 +22,9 @@ public class PaymentRequest : FullAuditedEntity<Guid>
 
     [MaxLength(CourseMateConst.DefaultMaxLength)]
     public string FailReason { get; set; }
+
+    public Guid OrderId { get; set; }
+
+    [MaxLength(CourseMateConst.DefaultMaxLength)]
+    public string TransactionId { get; set; }
 }

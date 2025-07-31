@@ -77,7 +77,6 @@ public static class CourseMateDbContextModelBuilderExtensions
         {
             b.ToTable("Orders", DbSchema);
             b.ConfigureByConvention();
-            b.HasOne<PaymentRequest>().WithOne().HasForeignKey<Order>(i => i.PaymentRequestId);
             b.HasOne<IdentityUser>().WithMany().HasForeignKey(i => i.StudentId).IsRequired();
         });
 
@@ -93,14 +92,15 @@ public static class CourseMateDbContextModelBuilderExtensions
         {
             b.ToTable("PaymentRequests", DbSchema);
             b.ConfigureByConvention();
+            b.HasOne<Order>().WithMany().HasForeignKey(i => i.OrderId);
         });
 
         builder.Entity<VideoProgress>(b =>
         {
             b.ToTable("VideoProgresses", DbSchema);
+            b.ConfigureByConvention();
             b.HasOne<Lesson>().WithOne().HasForeignKey<VideoProgress>(i => i.LessonId).IsRequired();
             b.HasOne<IdentityUser>().WithMany().HasForeignKey(i => i.UserId).IsRequired();
-            b.ConfigureByConvention();
         });
 
         builder.Entity<Notification>(b =>
@@ -112,17 +112,17 @@ public static class CourseMateDbContextModelBuilderExtensions
         builder.Entity<UserProgress>(b =>
         {
             b.ToTable("UserProgresses", DbSchema);
+            b.ConfigureByConvention();
             b.HasOne<IdentityUser>().WithMany().HasForeignKey(i => i.UserId).IsRequired();
             b.HasOne<Lesson>().WithMany().HasForeignKey(i => i.LessonId).IsRequired();
-            b.ConfigureByConvention();
         });
         
         builder.Entity<Cart>(b =>
         {
             b.ToTable("Carts", DbSchema);
+            b.ConfigureByConvention();
             b.HasOne<IdentityUser>().WithMany().HasForeignKey(i => i.UserId).IsRequired();
             b.HasOne<Course>().WithMany().HasForeignKey(i => i.CourseId).IsRequired();
-            b.ConfigureByConvention();
         });
     }
 }

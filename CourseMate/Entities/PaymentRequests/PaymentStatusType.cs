@@ -1,8 +1,8 @@
 ﻿namespace CourseMate.Entities.PaymentRequests;
 
-public enum PaymentStateType
+public enum PaymentStatusType
 {
-    Waiting,
+    Pending,
     Completed,
     Failed,
     Refunded

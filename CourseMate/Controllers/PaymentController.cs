@@ -25,10 +25,9 @@ public class PaymentController : AbpController
     }
 
     [HttpGet("vnpay-return")]
-    public async Task<IActionResult> VnPayReturnUrlCallback([FromQuery] ReturnUrlRequestDto input)
+    public IActionResult VnPayReturnUrlCallback([FromQuery] ReturnUrlRequestDto input)
     {
-        VnPayResponseDto result = await _vnPayService.ReturnUrlVnPay(input);
-
+        VnPayResponseDto result = _vnPayService.ReturnUrlVnPay(input);
         // Gợi ý: Chuyển hướng đến trang kết quả thanh toán
         string redirectUrl = $"/checkout/result?orderCode={input.vnp_TxnRef}&status={result.RspCode}";
         return Redirect(redirectUrl);
@@ -38,7 +37,6 @@ public class PaymentController : AbpController
     public async Task<IActionResult> VnPayIpnUrlCallback([FromQuery] ReturnUrlRequestDto input)
     {
         VnPayResponseDto result = await _vnPayService.InstantPaymentNotification(input);
-
-        return Content(result.RspCode == nameof(VnPayResponseCode.Success) ? "OK" : "FAIL");
+        return Ok(result);
     }
 }

@@ -2,12 +2,11 @@
 
 public class Order : FullAuditedEntity<Guid>
 {
-    public Order(Guid id, Guid studentId, decimal totalAmount, string currency, Guid paymentRequestId, OrderStatusType status, string description) : base(id)
+    public Order(Guid id, Guid studentId, decimal totalAmount, string currency, OrderStatusType status, string description) : base(id)
     {
         StudentId = studentId;
         TotalAmount = totalAmount;
         Currency = currency;
-        PaymentRequestId = paymentRequestId;
         Status = status;
         Description = description;
     }
@@ -17,8 +16,6 @@ public class Order : FullAuditedEntity<Guid>
 
     [MaxLength(24)]
     public string Currency { get; set; }
-
-    public Guid PaymentRequestId { get; set; }
 
     [MaxLength(CourseMateConst.DescriptionMaxLength)]
     public string Description { get; set; }
