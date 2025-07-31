@@ -75,9 +75,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="Data\Seeds\categories.json" />
-      <None Include="Data\Seeds\chapters.json" />
-      <None Include="Data\Seeds\courses.json" />
-      <None Include="Data\Seeds\lessons.json" />
+        <None Include="Data\Seeds\categories.json"/>
+        <None Include="Data\Seeds\chapters.json"/>
+        <None Include="Data\Seeds\courses.json"/>
+        <None Include="Data\Seeds\lessons.json"/>
     </ItemGroup>
 </Project>

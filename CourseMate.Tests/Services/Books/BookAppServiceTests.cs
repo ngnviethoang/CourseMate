@@ -1,7 +1,4 @@
-﻿using CourseMate.Entities.Books;
-using CourseMate.Services.Books;
-using CourseMate.Services.Dtos.Books;
-using CourseMate.Tests.TestBase;
+﻿using CourseMate.Tests.TestBase;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Validation;
 
@@ -30,7 +27,7 @@ public sealed class BookAppServiceTests : CourseMateTestBase<CourseMateTestModul
     [Fact]
     public async Task ShouldNotCreateABookWithoutName()
     {
-        var exception = await Assert.ThrowsAsync<AbpValidationException>(async () =>
+        AbpValidationException exception = await Assert.ThrowsAsync<AbpValidationException>(async () =>
         {
             await _bookAppService.CreateAsync(
                 new CreateUpdateBookDto

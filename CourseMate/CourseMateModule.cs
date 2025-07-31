@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
 using OpenIddict.Validation.AspNetCore;
+using Pages.Abp.MultiTenancy;
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
@@ -194,7 +195,7 @@ public class CourseMateModule : AbpModule
             options.VnpUrl = configuration.GetValue<string>("VnPayConfig:VnpUrl")!;
         });
     }
-    
+
     private void ConfigureRabbitMq(IConfiguration configuration)
     {
         Configure<AbpRabbitMqOptions>(options =>
@@ -275,7 +276,12 @@ public class CourseMateModule : AbpModule
 
     private void ConfigureAutoApiControllers()
     {
-        Configure<AbpAspNetCoreMvcOptions>(options => { options.ConventionalControllers.Create(typeof(CourseMateModule).Assembly); });
+        Configure<AbpAspNetCoreMvcOptions>(options =>
+        {
+            options.ConventionalControllers.Create(typeof(CourseMateModule).Assembly);
+            options.ControllersToRemove.Add(typeof(AbpTenantController));
+            options.ControllersToRemove.Add(typeof(TimeZoneSettingsController));
+        });
     }
 
     private void ConfigureSwagger(IServiceCollection services, IConfiguration configuration)

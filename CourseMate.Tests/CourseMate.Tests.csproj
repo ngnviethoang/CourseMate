@@ -19,11 +19,11 @@
         <PackageReference Include="xunit" Version="2.9.2"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2"/>
     </ItemGroup>
-    
+
     <ItemGroup>
         <ProjectReference Include="..\CourseMate\CourseMate.csproj"/>
     </ItemGroup>
-    
+
     <ItemGroup>
         <Using Include="Xunit"/>
     </ItemGroup>

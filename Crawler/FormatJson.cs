@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.SymbolStore;
-using Crawler.Models.Categories;
+﻿using Crawler.Models.Categories;
 using Crawler.Models.Chapters;
 using Crawler.Models.Courses;
 using Crawler.Models.Lessons;
@@ -8,6 +7,7 @@ using Crawler.Response.CategoryResponse;
 using Crawler.Response.CourseDetailResponse;
 using Crawler.Response.CourseListReponse;
 using Newtonsoft.Json;
+using Activity = Crawler.Response.CourseDetailResponse.Activity;
 using Datum = Crawler.Response.CategoryResponse.Datum;
 
 namespace Crawler;
@@ -16,10 +16,10 @@ public static class FormatJson
 {
     public static async Task Handle()
     {
-        JsonSerializerSettings settings = new JsonSerializerSettings
+        JsonSerializerSettings settings = new()
         {
             Formatting = Formatting.Indented,
-            StringEscapeHandling = StringEscapeHandling.Default,
+            StringEscapeHandling = StringEscapeHandling.Default
         };
 
         string baseDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "Data"));
@@ -75,8 +75,8 @@ public static class FormatJson
             };
             courses.Add(course);
             int postitionChapter = 1;
-            var sections = courseDetailResponse.Data.CourseSchedule.CourseScheduleList.SelectMany(i => i.Sections) ?? [];
-            foreach (var section in sections)
+            IEnumerable<Section> sections = courseDetailResponse.Data.CourseSchedule.CourseScheduleList.SelectMany(i => i.Sections) ?? [];
+            foreach (Section section in sections)
             {
                 Chapter chapter = new()
                 {
@@ -87,7 +87,7 @@ public static class FormatJson
                 };
                 chapters.Add(chapter);
                 int postitionLesson = 1;
-                foreach (var activity in section.Activities)
+                foreach (Activity activity in section.Activities)
                 {
                     Lesson lesson = new()
                     {
@@ -102,7 +102,7 @@ public static class FormatJson
                         CorrectAnswerJson = null,
                         Explanation = null,
                         OptionsJson = null,
-                        Type = LessonType.Coding,
+                        Type = LessonType.Coding
                     };
                     lessons.Add(lesson);
                     activityDict.Add(activity.ActivityId!.Value, lesson.Id);
@@ -110,12 +110,12 @@ public static class FormatJson
             }
         }
 
-        var lessonDict = lessons.ToDictionary(l => l.Id);
+        Dictionary<Guid, Lesson> lessonDict = lessons.ToDictionary(l => l.Id);
         string activityResponseString = await File.ReadAllTextAsync(Path.Combine(baseDir, "activities.json"));
-        var activityObj = JsonConvert.DeserializeObject<List<ActivityResponse>>(activityResponseString, settings)!;
+        List<ActivityResponse>? activityObj = JsonConvert.DeserializeObject<List<ActivityResponse>>(activityResponseString, settings)!;
         foreach (ActivityResponse activityResponse in activityObj)
         {
-            var activity = activityResponse.Data?.CodeActivity?.Activity;
+            Response.ActivityResponse.Activity? activity = activityResponse.Data?.CodeActivity?.Activity;
             if (activity != null)
             {
                 activityDict.TryGetValue(activity.Id!.Value, out Guid activityId);

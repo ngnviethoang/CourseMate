@@ -37,7 +37,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
                 CorrectAnswerJson = lesson.CorrectAnswerJson,
                 Explanation = lesson.Explanation,
                 OptionsJson = lesson.OptionsJson,
-                CourseId = course.Id,
+                CourseId = course.Id
             };
         return await AsyncExecuter.FirstOrDefaultAsync(queryable) ?? new LessonDto();
     }
@@ -63,7 +63,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
                 CodeSampleJson = lesson.CodeSampleJson,
                 CorrectAnswerJson = lesson.CorrectAnswerJson,
                 Explanation = lesson.Explanation,
-                OptionsJson = lesson.OptionsJson,
+                OptionsJson = lesson.OptionsJson
             };
         queryable = queryable
             .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(Lesson.Title) : input.Sorting)
@@ -93,14 +93,14 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
         await ChapterRepo.EnsureExistsAsync(input.ChapterId);
 
         Lesson lesson = new(
-            id: Guid.NewGuid(),
-            type: LessonType.Video,
-            chapterId: input.ChapterId,
-            position: input.Position,
-            title: input.Title,
-            content: input.Content,
-            videoFile: input.VideoFile,
-            duration: input.Duration
+            Guid.NewGuid(),
+            LessonType.Video,
+            input.ChapterId,
+            input.Position,
+            input.Title,
+            input.Content,
+            input.VideoFile,
+            input.Duration
         );
 
         await LessonRepo.InsertAsync(lesson);

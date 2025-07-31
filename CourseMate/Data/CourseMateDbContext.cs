@@ -18,6 +18,7 @@ using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
@@ -25,6 +26,7 @@ using Volo.Abp.SettingManagement.EntityFrameworkCore;
 namespace CourseMate.Data;
 
 [ReplaceDbContext(typeof(IIdentityDbContext))]
+[IgnoreMultiTenancy]
 public class CourseMateDbContext : AbpDbContext<CourseMateDbContext>, IIdentityDbContext
 {
     public CourseMateDbContext(DbContextOptions<CourseMateDbContext> options)
@@ -45,6 +47,15 @@ public class CourseMateDbContext : AbpDbContext<CourseMateDbContext>, IIdentityD
     public DbSet<UserProgress> UserProgresses { get; set; }
     public DbSet<Cart> Carts { get; set; }
 
+    public DbSet<IdentityUser> Users { get; set; }
+    public DbSet<IdentityRole> Roles { get; set; }
+    public DbSet<IdentityClaimType> ClaimTypes { get; set; }
+    public DbSet<OrganizationUnit> OrganizationUnits { get; set; }
+    public DbSet<IdentitySecurityLog> SecurityLogs { get; set; }
+    public DbSet<IdentityLinkUser> LinkUsers { get; set; }
+    public DbSet<IdentityUserDelegation> UserDelegations { get; set; }
+    public DbSet<IdentitySession> Sessions { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -58,13 +69,4 @@ public class CourseMateDbContext : AbpDbContext<CourseMateDbContext>, IIdentityD
         builder.ConfigureOpenIddict();
         builder.ConfigureCourseMateEntities();
     }
-
-    public DbSet<IdentityUser> Users { get; set; }
-    public DbSet<IdentityRole> Roles { get; set; }
-    public DbSet<IdentityClaimType> ClaimTypes { get; set; }
-    public DbSet<OrganizationUnit> OrganizationUnits { get; set; }
-    public DbSet<IdentitySecurityLog> SecurityLogs { get; set; }
-    public DbSet<IdentityLinkUser> LinkUsers { get; set; }
-    public DbSet<IdentityUserDelegation> UserDelegations { get; set; }
-    public DbSet<IdentitySession> Sessions { get; set; }
 }

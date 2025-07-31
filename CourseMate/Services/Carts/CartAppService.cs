@@ -48,7 +48,7 @@ public class CartAppService : CourseMateAppService, ICartAppService
                         UserName = user.UserName,
                         Avatar = user.Email
                     }
-                },
+                }
             };
         queryable = queryable.WhereIf(input.StudentId.HasValue, e => e.StudentId == input.StudentId);
         queryable = queryable.OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(CartDto.CreationTime) : input.Sorting);

@@ -1,10 +1,11 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using Crawler;
 using Crawler.Response.ActivityResponse;
 using Crawler.Response.CourseDetailResponse;
 using Crawler.Response.CourseListReponse;
 
-Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.OutputEncoding = Encoding.UTF8;
 
 await FormatJson.Handle();
 return;
@@ -38,7 +39,7 @@ if (courseList == null || courseList.Data == null)
 List<CourseDetailResponse> courseDetails = new();
 List<ActivityResponse> activities = new();
 int index = 1;
-foreach (var datum in courseList.Data)
+foreach (Datum datum in courseList.Data)
 {
     Console.WriteLine($"\n➡️ [{index}/{courseList.Data.Count}] Đang xử lý: {datum.Title} (ID: {datum.Id})");
 

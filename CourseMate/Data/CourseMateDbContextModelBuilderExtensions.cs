@@ -116,7 +116,7 @@ public static class CourseMateDbContextModelBuilderExtensions
             b.HasOne<IdentityUser>().WithMany().HasForeignKey(i => i.UserId).IsRequired();
             b.HasOne<Lesson>().WithMany().HasForeignKey(i => i.LessonId).IsRequired();
         });
-        
+
         builder.Entity<Cart>(b =>
         {
             b.ToTable("Carts", DbSchema);

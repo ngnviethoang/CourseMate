@@ -7,12 +7,12 @@ namespace CourseMate.Tests.TestBase.Security;
 [Dependency(ReplaceServices = true)]
 public class FakeCurrentPrincipalAccessor : ThreadCurrentPrincipalAccessor
 {
+    private ClaimsPrincipal _principal;
+
     protected override ClaimsPrincipal GetClaimsPrincipal()
     {
         return GetPrincipal();
     }
-
-    private ClaimsPrincipal _principal;
 
     private ClaimsPrincipal GetPrincipal()
     {
@@ -26,9 +26,9 @@ public class FakeCurrentPrincipalAccessor : ThreadCurrentPrincipalAccessor
                         new ClaimsIdentity(
                             new List<Claim>
                             {
-                                new Claim(AbpClaimTypes.UserId, "2e701e62-0953-4dd3-910b-dc6cc93ccb0d"),
-                                new Claim(AbpClaimTypes.UserName, "admin"),
-                                new Claim(AbpClaimTypes.Email, "admin@abp.io")
+                                new(AbpClaimTypes.UserId, "2e701e62-0953-4dd3-910b-dc6cc93ccb0d"),
+                                new(AbpClaimTypes.UserName, "admin"),
+                                new(AbpClaimTypes.Email, "admin@abp.io")
                             }
                         )
                     );
