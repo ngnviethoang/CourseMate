@@ -14,3 +14,6 @@ export interface FileResult extends ActionResult {
 export interface FileStreamResult extends FileResult {
   fileStream: any;
 }
+
+export interface IActionResult {
+}

@@ -34,6 +34,9 @@
             ],
             "@components": [
                 "src/app/components/index.ts"
+            ],
+            "@services": [
+                "src/app/services/index.ts"
             ]
         },
         "useDefineForClassFields": false,

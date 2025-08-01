@@ -34,7 +34,7 @@ import {
     TeacherComponent,
     TermsOfServiceComponent,
     TrainingOnlineComponent,
-    TrainingCourseDetailComponent,
+    TrainingOnlineDetailComponent,
     ProfileComponent,
     CourseListComponent,
     LoginComponent,
@@ -53,7 +53,9 @@ const routes: Routes = [
         children: [
             { path: '', component: HomeComponent },
             { path: 'training-online', component: TrainingOnlineComponent },
-            { path: 'training-online/:id', component: TrainingCourseDetailComponent },
+            { path: 'training-online/:slug', component: TrainingOnlineDetailComponent },
+            { path: 'cart', component: CartComponent },
+            { path: 'checkout/:orderId', component: CheckoutComponent },
 
             { path: 'profile', component: ProfileComponent },
             { path: 'about', component: AboutComponent },
@@ -71,7 +73,6 @@ const routes: Routes = [
             { path: 'categories', component: CategoriesComponent },
             { path: 'download-document', component: DownLoadRecoursesComponent },
             // { path: 'courses', component: CourseListComponent },
-            { path: 'cart', component: CartComponent },
             { path: 'payment/:purchaseCode', component: CheckoutComponent },
             { path: 'details-products', component: ProductsDetailsComponent },
             { path: 'gallery', component: GalleryComponent },
@@ -84,7 +85,7 @@ const routes: Routes = [
             { path: 'my-training-online', component: AccountProfileCoursesComponent },
             { path: 'my-information', component: AccountProfileDetailsComponent },
             { path: 'training-online', component: TrainingOnlineComponent },
-            { path: 'training-online/:id', component: TrainingCourseDetailComponent },
+            { path: 'training-online/:id', component: TrainingOnlineDetailComponent },
             { path: 'run-code/:id', component: RunCodeComponent },
             { path: 'video-lesson/:id', component: VideoLessonComponent },
 

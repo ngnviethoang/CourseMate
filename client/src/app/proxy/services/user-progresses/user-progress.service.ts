@@ -9,20 +9,20 @@ export class UserProgressService {
   apiName = 'Default';
   
 
-  createOrUpdate = (id: string, input: CreateUpdateUserProgressDto, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, void>({
-      method: 'POST',
-      url: `/api/app/user-progress/${id}/or-update`,
-      body: input,
-    },
-    { apiName: this.apiName,...config });
-  
-
   get = (courseId: string, config?: Partial<Rest.Config>) =>
     this.restService.request<any, CourseProgressDto>({
       method: 'GET',
       url: '/api/app/user-progress',
       params: { courseId },
+    },
+    { apiName: this.apiName,...config });
+  
+
+  update = (input: CreateUpdateUserProgressDto, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, void>({
+      method: 'PUT',
+      url: '/api/app/user-progress',
+      body: input,
     },
     { apiName: this.apiName,...config });
 

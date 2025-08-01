@@ -1,3 +1,13 @@
-﻿namespace CourseMate.Services.Dtos.Orders;
+﻿using CourseMate.Services.Dtos.Courses;
 
-public class OrderItemDto;
+namespace CourseMate.Services.Dtos.Orders;
+
+public class OrderItemDto : FullAuditedEntityDto<Guid>
+{
+    public Guid OrderId { get; set; }
+    public Guid CourseId { get; set; }
+    public decimal Price { get; set; }
+
+    // Extra Properties
+    public CourseDto? Course { get; set; }
+}

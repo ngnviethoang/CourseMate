@@ -9,6 +9,8 @@ import { ConstantValue } from '../../shared/contants/ennum_router';
 import { InformationManualBankingModel } from '../../models/infomation-banking';
 import { PurchaseOrder } from '../../models/purchase';
 import { PurchaseDetailsModel } from '../../models/purchase-details';
+import { OrderService } from '@proxy/services/orders';
+import { OrderDto } from '@proxy/services/dtos/orders';
 
 @Component({
     selector: 'app-checkout',
@@ -16,7 +18,7 @@ import { PurchaseDetailsModel } from '../../models/purchase-details';
     styleUrls: ['./checkout.component.scss']
 })
 export class CheckoutComponent implements OnInit {
-
+    order: OrderDto = {} as OrderDto;
     purchaseCode: string = '';
     infomationBanking: InformationManualBankingModel;
     totalValue = 0;
@@ -24,17 +26,23 @@ export class CheckoutComponent implements OnInit {
     tranferPayment = ConstantValue.paymentTranfer;
 
     constructor(
-        private readonly router: ActivatedRoute,
+        private readonly route: ActivatedRoute,
         private readonly routers: Router,
         private readonly purchaseServices: PurchaseServices,
         private readonly cartServices: CartServices,
         private readonly messengerServices: MessengerServices,
-        private readonly stripeServices: StripeServices
+        private readonly stripeServices: StripeServices,
+        private readonly orderService: OrderService
     ) {
     }
 
     ngOnInit(): void {
-        this.purchaseCode = this.router.snapshot.paramMap.get('purchaseCode');
+        const orderId = this.route.snapshot.paramMap.get('orderId');
+        this.orderService.get(orderId).subscribe(res => {
+            this.order = res;
+        });
+
+        this.purchaseCode = this.route.snapshot.paramMap.get('purchaseCode');
         this.getInfomationBanking();
         this.totalValue = this.cartServices.courseItems.reduce((c, t1) => t1.totalOrder + c, 0);
     }

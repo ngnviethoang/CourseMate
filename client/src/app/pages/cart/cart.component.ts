@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CartServices } from '../../core/services-old/cart.service';
-import { MessengerServices } from '../../core/services-old/messenger.service';
-import { PurchaseServices } from '../../core/services-old/purchase.service';
-import { AuthService } from '@abp/ng.core';
+import { AuthService, ConfigStateService } from '@abp/ng.core';
+import { CartService } from '@proxy/services/carts';
+import { CartDto } from '@proxy/services/dtos/carts';
+import { MessageService } from '@services';
+import { OrderService } from '@proxy/services/orders';
 
 @Component({
     selector: 'app-cart',
@@ -11,35 +12,47 @@ import { AuthService } from '@abp/ng.core';
     styleUrls: ['./cart.component.scss']
 })
 export class CartComponent implements OnInit {
-
     totalValue = 0;
-    basketDto: any;
+    carts: CartDto[] = [];
 
     constructor(
-        public readonly cartServices: CartServices,
-        private readonly purchaseServices: PurchaseServices,
         private readonly router: Router,
-        private readonly messengerServices: MessengerServices,
-        private readonly authService: AuthService
+        private readonly messageService: MessageService,
+        private readonly authService: AuthService,
+        private readonly cartService: CartService,
+        private readonly configStateService: ConfigStateService,
+        private readonly orderService: OrderService
     ) {
     }
 
     ngOnInit(): void {
-      /*  this.basketService.getAll().subscribe((response) => {
-            this.basketDto = response;
-        });*/
+        const currentUser = this.configStateService.getOne('currentUser');
+        this.cartService.getList({ studentId: currentUser.id }).subscribe(res => {
+            this.carts = res.items;
+        });
     }
 
-    removeItemOnCart(courseId: string) {
-        // this.cartServices.removeCourse(item);
-        this.totalValue = this.cartServices.courseItems.reduce((c, t1) => t1.totalOrder + c, 0);
+    async removeItem(courseId: string) {
+        this.cartService.delete(courseId).subscribe({
+            next: () => {
+                this.carts = this.carts.filter(i => i.id !== courseId);
+                this.totalValue = this.carts.reduce((sum, item) => sum + item.course.price, 0);
+                this.messageService.success('Thông báo', 'Xóa khóa học khỏi giỏ hàng thành công!');
+            },
+            error: (err) => {
+                this.messageService.error('Lỗi', 'Không thể xóa khóa học. Vui lòng thử lại sau.');
+            }
+        });
     }
 
-    async goToPaymentForCourse() {
+    async onClickCheckout() {
         if (this.authService.isAuthenticated) {
-            await this.router.navigate([`/payment/${3132}`]);
+            this.orderService.create({ courseIds: this.carts.map(cart => cart.courseId) }).subscribe(res => {
+                const orderId = res.id;
+                this.router.navigate([`/checkout/${orderId}`]);
+            });
         } else {
-            this.messengerServices.warringBookMarkCourse('Vui lòng đăng nhập để thực hiện thanh toán!');
+            await this.messageService.warringBookMarkCourse('Vui lòng đăng nhập để thực hiện thanh toán!');
         }
     }
 

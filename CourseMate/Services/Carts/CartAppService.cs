@@ -1,8 +1,10 @@
 ﻿using CourseMate.Entities.Carts;
 using CourseMate.Permissions;
 using CourseMate.Services.Dtos.Carts;
+using CourseMate.Services.Dtos.Categories;
 using CourseMate.Services.Dtos.Courses;
 using Microsoft.AspNetCore.Authorization;
+using Volo.Abp;
 using Volo.Abp.Domain.Repositories;
 
 namespace CourseMate.Services.Carts;
@@ -18,6 +20,8 @@ public class CartAppService : CourseMateAppService, ICartAppService
                 on cart.CourseId equals course.Id
             join user in await UserRepo.GetQueryableAsync()
                 on course.InstructorId equals user.Id
+            join category in await CategoryRepo.GetQueryableAsync()
+                on course.CategoryId equals category.Id
             select new CartDto
             {
                 Id = cart.Id,
@@ -39,6 +43,7 @@ public class CartAppService : CourseMateAppService, ICartAppService
                     IsPublished = course.IsPublished,
                     InstructorId = course.InstructorId,
                     CategoryId = course.CategoryId,
+                    Slug = course.Slug,
                     CreationTime = course.CreationTime,
                     CreatorId = course.CreatorId,
                     LastModificationTime = course.LastModificationTime,
@@ -47,6 +52,11 @@ public class CartAppService : CourseMateAppService, ICartAppService
                     {
                         UserName = user.UserName,
                         Avatar = user.Email
+                    },
+                    Category = new CategoryDto
+                    {
+                        Id = category.Id,
+                        Name = category.Name,
                     }
                 }
             };
@@ -72,16 +82,26 @@ public class CartAppService : CourseMateAppService, ICartAppService
     public async Task<ResultObjectDto> CreateAsync(CreateCartDto input)
     {
         Guid userId = CurrentUser.Id.GetValueOrDefault();
+
         await UserRepo.EnsureExistsAsync(userId);
         await CourseRepo.EnsureExistsAsync(input.CourseId);
-        Cart? cart = await CartRepo.FirstOrDefaultAsync(i => i.UserId == userId && i.CourseId == input.CourseId);
-        if (cart is null)
+
+        bool alreadyEnrolled = await EnrollmentRepo.AnyAsync(i => i.StudentId == userId && i.CourseId == input.CourseId);
+        if (alreadyEnrolled)
         {
-            cart = new Cart(GuidGenerator.Create(), userId, input.CourseId);
-            await CartRepo.InsertAsync(cart);
+            throw new UserFriendlyException("Bạn đã đăng ký khóa học này rồi.");
         }
 
-        return new ResultObjectDto(cart.Id);
+        Cart? existingCart = await CartRepo.FirstOrDefaultAsync(i => i.UserId == userId && i.CourseId == input.CourseId);
+        if (existingCart is not null)
+        {
+            return new ResultObjectDto(existingCart.Id);
+        }
+
+        Cart newCart = new Cart(GuidGenerator.Create(), userId, input.CourseId);
+        await CartRepo.InsertAsync(newCart);
+
+        return new ResultObjectDto(newCart.Id);
     }
 
     [Authorize(CourseMatePermissions.Enrollments.Delete)]

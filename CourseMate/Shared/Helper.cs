@@ -8,41 +8,19 @@ namespace CourseMate.Shared;
 
 public static class Helper
 {
-    public static string StripNonBasicUnicode(this string input)
+    public static string GenerateSlug(string phrase)
     {
-        if (string.IsNullOrWhiteSpace(input))
+        if (string.IsNullOrWhiteSpace(phrase))
         {
             return string.Empty;
         }
 
-        return Regex.Replace(input, @"[^\u0020-\u00FF]", "");
-    }
-
-    public static string NormalizeFileName(this string fileName)
-    {
-        if (string.IsNullOrWhiteSpace(fileName))
-        {
-            return string.Empty;
-        }
-
-        // Bước 1: Tách phần tên và phần mở rộng
-        string extension = Path.GetExtension(fileName);
-        string nameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
-
-        // Bước 2: Chuyển tiếng Việt thành không dấu
-        nameWithoutExt = RemoveDiacritics(nameWithoutExt);
-
-        // Bước 3: Loại bỏ ký tự không hợp lệ
-        nameWithoutExt = Regex.Replace(nameWithoutExt, @"[^a-zA-Z0-9\s-_]", "");
-
-        // Bước 4: Thay khoảng trắng bằng gạch ngang, bỏ thừa
-        nameWithoutExt = Regex.Replace(nameWithoutExt, @"\s+", "-").Trim('-');
-
-        // Bước 5: Chuyển về chữ thường
-        nameWithoutExt = nameWithoutExt.ToLowerInvariant();
-
-        // Kết quả cuối cùng
-        return nameWithoutExt + extension.ToLowerInvariant();
+        string str = phrase.ToLowerInvariant();
+        str = RemoveDiacritics(str);
+        str = Regex.Replace(str, @"[^a-z0-9\s-]", "");
+        str = Regex.Replace(str, @"\s+", "-").Trim('-');
+        str = Regex.Replace(str, @"-+", "-");
+        return str;
     }
 
     private static string RemoveDiacritics(string text)

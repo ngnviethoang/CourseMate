@@ -33,16 +33,16 @@
                 </tr>
                 </thead>
                 <tbody>
-                    @for (item of basketDto.items; track item.sortNumber) {
+                    @for (cart of this.carts; track cart.id) {
                         <tr>
                             <td class="product-thumbnail">
-                                <a routerLink="/training-online/{{item.courseId}}">
-                                    <img alt="item" [src]="item.thumbnail" />
+                                <a routerLink="/training-online/{{cart.courseId}}">
+                                    <img alt="item" [src]="cart.course.thumbnailFile" />
                                 </a>
                             </td>
                             <td class="product-name">
-                                <a routerLink="/training-online/{{item.courseId}}">{{ item.name }}</a><br />
-                                <a routerLink="/training-online/{{item.courseId}}">{{ item.authorName }}</a><br />
+                                <a routerLink="/training-online/{{cart.courseId}}">{{ cart.course.title }}</a><br />
+                                <a routerLink="/training-online/{{cart.courseId}}">{{ cart.course.author.userName }}</a><br />
                                 <div class="rating">
                                     <span>4.0</span>&nbsp;
                                     <span class="bx bxs-star checked"></span>
@@ -50,22 +50,21 @@
                                     <span class="bx bxs-star checked"></span>
                                     <span class="bx bxs-star checked"></span>
                                     <span class="bx bxs-star checked"></span>&nbsp;
-                                    <span>({{ item.totalVote }} rating)</span>
+                                    <!--                                    <span>({{ cart.totalVote }} rating)</span>-->
                                 </div>
                                 <div>
                                     <ul class="detail-courses-cart">
-                                        <li>{{ item.duration }} giờ học</li>
-                                        <li>{{ item.totalChapter }} bài học</li>
-                                        <li>{{ item.categoryName }}</li>
+                                        <!--                                        <li>{{ cart.course.duration }} giờ học</li>-->
+                                        <!--                                        <li>{{ cart.course.totalChapter }} bài học</li>-->
+                                        <!--                                        <li>{{ cart.course.category.Name }}</li>-->
                                     </ul>
                                 </div>
                             </td>
                             <td class="product-subtotal">
                                 <!-- @if( item.isDiscount == true)
                                  {}}-->
-                                <span
-                                    class="subtotal-amount">{{ 0 == 0 ? (item?.price | currency: 'VND':'symbol':'1.0-0') : (item.price | currency: 'VND':'symbol':'1.0-0') }}</span>
-                                <a (click)="removeItemOnCart(item.courseId)" class="remove" href="javascript:void(0)"><i
+                                <span class="subtotal-amount">{{ cart.course.price }} VNĐ</span>
+                                <a (click)="removeItem(cart.courseId)" class="remove" href="javascript:void(0)"><i
                                     class="bx bx-trash"></i></a>
                             </td>
                         </tr>
@@ -78,9 +77,9 @@
         <div class="cart-totals">
             <h3>Information Of Order</h3>
             <ul>
-                <li>Total bill Order <span>{{ basketDto.totalBill | currency: 'VND':'symbol':'1.0-0' }}</span></li>
+                <li>Total bill Order <span>{{ totalValue | currency: 'VND':'symbol':'1.0-0' }}</span></li>
                 <li>Discount <span></span></li>
-                <li>Total Amount <span>{{ basketDto.totalAmount | currency: 'VND':'symbol':'1.0-0' }}</span></li>
+                <li>Total Amount <span>{{ totalValue | currency: 'VND':'symbol':'1.0-0' }}</span></li>
             </ul>
 
             <div class="shopping-coupon-code">
@@ -88,8 +87,10 @@
                        type="text" />
                 <button type="submit">Promotion code</button>
             </div>
-            <a (click)="goToPaymentForCourse()" class="default-btn with-btn-login" href="javascript:void(0)"><i
-                class="flaticon-shopping-cart"></i>Continues to payment<span></span></a>
+            <a (click)="onClickCheckout()" class="default-btn with-btn-login" href="javascript:void(0)">
+                <i class="flaticon-shopping-cart"></i>
+                Proceed to Checkout
+            </a>
         </div>
     </div>
 </div>

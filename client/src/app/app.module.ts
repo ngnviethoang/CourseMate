@@ -61,7 +61,7 @@ import {
     TeacherComponent,
     TermsOfServiceComponent,
     TrainingOnlineComponent,
-    TrainingCourseDetailComponent,
+    TrainingOnlineDetailComponent,
     LessonComponent
 } from '@pages';
 import {
@@ -185,7 +185,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         AccountProfileCoursesComponent,
         AccountProfileDetailsComponent,
         TrainingOnlineComponent,
-        TrainingCourseDetailComponent,
+        TrainingOnlineDetailComponent,
         ProfileTeacherComponent,
         UserCommentCoursesComponent,
         UserReviewCoursesComponent,

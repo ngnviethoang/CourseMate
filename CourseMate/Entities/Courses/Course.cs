@@ -2,7 +2,7 @@
 
 public class Course : FullAuditedEntity<Guid>
 {
-    public Course(Guid id, string title, string description, string thumbnailFile, decimal price, CurrencyType currency, LevelType levelType, bool isPublished, string summary, Guid instructorId, Guid categoryId) : base(id)
+    public Course(Guid id, string title, string description, string thumbnailFile, decimal price, CurrencyType currency, LevelType levelType, bool isPublished, string summary, Guid instructorId, Guid categoryId, string slug) : base(id)
     {
         Title = title;
         Description = description;
@@ -13,11 +13,15 @@ public class Course : FullAuditedEntity<Guid>
         IsPublished = isPublished;
         InstructorId = instructorId;
         CategoryId = categoryId;
+        Slug = slug;
         Summary = summary;
     }
 
     [MaxLength(CourseMateConst.DefaultMaxLength)]
     public string Title { get; set; }
+
+    [MaxLength(CourseMateConst.DefaultMaxLength)]
+    public string Slug { get; set; }
 
     [MaxLength(CourseMateConst.DescriptionMaxLength)]
     public string Description { get; set; }

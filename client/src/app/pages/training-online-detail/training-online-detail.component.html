@@ -365,9 +365,17 @@
                 </ul>
 
                 <div class="btn-box">
-                    <div class="default-btn" (click)="onAddToCart()">
-                        <i class="flaticon-shopping-cart"></i>
-                        Ghi danh
+                    <div class="default-btn" (click)="onAddToCart(courseDto.id)">
+                        @if (courseDto.isEnrollment) {
+                            Vào học
+                        } @else {
+                            @if (this.isInCart) {
+                                Giỏ hàng
+                            } @else {
+                                <i class="flaticon-shopping-cart"></i>
+                                Thêm vào giỏ hàng
+                            }
+                        }
                     </div>
                 </div>
 

@@ -25,7 +25,7 @@ export * from './register-pages/register-pages.component';
 export * from './account-profile-courses/account-profile-courses.component';
 export * from './account-profile-details/account-profile-details.component';
 export * from './training-online/training-online.component';
-export * from './training-course-detail/training-course-detail.component';
+export * from '@pages/training-online-detail/training-online-detail.component';
 export * from './profile-teacher/profile-teacher.component';
 export * from './register-error/register-error.component';
 export * from './send-email-after-register/send-email-after-register.component';

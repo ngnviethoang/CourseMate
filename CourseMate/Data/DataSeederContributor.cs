@@ -4,6 +4,7 @@ using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
 using CourseMate.Entities.Lessons;
 using CourseMate.Permissions;
+using CourseMate.Shared;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
@@ -110,7 +111,11 @@ public class CourseMateDataSeederContributor : IDataSeedContributor, ITransientD
             json = await File.ReadAllTextAsync(jsonFilePath);
             List<Course> courses = JsonSerializer.Deserialize<List<Course>>(json)!;
             IdentityUser? adminUser = await _identityUserManager.FindByNameAsync("admin");
-            courses.ForEach(i => i.InstructorId = adminUser!.Id);
+            courses.ForEach(i =>
+            {
+                i.InstructorId = adminUser!.Id;
+                i.Slug = Helper.GenerateSlug(i.Title);
+            });
             await _courseRepo.InsertManyAsync(courses, true);
         }
 
@@ -127,6 +132,13 @@ public class CourseMateDataSeederContributor : IDataSeedContributor, ITransientD
             jsonFilePath = Path.Combine(projectDomain, "lessons.json");
             json = await File.ReadAllTextAsync(jsonFilePath);
             List<Lesson> lessons = JsonSerializer.Deserialize<List<Lesson>>(json)!;
+            lessons.ForEach(i =>
+            {
+                if (i.Content == null)
+                {
+                    i.Content = string.Empty;
+                }
+            });
             await _lessonRepo.InsertManyAsync(lessons, true);
         }
 

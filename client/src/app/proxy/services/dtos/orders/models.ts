@@ -1,16 +1,7 @@
+import type { PaymentRequestDto } from '../payment-requests/models';
 
 export interface CreateUpdateOrderDto {
-  studentId?: string;
-  totalAmount: number;
-  currency?: string;
-  paymentRequestId?: string;
-  items: CreateUpdateOrderItemDto[];
-}
-
-export interface CreateUpdateOrderItemDto {
-  orderId?: string;
-  courseId?: string;
-  price: number;
+  courseIds: string[];
 }
 
 export interface OrderDto {

@@ -235,6 +235,11 @@ namespace CourseMate.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
                     b.Property<string>("Summary")
                         .IsRequired()
                         .HasMaxLength(32768)

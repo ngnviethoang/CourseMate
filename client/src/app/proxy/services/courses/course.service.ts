@@ -36,6 +36,15 @@ export class CourseService {
     { apiName: this.apiName,...config });
   
 
+  getBySlug = (slug: string, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, CourseDto>({
+      method: 'GET',
+      url: '/api/app/course/by-slug',
+      params: { slug },
+    },
+    { apiName: this.apiName,...config });
+  
+
   getList = (input: GetListCourseRequestDto, config?: Partial<Rest.Config>) =>
     this.restService.request<any, PagedResultDto<CourseDto>>({
       method: 'GET',

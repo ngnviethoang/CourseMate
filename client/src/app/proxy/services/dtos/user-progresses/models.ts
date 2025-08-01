@@ -16,6 +16,7 @@ export interface CourseProgressDto {
 }
 
 export interface CreateUpdateUserProgressDto {
+  userProgressId?: string;
   lessonId?: string;
   isCompleted: boolean;
   watchedDuration?: string;
