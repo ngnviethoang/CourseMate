@@ -43,5 +43,6 @@ export interface CreateUpdateCourseDto {
 }
 
 export interface GetListCourseRequestDto extends GetListRequestDto {
+  search?: string;
   categoryId?: string;
 }

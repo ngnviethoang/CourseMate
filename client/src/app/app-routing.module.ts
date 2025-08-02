@@ -46,6 +46,8 @@ import {
 
 import { DefaultLayoutComponent, EmptyLayoutComponent } from '@components';
 
+import { authGuard } from '@abp/ng.core';
+
 const routes: Routes = [
     {
         path: '',
@@ -53,9 +55,9 @@ const routes: Routes = [
         children: [
             { path: '', component: HomeComponent },
             { path: 'training-online', component: TrainingOnlineComponent },
-            { path: 'training-online/:slug', component: TrainingOnlineDetailComponent },
-            { path: 'cart', component: CartComponent },
-            { path: 'checkout/:orderId', component: CheckoutComponent },
+            { path: 'training-online/:id', component: TrainingOnlineDetailComponent, canActivate: [authGuard] },
+            { path: 'cart', component: CartComponent, canActivate: [authGuard] },
+            { path: 'checkout/:orderId', component: CheckoutComponent, canActivate: [authGuard] },
 
             { path: 'profile', component: ProfileComponent },
             { path: 'about', component: AboutComponent },
@@ -102,7 +104,7 @@ const routes: Routes = [
         path: '',
         component: EmptyLayoutComponent,
         children: [{ path: 'course/:courseId', component: LessonComponent }]
-    }
+    },
 ];
 
 @NgModule({

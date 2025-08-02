@@ -11,6 +11,7 @@ namespace CourseMate.Services.Chapters;
 [Authorize(CourseMatePermissions.Chapters.Default)]
 public class ChapterAppService : CourseMateAppService, IChapterAppService
 {
+    [AllowAnonymous]
     public async Task<ChapterDto> GetAsync(Guid id)
     {
         IQueryable<ChapterDto> queryable =

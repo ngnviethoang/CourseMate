@@ -113,8 +113,14 @@
             <p-card class="tw-col-span-8 px-1 tw-h-full">
                 <div class="tw-grid tw-grid-flow-col tw-grid-rows-5 tw-gap-4 tw-h-full">
                     <div class="tw-row-span-4">
-                        <iframe class="tw-h-full tw-w-full"
-                                src="https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=1&mute=1"></iframe>
+                        <video class="tw-h-full tw-w-full" controls>
+                            <source
+                                src="https://localhost:44393/api/app/storage/video?fileName=file_example_MP4_1920_18MG.mp4"
+                                type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <!-- <iframe class="tw-h-full tw-w-full"
+                                 src="https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=1&mute=1"></iframe>-->
                     </div>
                     <div class="tw-row-span-1">
                         <p-panel header="Transcript">

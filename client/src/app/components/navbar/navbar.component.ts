@@ -5,6 +5,7 @@ import { HubConnection, LogLevel } from '@microsoft/signalr';
 import { environment } from '../../../environments/environment';
 import { NotificationService } from '@proxy/services/notifications';
 import { NotificationDto } from '@proxy/services/dtos/notifications';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-navbar',
@@ -19,11 +20,13 @@ export class NavbarComponent implements OnInit {
     notifications: NotificationDto[] = [];
     totalNotification = 0;
     private hubNotificationConnection: HubConnection;
+    searchKeyword: string;
 
     constructor(
         private authService: AuthService,
         private config: ConfigStateService,
-        private notificationService: NotificationService
+        private notificationService: NotificationService,
+        private router: Router
     ) {
     }
 
@@ -60,6 +63,13 @@ export class NavbarComponent implements OnInit {
 
     login() {
         this.authService.navigateToLogin();
+        return;
+    }
+
+    async submitSearch() {
+        await this.router.navigate(['/training-online'], {
+            queryParams: { q: this.searchKeyword }
+        });
     }
 
     private receivedNotification(notificationDto: NotificationDto) {

@@ -34,8 +34,8 @@ export class TrainingOnlineDetailComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        const id = this.route.snapshot.paramMap.get('slug');
-        this.courseService.getBySlug(id).subscribe((courseDto) => {
+        const id = this.route.snapshot.paramMap.get('id');
+        this.courseService.get(id).subscribe((courseDto) => {
             this.courseDto = courseDto;
             this.isInCart = courseDto.isInCart;
         });
@@ -55,6 +55,11 @@ export class TrainingOnlineDetailComponent implements OnInit {
         if (!this.authService.isAuthenticated) {
             let queryParams: Params = { returnUrl: this.router.url };
             this.authService.navigateToLogin(queryParams);
+        }
+
+        if (this.courseDto.isEnrollment) {
+            await this.router.navigate(['/course', this.courseDto.id]);
+            return;
         }
 
         if (this.isInCart) {

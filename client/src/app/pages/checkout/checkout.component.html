@@ -11,102 +11,92 @@
     <div class="shape9"><img alt="image" src="assets/img/shape8.svg" /></div>
 </div>
 
-<div class="checkout-area pt-3 pb-5">
+<div class="pt-3 pb-5">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 col-md-12">
-                <div class="billing-details">
-                    <h3 class="title">Transfer banking by QR Code</h3>
+                <div>
                     <div class="row">
-                        <div class="col-lg-12 col-md-12 select-box">
-                            <img alt=""
-                                 src="https://res.cloudinary.com/myperson/image/upload/v1701510036/ViQR_ziiwxs.jpg" />
-                        </div>
-                    </div>
-                    <h5>Open Banking App for scan QR Code</h5>
+                        <!-- Payment Method Section -->
+                        <h2 class="tw-text-lg tw-font-semibold tw-text-gray-800 tw-mb-4">Phương thức thanh toán</h2>
 
-                    <div class="tw-bg-white tw-text-gray-800 tw-rounded-lg tw-shadow-md tw-p-4">
-                        <h2 class="tw-text-xl tw-font-bold tw-mb-2">Giỏ hàng của bạn</h2>
+                        <p-selectbutton [options]="paymentOptions" [(ngModel)]="selectedPaymentMethod"
+                                        optionLabel="label"
+                                        optionValue="value"
+                                        class="tw-mb-4"
+                        >
+                            <ng-template #item let-item>
+                                <div class="tw-flex tw-items-center tw-gap-2">
+                                    <i [class]="item.icon"></i>
+                                    <span>{{ item.label }}</span>
+                                </div>
+                            </ng-template>
+                        </p-selectbutton>
 
-                        @for (item of order.; track item.id) {
-                            <div class="tw-flex tw-items-start tw-gap-4 tw-mb-4">
-                                <img [src]="item.thumbnailUrl" alt="{{ item.title }}" class="tw-w-20 tw-h-20 tw-object-cover tw-rounded" />
-                                <div class="tw-flex-1">
-                                    <div class="tw-font-semibold tw-text-sm md:tw-text-base">{{ item.title }}</div>
-                                    <div class="tw-text-red-600 tw-font-semibold tw-text-lg">
-                                        {{ item.discountPrice | number }}₫
-                                        <span class="tw-text-gray-400 tw-line-through tw-text-sm tw-ml-2">
-            {{ item.originalPrice | number }}₫
-          </span>
+                        <!-- Card Info Form -->
+                        @if (selectedPaymentMethod === PaymentMethod.Card) {
+                            <div class="tw-mt-6 tw-p-4 tw-border tw-rounded-md tw-bg-white">
+                                <h3 class="tw-font-semibold tw-text-gray-700 tw-mb-3">Nhập thông tin thẻ</h3>
+                                <div class="tw-flex tw-flex-col tw-gap-3">
+                                    <input type="text" placeholder="Số thẻ" class="tw-border tw-rounded-md tw-p-2" />
+                                    <input type="text" placeholder="Tên chủ thẻ"
+                                           class="tw-border tw-rounded-md tw-p-2" />
+                                    <div class="tw-flex tw-gap-3">
+                                        <input type="text" placeholder="MM/YY"
+                                               class="tw-border tw-rounded-md tw-p-2 tw-w-1/2" />
+                                        <input type="text" placeholder="CVV"
+                                               class="tw-border tw-rounded-md tw-p-2 tw-w-1/2" />
                                     </div>
+
+                                    <!-- 🔘 Nút Thanh Toán -->
+                                    <button
+                                        (click)="submitCardPayment()"
+                                        class="tw-mt-4 tw-w-full tw-bg-[#fe4a55] tw-text-white tw-font-semibold tw-py-3 tw-rounded-md tw-transition hover:tw-opacity-90"
+                                    >
+                                        Thanh toán
+                                    </button>
                                 </div>
                             </div>
                         }
+
+
+                        <!-- Order Summary -->
+                        <div class="tw-mt-8 tw-p-4 tw-border tw-rounded-md tw-bg-gray-50">
+                            <h3 class="tw-font-semibold tw-text-gray-800 tw-mb-2">Tóm tắt đơn hàng</h3>
+                            <div class="tw-flex tw-justify-between tw-font-bold tw-text-base">
+                                <span>Tổng đơn giá:</span>
+                                <span>{{ totalValue | currency:'VND' }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-6 col-md-12">
-                <div class="order-details">
-                    <h3 class="title">Tranfer manual banking with the infomation</h3>
-                    <div class="order-table table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
-                            <tr>
-                                <th scope="col" style="font-weight: normal">Name Banking</th>
-                                <th scope="col">{{ infomationBanking?.nameBanking }}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td class="product-name">
-                                    <a routerLink="/details-products">Account Name</a>
-                                </td>
-                                <td class="order-subtotal-price">
-                                    <span class="order-subtotal-amount">{{ infomationBanking?.accountName }}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="product-name">
-                                    <a routerLink="/details-products">Number Account</a>
-                                </td>
-                                <td class="order-subtotal-price">
-                                    <span class="order-subtotal-amount">{{ infomationBanking?.numberBanking }}</span>
-                                    <a href="javascript:void(0)"><span (click)="copyMessenger('6883688')"
-                                                                       class="copy-number-checkout">Copy</span></a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="product-name">
-                                    <a routerLink="/details-products">Amount</a>
-                                </td>
-                                <td class="order-subtotal-price">
-                                    <span
-                                        class="order-subtotal-amount">{{ totalValue | currency: 'VND':'symbol':'1.0-0' }}</span>
-                                    <a href="javascript:void(0)"><span (click)="copyMessenger('6883688')"
-                                                                       class="copy-number-checkout">Copy</span></a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="product-name">
-                                    <a routerLink="/details-products">Content Tranfer</a>
-                                </td>
-                                <td class="order-subtotal-price">
-                                    <span class="order-subtotal-amount">{{ purchaseCode }}</span>
-                                    <a href="javascript:void(0)"><span (click)="copyMessenger('6883688')"
-                                                                       class="copy-number-checkout">Copy</span></a>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="payment-box">
-                        <a (click)="paymentPurchaseCourse(tranferPayment)" class="secondary-btn"
-                           href="javascript:void(0)"
-                           style="width: 100%">Payment With Tranfer Bank Account</a>
-                        <a (click)="paymentPurchaseCourse(stripePayment)" class="secondary-btn"
-                           href="javascript:void(0)"
-                           style="width: 100%">Payment with Stripe</a>
-                    </div>
+                <div>
+                    <h3 class="tw-text-xl tw-font-bold tw-mb-6">Thông tin đơn hàng</h3>
+
+                    @for (item of order.items; track item.id) {
+                        <div class="tw-space-y-4">
+                            <div
+                                class="tw-flex tw-items-start tw-gap-4 tw-bg-white tw-shadow-sm tw-p-4 tw-rounded-lg">
+                                <img [src]="item.course.thumbnailFile"
+                                     [alt]="item.course.title"
+                                     class="tw-w-24 tw-h-24 tw-object-cover tw-rounded-lg" />
+
+                                <div class="tw-flex-1 tw-space-y-1">
+                                    <div class="tw-font-semibold tw-text-base md:tw-text-lg">
+                                        {{ item.course.title }}
+                                    </div>
+                                    <div class="tw-text-red-600 tw-font-bold tw-text-lg">
+                                        {{ item.course.price | number }}₫
+                                        <span class="tw-text-gray-400 tw-line-through tw-text-sm tw-ml-2">
+          {{ item.course.price | number }}₫
+        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

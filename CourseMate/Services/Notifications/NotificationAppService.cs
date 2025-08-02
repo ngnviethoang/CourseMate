@@ -7,6 +7,7 @@ namespace CourseMate.Services.Notifications;
 [Authorize]
 public class NotificationAppService : CourseMateAppService, INotificationAppService
 {
+    [AllowAnonymous]
     public async Task<PagedResultDto<NotificationDto>> GetListAsync(GetListRequestDto input)
     {
         IQueryable<NotificationDto> queryable =

@@ -2,7 +2,7 @@
 
 namespace CourseMate.Services.Dtos.Orders;
 
-public class OrderItemDto : FullAuditedEntityDto<Guid>
+public class OrderItemDto : EntityDto<Guid>
 {
     public Guid OrderId { get; set; }
     public Guid CourseId { get; set; }

@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel;
-using System.Globalization;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace CourseMate.Shared;
@@ -16,28 +14,11 @@ public static class Helper
         }
 
         string str = phrase.ToLowerInvariant();
-        str = RemoveDiacritics(str);
+        str = RemoveUnicode(str);
         str = Regex.Replace(str, @"[^a-z0-9\s-]", "");
         str = Regex.Replace(str, @"\s+", "-").Trim('-');
         str = Regex.Replace(str, @"-+", "-");
         return str;
-    }
-
-    private static string RemoveDiacritics(string text)
-    {
-        string normalized = text.Normalize(NormalizationForm.FormD);
-        StringBuilder sb = new();
-
-        foreach (char c in normalized)
-        {
-            UnicodeCategory unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
-            if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-            {
-                sb.Append(c);
-            }
-        }
-
-        return sb.ToString().Normalize(NormalizationForm.FormC);
     }
 
     public static string DescriptionAttr<T>(this T source)

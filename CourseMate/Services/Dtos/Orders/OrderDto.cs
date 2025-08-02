@@ -1,6 +1,6 @@
 ﻿namespace CourseMate.Services.Dtos.Orders;
 
-public class OrderDto : FullAuditedEntityDto<Guid>
+public class OrderDto : AuditedEntityDto<Guid>
 {
     public Guid StudentId { get; set; }
     public decimal TotalAmount { get; set; }

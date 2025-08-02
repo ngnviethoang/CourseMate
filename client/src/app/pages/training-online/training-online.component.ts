@@ -6,7 +6,8 @@ import { CourseService } from '@proxy/services/courses';
 import { CategoryService } from '@proxy/services/categories';
 import { PaginatorState } from 'primeng/paginator';
 import { SelectChangeEvent } from 'primeng/select';
-import { LoadingIndicatorService } from '../../services/loading-indicator.service';
+import { LoadingIndicatorService } from '@services';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-training-online',
@@ -30,13 +31,19 @@ export class TrainingOnlineComponent implements OnInit {
         skipCount: 0,
         sorting: null
     };
+    private keyword: string = '';
 
     constructor(private courseService: CourseService,
                 private categoryService: CategoryService,
-                private loadingService: LoadingIndicatorService) {
+                private loadingService: LoadingIndicatorService,
+                private route: ActivatedRoute) {
     }
 
     ngOnInit(): void {
+        this.route.queryParams.subscribe(params => {
+            this.getListCourseReq.search = params['q'] || null;
+        });
+
         this.categoryService
             .getList({})
             .subscribe(response => this.categories = response.items);

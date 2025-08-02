@@ -7441,12 +7441,69 @@
           "minimum": null,
           "maximum": null,
           "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Orders.OrderDto": {
+      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "StudentId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
         },
         {
-          "name": "PaymentRequest",
+          "name": "TotalAmount",
           "jsonName": null,
-          "type": "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto",
-          "typeSimple": "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto",
+          "type": "System.Decimal",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Currency",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Description",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Items",
+          "jsonName": null,
+          "type": "[CourseMate.Services.Dtos.Orders.OrderItemDto]",
+          "typeSimple": "[CourseMate.Services.Dtos.Orders.OrderItemDto]",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,
@@ -7456,21 +7513,62 @@
         }
       ]
     },
-    "CourseMate.Services.Dtos.Orders.OrderDto": {
-      "baseType": null,
+    "CourseMate.Services.Dtos.Orders.OrderItemDto": {
+      "baseType": "Volo.Abp.Application.Dtos.EntityDto<System.Guid>",
       "isEnum": false,
       "enumNames": null,
       "enumValues": null,
       "genericArguments": null,
-      "properties": []
-    },
-    "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto": {
-      "baseType": null,
-      "isEnum": false,
-      "enumNames": null,
-      "enumValues": null,
-      "genericArguments": null,
-      "properties": []
+      "properties": [
+        {
+          "name": "OrderId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CourseId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Price",
+          "jsonName": null,
+          "type": "System.Decimal",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Course",
+          "jsonName": null,
+          "type": "CourseMate.Services.Dtos.Courses.CourseDto",
+          "typeSimple": "CourseMate.Services.Dtos.Courses.CourseDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
     },
     "CourseMate.Services.Dtos.ResultObjectDto": {
       "baseType": null,

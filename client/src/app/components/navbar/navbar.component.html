@@ -11,8 +11,14 @@
                 </span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <form class="search-box">
-                    <input class="input-search" placeholder="Find the course on the system" type="text" />
+                <form class="search-box" (ngSubmit)="submitSearch()">
+                    <input
+                        class="input-search"
+                        placeholder="Find the course on the system"
+                        type="text"
+                        [(ngModel)]="searchKeyword"
+                        name="search"
+                    />
                     <button type="submit">
                         <i class="flaticon-search"></i>
                     </button>
@@ -47,7 +53,7 @@
                         </div>
 
                         <div class="option-item">
-                            <p-button (click)="op.toggle($event)" icon="pi pi-bell" [rounded]="true" [text]="true"
+                            <p-button (click)="op.show($event)" icon="pi pi-bell" [rounded]="true" [text]="true"
                                       severity="secondary"
                                       badge="2" />
                             <p-popover #op>
@@ -79,7 +85,8 @@
 
                         <div class="option-item">
                             @if (hasLoggedIn) {
-                                <p-button (click)="login()" [label]="currentUser.userName" icon="pi pi-user"
+                                <p-button (click)="settingPopover.show($event)" [label]="currentUser.userName"
+                                          icon="pi pi-user"
                                           [rounded]="true" [text]="true"
                                           severity="secondary" variant="text" />
                             } @else {
@@ -94,7 +101,7 @@
     </div>
 </div>
 
-<ng-template #popoverContent>
+<p-popover #settingPopover>
     <div style="min-width: 200px;">
         <div class="d-flex align-items-center mb-3">
             <img ngSrc="assets/img/user1.jpg" alt="User Image" class="rounded-circle me-2"
@@ -131,7 +138,7 @@
             </li>
         </ul>
     </div>
-</ng-template>
+</p-popover>
 
 
 

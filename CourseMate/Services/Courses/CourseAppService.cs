@@ -15,11 +15,13 @@ namespace CourseMate.Services.Courses;
 [Authorize(CourseMatePermissions.Courses.Default)]
 public class CourseAppService : CourseMateAppService, ICourseAppService
 {
+    [AllowAnonymous]
     public async Task<CourseDto> GetAsync(Guid id)
     {
         return await GetCourseAsync(id, null);
     }
 
+    [AllowAnonymous]
     public async Task<CourseDto> GetBySlugAsync(string slug)
     {
         return await GetCourseAsync(null, slug);
@@ -90,10 +92,11 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
 
         courseDto.Chapters = await AsyncExecuter.ToListAsync(queryableChapter);
         courseDto.IsInCart = await CartRepo.AnyAsync(i => i.Id == courseDto.Id && i.UserId == CurrentUser.Id);
-        courseDto.IsEnrollment = await EnrollmentRepo.AnyAsync(i => i.Id == courseDto.Id && i.StudentId == CurrentUser.Id);
+        courseDto.IsEnrollment = await EnrollmentRepo.AnyAsync(i => i.CourseId == courseDto.Id && i.StudentId == CurrentUser.Id);
         return courseDto;
     }
 
+    [AllowAnonymous]
     public async Task<PagedResultDto<CourseDto>> GetListAsync(GetListCourseRequestDto input)
     {
         IQueryable<CourseDto> queryable =
@@ -124,6 +127,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
                 }
             };
         queryable = queryable
+            .WhereIf(!string.IsNullOrEmpty(input.Search), i => i.Title.Contains(input.Search!))
             .WhereIf(input.CategoryId.HasValue, i => i.CategoryId == input.CategoryId!.Value)
             .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(Course.Title) : input.Sorting);
 

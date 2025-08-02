@@ -1,3 +1,7 @@
+::ng-deep .p-popover {
+    --p-popover-arrow-offset: 93%;
+}
+
 .navbar-area {
     position: relative;
     background-color: var(--whiteColor);
@@ -621,6 +625,7 @@ span.new {
         weight: 700;
     };
 }
+
 .popover-notification-wrapper {
     width: 320px;
     max-height: 500px;
@@ -655,6 +660,7 @@ span.new {
 .popover-footer {
     background-color: #f8f9fa;
 }
+
 .ngb-popover {
     max-width: 95vw !important;
 }

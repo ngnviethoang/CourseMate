@@ -11,6 +11,7 @@ namespace CourseMate.Services.Categories;
 [Authorize(CourseMatePermissions.Categories.Default)]
 public class CategoryAppService : CourseMateAppService, ICategoryAppService
 {
+    [AllowAnonymous]
     public async Task<CategoryDto> GetAsync(Guid id)
     {
         IQueryable<CategoryDto> queryable =
@@ -29,6 +30,7 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
         return await AsyncExecuter.FirstOrDefaultAsync(queryable) ?? new CategoryDto();
     }
 
+    [AllowAnonymous]
     public async Task<PagedResultDto<CategoryDto>> GetListAsync(GetListRequestDto input)
     {
         IQueryable<CategoryDto> queryable =

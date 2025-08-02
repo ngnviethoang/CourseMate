@@ -111,6 +111,8 @@ import { Accordion, AccordionContent, AccordionHeader, AccordionPanel } from 'pr
 import { Checkbox } from 'primeng/checkbox';
 import { Panel } from 'primeng/panel';
 import { Breadcrumb } from 'primeng/breadcrumb';
+import { IconField } from 'primeng/iconfield';
+import { SelectButton } from 'primeng/selectbutton';
 
 const CourseMatePreset = definePreset(Lara, {
     semantic: {
@@ -250,7 +252,9 @@ const monacoConfig: NgxMonacoEditorConfig = {
         AccordionContent,
         Checkbox,
         Panel,
-        Breadcrumb
+        Breadcrumb,
+        IconField,
+        SelectButton
     ],
     providers: [
         provideAbpCore(

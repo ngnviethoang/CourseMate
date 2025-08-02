@@ -1,5 +1,6 @@
 ﻿using CourseMate.Entities.Orders;
 using CourseMate.Permissions;
+using CourseMate.Services.Dtos.Courses;
 using CourseMate.Services.Dtos.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Domain.Repositories;
@@ -11,8 +12,60 @@ public class OrderAppService : CourseMateAppService, IOrderAppService
 {
     public async Task<OrderDto> GetAsync(Guid id)
     {
-        Order order = await OrderRepo.GetAsync(id);
-        return ObjectMapper.Map<Order, OrderDto>(order);
+        IQueryable<OrderDto> orderQueryable =
+            from order in await OrderRepo.GetQueryableAsync()
+            select new OrderDto
+            {
+                Id = order.Id,
+                StudentId = order.StudentId,
+                Currency = order.Currency,
+                TotalAmount = order.TotalAmount,
+                Description = order.Description,
+                CreationTime = order.CreationTime,
+                CreatorId = order.CreatorId,
+                LastModificationTime = order.LastModificationTime,
+                LastModifierId = order.LastModifierId
+            };
+
+        IQueryable<OrderItemDto> orderItemQueryable =
+            from orderItem in await OrderItemRepo.GetQueryableAsync()
+            join course in await CourseRepo.GetQueryableAsync()
+                on orderItem.CourseId equals course.Id
+            where orderItem.OrderId == id
+            select new OrderItemDto
+            {
+                Id = orderItem.Id,
+                CourseId = orderItem.CourseId,
+                OrderId = orderItem.OrderId,
+                Price = orderItem.Price,
+                Course = new CourseDto
+                {
+                    Id = course.Id,
+                    Title = course.Title,
+                    Description = course.Description,
+                    ThumbnailFile = course.ThumbnailFile,
+                    Price = course.Price,
+                    Currency = course.Currency,
+                    LevelType = course.LevelType,
+                    IsPublished = course.IsPublished,
+                    InstructorId = course.InstructorId,
+                    CategoryId = course.CategoryId,
+                    Slug = course.Slug,
+                    CreationTime = course.CreationTime,
+                    CreatorId = course.CreatorId,
+                    LastModificationTime = course.LastModificationTime,
+                    LastModifierId = course.LastModifierId
+                }
+            };
+
+        OrderDto? orderDto = await AsyncExecuter.FirstOrDefaultAsync(orderQueryable);
+        if (orderDto == null)
+        {
+            return new OrderDto();
+        }
+
+        orderDto.Items = await AsyncExecuter.ToListAsync(orderItemQueryable);
+        return orderDto;
     }
 
     public async Task<PagedResultDto<OrderDto>> GetListAsync(GetListRequestDto input)
