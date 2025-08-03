@@ -1,0 +1,68 @@
+<div class="page-title-area">
+    <div class="container">
+        <div class="page-title-content">
+            <ul>
+                <li><a routerLink="/">Home</a></li>
+                <li>Profile</li>
+            </ul>
+            <h2>Profile</h2>
+        </div>
+    </div>
+    <div class="shape9"><img alt="image" src="assets/img/shape8.svg"></div>
+</div>
+
+<div class="tw-container tw-py-4 tw-mx-auto tw-max-w-[80%]">
+    <div class="tw-flex tw-min-h-screen tw-bg-white tw-font-sans">
+        <!-- Sidebar -->
+        <aside class="tw-w-64 tw-border tw-rounded tw-py-1">
+            <div class="tw-flex tw-flex-col tw-items-center">
+                <div class="tw-w-20 tw-h-20 tw-rounded-full tw-bg-gray-800 tw-flex tw-items-center tw-justify-center">
+                    <i class="pi pi-user tw-text-white tw-text-2xl"></i>
+                </div>
+                <h2 class="tw-mt-4 tw-font-semibold">Udemy User</h2>
+            </div>
+            <p-menu [model]="menuItems" />
+        </aside>
+
+        <!-- Main Content -->
+        <div class="tw-flex-1 tw-p-10">
+            <h1 class="tw-text-2xl tw-font-bold tw-mb-6">Account</h1>
+
+            <!-- Email -->
+            <div class="tw-mb-6">
+                <label class="tw-block tw-font-medium tw-mb-2">Email:</label>
+                <div class="tw-flex tw-items-center tw-gap-2">
+                    <input type="text" disabled value="nguyen118hoang@gmail.com"
+                           class="tw-w-full tw-p-2 tw-border tw-rounded tw-bg-gray-100" />
+                    <p-button icon="pi pi-pencil"></p-button>
+                </div>
+            </div>
+
+            <!-- Change password -->
+            <div class="tw-space-y-4 tw-mb-6">
+                <div>
+                    <label class="tw-block tw-font-medium">New password</label>
+                    <input type="password" pInputText class="tw-w-full tw-p-2 tw-border tw-rounded" />
+                </div>
+                <div class="tw-pb-2">
+                    <label class="tw-block tw-font-medium">Confirm new password</label>
+                    <input type="password" pInputText class="tw-w-full tw-p-2 tw-border tw-rounded" />
+                </div>
+                <p-button label="Change password"></p-button>
+            </div>
+
+            <!-- MFA -->
+            <div class="tw-border tw-rounded tw-p-4 tw-bg-gray-50">
+                <h3 class="tw-font-semibold">Multi-factor Authentication</h3>
+                <p class="tw-text-sm tw-mt-2">
+                    Increase your account security by requiring that a code emailed to you be entered when you log in.
+                </p>
+                <a href="#" class="tw-text-sm tw-text-blue-600 tw-underline">Help Center article</a>
+                <div class="tw-mt-4">
+                    <p-button label="Enable"></p-button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

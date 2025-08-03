@@ -1,7 +1,7 @@
 <div [ngClass]="{ sticky: isSticky }" class="navbar-area">
     <div class="container-fluid">
         <nav [class.active]="classApplied" class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" routerLink="/"><img alt="logo" ngSrc="assets/img/logo.png" height="800"
+            <a class="navbar-brand" routerLink="/"><img alt="logo" src="./assets/img/logo.png" height="800"
                                                         width="800" /></a>
             <button (click)="toggleClass()" class="navbar-toggler" type="button">
                 <span class="burger-menu">
@@ -104,7 +104,7 @@
 <p-popover #settingPopover>
     <div style="min-width: 200px;">
         <div class="d-flex align-items-center mb-3">
-            <img ngSrc="assets/img/user1.jpg" alt="User Image" class="rounded-circle me-2"
+            <img src="./assets/img/user1.jpg" alt="User Image" class="rounded-circle me-2"
                  width="40" height="40"
                  style="object-fit: cover;">
             <div>
@@ -115,19 +115,9 @@
 
         <ul class="list-unstyled mb-0">
             <li class="mb-2">
-                <a href="/profile"
+                <a href="/account-setting"
                    class="d-flex align-items-center text-decoration-none text-dark">
-                    <i class="bx bx-user me-2"></i> Profile
-                </a>
-            </li>
-            <li class="mb-2">
-                <a href="#" class="d-flex align-items-center text-decoration-none text-dark">
-                    <i class="bx bx-cog me-2"></i> Settings
-                </a>
-            </li>
-            <li class="mb-2">
-                <a href="#" class="d-flex align-items-center text-decoration-none text-dark">
-                    <i class="bx bx-bell me-2"></i> Help
+                    <i class="bx bx-user me-2"></i> Account
                 </a>
             </li>
             <li>

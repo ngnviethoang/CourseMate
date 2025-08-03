@@ -5,7 +5,6 @@ import {
     AboutComponent,
     AccountBookmarkCourseComponent,
     AccountProfileCoursesComponent,
-    AccountProfileDetailsComponent,
     BecomeATeacherComponent,
     BlogDetailsStyleTwoComponent,
     CartComponent,
@@ -35,7 +34,7 @@ import {
     TermsOfServiceComponent,
     TrainingOnlineComponent,
     TrainingOnlineDetailComponent,
-    ProfileComponent,
+    AccountSettingComponent,
     CourseListComponent,
     LoginComponent,
     RunCodeComponent,
@@ -58,8 +57,8 @@ const routes: Routes = [
             { path: 'training-online/:id', component: TrainingOnlineDetailComponent, canActivate: [authGuard] },
             { path: 'cart', component: CartComponent, canActivate: [authGuard] },
             { path: 'checkout/:orderId', component: CheckoutComponent, canActivate: [authGuard] },
+            { path: 'account-setting', component: AccountSettingComponent, canActivate: [authGuard] },
 
-            { path: 'profile', component: ProfileComponent },
             { path: 'about', component: AboutComponent },
             { path: 'teacher', component: TeacherComponent },
             { path: 'information-teacher', component: ProfileTeacherComponent },
@@ -75,7 +74,6 @@ const routes: Routes = [
             { path: 'categories', component: CategoriesComponent },
             { path: 'download-document', component: DownLoadRecoursesComponent },
             // { path: 'courses', component: CourseListComponent },
-            { path: 'payment/:purchaseCode', component: CheckoutComponent },
             { path: 'details-products', component: ProductsDetailsComponent },
             { path: 'gallery', component: GalleryComponent },
             { path: 'news', component: CoursesNewsComponent },
@@ -85,7 +83,6 @@ const routes: Routes = [
             { path: 'login', component: LoginComponent },
             { path: 'register', component: RegisterPagesComponent },
             { path: 'my-training-online', component: AccountProfileCoursesComponent },
-            { path: 'my-information', component: AccountProfileDetailsComponent },
             { path: 'training-online', component: TrainingOnlineComponent },
             { path: 'training-online/:id', component: TrainingOnlineDetailComponent },
             { path: 'run-code/:id', component: RunCodeComponent },
@@ -104,7 +101,7 @@ const routes: Routes = [
         path: '',
         component: EmptyLayoutComponent,
         children: [{ path: 'course/:courseId', component: LessonComponent }]
-    },
+    }
 ];
 
 @NgModule({

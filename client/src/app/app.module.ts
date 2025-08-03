@@ -32,7 +32,6 @@ import {
     AboutComponent,
     AccountBookmarkCourseComponent,
     AccountProfileCoursesComponent,
-    AccountProfileDetailsComponent,
     BecomeATeacherComponent,
     BlogDetailsStyleTwoComponent,
     CartComponent,
@@ -62,8 +61,10 @@ import {
     TermsOfServiceComponent,
     TrainingOnlineComponent,
     TrainingOnlineDetailComponent,
-    LessonComponent
+    LessonComponent,
+    AccountSettingComponent
 } from '@pages';
+
 import {
     ApplyInstructorComponent,
     CoursesComponent,
@@ -113,6 +114,9 @@ import { Panel } from 'primeng/panel';
 import { Breadcrumb } from 'primeng/breadcrumb';
 import { IconField } from 'primeng/iconfield';
 import { SelectButton } from 'primeng/selectbutton';
+import { Menu } from 'primeng/menu';
+import { Badge } from 'primeng/badge';
+import { Avatar } from 'primeng/avatar';
 
 const CourseMatePreset = definePreset(Lara, {
     semantic: {
@@ -185,7 +189,6 @@ const monacoConfig: NgxMonacoEditorConfig = {
         // LoginComponent,
         RegisterPagesComponent,
         AccountProfileCoursesComponent,
-        AccountProfileDetailsComponent,
         TrainingOnlineComponent,
         TrainingOnlineDetailComponent,
         ProfileTeacherComponent,
@@ -197,6 +200,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         AccountBookmarkCourseComponent,
         CartComponent,
         LessonComponent,
+        AccountSettingComponent,
         DefaultLayoutComponent,
         EmptyLayoutComponent
     ],
@@ -254,7 +258,10 @@ const monacoConfig: NgxMonacoEditorConfig = {
         Panel,
         Breadcrumb,
         IconField,
-        SelectButton
+        SelectButton,
+        Menu,
+        Badge,
+        Avatar
     ],
     providers: [
         provideAbpCore(
