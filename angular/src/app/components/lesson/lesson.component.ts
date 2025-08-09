@@ -119,7 +119,7 @@ export class LessonComponent implements OnInit {
     this.form = this.fb.group({
       title: [this.selectedLesson.title || null, [Validators.required, Validators.maxLength(1024)]],
       position: [this.selectedLesson.position || 0, [Validators.required, Validators.min(0)]],
-      contentText: [this.selectedLesson.contentText || null, [Validators.required, Validators.maxLength(1024)]],
+      contentText: [this.selectedLesson.content || null, [Validators.required, Validators.maxLength(1024)]],
       videoFile: [this.selectedLesson.videoFile || null, [Validators.required, Validators.maxLength(1024)]],
       chapterId: [this.selectedLesson.chapterId || this.chapterId, [Validators.required, Validators.maxLength(100)]]
     });

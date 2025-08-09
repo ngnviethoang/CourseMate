@@ -15,6 +15,7 @@ using CourseMate.Services.Dtos.Lessons;
 using CourseMate.Services.Dtos.Orders;
 using CourseMate.Services.Dtos.PaymentRequests;
 using CourseMate.Services.Dtos.Reviews;
+using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.ObjectMapping;
 

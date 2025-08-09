@@ -7,132 +7,6 @@
       "rootPath": "abp",
       "remoteServiceName": "abp",
       "controllers": {
-        "Pages.Abp.MultiTenancy.AbpTenantController": {
-          "controllerName": "AbpTenant",
-          "controllerGroupName": "AbpTenant",
-          "isRemoteService": true,
-          "isIntegrationService": false,
-          "apiVersion": null,
-          "type": "Pages.Abp.MultiTenancy.AbpTenantController",
-          "interfaces": [
-            {
-              "type": "Volo.Abp.AspNetCore.Mvc.MultiTenancy.IAbpTenantAppService",
-              "name": "IAbpTenantAppService",
-              "methods": [
-                {
-                  "name": "FindTenantByNameAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "name",
-                      "typeAsString": "System.String, System.Private.CoreLib",
-                      "type": "System.String",
-                      "typeSimple": "string",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "Volo.Abp.AspNetCore.Mvc.MultiTenancy.FindTenantResultDto",
-                    "typeSimple": "Volo.Abp.AspNetCore.Mvc.MultiTenancy.FindTenantResultDto"
-                  }
-                },
-                {
-                  "name": "FindTenantByIdAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "id",
-                      "typeAsString": "System.Guid, System.Private.CoreLib",
-                      "type": "System.Guid",
-                      "typeSimple": "string",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "Volo.Abp.AspNetCore.Mvc.MultiTenancy.FindTenantResultDto",
-                    "typeSimple": "Volo.Abp.AspNetCore.Mvc.MultiTenancy.FindTenantResultDto"
-                  }
-                }
-              ]
-            }
-          ],
-          "actions": {
-            "FindTenantByNameAsyncByName": {
-              "uniqueName": "FindTenantByNameAsyncByName",
-              "name": "FindTenantByNameAsync",
-              "httpMethod": "GET",
-              "url": "api/abp/multi-tenancy/tenants/by-name/{name}",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "name",
-                  "typeAsString": "System.String, System.Private.CoreLib",
-                  "type": "System.String",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "name",
-                  "name": "name",
-                  "jsonName": null,
-                  "type": "System.String",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "Volo.Abp.AspNetCore.Mvc.MultiTenancy.FindTenantResultDto",
-                "typeSimple": "Volo.Abp.AspNetCore.Mvc.MultiTenancy.FindTenantResultDto"
-              },
-              "allowAnonymous": null,
-              "implementFrom": "Volo.Abp.AspNetCore.Mvc.MultiTenancy.IAbpTenantAppService"
-            },
-            "FindTenantByIdAsyncById": {
-              "uniqueName": "FindTenantByIdAsyncById",
-              "name": "FindTenantByIdAsync",
-              "httpMethod": "GET",
-              "url": "api/abp/multi-tenancy/tenants/by-id/{id}",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "id",
-                  "typeAsString": "System.Guid, System.Private.CoreLib",
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "id",
-                  "name": "id",
-                  "jsonName": null,
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "Volo.Abp.AspNetCore.Mvc.MultiTenancy.FindTenantResultDto",
-                "typeSimple": "Volo.Abp.AspNetCore.Mvc.MultiTenancy.FindTenantResultDto"
-              },
-              "allowAnonymous": null,
-              "implementFrom": "Volo.Abp.AspNetCore.Mvc.MultiTenancy.IAbpTenantAppService"
-            }
-          }
-        },
         "Volo.Abp.AspNetCore.Mvc.ApiExploring.AbpApiDefinitionController": {
           "controllerName": "AbpApiDefinition",
           "controllerGroupName": "AbpApiDefinition",
@@ -873,6 +747,418 @@
       "rootPath": "app",
       "remoteServiceName": "Default",
       "controllers": {
+        "CourseMate.Controllers.PaymentController": {
+          "controllerName": "Payment",
+          "controllerGroupName": null,
+          "isRemoteService": false,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "CourseMate.Controllers.PaymentController",
+          "interfaces": [],
+          "actions": {
+            "GetVnPaymentByOrderId": {
+              "uniqueName": "GetVnPaymentByOrderId",
+              "name": "GetVnPayment",
+              "httpMethod": "GET",
+              "url": "api/v1/payments/vnpay/{orderId}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "orderId",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "orderId",
+                  "name": "orderId",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [
+                    "GuidRouteConstraint"
+                  ],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "Microsoft.AspNetCore.Mvc.IActionResult",
+                "typeSimple": "Microsoft.AspNetCore.Mvc.IActionResult"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "CourseMate.Controllers.PaymentController"
+            },
+            "VnPayReturnUrlCallbackByInput": {
+              "uniqueName": "VnPayReturnUrlCallbackByInput",
+              "name": "VnPayReturnUrlCallback",
+              "httpMethod": "GET",
+              "url": "api/v1/payments/vnpay-return",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "CourseMate.Services.Dtos.VnPay.ReturnUrlRequestDto, CourseMate",
+                  "type": "CourseMate.Services.Dtos.VnPay.ReturnUrlRequestDto",
+                  "typeSimple": "CourseMate.Services.Dtos.VnPay.ReturnUrlRequestDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_TmnCode",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_Amount",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_BankCode",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_BankTranNo",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_CardType",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_PayDate",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_OrderInfo",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_TransactionNo",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_ResponseCode",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_TransactionStatus",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_TxnRef",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_SecureHashType",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_SecureHash",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                }
+              ],
+              "returnValue": {
+                "type": "Microsoft.AspNetCore.Mvc.IActionResult",
+                "typeSimple": "Microsoft.AspNetCore.Mvc.IActionResult"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "CourseMate.Controllers.PaymentController"
+            },
+            "VnPayIpnUrlCallbackByInput": {
+              "uniqueName": "VnPayIpnUrlCallbackByInput",
+              "name": "VnPayIpnUrlCallback",
+              "httpMethod": "GET",
+              "url": "api/v1/payments/ipn",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "CourseMate.Services.Dtos.VnPay.ReturnUrlRequestDto, CourseMate",
+                  "type": "CourseMate.Services.Dtos.VnPay.ReturnUrlRequestDto",
+                  "typeSimple": "CourseMate.Services.Dtos.VnPay.ReturnUrlRequestDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_TmnCode",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_Amount",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_BankCode",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_BankTranNo",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_CardType",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_PayDate",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_OrderInfo",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_TransactionNo",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_ResponseCode",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_TransactionStatus",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_TxnRef",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_SecureHashType",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "vnp_SecureHash",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                }
+              ],
+              "returnValue": {
+                "type": "Microsoft.AspNetCore.Mvc.IActionResult",
+                "typeSimple": "Microsoft.AspNetCore.Mvc.IActionResult"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "CourseMate.Controllers.PaymentController"
+            }
+          }
+        },
         "CourseMate.Controllers.StorageController": {
           "controllerName": "Storage",
           "controllerGroupName": null,
@@ -918,6 +1204,222 @@
               },
               "allowAnonymous": null,
               "implementFrom": "CourseMate.Controllers.StorageController"
+            }
+          }
+        },
+        "CourseMate.Services.Carts.CartAppService": {
+          "controllerName": "Cart",
+          "controllerGroupName": "Cart",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "CourseMate.Services.Carts.CartAppService",
+          "interfaces": [
+            {
+              "type": "CourseMate.Services.Carts.ICartAppService",
+              "name": "ICartAppService",
+              "methods": [
+                {
+                  "name": "GetListAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "CourseMate.Services.Dtos.Carts.GetListCartRequestDto, CourseMate",
+                      "type": "CourseMate.Services.Dtos.Carts.GetListCartRequestDto",
+                      "typeSimple": "CourseMate.Services.Dtos.Carts.GetListCartRequestDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Carts.CartDto>",
+                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Carts.CartDto>"
+                  }
+                },
+                {
+                  "name": "CreateAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "CourseMate.Services.Dtos.Carts.CreateCartDto, CourseMate",
+                      "type": "CourseMate.Services.Dtos.Carts.CreateCartDto",
+                      "typeSimple": "CourseMate.Services.Dtos.Carts.CreateCartDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "CourseMate.Services.Dtos.ResultObjectDto",
+                    "typeSimple": "CourseMate.Services.Dtos.ResultObjectDto"
+                  }
+                },
+                {
+                  "name": "DeleteAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "id",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Void",
+                    "typeSimple": "System.Void"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "GetListAsyncByInput": {
+              "uniqueName": "GetListAsyncByInput",
+              "name": "GetListAsync",
+              "httpMethod": "GET",
+              "url": "api/app/cart",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "CourseMate.Services.Dtos.Carts.GetListCartRequestDto, CourseMate",
+                  "type": "CourseMate.Services.Dtos.Carts.GetListCartRequestDto",
+                  "typeSimple": "CourseMate.Services.Dtos.Carts.GetListCartRequestDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "Sorting",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "SkipCount",
+                  "jsonName": null,
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "MaxResultCount",
+                  "jsonName": null,
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "StudentId",
+                  "jsonName": null,
+                  "type": "System.Guid?",
+                  "typeSimple": "string?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                }
+              ],
+              "returnValue": {
+                "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Carts.CartDto>",
+                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Carts.CartDto>"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "CourseMate.Services.Carts.ICartAppService"
+            },
+            "CreateAsyncByInput": {
+              "uniqueName": "CreateAsyncByInput",
+              "name": "CreateAsync",
+              "httpMethod": "POST",
+              "url": "api/app/cart",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "CourseMate.Services.Dtos.Carts.CreateCartDto, CourseMate",
+                  "type": "CourseMate.Services.Dtos.Carts.CreateCartDto",
+                  "typeSimple": "CourseMate.Services.Dtos.Carts.CreateCartDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "CourseMate.Services.Dtos.Carts.CreateCartDto",
+                  "typeSimple": "CourseMate.Services.Dtos.Carts.CreateCartDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "CourseMate.Services.Dtos.ResultObjectDto",
+                "typeSimple": "CourseMate.Services.Dtos.ResultObjectDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "CourseMate.Services.Carts.ICartAppService"
+            },
+            "DeleteAsyncById": {
+              "uniqueName": "DeleteAsyncById",
+              "name": "DeleteAsync",
+              "httpMethod": "DELETE",
+              "url": "api/app/cart/{id}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "CourseMate.Services.Carts.ICartAppService"
             }
           }
         },
@@ -1064,7 +1566,7 @@
                 "type": "CourseMate.Services.Dtos.Categories.CategoryDto",
                 "typeSimple": "CourseMate.Services.Dtos.Categories.CategoryDto"
               },
-              "allowAnonymous": false,
+              "allowAnonymous": true,
               "implementFrom": "CourseMate.Services.Categories.ICategoryAppService"
             },
             "GetListAsyncByInput": {
@@ -1119,13 +1621,25 @@
                   "constraintTypes": null,
                   "bindingSourceId": "ModelBinding",
                   "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Filter",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
                 }
               ],
               "returnValue": {
                 "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Categories.CategoryDto>",
                 "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Categories.CategoryDto>"
               },
-              "allowAnonymous": false,
+              "allowAnonymous": true,
               "implementFrom": "CourseMate.Services.Categories.ICategoryAppService"
             },
             "CreateAsyncByInput": {
@@ -1404,7 +1918,7 @@
                 "type": "CourseMate.Services.Dtos.Chapters.ChapterDto",
                 "typeSimple": "CourseMate.Services.Dtos.Chapters.ChapterDto"
               },
-              "allowAnonymous": false,
+              "allowAnonymous": true,
               "implementFrom": "CourseMate.Services.Chapters.IChapterAppService"
             },
             "GetListAsyncByInput": {
@@ -1454,6 +1968,18 @@
                   "jsonName": null,
                   "type": "System.Int32?",
                   "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Filter",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
                   "isOptional": false,
                   "defaultValue": null,
                   "constraintTypes": null,
@@ -1631,13 +2157,30 @@
                   }
                 },
                 {
+                  "name": "GetBySlugAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "slug",
+                      "typeAsString": "System.String, System.Private.CoreLib",
+                      "type": "System.String",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "CourseMate.Services.Dtos.Courses.CourseDto",
+                    "typeSimple": "CourseMate.Services.Dtos.Courses.CourseDto"
+                  }
+                },
+                {
                   "name": "GetListAsync",
                   "parametersOnMethod": [
                     {
                       "name": "input",
-                      "typeAsString": "CourseMate.Services.Dtos.GetListRequestDto, CourseMate",
-                      "type": "CourseMate.Services.Dtos.GetListRequestDto",
-                      "typeSimple": "CourseMate.Services.Dtos.GetListRequestDto",
+                      "typeAsString": "CourseMate.Services.Dtos.Courses.GetListCourseRequestDto, CourseMate",
+                      "type": "CourseMate.Services.Dtos.Courses.GetListCourseRequestDto",
+                      "typeSimple": "CourseMate.Services.Dtos.Courses.GetListCourseRequestDto",
                       "isOptional": false,
                       "defaultValue": null
                     }
@@ -1744,7 +2287,44 @@
                 "type": "CourseMate.Services.Dtos.Courses.CourseDto",
                 "typeSimple": "CourseMate.Services.Dtos.Courses.CourseDto"
               },
-              "allowAnonymous": false,
+              "allowAnonymous": true,
+              "implementFrom": "CourseMate.Services.Courses.ICourseAppService"
+            },
+            "GetBySlugAsyncBySlug": {
+              "uniqueName": "GetBySlugAsyncBySlug",
+              "name": "GetBySlugAsync",
+              "httpMethod": "GET",
+              "url": "api/app/course/by-slug",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "slug",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "slug",
+                  "name": "slug",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "CourseMate.Services.Dtos.Courses.CourseDto",
+                "typeSimple": "CourseMate.Services.Dtos.Courses.CourseDto"
+              },
+              "allowAnonymous": true,
               "implementFrom": "CourseMate.Services.Courses.ICourseAppService"
             },
             "GetListAsyncByInput": {
@@ -1756,14 +2336,26 @@
               "parametersOnMethod": [
                 {
                   "name": "input",
-                  "typeAsString": "CourseMate.Services.Dtos.GetListRequestDto, CourseMate",
-                  "type": "CourseMate.Services.Dtos.GetListRequestDto",
-                  "typeSimple": "CourseMate.Services.Dtos.GetListRequestDto",
+                  "typeAsString": "CourseMate.Services.Dtos.Courses.GetListCourseRequestDto, CourseMate",
+                  "type": "CourseMate.Services.Dtos.Courses.GetListCourseRequestDto",
+                  "typeSimple": "CourseMate.Services.Dtos.Courses.GetListCourseRequestDto",
                   "isOptional": false,
                   "defaultValue": null
                 }
               ],
               "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "CategoryId",
+                  "jsonName": null,
+                  "type": "System.Guid?",
+                  "typeSimple": "string?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
                 {
                   "nameOnMethod": "input",
                   "name": "Sorting",
@@ -1799,13 +2391,25 @@
                   "constraintTypes": null,
                   "bindingSourceId": "ModelBinding",
                   "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Filter",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
                 }
               ],
               "returnValue": {
                 "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Courses.CourseDto>",
                 "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Courses.CourseDto>"
               },
-              "allowAnonymous": false,
+              "allowAnonymous": true,
               "implementFrom": "CourseMate.Services.Courses.ICourseAppService"
             },
             "CreateAsyncByInput": {
@@ -1938,346 +2542,6 @@
               },
               "allowAnonymous": false,
               "implementFrom": "CourseMate.Services.Courses.ICourseAppService"
-            }
-          }
-        },
-        "CourseMate.Services.Enrollments.EnrollmentAppService": {
-          "controllerName": "Enrollment",
-          "controllerGroupName": "Enrollment",
-          "isRemoteService": true,
-          "isIntegrationService": false,
-          "apiVersion": null,
-          "type": "CourseMate.Services.Enrollments.EnrollmentAppService",
-          "interfaces": [
-            {
-              "type": "CourseMate.Services.Enrollments.IEnrollmentAppService",
-              "name": "IEnrollmentAppService",
-              "methods": [
-                {
-                  "name": "GetAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "id",
-                      "typeAsString": "System.Guid, System.Private.CoreLib",
-                      "type": "System.Guid",
-                      "typeSimple": "string",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "CourseMate.Services.Dtos.Enrollments.EnrollmentDto",
-                    "typeSimple": "CourseMate.Services.Dtos.Enrollments.EnrollmentDto"
-                  }
-                },
-                {
-                  "name": "GetListAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "input",
-                      "typeAsString": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto, Volo.Abp.Ddd.Application.Contracts",
-                      "type": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
-                      "typeSimple": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Enrollments.EnrollmentDto>",
-                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Enrollments.EnrollmentDto>"
-                  }
-                },
-                {
-                  "name": "CreateAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "input",
-                      "typeAsString": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto, CourseMate",
-                      "type": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto",
-                      "typeSimple": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "CourseMate.Services.Dtos.Enrollments.EnrollmentDto",
-                    "typeSimple": "CourseMate.Services.Dtos.Enrollments.EnrollmentDto"
-                  }
-                },
-                {
-                  "name": "UpdateAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "id",
-                      "typeAsString": "System.Guid, System.Private.CoreLib",
-                      "type": "System.Guid",
-                      "typeSimple": "string",
-                      "isOptional": false,
-                      "defaultValue": null
-                    },
-                    {
-                      "name": "input",
-                      "typeAsString": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto, CourseMate",
-                      "type": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto",
-                      "typeSimple": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "CourseMate.Services.Dtos.Enrollments.EnrollmentDto",
-                    "typeSimple": "CourseMate.Services.Dtos.Enrollments.EnrollmentDto"
-                  }
-                },
-                {
-                  "name": "DeleteAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "id",
-                      "typeAsString": "System.Guid, System.Private.CoreLib",
-                      "type": "System.Guid",
-                      "typeSimple": "string",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "System.Void",
-                    "typeSimple": "System.Void"
-                  }
-                }
-              ]
-            }
-          ],
-          "actions": {
-            "GetAsyncById": {
-              "uniqueName": "GetAsyncById",
-              "name": "GetAsync",
-              "httpMethod": "GET",
-              "url": "api/app/enrollment/{id}",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "id",
-                  "typeAsString": "System.Guid, System.Private.CoreLib",
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "id",
-                  "name": "id",
-                  "jsonName": null,
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "CourseMate.Services.Dtos.Enrollments.EnrollmentDto",
-                "typeSimple": "CourseMate.Services.Dtos.Enrollments.EnrollmentDto"
-              },
-              "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<CourseMate.Services.Dtos.Enrollments.EnrollmentDto,CourseMate.Services.Dtos.Enrollments.EnrollmentDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
-            },
-            "GetListAsyncByInput": {
-              "uniqueName": "GetListAsyncByInput",
-              "name": "GetListAsync",
-              "httpMethod": "GET",
-              "url": "api/app/enrollment",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "input",
-                  "typeAsString": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto, Volo.Abp.Ddd.Application.Contracts",
-                  "type": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
-                  "typeSimple": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "input",
-                  "name": "Sorting",
-                  "jsonName": null,
-                  "type": "System.String",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "ModelBinding",
-                  "descriptorName": "input"
-                },
-                {
-                  "nameOnMethod": "input",
-                  "name": "SkipCount",
-                  "jsonName": null,
-                  "type": "System.Int32",
-                  "typeSimple": "number",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "ModelBinding",
-                  "descriptorName": "input"
-                },
-                {
-                  "nameOnMethod": "input",
-                  "name": "MaxResultCount",
-                  "jsonName": null,
-                  "type": "System.Int32",
-                  "typeSimple": "number",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "ModelBinding",
-                  "descriptorName": "input"
-                }
-              ],
-              "returnValue": {
-                "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Enrollments.EnrollmentDto>",
-                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Enrollments.EnrollmentDto>"
-              },
-              "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<CourseMate.Services.Dtos.Enrollments.EnrollmentDto,CourseMate.Services.Dtos.Enrollments.EnrollmentDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
-            },
-            "CreateAsyncByInput": {
-              "uniqueName": "CreateAsyncByInput",
-              "name": "CreateAsync",
-              "httpMethod": "POST",
-              "url": "api/app/enrollment",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "input",
-                  "typeAsString": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto, CourseMate",
-                  "type": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto",
-                  "typeSimple": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "input",
-                  "name": "input",
-                  "jsonName": null,
-                  "type": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto",
-                  "typeSimple": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "Body",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "CourseMate.Services.Dtos.Enrollments.EnrollmentDto",
-                "typeSimple": "CourseMate.Services.Dtos.Enrollments.EnrollmentDto"
-              },
-              "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.ICreateAppService<CourseMate.Services.Dtos.Enrollments.EnrollmentDto,CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto>"
-            },
-            "UpdateAsyncByIdAndInput": {
-              "uniqueName": "UpdateAsyncByIdAndInput",
-              "name": "UpdateAsync",
-              "httpMethod": "PUT",
-              "url": "api/app/enrollment/{id}",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "id",
-                  "typeAsString": "System.Guid, System.Private.CoreLib",
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null
-                },
-                {
-                  "name": "input",
-                  "typeAsString": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto, CourseMate",
-                  "type": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto",
-                  "typeSimple": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "id",
-                  "name": "id",
-                  "jsonName": null,
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
-                  "descriptorName": ""
-                },
-                {
-                  "nameOnMethod": "input",
-                  "name": "input",
-                  "jsonName": null,
-                  "type": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto",
-                  "typeSimple": "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "Body",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "CourseMate.Services.Dtos.Enrollments.EnrollmentDto",
-                "typeSimple": "CourseMate.Services.Dtos.Enrollments.EnrollmentDto"
-              },
-              "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IUpdateAppService<CourseMate.Services.Dtos.Enrollments.EnrollmentDto,System.Guid,CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto>"
-            },
-            "DeleteAsyncById": {
-              "uniqueName": "DeleteAsyncById",
-              "name": "DeleteAsync",
-              "httpMethod": "DELETE",
-              "url": "api/app/enrollment/{id}",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "id",
-                  "typeAsString": "System.Guid, System.Private.CoreLib",
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "id",
-                  "name": "id",
-                  "jsonName": null,
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "System.Void",
-                "typeSimple": "System.Void"
-              },
-              "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IDeleteAppService<System.Guid>"
             }
           }
         },
@@ -2981,6 +3245,168 @@
             }
           }
         },
+        "CourseMate.Services.Notifications.NotificationAppService": {
+          "controllerName": "Notification",
+          "controllerGroupName": "Notification",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "CourseMate.Services.Notifications.NotificationAppService",
+          "interfaces": [
+            {
+              "type": "CourseMate.Services.Notifications.INotificationAppService",
+              "name": "INotificationAppService",
+              "methods": [
+                {
+                  "name": "GetListAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "CourseMate.Services.Dtos.GetListRequestDto, CourseMate",
+                      "type": "CourseMate.Services.Dtos.GetListRequestDto",
+                      "typeSimple": "CourseMate.Services.Dtos.GetListRequestDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Notifications.NotificationDto>",
+                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Notifications.NotificationDto>"
+                  }
+                },
+                {
+                  "name": "MarkReadAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "System.Collections.Generic.List`1[[System.Guid, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                      "type": "System.Collections.Generic.List<System.Guid>",
+                      "typeSimple": "[string]",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Void",
+                    "typeSimple": "System.Void"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "GetListAsyncByInput": {
+              "uniqueName": "GetListAsyncByInput",
+              "name": "GetListAsync",
+              "httpMethod": "GET",
+              "url": "api/app/notification",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "CourseMate.Services.Dtos.GetListRequestDto, CourseMate",
+                  "type": "CourseMate.Services.Dtos.GetListRequestDto",
+                  "typeSimple": "CourseMate.Services.Dtos.GetListRequestDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "Sorting",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "SkipCount",
+                  "jsonName": null,
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "MaxResultCount",
+                  "jsonName": null,
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Filter",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                }
+              ],
+              "returnValue": {
+                "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Notifications.NotificationDto>",
+                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.Notifications.NotificationDto>"
+              },
+              "allowAnonymous": true,
+              "implementFrom": "CourseMate.Services.Notifications.INotificationAppService"
+            },
+            "MarkReadAsyncByInput": {
+              "uniqueName": "MarkReadAsyncByInput",
+              "name": "MarkReadAsync",
+              "httpMethod": "POST",
+              "url": "api/app/notification/mark-read",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "System.Collections.Generic.List`1[[System.Guid, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                  "type": "System.Collections.Generic.List<System.Guid>",
+                  "typeSimple": "[string]",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "System.Collections.Generic.List<System.Guid>",
+                  "typeSimple": "[string]",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "CourseMate.Services.Notifications.INotificationAppService"
+            }
+          }
+        },
         "CourseMate.Services.Orders.OrderAppService": {
           "controllerName": "Order",
           "controllerGroupName": "Order",
@@ -3042,48 +3468,6 @@
                   "returnValue": {
                     "type": "CourseMate.Services.Dtos.ResultObjectDto",
                     "typeSimple": "CourseMate.Services.Dtos.ResultObjectDto"
-                  }
-                },
-                {
-                  "name": "UpdateAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "id",
-                      "typeAsString": "System.Guid, System.Private.CoreLib",
-                      "type": "System.Guid",
-                      "typeSimple": "string",
-                      "isOptional": false,
-                      "defaultValue": null
-                    },
-                    {
-                      "name": "input",
-                      "typeAsString": "CourseMate.Services.Dtos.Orders.CreateUpdateOrderDto, CourseMate",
-                      "type": "CourseMate.Services.Dtos.Orders.CreateUpdateOrderDto",
-                      "typeSimple": "CourseMate.Services.Dtos.Orders.CreateUpdateOrderDto",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "CourseMate.Services.Dtos.Orders.OrderDto",
-                    "typeSimple": "CourseMate.Services.Dtos.Orders.OrderDto"
-                  }
-                },
-                {
-                  "name": "DeleteAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "id",
-                      "typeAsString": "System.Guid, System.Private.CoreLib",
-                      "type": "System.Guid",
-                      "typeSimple": "string",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "System.Void",
-                    "typeSimple": "System.Void"
                   }
                 }
               ]
@@ -3179,6 +3563,18 @@
                   "constraintTypes": null,
                   "bindingSourceId": "ModelBinding",
                   "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Filter",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
                 }
               ],
               "returnValue": {
@@ -3224,440 +3620,6 @@
               },
               "allowAnonymous": false,
               "implementFrom": "CourseMate.Services.Orders.IOrderAppService"
-            },
-            "UpdateAsyncByIdAndInput": {
-              "uniqueName": "UpdateAsyncByIdAndInput",
-              "name": "UpdateAsync",
-              "httpMethod": "PUT",
-              "url": "api/app/order/{id}",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "id",
-                  "typeAsString": "System.Guid, System.Private.CoreLib",
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null
-                },
-                {
-                  "name": "input",
-                  "typeAsString": "CourseMate.Services.Dtos.Orders.CreateUpdateOrderDto, CourseMate",
-                  "type": "CourseMate.Services.Dtos.Orders.CreateUpdateOrderDto",
-                  "typeSimple": "CourseMate.Services.Dtos.Orders.CreateUpdateOrderDto",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "id",
-                  "name": "id",
-                  "jsonName": null,
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
-                  "descriptorName": ""
-                },
-                {
-                  "nameOnMethod": "input",
-                  "name": "input",
-                  "jsonName": null,
-                  "type": "CourseMate.Services.Dtos.Orders.CreateUpdateOrderDto",
-                  "typeSimple": "CourseMate.Services.Dtos.Orders.CreateUpdateOrderDto",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "Body",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "CourseMate.Services.Dtos.Orders.OrderDto",
-                "typeSimple": "CourseMate.Services.Dtos.Orders.OrderDto"
-              },
-              "allowAnonymous": false,
-              "implementFrom": "CourseMate.Services.Orders.IOrderAppService"
-            },
-            "DeleteAsyncById": {
-              "uniqueName": "DeleteAsyncById",
-              "name": "DeleteAsync",
-              "httpMethod": "DELETE",
-              "url": "api/app/order/{id}",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "id",
-                  "typeAsString": "System.Guid, System.Private.CoreLib",
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "id",
-                  "name": "id",
-                  "jsonName": null,
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "System.Void",
-                "typeSimple": "System.Void"
-              },
-              "allowAnonymous": false,
-              "implementFrom": "CourseMate.Services.Orders.IOrderAppService"
-            }
-          }
-        },
-        "CourseMate.Services.PaymentRequests.PaymentRequestAppService": {
-          "controllerName": "PaymentRequest",
-          "controllerGroupName": "PaymentRequest",
-          "isRemoteService": true,
-          "isIntegrationService": false,
-          "apiVersion": null,
-          "type": "CourseMate.Services.PaymentRequests.PaymentRequestAppService",
-          "interfaces": [
-            {
-              "type": "CourseMate.Services.PaymentRequests.IPaymentRequestAppService",
-              "name": "IPaymentRequestAppService",
-              "methods": [
-                {
-                  "name": "GetAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "id",
-                      "typeAsString": "System.Guid, System.Private.CoreLib",
-                      "type": "System.Guid",
-                      "typeSimple": "string",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto",
-                    "typeSimple": "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto"
-                  }
-                },
-                {
-                  "name": "GetListAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "input",
-                      "typeAsString": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto, Volo.Abp.Ddd.Application.Contracts",
-                      "type": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
-                      "typeSimple": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto>",
-                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto>"
-                  }
-                },
-                {
-                  "name": "CreateAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "input",
-                      "typeAsString": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto, CourseMate",
-                      "type": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto",
-                      "typeSimple": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto",
-                    "typeSimple": "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto"
-                  }
-                },
-                {
-                  "name": "UpdateAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "id",
-                      "typeAsString": "System.Guid, System.Private.CoreLib",
-                      "type": "System.Guid",
-                      "typeSimple": "string",
-                      "isOptional": false,
-                      "defaultValue": null
-                    },
-                    {
-                      "name": "input",
-                      "typeAsString": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto, CourseMate",
-                      "type": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto",
-                      "typeSimple": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto",
-                    "typeSimple": "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto"
-                  }
-                },
-                {
-                  "name": "DeleteAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "id",
-                      "typeAsString": "System.Guid, System.Private.CoreLib",
-                      "type": "System.Guid",
-                      "typeSimple": "string",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "System.Void",
-                    "typeSimple": "System.Void"
-                  }
-                }
-              ]
-            }
-          ],
-          "actions": {
-            "GetAsyncById": {
-              "uniqueName": "GetAsyncById",
-              "name": "GetAsync",
-              "httpMethod": "GET",
-              "url": "api/app/payment-request/{id}",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "id",
-                  "typeAsString": "System.Guid, System.Private.CoreLib",
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "id",
-                  "name": "id",
-                  "jsonName": null,
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto",
-                "typeSimple": "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto"
-              },
-              "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto,CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
-            },
-            "GetListAsyncByInput": {
-              "uniqueName": "GetListAsyncByInput",
-              "name": "GetListAsync",
-              "httpMethod": "GET",
-              "url": "api/app/payment-request",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "input",
-                  "typeAsString": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto, Volo.Abp.Ddd.Application.Contracts",
-                  "type": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
-                  "typeSimple": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "input",
-                  "name": "Sorting",
-                  "jsonName": null,
-                  "type": "System.String",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "ModelBinding",
-                  "descriptorName": "input"
-                },
-                {
-                  "nameOnMethod": "input",
-                  "name": "SkipCount",
-                  "jsonName": null,
-                  "type": "System.Int32",
-                  "typeSimple": "number",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "ModelBinding",
-                  "descriptorName": "input"
-                },
-                {
-                  "nameOnMethod": "input",
-                  "name": "MaxResultCount",
-                  "jsonName": null,
-                  "type": "System.Int32",
-                  "typeSimple": "number",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "ModelBinding",
-                  "descriptorName": "input"
-                }
-              ],
-              "returnValue": {
-                "type": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto>",
-                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto>"
-              },
-              "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto,CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
-            },
-            "CreateAsyncByInput": {
-              "uniqueName": "CreateAsyncByInput",
-              "name": "CreateAsync",
-              "httpMethod": "POST",
-              "url": "api/app/payment-request",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "input",
-                  "typeAsString": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto, CourseMate",
-                  "type": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto",
-                  "typeSimple": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "input",
-                  "name": "input",
-                  "jsonName": null,
-                  "type": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto",
-                  "typeSimple": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "Body",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto",
-                "typeSimple": "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto"
-              },
-              "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.ICreateAppService<CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto,CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto>"
-            },
-            "UpdateAsyncByIdAndInput": {
-              "uniqueName": "UpdateAsyncByIdAndInput",
-              "name": "UpdateAsync",
-              "httpMethod": "PUT",
-              "url": "api/app/payment-request/{id}",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "id",
-                  "typeAsString": "System.Guid, System.Private.CoreLib",
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null
-                },
-                {
-                  "name": "input",
-                  "typeAsString": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto, CourseMate",
-                  "type": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto",
-                  "typeSimple": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "id",
-                  "name": "id",
-                  "jsonName": null,
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
-                  "descriptorName": ""
-                },
-                {
-                  "nameOnMethod": "input",
-                  "name": "input",
-                  "jsonName": null,
-                  "type": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto",
-                  "typeSimple": "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "Body",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto",
-                "typeSimple": "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto"
-              },
-              "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IUpdateAppService<CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto,System.Guid,CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto>"
-            },
-            "DeleteAsyncById": {
-              "uniqueName": "DeleteAsyncById",
-              "name": "DeleteAsync",
-              "httpMethod": "DELETE",
-              "url": "api/app/payment-request/{id}",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "id",
-                  "typeAsString": "System.Guid, System.Private.CoreLib",
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "id",
-                  "name": "id",
-                  "jsonName": null,
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "System.Void",
-                "typeSimple": "System.Void"
-              },
-              "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IDeleteAppService<System.Guid>"
             }
           }
         },
@@ -4232,6 +4194,132 @@
               },
               "allowAnonymous": false,
               "implementFrom": "CourseMate.Services.Storages.IStorageAppService"
+            }
+          }
+        },
+        "CourseMate.Services.UserProgresses.UserProgressAppService": {
+          "controllerName": "UserProgress",
+          "controllerGroupName": "UserProgress",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "CourseMate.Services.UserProgresses.UserProgressAppService",
+          "interfaces": [
+            {
+              "type": "CourseMate.Services.UserProgresses.IUserProgressAppService",
+              "name": "IUserProgressAppService",
+              "methods": [
+                {
+                  "name": "GetAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "courseId",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "CourseMate.Services.Dtos.UserProgresses.CourseProgressDto",
+                    "typeSimple": "CourseMate.Services.Dtos.UserProgresses.CourseProgressDto"
+                  }
+                },
+                {
+                  "name": "UpdateAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "CourseMate.Services.Dtos.UserProgresses.CreateUpdateUserProgressDto, CourseMate",
+                      "type": "CourseMate.Services.Dtos.UserProgresses.CreateUpdateUserProgressDto",
+                      "typeSimple": "CourseMate.Services.Dtos.UserProgresses.CreateUpdateUserProgressDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Void",
+                    "typeSimple": "System.Void"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "GetAsyncByCourseId": {
+              "uniqueName": "GetAsyncByCourseId",
+              "name": "GetAsync",
+              "httpMethod": "GET",
+              "url": "api/app/user-progress",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "courseId",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "courseId",
+                  "name": "courseId",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "CourseMate.Services.Dtos.UserProgresses.CourseProgressDto",
+                "typeSimple": "CourseMate.Services.Dtos.UserProgresses.CourseProgressDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "CourseMate.Services.UserProgresses.IUserProgressAppService"
+            },
+            "UpdateAsyncByInput": {
+              "uniqueName": "UpdateAsyncByInput",
+              "name": "UpdateAsync",
+              "httpMethod": "PUT",
+              "url": "api/app/user-progress",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "CourseMate.Services.Dtos.UserProgresses.CreateUpdateUserProgressDto, CourseMate",
+                  "type": "CourseMate.Services.Dtos.UserProgresses.CreateUpdateUserProgressDto",
+                  "typeSimple": "CourseMate.Services.Dtos.UserProgresses.CreateUpdateUserProgressDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "CourseMate.Services.Dtos.UserProgresses.CreateUpdateUserProgressDto",
+                  "typeSimple": "CourseMate.Services.Dtos.UserProgresses.CreateUpdateUserProgressDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "CourseMate.Services.UserProgresses.IUserProgressAppService"
             }
           }
         }
@@ -6209,124 +6297,6 @@
               "implementFrom": "Volo.Abp.SettingManagement.IEmailSettingsAppService"
             }
           }
-        },
-        "Volo.Abp.SettingManagement.TimeZoneSettingsController": {
-          "controllerName": "TimeZoneSettings",
-          "controllerGroupName": "TimeZoneSettings",
-          "isRemoteService": true,
-          "isIntegrationService": false,
-          "apiVersion": null,
-          "type": "Volo.Abp.SettingManagement.TimeZoneSettingsController",
-          "interfaces": [
-            {
-              "type": "Volo.Abp.SettingManagement.ITimeZoneSettingsAppService",
-              "name": "ITimeZoneSettingsAppService",
-              "methods": [
-                {
-                  "name": "GetAsync",
-                  "parametersOnMethod": [],
-                  "returnValue": {
-                    "type": "System.String",
-                    "typeSimple": "string"
-                  }
-                },
-                {
-                  "name": "GetTimezonesAsync",
-                  "parametersOnMethod": [],
-                  "returnValue": {
-                    "type": "System.Collections.Generic.List<Volo.Abp.NameValue>",
-                    "typeSimple": "[Volo.Abp.NameValue]"
-                  }
-                },
-                {
-                  "name": "UpdateAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "timezone",
-                      "typeAsString": "System.String, System.Private.CoreLib",
-                      "type": "System.String",
-                      "typeSimple": "string",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "System.Void",
-                    "typeSimple": "System.Void"
-                  }
-                }
-              ]
-            }
-          ],
-          "actions": {
-            "GetAsync": {
-              "uniqueName": "GetAsync",
-              "name": "GetAsync",
-              "httpMethod": "GET",
-              "url": "api/setting-management/timezone",
-              "supportedVersions": [],
-              "parametersOnMethod": [],
-              "parameters": [],
-              "returnValue": {
-                "type": "System.String",
-                "typeSimple": "string"
-              },
-              "allowAnonymous": null,
-              "implementFrom": "Volo.Abp.SettingManagement.ITimeZoneSettingsAppService"
-            },
-            "GetTimezonesAsync": {
-              "uniqueName": "GetTimezonesAsync",
-              "name": "GetTimezonesAsync",
-              "httpMethod": "GET",
-              "url": "api/setting-management/timezone/timezones",
-              "supportedVersions": [],
-              "parametersOnMethod": [],
-              "parameters": [],
-              "returnValue": {
-                "type": "System.Collections.Generic.List<Volo.Abp.NameValue>",
-                "typeSimple": "[Volo.Abp.NameValue]"
-              },
-              "allowAnonymous": null,
-              "implementFrom": "Volo.Abp.SettingManagement.ITimeZoneSettingsAppService"
-            },
-            "UpdateAsyncByTimezone": {
-              "uniqueName": "UpdateAsyncByTimezone",
-              "name": "UpdateAsync",
-              "httpMethod": "POST",
-              "url": "api/setting-management/timezone",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "timezone",
-                  "typeAsString": "System.String, System.Private.CoreLib",
-                  "type": "System.String",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "timezone",
-                  "name": "timezone",
-                  "jsonName": null,
-                  "type": "System.String",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "ModelBinding",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "System.Void",
-                "typeSimple": "System.Void"
-              },
-              "allowAnonymous": null,
-              "implementFrom": "Volo.Abp.SettingManagement.ITimeZoneSettingsAppService"
-            }
-          }
         }
       }
     }
@@ -6362,6 +6332,24 @@
       "genericArguments": null,
       "properties": null
     },
+    "CourseMate.Entities.Lessons.LessonType": {
+      "baseType": "System.Enum",
+      "isEnum": true,
+      "enumNames": [
+        "Video",
+        "Document",
+        "Quiz",
+        "Coding"
+      ],
+      "enumValues": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "genericArguments": null,
+      "properties": null
+    },
     "CourseMate.Entities.Reviews.RatingType": {
       "baseType": "System.Enum",
       "isEnum": true,
@@ -6381,6 +6369,129 @@
       ],
       "genericArguments": null,
       "properties": null
+    },
+    "CourseMate.Services.Dtos.Carts.CartDto": {
+      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "CourseId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "StudentId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Course",
+          "jsonName": null,
+          "type": "CourseMate.Services.Dtos.Courses.CourseDto",
+          "typeSimple": "CourseMate.Services.Dtos.Courses.CourseDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Carts.CreateCartDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "CourseId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Carts.GetListCartRequestDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Sorting",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": 1024,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "SkipCount",
+          "jsonName": null,
+          "type": "System.Int32?",
+          "typeSimple": "number?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "0",
+          "maximum": "2147483647",
+          "regex": null
+        },
+        {
+          "name": "MaxResultCount",
+          "jsonName": null,
+          "type": "System.Int32?",
+          "typeSimple": "number?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "0",
+          "maximum": "1000",
+          "regex": null
+        },
+        {
+          "name": "StudentId",
+          "jsonName": null,
+          "type": "System.Guid?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
     },
     "CourseMate.Services.Dtos.Categories.CategoryDto": {
       "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
@@ -6441,7 +6552,7 @@
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 1024,
+          "maxLength": 32768,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -6492,10 +6603,22 @@
           "regex": null
         },
         {
-          "name": "SortNumber",
+          "name": "Position",
           "jsonName": null,
           "type": "System.Int32",
           "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Lessons",
+          "jsonName": null,
+          "type": "[CourseMate.Services.Dtos.Lessons.LessonDto]",
+          "typeSimple": "[CourseMate.Services.Dtos.Lessons.LessonDto]",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,
@@ -6537,7 +6660,7 @@
           "regex": null
         },
         {
-          "name": "SortNumber",
+          "name": "Position",
           "jsonName": null,
           "type": "System.Int32",
           "typeSimple": "number",
@@ -6546,6 +6669,39 @@
           "maxLength": null,
           "minimum": "0",
           "maximum": "2147483647",
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Courses.AuthorDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "UserName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Avatar",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
           "regex": null
         }
       ]
@@ -6664,6 +6820,102 @@
           "minimum": null,
           "maximum": null,
           "regex": null
+        },
+        {
+          "name": "Slug",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Author",
+          "jsonName": null,
+          "type": "CourseMate.Services.Dtos.Courses.AuthorDto",
+          "typeSimple": "CourseMate.Services.Dtos.Courses.AuthorDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TotalLessons",
+          "jsonName": null,
+          "type": "System.Int32?",
+          "typeSimple": "number?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TotalStudents",
+          "jsonName": null,
+          "type": "System.Int32?",
+          "typeSimple": "number?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Chapters",
+          "jsonName": null,
+          "type": "[CourseMate.Services.Dtos.Chapters.ChapterDto]",
+          "typeSimple": "[CourseMate.Services.Dtos.Chapters.ChapterDto]",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "IsInCart",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "IsEnrollment",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Category",
+          "jsonName": null,
+          "type": "CourseMate.Services.Dtos.Categories.CategoryDto",
+          "typeSimple": "CourseMate.Services.Dtos.Categories.CategoryDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
         }
       ]
     },
@@ -6693,7 +6945,19 @@
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 1024,
+          "maxLength": 32768,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Summary",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": 32768,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -6705,7 +6969,7 @@
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 50,
+          "maxLength": 1024,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -6772,87 +7036,18 @@
         }
       ]
     },
-    "CourseMate.Services.Dtos.Enrollments.CreateUpdateEnrollmentDto": {
-      "baseType": null,
+    "CourseMate.Services.Dtos.Courses.GetListCourseRequestDto": {
+      "baseType": "CourseMate.Services.Dtos.GetListRequestDto",
       "isEnum": false,
       "enumNames": null,
       "enumValues": null,
       "genericArguments": null,
       "properties": [
         {
-          "name": "StudentId",
+          "name": "CategoryId",
           "jsonName": null,
-          "type": "System.Guid",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "CourseId",
-          "jsonName": null,
-          "type": "System.Guid",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "IsCompleted",
-          "jsonName": null,
-          "type": "System.Boolean",
-          "typeSimple": "boolean",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        }
-      ]
-    },
-    "CourseMate.Services.Dtos.Enrollments.EnrollmentDto": {
-      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
-      "isEnum": false,
-      "enumNames": null,
-      "enumValues": null,
-      "genericArguments": null,
-      "properties": [
-        {
-          "name": "StudentId",
-          "jsonName": null,
-          "type": "System.Guid",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "CourseId",
-          "jsonName": null,
-          "type": "System.Guid",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "IsCompleted",
-          "jsonName": null,
-          "type": "System.Boolean",
-          "typeSimple": "boolean",
+          "type": "System.Guid?",
+          "typeSimple": "string?",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,
@@ -6904,6 +7099,18 @@
           "minimum": "0",
           "maximum": "1000",
           "regex": null
+        },
+        {
+          "name": "Filter",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": 100,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
         }
       ]
     },
@@ -6927,13 +7134,13 @@
           "regex": null
         },
         {
-          "name": "ContentText",
+          "name": "Content",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 2048,
+          "maxLength": 10000,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -6945,7 +7152,7 @@
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 50,
+          "maxLength": 1024,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -6975,7 +7182,7 @@
           "regex": null
         },
         {
-          "name": "SortNumber",
+          "name": "Position",
           "jsonName": null,
           "type": "System.Int32",
           "typeSimple": "number",
@@ -6996,6 +7203,42 @@
       "genericArguments": null,
       "properties": [
         {
+          "name": "Type",
+          "jsonName": null,
+          "type": "CourseMate.Entities.Lessons.LessonType",
+          "typeSimple": "enum",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ChapterId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Position",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
           "name": "Title",
           "jsonName": null,
           "type": "System.String",
@@ -7008,7 +7251,7 @@
           "regex": null
         },
         {
-          "name": "ContentText",
+          "name": "Content",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
@@ -7044,9 +7287,9 @@
           "regex": null
         },
         {
-          "name": "ChapterId",
+          "name": "CodeSampleJson",
           "jsonName": null,
-          "type": "System.Guid",
+          "type": "System.String",
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
@@ -7056,10 +7299,46 @@
           "regex": null
         },
         {
-          "name": "SortNumber",
+          "name": "OptionsJson",
           "jsonName": null,
-          "type": "System.Int32",
-          "typeSimple": "number",
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CorrectAnswerJson",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Explanation",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CourseId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,
@@ -7159,8 +7438,86 @@
         }
       ]
     },
+    "CourseMate.Services.Dtos.Notifications.NotificationDto": {
+      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "ReceiverUserId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Title",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Content",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "IsRead",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
     "CourseMate.Services.Dtos.Orders.CreateUpdateOrderDto": {
       "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "CourseIds",
+          "jsonName": null,
+          "type": "[System.Guid]",
+          "typeSimple": "[string]",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Orders.OrderDto": {
+      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
       "isEnum": false,
       "enumNames": null,
       "enumValues": null,
@@ -7197,15 +7554,15 @@
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 24,
+          "maxLength": null,
           "minimum": null,
           "maximum": null,
           "regex": null
         },
         {
-          "name": "PaymentRequestId",
+          "name": "Description",
           "jsonName": null,
-          "type": "System.Guid",
+          "type": "System.String",
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
@@ -7217,8 +7574,8 @@
         {
           "name": "Items",
           "jsonName": null,
-          "type": "[CourseMate.Services.Dtos.Orders.CreateUpdateOrderItemDto]",
-          "typeSimple": "[CourseMate.Services.Dtos.Orders.CreateUpdateOrderItemDto]",
+          "type": "[CourseMate.Services.Dtos.Orders.OrderItemDto]",
+          "typeSimple": "[CourseMate.Services.Dtos.Orders.OrderItemDto]",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,
@@ -7228,8 +7585,8 @@
         }
       ]
     },
-    "CourseMate.Services.Dtos.Orders.CreateUpdateOrderItemDto": {
-      "baseType": null,
+    "CourseMate.Services.Dtos.Orders.OrderItemDto": {
+      "baseType": "Volo.Abp.Application.Dtos.EntityDto<System.Guid>",
       "isEnum": false,
       "enumNames": null,
       "enumValues": null,
@@ -7270,32 +7627,20 @@
           "minimum": null,
           "maximum": null,
           "regex": null
+        },
+        {
+          "name": "Course",
+          "jsonName": null,
+          "type": "CourseMate.Services.Dtos.Courses.CourseDto",
+          "typeSimple": "CourseMate.Services.Dtos.Courses.CourseDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
         }
       ]
-    },
-    "CourseMate.Services.Dtos.Orders.OrderDto": {
-      "baseType": null,
-      "isEnum": false,
-      "enumNames": null,
-      "enumValues": null,
-      "genericArguments": null,
-      "properties": []
-    },
-    "CourseMate.Services.Dtos.PaymentRequests.CreateUpdatePaymentRequestDto": {
-      "baseType": null,
-      "isEnum": false,
-      "enumNames": null,
-      "enumValues": null,
-      "genericArguments": null,
-      "properties": []
-    },
-    "CourseMate.Services.Dtos.PaymentRequests.PaymentRequestDto": {
-      "baseType": null,
-      "isEnum": false,
-      "enumNames": null,
-      "enumValues": null,
-      "genericArguments": null,
-      "properties": []
     },
     "CourseMate.Services.Dtos.ResultObjectDto": {
       "baseType": null,
@@ -7416,6 +7761,471 @@
         }
       ]
     },
+    "CourseMate.Services.Dtos.UserProgresses.ChapterProgressDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "ChapterId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Title",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Position",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CourseId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Lessons",
+          "jsonName": null,
+          "type": "[CourseMate.Services.Dtos.UserProgresses.LessonProgressDto]",
+          "typeSimple": "[CourseMate.Services.Dtos.UserProgresses.LessonProgressDto]",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.UserProgresses.CourseProgressDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "CourseId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Title",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Position",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Chapters",
+          "jsonName": null,
+          "type": "[CourseMate.Services.Dtos.UserProgresses.ChapterProgressDto]",
+          "typeSimple": "[CourseMate.Services.Dtos.UserProgresses.ChapterProgressDto]",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.UserProgresses.CreateUpdateUserProgressDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "UserProgressId",
+          "jsonName": null,
+          "type": "System.Guid?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "LessonId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "IsCompleted",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "WatchedDuration",
+          "jsonName": null,
+          "type": "System.TimeSpan?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.UserProgresses.LessonProgressDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "LessonId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "UserProgressId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Title",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Type",
+          "jsonName": null,
+          "type": "CourseMate.Entities.Lessons.LessonType",
+          "typeSimple": "enum",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ChapterId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Position",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Duration",
+          "jsonName": null,
+          "type": "System.TimeSpan",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "IsCompleted",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "WatchedDuration",
+          "jsonName": null,
+          "type": "System.TimeSpan?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.VnPay.ReturnUrlRequestDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "vnp_TmnCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "8",
+          "maximum": "8",
+          "regex": null
+        },
+        {
+          "name": "vnp_Amount",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "1",
+          "maximum": "12",
+          "regex": null
+        },
+        {
+          "name": "vnp_BankCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "3",
+          "maximum": "20",
+          "regex": null
+        },
+        {
+          "name": "vnp_BankTranNo",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "1",
+          "maximum": "255",
+          "regex": null
+        },
+        {
+          "name": "vnp_CardType",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "2",
+          "maximum": "20",
+          "regex": null
+        },
+        {
+          "name": "vnp_PayDate",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "14",
+          "maximum": "14",
+          "regex": null
+        },
+        {
+          "name": "vnp_OrderInfo",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "1",
+          "maximum": "255",
+          "regex": null
+        },
+        {
+          "name": "vnp_TransactionNo",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "1",
+          "maximum": "15",
+          "regex": null
+        },
+        {
+          "name": "vnp_ResponseCode",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "2",
+          "maximum": "2",
+          "regex": null
+        },
+        {
+          "name": "vnp_TransactionStatus",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "2",
+          "maximum": "2",
+          "regex": null
+        },
+        {
+          "name": "vnp_TxnRef",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "1",
+          "maximum": "100",
+          "regex": null
+        },
+        {
+          "name": "vnp_SecureHashType",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "1",
+          "maximum": "10",
+          "regex": null
+        },
+        {
+          "name": "vnp_SecureHash",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "32",
+          "maximum": "256",
+          "regex": null
+        }
+      ]
+    },
     "Microsoft.AspNetCore.Mvc.ActionResult": {
       "baseType": null,
       "isEnum": false,
@@ -7513,6 +8323,14 @@
           "regex": null
         }
       ]
+    },
+    "Microsoft.AspNetCore.Mvc.IActionResult": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": []
     },
     "Microsoft.Extensions.Primitives.StringSegment": {
       "baseType": "System.ValueType",
@@ -10450,75 +11268,6 @@
         },
         {
           "name": "IsAvailable",
-          "jsonName": null,
-          "type": "System.Boolean",
-          "typeSimple": "boolean",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        }
-      ]
-    },
-    "Volo.Abp.AspNetCore.Mvc.MultiTenancy.FindTenantResultDto": {
-      "baseType": null,
-      "isEnum": false,
-      "enumNames": null,
-      "enumValues": null,
-      "genericArguments": null,
-      "properties": [
-        {
-          "name": "Success",
-          "jsonName": null,
-          "type": "System.Boolean",
-          "typeSimple": "boolean",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "TenantId",
-          "jsonName": null,
-          "type": "System.Guid?",
-          "typeSimple": "string?",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "Name",
-          "jsonName": null,
-          "type": "System.String",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "NormalizedName",
-          "jsonName": null,
-          "type": "System.String",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "IsActive",
           "jsonName": null,
           "type": "System.Boolean",
           "typeSimple": "boolean",

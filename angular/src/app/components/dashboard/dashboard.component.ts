@@ -3,11 +3,11 @@ import { Component } from '@angular/core';
 
 @Component({
   standalone: false,
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss']
 })
-export class HomeComponent {
+export class DashboardComponent {
   get hasLoggedIn(): boolean {
     return this.authService.isAuthenticated;
   }

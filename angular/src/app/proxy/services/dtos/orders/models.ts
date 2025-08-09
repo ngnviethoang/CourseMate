@@ -1,17 +1,21 @@
+import type { AuditedEntityDto, EntityDto } from '@abp/ng.core';
+import type { CourseDto } from '../courses/models';
 
 export interface CreateUpdateOrderDto {
+  courseIds: string[];
+}
+
+export interface OrderDto extends AuditedEntityDto<string> {
   studentId?: string;
   totalAmount: number;
   currency?: string;
-  paymentRequestId?: string;
-  items: CreateUpdateOrderItemDto[];
+  description?: string;
+  items: OrderItemDto[];
 }
 
-export interface CreateUpdateOrderItemDto {
+export interface OrderItemDto extends EntityDto<string> {
   orderId?: string;
   courseId?: string;
   price: number;
-}
-
-export interface OrderDto {
+  course: CourseDto;
 }

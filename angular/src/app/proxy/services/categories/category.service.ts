@@ -40,7 +40,7 @@ export class CategoryService {
     this.restService.request<any, PagedResultDto<CategoryDto>>({
       method: 'GET',
       url: '/api/app/category',
-      params: { sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
+      params: { sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount, filter: input.filter },
     },
     { apiName: this.apiName,...config });
   

@@ -52,6 +52,8 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
                 CourseTitle = course.Title
             };
 
+        queryable = queryable.WhereIf(!string.IsNullOrEmpty(input.Filter), i => i.Title.Contains(input.Filter!));
+        
         if (input.SkipCount.HasValue)
         {
             queryable = queryable.Skip(input.SkipCount.Value);

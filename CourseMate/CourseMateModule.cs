@@ -29,6 +29,7 @@ using Volo.Abp.BlobStoring;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.FileSystem;
 using Volo.Abp.Caching;
+using Volo.Abp.Data;
 using Volo.Abp.Emailing;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.PostgreSql;
@@ -183,6 +184,12 @@ public class CourseMateModule : AbpModule
         ConfigureBlobStoring();
         ConfigureRabbitMq(configuration);
         ConfigureVnpay(configuration);
+        ConfigureDataFilter();
+    }
+
+    private void ConfigureDataFilter()
+    {
+        Configure<AbpDataFilterOptions>(options => { options.DefaultStates[typeof(ISoftDelete)] = new DataFilterState(isEnabled: false); });
     }
 
     private void ConfigureVnpay(IConfiguration configuration)

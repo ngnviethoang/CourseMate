@@ -42,7 +42,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
         return await AsyncExecuter.FirstOrDefaultAsync(queryable) ?? new LessonDto();
     }
 
-    public async Task<PagedResultDto<LessonDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+    public async Task<PagedResultDto<LessonDto>> GetListAsync(GetListRequestDto input)
     {
         IQueryable<LessonDto> queryable =
             from lesson in await LessonRepo.GetQueryableAsync()
@@ -66,9 +66,18 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
                 OptionsJson = lesson.OptionsJson
             };
         queryable = queryable
-            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(Lesson.Title) : input.Sorting)
-            .Skip(input.SkipCount)
-            .Take(input.MaxResultCount);
+            .WhereIf(!string.IsNullOrEmpty(input.Filter), i => i.Title.Contains(input.Filter!))
+            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(Lesson.Title) : input.Sorting);
+
+        if (input.SkipCount.HasValue)
+        {
+            queryable = queryable.Skip(input.SkipCount.Value);
+        }
+
+        if (input.MaxResultCount.HasValue)
+        {
+            queryable = queryable.Take(input.MaxResultCount.Value);
+        }
 
         List<LessonDto> categories = await AsyncExecuter.ToListAsync(queryable);
         int totalCount = await LessonRepo.CountAsync();

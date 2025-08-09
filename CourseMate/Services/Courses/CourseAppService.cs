@@ -127,7 +127,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
                 }
             };
         queryable = queryable
-            .WhereIf(!string.IsNullOrEmpty(input.Search), i => i.Title.Contains(input.Search!))
+            .WhereIf(!string.IsNullOrEmpty(input.Filter), i => i.Title.Contains(input.Filter!))
             .WhereIf(input.CategoryId.HasValue, i => i.CategoryId == input.CategoryId!.Value)
             .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(Course.Title) : input.Sorting);
 

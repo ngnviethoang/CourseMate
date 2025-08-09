@@ -40,7 +40,7 @@ export class ChapterService {
     this.restService.request<any, PagedResultDto<ChapterDto>>({
       method: 'GET',
       url: '/api/app/chapter',
-      params: { sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
+      params: { sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount, filter: input.filter },
     },
     { apiName: this.apiName,...config });
   

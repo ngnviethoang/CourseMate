@@ -12,17 +12,10 @@ function configureRoutes() {
   routes.add([
     {
       path: '/',
-      name: '::Menu:Home',
-      iconClass: 'fas fa-home',
+      name: '::Menu:Dashboard',
+      iconClass: 'fas fa-tachometer-alt',
       order: 1,
       layout: eLayoutType.application
-    },
-    {
-      path: '/categories',
-      name: '::Menu:Categories',
-      iconClass: 'fas fa-book',
-      layout: eLayoutType.application,
-      requiredPolicy: 'CourseMate.Categories'
     },
     {
       path: '/courses',
@@ -32,11 +25,11 @@ function configureRoutes() {
       requiredPolicy: 'CourseMate.Courses'
     },
     {
-      path: '/students',
-      name: '::Menu:Students',
-      iconClass: 'fas fa-users',
-      requiredPolicy: 'CourseMate.Students',
-      layout: eLayoutType.application
+      path: '/categories',
+      name: '::Menu:Categories',
+      iconClass: 'fas fa-book',
+      layout: eLayoutType.application,
+      requiredPolicy: 'CourseMate.Categories'
     },
     {
       path: '/orders',
@@ -46,10 +39,10 @@ function configureRoutes() {
       layout: eLayoutType.application
     },
     {
-      path: '/payment-requests',
-      name: '::Menu:PaymentRequest',
-      iconClass: 'fas fa-credit-card',
-      requiredPolicy: 'CourseMate.PaymentRequests',
+      path: '/report',
+      name: '::Menu:Reports',
+      iconClass: 'fas fa-chart-line',
+      // requiredPolicy: 'CourseMate.Reports',
       layout: eLayoutType.application
     }
   ]);

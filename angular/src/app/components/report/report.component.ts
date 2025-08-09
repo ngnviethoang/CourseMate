@@ -9,11 +9,11 @@ import { CategoryService } from '@proxy/services/categories';
 
 @Component({
   standalone: false,
-  selector: 'app-category',
-  templateUrl: './category.component.html',
+  selector: 'app-order',
+  templateUrl: './report.component.html',
   providers: [ListService, { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }]
 })
-export class CategoryComponent implements OnInit {
+export class ReportComponent implements OnInit {
   categories = { items: [], totalCount: 0 } as PagedResultDto<CategoryDto>;
   selectedCategory = {} as CategoryDto;
   form: FormGroup;
@@ -23,7 +23,7 @@ export class CategoryComponent implements OnInit {
     public readonly list: ListService,
     private categoryService: CategoryService,
     private fb: FormBuilder,
-    private confirmation: ConfirmationService // inject the ConfirmationService
+    private confirmation: ConfirmationService
   ) {
   }
 

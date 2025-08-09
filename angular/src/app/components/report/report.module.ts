@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
-import { PaymentRequestRoutingModule } from './payment-request-routing.module';
-import { PaymentRequestComponent } from './payment-request.component';
+import { ReportRoutingModule } from './report-routing.module';
+import { ReportComponent } from './report.component';
 import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { Image } from 'primeng/image';
 import { FileUpload } from 'primeng/fileupload';
@@ -11,9 +11,9 @@ import { Message } from 'primeng/message';
 import { Toast } from 'primeng/toast'; // add this line
 
 @NgModule({
-  declarations: [PaymentRequestComponent],
+  declarations: [ReportComponent],
   imports: [
-    PaymentRequestRoutingModule,
+    ReportRoutingModule,
     SharedModule,
     NgbDatepickerModule,
     Image,
@@ -25,5 +25,5 @@ import { Toast } from 'primeng/toast'; // add this line
     // add this line
   ]
 })
-export class PaymentRequestModule {
+export class ReportModule {
 }

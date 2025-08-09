@@ -45,7 +45,9 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
                 LastModificationTime = category.LastModificationTime,
                 LastModifierId = category.LastModifierId
             };
-        queryable = queryable.OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "Name" : input.Sorting);
+        queryable = queryable
+            .WhereIf(!string.IsNullOrEmpty(input.Filter), i => i.Name.Contains(input.Filter!))
+            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "Name" : input.Sorting);
 
         if (input.SkipCount.HasValue)
         {

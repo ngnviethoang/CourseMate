@@ -10,4 +10,7 @@ public class GetListRequestDto
 
     [Range(0, 1000)]
     public int? MaxResultCount { get; set; }
+
+    [MaxLength(100)]
+    public string? Filter { get; set; }
 }

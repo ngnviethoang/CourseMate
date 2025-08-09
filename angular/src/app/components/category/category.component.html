@@ -19,6 +19,17 @@
     </div>
   </div>
   <div class="card-body">
+    <div id="data-tables-table-filter" class="data-tables-filter mb-3">
+      <div class="input-group">
+        <input
+          type="search"
+          class="form-control"
+          [placeholder]="'AbpUi::PagerSearch' | abpLocalization"
+          [(ngModel)]="list.filter"
+        />
+      </div>
+    </div>
+
     <ngx-datatable [rows]="this.categories.items" [count]="this.categories.totalCount" [list]="this.list" default>
       <ngx-datatable-column
         [name]="'::Actions' | abpLocalization"
@@ -88,7 +99,6 @@
       {{ '::Close' | abpLocalization }}
     </button>
 
-    <!--added save button-->
     <button class="btn btn-primary" (click)="this.save()" [disabled]="this.form.invalid">
       <i class="fa fa-check mr-1"></i>
       {{ '::Save' | abpLocalization }}
