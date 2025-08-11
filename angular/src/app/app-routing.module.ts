@@ -20,41 +20,36 @@ const routes: Routes = [
     path: 'setting-management',
     loadChildren: () => import('@abp/ng.setting-management').then(m => m.SettingManagementModule.forLazy())
   },
-  {
-    path: 'courses',
-    loadChildren: () => import('./components/course/course.module').then(m => m.CourseModule),
-    canActivate: [permissionGuard],
-    data: { requiredPolicy: 'CourseMate.Courses' }
-  },
+
   {
     path: 'categories',
-    loadChildren: () => import('./components/category/category.module').then(m => m.CategoryModule),
-    canActivate: [permissionGuard],
-    data: { requiredPolicy: 'CourseMate.Categories' }
+    loadChildren: () => import('./components/category/category.module').then(m => m.CategoryModule)
+    /*  canActivate: [permissionGuard],
+      data: { requiredPolicy: 'CourseMate.Categories' }*/
+  },
+  {
+    path: 'courses',
+    loadChildren: () => import('./components/course/course.module').then(m => m.CourseModule)
   },
   {
     path: 'chapters',
-    loadChildren: () => import('./components/chapter/chapter.module').then(m => m.ChapterModule),
-    canActivate: [permissionGuard],
-    data: { requiredPolicy: 'CourseMate.Chapters' }
+    loadChildren: () => import('./components/chapter/chapter.module').then(m => m.ChapterModule)
   },
   {
     path: 'lessons',
-    loadChildren: () => import('./components/lesson/lesson.module').then(m => m.LessonModule),
-    canActivate: [permissionGuard],
-    data: { requiredPolicy: 'CourseMate.Lessons' }
+    loadChildren: () => import('./components/lesson/lesson.module').then(m => m.LessonModule)
+  },
+  {
+    path: 'instructors',
+    loadChildren: () => import('./components/instructor/instructor.module').then(m => m.InstructorModule)
   },
   {
     path: 'orders',
-    loadChildren: () => import('./components/order/order.module').then(m => m.OrderModule),
-    canActivate: [permissionGuard],
-    data: { requiredPolicy: 'CourseMate.Orders' }
+    loadChildren: () => import('./components/order/order.module').then(m => m.OrderModule)
   },
   {
     path: 'reports',
     loadChildren: () => import('./components/report/report.module').then(m => m.ReportModule)
-    // canActivate: [permissionGuard],
-    // data: { requiredPolicy: 'CourseMate.Orders' }
   }
 ];
 

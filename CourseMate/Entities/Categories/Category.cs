@@ -2,10 +2,11 @@
 
 public class Category : FullAuditedEntity<Guid>
 {
-    public Category(Guid id, string name, string description) : base(id)
+    public Category(Guid id, string name, string description, bool isActive) : base(id)
     {
         Name = name;
         Description = description;
+        IsActive = isActive;
     }
 
     [MaxLength(CourseMateConst.DefaultMaxLength)]
@@ -13,4 +14,6 @@ public class Category : FullAuditedEntity<Guid>
 
     [MaxLength(CourseMateConst.DescriptionMaxLength)]
     public string Description { get; set; }
+
+    public bool IsActive { get; set; }
 }

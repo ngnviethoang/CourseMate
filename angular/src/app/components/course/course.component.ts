@@ -3,15 +3,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
-import { CourseService } from '../../proxy/services/courses';
-import { CourseDto } from '../../proxy/services/dtos/courses';
-import { CurrencyType, currencyTypeOptions, LevelType, levelTypeOptions } from '../../proxy/entities/courses';
+import { CourseService } from '@proxy/services/courses';
+import { CourseDto } from '@proxy/services/dtos/courses';
+import { CurrencyType, currencyTypeOptions, LevelType, levelTypeOptions } from '@proxy/entities/courses';
 import { FileSelectEvent } from 'primeng/fileupload';
 import { MessageService } from 'primeng/api';
-import { StorageService } from '../../proxy/services/storages';
+import { StorageService } from '@proxy/services/storages';
 import { Router } from '@angular/router';
-import { LookupDto } from '../../proxy/services/dtos/lookups';
-import { LookupService } from '../../proxy/services/lookups';
+import { LookupDto } from '@proxy/services/dtos/lookups';
+import { LookupService } from '@proxy/services/lookups';
 import { StorageConstants } from '../../shared/storage-constant';
 
 @Component({
@@ -101,7 +101,7 @@ export class CourseComponent implements OnInit {
       price: [this.selectedCourse.price || null, [Validators.required, Validators.min(0)]],
       currency: [this.selectedCourse.currency || CurrencyType.Usd, [Validators.required]],
       levelType: [this.selectedCourse.levelType || LevelType.Beginner, [Validators.required]],
-      isPublished: [this.selectedCourse.isPublished || true, [Validators.required]],
+      isActive: [this.selectedCourse.isActive, [Validators.required]],
       categoryId: [this.selectedCourse.categoryId || '', [Validators.required, Validators.maxLength(100)]]
     });
   }

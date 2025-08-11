@@ -2,7 +2,7 @@
 
 public class Course : FullAuditedEntity<Guid>
 {
-    public Course(Guid id, string title, string description, string thumbnailFile, decimal price, CurrencyType currency, LevelType levelType, bool isPublished, string summary, Guid instructorId, Guid categoryId, string slug) : base(id)
+    public Course(Guid id, string title, string description, string thumbnailFile, decimal price, CurrencyType currency, LevelType levelType, string summary, Guid instructorId, Guid categoryId, string slug, bool isActive) : base(id)
     {
         Title = title;
         Description = description;
@@ -10,10 +10,10 @@ public class Course : FullAuditedEntity<Guid>
         Price = price;
         Currency = currency;
         LevelType = levelType;
-        IsPublished = isPublished;
         InstructorId = instructorId;
         CategoryId = categoryId;
         Slug = slug;
+        IsActive = isActive;
         Summary = summary;
     }
 
@@ -35,7 +35,7 @@ public class Course : FullAuditedEntity<Guid>
     public decimal Price { get; set; }
     public CurrencyType Currency { get; set; }
     public LevelType LevelType { get; set; }
-    public bool IsPublished { get; set; }
     public Guid InstructorId { get; set; }
     public Guid CategoryId { get; set; }
+    public bool IsActive { get; set; }
 }

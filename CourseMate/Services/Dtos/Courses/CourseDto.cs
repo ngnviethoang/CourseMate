@@ -12,7 +12,7 @@ public class CourseDto : AuditedEntityDto<Guid>
     public decimal Price { get; set; }
     public CurrencyType Currency { get; set; }
     public LevelType LevelType { get; set; }
-    public bool IsPublished { get; set; }
+    public bool IsActive { get; set; }
     public Guid InstructorId { get; set; }
     public Guid CategoryId { get; set; }
     public string Slug { get; set; } = string.Empty;

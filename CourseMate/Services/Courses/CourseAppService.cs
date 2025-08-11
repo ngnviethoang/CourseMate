@@ -42,7 +42,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
                 Price = course.Price,
                 Currency = course.Currency,
                 LevelType = course.LevelType,
-                IsPublished = course.IsPublished,
+                IsActive = course.IsActive,
                 InstructorId = course.InstructorId,
                 CategoryId = course.CategoryId,
                 Slug = course.Slug,
@@ -112,7 +112,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
                 Price = course.Price,
                 Currency = course.Currency,
                 LevelType = course.LevelType,
-                IsPublished = course.IsPublished,
+                IsActive = course.IsActive,
                 InstructorId = course.InstructorId,
                 CategoryId = course.CategoryId,
                 CreationTime = course.CreationTime,
@@ -197,11 +197,11 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
             input.Price,
             input.Currency,
             input.LevelType,
-            input.IsPublished,
             input.Summary,
             instructorId,
             input.CategoryId,
-            Helper.GenerateSlug(input.Title)
+            Helper.GenerateSlug(input.Title),
+            input.IsActive
         );
         await CourseRepo.InsertAsync(course);
         return new ResultObjectDto(course.Id);
@@ -225,9 +225,10 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
         course.Price = input.Price;
         course.Currency = input.Currency;
         course.LevelType = input.LevelType;
-        course.IsPublished = input.IsPublished;
         course.CategoryId = input.CategoryId;
-
+        course.IsActive = input.IsActive;
+        course.Slug = Helper.GenerateSlug(input.Title);
+        
         await CourseRepo.UpdateAsync(course);
         return new CourseDto
         {
@@ -238,7 +239,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
             Price = course.Price,
             Currency = course.Currency,
             LevelType = course.LevelType,
-            IsPublished = course.IsPublished,
+            IsActive = course.IsActive,
             InstructorId = course.InstructorId,
             Slug = course.Slug,
             CategoryId = course.CategoryId,

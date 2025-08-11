@@ -8,4 +8,6 @@ public class CreateUpdateCategoryDto
 
     [MaxLength(32768)] // 2^15
     public string Description { get; set; } = string.Empty;
+
+    public bool IsActive { get; set; }
 }

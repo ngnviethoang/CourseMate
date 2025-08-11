@@ -6,6 +6,15 @@ namespace CourseMate.Shared;
 
 public static class Helper
 {
+    private static readonly Dictionary<string, string> Mappings = new()
+    {
+        { "+", " plus " },
+        { "#", " sharp " },
+        { "&", " and " },
+        { "%", " percent " },
+        { "$", " dollar " },
+    };
+
     public static string GenerateSlug(string phrase)
     {
         if (string.IsNullOrWhiteSpace(phrase))
@@ -15,6 +24,11 @@ public static class Helper
 
         string str = phrase.ToLowerInvariant();
         str = RemoveUnicode(str);
+        foreach (KeyValuePair<string, string> kvp in Mappings)
+        {
+            str = str.Replace(kvp.Key, kvp.Value);
+        }
+
         str = Regex.Replace(str, @"[^a-z0-9\s-]", "");
         str = Regex.Replace(str, @"\s+", "-").Trim('-');
         str = Regex.Replace(str, @"-+", "-");

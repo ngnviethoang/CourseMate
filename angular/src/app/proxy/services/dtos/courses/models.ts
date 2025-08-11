@@ -17,7 +17,7 @@ export interface CourseDto extends AuditedEntityDto<string> {
   price: number;
   currency?: CurrencyType;
   levelType?: LevelType;
-  isPublished: boolean;
+  isActive: boolean;
   instructorId?: string;
   categoryId?: string;
   slug?: string;
@@ -38,7 +38,7 @@ export interface CreateUpdateCourseDto {
   price: number;
   currency?: CurrencyType;
   levelType?: LevelType;
-  isPublished: boolean;
+  isActive: boolean;
   categoryId?: string;
 }
 

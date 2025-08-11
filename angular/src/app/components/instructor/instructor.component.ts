@@ -9,11 +9,11 @@ import { CategoryService } from '@proxy/services/categories';
 
 @Component({
   standalone: false,
-  selector: 'app-category',
-  templateUrl: './category.component.html',
+  selector: 'app-instructor',
+  templateUrl: './instructor.component.html',
   providers: [ListService, { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }]
 })
-export class CategoryComponent implements OnInit {
+export class InstructorComponent implements OnInit {
   categories = { items: [], totalCount: 0 } as PagedResultDto<CategoryDto>;
   selectedCategory = {} as CategoryDto;
   form: FormGroup;

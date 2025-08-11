@@ -184,12 +184,6 @@ public class CourseMateModule : AbpModule
         ConfigureBlobStoring();
         ConfigureRabbitMq(configuration);
         ConfigureVnpay(configuration);
-        ConfigureDataFilter();
-    }
-
-    private void ConfigureDataFilter()
-    {
-        Configure<AbpDataFilterOptions>(options => { options.DefaultStates[typeof(ISoftDelete)] = new DataFilterState(isEnabled: false); });
     }
 
     private void ConfigureVnpay(IConfiguration configuration)

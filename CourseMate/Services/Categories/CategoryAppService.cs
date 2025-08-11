@@ -22,6 +22,7 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
                 Id = category.Id,
                 Name = category.Name,
                 Description = category.Description,
+                IsActive = category.IsActive,
                 CreationTime = category.CreationTime,
                 CreatorId = category.CreatorId,
                 LastModificationTime = category.LastModificationTime,
@@ -40,6 +41,7 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
                 Id = category.Id,
                 Name = category.Name,
                 Description = category.Description,
+                IsActive = category.IsActive,
                 CreationTime = category.CreationTime,
                 CreatorId = category.CreatorId,
                 LastModificationTime = category.LastModificationTime,
@@ -73,7 +75,7 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
             throw new UserFriendlyException("Duplicate category name");
         }
 
-        Category category = new(GuidGenerator.Create(), input.Name, input.Description);
+        Category category = new(GuidGenerator.Create(), input.Name, input.Description, true);
         await CategoryRepo.InsertAsync(category);
         return new ResultObjectDto(category.Id);
     }
@@ -90,12 +92,14 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
         Category category = await CategoryRepo.GetAsync(id);
         category.Name = input.Name;
         category.Description = input.Name;
+        category.IsActive = input.IsActive;
         await CategoryRepo.UpdateAsync(category);
         return new CategoryDto
         {
             Id = category.Id,
             Name = category.Name,
             Description = category.Description,
+            IsActive = category.IsActive,
             CreationTime = category.CreationTime,
             CreatorId = category.CreatorId,
             LastModificationTime = category.LastModificationTime,

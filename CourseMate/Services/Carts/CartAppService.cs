@@ -40,7 +40,7 @@ public class CartAppService : CourseMateAppService, ICartAppService
                     Price = course.Price,
                     Currency = course.Currency,
                     LevelType = course.LevelType,
-                    IsPublished = course.IsPublished,
+                    IsActive = course.IsActive,
                     InstructorId = course.InstructorId,
                     CategoryId = course.CategoryId,
                     Slug = course.Slug,

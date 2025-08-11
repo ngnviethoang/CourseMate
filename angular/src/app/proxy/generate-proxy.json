@@ -2579,9 +2579,9 @@
                   "parametersOnMethod": [
                     {
                       "name": "input",
-                      "typeAsString": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto, Volo.Abp.Ddd.Application.Contracts",
-                      "type": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
-                      "typeSimple": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
+                      "typeAsString": "CourseMate.Services.Dtos.GetListRequestDto, CourseMate",
+                      "type": "CourseMate.Services.Dtos.GetListRequestDto",
+                      "typeSimple": "CourseMate.Services.Dtos.GetListRequestDto",
                       "isOptional": false,
                       "defaultValue": null
                     }
@@ -2700,9 +2700,9 @@
               "parametersOnMethod": [
                 {
                   "name": "input",
-                  "typeAsString": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto, Volo.Abp.Ddd.Application.Contracts",
-                  "type": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
-                  "typeSimple": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
+                  "typeAsString": "CourseMate.Services.Dtos.GetListRequestDto, CourseMate",
+                  "type": "CourseMate.Services.Dtos.GetListRequestDto",
+                  "typeSimple": "CourseMate.Services.Dtos.GetListRequestDto",
                   "isOptional": false,
                   "defaultValue": null
                 }
@@ -2724,8 +2724,8 @@
                   "nameOnMethod": "input",
                   "name": "SkipCount",
                   "jsonName": null,
-                  "type": "System.Int32",
-                  "typeSimple": "number",
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
                   "isOptional": false,
                   "defaultValue": null,
                   "constraintTypes": null,
@@ -2736,8 +2736,20 @@
                   "nameOnMethod": "input",
                   "name": "MaxResultCount",
                   "jsonName": null,
-                  "type": "System.Int32",
-                  "typeSimple": "number",
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Filter",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
                   "isOptional": false,
                   "defaultValue": null,
                   "constraintTypes": null,
@@ -6523,6 +6535,18 @@
           "minimum": null,
           "maximum": null,
           "regex": null
+        },
+        {
+          "name": "IsActive",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
         }
       ]
     },
@@ -6553,6 +6577,18 @@
           "isRequired": false,
           "minLength": null,
           "maxLength": 32768,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "IsActive",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -6786,7 +6822,7 @@
           "regex": null
         },
         {
-          "name": "IsPublished",
+          "name": "IsActive",
           "jsonName": null,
           "type": "System.Boolean",
           "typeSimple": "boolean",
@@ -7011,7 +7047,7 @@
           "regex": null
         },
         {
-          "name": "IsPublished",
+          "name": "IsActive",
           "jsonName": null,
           "type": "System.Boolean",
           "typeSimple": "boolean",

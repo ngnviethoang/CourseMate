@@ -24,6 +24,8 @@ public abstract class CourseMateAppService : ApplicationService
     }
 
     protected IRepository<IdentityUser, Guid> UserRepo => LazyServiceProvider.GetRequiredService<IRepository<IdentityUser, Guid>>();
+    protected IRepository<IdentityRole, Guid> RoleRepo => LazyServiceProvider.GetRequiredService<IRepository<IdentityRole, Guid>>();
+    protected IRepository<IdentityUserRole> UserRoleRepo => LazyServiceProvider.GetRequiredService<IRepository<IdentityUserRole>>();
     protected IRepository<Category, Guid> CategoryRepo => LazyServiceProvider.GetRequiredService<IRepository<Category, Guid>>();
     protected IRepository<Chapter, Guid> ChapterRepo => LazyServiceProvider.GetRequiredService<IRepository<Chapter, Guid>>();
     protected IRepository<Course, Guid> CourseRepo => LazyServiceProvider.GetRequiredService<IRepository<Course, Guid>>();

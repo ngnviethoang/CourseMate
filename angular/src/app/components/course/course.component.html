@@ -66,17 +66,20 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column [name]="'::Title' | abpLocalization" prop="title"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Description' | abpLocalization" prop="description"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Slug' | abpLocalization" prop="slug"></ngx-datatable-column>
       <ngx-datatable-column [name]="'::Price' | abpLocalization" prop="price"></ngx-datatable-column>
       <ngx-datatable-column [name]="'::LevelType' | abpLocalization" prop="levelType">
         <ng-template let-row="row" ngx-datatable-cell-template>
           {{ '::Enum:LevelType.' + row.levelType | abpLocalization }}
         </ng-template>
       </ngx-datatable-column>
-      <ngx-datatable-column [name]="'::IsPublished' | abpLocalization" prop="isPublished">
+      <ngx-datatable-column [name]="'::IsActive' | abpLocalization" prop="isActive">
         <ng-template let-row="row" ngx-datatable-cell-template>
-          <i *ngIf="row.isPublished" class="bi bi-check-circle-fill text-success"></i>
-          <i *ngIf="!row.isPublished" class="bi bi-x-circle-fill text-danger"></i>
+          @if (row.isActive) {
+            <i class="bi bi-check-circle-fill text-success"></i>
+          } @else {
+            <i class="bi bi-x-circle-fill text-danger"></i>
+          }
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column [name]="'::CreationTime' | abpLocalization" prop="creationTime">
@@ -186,8 +189,8 @@
         </div>
 
         <div class="col-2 form-check d-flex justify-content-between align-items-center">
-          <label for="isPublished">Publish</label>
-          <input class="form-check-input" type="checkbox" formControlName="isPublished" id="isPublished">
+          <label for="isActive">Active</label>
+          <input class="form-check-input" type="checkbox" formControlName="isActive" id="isActive">
         </div>
       </div>
     </form>

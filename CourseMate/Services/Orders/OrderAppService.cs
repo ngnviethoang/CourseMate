@@ -47,7 +47,7 @@ public class OrderAppService : CourseMateAppService, IOrderAppService
                     Price = course.Price,
                     Currency = course.Currency,
                     LevelType = course.LevelType,
-                    IsPublished = course.IsPublished,
+                    IsActive = course.IsActive,
                     InstructorId = course.InstructorId,
                     CategoryId = course.CategoryId,
                     Slug = course.Slug,

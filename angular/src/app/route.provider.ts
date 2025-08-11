@@ -11,15 +11,54 @@ function configureRoutes() {
   const routes = inject(RoutesService);
   routes.add([
     {
-      path: '/',
       name: '::Menu:Dashboard',
       iconClass: 'fas fa-tachometer-alt',
       order: 1,
+      // requiredPolicy: 'CourseMate.Courses',
       layout: eLayoutType.application
     },
     {
-      path: '/courses',
-      name: '::Menu:Courses',
+      path: '/',
+      name: '::Menu:Overview',
+      iconClass: 'fas fa-chart-line',
+      layout: eLayoutType.application,
+      parentName: '::Menu:Dashboard'
+    },
+    {
+      path: '/reports',
+      name: '::Menu:Reports',
+      iconClass: 'fas fa-file-alt',
+      layout: eLayoutType.application,
+      parentName: '::Menu:Dashboard'
+    },
+    {
+      name: '::Menu:SystemManagement',
+      iconClass: 'fas fa-cog',
+      layout: eLayoutType.application
+    },
+    {
+      path: '/news',
+      name: '::Menu:News',
+      iconClass: 'fas fa-newspaper',
+      layout: eLayoutType.application,
+      parentName: '::Menu:SystemManagement'
+    },
+    {
+      path: '/banners',
+      name: '::Menu:Banners',
+      iconClass: 'fas fa-image',
+      layout: eLayoutType.application,
+      parentName: '::Menu:SystemManagement'
+    },
+    {
+      path: '/files',
+      name: '::Menu:Files',
+      iconClass: 'fas fa-folder-open',
+      layout: eLayoutType.application,
+      parentName: '::Menu:SystemManagement'
+    },
+    {
+      name: '::Menu:CourseManagement',
       iconClass: 'fas fa-graduation-cap',
       layout: eLayoutType.application,
       requiredPolicy: 'CourseMate.Courses'
@@ -27,23 +66,50 @@ function configureRoutes() {
     {
       path: '/categories',
       name: '::Menu:Categories',
+      iconClass: 'fas fa-list',
+      layout: eLayoutType.application,
+      parentName: '::Menu:CourseManagement'
+    },
+    {
+      path: '/courses',
+      name: '::Menu:Courses',
       iconClass: 'fas fa-book',
       layout: eLayoutType.application,
-      requiredPolicy: 'CourseMate.Categories'
+      parentName: '::Menu:CourseManagement'
+    },
+    {
+      path: '/instructors',
+      name: '::Menu:Instructors',
+      iconClass: 'fas fa-chalkboard-teacher',
+      layout: eLayoutType.application,
+      parentName: '::Menu:CourseManagement'
+    },
+    {
+      path: '/students',
+      name: '::Menu:Students',
+      iconClass: 'fas fa-user-graduate',
+      layout: eLayoutType.application,
+      parentName: '::Menu:CourseManagement'
+    },
+    {
+      name: '::Menu:PaymentManagement',
+      iconClass: 'fas fa-shopping-cart',
+      layout: eLayoutType.application
     },
     {
       path: '/orders',
       name: '::Menu:Orders',
-      iconClass: 'fas fa-shopping-cart',
-      requiredPolicy: 'CourseMate.Orders',
-      layout: eLayoutType.application
+      iconClass: 'fas fa-receipt',
+      layout: eLayoutType.application,
+      parentName: '::Menu:PaymentManagement'
     },
     {
-      path: '/report',
-      name: '::Menu:Reports',
-      iconClass: 'fas fa-chart-line',
-      // requiredPolicy: 'CourseMate.Reports',
-      layout: eLayoutType.application
+      path: '/payment-requests',
+      name: '::Menu:PaymentRequests',
+      iconClass: 'fas fa-money-check-alt',
+      layout: eLayoutType.application,
+      parentName: '::Menu:PaymentManagement'
     }
   ]);
 }
+
