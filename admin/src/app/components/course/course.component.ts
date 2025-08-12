@@ -13,6 +13,8 @@ import { Router } from '@angular/router';
 import { LookupDto } from '@proxy/services/dtos/lookups';
 import { LookupService } from '@proxy/services/lookups';
 import { StorageConstants } from '../../shared/storage-constant';
+import { ChapterDto } from '@proxy/services/dtos/chapters';
+import { LessonDto } from '@proxy/services/dtos/lessons';
 
 @Component({
   standalone: false,
@@ -23,7 +25,6 @@ import { StorageConstants } from '../../shared/storage-constant';
 export class CourseComponent implements OnInit {
   courses = { items: [], totalCount: 0 } as PagedResultDto<CourseDto>;
   selectedCourse = {} as CourseDto;
-
   form: FormGroup;
   currencyTypes = currencyTypeOptions;
   levelTypes = levelTypeOptions;
@@ -189,5 +190,33 @@ export class CourseComponent implements OnInit {
   onClickClose() {
     this.handleDeleteThumbnail();
     this.isModalOpen = false;
+  }
+
+  onClickAddChapter() {
+    if (this.selectedCourse.chapters == null) {
+      this.selectedCourse.chapters = [];
+    }
+
+    this.selectedCourse.chapters.push({} as ChapterDto);
+  }
+
+  onClickAddLesson(chapter: ChapterDto) {
+    if (chapter.lessons == null) {
+      chapter.lessons = [];
+    }
+
+    chapter.lessons.push({} as LessonDto);
+  }
+
+  onClickRemoveChapter(chapterIndex: number) {
+    if (this.selectedCourse?.chapters) {
+      this.selectedCourse.chapters.splice(chapterIndex, 1);
+    }
+  }
+
+  onClickRemoveLesson(chapter: ChapterDto, lessonIndex: number) {
+    if (chapter?.lessons) {
+      chapter.lessons.splice(lessonIndex, 1);
+    }
   }
 }

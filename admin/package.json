@@ -54,6 +54,7 @@
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
+    "autoprefixer": "^10.4.21",
     "eslint": "^8.0.0",
     "jasmine-core": "~4.0.0",
     "karma": "~6.3.0",
@@ -61,9 +62,8 @@
     "karma-coverage": "~2.1.0",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.0.0",
-    "typescript": "~5.6.0",
+    "postcss": "^8.5.6",
     "tailwindcss": "3",
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.6"
+    "typescript": "~5.6.0"
   }
 }

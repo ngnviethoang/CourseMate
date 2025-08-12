@@ -7,7 +7,12 @@ import { Image } from 'primeng/image';
 import { FileUpload } from 'primeng/fileupload';
 import { Button } from 'primeng/button';
 import { NgOptimizedImage } from '@angular/common';
-import { Select } from 'primeng/select'; // add this line
+import { Select } from 'primeng/select';
+import { StepperModule } from 'primeng/stepper';
+import { InputTextModule } from 'primeng/inputtext';
+import { FloatLabel } from 'primeng/floatlabel';
+import { Textarea } from 'primeng/textarea';
+import { AccordionModule } from 'primeng/accordion';
 
 @NgModule({
   declarations: [CourseComponent],
@@ -19,8 +24,12 @@ import { Select } from 'primeng/select'; // add this line
     FileUpload,
     Button,
     NgOptimizedImage,
-    Select
-    // add this line
+    Select,
+    StepperModule,
+    InputTextModule,
+    FloatLabel,
+    Textarea,
+    AccordionModule
   ]
 })
 export class CourseModule {

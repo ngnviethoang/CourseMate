@@ -98,101 +98,167 @@
 </div>
 
 <!-- Add the modal here -->
-<abp-modal [(visible)]="isModalOpen" [options]="{ size: 'lg' }">
+<abp-modal [(visible)]="isModalOpen" [options]="{ size: 'xl' }">
   <ng-template #abpHeader>
     <h3>{{ (selectedCourse.id ? '::Edit' : '::Create') | abpLocalization }}</h3>
   </ng-template>
 
   <ng-template #abpBody>
     <form [formGroup]="form" (ngSubmit)="save()">
-      <div class="row mt-2">
-        @if (thumbnailUrl === null || thumbnailUrl === '' || thumbnailUrl === undefined) {
-          <div class="col">
-            <label>Thumbnail</label>
-            <div class="flex gap-6 items-center justify-between">
-              <p-fileupload mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="demo[]"
-                            accept=".jpg" maxFileSize="1000000"
-                            [fileLimit]="1"
-                            (onSelect)="onSelect($event)"
-                            [chooseButtonProps]="{ size: 'small' }" />
-              <p-button label="Upload" (onClick)="onUpload()" severity="secondary" size="small" class="p-1"
-                        [disabled]="thumbnailFile === null || thumbnailFile === undefined" />
-            </div>
-          </div>
-        } @else {
-          <div class="col flex flex-column justify-content-center">
-            <label>Thumbnail</label>
-            <div class="flex justify-center">
-              <div class="relative inline-block">
-                <p-image
-                  [src]="thumbnailUrl"
-                  alt="Image"
-                  height="300px"
-                  width="300px"
-                  styleClass="rounded-md" />
+      <p-stepper [value]="1">
+        <p-step-item [value]="1">
+          <p-step>Overview</p-step>
+          <p-step-panel>
+            <ng-template #content>
+              <div class="tw-grid tw-grid-cols-4 tw-gap-4 tw-mt-2">
+                <div class="tw-col-span-2">
+                  <p-floatlabel variant="on">
+                    <input pInputText class="tw-w-full" id="title" formControlName="title" autocomplete="off"
+                           autofocus />
+                    <label for="title">Title</label>
+                  </p-floatlabel>
+                </div>
+                <div class="tw-col-span-2">
+                  <p-floatlabel variant="on">
+                    <input pInputText class="tw-w-full" id="summary" formControlName="summary" autocomplete="off"
+                           autofocus />
+                    <label for="summary">Summary</label>
+                  </p-floatlabel>
+                </div>
 
-                <p-button icon="pi pi-times" class="absolute top-2 right-2" [rounded]="true" [text]="true"
-                          severity="danger" (click)="onRemoveThumbnail()" />
+                <div class="tw-col-span-4">
+                  <p-floatlabel variant="on">
+                    <textarea pTextarea class="tw-w-full" id="description" formControlName="description" rows="5"
+                              cols="30" style="resize: none"></textarea>
+                    <label for="description">Description</label>
+                  </p-floatlabel>
+                </div>
+
+                <div class="tw-col-span-1">
+                  <p-select formControlName="levelType" [options]="levelTypes" optionLabel="key" optionValue="value"
+                            placeholder="Select a level" class="tw-w-full" />
+                </div>
+                <div class="tw-col-span-1">
+                  <p-select formControlName="categoryId" [options]="categories" optionLabel="name" optionValue="value"
+                            placeholder="Select a level" class="tw-w-full" />
+                </div>
+                <div class="tw-col-span-1">
+                  <p-floatlabel variant="on">
+                    <input pInputText class="tw-w-full" id="price" formControlName="price" autocomplete="off"
+                           autofocus />
+                    <label for="price">Price</label>
+                  </p-floatlabel>
+                </div>
+                <div class="tw-col-span-1">
+                  <p-select formControlName="categoryId" [options]="categories" optionLabel="name" optionValue="value"
+                            placeholder="Select a level" class="tw-w-full" />
+                </div>
+
+                <div class="tw-col-span-2">
+                  <label>Thumbnail</label>
+                  <p-image [src]="thumbnailUrl" alt="Image" height="300px" width="500px" styleClass="rounded-md" />
+                  <div class="tw-flex tw-mt-2">
+                    <p-button class="tw-mr-2" label="Upload" (onClick)="onUpload()" severity="secondary" size="small"
+                              [disabled]="thumbnailFile === null || thumbnailFile === undefined" />
+                    <p-button icon="pi pi-times" label="Remove" size="small" severity="danger"
+                              (click)="onRemoveThumbnail()" />
+                  </div>
+                </div>
+                <div class="tw-col-span-2">
+                  <label>Promotional video</label>
+                  <p-image [src]="thumbnailUrl" alt="Image" height="300px" width="500px" styleClass="rounded-md" />
+                  <div class="tw-flex tw-mt-2">
+                    <p-button class="tw-mr-2" label="Upload" (onClick)="onUpload()" severity="secondary" size="small"
+                              [disabled]="thumbnailFile === null || thumbnailFile === undefined" />
+                    <p-button icon="pi pi-times" label="Remove" size="small" severity="danger"
+                              (click)="onRemoveThumbnail()" />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        }
-      </div>
+            </ng-template>
+          </p-step-panel>
+        </p-step-item>
 
-      <div class="row mt-2">
-        <div class="col ">
-          <label for="title">Title</label><span class="text-danger">*</span>
-          <input type="text" id="title" class="form-control" formControlName="title" autofocus />
-        </div>
-      </div>
+        <p-step-item [value]="2">
+          <p-step>Content</p-step>
+          <p-step-panel>
+            <ng-template #content>
+              <div class="tw-flex tw-justify-content-center tw-my-2">
+                <p-button label="Chapter" severity="secondary" size="small" icon="pi pi-plus"
+                          (click)="onClickAddChapter()" />
+              </div>
 
-      <div class="row mt-2">
-        <div class="col">
-          <label for="description">Description</label>
-          <input type="text" id="description" class="form-control" formControlName="description" />
-        </div>
-      </div>
+              <div class="tw-card tw-flex tw-justify-content-center">
+                <p-accordion value="0" styleClass="tw-w-full">
+                  @for (chapter of selectedCourse.chapters; track $index; let chapterIndex = $index) {
+                    <p-accordion-panel [value]="chapterIndex">
+                      <p-accordion-header>
+                      <span class="tw-flex tw-items-center tw-w-full">
+                        <span class="tw-font-bold tw-whitespace-nowrap tw-mr-2">Chapter {{ chapterIndex }} - </span>
+                        <input pInputText type="text" pSize="small" placeholder="Title"
+                               (keydown.space)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" />
+                         <p-button class="tw-ml-2" severity="danger" size="small" icon="pi pi-trash"
+                                   (click)="onClickRemoveChapter(chapterIndex)" />
+                      </span>
+                      </p-accordion-header>
+                      <p-accordion-content>
+                        <div class="tw-flex tw-justify-content-center tw-mb-2">
+                          <p-button label="Lesson" severity="secondary" size="small" icon="pi pi-plus"
+                                    (click)="onClickAddLesson(chapter)" />
+                        </div>
+                        <p-accordion value="0">
+                          @for (lesson of chapter.lessons; track $index; let lessonIndex = $index) {
+                            <p-accordion-panel [value]="lessonIndex">
+                              <p-accordion-header>
+                            <span class="tw-flex tw-items-center tw-w-full">
+                              <span class="tw-font-bold tw-whitespace-nowrap tw-mr-2">Lesson {{ lessonIndex }} - </span>
+                              <input pInputText type="text" pSize="small" placeholder="Title"
+                                     (keydown.space)="$event.stopPropagation()"
+                                     (keydown.enter)="$event.stopPropagation()" />
+                               <p-button class="tw-ml-2" severity="danger" size="small" icon="pi pi-trash"
+                                         (click)="onClickRemoveLesson(chapter, lessonIndex)" />
+                            </span>
+                              </p-accordion-header>
+                              <p-accordion-content>
+                                <div class="tw-grid tw-grid-cols-4 tw-gap-4 tw-mt-2">
+                                  <div class="tw-col-span-4">
+                                    <p-floatlabel variant="on">
+                    <textarea pTextarea class="tw-w-full" id="description" formControlName="description" rows="5"
+                              cols="30" style="resize: none"></textarea>
+                                      <label for="description">Description</label>
+                                    </p-floatlabel>
+                                  </div>
 
-      <div class="row mt-2">
-        <div class="col">
-          <label for="price">Price</label>
-          <input type="number" id="price" class="form-control" formControlName="price" />
-        </div>
+                                  <div class="tw-col-span-4">
+                                    <p-floatlabel variant="on">
+                    <textarea pTextarea class="tw-w-full" id="description" formControlName="description" rows="5"
+                              cols="30" style="resize: none"></textarea>
+                                      <label for="description">Article</label>
+                                    </p-floatlabel>
+                                  </div>
 
-        <div class="col">
-          <label for="currency">Currency</label><span class="text-danger">*</span>
-          <select class="form-control" id="currency" formControlName="currency">
-            <option [ngValue]="type.value"
-                    *ngFor="let type of currencyTypes"> {{ '::Enum:CurrencyType.' + type.value | abpLocalization }}
-            </option>
-          </select>
-        </div>
-      </div>
+                                  <div class="tw-col-span-4">
+                                    <p-floatlabel variant="on">
+                    <textarea pTextarea class="tw-w-full" id="description" formControlName="description" rows="5"
+                              cols="30" style="resize: none"></textarea>
+                                      <label for="description">Resources</label>
+                                    </p-floatlabel>
+                                  </div>
+                                </div>
+                              </p-accordion-content>
+                            </p-accordion-panel>
+                          }
 
-      <div class="row mt-2">
-        <div class="col">
-          <label for="levelType">Level</label><span class="text-danger">*</span>
-          <select class="form-control" id="levelType" formControlName="levelType">
-            <option [ngValue]="type.value"
-                    *ngFor="let type of levelTypes"> {{ '::Enum:LevelType.' + type.value | abpLocalization }}
-            </option>
-          </select>
-        </div>
-
-        <div class="col">
-          <label for="categoryId">Category</label><span class="text-danger">*</span>
-          <select class="form-control" id="categoryId" formControlName="categoryId">
-            <option [ngValue]="type.id"
-                    *ngFor="let type of categories"> {{ type.name }}
-            </option>
-          </select>
-        </div>
-
-        <div class="col-2 form-check d-flex justify-content-between align-items-center">
-          <label for="isActive">Active</label>
-          <input class="form-check-input" type="checkbox" formControlName="isActive" id="isActive">
-        </div>
-      </div>
+                        </p-accordion>
+                      </p-accordion-content>
+                    </p-accordion-panel>
+                  }
+                </p-accordion>
+              </div>
+            </ng-template>
+          </p-step-panel>
+        </p-step-item>
+      </p-stepper>
     </form>
   </ng-template>
 
