@@ -1,0 +1,210 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row mt-2">
+      <div class="col col-md-6">
+        <h5 class="card-title">
+          {{ '::Menu:Courses' | abpLocalization }}
+        </h5>
+      </div>
+      <div class="text-end col col-md-6">
+
+        <div class="text-lg-end pt-2">
+          <button *abpPermission="'CourseMate.Courses.Create'" id="create" class="btn btn-primary" type="button"
+                  (click)="create()">
+            <i class="fa fa-plus me-1"></i>
+            <span>{{ '::Create' | abpLocalization }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div id="data-tables-table-filter" class="data-tables-filter mb-3">
+      <div class="input-group">
+        <input
+          type="search"
+          class="form-control"
+          [placeholder]="'AbpUi::PagerSearch' | abpLocalization"
+          [(ngModel)]="list.filter"
+        />
+      </div>
+    </div>
+
+    <ngx-datatable [rows]="courses.items" [count]="courses.totalCount" [list]="list" default>
+      <ngx-datatable-column
+        [name]="'::Actions' | abpLocalization"
+        [maxWidth]="150"
+        [sortable]="false"
+      >
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <div ngbDropdown container="body" class="d-inline-block">
+            <button
+              class="btn btn-primary btn-sm dropdown-toggle"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              ngbDropdownToggle
+            >
+              <i class="fa fa-cog me-1"></i>{{ '::Actions' | abpLocalization }}
+            </button>
+            <div ngbDropdownMenu>
+              <button *abpPermission="'CourseMate.Courses.Edit'" ngbDropdownItem (click)="edit(row.id)">
+                {{ '::Edit' | abpLocalization }}
+              </button>
+              <button *abpPermission="'CourseMate.Courses.Delete'" ngbDropdownItem (click)="delete(row.id)">
+                {{ '::Delete' | abpLocalization }}
+              </button>
+              <button *abpPermission="'CourseMate.Chapters'" ngbDropdownItem
+                      (click)="onClickChapterManagement(row.id)">
+                {{ '::Menu:Chapters' | abpLocalization }}
+              </button>
+              <button *abpPermission="'CourseMate.Students'" ngbDropdownItem
+                      (click)="onClickStudentManagement(row.id)">
+                {{ '::Menu:Students' | abpLocalization }}
+              </button>
+            </div>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Title' | abpLocalization" prop="title"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Slug' | abpLocalization" prop="slug"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Price' | abpLocalization" prop="price"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::LevelType' | abpLocalization" prop="levelType">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ '::Enum:LevelType.' + row.levelType | abpLocalization }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::IsActive' | abpLocalization" prop="isActive">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          @if (row.isActive) {
+            <i class="bi bi-check-circle-fill text-success"></i>
+          } @else {
+            <i class="bi bi-x-circle-fill text-danger"></i>
+          }
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::CreationTime' | abpLocalization" prop="creationTime">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.creationTime | shortDateTime }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::LastModificationTime' | abpLocalization"
+                            prop="lastModificationTime">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.lastModificationTime | shortDateTime }}
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+  </div>
+</div>
+
+<!-- Add the modal here -->
+<abp-modal [(visible)]="isModalOpen" [options]="{ size: 'lg' }">
+  <ng-template #abpHeader>
+    <h3>{{ (selectedCourse.id ? '::Edit' : '::Create') | abpLocalization }}</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="row mt-2">
+        @if (thumbnailUrl === null || thumbnailUrl === '' || thumbnailUrl === undefined) {
+          <div class="col">
+            <label>Thumbnail</label>
+            <div class="flex gap-6 items-center justify-between">
+              <p-fileupload mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="demo[]"
+                            accept=".jpg" maxFileSize="1000000"
+                            [fileLimit]="1"
+                            (onSelect)="onSelect($event)"
+                            [chooseButtonProps]="{ size: 'small' }" />
+              <p-button label="Upload" (onClick)="onUpload()" severity="secondary" size="small" class="p-1"
+                        [disabled]="thumbnailFile === null || thumbnailFile === undefined" />
+            </div>
+          </div>
+        } @else {
+          <div class="col flex flex-column justify-content-center">
+            <label>Thumbnail</label>
+            <div class="flex justify-center">
+              <div class="relative inline-block">
+                <p-image
+                  [src]="thumbnailUrl"
+                  alt="Image"
+                  height="300px"
+                  width="300px"
+                  styleClass="rounded-md" />
+
+                <p-button icon="pi pi-times" class="absolute top-2 right-2" [rounded]="true" [text]="true"
+                          severity="danger" (click)="onRemoveThumbnail()" />
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="row mt-2">
+        <div class="col ">
+          <label for="title">Title</label><span class="text-danger">*</span>
+          <input type="text" id="title" class="form-control" formControlName="title" autofocus />
+        </div>
+      </div>
+
+      <div class="row mt-2">
+        <div class="col">
+          <label for="description">Description</label>
+          <input type="text" id="description" class="form-control" formControlName="description" />
+        </div>
+      </div>
+
+      <div class="row mt-2">
+        <div class="col">
+          <label for="price">Price</label>
+          <input type="number" id="price" class="form-control" formControlName="price" />
+        </div>
+
+        <div class="col">
+          <label for="currency">Currency</label><span class="text-danger">*</span>
+          <select class="form-control" id="currency" formControlName="currency">
+            <option [ngValue]="type.value"
+                    *ngFor="let type of currencyTypes"> {{ '::Enum:CurrencyType.' + type.value | abpLocalization }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row mt-2">
+        <div class="col">
+          <label for="levelType">Level</label><span class="text-danger">*</span>
+          <select class="form-control" id="levelType" formControlName="levelType">
+            <option [ngValue]="type.value"
+                    *ngFor="let type of levelTypes"> {{ '::Enum:LevelType.' + type.value | abpLocalization }}
+            </option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label for="categoryId">Category</label><span class="text-danger">*</span>
+          <select class="form-control" id="categoryId" formControlName="categoryId">
+            <option [ngValue]="type.id"
+                    *ngFor="let type of categories"> {{ type.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="col-2 form-check d-flex justify-content-between align-items-center">
+          <label for="isActive">Active</label>
+          <input class="form-check-input" type="checkbox" formControlName="isActive" id="isActive">
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <p-button severity="secondary" (click)="onClickClose()">
+      {{ '::Close' | abpLocalization }}
+    </p-button>
+
+    <p-button (click)="save()" [disabled]="form.invalid">
+      <i class="fa fa-check mr-1"></i>
+      {{ '::Save' | abpLocalization }}
+    </p-button>
+  </ng-template>
+
+</abp-modal>
