@@ -48,7 +48,15 @@ export class ChapterComponent implements OnInit {
       this.router.navigateByUrl('/courses');
     });
 
-    const chapterStreamCreator = (query) => this.chapterService.getList(query);
+    const chapterStreamCreator = (query) => this.chapterService.getList(
+      {
+        maxResultCount: query.maxResultCount,
+        skipCount: query.skipCount,
+        filter: query.filter,
+        sorting: query.sorting,
+        courseId: this.courseId
+      }
+    );
 
     this.list.hookToQuery(chapterStreamCreator).subscribe((response) => {
       this.chapters = response;

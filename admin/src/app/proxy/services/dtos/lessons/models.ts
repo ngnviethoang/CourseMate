@@ -1,5 +1,6 @@
 import type { AuditedEntityDto } from '@abp/ng.core';
 import type { LessonType } from '../../../entities/lessons/lesson-type.enum';
+import type { GetListRequestDto } from '../models';
 
 export interface LessonDto extends AuditedEntityDto<string> {
   type?: LessonType;
@@ -23,4 +24,8 @@ export interface CreateUpdateLessonDto {
   duration?: string;
   chapterId?: string;
   position: number;
+}
+
+export interface GetListLessonRequestDto extends GetListRequestDto {
+  chapterId?: string;
 }

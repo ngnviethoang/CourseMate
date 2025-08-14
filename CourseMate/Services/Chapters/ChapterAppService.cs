@@ -33,7 +33,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
         return await AsyncExecuter.FirstOrDefaultAsync(queryable) ?? new ChapterDto();
     }
 
-    public async Task<PagedResultDto<ChapterDto>> GetListAsync(GetListRequestDto input)
+    public async Task<PagedResultDto<ChapterDto>> GetListAsync(GetListChapterRequestDto input)
     {
         IQueryable<ChapterDto> queryable =
             from chapter in await ChapterRepo.GetQueryableAsync()
@@ -52,8 +52,10 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
                 CourseTitle = course.Title
             };
 
-        queryable = queryable.WhereIf(!string.IsNullOrEmpty(input.Filter), i => i.Title.Contains(input.Filter!));
-        
+        queryable = queryable
+            .WhereIf(input.CourseId != null, chapter => chapter.CourseId == input.CourseId)
+            .WhereIf(!string.IsNullOrEmpty(input.Filter), i => i.Title.Contains(input.Filter!));
+
         if (input.SkipCount.HasValue)
         {
             queryable = queryable.Skip(input.SkipCount.Value);
@@ -78,16 +80,15 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
             throw new UserFriendlyException("Duplicate chapter name");
         }
 
-        bool isDuplicateSortNumber = await ChapterRepo.AnyAsync(i => i.Position == input.Position);
-        if (input.Position != 0 && isDuplicateSortNumber)
-        {
-            throw new UserFriendlyException("Duplicate chapter sort number");
-        }
-
         await CourseRepo.EnsureExistsAsync(input.CourseId);
 
         Chapter chapter = new(GuidGenerator.Create(), input.Title, input.CourseId, input.Position);
         await ChapterRepo.InsertAsync(chapter);
+
+        List<Chapter> chapters = await ChapterRepo.GetListAsync(i => i.CourseId == chapter.CourseId && i.Position == chapter.Position);
+        chapters.ForEach(i => i.Position = 0);
+        await ChapterRepo.UpdateManyAsync(chapters);
+
         return new ResultObjectDto(chapter.Id);
     }
 
@@ -100,20 +101,18 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
             throw new UserFriendlyException("Duplicate chapter name");
         }
 
-        bool isDuplicateSortNumber = await ChapterRepo.AnyAsync(i => i.Position == input.Position && i.Id != id);
-        if (input.Position != 0 && isDuplicateSortNumber)
-        {
-            throw new UserFriendlyException("Duplicate chapter sort number");
-        }
-
         await CourseRepo.EnsureExistsAsync(input.CourseId);
         Chapter chapter = await ChapterRepo.GetAsync(id);
 
         chapter.Title = input.Title;
         chapter.CourseId = input.CourseId;
         chapter.Position = input.Position;
-
         await ChapterRepo.UpdateAsync(chapter);
+
+        List<Chapter> chapters = await ChapterRepo.GetListAsync(i => i.CourseId == chapter.CourseId && i.Position == chapter.Position);
+        chapters.ForEach(i => i.Position = 0);
+        await ChapterRepo.UpdateManyAsync(chapters);
+
         return new ChapterDto
         {
             Id = chapter.Id,

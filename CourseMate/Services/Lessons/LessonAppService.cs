@@ -42,7 +42,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
         return await AsyncExecuter.FirstOrDefaultAsync(queryable) ?? new LessonDto();
     }
 
-    public async Task<PagedResultDto<LessonDto>> GetListAsync(GetListRequestDto input)
+    public async Task<PagedResultDto<LessonDto>> GetListAsync(GetListLessonRequestDto input)
     {
         IQueryable<LessonDto> queryable =
             from lesson in await LessonRepo.GetQueryableAsync()
@@ -66,6 +66,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
                 OptionsJson = lesson.OptionsJson
             };
         queryable = queryable
+            .WhereIf(input.ChapterId != null, lesson => lesson.ChapterId == input.ChapterId)
             .WhereIf(!string.IsNullOrEmpty(input.Filter), i => i.Title.Contains(input.Filter!))
             .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(Lesson.Title) : input.Sorting);
 
@@ -93,12 +94,6 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
             throw new UserFriendlyException("Duplicate lesson name");
         }
 
-        bool isDuplicateSortNumber = await LessonRepo.AnyAsync(i => i.Position == input.Position);
-        if (input.Position != 0 && isDuplicateSortNumber)
-        {
-            throw new UserFriendlyException("Duplicate lesson sort number");
-        }
-
         await ChapterRepo.EnsureExistsAsync(input.ChapterId);
 
         Lesson lesson = new(
@@ -113,6 +108,11 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
         );
 
         await LessonRepo.InsertAsync(lesson);
+
+        List<Lesson> lessons = await LessonRepo.GetListAsync(i => i.ChapterId == lesson.ChapterId && i.Position == lesson.Position);
+        lessons.ForEach(i => i.Position = 0);
+        await LessonRepo.UpdateManyAsync(lessons);
+
         return new ResultObjectDto(lesson.Id);
     }
 
@@ -125,12 +125,6 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
             throw new UserFriendlyException("Duplicate lesson name");
         }
 
-        bool isDuplicateSortNumber = await LessonRepo.AnyAsync(i => i.Position == input.Position && i.Id != id);
-        if (input.Position != 0 && isDuplicateSortNumber)
-        {
-            throw new UserFriendlyException("Duplicate lesson sort number");
-        }
-
         await ChapterRepo.EnsureExistsAsync(input.ChapterId);
         Lesson lesson = await LessonRepo.GetAsync(id);
 
@@ -139,8 +133,12 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
         lesson.VideoFile = input.VideoFile;
         lesson.Duration = input.Duration;
         lesson.ChapterId = input.ChapterId;
-
         await LessonRepo.UpdateAsync(lesson);
+
+        List<Lesson> lessons = await LessonRepo.GetListAsync(i => i.ChapterId == lesson.ChapterId && i.Position == lesson.Position);
+        lessons.ForEach(i => i.Position = 0);
+        await LessonRepo.UpdateManyAsync(lessons);
+
         return new LessonDto
         {
             Id = lesson.Id,

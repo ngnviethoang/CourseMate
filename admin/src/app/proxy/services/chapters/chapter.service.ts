@@ -1,8 +1,8 @@
 import { RestService, Rest } from '@abp/ng.core';
 import type { PagedResultDto } from '@abp/ng.core';
 import { Injectable } from '@angular/core';
-import type { ChapterDto, CreateUpdateChapterDto } from '../dtos/chapters/models';
-import type { GetListRequestDto, ResultObjectDto } from '../dtos/models';
+import type { ChapterDto, CreateUpdateChapterDto, GetListChapterRequestDto } from '../dtos/chapters/models';
+import type { ResultObjectDto } from '../dtos/models';
 
 @Injectable({
   providedIn: 'root',
@@ -36,11 +36,11 @@ export class ChapterService {
     { apiName: this.apiName,...config });
   
 
-  getList = (input: GetListRequestDto, config?: Partial<Rest.Config>) =>
+  getList = (input: GetListChapterRequestDto, config?: Partial<Rest.Config>) =>
     this.restService.request<any, PagedResultDto<ChapterDto>>({
       method: 'GET',
       url: '/api/app/chapter',
-      params: { sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount, filter: input.filter },
+      params: { courseId: input.courseId, sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount, filter: input.filter },
     },
     { apiName: this.apiName,...config });
   
