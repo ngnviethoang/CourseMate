@@ -3,8 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
-import { FileRemoveEvent, FileSelectEvent, FileUploadHandlerEvent } from 'primeng/fileupload';
-import { MessageService } from 'primeng/api';
+import { FileRemoveEvent, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { StorageService } from '@proxy/services/storages';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LookupDto } from '@proxy/services/dtos/lookups';
@@ -12,13 +11,12 @@ import { LookupService } from '@proxy/services/lookups';
 import { ChapterDto } from '@proxy/services/dtos/chapters';
 import { LessonDto } from '@proxy/services/dtos/lessons';
 import { LessonService } from '@proxy/services/lessons';
-import { StorageConstants } from '../../shared/storage-constant';
 import { ChapterService } from '@proxy/services/chapters';
-import { currencyTypeOptions, levelTypeOptions } from '@proxy/entities/courses';
+import { LessonType, lessonTypeOptions } from '@proxy/entities/lessons';
 
 @Component({
   standalone: false,
-  selector: 'app-course',
+  selector: 'app-lesson',
   templateUrl: './lesson.component.html',
   providers: [ListService, { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }]
 })
@@ -29,13 +27,10 @@ export class LessonComponent implements OnInit {
   form: FormGroup;
   isModalOpen = false;
   categories: LookupDto[] = [];
-  videoFile: File;
   files: File[] = [];
-  videoFileUrl: string;
-  prevVideoFile: string;
   private chapterId: string;
-  maxFileSize = 10 * 1024 * 1024 * 1024; // 10Gb
-  private courseId: string;
+  protected readonly lessonTypeOptions = lessonTypeOptions;
+  protected readonly LessonType = LessonType;
 
   constructor(
     public readonly list: ListService,
@@ -44,7 +39,6 @@ export class LessonComponent implements OnInit {
     private fb: FormBuilder,
     private confirmation: ConfirmationService,
     private lookupService: LookupService,
-    private messageService: MessageService,
     private storageService: StorageService,
     private router: Router,
     private route: ActivatedRoute
@@ -52,19 +46,11 @@ export class LessonComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.courseId = this.route.snapshot.queryParamMap.get('courseId');
-    this.chapterId = this.route.snapshot.queryParamMap.get('chapterId');
-    if (this.chapterId === null) {
-      this.router.navigateByUrl(`/chapters?courseId=${this.courseId}`);
-    }
+    this.chapterId = this.route.snapshot.paramMap.get('chapterId');
 
-    this.chapterService
-      .get(this.chapterId)
-      .subscribe(response => {
-        this.chapter = response;
-      }, _ => {
-        this.router.navigateByUrl(`/chapters?courseId=${this.courseId}`);
-      });
+    this.chapterService.get(this.chapterId).subscribe(response => {
+      this.chapter = response;
+    });
 
     const lessonStreamCreator = (query) => this.lessonService.getList(
       {
@@ -75,30 +61,13 @@ export class LessonComponent implements OnInit {
         chapterId: this.chapterId
       }
     );
+    this.list.hookToQuery(lessonStreamCreator).subscribe((response) => {
+      this.lessons = response;
+    });
 
-    this.list
-      .hookToQuery(lessonStreamCreator)
-      .subscribe((response) => {
-        this.lessons = response;
-      });
-
-    const courseStreamCreator = (query) => this.lessonService.getList(query);
-
-    this.list
-      .hookToQuery(courseStreamCreator)
-      .subscribe((response) => {
-        this.lessons = response;
-      });
-
-    this.lookupService
-      .getCategories({ maxResultCount: null, skipCount: null })
-      .subscribe((response) => {
-        this.categories = response.items;
-      });
   }
 
   backToChapter() {
-    this.router.navigateByUrl(`/chapters?courseId=${this.courseId}`);
   }
 
   create() {
@@ -109,14 +78,9 @@ export class LessonComponent implements OnInit {
   }
 
   edit(id: string) {
-    this.lessonService.get(id).subscribe((repsonse) => {
-      this.selectedLesson = repsonse;
+    this.lessonService.get(id).subscribe(response => {
+      this.selectedLesson = response;
       this.buildForm();
-      if (repsonse.videoFile !== null && repsonse.videoFile !== '') {
-        this.videoFileUrl = `${StorageConstants.VIDEO_API}?fileName=${repsonse.videoFile}`;
-      } else {
-        this.videoFileUrl = null;
-      }
       this.isModalOpen = true;
     });
   }
@@ -131,12 +95,80 @@ export class LessonComponent implements OnInit {
 
   buildForm() {
     this.form = this.fb.group({
-      title: [this.selectedLesson.title || null, [Validators.required, Validators.maxLength(1024)]],
-      position: [this.selectedLesson.position || 0, [Validators.required, Validators.min(0)]],
-      contentText: [this.selectedLesson.content || null, [Validators.required, Validators.maxLength(1024)]],
-      videoFile: [this.selectedLesson.videoFile || null, [Validators.required, Validators.maxLength(1024)]],
-      chapterId: [this.selectedLesson.chapterId || this.chapterId, [Validators.required, Validators.maxLength(100)]]
+      lessonType: [this.selectedLesson.lessonType, Validators.required],
+      chapterId: [this.selectedLesson.chapterId ?? this.chapterId, [Validators.required, Validators.maxLength(100)]],
+      position: [this.selectedLesson.position, [Validators.required, Validators.min(0)]],
+      title: [this.selectedLesson.title, [Validators.required, Validators.maxLength(1024)]]
     });
+
+    this.form.get('lessonType')?.valueChanges.subscribe(type => {
+      this.switchLessonType(type);
+    });
+
+    if (this.selectedLesson.lessonType) {
+      this.switchLessonType(this.selectedLesson.lessonType);
+    }
+  }
+
+  switchLessonType(type: LessonType) {
+    // Xóa control cũ nếu có
+    ['article', 'video', 'codingExercise', 'quizQuestion'].forEach(ctrl => {
+      if (this.form.contains(ctrl)) {
+        this.form.removeControl(ctrl);
+      }
+    });
+
+    // Add form control mới theo type
+    switch (type) {
+      case LessonType.Article:
+        this.form.addControl(
+          'article',
+          this.fb.group({
+            id: [this.selectedLesson.article?.id],
+            lessonId: [this.selectedLesson.article?.lessonId],
+            content: [this.selectedLesson.article?.content]
+          })
+        );
+        break;
+
+      case LessonType.Video:
+        this.form.addControl(
+          'video',
+          this.fb.group({
+            id: [this.selectedLesson.video?.id],
+            lessonId: [this.selectedLesson.video?.lessonId],
+            videoFile: [this.selectedLesson.video?.videoFile],
+            duration: [this.selectedLesson.video?.duration]
+          })
+        );
+        break;
+
+      case LessonType.Coding:
+        this.form.addControl(
+          'codingExercise',
+          this.fb.group({
+            id: [this.selectedLesson.codingExercise?.id],
+            lessonId: [this.selectedLesson.codingExercise?.lessonId],
+            title: [this.selectedLesson.codingExercise?.title],
+            description: [this.selectedLesson.codingExercise?.description],
+            sampleCodes: this.fb.array([]),
+            testCases: this.fb.array([])
+          })
+        );
+        break;
+
+      case LessonType.Quiz:
+        this.form.addControl(
+          'quizQuestion',
+          this.fb.group({
+            id: [this.selectedLesson.quizQuestion?.id],
+            lessonId: [this.selectedLesson.quizQuestion?.lessonId],
+            questionText: [this.selectedLesson.quizQuestion?.questionText],
+            quizOptions: this.fb.array([])
+          })
+        );
+        break;
+    }
   }
 
   save() {
@@ -149,86 +181,22 @@ export class LessonComponent implements OnInit {
       : this.lessonService.create(this.form.value);
 
     request.subscribe(() => {
-      this.handleDeleteVideo();
       this.isModalOpen = false;
       this.form.reset();
       this.list.get();
     });
   }
 
-  onSelect(event: FileSelectEvent) {
-    const file = event.files[0];
-    if (!file) {
-      return;
-    }
-    this.videoFile = file;
-  }
-
-  onUpload() {
-    try {
-      if (this.videoFile === null || this.videoFile === undefined) {
-        return;
-      }
-      const formData = new FormData();
-      formData.append('streamContent', this.videoFile);
-      this.storageService.uploadVideo(formData).subscribe(response => {
-        this.videoFileUrl = `${StorageConstants.VIDEO_API}?fileName=${response.name}`;
-        this.selectedLesson.videoFile = response.name;
-        this.form.controls['videoFile'].setValue(response.name);
-      });
-
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Success',
-        detail: 'File uploaded successfully'
-      });
-    } catch (error) {
-      console.error('Upload failed:', error);
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Upload failed',
-        detail: 'There was a problem uploading your file.'
-      });
-    }
-  }
-
-  isInvalid(controlName: string) {
-    const control = this.form.get(controlName);
-    return control?.invalid && (control.touched);
-  }
-
   generatePosition() {
-    this.lookupService
-      .getMaxPositionLessons(this.chapterId)
-      .subscribe(response => {
-        this.selectedLesson.position = response + 1;
-        this.form.controls['position'].setValue(response + 1);
-      });
-  }
-
-  onRemoveVideo() {
-    this.prevVideoFile = this.selectedLesson.videoFile;
-    this.videoFile = null;
-    this.videoFileUrl = null;
-    this.form.controls['videoFile'].setValue('');
-  }
-
-  handleDeleteVideo() {
-    if (this.selectedLesson.id === undefined ||
-      this.selectedLesson.id === null ||
-      this.selectedLesson.videoFile !== this.prevVideoFile) {
-      this.storageService.delete(this.prevVideoFile).subscribe(response => {
-      });
-    }
+    this.lookupService.getMaxPositionLessons(this.chapterId).subscribe(response => {
+      this.selectedLesson.position = response + 1;
+      this.form.controls['position'].setValue(response + 1);
+    });
   }
 
   onClickClose() {
-    this.handleDeleteVideo();
     this.isModalOpen = false;
   }
-
-  protected readonly levelTypes = levelTypeOptions;
-  protected readonly currencyTypes = currencyTypeOptions;
 
   uploadHandler(event: FileUploadHandlerEvent) {
   }

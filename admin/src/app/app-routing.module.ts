@@ -32,11 +32,11 @@ const routes: Routes = [
     loadChildren: () => import('./components/course/course.module').then(m => m.CourseModule)
   },
   {
-    path: 'chapters',
+    path: 'courses/:courseId/chapters',
     loadChildren: () => import('./components/chapter/chapter.module').then(m => m.ChapterModule)
   },
   {
-    path: 'lessons',
+    path: 'chapters/:chapterId/lessons',
     loadChildren: () => import('./components/lesson/lesson.module').then(m => m.LessonModule)
   },
   {

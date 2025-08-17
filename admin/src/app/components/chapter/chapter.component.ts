@@ -37,15 +37,9 @@ export class ChapterComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.courseId = this.route.snapshot.queryParamMap.get('courseId');
-    if (this.courseId === null) {
-      this.router.navigateByUrl('/courses');
-    }
-
+    this.courseId = this.route.snapshot.paramMap.get('courseId');
     this.courseService.get(this.courseId).subscribe(response => {
       this.course = response;
-    }, error => {
-      this.router.navigateByUrl('/courses');
     });
 
     const chapterStreamCreator = (query) => this.chapterService.getList(
@@ -116,7 +110,7 @@ export class ChapterComponent implements OnInit {
   }
 
   async onClickLessonManagement(chapterId: string) {
-    await this.router.navigateByUrl(`/lessons?courseId=${this.courseId}&chapterId=${chapterId}`);
+    await this.router.navigateByUrl(`chapters/${chapterId}/lessons`);
   }
 
   generatePosition() {

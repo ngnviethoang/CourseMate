@@ -68,6 +68,11 @@
       </ngx-datatable-column>
       <ngx-datatable-column [name]="'::Title' | abpLocalization" prop="title"></ngx-datatable-column>
       <ngx-datatable-column [name]="'::Position' | abpLocalization" prop="position"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::LessonType' | abpLocalization" prop="levelType">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ '::Enum:LessonType.' + row.lessonType | abpLocalization }}
+        </ng-template>
+      </ngx-datatable-column>
       <ngx-datatable-column [name]="'::CreationTime' | abpLocalization" prop="creationTime">
         <ng-template let-row="row" ngx-datatable-cell-template>
           {{ row.creationTime | shortDateTime }}
@@ -84,7 +89,7 @@
 </div>
 
 <!-- Add the modal here -->
-<abp-modal [(visible)]="isModalOpen" [options]="{ fullscreen:true}">
+<abp-modal [(visible)]="isModalOpen" [options]="{ fullscreen: true }">
   <ng-template #abpHeader>
     <h3>{{ (selectedLesson.id ? '::Edit' : '::Create') | abpLocalization }}</h3>
   </ng-template>
@@ -92,70 +97,65 @@
   <ng-template #abpBody>
     <form [formGroup]="form">
       <div class="tw-grid tw-grid-cols-12 tw-gap-4">
-        <div class="tw-col-span-10">
+        <div class="tw-col-span-9">
           <p-floatlabel variant="on">
             <input pInputText class="tw-w-full" type="text" id="title" formControlName="title" />
             <label for="title">Title</label>
           </p-floatlabel>
         </div>
+        <div class="tw-col-span-1">
+          <p-floatlabel variant="on">
+            <input pInputText class="tw-w-full" type="number" step="1" min="0" id="position"
+                   formControlName="position" />
+            <label for="position">Position</label>
+          </p-floatlabel>
+        </div>
         <div class="tw-col-span-2">
-          <p-checkbox class="tw-m-2" formControlName="isActive" [binary]="true" inputId="isActive" />
-          <label for="isActive">Active</label>
+          <p-button (onClick)="generatePosition()">Last position</p-button>
         </div>
 
-        <div class="tw-col-span-12">
-          <p-floatlabel variant="on">
-            <textarea pTextarea id="summary" formControlName="summary" rows="5" style="resize: none"
+        <div class="tw-col-span-3 tw-mb-5">
+          <p-select [options]="lessonTypeOptions" optionLabel="key" optionValue="value"
+                    placeholder="Select a lesson type"
+                    formControlName="lessonType" class="tw-w-full" />
+        </div>
+        <div class="tw-col-span-9"></div>
+
+        @if (form.get('lessonType').value === LessonType.Video) {
+          <div class="tw-col-start-4 tw-col-span-6">
+            <label for="thumbnail">Thumbnail</label>
+            <p-fileupload (uploadHandler)="uploadHandler($event)" customUpload="true" accept="image/*"
+                          [files]="files" maxFileSize="1000000" mode="advanced" previewWidth="500"
+                          (onRemove)="onRemove($event)"
+                          showCancelButton="false">
+              <ng-template #empty>
+                <div>Drag and drop files to here to upload.</div>
+              </ng-template>
+            </p-fileupload>
+          </div>
+        } @else if (form.get('lessonType').value === LessonType.Article && form.get('article')) {
+          <div class="tw-col-span-12" formGroupName="article">
+            <p-floatlabel variant="on">
+            <textarea pTextarea id="articleContent" formControlName="content" rows="5"
+                      style="resize: none"
                       class="tw-w-full"></textarea>
-            <label for="summary">Summary</label>
-          </p-floatlabel>
-        </div>
+              <label for="articleContent">Content</label>
+            </p-floatlabel>
+          </div>
+        } @else if (form.get('lessonType').value === LessonType.Quiz && form.get('quiz')) {
+          <div class="tw-col-span-12">
 
-        <div class="tw-col-span-12">
-          <p-floatlabel variant="on">
-            <textarea pTextarea id="description" formControlName="description" rows="5" style="resize: none"
-                      class="tw-w-full"></textarea>
-            <label for="description">Description</label>
-          </p-floatlabel>
-        </div>
+          </div>
+        } @else if (form.get('lessonType').value === LessonType.Quiz && form.get('codingExercise')) {
+          <div class="tw-col-span-12">
 
-        <div class="tw-col-span-3">
-          <p-select [options]="categories" optionLabel="name" optionValue="id" placeholder="Select a category"
-                    formControlName="categoryId" class="tw-w-full" />
-        </div>
-        <div class="tw-col-span-3">
-          <p-select [options]="levelTypes" optionLabel="key" optionValue="value" placeholder="Select a levelType"
-                    formControlName="levelType" class="tw-w-full" />
-        </div>
-        <div class="tw-col-span-3">
-          <p-select [options]="currencyTypes" optionLabel="key" optionValue="value" placeholder="Select a currency"
-                    formControlName="currency" class="tw-w-full" />
-        </div>
-        <div class="tw-col-span-3">
-          <p-floatlabel variant="on">
-            <p-input-number formControlName="price" inputId="price" mode="currency" currency="USD" locale="en-US" />
-            <label for="price">Price</label>
-          </p-floatlabel>
-        </div>
-
-        <div class="tw-col-start-4 tw-col-span-6">
-          <label for="thumbnail">Thumbnail</label>
-          <p-fileupload (uploadHandler)="uploadHandler($event)" customUpload="true" accept="image/*"
-                        [files]="files" maxFileSize="1000000" mode="advanced" previewWidth="500"
-                        (onRemove)="onRemove($event)"
-                        showCancelButton="false">
-            <ng-template #empty>
-              <div>Drag and drop files to here to upload.</div>
-            </ng-template>
-          </p-fileupload>
-        </div>
+          </div>
+        }
       </div>
     </form>
   </ng-template>
 
   <ng-template #abpFooter>
-    <p-button (onClick)="generatePosition()">Generate last position</p-button>
-
     <p-button severity="secondary" (click)="onClickClose()">
       {{ '::Close' | abpLocalization }}
     </p-button>

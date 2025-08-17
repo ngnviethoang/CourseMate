@@ -115,7 +115,7 @@ export class CourseComponent implements OnInit {
   }
 
   async onClickChapterManagement(courseId: string) {
-    await this.router.navigateByUrl(`/chapters?courseId=${courseId}`);
+    await this.router.navigateByUrl(`/courses/${courseId}/chapters`);
   }
 
   onClickClose() {
