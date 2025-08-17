@@ -2,7 +2,7 @@
 
 public class Notification : FullAuditedEntity<Guid>
 {
-    public Notification(Guid id, Guid receiverUserId, string title, string content, bool isRead) : base(id)
+    public Notification(Guid id, Guid? receiverUserId, string title, string content, bool isRead) : base(id)
     {
         ReceiverUserId = receiverUserId;
         Title = title;
@@ -10,7 +10,7 @@ public class Notification : FullAuditedEntity<Guid>
         IsRead = isRead;
     }
 
-    public Guid ReceiverUserId { get; set; }
+    public Guid? ReceiverUserId { get; set; }
 
     [MaxLength(CourseMateConst.DefaultMaxLength)]
     public string Title { get; set; }

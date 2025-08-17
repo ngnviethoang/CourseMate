@@ -16,9 +16,8 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
                 CreatorId = course.CreatorId
             };
 
-        BuildPagedResultAsync(queryable, input);
+        int totalCount = await BuildPagedResultAsync(queryable, input);
         List<LookupDto> items = await AsyncExecuter.ToListAsync(queryable);
-        int totalCount = await CategoryRepo.CountAsync();
         return new PagedResultDto<LookupDto>(totalCount, items);
     }
 
@@ -33,9 +32,8 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
                 CreatorId = category.CreatorId
             };
 
-        BuildPagedResultAsync(queryable, input);
+        int totalCount = await BuildPagedResultAsync(queryable, input);
         List<LookupDto> items = await AsyncExecuter.ToListAsync(queryable);
-        int totalCount = await CourseRepo.CountAsync();
         return new PagedResultDto<LookupDto>(totalCount, items);
     }
 
@@ -50,9 +48,8 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
                 CreatorId = chapter.CreatorId
             };
 
-        BuildPagedResultAsync(queryable, input);
+        int totalCount = await BuildPagedResultAsync(queryable, input);
         List<LookupDto> items = await AsyncExecuter.ToListAsync(queryable);
-        int totalCount = await ChapterRepo.CountAsync();
         return new PagedResultDto<LookupDto>(totalCount, items);
     }
 
@@ -76,11 +73,13 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
         return sortNumber.Count != 0 ? sortNumber.Max() : 0;
     }
 
-    private void BuildPagedResultAsync(IQueryable<LookupDto> queryable, LookupRequestDto input)
+    private async Task<int> BuildPagedResultAsync(IQueryable<LookupDto> queryable, LookupRequestDto input)
     {
         queryable = queryable
             .WhereIf(!CurrentUser.IsInRole(RoleConst.Admin), i => i.CreatorId == CurrentUser.Id)
             .WhereIf(!input.Filter.IsNullOrEmpty(), i => i.Name.Contains(input.Filter!));
+
+        int totalCount = await AsyncExecuter.CountAsync(queryable);
 
         if (input.SkipCount.HasValue)
         {
@@ -91,5 +90,7 @@ public class LookupAppService : CourseMateAppService, ILookupAppService
         {
             queryable = queryable.Take(input.MaxResultCount.Value);
         }
+
+        return totalCount;
     }
 }

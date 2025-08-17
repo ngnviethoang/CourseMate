@@ -2,13 +2,14 @@
   <div class="card-header">
     <div class="row mt-2">
       <div class="col col-md-6">
-        <h5 class="card-title">
-          {{ '::Menu:Courses' | abpLocalization }}
+        <h5 class="card-title tw-uppercase">
+          <span class="tw-uppercase">
+             {{ '::Menu:Courses' | abpLocalization }}
+          </span>
         </h5>
       </div>
       <div class="text-end col col-md-6">
-
-        <div class="text-lg-end pt-2">
+        <div class="text-lg-end">
           <button *abpPermission="'CourseMate.Courses.Create'" id="create" class="btn btn-primary" type="button"
                   (click)="create()">
             <i class="fa fa-plus me-1"></i>
@@ -57,10 +58,6 @@
                       (click)="onClickChapterManagement(row.id)">
                 {{ '::Menu:Chapters' | abpLocalization }}
               </button>
-              <button *abpPermission="'CourseMate.Students'" ngbDropdownItem
-                      (click)="onClickStudentManagement(row.id)">
-                {{ '::Menu:Students' | abpLocalization }}
-              </button>
             </div>
           </div>
         </ng-template>
@@ -98,113 +95,83 @@
 </div>
 
 <!-- Add the modal here -->
-<abp-modal [(visible)]="isModalOpen" [options]="{ size: 'lg' }">
+<abp-modal [(visible)]="isModalOpen" [options]="{ size: 'xl' }">
   <ng-template #abpHeader>
     <h3>{{ (selectedCourse.id ? '::Edit' : '::Create') | abpLocalization }}</h3>
   </ng-template>
 
   <ng-template #abpBody>
-    <form [formGroup]="form" (ngSubmit)="save()">
-      <div class="row mt-2">
-        @if (thumbnailUrl === null || thumbnailUrl === '' || thumbnailUrl === undefined) {
-          <div class="col">
-            <label>Thumbnail</label>
-            <div class="flex gap-6 items-center justify-between">
-              <p-fileupload mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="demo[]"
-                            accept=".jpg" maxFileSize="1000000"
-                            [fileLimit]="1"
-                            (onSelect)="onSelect($event)"
-                            [chooseButtonProps]="{ size: 'small' }" />
-              <p-button label="Upload" (onClick)="onUpload()" severity="secondary" size="small" class="p-1"
-                        [disabled]="thumbnailFile === null || thumbnailFile === undefined" />
-            </div>
-          </div>
-        } @else {
-          <div class="col flex flex-column justify-content-center">
-            <label>Thumbnail</label>
-            <div class="flex justify-center">
-              <div class="relative inline-block">
-                <p-image
-                  [src]="thumbnailUrl"
-                  alt="Image"
-                  height="300px"
-                  width="300px"
-                  styleClass="rounded-md" />
-
-                <p-button icon="pi pi-times" class="absolute top-2 right-2" [rounded]="true" [text]="true"
-                          severity="danger" (click)="onRemoveThumbnail()" />
-              </div>
-            </div>
-          </div>
-        }
-      </div>
-
-      <div class="row mt-2">
-        <div class="col ">
-          <label for="title">Title</label><span class="text-danger">*</span>
-          <input type="text" id="title" class="form-control" formControlName="title" autofocus />
+    <form [formGroup]="form">
+      <div class="tw-grid tw-grid-cols-12 tw-gap-4">
+        <div class="tw-col-span-10">
+          <p-floatlabel variant="on">
+            <input pInputText class="tw-w-full" type="text" id="title" formControlName="title" />
+            <label for="title">Title</label>
+          </p-floatlabel>
         </div>
-      </div>
-
-      <div class="row mt-2">
-        <div class="col">
-          <label for="description">Description</label>
-          <input type="text" id="description" class="form-control" formControlName="description" />
-        </div>
-      </div>
-
-      <div class="row mt-2">
-        <div class="col">
-          <label for="price">Price</label>
-          <input type="number" id="price" class="form-control" formControlName="price" />
-        </div>
-
-        <div class="col">
-          <label for="currency">Currency</label><span class="text-danger">*</span>
-          <select class="form-control" id="currency" formControlName="currency">
-            <option [ngValue]="type.value"
-                    *ngFor="let type of currencyTypes"> {{ '::Enum:CurrencyType.' + type.value | abpLocalization }}
-            </option>
-          </select>
-        </div>
-      </div>
-
-      <div class="row mt-2">
-        <div class="col">
-          <label for="levelType">Level</label><span class="text-danger">*</span>
-          <select class="form-control" id="levelType" formControlName="levelType">
-            <option [ngValue]="type.value"
-                    *ngFor="let type of levelTypes"> {{ '::Enum:LevelType.' + type.value | abpLocalization }}
-            </option>
-          </select>
-        </div>
-
-        <div class="col">
-          <label for="categoryId">Category</label><span class="text-danger">*</span>
-          <select class="form-control" id="categoryId" formControlName="categoryId">
-            <option [ngValue]="type.id"
-                    *ngFor="let type of categories"> {{ type.name }}
-            </option>
-          </select>
-        </div>
-
-        <div class="col-2 form-check d-flex justify-content-between align-items-center">
+        <div class="tw-col-span-2">
+          <p-checkbox class="tw-m-2" formControlName="isActive" [binary]="true" inputId="isActive" />
           <label for="isActive">Active</label>
-          <input class="form-check-input" type="checkbox" formControlName="isActive" id="isActive">
+        </div>
+
+        <div class="tw-col-span-12">
+          <p-floatlabel variant="on">
+            <textarea pTextarea id="summary" formControlName="summary" rows="5" style="resize: none"
+                      class="tw-w-full"></textarea>
+            <label for="summary">Summary</label>
+          </p-floatlabel>
+        </div>
+
+        <div class="tw-col-span-12">
+          <p-floatlabel variant="on">
+            <textarea pTextarea id="description" formControlName="description" rows="5" style="resize: none"
+                      class="tw-w-full"></textarea>
+            <label for="description">Description</label>
+          </p-floatlabel>
+        </div>
+
+        <div class="tw-col-span-3">
+          <p-select [options]="categories" optionLabel="name" optionValue="id" placeholder="Select a category"
+                    formControlName="categoryId" class="tw-w-full" />
+        </div>
+        <div class="tw-col-span-3">
+          <p-select [options]="levelTypes" optionLabel="key" optionValue="value" placeholder="Select a levelType"
+                    formControlName="levelType" class="tw-w-full" />
+        </div>
+        <div class="tw-col-span-3">
+          <p-select [options]="currencyTypes" optionLabel="key" optionValue="value" placeholder="Select a currency"
+                    formControlName="currency" class="tw-w-full" />
+        </div>
+        <div class="tw-col-span-3">
+          <p-floatlabel variant="on">
+            <p-input-number formControlName="price" inputId="price" mode="currency" currency="USD" locale="en-US" />
+            <label for="price">Price</label>
+          </p-floatlabel>
+        </div>
+
+        <div class="tw-col-start-4 tw-col-span-6">
+          <label for="thumbnail">Thumbnail</label>
+          <p-fileupload (uploadHandler)="uploadHandler($event)" customUpload="true" accept="image/*"
+                        [files]="files" maxFileSize="1000000" mode="advanced" previewWidth="500"
+                        (onRemove)="onRemove($event)"
+                        showCancelButton="false">
+            <ng-template #empty>
+              <div>Drag and drop files to here to upload.</div>
+            </ng-template>
+          </p-fileupload>
         </div>
       </div>
     </form>
   </ng-template>
 
   <ng-template #abpFooter>
-    <p-button severity="secondary" (click)="onClickClose()">
+    <p-button severity="secondary" (click)="onClickClose()" type="button">
       {{ '::Close' | abpLocalization }}
     </p-button>
 
-    <p-button (click)="save()" [disabled]="form.invalid">
+    <p-button (click)="save()" [disabled]="form.invalid" type="submit">
       <i class="fa fa-check mr-1"></i>
       {{ '::Save' | abpLocalization }}
     </p-button>
   </ng-template>
-
 </abp-modal>

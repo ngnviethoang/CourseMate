@@ -3,18 +3,18 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
-import { CourseDto } from '../../proxy/services/dtos/courses';
-import { FileSelectEvent } from 'primeng/fileupload';
+import { FileRemoveEvent, FileSelectEvent, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { MessageService } from 'primeng/api';
-import { StorageService } from '../../proxy/services/storages';
+import { StorageService } from '@proxy/services/storages';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LookupDto } from '../../proxy/services/dtos/lookups';
-import { LookupService } from '../../proxy/services/lookups';
-import { ChapterDto } from '../../proxy/services/dtos/chapters';
-import { LessonDto } from '../../proxy/services/dtos/lessons';
-import { LessonService } from '../../proxy/services/lessons';
+import { LookupDto } from '@proxy/services/dtos/lookups';
+import { LookupService } from '@proxy/services/lookups';
+import { ChapterDto } from '@proxy/services/dtos/chapters';
+import { LessonDto } from '@proxy/services/dtos/lessons';
+import { LessonService } from '@proxy/services/lessons';
 import { StorageConstants } from '../../shared/storage-constant';
-import { ChapterService } from '../../proxy/services/chapters';
+import { ChapterService } from '@proxy/services/chapters';
+import { currencyTypeOptions, levelTypeOptions } from '@proxy/entities/courses';
 
 @Component({
   standalone: false,
@@ -30,10 +30,12 @@ export class LessonComponent implements OnInit {
   isModalOpen = false;
   categories: LookupDto[] = [];
   videoFile: File;
+  files: File[] = [];
   videoFileUrl: string;
   prevVideoFile: string;
   private chapterId: string;
   maxFileSize = 10 * 1024 * 1024 * 1024; // 10Gb
+  private courseId: string;
 
   constructor(
     public readonly list: ListService,
@@ -50,10 +52,10 @@ export class LessonComponent implements OnInit {
   }
 
   ngOnInit() {
-    const courseId = this.route.snapshot.queryParamMap.get('courseId');
+    this.courseId = this.route.snapshot.queryParamMap.get('courseId');
     this.chapterId = this.route.snapshot.queryParamMap.get('chapterId');
     if (this.chapterId === null) {
-      this.router.navigateByUrl(`/chapters?courseId=${courseId}`);
+      this.router.navigateByUrl(`/chapters?courseId=${this.courseId}`);
     }
 
     this.chapterService
@@ -61,10 +63,18 @@ export class LessonComponent implements OnInit {
       .subscribe(response => {
         this.chapter = response;
       }, _ => {
-        this.router.navigateByUrl(`/chapters?courseId=${courseId}`);
+        this.router.navigateByUrl(`/chapters?courseId=${this.courseId}`);
       });
 
-    const lessonStreamCreator = (query) => this.lessonService.getList(query);
+    const lessonStreamCreator = (query) => this.lessonService.getList(
+      {
+        maxResultCount: query.maxResultCount,
+        skipCount: query.skipCount,
+        filter: query.filter,
+        sorting: query.sorting,
+        chapterId: this.chapterId
+      }
+    );
 
     this.list
       .hookToQuery(lessonStreamCreator)
@@ -85,6 +95,10 @@ export class LessonComponent implements OnInit {
       .subscribe((response) => {
         this.categories = response.items;
       });
+  }
+
+  backToChapter() {
+    this.router.navigateByUrl(`/chapters?courseId=${this.courseId}`);
   }
 
   create() {
@@ -211,5 +225,14 @@ export class LessonComponent implements OnInit {
   onClickClose() {
     this.handleDeleteVideo();
     this.isModalOpen = false;
+  }
+
+  protected readonly levelTypes = levelTypeOptions;
+  protected readonly currencyTypes = currencyTypeOptions;
+
+  uploadHandler(event: FileUploadHandlerEvent) {
+  }
+
+  onRemove(_: FileRemoveEvent) {
   }
 }

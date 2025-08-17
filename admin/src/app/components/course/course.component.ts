@@ -1,4 +1,4 @@
-import { ListService, PagedResultDto } from '@abp/ng.core';
+import { ABP, ListService, PagedResultDto } from '@abp/ng.core';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
@@ -6,13 +6,13 @@ import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
 import { CourseService } from '@proxy/services/courses';
 import { CourseDto } from '@proxy/services/dtos/courses';
 import { CurrencyType, currencyTypeOptions, LevelType, levelTypeOptions } from '@proxy/entities/courses';
-import { FileSelectEvent } from 'primeng/fileupload';
+import { FileRemoveEvent, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { MessageService } from 'primeng/api';
 import { StorageService } from '@proxy/services/storages';
 import { Router } from '@angular/router';
 import { LookupDto } from '@proxy/services/dtos/lookups';
 import { LookupService } from '@proxy/services/lookups';
-import { StorageConstants } from '../../shared/storage-constant';
+import Option = ABP.Option;
 
 @Component({
   standalone: false,
@@ -21,16 +21,15 @@ import { StorageConstants } from '../../shared/storage-constant';
   providers: [ListService, { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }]
 })
 export class CourseComponent implements OnInit {
-  courses = { items: [], totalCount: 0 } as PagedResultDto<CourseDto>;
-  selectedCourse = {} as CourseDto;
+  currencyTypes: Option<typeof CurrencyType>[] = currencyTypeOptions;
+  levelTypes: Option<typeof LevelType>[] = levelTypeOptions;
+  courses: PagedResultDto<CourseDto> = {} as PagedResultDto<CourseDto>;
+  selectedCourse: CourseDto = {} as CourseDto;
   form: FormGroup;
-  currencyTypes = currencyTypeOptions;
-  levelTypes = levelTypeOptions;
-  isModalOpen = false;
+  isModalOpen: boolean = false;
   categories: LookupDto[] = [];
   thumbnailFile: File;
-  thumbnailUrl: string;
-  prevThumbnailFile: string;
+  files: File[] = [];
 
   constructor(
     public readonly list: ListService,
@@ -47,41 +46,34 @@ export class CourseComponent implements OnInit {
   ngOnInit() {
     const courseStreamCreator = (query) => this.courseService.getList(query);
 
-    this.list
-      .hookToQuery(courseStreamCreator)
-      .subscribe((response) => {
-        this.courses = response;
-      });
+    this.list.hookToQuery(courseStreamCreator).subscribe(response => {
+      this.courses = response;
+    });
 
-    this.lookupService
-      .getCategories({ maxResultCount: null, skipCount: null })
-      .subscribe((response) => {
-        this.categories = response.items;
-      });
+    this.lookupService.getCategories({ maxResultCount: null, skipCount: null }).subscribe(response => {
+      this.categories = response.items;
+    });
   }
 
   create() {
     this.selectedCourse = {} as CourseDto;
     this.buildForm();
+    this.files = [];
     this.thumbnailFile = null;
-    this.thumbnailUrl = null;
-    this.prevThumbnailFile = null;
     this.isModalOpen = true;
   }
 
   edit(id: string) {
-    this.courseService
-      .get(id)
-      .subscribe(response => {
-        this.selectedCourse = response;
-        this.buildForm();
-        if (response.thumbnailFile !== null && response.thumbnailFile !== '') {
-          this.thumbnailUrl = `${StorageConstants.IMAGE_API}?fileName=${response.thumbnailFile}`;
-        } else {
-          this.thumbnailUrl = '';
-        }
-        this.isModalOpen = true;
+    this.courseService.get(id).subscribe(response => {
+      this.selectedCourse = response;
+      this.buildForm();
+      this.storageService.getImage(response.thumbnailFile).subscribe(blob => {
+        this.thumbnailFile = new File([blob], response.thumbnailFile, { type: blob.type });
+        this.files = [];
+        this.files.push(this.thumbnailFile);
       });
+      this.isModalOpen = true;
+    });
   }
 
   delete(id: string) {
@@ -94,14 +86,15 @@ export class CourseComponent implements OnInit {
 
   buildForm() {
     this.form = this.fb.group({
-      title: [this.selectedCourse.title || '', [Validators.required, Validators.maxLength(1024)]],
-      description: [this.selectedCourse.description || '', [Validators.maxLength(1024)]],
-      thumbnailFile: [this.selectedCourse.thumbnailFile || '', [Validators.maxLength(1024)]],
-      price: [this.selectedCourse.price || null, [Validators.required, Validators.min(0)]],
-      currency: [this.selectedCourse.currency || CurrencyType.Usd, [Validators.required]],
-      levelType: [this.selectedCourse.levelType || LevelType.Beginner, [Validators.required]],
+      title: [this.selectedCourse.title, [Validators.required, Validators.maxLength(1024)]],
+      summary: [this.selectedCourse.summary, [Validators.required, Validators.maxLength(32768)]],
+      description: [this.selectedCourse.description, [Validators.required, Validators.maxLength(32768)]],
+      thumbnailFile: [this.selectedCourse.thumbnailFile, [Validators.required, Validators.maxLength(1024)]],
+      price: [this.selectedCourse.price, [Validators.required, Validators.min(0)]],
+      currency: [this.selectedCourse.currency, [Validators.required]],
+      levelType: [this.selectedCourse.levelType, [Validators.required]],
       isActive: [this.selectedCourse.isActive, [Validators.required]],
-      categoryId: [this.selectedCourse.categoryId || '', [Validators.required, Validators.maxLength(100)]]
+      categoryId: [this.selectedCourse.categoryId, [Validators.required, Validators.maxLength(100)]]
     });
   }
 
@@ -115,78 +108,64 @@ export class CourseComponent implements OnInit {
       : this.courseService.create(this.form.value);
 
     request.subscribe(() => {
-      this.handleDeleteThumbnail();
       this.isModalOpen = false;
       this.form.reset();
       this.list.get();
     });
   }
 
-  onSelect(event: FileSelectEvent) {
-    const file = event.files[0];
-    if (!file) {
-      return;
-    }
-    this.thumbnailFile = file;
-  }
-
-  onUpload() {
-    try {
-      if (this.thumbnailFile === null || this.thumbnailFile === undefined) {
-        return;
-      }
-      const formData = new FormData();
-      formData.append('streamContent', this.thumbnailFile);
-      this.storageService
-        .uploadImage(formData)
-        .subscribe(response => {
-          this.thumbnailUrl = `${StorageConstants.IMAGE_API}?fileName=${response.name}`;
-          this.selectedCourse.thumbnailFile = response.name;
-          this.form.controls['thumbnailFile'].setValue(response.name);
-        });
-
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Success',
-        detail: 'File uploaded successfully'
-      });
-    } catch (error) {
-      console.error('Upload failed:', error);
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Upload failed',
-        detail: 'There was a problem uploading your file.'
-      });
-    }
-  }
-
   async onClickChapterManagement(courseId: string) {
     await this.router.navigateByUrl(`/chapters?courseId=${courseId}`);
   }
 
-  async onClickStudentManagement(courseId: string) {
-    await this.router.navigateByUrl(`/students?courseId=${courseId}`);
+  onClickClose() {
+    this.isModalOpen = false;
   }
 
-  onRemoveThumbnail() {
-    this.prevThumbnailFile = this.selectedCourse.thumbnailFile;
+  uploadHandler(event: FileUploadHandlerEvent) {
+    if (this.thumbnailFile === event.files[0]) {
+      return;
+    }
 
-    this.thumbnailFile = null;
-    this.thumbnailUrl = null;
-    this.form.controls['thumbnailFile'].setValue('');
-  }
-
-  handleDeleteThumbnail() {
-    if (this.selectedCourse.id === undefined ||
-      this.selectedCourse.id === null ||
-      this.selectedCourse.thumbnailFile !== this.prevThumbnailFile) {
-      this.storageService.delete(this.prevThumbnailFile).subscribe(response => {
+    try {
+      this.thumbnailFile = event.files[0];
+      const formData = new FormData();
+      formData.append('streamContent', this.thumbnailFile);
+      this.storageService.uploadImage(formData).subscribe(response => {
+        this.selectedCourse.thumbnailFile = response.name;
+        this.form.controls['thumbnailFile'].setValue(response.name);
+      });
+      this.messageService.add({ severity: 'info', summary: 'File Uploaded', detail: '' });
+    } catch (error) {
+      console.error('Upload failed:', error);
+      this.messageService.add({
+        severity: 'error', summary: 'Upload failed', detail: 'There was a problem uploading your file.'
       });
     }
   }
 
-  onClickClose() {
-    this.handleDeleteThumbnail();
-    this.isModalOpen = false;
+  onRemove(_: FileRemoveEvent) {
+    this.storageService.delete(this.thumbnailFile.name).subscribe({
+      next: () => {
+        this.thumbnailFile = null;
+        this.files = [];
+        this.selectedCourse.thumbnailFile = null;
+        this.form.controls['thumbnailFile'].setValue('');
+
+        this.messageService.add({
+          severity: 'info',
+          summary: 'File removed',
+          detail: 'Thumbnail deleted successfully'
+        });
+      },
+      error: (error) => {
+        console.error('Delete failed:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Delete failed',
+          detail: 'There was a problem deleting your file.'
+        });
+      }
+    });
   }
 }

@@ -1,14 +1,23 @@
 <div class="card">
   <div class="card-header">
     <div class="row mt-2">
-      <div class="col col-md-6">
-        <h5 class="card-title">
-          {{ chapter.title }} - {{ '::Menu:Lessons' | abpLocalization }}
+      <div class="col col-md-10 d-flex">
+        <p-button (click)="backToChapter()" size="small" class="tw-p-1">
+          <i class="fa fa-arrow-left"> Back </i>
+        </p-button>
+
+        <h5 class="card-title tw-my-auto">
+          <span class="tw-uppercase">
+             {{ '::Menu:Lessons' | abpLocalization }} -
+          </span>
+
+          <i class="fa fa-book"> {{ chapter.courseTitle }} </i>
+          <span class="tw-mx-3">-</span>
+          <i class="fa fa-list-ol"> {{ chapter.title }} </i>
         </h5>
       </div>
-      <div class="text-end col col-md-6">
-
-        <div class="text-lg-end pt-2">
+      <div class="text-end col col-md-2">
+        <div class="text-lg-end">
           <button *abpPermission="'CourseMate.Lessons.Create'" id="create" class="btn btn-primary" type="button"
                   (click)="create()">
             <i class="fa fa-plus me-1"></i>
@@ -81,65 +90,66 @@
   </ng-template>
 
   <ng-template #abpBody>
-    <form [formGroup]="form" (ngSubmit)="save()">
-      <div class="row mt-2">
-        <div class="col-2">
-          <label for="position">Position</label><span class="text-danger">*</span>
-          <input type="number" id="position" class="form-control" formControlName="position" autofocus />
+    <form [formGroup]="form">
+      <div class="tw-grid tw-grid-cols-12 tw-gap-4">
+        <div class="tw-col-span-10">
+          <p-floatlabel variant="on">
+            <input pInputText class="tw-w-full" type="text" id="title" formControlName="title" />
+            <label for="title">Title</label>
+          </p-floatlabel>
+        </div>
+        <div class="tw-col-span-2">
+          <p-checkbox class="tw-m-2" formControlName="isActive" [binary]="true" inputId="isActive" />
+          <label for="isActive">Active</label>
         </div>
 
-        <div class="col ">
-          <label for="title">Title</label><span class="text-danger">*</span>
-          <input type="text" id="title" class="form-control" formControlName="title" />
+        <div class="tw-col-span-12">
+          <p-floatlabel variant="on">
+            <textarea pTextarea id="summary" formControlName="summary" rows="5" style="resize: none"
+                      class="tw-w-full"></textarea>
+            <label for="summary">Summary</label>
+          </p-floatlabel>
+        </div>
+
+        <div class="tw-col-span-12">
+          <p-floatlabel variant="on">
+            <textarea pTextarea id="description" formControlName="description" rows="5" style="resize: none"
+                      class="tw-w-full"></textarea>
+            <label for="description">Description</label>
+          </p-floatlabel>
+        </div>
+
+        <div class="tw-col-span-3">
+          <p-select [options]="categories" optionLabel="name" optionValue="id" placeholder="Select a category"
+                    formControlName="categoryId" class="tw-w-full" />
+        </div>
+        <div class="tw-col-span-3">
+          <p-select [options]="levelTypes" optionLabel="key" optionValue="value" placeholder="Select a levelType"
+                    formControlName="levelType" class="tw-w-full" />
+        </div>
+        <div class="tw-col-span-3">
+          <p-select [options]="currencyTypes" optionLabel="key" optionValue="value" placeholder="Select a currency"
+                    formControlName="currency" class="tw-w-full" />
+        </div>
+        <div class="tw-col-span-3">
+          <p-floatlabel variant="on">
+            <p-input-number formControlName="price" inputId="price" mode="currency" currency="USD" locale="en-US" />
+            <label for="price">Price</label>
+          </p-floatlabel>
+        </div>
+
+        <div class="tw-col-start-4 tw-col-span-6">
+          <label for="thumbnail">Thumbnail</label>
+          <p-fileupload (uploadHandler)="uploadHandler($event)" customUpload="true" accept="image/*"
+                        [files]="files" maxFileSize="1000000" mode="advanced" previewWidth="500"
+                        (onRemove)="onRemove($event)"
+                        showCancelButton="false">
+            <ng-template #empty>
+              <div>Drag and drop files to here to upload.</div>
+            </ng-template>
+          </p-fileupload>
         </div>
       </div>
-
-      <div class="row mt-2">
-        <div class="col">
-          <label for="contentText">Content</label>
-          <p-editor id="contentText" formControlName="contentText" [style]="{ height: '320px' }"
-                    (invalid)="isInvalid('contentText')"
-                    [validateOnSubmit]="true">
-            @if (isInvalid('contentText')) {
-              <p-message severity="error" size="small" variant="simple">Content is required.</p-message>
-            }
-          </p-editor>
-        </div>
-      </div>
-
-      @if (videoFileUrl === undefined || videoFileUrl === null || videoFileUrl === '') {
-        <div class="row mt-2">
-          <div class="col">
-            <label>Video</label>
-            <div class="flex gap-6 items-center justify-between">
-              <p-fileupload #fu mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="demo[]"
-                            accept="video/mp4" [maxFileSize]="maxFileSize"
-                            [fileLimit]="1"
-                            (onSelect)="onSelect($event)"
-                            [chooseButtonProps]="{ size: 'small', styleClass: 'p-1' }" />
-              <p-button label="Upload" (onClick)="onUpload()" severity="secondary" size="small" class="p-1"
-                        [disabled]="videoFile === null || videoFile === undefined" />
-            </div>
-          </div>
-        </div>
-      } @else {
-        <div class="row mt-1">
-          <div class="col flex flex-column justify-content-center">
-            <label>Video</label>
-            <div class="flex justify-center">
-              <div class="relative inline-block">
-                <video width="640" height="360"
-                       [src]="videoFileUrl"
-                       controls>
-                </video>
-
-                <p-button icon="pi pi-times" class="absolute top-2 right-2" [rounded]="true" [text]="true"
-                          severity="danger" (click)="onRemoveVideo()" />
-              </div>
-            </div>
-          </div>
-        </div>
-      }
     </form>
   </ng-template>
 

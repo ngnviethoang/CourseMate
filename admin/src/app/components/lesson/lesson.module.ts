@@ -8,7 +8,13 @@ import { FileUpload } from 'primeng/fileupload';
 import { Button } from 'primeng/button';
 import { Editor } from 'primeng/editor';
 import { Message } from 'primeng/message';
-import { Toast } from 'primeng/toast'; // add this line
+import { Toast } from 'primeng/toast';
+import { Checkbox } from 'primeng/checkbox';
+import { FloatLabel } from 'primeng/floatlabel';
+import { InputNumber } from 'primeng/inputnumber';
+import { InputText } from 'primeng/inputtext';
+import { Select } from 'primeng/select';
+import { Textarea } from 'primeng/textarea'; // add this line
 
 @NgModule({
   declarations: [LessonComponent],
@@ -21,7 +27,13 @@ import { Toast } from 'primeng/toast'; // add this line
     Button,
     Editor,
     Message,
-    Toast
+    Toast,
+    Checkbox,
+    FloatLabel,
+    InputNumber,
+    InputText,
+    Select,
+    Textarea
     // add this line
   ]
 })

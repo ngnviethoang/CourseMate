@@ -28,7 +28,8 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
                 LastModificationTime = chapter.LastModificationTime,
                 LastModifierId = chapter.LastModifierId,
                 CourseId = chapter.CourseId,
-                CourseTitle = course.Title
+                CourseTitle = course.Title,
+                Description = chapter.Description
             };
         return await AsyncExecuter.FirstOrDefaultAsync(queryable) ?? new ChapterDto();
     }
@@ -49,12 +50,16 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
                 LastModificationTime = chapter.LastModificationTime,
                 LastModifierId = chapter.LastModifierId,
                 CourseId = chapter.CourseId,
-                CourseTitle = course.Title
+                CourseTitle = course.Title,
+                Description = chapter.Description
             };
 
         queryable = queryable
             .WhereIf(input.CourseId != null, chapter => chapter.CourseId == input.CourseId)
-            .WhereIf(!string.IsNullOrEmpty(input.Filter), i => i.Title.Contains(input.Filter!));
+            .WhereIf(!string.IsNullOrEmpty(input.Filter), i => i.Title.Contains(input.Filter!))
+            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(ChapterDto.Position) : input.Sorting);
+
+        int totalCount = await AsyncExecuter.CountAsync(queryable);
 
         if (input.SkipCount.HasValue)
         {
@@ -67,7 +72,6 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
         }
 
         List<ChapterDto> chapters = await AsyncExecuter.ToListAsync(queryable);
-        int totalCount = await ChapterRepo.CountAsync();
         return new PagedResultDto<ChapterDto>(totalCount, chapters);
     }
 
@@ -82,7 +86,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
 
         await CourseRepo.EnsureExistsAsync(input.CourseId);
 
-        Chapter chapter = new(GuidGenerator.Create(), input.Title, input.CourseId, input.Position);
+        Chapter chapter = new(GuidGenerator.Create(), input.Title, input.CourseId, input.Position, input.Description);
         await ChapterRepo.InsertAsync(chapter);
 
         List<Chapter> chapters = await ChapterRepo.GetListAsync(i => i.CourseId == chapter.CourseId && i.Position == chapter.Position);
@@ -107,6 +111,8 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
         chapter.Title = input.Title;
         chapter.CourseId = input.CourseId;
         chapter.Position = input.Position;
+        chapter.Description = input.Description;
+
         await ChapterRepo.UpdateAsync(chapter);
 
         List<Chapter> chapters = await ChapterRepo.GetListAsync(i => i.CourseId == chapter.CourseId && i.Position == chapter.Position);
@@ -117,11 +123,12 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
         {
             Id = chapter.Id,
             Title = chapter.Title,
+            Description = chapter.Description,
             CreationTime = chapter.CreationTime,
             CreatorId = chapter.CreatorId,
             Position = chapter.Position,
             LastModificationTime = chapter.LastModificationTime,
-            LastModifierId = chapter.LastModifierId
+            LastModifierId = chapter.LastModifierId,
         };
     }
 

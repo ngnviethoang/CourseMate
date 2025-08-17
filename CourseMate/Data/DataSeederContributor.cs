@@ -132,13 +132,6 @@ public class CourseMateDataSeederContributor : IDataSeedContributor, ITransientD
             jsonFilePath = Path.Combine(projectDomain, "lessons.json");
             json = await File.ReadAllTextAsync(jsonFilePath);
             List<Lesson> lessons = JsonSerializer.Deserialize<List<Lesson>>(json)!;
-            lessons.ForEach(i =>
-            {
-                if (i.Content == null)
-                {
-                    i.Content = string.Empty;
-                }
-            });
             await _lessonRepo.InsertManyAsync(lessons, true);
         }
 

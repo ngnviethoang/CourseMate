@@ -4,6 +4,10 @@ using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
 using CourseMate.Entities.Enrollments;
 using CourseMate.Entities.Lessons;
+using CourseMate.Entities.Lessons.Articles;
+using CourseMate.Entities.Lessons.CodingExercises;
+using CourseMate.Entities.Lessons.Quizzes;
+using CourseMate.Entities.Lessons.Videos;
 using CourseMate.Entities.Notifications;
 using CourseMate.Entities.Orders;
 using CourseMate.Entities.PaymentRequests;
@@ -38,4 +42,11 @@ public abstract class CourseMateAppService : ApplicationService
     protected IRepository<Notification, Guid> NotificationRepo => LazyServiceProvider.GetRequiredService<IRepository<Notification, Guid>>();
     protected IRepository<UserProgress, Guid> UserProgressRepo => LazyServiceProvider.GetRequiredService<IRepository<UserProgress, Guid>>();
     protected IRepository<Cart, Guid> CartRepo => LazyServiceProvider.GetRequiredService<IRepository<Cart, Guid>>();
+    protected IRepository<Video, Guid> VideoRepo => LazyServiceProvider.GetRequiredService<IRepository<Video, Guid>>();
+    protected IRepository<Article, Guid> ArticleRepo => LazyServiceProvider.GetRequiredService<IRepository<Article, Guid>>();
+    protected IRepository<QuizQuestion, Guid> QuizQuestionRepo => LazyServiceProvider.GetRequiredService<IRepository<QuizQuestion, Guid>>();
+    protected IRepository<QuizOption, Guid> QuizOptionRepo => LazyServiceProvider.GetRequiredService<IRepository<QuizOption, Guid>>();
+    protected IRepository<SampleCode, Guid> SampleCodeRepo => LazyServiceProvider.GetRequiredService<IRepository<SampleCode, Guid>>();
+    protected IRepository<CodingExercise, Guid> CodingExerciseRepo => LazyServiceProvider.GetRequiredService<IRepository<CodingExercise, Guid>>();
+    protected IRepository<TestCase, Guid> TestCaseRepo => LazyServiceProvider.GetRequiredService<IRepository<TestCase, Guid>>();
 }

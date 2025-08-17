@@ -4,11 +4,11 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CourseService } from '../../proxy/services/courses';
-import { CourseDto } from '../../proxy/services/dtos/courses';
-import { ChapterService } from '../../proxy/services/chapters';
-import { ChapterDto } from '../../proxy/services/dtos/chapters';
-import { LookupService } from '../../proxy/services/lookups';
+import { CourseService } from '@proxy/services/courses';
+import { CourseDto } from '@proxy/services/dtos/courses';
+import { ChapterService } from '@proxy/services/chapters';
+import { ChapterDto } from '@proxy/services/dtos/chapters';
+import { LookupService } from '@proxy/services/lookups';
 
 @Component({
   standalone: false,
@@ -17,7 +17,7 @@ import { LookupService } from '../../proxy/services/lookups';
   providers: [ListService, { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }]
 })
 export class ChapterComponent implements OnInit {
-  chapters = { items: [], totalCount: 0 } as PagedResultDto<ChapterDto>;
+  chapters = {} as PagedResultDto<ChapterDto>;
   selectedChapter = {} as ChapterDto;
   form: FormGroup;
   isModalOpen = false;
@@ -58,9 +58,13 @@ export class ChapterComponent implements OnInit {
       }
     );
 
-    this.list.hookToQuery(chapterStreamCreator).subscribe((response) => {
+    this.list.hookToQuery(chapterStreamCreator).subscribe(response => {
       this.chapters = response;
     });
+  }
+
+  backToCourse() {
+    this.router.navigateByUrl('/courses');
   }
 
   create() {
@@ -88,9 +92,10 @@ export class ChapterComponent implements OnInit {
 
   buildForm() {
     this.form = this.fb.group({
-      title: [this.selectedChapter.title || null, Validators.required],
-      position: [this.selectedChapter.position || 0, [Validators.required, Validators.min(0)]],
-      courseId: [this.selectedChapter.courseId || this.courseId, Validators.required]
+      title: [this.selectedChapter.title, [Validators.required, Validators.maxLength(1024)]],
+      description: [this.selectedChapter.description, [Validators.required, Validators.maxLength(32768)]],
+      position: [this.selectedChapter.position, [Validators.required, Validators.min(0)]],
+      courseId: [this.selectedChapter.courseId, Validators.required]
     });
   }
 
@@ -115,11 +120,9 @@ export class ChapterComponent implements OnInit {
   }
 
   generatePosition() {
-    this.lookupService
-      .getMaxPositionChapters(this.courseId)
-      .subscribe(response => {
-        this.selectedChapter.position = response + 1;
-        this.form.controls['position'].setValue(response + 1);
-      });
+    this.lookupService.getMaxPositionChapters(this.courseId).subscribe(response => {
+      this.selectedChapter.position = response + 1;
+      this.form.controls['position'].setValue(response + 1);
+    });
   }
 }

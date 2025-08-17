@@ -7,6 +7,7 @@ export interface ChapterDto extends AuditedEntityDto<string> {
   courseId?: string;
   courseTitle?: string;
   position: number;
+  description?: string;
   lessons: LessonDto[];
 }
 
@@ -14,6 +15,7 @@ export interface CreateUpdateChapterDto {
   title?: string;
   courseId?: string;
   position: number;
+  description?: string;
 }
 
 export interface GetListChapterRequestDto extends GetListRequestDto {

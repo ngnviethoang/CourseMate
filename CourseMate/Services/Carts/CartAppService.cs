@@ -62,7 +62,8 @@ public class CartAppService : CourseMateAppService, ICartAppService
             };
         queryable = queryable.WhereIf(input.StudentId.HasValue, e => e.StudentId == input.StudentId);
         queryable = queryable.OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(CartDto.CreationTime) : input.Sorting);
-
+        int totalCount = await AsyncExecuter.CountAsync(queryable);
+        
         if (input.SkipCount.HasValue)
         {
             queryable = queryable.Skip(input.SkipCount.Value);
@@ -74,7 +75,6 @@ public class CartAppService : CourseMateAppService, ICartAppService
         }
 
         List<CartDto> carts = await AsyncExecuter.ToListAsync(queryable);
-        int totalCount = await CartRepo.CountAsync();
         return new PagedResultDto<CartDto>(totalCount, carts);
     }
 

@@ -7209,12 +7209,30 @@
       "genericArguments": null,
       "properties": null
     },
+    "CourseMate.Entities.Lessons.LanguageType": {
+      "baseType": "System.Enum",
+      "isEnum": true,
+      "enumNames": [
+        "CSharp",
+        "Java",
+        "JavaScript",
+        "CPlusPlus"
+      ],
+      "enumValues": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "genericArguments": null,
+      "properties": null
+    },
     "CourseMate.Entities.Lessons.LessonType": {
       "baseType": "System.Enum",
       "isEnum": true,
       "enumNames": [
         "Video",
-        "Document",
+        "Article",
         "Quiz",
         "Coding"
       ],
@@ -7516,6 +7534,18 @@
           "regex": null
         },
         {
+          "name": "Description",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
           "name": "Lessons",
           "jsonName": null,
           "type": "[CourseMate.Services.Dtos.Lessons.LessonDto]",
@@ -7543,7 +7573,7 @@
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 1024,
+          "maxLength": 32768,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -7570,6 +7600,18 @@
           "maxLength": null,
           "minimum": "0",
           "maximum": "2147483647",
+          "regex": null
+        },
+        {
+          "name": "Description",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": 32768,
+          "minimum": null,
+          "maximum": null,
           "regex": null
         }
       ]
@@ -7649,6 +7691,18 @@
         },
         {
           "name": "Description",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Summary",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
@@ -8036,13 +8090,58 @@
         }
       ]
     },
-    "CourseMate.Services.Dtos.Lessons.CreateUpdateLessonDto": {
-      "baseType": null,
+    "CourseMate.Services.Dtos.Lessons.ArticleDto": {
+      "baseType": "Volo.Abp.Application.Dtos.EntityDto<System.Guid>",
       "isEnum": false,
       "enumNames": null,
       "enumValues": null,
       "genericArguments": null,
       "properties": [
+        {
+          "name": "LessonId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Content",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Lessons.CodingExerciseDto": {
+      "baseType": "Volo.Abp.Application.Dtos.EntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "LessonId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
         {
           "name": "Title",
           "jsonName": null,
@@ -8056,34 +8155,55 @@
           "regex": null
         },
         {
-          "name": "Content",
+          "name": "Description",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 10000,
+          "maxLength": 32768,
           "minimum": null,
           "maximum": null,
           "regex": null
         },
         {
-          "name": "VideoFile",
+          "name": "SampleCodes",
           "jsonName": null,
-          "type": "System.String",
-          "typeSimple": "string",
+          "type": "[CourseMate.Services.Dtos.Lessons.SampleCodeDto]",
+          "typeSimple": "[CourseMate.Services.Dtos.Lessons.SampleCodeDto]",
           "isRequired": false,
           "minLength": null,
-          "maxLength": 1024,
+          "maxLength": null,
           "minimum": null,
           "maximum": null,
           "regex": null
         },
         {
-          "name": "Duration",
+          "name": "TestCases",
           "jsonName": null,
-          "type": "System.TimeSpan",
-          "typeSimple": "string",
+          "type": "[CourseMate.Services.Dtos.Lessons.TestCaseDto]",
+          "typeSimple": "[CourseMate.Services.Dtos.Lessons.TestCaseDto]",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Lessons.CreateUpdateLessonDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "LessonType",
+          "jsonName": null,
+          "type": "CourseMate.Entities.Lessons.LessonType",
+          "typeSimple": "enum",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,
@@ -8113,6 +8233,66 @@
           "maxLength": null,
           "minimum": "0",
           "maximum": "2147483647",
+          "regex": null
+        },
+        {
+          "name": "Title",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": 1024,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Article",
+          "jsonName": null,
+          "type": "CourseMate.Services.Dtos.Lessons.ArticleDto",
+          "typeSimple": "CourseMate.Services.Dtos.Lessons.ArticleDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Video",
+          "jsonName": null,
+          "type": "CourseMate.Services.Dtos.Lessons.VideoDto",
+          "typeSimple": "CourseMate.Services.Dtos.Lessons.VideoDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CodingExercise",
+          "jsonName": null,
+          "type": "CourseMate.Services.Dtos.Lessons.CodingExerciseDto",
+          "typeSimple": "CourseMate.Services.Dtos.Lessons.CodingExerciseDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "QuizQuestion",
+          "jsonName": null,
+          "type": "CourseMate.Services.Dtos.Lessons.QuizQuestionDto",
+          "typeSimple": "CourseMate.Services.Dtos.Lessons.QuizQuestionDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
           "regex": null
         }
       ]
@@ -8146,7 +8326,7 @@
       "genericArguments": null,
       "properties": [
         {
-          "name": "Type",
+          "name": "LessonType",
           "jsonName": null,
           "type": "CourseMate.Entities.Lessons.LessonType",
           "typeSimple": "enum",
@@ -8194,9 +8374,270 @@
           "regex": null
         },
         {
-          "name": "Content",
+          "name": "CourseId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Article",
+          "jsonName": null,
+          "type": "CourseMate.Services.Dtos.Lessons.ArticleDto",
+          "typeSimple": "CourseMate.Services.Dtos.Lessons.ArticleDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Video",
+          "jsonName": null,
+          "type": "CourseMate.Services.Dtos.Lessons.VideoDto",
+          "typeSimple": "CourseMate.Services.Dtos.Lessons.VideoDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CodingExercise",
+          "jsonName": null,
+          "type": "CourseMate.Services.Dtos.Lessons.CodingExerciseDto",
+          "typeSimple": "CourseMate.Services.Dtos.Lessons.CodingExerciseDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "QuizQuestion",
+          "jsonName": null,
+          "type": "CourseMate.Services.Dtos.Lessons.QuizQuestionDto",
+          "typeSimple": "CourseMate.Services.Dtos.Lessons.QuizQuestionDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Lessons.QuizOptionDto": {
+      "baseType": "Volo.Abp.Application.Dtos.EntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "QuizQuestionId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Text",
           "jsonName": null,
           "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": 1024,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "IsCorrect",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Lessons.QuizQuestionDto": {
+      "baseType": "Volo.Abp.Application.Dtos.EntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "LessonId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "QuestionText",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": 1024,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "QuizOptions",
+          "jsonName": null,
+          "type": "[CourseMate.Services.Dtos.Lessons.QuizOptionDto]",
+          "typeSimple": "[CourseMate.Services.Dtos.Lessons.QuizOptionDto]",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Lessons.SampleCodeDto": {
+      "baseType": "Volo.Abp.Application.Dtos.EntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "CodingExerciseId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Code",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": 1024,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "LanguageType",
+          "jsonName": null,
+          "type": "CourseMate.Entities.Lessons.LanguageType",
+          "typeSimple": "enum",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Lessons.TestCaseDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "CodingExerciseId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Input",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": 1024,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Output",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": 1024,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "IsHidden",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "CourseMate.Services.Dtos.Lessons.VideoDto": {
+      "baseType": "Volo.Abp.Application.Dtos.EntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "LessonId",
+          "jsonName": null,
+          "type": "System.Guid",
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
@@ -8212,7 +8653,7 @@
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
-          "maxLength": null,
+          "maxLength": 1024,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -8221,66 +8662,6 @@
           "name": "Duration",
           "jsonName": null,
           "type": "System.TimeSpan",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "CodeSampleJson",
-          "jsonName": null,
-          "type": "System.String",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "OptionsJson",
-          "jsonName": null,
-          "type": "System.String",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "CorrectAnswerJson",
-          "jsonName": null,
-          "type": "System.String",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "Explanation",
-          "jsonName": null,
-          "type": "System.String",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "CourseId",
-          "jsonName": null,
-          "type": "System.Guid",
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
@@ -8391,8 +8772,8 @@
         {
           "name": "ReceiverUserId",
           "jsonName": null,
-          "type": "System.Guid",
-          "typeSimple": "string",
+          "type": "System.Guid?",
+          "typeSimple": "string?",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,

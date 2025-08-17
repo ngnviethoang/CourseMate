@@ -73,20 +73,14 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
                 Position = g.Key.Position,
                 CourseId = g.Key.CourseId,
                 CourseTitle = g.Key.Title,
+                Description = g.Key.Description,
                 Lessons = g.OrderBy(i => i.Position).Select(i => new LessonDto
                 {
                     Id = i.Id,
                     Title = i.Title,
                     ChapterId = i.ChapterId,
-                    Content = null,
-                    Duration = i.Duration,
-                    VideoFile = i.VideoFile,
                     Position = i.Position,
-                    CodeSampleJson = null,
-                    CorrectAnswerJson = null,
-                    Explanation = null,
-                    OptionsJson = null,
-                    Type = i.Type
+                    LessonType = i.LessonType
                 })
             };
 
@@ -131,6 +125,8 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
             .WhereIf(input.CategoryId.HasValue, i => i.CategoryId == input.CategoryId!.Value)
             .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(Course.Title) : input.Sorting);
 
+        int totalCount = await AsyncExecuter.CountAsync(queryable);
+        
         if (input.SkipCount.HasValue)
         {
             queryable = queryable.Skip(input.SkipCount.Value);
@@ -141,7 +137,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
             queryable = queryable.Take(input.MaxResultCount.Value);
         }
 
-        List<CourseDto> courses = await AsyncExecuter.ToListAsync(queryable.AsNoTracking());
+        List<CourseDto> courses = await AsyncExecuter.ToListAsync(queryable);
         IEnumerable<Guid> courseIds = courses.Select(i => i.Id);
 
         var enrollmentsPerCourseQuery =
@@ -173,7 +169,6 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
             course.TotalLessons = totalLessons?.Count;
         }
 
-        int totalCount = await CourseRepo.CountAsync();
         return new PagedResultDto<CourseDto>(totalCount, courses);
     }
 
@@ -227,6 +222,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
         course.LevelType = input.LevelType;
         course.CategoryId = input.CategoryId;
         course.IsActive = input.IsActive;
+        course.Summary = input.Summary;
         course.Slug = Helper.GenerateSlug(input.Title);
         
         await CourseRepo.UpdateAsync(course);

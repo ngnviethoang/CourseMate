@@ -10,13 +10,11 @@ namespace CourseMate.Services.Storages;
 [Authorize(CourseMatePermissions.Files.Default)]
 public class StorageAppService : CourseMateAppService, IStorageAppService
 {
-    private readonly IBlobContainer _blobContainer;
     private readonly IBlobContainerFactory _blobContainerFactory;
 
-    public StorageAppService(IBlobContainerFactory blobContainerFactory, IBlobContainer blobContainer)
+    public StorageAppService(IBlobContainerFactory blobContainerFactory)
     {
         _blobContainerFactory = blobContainerFactory;
-        _blobContainer = blobContainer;
     }
 
     [Authorize(CourseMatePermissions.Files.Create)]
@@ -62,6 +60,9 @@ public class StorageAppService : CourseMateAppService, IStorageAppService
     [Authorize(CourseMatePermissions.Files.Delete)]
     public async Task DeleteAsync(string fileName)
     {
-        await _blobContainer.DeleteAsync(fileName);
+        IBlobContainer imageContainer = _blobContainerFactory.Create<ImageContainer>();
+        IBlobContainer videoContainer = _blobContainerFactory.Create<VideoContainer>();
+        await imageContainer.DeleteAsync(fileName);
+        await videoContainer.DeleteAsync(fileName);
     }
 }

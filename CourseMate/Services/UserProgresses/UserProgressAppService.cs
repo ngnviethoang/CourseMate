@@ -46,9 +46,8 @@ public class UserProgressAppService : CourseMateAppService, IUserProgressAppServ
                     LessonId = l.Id,
                     Title = l.Title,
                     ChapterId = l.ChapterId,
-                    Duration = l.Duration,
                     Position = l.Position,
-                    Type = l.Type
+                    Type = l.LessonType
                 })
             };
 
@@ -91,9 +90,9 @@ public class UserProgressAppService : CourseMateAppService, IUserProgressAppServ
         await LessonRepo.EnsureExistsAsync(input.LessonId);
 
         IQueryable<TimeSpan> lessonDurationQuery =
-            from lesson in await LessonRepo.GetQueryableAsync()
-            where lesson.Id == input.LessonId
-            select lesson.Duration;
+            from video in await VideoRepo.GetQueryableAsync()
+            where video.LessonId == input.LessonId
+            select video.Duration;
 
         TimeSpan lessonDuration = await AsyncExecuter.FirstOrDefaultAsync(lessonDurationQuery);
 

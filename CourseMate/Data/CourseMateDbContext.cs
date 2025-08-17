@@ -4,6 +4,10 @@ using CourseMate.Entities.Chapters;
 using CourseMate.Entities.Courses;
 using CourseMate.Entities.Enrollments;
 using CourseMate.Entities.Lessons;
+using CourseMate.Entities.Lessons.Articles;
+using CourseMate.Entities.Lessons.CodingExercises;
+using CourseMate.Entities.Lessons.Quizzes;
+using CourseMate.Entities.Lessons.Videos;
 using CourseMate.Entities.Notifications;
 using CourseMate.Entities.Orders;
 using CourseMate.Entities.PaymentRequests;
@@ -34,10 +38,18 @@ public class CourseMateDbContext : AbpDbContext<CourseMateDbContext>, IIdentityD
     {
     }
 
+    public DbSet<Cart> Carts { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Chapter> Chapters { get; set; }
     public DbSet<Course> Courses { get; set; }
     public DbSet<Enrollment> Enrollments { get; set; }
+    public DbSet<Article> Articles { get; set; }
+    public DbSet<CodingExercise> CodingExercises { get; set; }
+    public DbSet<SampleCode> SampleCodes { get; set; }
+    public DbSet<TestCase> TestCase { get; set; }
+    public DbSet<QuizQuestion> QuizQuestions { get; set; }
+    public DbSet<QuizOption> QuizOptions { get; set; }
+    public DbSet<Video> Videos { get; set; }
     public DbSet<Lesson> Lessons { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
@@ -45,7 +57,6 @@ public class CourseMateDbContext : AbpDbContext<CourseMateDbContext>, IIdentityD
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<UserProgress> UserProgresses { get; set; }
-    public DbSet<Cart> Carts { get; set; }
 
     public DbSet<IdentityUser> Users { get; set; }
     public DbSet<IdentityRole> Roles { get; set; }

@@ -3,7 +3,7 @@
 public enum LessonType
 {
     Video,
-    Document,
+    Article,
     Quiz,
     Coding
 }

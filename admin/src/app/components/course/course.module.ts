@@ -13,6 +13,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabel } from 'primeng/floatlabel';
 import { Textarea } from 'primeng/textarea';
 import { AccordionModule } from 'primeng/accordion';
+import { IftaLabelModule } from 'primeng/iftalabel';
+import { Checkbox } from 'primeng/checkbox';
+import { InputNumber } from 'primeng/inputnumber';
+import { ToastModule } from 'primeng/toast';
+import { MessageModule } from 'primeng/message';
 
 @NgModule({
   declarations: [CourseComponent],
@@ -29,7 +34,13 @@ import { AccordionModule } from 'primeng/accordion';
     InputTextModule,
     FloatLabel,
     Textarea,
-    AccordionModule
+    AccordionModule,
+    InputTextModule,
+    IftaLabelModule,
+    Checkbox,
+    InputNumber,
+    ToastModule,
+    MessageModule
   ]
 })
 export class CourseModule {

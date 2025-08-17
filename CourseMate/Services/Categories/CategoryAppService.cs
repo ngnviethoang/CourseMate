@@ -51,6 +51,8 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
             .WhereIf(!string.IsNullOrEmpty(input.Filter), i => i.Name.Contains(input.Filter!))
             .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "Name" : input.Sorting);
 
+        int totalCount = await AsyncExecuter.CountAsync(queryable);
+        
         if (input.SkipCount.HasValue)
         {
             queryable = queryable.Skip(input.SkipCount.Value);
@@ -62,7 +64,6 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
         }
 
         List<CategoryDto> categories = await AsyncExecuter.ToListAsync(queryable);
-        int totalCount = await CategoryRepo.CountAsync();
         return new PagedResultDto<CategoryDto>(totalCount, categories);
     }
 

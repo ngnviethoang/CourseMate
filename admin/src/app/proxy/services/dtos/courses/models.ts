@@ -13,6 +13,7 @@ export interface AuthorDto {
 export interface CourseDto extends AuditedEntityDto<string> {
   title?: string;
   description?: string;
+  summary?: string;
   thumbnailFile?: string;
   price: number;
   currency?: CurrencyType;

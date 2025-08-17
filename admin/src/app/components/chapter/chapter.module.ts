@@ -4,7 +4,13 @@ import { ChapterRoutingModule } from './chapter-routing.module';
 import { ChapterComponent } from './chapter.component';
 import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
-import { Button } from 'primeng/button'; // add this line
+import { Button } from 'primeng/button';
+import { Checkbox } from 'primeng/checkbox';
+import { FileUpload } from 'primeng/fileupload';
+import { FloatLabel } from 'primeng/floatlabel';
+import { InputNumber } from 'primeng/inputnumber';
+import { InputText } from 'primeng/inputtext';
+import { Textarea } from 'primeng/textarea'; // add this line
 
 @NgModule({
   declarations: [ChapterComponent],
@@ -13,7 +19,13 @@ import { Button } from 'primeng/button'; // add this line
     SharedModule,
     NgbDatepickerModule,
     Select,
-    Button
+    Button,
+    Checkbox,
+    FileUpload,
+    FloatLabel,
+    InputNumber,
+    InputText,
+    Textarea
     // add this line
   ]
 })
