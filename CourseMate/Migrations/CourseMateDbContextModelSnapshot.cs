@@ -456,7 +456,6 @@ namespace CourseMate.Migrations
             modelBuilder.Entity("CourseMate.Entities.Lessons.Articles.Article", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Content")
@@ -508,7 +507,6 @@ namespace CourseMate.Migrations
             modelBuilder.Entity("CourseMate.Entities.Lessons.CodingExercises.CodingExercise", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationTime")
@@ -565,7 +563,6 @@ namespace CourseMate.Migrations
             modelBuilder.Entity("CourseMate.Entities.Lessons.CodingExercises.SampleCode", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Code")
@@ -619,7 +616,6 @@ namespace CourseMate.Migrations
             modelBuilder.Entity("CourseMate.Entities.Lessons.CodingExercises.TestCase", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("CodingExerciseId")
@@ -734,7 +730,6 @@ namespace CourseMate.Migrations
             modelBuilder.Entity("CourseMate.Entities.Lessons.Quizzes.QuizOption", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationTime")
@@ -788,7 +783,6 @@ namespace CourseMate.Migrations
             modelBuilder.Entity("CourseMate.Entities.Lessons.Quizzes.QuizQuestion", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationTime")
@@ -831,8 +825,7 @@ namespace CourseMate.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LessonId")
-                        .IsUnique();
+                    b.HasIndex("LessonId");
 
                     b.ToTable("QuizQuestions", "app");
                 });
@@ -840,7 +833,6 @@ namespace CourseMate.Migrations
             modelBuilder.Entity("CourseMate.Entities.Lessons.Videos.Video", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationTime")
@@ -3155,8 +3147,8 @@ namespace CourseMate.Migrations
             modelBuilder.Entity("CourseMate.Entities.Lessons.Quizzes.QuizQuestion", b =>
                 {
                     b.HasOne("CourseMate.Entities.Lessons.Lesson", null)
-                        .WithOne()
-                        .HasForeignKey("CourseMate.Entities.Lessons.Quizzes.QuizQuestion", "LessonId")
+                        .WithMany()
+                        .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

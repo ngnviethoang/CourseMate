@@ -1,5 +1,4 @@
-﻿using CourseMate.BlobContainers;
-using CourseMate.Entities.Lessons;
+﻿using CourseMate.Entities.Lessons;
 using CourseMate.Entities.Lessons.Articles;
 using CourseMate.Entities.Lessons.CodingExercises;
 using CourseMate.Entities.Lessons.Quizzes;
@@ -102,7 +101,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
                         Text = x.quizOption.Text
                     })
                 };
-            lessonDto.QuizQuestion = await AsyncExecuter.FirstOrDefaultAsync(queryableQuiz);
+            lessonDto.QuizQuestions = await AsyncExecuter.ToListAsync(queryableQuiz);
         }
 
         if (lessonDto.LessonType == LessonType.Coding)
@@ -215,7 +214,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
             case LessonType.Article when input.Article is not null:
                 await HandleArticleLessonAsync(input.Article, lessonId);
                 break;
-            case LessonType.Quiz when input.QuizQuestion is not null:
+            case LessonType.Quiz:
                 await HandleQuizLessonAsync(input.QuizQuestion, lessonId);
                 break;
             case LessonType.Coding when input.CodingExercise is not null:
@@ -238,14 +237,20 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
         await ArticleRepo.InsertAsync(article);
     }
 
-    private async Task HandleQuizLessonAsync(CreateUpdateQuizQuestionDto dto, Guid lessonId)
+    private async Task HandleQuizLessonAsync(IEnumerable<CreateUpdateQuizQuestionDto> dtos, Guid lessonId)
     {
-        QuizQuestion quizQuestion = new(GuidGenerator.Create(), lessonId, dto.QuestionText);
-        IEnumerable<QuizOption> options = dto.QuizOptions
-            .Select(i => new QuizOption(GuidGenerator.Create(), quizQuestion.Id, i.Text, i.IsCorrect));
+        List<QuizQuestion> quizQuestions = [];
+        List<QuizOption> quizOptions = [];
+        foreach (CreateUpdateQuizQuestionDto dto in dtos)
+        {
+            QuizQuestion quizQuestion = new(GuidGenerator.Create(), lessonId, dto.QuestionText);
+            quizQuestions.Add(quizQuestion);
+            quizOptions.AddRange(dto.QuizOptions.Select(i =>
+                new QuizOption(GuidGenerator.Create(), quizQuestion.Id, i.Text, i.IsCorrect)));
+        }
 
-        await QuizQuestionRepo.InsertAsync(quizQuestion);
-        await QuizOptionRepo.InsertManyAsync(options);
+        await QuizQuestionRepo.InsertManyAsync(quizQuestions);
+        await QuizOptionRepo.InsertManyAsync(quizOptions);
     }
 
     private async Task HandleCodingLessonAsync(CreateUpdateCodingExerciseDto dto, Guid lessonId)
