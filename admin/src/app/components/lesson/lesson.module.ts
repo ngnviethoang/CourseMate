@@ -28,6 +28,7 @@ import { Rating } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
+import { SelectButton } from 'primeng/selectbutton';
 
 @NgModule({
   declarations: [LessonComponent],
@@ -66,7 +67,8 @@ import { InputIconModule } from 'primeng/inputicon';
     FormsModule,
     InputNumber,
     IconFieldModule,
-    InputIconModule
+    InputIconModule,
+    SelectButton
   ]
 })
 export class LessonModule {

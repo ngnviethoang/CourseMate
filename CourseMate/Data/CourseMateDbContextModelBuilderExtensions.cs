@@ -126,7 +126,7 @@ public static class CourseMateDbContextModelBuilderExtensions
         {
             b.ToTable("QuizQuestions", DbSchema);
             b.ConfigureByConvention();
-            b.HasOne<Lesson>().WithOne().HasForeignKey<QuizQuestion>(i => i.LessonId).IsRequired();
+            b.HasOne<Lesson>().WithMany().HasForeignKey(i => i.LessonId).IsRequired();
         });
 
         builder.Entity<Video>(b =>

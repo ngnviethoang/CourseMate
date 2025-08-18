@@ -13,8 +13,8 @@ public class CreateUpdateLessonDto
     [MaxLength(CourseMateConst.DefaultMaxLength)]
     public string Title { get; set; } = string.Empty;
 
-    public ArticleDto? Article { get; set; }
-    public VideoDto? Video { get; set; }
-    public CodingExerciseDto? CodingExercise { get; set; }
-    public QuizQuestionDto? QuizQuestion { get; set; }
+    public CreateUpdateArticleDto? Article { get; set; }
+    public CreateUpdateVideoDto? Video { get; set; }
+    public CreateUpdateCodingExerciseDto? CodingExercise { get; set; }
+    public IEnumerable<CreateUpdateQuizQuestionDto> QuizQuestion { get; set; } = [];
 }

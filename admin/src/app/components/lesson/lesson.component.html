@@ -115,9 +115,8 @@
         </div>
 
         <div class="tw-col-span-3 tw-mb-5">
-          <p-select [options]="lessonTypeOptions" optionLabel="key" optionValue="value"
-                    placeholder="Select a lesson type"
-                    formControlName="lessonType" class="tw-w-full" />
+          <p-select-button [options]="lessonTypeOptions" optionLabel="key" optionValue="value" aria-labelledby="basic"
+                           formControlName="lessonType" class="tw-w-full" />
         </div>
         <div class="tw-col-span-9"></div>
 
@@ -135,21 +134,37 @@
           </div>
         } @else if (form.get('lessonType').value === LessonType.Article && form.get('article')) {
           <div class="tw-col-span-12" formGroupName="article">
+            <label for="articleContent">Content</label>
+            <p-editor formControlName="content" [style]="{ height: '320px' }" />
+          </div>
+        } @else if (form.get('lessonType').value === LessonType.Quiz && form.get('quizQuestion')) {
+          <div class="tw-col-span-10" formGroupName="quizQuestion">
             <p-floatlabel variant="on">
-            <textarea pTextarea id="articleContent" formControlName="content" rows="5"
-                      style="resize: none"
-                      class="tw-w-full"></textarea>
-              <label for="articleContent">Content</label>
+              <input pInputText class="tw-w-full" type="text" id="questionText" formControlName="questionText" />
+              <label for="questionText">Question</label>
             </p-floatlabel>
           </div>
-        } @else if (form.get('lessonType').value === LessonType.Quiz && form.get('quiz')) {
-          <div class="tw-col-span-12">
-
+          <div class="tw-col-span-2">
+            <p-button (onClick)="addOption()">Add option</p-button>
           </div>
+
+          <div formGroupName="quizQuestion">
+            @for (quizOption of getQuizOption().controls; track $index) {
+              <div class="tw-col-span-10" formArrayName="quizOptions">
+                <p-floatlabel variant="on">
+                  <input pInputText class="tw-w-full" type="text" [id]="`text-${$index}`" formControlName="title" />
+                  <label for="title">Title</label>
+                </p-floatlabel>
+              </div>
+              <div class="tw-col-span-2" formArrayName="quizOptions">
+                <p-checkbox class="tw-m-2" formControlName="isActive" [binary]="true" inputId="isActive" />
+                <label for="isActive">Active</label>
+              </div>
+            }
+          </div>
+
         } @else if (form.get('lessonType').value === LessonType.Quiz && form.get('codingExercise')) {
-          <div class="tw-col-span-12">
 
-          </div>
         }
       </div>
     </form>

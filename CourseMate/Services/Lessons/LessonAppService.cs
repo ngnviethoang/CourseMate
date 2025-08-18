@@ -1,4 +1,5 @@
-﻿using CourseMate.Entities.Lessons;
+﻿using CourseMate.BlobContainers;
+using CourseMate.Entities.Lessons;
 using CourseMate.Entities.Lessons.Articles;
 using CourseMate.Entities.Lessons.CodingExercises;
 using CourseMate.Entities.Lessons.Quizzes;
@@ -225,19 +226,19 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
         }
     }
 
-    private async Task HandleVideoLessonAsync(VideoDto dto, Guid lessonId)
+    private async Task HandleVideoLessonAsync(CreateUpdateVideoDto dto, Guid lessonId)
     {
         Video video = new(GuidGenerator.Create(), dto.VideoFile, dto.Duration, lessonId);
         await VideoRepo.InsertAsync(video);
     }
 
-    private async Task HandleArticleLessonAsync(ArticleDto dto, Guid lessonId)
+    private async Task HandleArticleLessonAsync(CreateUpdateArticleDto dto, Guid lessonId)
     {
         Article article = new(GuidGenerator.Create(), lessonId, dto.Content);
         await ArticleRepo.InsertAsync(article);
     }
 
-    private async Task HandleQuizLessonAsync(QuizQuestionDto dto, Guid lessonId)
+    private async Task HandleQuizLessonAsync(CreateUpdateQuizQuestionDto dto, Guid lessonId)
     {
         QuizQuestion quizQuestion = new(GuidGenerator.Create(), lessonId, dto.QuestionText);
         IEnumerable<QuizOption> options = dto.QuizOptions
@@ -247,7 +248,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
         await QuizOptionRepo.InsertManyAsync(options);
     }
 
-    private async Task HandleCodingLessonAsync(CodingExerciseDto dto, Guid lessonId)
+    private async Task HandleCodingLessonAsync(CreateUpdateCodingExerciseDto dto, Guid lessonId)
     {
         CodingExercise codingExercise = new(GuidGenerator.Create(), lessonId, dto.Title, dto.Description);
 

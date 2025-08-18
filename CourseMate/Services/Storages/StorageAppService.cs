@@ -58,11 +58,16 @@ public class StorageAppService : CourseMateAppService, IStorageAppService
     }
 
     [Authorize(CourseMatePermissions.Files.Delete)]
-    public async Task DeleteAsync(string fileName)
+    public async Task DeleteImageAsync(string fileName)
     {
         IBlobContainer imageContainer = _blobContainerFactory.Create<ImageContainer>();
-        IBlobContainer videoContainer = _blobContainerFactory.Create<VideoContainer>();
         await imageContainer.DeleteAsync(fileName);
+    }
+
+    [Authorize(CourseMatePermissions.Files.Delete)]
+    public async Task DeleteVideoAsync(string fileName)
+    {
+        IBlobContainer videoContainer = _blobContainerFactory.Create<VideoContainer>();
         await videoContainer.DeleteAsync(fileName);
     }
 }

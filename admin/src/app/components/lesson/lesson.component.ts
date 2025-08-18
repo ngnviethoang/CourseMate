@@ -1,6 +1,6 @@
 import { ListService, PagedResultDto } from '@abp/ng.core';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
 import { FileRemoveEvent, FileUploadHandlerEvent } from 'primeng/fileupload';
@@ -192,6 +192,18 @@ export class LessonComponent implements OnInit {
       this.selectedLesson.position = response + 1;
       this.form.controls['position'].setValue(response + 1);
     });
+  }
+
+  addOption() {
+    let quizOptions = this.getQuizOption();
+    quizOptions.push(this.fb.group({
+      text: ['', [Validators.required]],
+      isCorrect: [false, [Validators.required]]
+    }));
+  }
+
+  getQuizOption() {
+    return this.form.get('quizQuestion').get('quizOptions') as FormArray;
   }
 
   onClickClose() {
