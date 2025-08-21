@@ -152,7 +152,7 @@
             @for (quizOption of getQuizOption().controls; track $index) {
               <div class="tw-col-span-10" formArrayName="quizOptions">
                 <p-floatlabel variant="on">
-                  <input pInputText class="tw-w-full" type="text" [id]="`text-${$index}`" formControlName="title" />
+                  <input pInputText class="tw-w-full" type="text" [id]="'text-' + $index"  formControlName="title" />
                   <label for="title">Title</label>
                 </p-floatlabel>
               </div>

@@ -46,6 +46,120 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
         return lessonDto;
     }
 
+    public async Task<PagedResultDto<LessonDto>> GetListAsync(GetListLessonRequestDto input)
+    {
+        IQueryable<LessonDto> queryable =
+            from lesson in await LessonRepo.GetQueryableAsync()
+            select new LessonDto
+            {
+                Id = lesson.Id,
+                Title = lesson.Title,
+                ChapterId = lesson.ChapterId,
+                Position = lesson.Position,
+                LessonType = lesson.LessonType,
+                CreationTime = lesson.CreationTime,
+                CreatorId = lesson.CreatorId,
+                LastModificationTime = lesson.LastModificationTime,
+                LastModifierId = lesson.LastModifierId
+            };
+        queryable = queryable
+            .WhereIf(input.ChapterId != null, lesson => lesson.ChapterId == input.ChapterId)
+            .WhereIf(!string.IsNullOrEmpty(input.Filter), i => i.Title.Contains(input.Filter!))
+            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(LessonDto.Position) : input.Sorting);
+
+        int totalCount = await AsyncExecuter.CountAsync(queryable);
+
+        if (input.SkipCount.HasValue)
+        {
+            queryable = queryable.Skip(input.SkipCount.Value);
+        }
+
+        if (input.MaxResultCount.HasValue)
+        {
+            queryable = queryable.Take(input.MaxResultCount.Value);
+        }
+
+        List<LessonDto> lessons = await AsyncExecuter.ToListAsync(queryable);
+        return new PagedResultDto<LessonDto>(totalCount, lessons);
+    }
+
+    [Authorize(CourseMatePermissions.Lessons.Create)]
+    public async Task<ResultObjectDto> CreateAsync(CreateUpdateLessonDto input)
+    {
+        if (await LessonRepo.AnyAsync(i => i.Title == input.Title))
+        {
+            throw new UserFriendlyException("Duplicate lesson name");
+        }
+
+        await ChapterRepo.EnsureExistsAsync(input.ChapterId);
+
+        Lesson lesson = new(GuidGenerator.Create(), input.LessonType, input.ChapterId, input.Position, input.Title);
+        await LessonRepo.InsertAsync(lesson);
+
+        await NormalizeLessonPositionAsync(lesson);
+
+        await HandleLessonContentAsync(input, lesson.Id);
+
+        return new ResultObjectDto(lesson.Id);
+    }
+
+    [Authorize(CourseMatePermissions.Lessons.Edit)]
+    public async Task<LessonDto> UpdateAsync(Guid id, CreateUpdateLessonDto input)
+    {
+        bool isDuplicateName = await LessonRepo.AnyAsync(i => i.Title == input.Title && i.Id != id);
+        if (isDuplicateName)
+        {
+            throw new UserFriendlyException("Duplicate lesson name");
+        }
+
+        await ChapterRepo.EnsureExistsAsync(input.ChapterId);
+        Lesson lesson = await LessonRepo.GetAsync(id);
+
+        lesson.Title = input.Title;
+        lesson.ChapterId = input.ChapterId;
+        lesson.LessonType = input.LessonType;
+        lesson.Position = input.Position;
+        await LessonRepo.UpdateAsync(lesson);
+
+        await HandleRemoveLessonContentAsync(lesson.Id, lesson.LessonType);
+        await HandleLessonContentAsync(input, lesson.Id);
+
+        await NormalizeLessonPositionAsync(lesson);
+
+        return new LessonDto
+        {
+            Id = lesson.Id,
+            Title = lesson.Title,
+            ChapterId = lesson.ChapterId,
+            Position = lesson.Position,
+            CreationTime = lesson.CreationTime,
+            CreatorId = lesson.CreatorId,
+            LastModificationTime = lesson.LastModificationTime,
+            LastModifierId = lesson.LastModifierId
+        };
+    }
+
+    [Authorize(CourseMatePermissions.Lessons.Delete)]
+    public async Task DeleteAsync(Guid id)
+    {
+        IQueryable<LessonDto> query =
+            from lesson in await LessonRepo.GetQueryableAsync()
+            where lesson.Id == id
+            select new LessonDto
+            {
+                Id = lesson.Id,
+                LessonType = lesson.LessonType
+            };
+        LessonDto? lessonDto = await AsyncExecuter.FirstOrDefaultAsync(query);
+        if (lessonDto is null)
+        {
+            return;
+        }
+
+        await LessonRepo.DeleteAsync(lessonDto.Id);
+        await HandleRemoveLessonContentAsync(lessonDto.Id, lessonDto.LessonType);
+    }
+
     private async Task HandleGetLessonContentAsync(LessonDto lessonDto)
     {
         if (lessonDto.LessonType == LessonType.Video)
@@ -140,63 +254,6 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
         }
     }
 
-    public async Task<PagedResultDto<LessonDto>> GetListAsync(GetListLessonRequestDto input)
-    {
-        IQueryable<LessonDto> queryable =
-            from lesson in await LessonRepo.GetQueryableAsync()
-            select new LessonDto
-            {
-                Id = lesson.Id,
-                Title = lesson.Title,
-                ChapterId = lesson.ChapterId,
-                Position = lesson.Position,
-                LessonType = lesson.LessonType,
-                CreationTime = lesson.CreationTime,
-                CreatorId = lesson.CreatorId,
-                LastModificationTime = lesson.LastModificationTime,
-                LastModifierId = lesson.LastModifierId
-            };
-        queryable = queryable
-            .WhereIf(input.ChapterId != null, lesson => lesson.ChapterId == input.ChapterId)
-            .WhereIf(!string.IsNullOrEmpty(input.Filter), i => i.Title.Contains(input.Filter!))
-            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(LessonDto.Position) : input.Sorting);
-
-        int totalCount = await AsyncExecuter.CountAsync(queryable);
-
-        if (input.SkipCount.HasValue)
-        {
-            queryable = queryable.Skip(input.SkipCount.Value);
-        }
-
-        if (input.MaxResultCount.HasValue)
-        {
-            queryable = queryable.Take(input.MaxResultCount.Value);
-        }
-
-        List<LessonDto> lessons = await AsyncExecuter.ToListAsync(queryable);
-        return new PagedResultDto<LessonDto>(totalCount, lessons);
-    }
-
-    [Authorize(CourseMatePermissions.Lessons.Create)]
-    public async Task<ResultObjectDto> CreateAsync(CreateUpdateLessonDto input)
-    {
-        if (await LessonRepo.AnyAsync(i => i.Title == input.Title))
-        {
-            throw new UserFriendlyException("Duplicate lesson name");
-        }
-
-        await ChapterRepo.EnsureExistsAsync(input.ChapterId);
-
-        Lesson lesson = new(GuidGenerator.Create(), input.LessonType, input.ChapterId, input.Position, input.Title);
-        await LessonRepo.InsertAsync(lesson);
-
-        await NormalizeLessonPositionAsync(lesson);
-
-        await HandleLessonContentAsync(input, lesson.Id);
-
-        return new ResultObjectDto(lesson.Id);
-    }
-
     private async Task NormalizeLessonPositionAsync(Lesson lesson)
     {
         List<Lesson> lessons = await LessonRepo.GetListAsync(i => i.ChapterId == lesson.ChapterId && i.Position == lesson.Position);
@@ -266,63 +323,6 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
         await CodingExerciseRepo.InsertAsync(codingExercise);
         await TestCaseRepo.InsertManyAsync(testCases);
         await SampleCodeRepo.InsertManyAsync(sampleCodes);
-    }
-
-    [Authorize(CourseMatePermissions.Lessons.Edit)]
-    public async Task<LessonDto> UpdateAsync(Guid id, CreateUpdateLessonDto input)
-    {
-        bool isDuplicateName = await LessonRepo.AnyAsync(i => i.Title == input.Title && i.Id != id);
-        if (isDuplicateName)
-        {
-            throw new UserFriendlyException("Duplicate lesson name");
-        }
-
-        await ChapterRepo.EnsureExistsAsync(input.ChapterId);
-        Lesson lesson = await LessonRepo.GetAsync(id);
-
-        lesson.Title = input.Title;
-        lesson.ChapterId = input.ChapterId;
-        lesson.LessonType = input.LessonType;
-        lesson.Position = input.Position;
-        await LessonRepo.UpdateAsync(lesson);
-
-        await HandleRemoveLessonContentAsync(lesson.Id, lesson.LessonType);
-        await HandleLessonContentAsync(input, lesson.Id);
-
-        await NormalizeLessonPositionAsync(lesson);
-
-        return new LessonDto
-        {
-            Id = lesson.Id,
-            Title = lesson.Title,
-            ChapterId = lesson.ChapterId,
-            Position = lesson.Position,
-            CreationTime = lesson.CreationTime,
-            CreatorId = lesson.CreatorId,
-            LastModificationTime = lesson.LastModificationTime,
-            LastModifierId = lesson.LastModifierId
-        };
-    }
-
-    [Authorize(CourseMatePermissions.Lessons.Delete)]
-    public async Task DeleteAsync(Guid id)
-    {
-        IQueryable<LessonDto> query =
-            from lesson in await LessonRepo.GetQueryableAsync()
-            where lesson.Id == id
-            select new LessonDto
-            {
-                Id = lesson.Id,
-                LessonType = lesson.LessonType
-            };
-        LessonDto? lessonDto = await AsyncExecuter.FirstOrDefaultAsync(query);
-        if (lessonDto is null)
-        {
-            return;
-        }
-
-        await LessonRepo.DeleteAsync(lessonDto.Id);
-        await HandleRemoveLessonContentAsync(lessonDto.Id, lessonDto.LessonType);
     }
 
     private async Task HandleRemoveLessonContentAsync(Guid lessonId, LessonType lessonType)

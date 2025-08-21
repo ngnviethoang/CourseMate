@@ -5,7 +5,6 @@ using CourseMate.Services.Dtos.Courses;
 using CourseMate.Services.Dtos.Lessons;
 using CourseMate.Shared;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 using Volo.Abp;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Validation;
@@ -25,69 +24,6 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
     public async Task<CourseDto> GetBySlugAsync(string slug)
     {
         return await GetCourseAsync(null, slug);
-    }
-
-    private async Task<CourseDto> GetCourseAsync(Guid? id, string? slug)
-    {
-        IQueryable<Course> courseQueryable = await CourseRepo.GetQueryableAsync();
-        IQueryable<CourseDto> queryable = courseQueryable
-            .WhereIf(id != null, i => i.Id == id)
-            .WhereIf(id == null, i => i.Slug == slug)
-            .Select(course => new CourseDto
-            {
-                Id = course.Id,
-                Title = course.Title,
-                Description = course.Description,
-                ThumbnailFile = course.ThumbnailFile,
-                Price = course.Price,
-                Currency = course.Currency,
-                LevelType = course.LevelType,
-                IsActive = course.IsActive,
-                InstructorId = course.InstructorId,
-                CategoryId = course.CategoryId,
-                Slug = course.Slug,
-                CreationTime = course.CreationTime,
-                CreatorId = course.CreatorId,
-                LastModificationTime = course.LastModificationTime,
-                LastModifierId = course.LastModifierId
-            });
-
-        CourseDto? courseDto = await AsyncExecuter.FirstOrDefaultAsync(queryable);
-        if (courseDto == null)
-        {
-            return new CourseDto();
-        }
-
-        IQueryable<ChapterDto> queryableChapter =
-            from chapter in await ChapterRepo.GetQueryableAsync()
-            join lesson in await LessonRepo.GetQueryableAsync()
-                on chapter.Id equals lesson.ChapterId
-            where chapter.CourseId == courseDto.Id
-            group lesson by chapter
-            into g
-            orderby g.Key.Position
-            select new ChapterDto
-            {
-                Id = g.Key.Id,
-                Title = g.Key.Title,
-                Position = g.Key.Position,
-                CourseId = g.Key.CourseId,
-                CourseTitle = g.Key.Title,
-                Description = g.Key.Description,
-                Lessons = g.OrderBy(i => i.Position).Select(i => new LessonDto
-                {
-                    Id = i.Id,
-                    Title = i.Title,
-                    ChapterId = i.ChapterId,
-                    Position = i.Position,
-                    LessonType = i.LessonType
-                })
-            };
-
-        courseDto.Chapters = await AsyncExecuter.ToListAsync(queryableChapter);
-        courseDto.IsInCart = await CartRepo.AnyAsync(i => i.Id == courseDto.Id && i.UserId == CurrentUser.Id);
-        courseDto.IsEnrollment = await EnrollmentRepo.AnyAsync(i => i.CourseId == courseDto.Id && i.StudentId == CurrentUser.Id);
-        return courseDto;
     }
 
     [AllowAnonymous]
@@ -126,7 +62,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
             .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(Course.Title) : input.Sorting);
 
         int totalCount = await AsyncExecuter.CountAsync(queryable);
-        
+
         if (input.SkipCount.HasValue)
         {
             queryable = queryable.Skip(input.SkipCount.Value);
@@ -224,7 +160,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
         course.IsActive = input.IsActive;
         course.Summary = input.Summary;
         course.Slug = Helper.GenerateSlug(input.Title);
-        
+
         await CourseRepo.UpdateAsync(course);
         return new CourseDto
         {
@@ -255,5 +191,68 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
         }
 
         await CourseRepo.DeleteAsync(id);
+    }
+
+    private async Task<CourseDto> GetCourseAsync(Guid? id, string? slug)
+    {
+        IQueryable<Course> courseQueryable = await CourseRepo.GetQueryableAsync();
+        IQueryable<CourseDto> queryable = courseQueryable
+            .WhereIf(id != null, i => i.Id == id)
+            .WhereIf(id == null, i => i.Slug == slug)
+            .Select(course => new CourseDto
+            {
+                Id = course.Id,
+                Title = course.Title,
+                Description = course.Description,
+                ThumbnailFile = course.ThumbnailFile,
+                Price = course.Price,
+                Currency = course.Currency,
+                LevelType = course.LevelType,
+                IsActive = course.IsActive,
+                InstructorId = course.InstructorId,
+                CategoryId = course.CategoryId,
+                Slug = course.Slug,
+                CreationTime = course.CreationTime,
+                CreatorId = course.CreatorId,
+                LastModificationTime = course.LastModificationTime,
+                LastModifierId = course.LastModifierId
+            });
+
+        CourseDto? courseDto = await AsyncExecuter.FirstOrDefaultAsync(queryable);
+        if (courseDto == null)
+        {
+            return new CourseDto();
+        }
+
+        IQueryable<ChapterDto> queryableChapter =
+            from chapter in await ChapterRepo.GetQueryableAsync()
+            join lesson in await LessonRepo.GetQueryableAsync()
+                on chapter.Id equals lesson.ChapterId
+            where chapter.CourseId == courseDto.Id
+            group lesson by chapter
+            into g
+            orderby g.Key.Position
+            select new ChapterDto
+            {
+                Id = g.Key.Id,
+                Title = g.Key.Title,
+                Position = g.Key.Position,
+                CourseId = g.Key.CourseId,
+                CourseTitle = g.Key.Title,
+                Description = g.Key.Description,
+                Lessons = g.OrderBy(i => i.Position).Select(i => new LessonDto
+                {
+                    Id = i.Id,
+                    Title = i.Title,
+                    ChapterId = i.ChapterId,
+                    Position = i.Position,
+                    LessonType = i.LessonType
+                })
+            };
+
+        courseDto.Chapters = await AsyncExecuter.ToListAsync(queryableChapter);
+        courseDto.IsInCart = await CartRepo.AnyAsync(i => i.Id == courseDto.Id && i.UserId == CurrentUser.Id);
+        courseDto.IsEnrollment = await EnrollmentRepo.AnyAsync(i => i.CourseId == courseDto.Id && i.StudentId == CurrentUser.Id);
+        return courseDto;
     }
 }

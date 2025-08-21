@@ -2,6 +2,13 @@
 
 public class CodingExercise : FullAuditedEntity<Guid>
 {
+    public CodingExercise(Guid id, Guid lessonId, string title, string description) : base(id)
+    {
+        LessonId = lessonId;
+        Title = title;
+        Description = description;
+    }
+
     public Guid LessonId { get; set; }
 
     [MaxLength(CourseMateConst.DefaultMaxLength)]
@@ -9,11 +16,4 @@ public class CodingExercise : FullAuditedEntity<Guid>
 
     [MaxLength(CourseMateConst.DescriptionMaxLength)]
     public string Description { get; set; }
-
-    public CodingExercise(Guid id, Guid lessonId, string title, string description) : base(id)
-    {
-        LessonId = lessonId;
-        Title = title;
-        Description = description;
-    }
 }

@@ -128,7 +128,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
             CreatorId = chapter.CreatorId,
             Position = chapter.Position,
             LastModificationTime = chapter.LastModificationTime,
-            LastModifierId = chapter.LastModifierId,
+            LastModifierId = chapter.LastModifierId
         };
     }
 

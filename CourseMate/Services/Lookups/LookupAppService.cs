@@ -1,5 +1,4 @@
 ﻿using CourseMate.Services.Dtos.Lookups;
-using Volo.Abp.Domain.Repositories;
 
 namespace CourseMate.Services.Lookups;
 

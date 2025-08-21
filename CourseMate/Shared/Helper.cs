@@ -12,7 +12,7 @@ public static class Helper
         { "#", " sharp " },
         { "&", " and " },
         { "%", " percent " },
-        { "$", " dollar " },
+        { "$", " dollar " }
     };
 
     public static string GenerateSlug(string phrase)

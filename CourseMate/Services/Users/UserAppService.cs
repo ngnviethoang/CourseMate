@@ -40,7 +40,7 @@ public class UserAppService : IdentityUserAppService, IUserAppService
             return new PagedResultDto<IdentityUserDto>();
         }
 
-        long count = await UserRepository.GetCountAsync(input.Filter, roleId: role.Id);
+        long count = await UserRepository.GetCountAsync(input.Filter, role.Id);
         List<IdentityUser>? users = await UserRepository.GetListAsync(input.Sorting, input.MaxResultCount, input.SkipCount, input.Filter, roleId: role.Id);
         return new PagedResultDto<IdentityUserDto>(count, ObjectMapper.Map<List<IdentityUser>, List<IdentityUserDto>>(users));
     }

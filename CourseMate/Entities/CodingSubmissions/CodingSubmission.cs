@@ -4,6 +4,17 @@ namespace CourseMate.Entities.CodingSubmissions;
 
 public class CodingSubmission : FullAuditedEntity<Guid>
 {
+    public CodingSubmission(Guid id, Guid codingExerciseId, Guid userId, string sourceCode, LanguageType language, bool isPassed, string error, TimeSpan totalExecutionTime) : base(id)
+    {
+        CodingExerciseId = codingExerciseId;
+        UserId = userId;
+        SourceCode = sourceCode;
+        Language = language;
+        IsPassed = isPassed;
+        Error = error;
+        TotalExecutionTime = totalExecutionTime;
+    }
+
     public Guid CodingExerciseId { get; set; }
 
     public Guid UserId { get; set; }
@@ -18,15 +29,4 @@ public class CodingSubmission : FullAuditedEntity<Guid>
     public string Error { get; set; }
 
     public TimeSpan TotalExecutionTime { get; set; }
-
-    public CodingSubmission(Guid id, Guid codingExerciseId, Guid userId, string sourceCode, LanguageType language, bool isPassed, string error, TimeSpan totalExecutionTime) : base(id)
-    {
-        CodingExerciseId = codingExerciseId;
-        UserId = userId;
-        SourceCode = sourceCode;
-        Language = language;
-        IsPassed = isPassed;
-        Error = error;
-        TotalExecutionTime = totalExecutionTime;
-    }
 }

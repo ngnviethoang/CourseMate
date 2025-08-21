@@ -52,7 +52,7 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
             .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "Name" : input.Sorting);
 
         int totalCount = await AsyncExecuter.CountAsync(queryable);
-        
+
         if (input.SkipCount.HasValue)
         {
             queryable = queryable.Skip(input.SkipCount.Value);

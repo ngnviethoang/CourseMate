@@ -56,14 +56,14 @@ public class CartAppService : CourseMateAppService, ICartAppService
                     Category = new CategoryDto
                     {
                         Id = category.Id,
-                        Name = category.Name,
+                        Name = category.Name
                     }
                 }
             };
         queryable = queryable.WhereIf(input.StudentId.HasValue, e => e.StudentId == input.StudentId);
         queryable = queryable.OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(CartDto.CreationTime) : input.Sorting);
         int totalCount = await AsyncExecuter.CountAsync(queryable);
-        
+
         if (input.SkipCount.HasValue)
         {
             queryable = queryable.Skip(input.SkipCount.Value);
@@ -98,7 +98,7 @@ public class CartAppService : CourseMateAppService, ICartAppService
             return new ResultObjectDto(existingCart.Id);
         }
 
-        Cart newCart = new Cart(GuidGenerator.Create(), userId, input.CourseId);
+        Cart newCart = new(GuidGenerator.Create(), userId, input.CourseId);
         await CartRepo.InsertAsync(newCart);
 
         return new ResultObjectDto(newCart.Id);

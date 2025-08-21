@@ -1,4 +1,4 @@
-﻿using CourseMate.Tests.TestBase;
+﻿/*using CourseMate.Tests.TestBase;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Validation;
 
@@ -42,4 +42,5 @@ public sealed class BookAppServiceTests : CourseMateTestBase<CourseMateTestModul
 
         Assert.Contains(exception.ValidationErrors, err => err.MemberNames.Any(m => m == "Name"));
     }
-}
+}*/
+

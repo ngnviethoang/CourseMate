@@ -1,24 +1,30 @@
+using Projects;
+
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
+
+IResourceBuilder<RabbitMQServerResource> coursemateRabbitMq = builder.AddRabbitMQ("coursemate-rabbitmq")
+    .WithManagementPlugin();
 
 IResourceBuilder<PostgresServerResource> coursemateDb = builder.AddPostgres("coursemate-db")
     .WithLifetime(ContainerLifetime.Persistent);
 
-IResourceBuilder<RabbitMQServerResource> coursemateRabbitMq = builder.AddRabbitMQ("coursemate-rabbitmq");
-
-IResourceBuilder<ProjectResource> coursemateApi = builder.AddProject<Projects.CourseMate>("coursemate-api")
+IResourceBuilder<ProjectResource> coursemateApi = builder.AddProject<CourseMate>("coursemate-api")
     .WaitFor(coursemateDb)
-    .WaitFor(coursemateRabbitMq);
+    .WithReference(coursemateDb)
+    .WithReference(coursemateRabbitMq)
+    .WithReference(coursemateRabbitMq)
+    .WithHttpsEndpoint(44393);
 
-builder.AddNodeApp("admin", "../admin")
+builder.AddYarnApp("admin", "../admin")
+    .WithReference(coursemateApi)
     .WaitFor(coursemateApi)
-    .WithHttpEndpoint(env: "PORT")
     .WithExternalHttpEndpoints()
-    .PublishAsDockerFile();
+    .WithHttpEndpoint(4200, isProxied: false);
 
-builder.AddNodeApp("client", "../client")
+builder.AddYarnApp("client", "../client")
+    .WithReference(coursemateApi)
     .WaitFor(coursemateApi)
-    .WithHttpEndpoint(env: "PORT")
     .WithExternalHttpEndpoints()
-    .PublishAsDockerFile();
+    .WithHttpEndpoint(4100, isProxied: false);
 
 builder.Build().Run();
