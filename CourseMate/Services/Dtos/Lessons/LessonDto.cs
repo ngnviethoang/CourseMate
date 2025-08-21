@@ -12,5 +12,5 @@ public class LessonDto : AuditedEntityDto<Guid>
     public ArticleDto? Article { get; set; }
     public VideoDto? Video { get; set; }
     public CodingExerciseDto? CodingExercise { get; set; }
-    public QuizQuestionDto? QuizQuestion { get; set; }
+    public IEnumerable<QuizQuestionDto> QuizQuestions { get; set; } = [];
 }
