@@ -1,3 +1,4 @@
+using AppHost.ServiceDefaults;
 using CourseMate.Data;
 using Serilog;
 using Serilog.Events;
@@ -19,6 +20,9 @@ public class Program
         try
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+            builder.AddServiceDefaults();
+
             builder.Host.AddAppSettingsSecretsJson()
                 .UseAutofac()
                 .UseSerilog((context, services, loggerConfiguration) =>

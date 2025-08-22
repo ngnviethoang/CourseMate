@@ -80,4 +80,8 @@
         <None Include="Data\Seeds\courses.json"/>
         <None Include="Data\Seeds\lessons.json"/>
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AppHost.ServiceDefaults\AppHost.ServiceDefaults.csproj" />
+    </ItemGroup>
 </Project>
