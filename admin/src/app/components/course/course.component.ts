@@ -93,7 +93,7 @@ export class CourseComponent implements OnInit {
       price: [this.selectedCourse.price, [Validators.required, Validators.min(0)]],
       currency: [this.selectedCourse.currency, [Validators.required]],
       levelType: [this.selectedCourse.levelType, [Validators.required]],
-      isActive: [this.selectedCourse.isActive, [Validators.required]],
+      isActive: [this.selectedCourse.isActive ?? true, [Validators.required]],
       categoryId: [this.selectedCourse.categoryId, [Validators.required, Validators.maxLength(100)]]
     });
   }

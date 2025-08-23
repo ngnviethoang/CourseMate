@@ -2,6 +2,4 @@
 
 namespace CourseMate.Hubs;
 
-public class ConversationHub : AbpHub
-{
-}
+public class ConversationHub : AbpHub;

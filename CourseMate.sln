@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMate.Tests", "CourseM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMate.Crawler", "CourseMate.Crawler\CourseMate.Crawler.csproj", "{E9588295-8D48-46A7-8D33-24E2068D9666}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoourseMate.AppHost", "CoourseMate.AppHost\CoourseMate.AppHost.csproj", "{47326D7E-36D5-4E10-B0C7-7E5EAF619316}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMate.AppHost", "CourseMate.AppHost\CourseMate.AppHost.csproj", "{47326D7E-36D5-4E10-B0C7-7E5EAF619316}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMate.ServiceDefaults", "CourseMate.ServiceDefaults\CourseMate.ServiceDefaults.csproj", "{3A63AFEC-9A8A-4E51-876D-597507A75024}"
 EndProject

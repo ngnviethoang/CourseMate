@@ -2,6 +2,7 @@ using CourseMate.Data;
 using CourseMate.HealthChecks;
 using CourseMate.Localization;
 using CourseMate.Services.VnPay;
+using MailKit.Security;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
@@ -57,6 +58,7 @@ using Volo.Abp.Swashbuckle;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
+using Volo.Abp.MailKit;
 
 namespace CourseMate;
 
@@ -112,6 +114,7 @@ namespace CourseMate;
     typeof(AbpBlobStoringFileSystemModule),
     typeof(AbpEventBusRabbitMqModule)
 )]
+[DependsOn(typeof(AbpMailKitModule))]
 public class CourseMateModule : AbpModule
 {
     /* Single point to enable/disable multi-tenancy */
@@ -162,7 +165,7 @@ public class CourseMateModule : AbpModule
             IdentityModelEventSource.LogCompleteSecurityArtifact = true;
         }
 
-        if (hostingEnvironment.IsDevelopment())
+        if (!hostingEnvironment.IsDevelopment())
         {
             context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
         }
@@ -183,6 +186,12 @@ public class CourseMateModule : AbpModule
         ConfigureBlobStoring();
         ConfigureRabbitMq(configuration);
         ConfigureVnpay(configuration);
+        ConfigureMailKit();
+    }
+
+    private void ConfigureMailKit()
+    {
+        Configure<AbpMailKitOptions>(options => { options.SecureSocketOption = SecureSocketOptions.SslOnConnect; });
     }
 
     private void ConfigureVnpay(IConfiguration configuration)
@@ -221,6 +230,11 @@ public class CourseMateModule : AbpModule
     {
         context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
         context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options => { options.IsDynamicClaimsEnabled = true; });
+        context.Services.AddAuthentication().AddGoogle(googleOptions =>
+        {
+            googleOptions.ClientId = context.Configuration["Authentication:Google:ClientId"]!;
+            googleOptions.ClientSecret = context.Configuration["Authentication:Google:ClientSecret"]!;
+        });
     }
 
     private void ConfigureBundles()

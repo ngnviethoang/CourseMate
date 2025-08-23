@@ -44,27 +44,11 @@ public class CourseMateDataSeederContributor : IDataSeedContributor, ITransientD
     public async Task SeedAsync(DataSeedContext context)
     {
         List<PermissionWithGrantedProviders> permissions = await _permissionManager.GetAllAsync(null, null) ?? [];
-        if (!await _identityRoleManager.RoleExistsAsync(RoleConst.Anonymous))
-        {
-            IdentityRole role = new(Guid.NewGuid(), RoleConst.Anonymous)
-            {
-                IsDefault = true,
-                IsPublic = true,
-                IsStatic = true
-            };
-            await _identityRoleManager.CreateAsync(role);
-
-            foreach (PermissionWithGrantedProviders permission in permissions.Where(i => i.Name.StartsWith(CourseMatePermissions.GroupName)))
-            {
-                await _permissionManager.SetForRoleAsync(RoleConst.Anonymous, permission.Name, true);
-            }
-        }
-
         if (!await _identityRoleManager.RoleExistsAsync(RoleConst.Student))
         {
             IdentityRole role = new(Guid.NewGuid(), RoleConst.Student)
             {
-                IsDefault = false,
+                IsDefault = true,
                 IsPublic = true,
                 IsStatic = true
             };

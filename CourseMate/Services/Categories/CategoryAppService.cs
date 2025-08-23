@@ -1,4 +1,5 @@
 ﻿using CourseMate.Entities.Categories;
+using CourseMate.Entities.Courses;
 using CourseMate.Permissions;
 using CourseMate.Services.Dtos.Categories;
 using Microsoft.AspNetCore.Authorization;
@@ -49,7 +50,7 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
             };
         queryable = queryable
             .WhereIf(!string.IsNullOrEmpty(input.Filter), i => i.Name.Contains(input.Filter!))
-            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "Name" : input.Sorting);
+            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(CategoryDto.CreationTime) : input.Sorting);
 
         int totalCount = await AsyncExecuter.CountAsync(queryable);
 
@@ -93,6 +94,13 @@ public class CategoryAppService : CourseMateAppService, ICategoryAppService
         Category category = await CategoryRepo.GetAsync(id);
         category.Name = input.Name;
         category.Description = input.Name;
+        if (category.IsActive && input.IsActive == false)
+        {
+            List<Course> courses = await CourseRepo.GetListAsync(i => i.CategoryId == category.Id);
+            courses.ForEach(course => course.IsActive = false);
+            await CourseRepo.UpdateManyAsync(courses);
+        }
+
         category.IsActive = input.IsActive;
         await CategoryRepo.UpdateAsync(category);
         return new CategoryDto

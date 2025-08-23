@@ -54,13 +54,13 @@
               <i class="fa fa-cog me-1"></i>{{ '::Actions' | abpLocalization }}
             </button>
             <div ngbDropdownMenu>
-              <button *abpPermission="'CourseMate.Chapters.Edit'" ngbDropdownItem (click)="edit(row.id)">
+              <button *abpPermission="'CourseMate.Courses.Edit'" ngbDropdownItem (click)="edit(row.id)">
                 {{ '::Edit' | abpLocalization }}
               </button>
-              <button *abpPermission="'CourseMate.Chapters.Delete'" ngbDropdownItem (click)="delete(row.id)">
+              <button *abpPermission="'CourseMate.Courses.Delete'" ngbDropdownItem (click)="delete(row.id)">
                 {{ '::Delete' | abpLocalization }}
               </button>
-              <button *abpPermission="'CourseMate.Lessons'" ngbDropdownItem
+              <button *abpPermission="'CourseMate.Courses.Edit'" ngbDropdownItem
                       (click)="onClickLessonManagement(row.id)">
                 {{ '::Lessons' | abpLocalization }}
               </button>

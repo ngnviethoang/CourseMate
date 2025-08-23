@@ -8,7 +8,7 @@ using Volo.Abp.Validation;
 
 namespace CourseMate.Services.Chapters;
 
-[Authorize(CourseMatePermissions.Chapters.Default)]
+[Authorize(CourseMatePermissions.Courses.Default)]
 public class ChapterAppService : CourseMateAppService, IChapterAppService
 {
     [AllowAnonymous]
@@ -34,6 +34,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
         return await AsyncExecuter.FirstOrDefaultAsync(queryable) ?? new ChapterDto();
     }
 
+    [AllowAnonymous]
     public async Task<PagedResultDto<ChapterDto>> GetListAsync(GetListChapterRequestDto input)
     {
         IQueryable<ChapterDto> queryable =
@@ -75,7 +76,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
         return new PagedResultDto<ChapterDto>(totalCount, chapters);
     }
 
-    [Authorize(CourseMatePermissions.Chapters.Create)]
+    [Authorize(CourseMatePermissions.Courses.Create)]
     public async Task<ResultObjectDto> CreateAsync(CreateUpdateChapterDto input)
     {
         bool isDuplicateName = await ChapterRepo.AnyAsync(i => i.Title == input.Title);
@@ -96,7 +97,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
         return new ResultObjectDto(chapter.Id);
     }
 
-    [Authorize(CourseMatePermissions.Chapters.Edit)]
+    [Authorize(CourseMatePermissions.Courses.Edit)]
     public async Task<ChapterDto> UpdateAsync(Guid id, CreateUpdateChapterDto input)
     {
         bool isDuplicateName = await ChapterRepo.AnyAsync(i => i.Title == input.Title && i.Id != id);
@@ -132,7 +133,7 @@ public class ChapterAppService : CourseMateAppService, IChapterAppService
         };
     }
 
-    [Authorize(CourseMatePermissions.Chapters.Delete)]
+    [Authorize(CourseMatePermissions.Courses.Delete)]
     public async Task DeleteAsync(Guid id)
     {
         if (await LessonRepo.AnyAsync(i => i.ChapterId == id))

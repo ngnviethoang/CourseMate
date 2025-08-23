@@ -11,7 +11,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace CourseMate.Services.Lessons;
 
-[Authorize(CourseMatePermissions.Lessons.Default)]
+[Authorize(CourseMatePermissions.Courses.Default)]
 public class LessonAppService : CourseMateAppService, ILessonAppService
 {
     public async Task<LessonDto> GetAsync(Guid id)
@@ -83,7 +83,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
         return new PagedResultDto<LessonDto>(totalCount, lessons);
     }
 
-    [Authorize(CourseMatePermissions.Lessons.Create)]
+    [Authorize(CourseMatePermissions.Courses.Create)]
     public async Task<ResultObjectDto> CreateAsync(CreateUpdateLessonDto input)
     {
         if (await LessonRepo.AnyAsync(i => i.Title == input.Title))
@@ -103,7 +103,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
         return new ResultObjectDto(lesson.Id);
     }
 
-    [Authorize(CourseMatePermissions.Lessons.Edit)]
+    [Authorize(CourseMatePermissions.Courses.Edit)]
     public async Task<LessonDto> UpdateAsync(Guid id, CreateUpdateLessonDto input)
     {
         bool isDuplicateName = await LessonRepo.AnyAsync(i => i.Title == input.Title && i.Id != id);
@@ -139,7 +139,7 @@ public class LessonAppService : CourseMateAppService, ILessonAppService
         };
     }
 
-    [Authorize(CourseMatePermissions.Lessons.Delete)]
+    [Authorize(CourseMatePermissions.Courses.Delete)]
     public async Task DeleteAsync(Guid id)
     {
         IQueryable<LessonDto> query =

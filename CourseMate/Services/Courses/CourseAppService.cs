@@ -59,7 +59,8 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
         queryable = queryable
             .WhereIf(!string.IsNullOrEmpty(input.Filter), i => i.Title.Contains(input.Filter!))
             .WhereIf(input.CategoryId.HasValue, i => i.CategoryId == input.CategoryId!.Value)
-            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(Course.Title) : input.Sorting);
+            .WhereIf(input.InstructorId.HasValue, i => i.InstructorId == input.InstructorId!.Value)
+            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(CourseDto.CreationTime) : input.Sorting);
 
         int totalCount = await AsyncExecuter.CountAsync(queryable);
 
@@ -204,6 +205,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
                 Id = course.Id,
                 Title = course.Title,
                 Description = course.Description,
+                Summary = course.Summary,
                 ThumbnailFile = course.ThumbnailFile,
                 Price = course.Price,
                 Currency = course.Currency,
@@ -215,7 +217,7 @@ public class CourseAppService : CourseMateAppService, ICourseAppService
                 CreationTime = course.CreationTime,
                 CreatorId = course.CreatorId,
                 LastModificationTime = course.LastModificationTime,
-                LastModifierId = course.LastModifierId
+                LastModifierId = course.LastModifierId,
             });
 
         CourseDto? courseDto = await AsyncExecuter.FirstOrDefaultAsync(queryable);

@@ -14,7 +14,7 @@ import { CategoryService } from '@proxy/services/categories';
   providers: [ListService, { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }]
 })
 export class CategoryComponent implements OnInit {
-  categories = { items: [], totalCount: 0 } as PagedResultDto<CategoryDto>;
+  categories = {} as PagedResultDto<CategoryDto>;
   selectedCategory = {} as CategoryDto;
   form: FormGroup;
   isModalOpen = false;
@@ -23,7 +23,7 @@ export class CategoryComponent implements OnInit {
     public readonly list: ListService,
     private categoryService: CategoryService,
     private fb: FormBuilder,
-    private confirmation: ConfirmationService // inject the ConfirmationService
+    private confirmation: ConfirmationService
   ) {
   }
 
@@ -59,9 +59,9 @@ export class CategoryComponent implements OnInit {
 
   buildForm() {
     this.form = this.fb.group({
-      name: [this.selectedCategory.name || '', [Validators.required, Validators.maxLength(1024)]],
-      description: [this.selectedCategory.description || '', [Validators.maxLength(1024)]],
-      isActive: [this.selectedCategory.isActive, [Validators.required]]
+      name: [this.selectedCategory.name ?? '', [Validators.required, Validators.maxLength(1024)]],
+      description: [this.selectedCategory.description ?? '', [Validators.maxLength(1024)]],
+      isActive: [this.selectedCategory.isActive ?? true]
     });
   }
 

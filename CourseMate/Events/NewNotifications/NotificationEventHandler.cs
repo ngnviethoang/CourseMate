@@ -39,7 +39,7 @@ public class NotificationEventHandler : IDistributedEventHandler<NewNotification
         foreach (Notification notify in notifications)
         {
             await _hubContext.Clients
-                .User(notify.ReceiverUserId.ToString())
+                .User(notify.ReceiverUserId.ToString() ?? string.Empty)
                 .SendAsync("ReceiveNotification", new
                 {
                     notify.Id,

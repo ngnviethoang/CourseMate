@@ -2,6 +2,7 @@
 using System.Transactions;
 using CourseMate.Entities.Orders;
 using CourseMate.Entities.PaymentRequests;
+using CourseMate.Permissions;
 using CourseMate.Services.Dtos.VnPay;
 using CourseMate.Shared;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +11,6 @@ using Volo.Abp;
 
 namespace CourseMate.Services.VnPay;
 
-[Authorize]
 [RemoteService(false)]
 public class VnPayService : CourseMateAppService, IVnPayService
 {
@@ -20,7 +20,7 @@ public class VnPayService : CourseMateAppService, IVnPayService
     {
         _vnPayOptions = vnPayConfig.Value;
     }
-
+    
     public async Task<string> CreatePaymentUrl(Guid orderId, string clientIp)
     {
         Order? order = await OrderRepo.FindAsync(i => i.Id == orderId && i.Status == OrderStatusType.Submitted);

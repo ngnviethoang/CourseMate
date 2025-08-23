@@ -7,8 +7,7 @@ namespace CourseMate.Services.Notifications;
 [Authorize]
 public class NotificationAppService : CourseMateAppService, INotificationAppService
 {
-    [AllowAnonymous]
-    public async Task<PagedResultDto<NotificationDto>> GetListAsync(GetListRequestDto input)
+    public async Task<PagedResultDto<NotificationDto>> GetListAsync(GetListNotificationRequestDto input)
     {
         IQueryable<NotificationDto> queryable =
             from notification in await NotificationRepo.GetQueryableAsync()
@@ -25,6 +24,10 @@ public class NotificationAppService : CourseMateAppService, INotificationAppServ
                 ReceiverUserId = notification.ReceiverUserId
             };
 
+        queryable = queryable
+            .WhereIf(input.ReceiverUserId.HasValue, i => i.ReceiverUserId == input.ReceiverUserId!.Value)
+            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(NotificationDto.CreationTime) : input.Sorting);
+
         if (input.SkipCount.HasValue)
         {
             queryable = queryable.Skip(input.SkipCount.Value);
@@ -40,14 +43,9 @@ public class NotificationAppService : CourseMateAppService, INotificationAppServ
         return new PagedResultDto<NotificationDto>(totalCount, notifications);
     }
 
-    public async Task MarkReadAsync(List<Guid> input)
+    public async Task MarkReadAsync(IEnumerable<Guid> input)
     {
-        IQueryable<Notification> queryable =
-            from notification in await NotificationRepo.GetQueryableAsync()
-            where input.Contains(notification.Id)
-            select notification;
-
-        List<Notification> notifications = await AsyncExecuter.ToListAsync(queryable);
+        List<Notification> notifications = await NotificationRepo.GetListAsync(i => input.Contains(i.Id));
         notifications.ForEach(notification => notification.IsRead = true);
         await NotificationRepo.UpdateManyAsync(notifications);
     }

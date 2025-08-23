@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.DependencyInjection;
@@ -10,6 +11,7 @@ namespace CourseMate.Services.Users;
 
 [Dependency(ReplaceServices = true)]
 [ExposeServices(typeof(IIdentityUserAppService), typeof(IdentityUserAppService), typeof(UserAppService))]
+[Authorize]
 public class UserAppService : IdentityUserAppService, IUserAppService
 {
     public UserAppService(

@@ -1,5 +1,7 @@
-﻿using CourseMate.Services.Dtos.VnPay;
+﻿using CourseMate.Permissions;
+using CourseMate.Services.Dtos.VnPay;
 using CourseMate.Services.VnPay;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc;
 
@@ -16,6 +18,7 @@ public class PaymentController : AbpController
         _vnPayService = vnPayService;
     }
 
+    [Authorize(CourseMatePermissions.PaymentRequests.Create)]
     [HttpGet("vnpay/{orderId:guid}")]
     public async Task<IActionResult> GetVnPayment([FromRoute] Guid orderId)
     {

@@ -2,7 +2,8 @@
 
 public class NewNotificationEto
 {
-    public List<Guid> ReceiverUserIds { get; set; } = [];
+    public IEnumerable<Guid> ReceiverUserIds { get; set; } = [];
+
     public bool IsBroadcast { get; set; }
 
     [MaxLength(1024)]

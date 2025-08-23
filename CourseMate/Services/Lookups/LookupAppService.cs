@@ -1,7 +1,9 @@
 ﻿using CourseMate.Services.Dtos.Lookups;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CourseMate.Services.Lookups;
 
+[Authorize]
 public class LookupAppService : CourseMateAppService, ILookupAppService
 {
     public async Task<PagedResultDto<LookupDto>> GetCategoriesAsync(LookupRequestDto input)

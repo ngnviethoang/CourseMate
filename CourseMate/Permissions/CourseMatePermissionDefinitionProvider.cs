@@ -10,20 +10,10 @@ public class CourseMatePermissionDefinitionProvider : PermissionDefinitionProvid
     {
         PermissionGroupDefinition myGroup = context.AddGroup(CourseMatePermissions.GroupName);
 
-        PermissionDefinition booksPermission = myGroup.AddPermission(CourseMatePermissions.Books.Default, L("Permission:Books"));
-        booksPermission.AddChild(CourseMatePermissions.Books.Create, L("Permission:Books.Create"));
-        booksPermission.AddChild(CourseMatePermissions.Books.Edit, L("Permission:Books.Edit"));
-        booksPermission.AddChild(CourseMatePermissions.Books.Delete, L("Permission:Books.Delete"));
-
         PermissionDefinition categoriesPermission = myGroup.AddPermission(CourseMatePermissions.Categories.Default, L("Permission:Categories"));
         categoriesPermission.AddChild(CourseMatePermissions.Categories.Create, L("Permission:Categories.Create"));
         categoriesPermission.AddChild(CourseMatePermissions.Categories.Edit, L("Permission:Categories.Edit"));
         categoriesPermission.AddChild(CourseMatePermissions.Categories.Delete, L("Permission:Categories.Delete"));
-
-        PermissionDefinition chaptersPermission = myGroup.AddPermission(CourseMatePermissions.Chapters.Default, L("Permission:Chapters"));
-        chaptersPermission.AddChild(CourseMatePermissions.Chapters.Create, L("Permission:Chapters.Create"));
-        chaptersPermission.AddChild(CourseMatePermissions.Chapters.Edit, L("Permission:Chapters.Edit"));
-        chaptersPermission.AddChild(CourseMatePermissions.Chapters.Delete, L("Permission:Chapters.Delete"));
 
         PermissionDefinition coursesPermission = myGroup.AddPermission(CourseMatePermissions.Courses.Default, L("Permission:Courses"));
         coursesPermission.AddChild(CourseMatePermissions.Courses.Create, L("Permission:Courses.Create"));
@@ -34,11 +24,6 @@ public class CourseMatePermissionDefinitionProvider : PermissionDefinitionProvid
         enrollmentsPermission.AddChild(CourseMatePermissions.Enrollments.Create, L("Permission:Enrollments.Create"));
         enrollmentsPermission.AddChild(CourseMatePermissions.Enrollments.Edit, L("Permission:Enrollments.Edit"));
         enrollmentsPermission.AddChild(CourseMatePermissions.Enrollments.Delete, L("Permission:Enrollments.Delete"));
-
-        PermissionDefinition lessonsPermission = myGroup.AddPermission(CourseMatePermissions.Lessons.Default, L("Permission:Lessons"));
-        lessonsPermission.AddChild(CourseMatePermissions.Lessons.Create, L("Permission:Lessons.Create"));
-        lessonsPermission.AddChild(CourseMatePermissions.Lessons.Edit, L("Permission:Lessons.Edit"));
-        lessonsPermission.AddChild(CourseMatePermissions.Lessons.Delete, L("Permission:Lessons.Delete"));
 
         PermissionDefinition ordersPermission = myGroup.AddPermission(CourseMatePermissions.Orders.Default, L("Permission:Orders"));
         ordersPermission.AddChild(CourseMatePermissions.Orders.Create, L("Permission:Orders.Create"));
@@ -59,16 +44,6 @@ public class CourseMatePermissionDefinitionProvider : PermissionDefinitionProvid
         filesPermission.AddChild(CourseMatePermissions.Files.Create, L("Permission:Files.Create"));
         filesPermission.AddChild(CourseMatePermissions.Files.Edit, L("Permission:Files.Edit"));
         filesPermission.AddChild(CourseMatePermissions.Files.Delete, L("Permission:Files.Delete"));
-
-        PermissionDefinition studentsPermission = myGroup.AddPermission(CourseMatePermissions.Students.Default, L("Permission:Students"));
-        studentsPermission.AddChild(CourseMatePermissions.Students.Create, L("Permission:Students.Create"));
-        studentsPermission.AddChild(CourseMatePermissions.Students.Edit, L("Permission:Students.Edit"));
-        studentsPermission.AddChild(CourseMatePermissions.Students.Delete, L("Permission:Students.Delete"));
-
-        PermissionDefinition notificationsPermission = myGroup.AddPermission(CourseMatePermissions.Notifications.Default, L("Permission:Notifications"));
-        notificationsPermission.AddChild(CourseMatePermissions.Notifications.Create, L("Permission:Notifications.Create"));
-        notificationsPermission.AddChild(CourseMatePermissions.Notifications.Edit, L("Permission:Notifications.Edit"));
-        notificationsPermission.AddChild(CourseMatePermissions.Notifications.Delete, L("Permission:Notifications.Delete"));
     }
 
     private static LocalizableString L(string name)

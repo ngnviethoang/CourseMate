@@ -8,7 +8,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <UserSecretsId>fd58ff76-088f-40ef-b969-902037d8b5c9</UserSecretsId>
-        <RootNamespace>AppHost</RootNamespace>
+        <RootNamespace>CourseMate.AppHost</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
