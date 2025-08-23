@@ -1,5 +1,5 @@
-using AppHost.ServiceDefaults;
 using CourseMate.Data;
+using CourseMate.ServiceDefaults;
 using Serilog;
 using Serilog.Events;
 using Volo.Abp.Data;

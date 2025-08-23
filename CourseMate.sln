@@ -6,11 +6,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMate", "CourseMate\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMate.Tests", "CourseMate.Tests\CourseMate.Tests.csproj", "{470FBED4-479A-435A-A4B1-FFEAE5BEFAE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crawler", "Crawler\Crawler.csproj", "{E9588295-8D48-46A7-8D33-24E2068D9666}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMate.Crawler", "CourseMate.Crawler\CourseMate.Crawler.csproj", "{E9588295-8D48-46A7-8D33-24E2068D9666}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHost", "AppHost\AppHost.csproj", "{47326D7E-36D5-4E10-B0C7-7E5EAF619316}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoourseMate.AppHost", "CoourseMate.AppHost\CoourseMate.AppHost.csproj", "{47326D7E-36D5-4E10-B0C7-7E5EAF619316}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHost.ServiceDefaults", "AppHost.ServiceDefaults\AppHost.ServiceDefaults.csproj", "{3A63AFEC-9A8A-4E51-876D-597507A75024}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMate.ServiceDefaults", "CourseMate.ServiceDefaults\CourseMate.ServiceDefaults.csproj", "{3A63AFEC-9A8A-4E51-876D-597507A75024}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
