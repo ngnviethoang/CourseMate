@@ -91,10 +91,4 @@
     <ItemGroup>
       <ProjectReference Include="..\CourseMate.ServiceDefaults\CourseMate.ServiceDefaults.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Components\StorageSettingGroup\Default.cshtml" />
-      <_ContentIncludedByDefault Remove="Pages\StorageSettingGroup\Default.cshtml" />
-      <_ContentIncludedByDefault Remove="Pages\StorageSettingGroup\StorageSettingGroupComponent.razor" />
-    </ItemGroup>
 </Project>
