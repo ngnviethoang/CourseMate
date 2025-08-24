@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '@abp/ng.core';
 import { LoadingIndicatorService } from './services/loading-indicator.service';
 import { Observable } from 'rxjs';
+import { SettingTabsService } from '@abp/ng.setting-management/config';
+import { StorageSettingsComponent } from './components/storage-settings/storage-settings.component';
 
 @Component({
   standalone: false,
@@ -22,8 +24,19 @@ export class AppComponent implements OnInit {
   isAuthenticated = false;
   loading$: Observable<boolean>;
 
-  constructor(private authService: AuthService, private loadingService: LoadingIndicatorService) {
+  constructor(
+    private authService: AuthService,
+    private loadingService: LoadingIndicatorService,
+    private settingTabs: SettingTabsService) {
+
     this.loading$ = this.loadingService.loading$;
+    this.settingTabs.add([
+      {
+        name: 'Storage',
+        component: StorageSettingsComponent,
+        requiredPolicy: 'SettingManagement.Storages'
+      }
+    ]);
   }
 
   ngOnInit(): void {

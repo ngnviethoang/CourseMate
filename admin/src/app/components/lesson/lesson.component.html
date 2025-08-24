@@ -122,11 +122,11 @@
 
         @if (form.get('lessonType').value === LessonType.Video) {
           <div class="tw-col-start-4 tw-col-span-6">
-            <label for="thumbnail">Thumbnail</label>
-            <p-fileupload (uploadHandler)="uploadHandler($event)" customUpload="true" accept="image/*"
-                          [files]="files" maxFileSize="1000000" mode="advanced" previewWidth="500"
-                          (onRemove)="onRemove($event)"
-                          showCancelButton="false">
+            <label for="video">Video</label>
+            <p-toast />
+            <p-fileupload name="streamContent" url="https://localhost:44393/api/app/storage/upload-video"
+                          (onUpload)="onUpload($event)" accept="video/*" maxFileSize="100000000"
+                          mode="advanced">
               <ng-template #empty>
                 <div>Drag and drop files to here to upload.</div>
               </ng-template>
@@ -138,27 +138,37 @@
             <p-editor formControlName="content" [style]="{ height: '320px' }" />
           </div>
         } @else if (form.get('lessonType').value === LessonType.Quiz && form.get('quizQuestion')) {
-          <div class="tw-col-span-10" formGroupName="quizQuestion">
+          <div class="tw-col-span-2">
+            <p-button icon="pi pi-plus" (onClick)="addOption()" label="Question" size="small" />
+          </div>
+
+          <div class="tw-col-start-1 tw-col-span-10" formGroupName="quizQuestion">
             <p-floatlabel variant="on">
               <input pInputText class="tw-w-full" type="text" id="questionText" formControlName="questionText" />
               <label for="questionText">Question</label>
             </p-floatlabel>
           </div>
           <div class="tw-col-span-2">
-            <p-button (onClick)="addOption()">Add option</p-button>
+            <p-button icon="pi pi-plus" (onClick)="addOption()" label="Option" size="small" styleClass="tw-mr-2" />
+            <p-button icon="pi pi-trash" (onClick)="addOption()" severity="danger" label="Question" size="small" />
           </div>
 
-          <div formGroupName="quizQuestion">
+          <div class="tw-col-span-10 tw-grid tw-grid-cols-12 tw-gap-4" formGroupName="quizQuestion">
             @for (quizOption of getQuizOption().controls; track $index) {
               <div class="tw-col-span-10" formArrayName="quizOptions">
                 <p-floatlabel variant="on">
-                  <input pInputText class="tw-w-full" type="text" [id]="'text-' + $index"  formControlName="title" />
+                  <input pInputText class="tw-w-full" type="text" [id]="'text-' + $index" formControlName="title" />
                   <label for="title">Title</label>
                 </p-floatlabel>
               </div>
+
               <div class="tw-col-span-2" formArrayName="quizOptions">
-                <p-checkbox class="tw-m-2" formControlName="isActive" [binary]="true" inputId="isActive" />
-                <label for="isActive">Active</label>
+                <div class="tw-flex tw-items-center">
+                  <p-checkbox formControlName="isActive" [binary]="true" inputId="isActive" />
+                  <label for="isActive" class="tw-ml-2 tw-mr-4">Active</label>
+
+                  <p-button icon="pi pi-trash" (onClick)="addOption()" severity="danger" label="Option" size="small" />
+                </div>
               </div>
             }
           </div>

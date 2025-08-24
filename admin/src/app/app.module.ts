@@ -23,6 +23,10 @@ import Lara from '@primeng/themes/lara';
 import { definePreset } from '@primeng/themes';
 import { MessageService } from 'primeng/api';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { StorageSettingsComponent } from './components/storage-settings/storage-settings.component';
+import { Checkbox } from 'primeng/checkbox';
+import { FloatLabel } from 'primeng/floatlabel';
+import { InputText } from 'primeng/inputtext';
 
 const CourseMatePreset = definePreset(Lara, {
   semantic: {
@@ -43,7 +47,7 @@ const CourseMatePreset = definePreset(Lara, {
 });
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, StorageSettingsComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -52,7 +56,10 @@ const CourseMatePreset = definePreset(Lara, {
     CoreModule,
     ThemeLeptonXModule.forRoot(),
     SideMenuLayoutModule.forRoot(),
-    ProgressSpinner
+    ProgressSpinner,
+    Checkbox,
+    FloatLabel,
+    InputText
   ],
   providers: [APP_ROUTE_PROVIDER,
     provideAbpCore(

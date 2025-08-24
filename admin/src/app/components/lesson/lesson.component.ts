@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
-import { FileRemoveEvent, FileUploadHandlerEvent } from 'primeng/fileupload';
+import { FileRemoveEvent, FileUploadEvent, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { StorageService } from '@proxy/services/storages';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LookupDto } from '@proxy/services/dtos/lookups';
@@ -13,6 +13,7 @@ import { LessonDto } from '@proxy/services/dtos/lessons';
 import { LessonService } from '@proxy/services/lessons';
 import { ChapterService } from '@proxy/services/chapters';
 import { LessonType, lessonTypeOptions } from '@proxy/entities/lessons';
+import { MessageService } from 'primeng/api';
 
 @Component({
   standalone: false,
@@ -41,7 +42,8 @@ export class LessonComponent implements OnInit {
     private lookupService: LookupService,
     private storageService: StorageService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private messageService: MessageService
   ) {
   }
 
@@ -214,5 +216,9 @@ export class LessonComponent implements OnInit {
   }
 
   onRemove(_: FileRemoveEvent) {
+  }
+
+  onUpload(event: FileUploadEvent) {
+    this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Basic Mode' });
   }
 }

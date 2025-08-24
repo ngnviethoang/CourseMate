@@ -35,6 +35,7 @@
     "Permission:Lessons.Create": "Create",
     "Permission:Lessons.Edit": "Edit ",
     "Permission:Lessons.Delete": "Delete",
+    "Permission:Storage": "Storage",
     "Menu:CourseMate": "CourseMate",
     "Menu:Dashboard": "Dashboard",
     "Menu:Overview": "Overview",

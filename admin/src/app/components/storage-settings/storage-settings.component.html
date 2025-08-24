@@ -1,0 +1,14 @@
+<form [formGroup]="form">
+  <div class="tw-grid tw-grid-cols-12 tw-gap-4">
+    <div class="tw-col-span-10">
+      <p-floatlabel variant="on">
+        <input pInputText class="tw-w-full" type="text" id="title" formControlName="title" />
+        <label for="title">Title</label>
+      </p-floatlabel>
+    </div>
+    <div class="tw-col-span-2">
+      <p-checkbox class="tw-m-2" formControlName="isActive" [binary]="true" inputId="isActive" />
+      <label for="isActive">Active</label>
+    </div>
+  </div>
+</form>

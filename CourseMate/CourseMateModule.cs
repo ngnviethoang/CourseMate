@@ -2,6 +2,7 @@ using CourseMate.Data;
 using CourseMate.HealthChecks;
 using CourseMate.Localization;
 using CourseMate.Services.VnPay;
+using CourseMate.Settings;
 using MailKit.Security;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.DataProtection;
