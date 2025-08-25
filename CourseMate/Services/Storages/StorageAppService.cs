@@ -86,7 +86,7 @@ public class StorageAppService : CourseMateAppService, IStorageAppService
 
     private async Task ValidateExtension(IRemoteStreamContent streamContent)
     {
-        string? allowFileExtension = await _settingProvider.GetOrNullAsync(StorageSettings.AllowFileExtension);
+        string? allowFileExtension = await _settingProvider.GetOrNullAsync(StorageSettingNames.AllowFileExtension);
         if (allowFileExtension.IsNullOrWhiteSpace())
         {
             throw new UserFriendlyException("No allowed file extension is configured.");
@@ -116,12 +116,12 @@ public class StorageAppService : CourseMateAppService, IStorageAppService
 
         if (contentType.StartsWith("image/"))
         {
-            long maxSize = await _settingProvider.GetAsync<long>(StorageSettings.ImageMaxSize);
+            long maxSize = await _settingProvider.GetAsync<long>(StorageSettingNames.ImageMaxSize);
             EnsureFileSize(fileSize, maxSize, "image");
         }
         else if (contentType.StartsWith("video/"))
         {
-            long maxSize = await _settingProvider.GetAsync<long>(StorageSettings.VideoMaxSize);
+            long maxSize = await _settingProvider.GetAsync<long>(StorageSettingNames.VideoMaxSize);
             EnsureFileSize(fileSize, maxSize, "video");
         }
         else
