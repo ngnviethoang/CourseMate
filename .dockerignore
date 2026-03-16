@@ -24,10 +24,5 @@
 **/secrets.dev.yaml
 **/values.dev.yaml
 **/.classpath
-!**/.gitignore
-!.git/HEAD
-!.git/config
-!.git/packed-refs
-!.git/refs/heads/**
 LICENSE
 README.md
