@@ -1,0 +1,1 @@
+﻿docker build -f CourseMate.API/Dockerfile -t coursemate-api:0.0.1 . --progress=plain
