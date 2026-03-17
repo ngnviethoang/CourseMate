@@ -9,3 +9,11 @@
         environment:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres
+
+    api:
+        container_name: api
+        build: 
+            context: .
+            dockerfile: ./CourseMate.API/Dockerfile
+        ports:
+            - "8080:8080"
