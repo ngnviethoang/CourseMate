@@ -1,1 +1,5 @@
 ﻿docker build -f CourseMate.API/Dockerfile -t coursemate-api:0.0.1 . --progress=plain
+
+ef migrations add --project CourseMate.Infrastructure\CourseMate.Infrastructure.csproj --startup-project CourseMate.API\CourseMate.API.csproj --context CourseMate.Core.CourseMateDbContext --configuration Debug Initial --output-dir Migrations
+
+ef database update --project CourseMate.Infrastructure\CourseMate.Infrastructure.csproj --startup-project CourseMate.API\CourseMate.API.csproj --context CourseMate.Core.CourseMateDbContext --configuration Debug 20260317162718_Initial

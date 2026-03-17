@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CourseMate.Core.Migrations
 {
     [DbContext(typeof(CourseMateDbContext))]
-    [Migration("20260317152002_Initial")]
+    [Migration("20260317162718_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -465,12 +465,15 @@ namespace CourseMate.Core.Migrations
                     b.Property<int>("NotificationType")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("ReceiverId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("citext");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -947,9 +950,7 @@ namespace CourseMate.Core.Migrations
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", null)
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("CourseMate.Core.Entities.Order", b =>

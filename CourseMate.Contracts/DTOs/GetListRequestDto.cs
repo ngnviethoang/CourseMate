@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using MediatR;
 
 namespace CourseMate.Contract.DTOs;
@@ -8,11 +8,11 @@ public abstract class GetListQuery<T> : IRequest<PagedDto<T>> where T : class
     [MaxLength(1024)]
     public string? Sorting { get; set; }
 
-    [Range(0, 25)]
-    public int? PageSize { get; set; }
+    [Range(1, 100)]
+    public int PageSize { get; set; } = 10;
 
-    [Range(0, int.MaxValue)]
-    public int? PageIndex { get; set; }
+    [Range(1, int.MaxValue)]
+    public int PageIndex { get; set; } = 1;
 
     [MaxLength(100)]
     public string? Filter { get; set; }

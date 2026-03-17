@@ -1,6 +1,5 @@
 ﻿using CourseMate.Contract.DTOs;
 using CourseMate.Contract.DTOs.Admins;
-using CourseMate.Contract.Exceptions;
 using CourseMate.Core;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +29,8 @@ internal sealed class GetListCategoryQueryHandler : IRequestHandler<GetListCateg
 
         return new PagedDto<CategoryDto>
         {
+            PageSize = request.PageSize,
+            PageIndex = request.PageIndex,
             Items = categories
         };
     }

@@ -12,7 +12,7 @@ namespace CourseMate.API.Controllers;
 [Authorize(Roles = Roles.Student)]
 public class StudentController : ControllerBase
 {
-    private IMediator _mediator;
+    private readonly IMediator _mediator;
 
     public StudentController(IMediator mediator)
     {

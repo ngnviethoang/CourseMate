@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # 🧱 CourseMate Architecture
 
 ## 📌 Overview
@@ -39,11 +43,15 @@
 - Command uses `CourseMateDbContext`
 - Query uses `CourseMateReadOnlyDbContext`
 - Can integrate with Admin Category API
-
+- In Command, Query: must throw `BusinessException`, not generic exceptions
+- Do not hardcode error messages; use Exception Constants
+- Query must not throw exceptions
+- Always return safe defaults (empty list or null)
 ---
 
 ### 🔹 Contracts
 - Shared DTOs (Request/Response)
+- DTO must be POCO classes (no inheritance, no logic)
 - Enums & constants across projects
 - Input validation
 - No business logic

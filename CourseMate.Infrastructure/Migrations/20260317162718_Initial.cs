@@ -205,11 +205,12 @@ namespace CourseMate.Core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ReceiverId = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "citext", maxLength: 1024, nullable: false),
                     Message = table.Column<string>(type: "citext", maxLength: 32768, nullable: false),
                     IsRead = table.Column<bool>(type: "boolean", nullable: false),
                     NotificationType = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     LastModificationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
@@ -221,8 +222,7 @@ namespace CourseMate.Core.Migrations
                         name: "FK_Notifications_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
