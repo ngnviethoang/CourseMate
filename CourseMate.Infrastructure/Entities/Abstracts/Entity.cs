@@ -8,8 +8,12 @@ public abstract class Entity : IAuditable, ISoftDelete
     }
 
     public Guid Id { get; set; }
+
     public Guid? UserId { get; set; }
+
     public DateTimeOffset CreationTime { get; set; }
+
     public DateTimeOffset? LastModificationTime { get; set; }
+
     public bool IsDeleted { get; set; }
 }

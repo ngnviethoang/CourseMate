@@ -1,6 +1,6 @@
-﻿using CourseMate.Contract;
+﻿using System.ComponentModel.DataAnnotations;
+using CourseMate.Contract;
 using CourseMate.Core.Entities.Abstracts;
-using System.ComponentModel.DataAnnotations;
 
 namespace CourseMate.Core.Entities;
 
