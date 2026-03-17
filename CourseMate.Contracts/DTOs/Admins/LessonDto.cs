@@ -19,4 +19,8 @@ public class LessonDto
     public LessonType LessonType { get; set; }
 
     public int Position { get; set; }
+
+    public DateTimeOffset CreationTime { get; set; }
+
+    public DateTimeOffset? LastModificationTime { get; set; }
 }

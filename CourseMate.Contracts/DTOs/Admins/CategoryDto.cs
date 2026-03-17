@@ -1,4 +1,4 @@
-﻿namespace CourseMate.Contract.DTOs.Admins;
+namespace CourseMate.Contract.DTOs.Admins;
 
 public class CategoryDto
 {
@@ -9,4 +9,8 @@ public class CategoryDto
     public string Description { get; set; } = string.Empty;
 
     public bool IsActive { get; set; }
+
+    public DateTimeOffset CreationTime { get; set; }
+
+    public DateTimeOffset? LastModificationTime { get; set; }
 }

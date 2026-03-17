@@ -1,50 +1,43 @@
-"use client";
+'use client'
 
-import { ChevronRight, Play } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { ChevronRight, Play } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 
 const enrolledCourses = [
   {
     id: 1,
-    title: "React – The Complete Guide",
-    instructor: "Maximilian Schwarzmüller",
+    title: 'React – The Complete Guide',
+    instructor: 'Maximilian Schwarzmüller',
     progress: 68,
     totalLessons: 60,
     completedLessons: 41,
-    thumbnail: "https://placehold.co/400x225/6366f1/ffffff?text=React",
-    category: "Development",
+    thumbnail: 'https://placehold.co/400x225/6366f1/ffffff?text=React',
+    category: 'Development'
   },
   {
     id: 2,
-    title: "UI/UX Design Masterclass",
-    instructor: "Daniel Walter Scott",
+    title: 'UI/UX Design Masterclass',
+    instructor: 'Daniel Walter Scott',
     progress: 35,
     totalLessons: 48,
     completedLessons: 17,
-    thumbnail: "https://placehold.co/400x225/ec4899/ffffff?text=UI%2FUX",
-    category: "Design",
+    thumbnail: 'https://placehold.co/400x225/ec4899/ffffff?text=UI%2FUX',
+    category: 'Design'
   },
   {
     id: 3,
-    title: "Python for Data Science & AI",
-    instructor: "Jose Portilla",
+    title: 'Python for Data Science & AI',
+    instructor: 'Jose Portilla',
     progress: 12,
     totalLessons: 95,
     completedLessons: 11,
-    thumbnail: "https://placehold.co/400x225/10b981/ffffff?text=Python",
-    category: "Data Science",
-  },
-];
+    thumbnail: 'https://placehold.co/400x225/10b981/ffffff?text=Python',
+    category: 'Data Science'
+  }
+]
 
 export function ContinueLearning() {
   return (
@@ -60,7 +53,7 @@ export function ContinueLearning() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {enrolledCourses.map((course) => (
+        {enrolledCourses.map(course => (
           <Card key={course.id} className="group cursor-pointer transition-shadow hover:shadow-md">
             <div className="relative overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -87,7 +80,9 @@ export function ContinueLearning() {
             <CardContent className="space-y-1.5 pb-0">
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span className="font-medium text-foreground">{course.progress}% complete</span>
-                <span>{course.completedLessons}/{course.totalLessons} lessons</span>
+                <span>
+                  {course.completedLessons}/{course.totalLessons} lessons
+                </span>
               </div>
               <Progress value={course.progress} />
             </CardContent>
@@ -101,5 +96,5 @@ export function ContinueLearning() {
         ))}
       </div>
     </section>
-  );
+  )
 }

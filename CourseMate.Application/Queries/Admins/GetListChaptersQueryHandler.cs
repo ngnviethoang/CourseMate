@@ -33,8 +33,23 @@ internal sealed class GetListChaptersQueryHandler : IRequestHandler<GetListChapt
                 CourseId = chapter.CourseId,
                 CourseName = course.Title,
                 Title = chapter.Title,
-                Position = chapter.Position
+                Position = chapter.Position,
+                CreationTime = chapter.CreationTime,
+                LastModificationTime = chapter.LastModificationTime
             };
+
+        query = request.Sorting switch
+        {
+            "title" => query.OrderBy(x => x.Title),
+            "title_desc" => query.OrderByDescending(x => x.Title),
+            "position" => query.OrderBy(x => x.Position),
+            "position_desc" => query.OrderByDescending(x => x.Position),
+            "creationTime_desc" => query.OrderByDescending(x => x.CreationTime),
+            "lastModificationTime_desc" => query.OrderByDescending(x => x.LastModificationTime),
+            _ => query.OrderBy(x => x.CreationTime)
+        };
+
+        int total = await query.CountAsync(cancellationToken);
 
         List<ChapterDto> chapters = await query
             .Skip((request.PageIndex - 1) * request.PageSize)
@@ -45,7 +60,8 @@ internal sealed class GetListChaptersQueryHandler : IRequestHandler<GetListChapt
         {
             Items = chapters,
             PageIndex = request.PageIndex,
-            PageSize = request.PageSize
+            PageSize = request.PageSize,
+            TotalCount = total
         };
     }
 }

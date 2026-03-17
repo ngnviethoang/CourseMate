@@ -37,8 +37,23 @@ internal sealed class GetListLessonsQueryHandler : IRequestHandler<GetListLesson
                 CourseName = course.Title,
                 Title = lesson.Title,
                 LessonType = lesson.LessonType,
-                Position = lesson.Position
+                Position = lesson.Position,
+                CreationTime = lesson.CreationTime,
+                LastModificationTime = lesson.LastModificationTime
             };
+
+        query = request.Sorting switch
+        {
+            "title" => query.OrderBy(x => x.Title),
+            "title_desc" => query.OrderByDescending(x => x.Title),
+            "position" => query.OrderBy(x => x.Position),
+            "position_desc" => query.OrderByDescending(x => x.Position),
+            "creationTime_desc" => query.OrderByDescending(x => x.CreationTime),
+            "lastModificationTime_desc" => query.OrderByDescending(x => x.LastModificationTime),
+            _ => query.OrderBy(x => x.CreationTime)
+        };
+
+        int total = await query.CountAsync(cancellationToken);
 
         List<LessonDto> lessons = await query
             .Skip((request.PageIndex - 1) * request.PageSize)
@@ -49,7 +64,8 @@ internal sealed class GetListLessonsQueryHandler : IRequestHandler<GetListLesson
         {
             Items = lessons,
             PageIndex = request.PageIndex,
-            PageSize = request.PageSize
+            PageSize = request.PageSize,
+            TotalCount = total
         };
     }
 }

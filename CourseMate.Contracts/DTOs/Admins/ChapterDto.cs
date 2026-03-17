@@ -11,4 +11,8 @@ public class ChapterDto
     public string Title { get; set; } = string.Empty;
 
     public int Position { get; set; }
+
+    public DateTimeOffset CreationTime { get; set; }
+
+    public DateTimeOffset? LastModificationTime { get; set; }
 }

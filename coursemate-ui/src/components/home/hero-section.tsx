@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { BookOpen, Clock, Search, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { BookOpen, Clock, Search, Star } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 export function HeroSection() {
   return (
@@ -14,11 +14,10 @@ export function HeroSection() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
           <p className="mb-2 text-sm font-medium text-primary">Welcome back 👋</p>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-            Hello, Nguyen Han!
-          </h1>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">Hello, Nguyen Han!</h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            You have <span className="font-semibold text-foreground">3 courses</span> in progress. Keep up the great work!
+            You have <span className="font-semibold text-foreground">3 courses</span> in progress. Keep up the great
+            work!
           </p>
 
           {/* Search */}
@@ -36,9 +35,9 @@ export function HeroSection() {
           {/* Quick stat pills */}
           <div className="mt-6 flex flex-wrap gap-3">
             {[
-              { icon: BookOpen, label: "7 Courses enrolled" },
-              { icon: Clock, label: "42h total learned" },
-              { icon: Star, label: "4 Certificates earned" },
+              { icon: BookOpen, label: '7 Courses enrolled' },
+              { icon: Clock, label: '42h total learned' },
+              { icon: Star, label: '4 Certificates earned' }
             ].map(({ icon: Icon, label }) => (
               <div
                 key={label}
@@ -52,5 +51,5 @@ export function HeroSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }

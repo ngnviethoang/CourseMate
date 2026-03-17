@@ -45,14 +45,14 @@ public class AdminController : ControllerBase
     {
         request.Id = id;
         await _mediator.Send(request);
-        return Ok();
+        return NoContent();
     }
 
     [HttpDelete("categories/{id:guid}")]
     public async Task<IActionResult> DeleteCategoryAsync(Guid id)
     {
         await _mediator.Send(new DeleteCategoryCommand(id));
-        return Ok();
+        return NoContent();
     }
 
     #endregion
@@ -85,14 +85,14 @@ public class AdminController : ControllerBase
     {
         request.Id = id;
         await _mediator.Send(request);
-        return Ok();
+        return NoContent();
     }
 
     [HttpDelete("courses/{id:guid}")]
     public async Task<IActionResult> DeleteCourseAsync(Guid id)
     {
         await _mediator.Send(new DeleteCourseCommand(id));
-        return Ok();
+        return NoContent();
     }
 
     #endregion
@@ -125,14 +125,14 @@ public class AdminController : ControllerBase
     {
         request.Id = id;
         await _mediator.Send(request);
-        return Ok();
+        return NoContent();
     }
 
     [HttpDelete("chapters/{id:guid}")]
     public async Task<IActionResult> DeleteChapterAsync(Guid id)
     {
         await _mediator.Send(new DeleteChapterCommand(id));
-        return Ok();
+        return NoContent();
     }
 
     #endregion
@@ -165,14 +165,14 @@ public class AdminController : ControllerBase
     {
         request.Id = id;
         await _mediator.Send(request);
-        return Ok();
+        return NoContent();
     }
 
     [HttpDelete("lessons/{id:guid}")]
     public async Task<IActionResult> DeleteLessonAsync(Guid id)
     {
         await _mediator.Send(new DeleteLessonCommand(id));
-        return Ok();
+        return NoContent();
     }
 
     #endregion
@@ -205,14 +205,14 @@ public class AdminController : ControllerBase
     {
         request.Id = id;
         await _mediator.Send(request);
-        return Ok();
+        return NoContent();
     }
 
     [HttpDelete("users/{id:guid}")]
     public async Task<IActionResult> DeleteUserAsync(Guid id)
     {
         await _mediator.Send(new DeleteUserCommand(id));
-        return Ok();
+        return NoContent();
     }
 
     #endregion

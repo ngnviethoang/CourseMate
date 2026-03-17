@@ -9,4 +9,8 @@ public class UserDto
     public string? Email { get; set; } = string.Empty;
 
     public string? PhoneNumber { get; set; } = string.Empty;
+
+    public DateTimeOffset CreationTime { get; set; }
+
+    public DateTimeOffset? LastModificationTime { get; set; }
 }

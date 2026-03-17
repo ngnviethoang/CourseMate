@@ -39,8 +39,23 @@ internal sealed class GetListCoursesQueryHandler : IRequestHandler<GetListCourse
                 CategoryId = course.CategoryId,
                 CategoryName = category.Name,
                 InstructorId = course.InstructorId,
-                InstructorName = instructor.UserName
+                InstructorName = instructor.UserName,
+                CreationTime = course.CreationTime,
+                LastModificationTime = course.LastModificationTime
             };
+
+        query = request.Sorting switch
+        {
+            "title" => query.OrderBy(x => x.Title),
+            "title_desc" => query.OrderByDescending(x => x.Title),
+            "price" => query.OrderBy(x => x.Price),
+            "price_desc" => query.OrderByDescending(x => x.Price),
+            "creationTime_desc" => query.OrderByDescending(x => x.CreationTime),
+            "lastModificationTime_desc" => query.OrderByDescending(x => x.LastModificationTime),
+            _ => query.OrderBy(x => x.CreationTime)
+        };
+
+        int total = await query.CountAsync(cancellationToken);
 
         List<CourseDto> courses = await query
             .Skip((request.PageIndex - 1) * request.PageSize)
@@ -51,7 +66,8 @@ internal sealed class GetListCoursesQueryHandler : IRequestHandler<GetListCourse
         {
             Items = courses,
             PageIndex = request.PageIndex,
-            PageSize = request.PageSize
+            PageSize = request.PageSize,
+            TotalCount = total
         };
     }
 }

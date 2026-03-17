@@ -21,4 +21,8 @@ public class CourseDto
     public Guid InstructorId { get; set; }
 
     public string? InstructorName { get; set; } = string.Empty;
+
+    public DateTimeOffset CreationTime { get; set; }
+
+    public DateTimeOffset? LastModificationTime { get; set; }
 }

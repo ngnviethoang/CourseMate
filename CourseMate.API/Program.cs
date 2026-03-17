@@ -14,6 +14,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddProblemDetails().AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
 
 WebApplication app = builder.Build();
 
@@ -23,9 +33,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseExceptionHandler();
+app.UseHttpsRedirection();
+app.UseCors();
 app.UseSwaggerUI();
 app.MapOpenApi();
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();

@@ -1,28 +1,18 @@
-"use client";
+'use client'
 
-import {
-  BarChart3,
-  Briefcase,
-  Camera,
-  ChevronRight,
-  Code2,
-  Globe,
-  Music,
-  Palette,
-  TrendingUp,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { BarChart3, Briefcase, Camera, ChevronRight, Code2, Globe, Music, Palette, TrendingUp } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const categories = [
-  { label: "Development", icon: Code2, color: "bg-indigo-100 text-indigo-600" },
-  { label: "Design", icon: Palette, color: "bg-pink-100 text-pink-600" },
-  { label: "Data Science", icon: BarChart3, color: "bg-emerald-100 text-emerald-600" },
-  { label: "Business", icon: Briefcase, color: "bg-amber-100 text-amber-600" },
-  { label: "Language", icon: Globe, color: "bg-sky-100 text-sky-600" },
-  { label: "Music", icon: Music, color: "bg-purple-100 text-purple-600" },
-  { label: "Photography", icon: Camera, color: "bg-rose-100 text-rose-600" },
-  { label: "Marketing", icon: TrendingUp, color: "bg-orange-100 text-orange-600" },
-];
+  { label: 'Development', icon: Code2, color: 'bg-indigo-100 text-indigo-600' },
+  { label: 'Design', icon: Palette, color: 'bg-pink-100 text-pink-600' },
+  { label: 'Data Science', icon: BarChart3, color: 'bg-emerald-100 text-emerald-600' },
+  { label: 'Business', icon: Briefcase, color: 'bg-amber-100 text-amber-600' },
+  { label: 'Language', icon: Globe, color: 'bg-sky-100 text-sky-600' },
+  { label: 'Music', icon: Music, color: 'bg-purple-100 text-purple-600' },
+  { label: 'Photography', icon: Camera, color: 'bg-rose-100 text-rose-600' },
+  { label: 'Marketing', icon: TrendingUp, color: 'bg-orange-100 text-orange-600' }
+]
 
 export function Categories() {
   return (
@@ -47,5 +37,5 @@ export function Categories() {
         ))}
       </div>
     </section>
-  );
+  )
 }

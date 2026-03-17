@@ -17,7 +17,7 @@ internal sealed class CreateCategoryCommandHandler : IRequestHandler<CreateCateg
 
     public async Task<ResultIdDto> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
-        Category category = new(Guid.NewGuid(), request.Name, request.Description, false);
+        Category category = new(Guid.NewGuid(), request.Name, request.Description, request.IsActive);
 
         await _dbContext.AddAsync(category, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
