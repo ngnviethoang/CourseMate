@@ -1,8 +1,8 @@
-using CourseMate.Contract.Constants;
-using CourseMate.Contract.DTOs.Admins;
-using CourseMate.Contract.Exceptions;
-using CourseMate.Core;
-using CourseMate.Core.Entities;
+using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Contracts.Exceptions;
+using CourseMate.Infrastructure;
+using CourseMate.Infrastructure.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

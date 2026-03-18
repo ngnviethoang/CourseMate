@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using MediatR;
 
-namespace CourseMate.Contract.DTOs;
+namespace CourseMate.Contracts.DTOs;
 
 public abstract class GetListQuery<T> : IRequest<PagedDto<T>> where T : class
 {

@@ -1,7 +1,7 @@
-using CourseMate.Contract.Enums;
+using CourseMate.Contracts.Enums;
 using MediatR;
 
-namespace CourseMate.Contract.DTOs.Admins;
+namespace CourseMate.Contracts.DTOs.Admins;
 
 public class UpdateLessonCommand : IRequest
 {

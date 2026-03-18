@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace CourseMate.Core;
+namespace CourseMate.Infrastructure;
 
 public static class AssemblyReference
 {

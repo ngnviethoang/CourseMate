@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using CourseMate.Contract.Exceptions;
+using CourseMate.Contracts.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 

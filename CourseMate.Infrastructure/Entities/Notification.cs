@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using CourseMate.Contract;
-using CourseMate.Contract.Enums;
-using CourseMate.Core.Entities.Abstracts;
+using CourseMate.Contracts;
+using CourseMate.Contracts.Enums;
+using CourseMate.Infrastructure.Entities.Abstracts;
 
-namespace CourseMate.Core.Entities;
+namespace CourseMate.Infrastructure.Entities;
 
 public class Notification : Entity
 {

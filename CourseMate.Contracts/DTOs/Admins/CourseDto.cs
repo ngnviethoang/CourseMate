@@ -1,4 +1,4 @@
-namespace CourseMate.Contract.DTOs.Admins;
+namespace CourseMate.Contracts.DTOs.Admins;
 
 public class CourseDto
 {

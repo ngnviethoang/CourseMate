@@ -17,12 +17,35 @@ type FetchOptions = Omit<RequestInit, 'body'> & {
 async function apiClient<T>(url: string, options: FetchOptions = {}): Promise<T> {
   const { body, headers, ...rest } = options
 
+  let token = ''
+  if (typeof window === 'undefined') {
+    try {
+      const { cookies } = await import('next/headers')
+      const cookieStore = await cookies()
+      token = cookieStore.get('accessToken')?.value ?? ''
+    } catch {
+      // ignore
+    }
+  } else {
+    token =
+      document.cookie
+        .split('; ')
+        .find(row => row.startsWith('accessToken='))
+        ?.split('=')[1] ?? ''
+  }
+
+  const reqHeaders: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(headers as Record<string, string>)
+  }
+
+  if (token) {
+    reqHeaders['Authorization'] = `Bearer ${token}`
+  }
+
   const res = await fetch(`${BASE_URL}${url}`, {
     ...rest,
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers
-    },
+    headers: reqHeaders,
     body: body !== undefined ? JSON.stringify(body) : undefined
   })
 

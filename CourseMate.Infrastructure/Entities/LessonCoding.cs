@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using CourseMate.Contract;
-using CourseMate.Core.Entities.Abstracts;
+using CourseMate.Contracts;
+using CourseMate.Infrastructure.Entities.Abstracts;
 
-namespace CourseMate.Core.Entities;
+namespace CourseMate.Infrastructure.Entities;
 
 public class LessonCoding : Entity
 {

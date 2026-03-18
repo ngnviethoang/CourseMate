@@ -1,7 +1,16 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AdminSidebar } from '@/components/admin/admin-sidebar'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+
+  if (pathname === '/management/login') {
+    return <>{children}</>
+  }
+
   return (
     <SidebarProvider>
       <AdminSidebar />

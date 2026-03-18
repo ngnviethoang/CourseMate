@@ -1,7 +1,7 @@
-﻿using CourseMate.Contract.DTOs;
-using CourseMate.Contract.DTOs.Admins;
-using CourseMate.Core;
-using CourseMate.Core.Entities;
+﻿using CourseMate.Contracts.DTOs;
+using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Infrastructure;
+using CourseMate.Infrastructure.Entities;
 using MediatR;
 
 namespace CourseMate.Application.Commands.Admins;

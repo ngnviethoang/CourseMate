@@ -1,4 +1,4 @@
-﻿using CourseMate.Contract.DTOs.Auth;
+﻿using CourseMate.Contracts.DTOs.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

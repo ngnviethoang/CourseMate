@@ -1,6 +1,6 @@
-using CourseMate.Contract.DTOs;
-using CourseMate.Contract.DTOs.Admins;
-using CourseMate.Core;
+using CourseMate.Contracts.DTOs;
+using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

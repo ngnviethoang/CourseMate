@@ -1,7 +1,7 @@
 using System.Text;
 using CourseMate.API.Middlewares;
 using CourseMate.Application;
-using CourseMate.Core;
+using CourseMate.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -17,20 +17,21 @@ builder.Services.AddAuthentication(options =>
     })
     .AddJwtBearer(options =>
     {
-        options.Authority = configuration["Jwt:Authority"];
-        options.Audience = configuration["Jwt:Audience"];
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
+            ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
+            ValidIssuer = configuration["Jwt:Issuer"],
+            ValidAudience = configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
         };
-        options.MapInboundClaims = false;
     });
 
 builder.Services.AddIdentityCore<IdentityUser<Guid>>()
     .AddSignInManager()
+    .AddRoles<IdentityRole<Guid>>()
     .AddEntityFrameworkStores<CourseMateDbContext>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -56,7 +57,7 @@ builder.Services.AddCors(options =>
 });
 
 WebApplication app = builder.Build();
-
+await app.Services.SeedAsync();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -71,4 +72,4 @@ app.UseAuthentication();
 app.UseAuthorization();
 // app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
 app.MapControllers();
-app.Run();
+await app.RunAsync();

@@ -1,4 +1,4 @@
-namespace CourseMate.Contract.Enums;
+namespace CourseMate.Contracts.Enums;
 
 public enum OrderStatus
 {

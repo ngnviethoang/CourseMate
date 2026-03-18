@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Security.Claims;
-using CourseMate.Core.Entities;
-using CourseMate.Core.Entities.Abstracts;
+using CourseMate.Infrastructure.Entities;
+using CourseMate.Infrastructure.Entities.Abstracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace CourseMate.Core;
+namespace CourseMate.Infrastructure;
 
 public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
 {

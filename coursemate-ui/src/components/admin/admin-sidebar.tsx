@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutGrid, BookOpen, Layers, FileText, Users, Tag, GraduationCap } from 'lucide-react'
+import { LayoutGrid, BookOpen, Layers, FileText, Users, Tag, GraduationCap, LogOut } from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -10,7 +10,8 @@ import {
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuItem,
-  SidebarHeader
+  SidebarHeader,
+  SidebarFooter
 } from '@/components/ui/sidebar'
 
 const navItems = [
@@ -72,6 +73,19 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter className="border-t border-border/50 p-4">
+        <button
+          onClick={() => {
+            document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+            router.push('/management/login')
+          }}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+        >
+          <LogOut className="size-4 shrink-0" />
+          <span className="font-medium">Logout</span>
+        </button>
+      </SidebarFooter>
     </Sidebar>
   )
 }

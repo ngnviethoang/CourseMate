@@ -1,3 +1,3 @@
-namespace CourseMate.Contract.DTOs.Admins;
+namespace CourseMate.Contracts.DTOs.Admins;
 
 public class GetListUsersQuery : GetListQuery<UserDto>;

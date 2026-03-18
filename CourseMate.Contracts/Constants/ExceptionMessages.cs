@@ -1,4 +1,4 @@
-namespace CourseMate.Contract.Constants;
+namespace CourseMate.Contracts.Constants;
 
 public static class ExceptionMessages
 {

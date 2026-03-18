@@ -1,13 +1,15 @@
-using CourseMate.Contract.DTOs;
-using CourseMate.Contract.DTOs.Admins;
+using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.DTOs;
+using CourseMate.Contracts.DTOs.Admins;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseMate.API.Controllers;
 
 [ApiController]
 [Route("api/admin")]
-// [Authorize(Roles = Roles.Admin)]
+[Authorize(Roles = Roles.Admin)]
 public class AdminController : ControllerBase
 {
     private readonly IMediator _mediator;

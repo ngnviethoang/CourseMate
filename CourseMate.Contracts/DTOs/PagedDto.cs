@@ -1,4 +1,4 @@
-namespace CourseMate.Contract.DTOs;
+namespace CourseMate.Contracts.DTOs;
 
 public class PagedDto<T> where T : class
 {

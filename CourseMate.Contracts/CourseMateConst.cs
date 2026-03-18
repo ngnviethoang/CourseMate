@@ -1,4 +1,4 @@
-﻿namespace CourseMate.Contract;
+﻿namespace CourseMate.Contracts;
 
 public static class CourseMateConsts
 {

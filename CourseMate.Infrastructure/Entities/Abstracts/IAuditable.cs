@@ -1,4 +1,4 @@
-﻿namespace CourseMate.Core.Entities.Abstracts;
+﻿namespace CourseMate.Infrastructure.Entities.Abstracts;
 
 public interface IAuditable
 {

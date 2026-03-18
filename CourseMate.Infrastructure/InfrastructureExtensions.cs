@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CourseMate.Core;
+namespace CourseMate.Infrastructure;
 
 public static class InfrastructureExtensions
 {

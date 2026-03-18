@@ -1,6 +1,6 @@
-using CourseMate.Contract.Enums;
+using CourseMate.Contracts.Enums;
 
-namespace CourseMate.Contract.DTOs.Admins;
+namespace CourseMate.Contracts.DTOs.Admins;
 
 public class LessonDto
 {

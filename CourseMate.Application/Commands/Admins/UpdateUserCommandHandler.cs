@@ -1,6 +1,6 @@
-using CourseMate.Contract.Constants;
-using CourseMate.Contract.DTOs.Admins;
-using CourseMate.Contract.Exceptions;
+using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Contracts.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 

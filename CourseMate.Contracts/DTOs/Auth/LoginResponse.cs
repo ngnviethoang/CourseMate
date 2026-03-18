@@ -1,4 +1,4 @@
-﻿namespace CourseMate.Contract.DTOs.Auth;
+﻿namespace CourseMate.Contracts.DTOs.Auth;
 
 public class LoginResponse
 {

@@ -1,3 +1,3 @@
-﻿namespace CourseMate.Contract.DTOs;
+﻿namespace CourseMate.Contracts.DTOs;
 
 public record ResultIdDto(Guid Id);

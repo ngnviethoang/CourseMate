@@ -1,5 +1,5 @@
-﻿using CourseMate.Contract.DTOs.Auth;
-using CourseMate.Contract.Exceptions;
+using CourseMate.Contracts.DTOs.Auth;
+using CourseMate.Contracts.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -31,6 +31,8 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand>
         {
             throw new BusinessException(result.Errors.FirstOrDefault()?.Description ?? string.Empty);
         }
+
+        await _userManager.AddToRoleAsync(user, request.Role.ToString());
 
         // TODO SendConfirmationEmailAsync
     }

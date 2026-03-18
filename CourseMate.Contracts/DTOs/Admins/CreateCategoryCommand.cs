@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace CourseMate.Contract.DTOs.Admins;
+namespace CourseMate.Contracts.DTOs.Admins;
 
 public class CreateCategoryCommand : IRequest<ResultIdDto>
 {

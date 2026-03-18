@@ -1,12 +1,12 @@
 using System.Linq.Expressions;
-using CourseMate.Core.Entities;
-using CourseMate.Core.Entities.Abstracts;
+using CourseMate.Infrastructure.Entities;
+using CourseMate.Infrastructure.Entities.Abstracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace CourseMate.Core;
+namespace CourseMate.Infrastructure;
 
 public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
 {

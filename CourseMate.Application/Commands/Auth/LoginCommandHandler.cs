@@ -1,14 +1,13 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using CourseMate.Contract.Constants;
-using CourseMate.Contract.DTOs.Auth;
-using CourseMate.Contract.Exceptions;
+using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.DTOs.Auth;
+using CourseMate.Contracts.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace CourseMate.Application.Commands.Auth;
 
@@ -42,21 +41,27 @@ internal sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginR
             throw new UnauthorizedAccessException(result.ToString());
         }
 
-        // The signInManager already produced the needed response in the form of a cookie or bearer token.
+        IList<string> roles = await _userManager.GetRolesAsync(user);
+        string accessToken = GenerateJwtToken(user, roles);
         return new LoginResponse
         {
-            AccessToken = GenerateJwtToken(user)
+            AccessToken = accessToken
         };
     }
 
-    private string GenerateJwtToken(IdentityUser<Guid> user)
+    private string GenerateJwtToken(IdentityUser<Guid> user, IList<string> roles)
     {
-        IReadOnlyList<Claim> claims =
+        ICollection<Claim> claims =
         [
-            new(JwtRegisteredClaimNames.Sub, user.UserName ?? string.Empty),
-            new(JwtRegisteredClaimNames.Sid, user.Id.ToString()),
-            new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty)
+            new(ClaimTypes.Name, user.UserName ?? string.Empty),
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Email, user.Email ?? string.Empty)
         ];
+
+        foreach (string role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
 
         SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
         SigningCredentials credentials = new(key, SecurityAlgorithms.HmacSha256);

@@ -1,9 +1,9 @@
-using CourseMate.Core.Entities;
+using CourseMate.Infrastructure.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CourseMate.Core.DbConfigurations;
+namespace CourseMate.Infrastructure.DbConfigurations;
 
 public class EnrollmentConfigurations : IEntityTypeConfiguration<Enrollment>
 {

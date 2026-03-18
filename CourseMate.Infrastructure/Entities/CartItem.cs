@@ -1,6 +1,6 @@
-using CourseMate.Core.Entities.Abstracts;
+using CourseMate.Infrastructure.Entities.Abstracts;
 
-namespace CourseMate.Core.Entities;
+namespace CourseMate.Infrastructure.Entities;
 
 public class CartItem : Entity
 {

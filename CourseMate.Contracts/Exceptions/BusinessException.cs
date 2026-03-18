@@ -1,4 +1,4 @@
-﻿namespace CourseMate.Contract.Exceptions;
+﻿namespace CourseMate.Contracts.Exceptions;
 
 public class BusinessException : Exception
 {

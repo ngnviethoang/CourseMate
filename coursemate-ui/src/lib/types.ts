@@ -11,6 +11,24 @@ export interface ResultIdDto {
   id: string
 }
 
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+
+export interface LoginCommand {
+  userName: string
+  password: string
+}
+
+export interface RegisterCommand {
+  userName: string
+  email: string
+  password: string
+  role: 'Student' | 'Instructor'
+}
+
+export interface LoginResponse {
+  accessToken: string
+}
+
 // ─── Category ─────────────────────────────────────────────────────────────────
 
 export interface CategoryDto {
