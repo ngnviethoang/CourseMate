@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { Bell, GraduationCap } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -18,18 +19,18 @@ export function Navbar() {
 
         {/* Nav links */}
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-          <a href="#" className="text-primary">
+          <Link href="/" className="text-primary">
             Home
-          </a>
-          <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-            My Learning
-          </a>
-          <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-            Browse
-          </a>
-          <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-            Instructors
-          </a>
+          </Link>
+          <Link href="/courses" className="text-muted-foreground hover:text-foreground transition-colors">
+            Browse Courses
+          </Link>
+          <Link href="/cart" className="text-muted-foreground hover:text-foreground transition-colors">
+            Cart
+          </Link>
+          <Link href="/orders" className="text-muted-foreground hover:text-foreground transition-colors">
+            Orders
+          </Link>
         </nav>
 
         {/* Right side */}

@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
       } else {
         toast.error('Invalid response from server.')
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       // apiClient already handles displaying toast.error for standard HTTP errors (401, 403, etc.)
       console.error('Login error:', err)
     } finally {

@@ -167,3 +167,67 @@ export interface UpdateUserRequest {
   email: string
   phoneNumber: string
 }
+
+// ─── Student Types ────────────────────────────────────────────────────────────
+
+export interface StudentLessonDetailDto {
+  id: string
+  title: string
+  lessonType: string
+  position: number
+  isCompleted: boolean
+}
+
+export interface StudentChapterDetailDto {
+  id: string
+  title: string
+  position: number
+  lessons: StudentLessonDetailDto[]
+}
+
+export interface StudentCourseDetailDto {
+  id: string
+  title: string
+  description: string
+  price: number
+  imageUrl: string
+  categoryId: string
+  categoryName: string
+  instructorId: string
+  instructorName: string
+  isEnrolled: boolean
+  progressPercentage: number
+  chapters: StudentChapterDetailDto[]
+}
+
+export interface CartItemDto {
+  id: string
+  courseId: string
+  courseTitle: string
+  courseImageUrl: string
+  instructorName: string
+  price: number
+}
+
+export interface CartDto {
+  id: string
+  studentId: string
+  totalPrice: number
+  items: CartItemDto[]
+}
+
+export interface OrderItemDto {
+  id: string
+  courseId: string
+  courseTitle: string
+  courseImageUrl: string
+  price: number
+}
+
+export interface OrderDto {
+  id: string
+  studentId: string
+  totalAmount: number
+  status: number
+  items: OrderItemDto[]
+}

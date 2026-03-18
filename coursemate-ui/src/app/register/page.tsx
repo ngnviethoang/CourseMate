@@ -41,7 +41,7 @@ export default function RegisterPage() {
       toast.success('Registration successful! You can now sign in.')
       // For now, redirect to the admin login page or home page until generic login is implemented
       router.push('/management/login')
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Registration error:', err)
       // apiClient already displays toast.error
     } finally {
@@ -55,13 +55,13 @@ export default function RegisterPage() {
         <Label htmlFor="userName">Username</Label>
         <div className="relative">
           <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input 
-            id="userName" 
-            name="userName" 
-            placeholder="johndoe" 
-            className="pl-9 bg-background/50 focus-visible:ring-primary/30" 
-            required 
-            disabled={isLoading} 
+          <Input
+            id="userName"
+            name="userName"
+            placeholder="johndoe"
+            className="pl-9 bg-background/50 focus-visible:ring-primary/30"
+            required
+            disabled={isLoading}
           />
         </div>
       </div>
@@ -69,14 +69,14 @@ export default function RegisterPage() {
         <Label htmlFor="email">Email address</Label>
         <div className="relative">
           <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input 
-            id="email" 
-            name="email" 
-            type="email" 
-            placeholder="hello@example.com" 
-            className="pl-9 bg-background/50 focus-visible:ring-primary/30" 
-            required 
-            disabled={isLoading} 
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="hello@example.com"
+            className="pl-9 bg-background/50 focus-visible:ring-primary/30"
+            required
+            disabled={isLoading}
           />
         </div>
       </div>
@@ -84,14 +84,14 @@ export default function RegisterPage() {
         <Label htmlFor="password">Password</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input 
-            id="password" 
-            name="password" 
-            type="password" 
-            placeholder="••••••••" 
-            className="pl-9 bg-background/50 focus-visible:ring-primary/30" 
-            required 
-            disabled={isLoading} 
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="••••••••"
+            className="pl-9 bg-background/50 focus-visible:ring-primary/30"
+            required
+            disabled={isLoading}
           />
         </div>
       </div>
@@ -131,15 +131,13 @@ export default function RegisterPage() {
         <Card className="border-border/50 shadow-2xl shadow-black/5 dark:shadow-black/20 bg-background/60 backdrop-blur-xl">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="text-xl font-semibold">Create an account</CardTitle>
-            <CardDescription className="text-sm">
-              Choose your role and enter your details to register.
-            </CardDescription>
+            <CardDescription className="text-sm">Choose your role and enter your details to register.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs 
-              defaultValue="Student" 
+            <Tabs
+              defaultValue="Student"
               className="w-full"
-              onValueChange={(val) => setRole(val as 'Student' | 'Instructor')}
+              onValueChange={val => setRole(val as 'Student' | 'Instructor')}
             >
               <TabsList className="grid w-full grid-cols-2 p-1 bg-muted/50 rounded-lg">
                 <TabsTrigger value="Student" className="rounded-md transition-all data-[state=active]:shadow-sm">
@@ -152,22 +150,18 @@ export default function RegisterPage() {
                 </TabsTrigger>
               </TabsList>
 
-              {/* Both tabs share the exact same form but we split them into distinct content 
-                  blocks to allow layout differences later if needed */}
               <form onSubmit={handleSubmit}>
-                <TabsContent value="Student" forceMount hidden={role !== 'Student'}>
-                  <RegisterFields />
-                </TabsContent>
-                <TabsContent value="Instructor" forceMount hidden={role !== 'Instructor'}>
-                  <RegisterFields />
-                </TabsContent>
+                <RegisterFields />
               </form>
             </Tabs>
           </CardContent>
           <CardFooter className="flex flex-col items-center border-t border-border/10 pt-6 pb-6">
             <div className="text-sm text-muted-foreground">
               Already have an account?{' '}
-              <Link href="/management/login" className="font-semibold text-primary hover:text-primary/80 transition-colors">
+              <Link
+                href="/management/login"
+                className="font-semibold text-primary hover:text-primary/80 transition-colors"
+              >
                 Sign in here
               </Link>
             </div>

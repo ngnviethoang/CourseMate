@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { BookOpen, Clock, Search, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -30,6 +31,22 @@ export function HeroSection() {
               />
             </div>
             <Button className="h-11 rounded-full px-6 shadow-sm">Search</Button>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/courses"
+              className="inline-flex items-center rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
+            >
+              Browse Courses
+            </Link>
+            <Link
+              href="/cart"
+              className="inline-flex items-center rounded-full border border-input bg-background px-6 py-2.5 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              My Cart
+            </Link>
           </div>
 
           {/* Quick stat pills */}
