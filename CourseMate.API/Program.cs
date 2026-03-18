@@ -24,7 +24,7 @@ builder.Services.AddAuthentication(options =>
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
         };
         options.MapInboundClaims = false;
     });
@@ -69,6 +69,6 @@ app.UseSwaggerUI();
 app.MapOpenApi();
 app.UseAuthentication();
 app.UseAuthorization();
-//app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
+// app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
 app.MapControllers();
 app.Run();
