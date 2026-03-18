@@ -24,7 +24,7 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
             Instance = null,
             Title = "Internal Server Error",
             Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.1",
-            Detail = exception.Message,
+            Detail = "Internal Server Error",
             Extensions =
             {
                 ["traceId"] = httpContext.TraceIdentifier,
@@ -34,11 +34,12 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
 
         switch (exception)
         {
-            case BusinessException businessException:
+            case BusinessException:
+            case EntityNotFound:
                 httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                 problemDetails.Status = httpContext.Response.StatusCode;
                 problemDetails.Title = "Forbidden";
-                problemDetails.Detail = businessException.Message;
+                problemDetails.Detail = exception.Message;
                 problemDetails.Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3";
                 break;
         }
