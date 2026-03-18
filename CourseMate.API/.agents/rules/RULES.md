@@ -20,7 +20,7 @@ trigger: always_on
 - Do not change frontend (`coursemate-ui`)
 - Do not add new libraries without approval
 - Do not modify `DbContext` configuration
-
+- Do not pass UserId from Controller, use IHttpContextAccessor to get UserId from the current request context in handler
 ---
 
 ## 🧩 Layer Responsibilities
@@ -31,7 +31,15 @@ trigger: always_on
 - Call Application via MediatR
 - No try-catch (handled by global exception)
 - No business logic
-
+- Controller methods must follow naming convention:
+  - GetList[Entities]Async
+  - GetById[Entity]Async
+  - Create[Entity]Async
+  - Update[Entity]Async
+  - Delete[Entity]Async
+- Controllers must only return success responses:
+  - Ok() for data
+  - NoContent() for no data
 ---
 
 ### 🔹 Application
@@ -47,6 +55,9 @@ trigger: always_on
 - Do not hardcode error messages; use Exception Constants
 - Query must not throw exceptions
 - Always return safe defaults (empty list or null)
+- Handlers must follow the same naming convention per use case:
+  - Query: GetList[Entities]QueryHandler, GetById[Entity]QueryHandler
+  - Command: Create[Entity]CommandHandler, Update[Entity]CommandHandler, Delete[Entity]CommandHandler
 ---
 
 ### 🔹 Contracts
@@ -55,7 +66,11 @@ trigger: always_on
 - Enums & constants across projects
 - Input validation
 - No business logic
-
+- Command, Query must be simple POCO classes (no inheritance, no business logic, no constructors)
+- Each use case should have its own Command, Query, and DTO (avoid reuse across handlers)
+- DTOs must follow naming convention per use case:
+  - Query DTO: GetList[Entities]Query, GetById[Entity]Query
+  - Command DTO: Create[Entity]Command, Update[Entity]Command, Delete[Entity]Command
 ---
 
 ### 🔹 Infrastructure
@@ -70,3 +85,6 @@ trigger: always_on
   - Must add to `DbContext`
   - Must add to `ReadOnlyDbContext`
 - Do not modify DB tuning/configuration
+- Write Db configuration in a single line
+- Use plural names for table mapping
+-

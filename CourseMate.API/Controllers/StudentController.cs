@@ -1,6 +1,6 @@
-﻿using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
-using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Contracts.DTOs.Students;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,37 +19,104 @@ public class StudentController : ControllerBase
         _mediator = mediator;
     }
 
-    #region API Cart
+    #region API Category
 
-    [HttpGet("carts")]
-    public async Task<IActionResult> GetListCartsAsync([FromQuery] GetListCategoriesQuery request)
+    [HttpGet("categories")]
+    public async Task<IActionResult> GetListCategoriesAsync()
     {
-        PagedDto<CategoryDto> result = await _mediator.Send(request);
+        PagedDto<CategoryDto> result = await _mediator.Send(new GetListCategoriesQuery());
         return Ok(result);
     }
 
-    [HttpGet("carts/{id:guid}")]
-    public async Task<IActionResult> GetCartByIdAsync(Guid id)
+    #endregion
+
+    #region API Cart
+
+    [HttpGet("carts")]
+    public async Task<IActionResult> GetCartAsync()
     {
-        return Ok();
+        CartDto? result = await _mediator.Send(new GetCartQuery());
+        return Ok(result);
     }
 
     [HttpPost("carts")]
-    public async Task<IActionResult> CreateCartAsync()
+    public async Task<IActionResult> CreateCartAsync([FromBody] CreateCartCommand request)
     {
-        return Ok();
-    }
-
-    [HttpPut("carts/{id:guid}")]
-    public async Task<IActionResult> UpdateCartAsync(Guid id)
-    {
-        return Ok();
+        ResultIdDto result = await _mediator.Send(request);
+        return Ok(result);
     }
 
     [HttpDelete("carts/{id:guid}")]
     public async Task<IActionResult> DeleteCartAsync(Guid id)
     {
-        return Ok();
+        await _mediator.Send(new DeleteCartCommand
+        {
+            CartItemId = id
+        });
+
+        return NoContent();
+    }
+
+    #endregion
+
+    #region API Course
+
+    [HttpGet("courses")]
+    public async Task<IActionResult> GetListCourseAsync([FromQuery] GetListCoursesQuery request)
+    {
+        PagedDto<CourseDto> result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
+    [HttpGet("courses/{id:guid}")]
+    public async Task<IActionResult> GetCourseByIdAsync(Guid id)
+    {
+        CourseDetailDto? result = await _mediator.Send(new GetCourseByIdQuery { Id = id });
+        return Ok(result);
+    }
+
+    #endregion
+
+    #region API Order
+
+    [HttpGet("orders")]
+    public async Task<IActionResult> GetOrdersAsync([FromQuery] GetListOrdersQuery request)
+    {
+        PagedDto<OrderDto> result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
+    [HttpGet("orders/{id:guid}")]
+    public async Task<IActionResult> GetOrderByIdAsync(Guid id)
+    {
+        OrderDto? result = await _mediator.Send(new GetOrderByIdQuery { Id = id });
+        return Ok(result);
+    }
+
+    [HttpPost("orders")]
+    public async Task<IActionResult> CreateOrdersAsync()
+    {
+        ResultIdDto result = await _mediator.Send(new CreateOrderCommand());
+        return Ok(result);
+    }
+
+    [HttpPut("orders/{id:guid}")]
+    public async Task<IActionResult> UpdateOrdersAsync(Guid id, [FromBody] UpdateOrderCommand request)
+    {
+        UpdateOrderCommand command = new()
+        {
+            Id = id,
+            Status = request.Status
+        };
+        await _mediator.Send(command);
+        return NoContent();
+    }
+
+    [HttpDelete("orders/{id:guid}")]
+    public async Task<IActionResult> DeleteOrderAsync(Guid id)
+    {
+        await _mediator.Send(new DeleteOrderCommand { Id = id });
+        return NoContent();
     }
 
     #endregion

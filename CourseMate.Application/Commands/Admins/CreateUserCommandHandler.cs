@@ -29,7 +29,7 @@ internal sealed class CreateUserCommandHandler : IRequestHandler<CreateUserComma
 
         if (result.Succeeded)
         {
-            return new ResultIdDto(user.Id);
+            return new ResultIdDto { Id = user.Id };
         }
 
         string errors = string.Join(", ", result.Errors.Select(e => e.Description));

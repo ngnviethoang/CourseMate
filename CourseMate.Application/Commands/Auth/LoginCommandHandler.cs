@@ -38,7 +38,7 @@ internal sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginR
         SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
         if (!result.Succeeded)
         {
-            throw new UnauthorizedAccessException(result.ToString());
+            throw new BusinessException(result.ToString());
         }
 
         IList<string> roles = await _userManager.GetRolesAsync(user);

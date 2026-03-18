@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using CourseMate.Infrastructure.Entities;
 using CourseMate.Infrastructure.Entities.Abstracts;
@@ -38,6 +38,7 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
+    public DbSet<UserLessonProgress> UserLessonProgresses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

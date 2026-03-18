@@ -22,6 +22,6 @@ internal sealed class CreateCategoryCommandHandler : IRequestHandler<CreateCateg
         await _dbContext.AddAsync(category, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return new ResultIdDto(category.Id);
+        return new ResultIdDto { Id = category.Id };
     }
 }

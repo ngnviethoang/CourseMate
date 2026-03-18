@@ -12,7 +12,6 @@
         <Folder Include="Commands\Students\"/>
         <Folder Include="Queries\Anonymous\"/>
         <Folder Include="Queries\Instructors\"/>
-        <Folder Include="Queries\Students\"/>
     </ItemGroup>
 
     <ItemGroup>

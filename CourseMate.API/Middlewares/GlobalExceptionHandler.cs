@@ -22,7 +22,7 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
             Instance = null,
             Title = "Internal Server Error",
             Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.1",
-            Detail = "Internal Server Error",
+            Detail = exception.Message,
             Extensions =
             {
                 ["traceId"] = httpContext.TraceIdentifier,
@@ -32,13 +32,26 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
 
         switch (exception)
         {
-            case BusinessException:
-            case EntityNotFoundException:
+            case BusinessException or EntityNotFoundException:
                 httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                 problemDetails.Status = httpContext.Response.StatusCode;
                 problemDetails.Title = "Forbidden";
                 problemDetails.Detail = exception.Message;
                 problemDetails.Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3";
+                break;
+            case UnauthorizedAccessException:
+                httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                problemDetails.Status = httpContext.Response.StatusCode;
+                problemDetails.Title = "Unauthorized";
+                problemDetails.Detail = exception.Message;
+                problemDetails.Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3";
+                break;
+            case BadHttpRequestException:
+                httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                problemDetails.Status = httpContext.Response.StatusCode;
+                problemDetails.Title = "BadRequest";
+                problemDetails.Detail = exception.Message;
+                problemDetails.Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.1";
                 break;
         }
 

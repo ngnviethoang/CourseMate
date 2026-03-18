@@ -29,6 +29,6 @@ internal sealed class CreateLessonCommandHandler : IRequestHandler<CreateLessonC
         await _dbContext.AddAsync(lesson, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return new ResultIdDto(lesson.Id);
+        return new ResultIdDto { Id = lesson.Id };
     }
 }

@@ -27,6 +27,6 @@ internal sealed class CreateChapterCommandHandler : IRequestHandler<CreateChapte
         await _dbContext.AddAsync(chapter, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return new ResultIdDto(chapter.Id);
+        return new ResultIdDto { Id = chapter.Id };
     }
 }

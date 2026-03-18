@@ -31,7 +31,7 @@ public class AdminController : ControllerBase
     [HttpGet("categories/{id:guid}")]
     public async Task<IActionResult> GetCategoryByIdAsync(Guid id)
     {
-        CategoryDto? result = await _mediator.Send(new GetCategoryByIdQuery(id));
+        CategoryDto? result = await _mediator.Send(new GetCategoryByIdQuery { Id = id });
         return Ok(result);
     }
 
@@ -53,7 +53,7 @@ public class AdminController : ControllerBase
     [HttpDelete("categories/{id:guid}")]
     public async Task<IActionResult> DeleteCategoryAsync(Guid id)
     {
-        await _mediator.Send(new DeleteCategoryCommand(id));
+        await _mediator.Send(new DeleteCategoryCommand { Id = id });
         return NoContent();
     }
 
@@ -71,7 +71,7 @@ public class AdminController : ControllerBase
     [HttpGet("courses/{id:guid}")]
     public async Task<IActionResult> GetCourseByIdAsync(Guid id)
     {
-        CourseDto? result = await _mediator.Send(new GetCourseByIdQuery(id));
+        CourseDto? result = await _mediator.Send(new GetCourseByIdQuery { Id = id });
         return Ok(result);
     }
 
@@ -93,7 +93,7 @@ public class AdminController : ControllerBase
     [HttpDelete("courses/{id:guid}")]
     public async Task<IActionResult> DeleteCourseAsync(Guid id)
     {
-        await _mediator.Send(new DeleteCourseCommand(id));
+        await _mediator.Send(new DeleteCourseCommand { Id = id });
         return NoContent();
     }
 
@@ -111,7 +111,7 @@ public class AdminController : ControllerBase
     [HttpGet("chapters/{id:guid}")]
     public async Task<IActionResult> GetChapterByIdAsync(Guid id)
     {
-        ChapterDto? result = await _mediator.Send(new GetChapterByIdQuery(id));
+        ChapterDto? result = await _mediator.Send(new GetChapterByIdQuery { Id = id });
         return Ok(result);
     }
 
@@ -133,7 +133,7 @@ public class AdminController : ControllerBase
     [HttpDelete("chapters/{id:guid}")]
     public async Task<IActionResult> DeleteChapterAsync(Guid id)
     {
-        await _mediator.Send(new DeleteChapterCommand(id));
+        await _mediator.Send(new DeleteChapterCommand { Id = id });
         return NoContent();
     }
 
@@ -151,7 +151,7 @@ public class AdminController : ControllerBase
     [HttpGet("lessons/{id:guid}")]
     public async Task<IActionResult> GetLessonByIdAsync(Guid id)
     {
-        LessonDto? result = await _mediator.Send(new GetLessonByIdQuery(id));
+        LessonDto? result = await _mediator.Send(new GetLessonByIdQuery { Id = id });
         return Ok(result);
     }
 
@@ -173,7 +173,7 @@ public class AdminController : ControllerBase
     [HttpDelete("lessons/{id:guid}")]
     public async Task<IActionResult> DeleteLessonAsync(Guid id)
     {
-        await _mediator.Send(new DeleteLessonCommand(id));
+        await _mediator.Send(new DeleteLessonCommand { Id = id });
         return NoContent();
     }
 
@@ -191,7 +191,7 @@ public class AdminController : ControllerBase
     [HttpGet("users/{id:guid}")]
     public async Task<IActionResult> GetUserByIdAsync(Guid id)
     {
-        UserDto? result = await _mediator.Send(new GetUserByIdQuery(id));
+        UserDto? result = await _mediator.Send(new GetUserByIdQuery { Id = id });
         return Ok(result);
     }
 
@@ -213,7 +213,7 @@ public class AdminController : ControllerBase
     [HttpDelete("users/{id:guid}")]
     public async Task<IActionResult> DeleteUserAsync(Guid id)
     {
-        await _mediator.Send(new DeleteUserCommand(id));
+        await _mediator.Send(new DeleteUserCommand { Id = id });
         return NoContent();
     }
 

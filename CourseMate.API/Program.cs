@@ -5,6 +5,7 @@ using CourseMate.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -43,7 +44,22 @@ builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
+        BearerFormat = "JWT",
+        Description = "JWT Authorization header using the Bearer scheme."
+    });
+
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference(JwtBearerDefaults.AuthenticationScheme, document)] = []
+    });
+});
+
 builder.Services.AddProblemDetails().AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddCors(options =>
 {
@@ -61,12 +77,12 @@ await app.Services.SeedAsync();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 app.UseCors();
-app.UseSwaggerUI();
 app.MapOpenApi();
 app.UseAuthentication();
 app.UseAuthorization();
