@@ -74,12 +74,8 @@ builder.Services.AddCors(options =>
 
 WebApplication app = builder.Build();
 await app.Services.SeedAsync();
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 app.UseCors();
