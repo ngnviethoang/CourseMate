@@ -3,3 +3,7 @@
 ef migrations add --project CourseMate.Infrastructure\CourseMate.Infrastructure.csproj --startup-project CourseMate.API\CourseMate.API.csproj --context CourseMate.Core.CourseMateDbContext --configuration Debug Initial --output-dir Migrations
 
 ef database update --project CourseMate.Infrastructure\CourseMate.Infrastructure.csproj --startup-project CourseMate.API\CourseMate.API.csproj --context CourseMate.Core.CourseMateDbContext --configuration Debug 20260317162718_Initial
+
+#RUN Backend
+docker compose up -d db
+dotnet run --launch-profile https --project CourseMate.API/CourseMate.API.csproj
