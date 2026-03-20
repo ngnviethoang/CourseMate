@@ -168,6 +168,28 @@ export interface UpdateUserRequest {
   phoneNumber: string
 }
 
+// ─── Profile ──────────────────────────────────────────────────────────────────
+
+export interface ProfileDto {
+  id: string
+  userName: string
+  email?: string
+  phoneNumber?: string
+  roles: string[]
+}
+
+export interface UpdateProfileRequest {
+  userName: string
+  email?: string
+  phoneNumber?: string
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string
+  newPassword: string
+}
+
+
 // ─── Student Types ────────────────────────────────────────────────────────────
 
 export interface StudentLessonDetailDto {

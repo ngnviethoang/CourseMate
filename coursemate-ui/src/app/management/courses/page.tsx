@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
-import { courseService } from '@/lib/admin-service'
-import type { CourseDto, CreateCourseRequest } from '@/lib/types'
+import { courseService, categoryService, userService } from '@/lib/admin-service'
+import type { CategoryDto, CourseDto, CreateCourseRequest, UserDto } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,6 +23,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { formatDate } from '@/lib/format-date'
 
 const columns: Column<CourseDto>[] = [
@@ -61,6 +63,7 @@ const emptyForm: CreateCourseRequest = {
 }
 
 export default function CoursesPage() {
+  const router = useRouter()
   const [items, setItems] = useState<CourseDto[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')
@@ -70,6 +73,9 @@ export default function CoursesPage() {
   const [editing, setEditing] = useState<CourseDto | null>(null)
   const [form, setForm] = useState<CreateCourseRequest>(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [categories, setCategories] = useState<CategoryDto[]>([])
+  const [users, setUsers] = useState<UserDto[]>([])
+  const [loadingDropdowns, setLoadingDropdowns] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -81,18 +87,32 @@ export default function CoursesPage() {
     }
   }, [filter, sorting])
 
+
   useEffect(() => {
     const t = setTimeout(load, 300)
     return () => clearTimeout(t)
   }, [load])
 
-  function openCreate() {
+  async function loadDropdowns() {
+    setLoadingDropdowns(true)
+    try {
+      await Promise.all([
+        categoryService.list({ filter, pageSize: 25, sorting }).then(res => setCategories(res.items)),
+        userService.list({ filter, pageSize: 25, sorting }).then(res => setUsers(res.items))
+      ])
+    } finally {
+      setLoadingDropdowns(false)
+    }
+  }
+
+  async function openCreate() {
     setEditing(null)
     setForm(emptyForm)
+    await loadDropdowns()
     setDialogOpen(true)
   }
 
-  function openEdit(row: CourseDto) {
+  async function openEdit(row: CourseDto) {
     setEditing(row)
     setForm({
       title: row.title,
@@ -103,6 +123,7 @@ export default function CoursesPage() {
       categoryId: row.categoryId,
       instructorId: row.instructorId
     })
+    await loadDropdowns()
     setDialogOpen(true)
   }
 
@@ -161,51 +182,102 @@ export default function CoursesPage() {
         loading={loading}
         sorting={sorting}
         onSort={setSorting}
+        onView={row => router.push(`/management/courses/${row.id}`)}
         onEdit={openEdit}
         onDelete={setDeleteId}
       />
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{editing ? 'Edit Course' : 'New Course'}</DialogTitle>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader className="pb-2 border-b">
+            <DialogTitle className="text-xl">{editing ? 'Edit Course' : 'New Course'}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 py-2">
-            <div className="col-span-2 space-y-1">
-              <Label>Title</Label>
-              <Input value={form.title} onChange={e => f('title', e.target.value)} />
+
+          <div className="py-4 space-y-5">
+            {/* Basic Info */}
+            <div className="space-y-4">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Basic Info</p>
+              <div className="space-y-1">
+                <Label>Title</Label>
+                <Input placeholder="Course title" value={form.title} onChange={e => f('title', e.target.value)} />
+              </div>
+              <div className="space-y-1">
+                <Label>Description</Label>
+                <textarea
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring min-h-[80px] resize-y"
+                  placeholder="Short description…"
+                  value={form.description}
+                  onChange={e => f('description', e.target.value)}
+                />
+              </div>
             </div>
-            <div className="col-span-2 space-y-1">
-              <Label>Description</Label>
-              <Input value={form.description} onChange={e => f('description', e.target.value)} />
+
+            {/* Media & Pricing */}
+            <div className="space-y-4">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Media &amp; Pricing</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label>Price ($)</Label>
+                  <Input type="number" min={0} step={0.01} placeholder="0.00" value={form.price} onChange={e => f('price', Number(e.target.value))} />
+                </div>
+                <div className="space-y-1">
+                  <Label>Image URL</Label>
+                  <Input placeholder="https://…" value={form.imageUrl} onChange={e => f('imageUrl', e.target.value)} />
+                </div>
+              </div>
             </div>
-            <div className="space-y-1">
-              <Label>Price ($)</Label>
-              <Input type="number" min={0} value={form.price} onChange={e => f('price', Number(e.target.value))} />
+
+            {/* Assignment */}
+            <div className="space-y-4">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Assignment</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label>Category</Label>
+                  <Select value={form.categoryId} onValueChange={v => f('categoryId', v)} disabled={loadingDropdowns}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={loadingDropdowns ? 'Loading…' : 'Select category'}>
+                        {categories.find(c => c.id === form.categoryId)?.name ?? (loadingDropdowns ? 'Loading…' : 'Select category')}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map(c => (
+                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label>Instructor</Label>
+                  <Select value={form.instructorId} onValueChange={v => f('instructorId', v)} disabled={loadingDropdowns}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={loadingDropdowns ? 'Loading…' : 'Select instructor'}>
+                        {(() => { const u = users.find(u => u.id === form.instructorId); return u ? (u.userName ?? u.email) : (loadingDropdowns ? 'Loading…' : 'Select instructor') })()}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {users.map(u => (
+                        <SelectItem key={u.id} value={u.id}>{u.userName ?? u.email}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
-            <div className="space-y-1">
-              <Label>Image URL</Label>
-              <Input value={form.imageUrl} onChange={e => f('imageUrl', e.target.value)} />
-            </div>
-            <div className="space-y-1">
-              <Label>Category ID</Label>
-              <Input value={form.categoryId} onChange={e => f('categoryId', e.target.value)} />
-            </div>
-            <div className="space-y-1">
-              <Label>Instructor ID</Label>
-              <Input value={form.instructorId} onChange={e => f('instructorId', e.target.value)} />
-            </div>
-            <div className="col-span-2 flex items-center gap-3">
+
+            {/* Publishing */}
+            <div className="flex items-center gap-3 rounded-lg border px-4 py-3">
               <Switch checked={form.isPublished} onCheckedChange={v => f('isPublished', v)} />
-              <Label>Published</Label>
+              <div>
+                <p className="text-sm font-medium">Published</p>
+                <p className="text-xs text-muted-foreground">Course will be visible to students</p>
+              </div>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
-            </Button>
+
+          <DialogFooter className="pt-2 border-t gap-2">
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
             <Button onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving…' : 'Save'}
+              {saving ? 'Saving…' : editing ? 'Save Changes' : 'Create Course'}
             </Button>
           </DialogFooter>
         </DialogContent>

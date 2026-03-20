@@ -1,6 +1,7 @@
 import { api } from '@/lib/api-client'
 import type {
   CategoryDto,
+  ChangePasswordRequest,
   ChapterDto,
   CourseDto,
   CreateCategoryRequest,
@@ -10,11 +11,13 @@ import type {
   CreateUserRequest,
   LessonDto,
   PagedDto,
+  ProfileDto,
   ResultIdDto,
   UpdateCategoryRequest,
   UpdateChapterRequest,
   UpdateCourseRequest,
   UpdateLessonRequest,
+  UpdateProfileRequest,
   UpdateUserRequest,
   UserDto
 } from '@/lib/types'
@@ -24,11 +27,12 @@ const BASE = '/api/admin'
 // ─── Category ────────────────────────────────────────────────────────────────
 
 export const categoryService = {
-  list: (params?: { filter?: string; pageIndex?: number; pageSize?: number }) => {
+  list: (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string }) => {
     const qs = new URLSearchParams()
     if (params?.filter) qs.set('filter', params.filter)
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
+    if (params?.sorting) qs.set('sorting', params.sorting)
     return api.get<PagedDto<CategoryDto>>(`${BASE}/categories?${qs}`)
   },
   getById: (id: string) => api.get<CategoryDto | null>(`${BASE}/categories/${id}`),
@@ -40,11 +44,12 @@ export const categoryService = {
 // ─── Course ──────────────────────────────────────────────────────────────────
 
 export const courseService = {
-  list: (params?: { filter?: string; pageIndex?: number; pageSize?: number }) => {
+  list: (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string }) => {
     const qs = new URLSearchParams()
     if (params?.filter) qs.set('filter', params.filter)
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
+    if (params?.sorting) qs.set('sorting', params.sorting)
     return api.get<PagedDto<CourseDto>>(`${BASE}/courses?${qs}`)
   },
   getById: (id: string) => api.get<CourseDto | null>(`${BASE}/courses/${id}`),
@@ -56,11 +61,13 @@ export const courseService = {
 // ─── Chapter ─────────────────────────────────────────────────────────────────
 
 export const chapterService = {
-  list: (params?: { filter?: string; pageIndex?: number; pageSize?: number }) => {
+  list: (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string; courseId?: string }) => {
     const qs = new URLSearchParams()
     if (params?.filter) qs.set('filter', params.filter)
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
+    if (params?.sorting) qs.set('sorting', params.sorting)
+    if (params?.courseId) qs.set('courseId', params.courseId)
     return api.get<PagedDto<ChapterDto>>(`${BASE}/chapters?${qs}`)
   },
   getById: (id: string) => api.get<ChapterDto | null>(`${BASE}/chapters/${id}`),
@@ -72,11 +79,13 @@ export const chapterService = {
 // ─── Lesson ──────────────────────────────────────────────────────────────────
 
 export const lessonService = {
-  list: (params?: { filter?: string; pageIndex?: number; pageSize?: number }) => {
+  list: (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string; chapterId?: string }) => {
     const qs = new URLSearchParams()
     if (params?.filter) qs.set('filter', params.filter)
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
+    if (params?.sorting) qs.set('sorting', params.sorting)
+    if (params?.chapterId) qs.set('chapterId', params.chapterId)
     return api.get<PagedDto<LessonDto>>(`${BASE}/lessons?${qs}`)
   },
   getById: (id: string) => api.get<LessonDto | null>(`${BASE}/lessons/${id}`),
@@ -88,15 +97,24 @@ export const lessonService = {
 // ─── User ────────────────────────────────────────────────────────────────────
 
 export const userService = {
-  list: (params?: { filter?: string; pageIndex?: number; pageSize?: number }) => {
+  list: (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string }) => {
     const qs = new URLSearchParams()
     if (params?.filter) qs.set('filter', params.filter)
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
+    if (params?.sorting) qs.set('sorting', params.sorting)
     return api.get<PagedDto<UserDto>>(`${BASE}/users?${qs}`)
   },
   getById: (id: string) => api.get<UserDto | null>(`${BASE}/users/${id}`),
   create: (body: CreateUserRequest) => api.post<ResultIdDto>(`${BASE}/users`, body),
   update: (id: string, body: UpdateUserRequest) => api.put<void>(`${BASE}/users/${id}`, body),
   delete: (id: string) => api.delete<void>(`${BASE}/users/${id}`)
+}
+
+// ─── Profile (current user) ───────────────────────────────────────────────────
+
+export const profileService = {
+  getMe: () => api.get<ProfileDto>('/api/auth/me'),
+  updateProfile: (body: UpdateProfileRequest) => api.put<void>('/api/auth/profile', body),
+  changePassword: (body: ChangePasswordRequest) => api.post<void>('/api/auth/change-password', body)
 }

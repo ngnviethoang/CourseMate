@@ -31,11 +31,19 @@ export default function AdminLoginPage() {
     try {
       const res = await authService.login({ userName, password })
       if (res?.accessToken) {
-        // Store token in cookie for SSR and apiClient access
-        // HttpOnly is ideal but cannot be done from client-side Document.cookie.
         document.cookie = `accessToken=${res.accessToken}; path=/; max-age=86400; samesite=strict`
-        toast.success('Welcome back, Admin!')
-        router.push('/management')
+        const payload = JSON.parse(atob(res.accessToken.split('.')[1]))
+        const role: string =
+          payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
+          payload['role'] ??
+          ''
+        if (role.toLowerCase() === 'student') {
+          toast.success('Welcome back!')
+          router.push('/')
+        } else {
+          toast.success('Welcome back!')
+          router.push('/management')
+        }
       } else {
         toast.error('Invalid response from server.')
       }

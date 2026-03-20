@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutGrid, BookOpen, Layers, FileText, Users, Tag, GraduationCap, LogOut } from 'lucide-react'
+import { LayoutGrid, BookOpen, Users, Tag, GraduationCap, LogOut } from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -18,8 +18,6 @@ const navItems = [
   { href: '/management', label: 'Dashboard', icon: LayoutGrid },
   { href: '/management/categories', label: 'Categories', icon: Tag },
   { href: '/management/courses', label: 'Courses', icon: BookOpen },
-  { href: '/management/chapters', label: 'Chapters', icon: Layers },
-  { href: '/management/lessons', label: 'Lessons', icon: FileText },
   { href: '/management/users', label: 'Users', icon: Users }
 ]
 
@@ -56,10 +54,9 @@ export function AdminSidebar() {
                     <button
                       onClick={() => router.push(href)}
                       className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-150
-                        ${
-                          active
-                            ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/30 font-medium'
-                            : 'text-foreground/70 hover:bg-primary/10 hover:text-primary'
+                        ${active
+                          ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/30 font-medium'
+                          : 'text-foreground/70 hover:bg-primary/10 hover:text-primary'
                         }`}
                     >
                       <Icon className="size-4 shrink-0" />

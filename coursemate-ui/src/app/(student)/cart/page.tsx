@@ -2,32 +2,100 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { ShoppingBag, Trash2, ShoppingCart } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import {
+  ShoppingCart,
+  Trash2,
+  ArrowRight,
+  BookOpen,
+  Sparkles,
+  Loader2,
+  Tag
+} from 'lucide-react'
 import { studentService } from '@/lib/student-service'
 import { CartDto } from '@/lib/types'
 import { toast } from 'sonner'
+
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+
+function CartSkeleton() {
+  return (
+    <div className="grid md:grid-cols-3 gap-8 animate-pulse">
+      <div className="md:col-span-2 space-y-4">
+        {[1, 2].map(i => (
+          <div key={i} className="flex gap-4 rounded-2xl border bg-card p-4">
+            <div className="h-28 w-44 flex-shrink-0 rounded-xl bg-muted" />
+            <div className="flex-1 space-y-3 py-1">
+              <div className="h-4 w-3/4 rounded bg-muted" />
+              <div className="h-3 w-1/2 rounded bg-muted" />
+              <div className="h-4 w-1/4 rounded bg-muted" />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="md:col-span-1">
+        <div className="rounded-2xl border bg-card p-6 space-y-4">
+          <div className="h-5 w-1/2 rounded bg-muted" />
+          <div className="h-3 w-full rounded bg-muted" />
+          <div className="h-3 w-full rounded bg-muted" />
+          <div className="h-10 w-full rounded-xl bg-muted" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Empty State ──────────────────────────────────────────────────────────────
+
+function EmptyCart() {
+  const router = useRouter()
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center px-4">
+      <div className="relative">
+        <div className="flex h-28 w-28 items-center justify-center rounded-full bg-primary/10">
+          <ShoppingCart className="h-12 w-12 text-primary" />
+        </div>
+        <div className="absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-muted border-2 border-background text-xs font-bold">
+          0
+        </div>
+      </div>
+      <div>
+        <h2 className="text-2xl font-bold">Giỏ hàng trống</h2>
+        <p className="mt-2 text-muted-foreground max-w-sm">
+          Bạn chưa thêm khoá học nào vào giỏ hàng. Hãy khám phá hàng nghìn khoá học chất lượng!
+        </p>
+      </div>
+      <Button
+        size="lg"
+        className="rounded-full gap-2 px-8"
+        onClick={() => router.push('/')}
+      >
+        <BookOpen className="h-4 w-4" />
+        Khám phá khoá học
+      </Button>
+    </div>
+  )
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function CartPage() {
   const router = useRouter()
   const [cart, setCart] = useState<CartDto | null>(null)
   const [loading, setLoading] = useState(true)
   const [removingId, setRemovingId] = useState<string | null>(null)
-  const [checkingOut, setCheckingOut] = useState(false)
 
   const fetchCart = () => {
     setLoading(true)
     studentService
       .getCart()
-      .then(res => {
-        setCart(res)
-        setLoading(false)
-      })
-      .catch(() => {
-        setLoading(false)
-      })
+      .then(res => setCart(res))
+      .catch(() => { })
+      .finally(() => setLoading(false))
   }
 
   useEffect(() => {
@@ -38,7 +106,7 @@ export default function CartPage() {
     setRemovingId(cartItemId)
     try {
       await studentService.removeFromCart(cartItemId)
-      toast.success('Item removed from cart.')
+      toast.success('Đã xoá khoá học khỏi giỏ hàng.')
       fetchCart()
     } catch {
       // handled by api-client
@@ -47,111 +115,159 @@ export default function CartPage() {
     }
   }
 
-  const handleCheckout = async () => {
-    setCheckingOut(true)
-    try {
-      await studentService.createOrder()
-      toast.success('Order placed successfully!')
-      fetchCart()
-      router.push('/orders')
-    } catch {
-      // handled by api-client
-    } finally {
-      setCheckingOut(false)
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
-
   const items = cart?.items ?? []
 
-  if (items.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] gap-6 text-center">
-        <ShoppingCart className="h-16 w-16 text-muted-foreground" />
-        <h2 className="text-2xl font-semibold">Your cart is empty</h2>
-        <p className="text-muted-foreground">Browse courses and add them to your cart.</p>
-        <Button onClick={() => router.push('/')}>Explore Courses</Button>
-      </div>
-    )
-  }
-
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-          <ShoppingBag className="h-7 w-7" />
-          My Cart
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          {items.length} item{items.length !== 1 ? 's' : ''} in your cart
-        </p>
+    <div className="min-h-screen bg-background">
+      {/* Gradient header strip */}
+      <div className="bg-gradient-to-br from-primary/8 via-background to-indigo-50 border-b">
+        <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md">
+              <ShoppingCart className="h-5 w-5" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Giỏ hàng của tôi</h1>
+              {!loading && (
+                <p className="text-sm text-muted-foreground">
+                  {items.length > 0
+                    ? `${items.length} khoá học đang chờ bạn`
+                    : 'Chưa có khoá học nào'}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8">
-        <div className="md:col-span-2 space-y-4">
-          {items.map(item => (
-            <Card key={item.id} className="flex flex-col sm:flex-row overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={item.courseImageUrl || 'https://placehold.co/200x150?text=Course'}
-                alt={item.courseTitle}
-                className="h-32 sm:w-36 w-full object-cover flex-shrink-0 bg-muted"
-              />
-              <CardContent className="p-4 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="font-semibold line-clamp-2">{item.courseTitle}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{item.instructorName}</p>
-                </div>
-                <div className="flex items-center justify-between mt-4">
-                  <span className="text-lg font-bold text-primary">${item.price.toFixed(2)}</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-1"
-                    onClick={() => handleRemove(item.id)}
-                    disabled={removingId === item.id}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    Remove
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+        {loading ? (
+          <CartSkeleton />
+        ) : items.length === 0 ? (
+          <EmptyCart />
+        ) : (
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* ── Course list ── */}
+            <div className="md:col-span-2 space-y-4">
+              {items.map(item => (
+                <div
+                  key={item.id}
+                  className="group flex flex-col sm:flex-row gap-4 rounded-2xl border bg-card p-4 shadow-xs transition-shadow hover:shadow-md"
+                >
+                  <Link href={`/courses/${item.courseId}`} className="flex-shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={item.courseImageUrl || `https://placehold.co/200x140/6366f1/ffffff?text=Khoá+học`}
+                      alt={item.courseTitle}
+                      className="h-32 w-full sm:w-44 rounded-xl object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      onError={e => {
+                        ; (e.target as HTMLImageElement).src =
+                          'https://placehold.co/200x140/6366f1/ffffff?text=Khoá+học'
+                      }}
+                    />
+                  </Link>
 
-        <div className="md:col-span-1">
-          <Card className="sticky top-6">
-            <CardContent className="p-6 space-y-4">
-              <h2 className="text-lg font-semibold">Order Summary</h2>
-              <div className="space-y-2 text-sm">
-                {items.map(item => (
-                  <div key={item.id} className="flex justify-between">
-                    <span className="text-muted-foreground line-clamp-1 max-w-[60%]">{item.courseTitle}</span>
-                    <span>${item.price.toFixed(2)}</span>
+                  <div className="flex flex-1 flex-col justify-between">
+                    <div>
+                      <Link href={`/courses/${item.courseId}`}>
+                        <h3 className="font-semibold leading-snug line-clamp-2 hover:text-primary transition-colors">
+                          {item.courseTitle}
+                        </h3>
+                      </Link>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {item.instructorName}
+                      </p>
+                      <Badge variant="secondary" className="mt-2 text-xs gap-1">
+                        <Tag className="h-3 w-3" /> Khoá học trực tuyến
+                      </Badge>
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-xl font-bold text-primary">
+                        {item.price === 0 ? 'Miễn phí' : `$${item.price.toFixed(2)}`}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-1.5 rounded-full"
+                        onClick={() => handleRemove(item.id)}
+                        disabled={removingId === item.id}
+                      >
+                        {removingId === item.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-4 w-4" />
+                        )}
+                        Xoá
+                      </Button>
+                    </div>
                   </div>
-                ))}
+                </div>
+              ))}
+            </div>
+
+            {/* ── Order Summary ── */}
+            <div className="md:col-span-1">
+              <div className="sticky top-20 rounded-2xl border bg-card shadow-sm overflow-hidden">
+                {/* Summary header */}
+                <div className="bg-gradient-to-r from-primary/10 to-indigo-50 px-6 py-4 border-b">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    <h2 className="font-semibold">Tổng đơn hàng</h2>
+                  </div>
+                </div>
+
+                <div className="p-6 space-y-4">
+                  {/* Item breakdown */}
+                  <div className="space-y-2.5">
+                    {items.map(item => (
+                      <div key={item.id} className="flex items-start justify-between gap-2 text-sm">
+                        <span className="text-muted-foreground line-clamp-2 flex-1 leading-snug">
+                          {item.courseTitle}
+                        </span>
+                        <span className="font-medium flex-shrink-0">
+                          ${item.price.toFixed(2)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <Separator />
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Tạm tính</span>
+                    <span className="font-medium">${(cart?.totalPrice ?? 0).toFixed(2)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Giảm giá</span>
+                    <span className="text-emerald-600 font-medium">$0.00</span>
+                  </div>
+
+                  <Separator />
+
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-lg">Tổng cộng</span>
+                    <span className="text-xl font-bold text-primary">
+                      ${(cart?.totalPrice ?? 0).toFixed(2)}
+                    </span>
+                  </div>
+
+                  <Button
+                    className="w-full h-11 rounded-xl gap-2 text-base font-semibold shadow-sm mt-2"
+                    onClick={() => router.push('/checkout')}
+                  >
+                    Tiến hành thanh toán
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+
+                  <p className="text-center text-xs text-muted-foreground">
+                    🔒 Thanh toán an toàn & bảo mật
+                  </p>
+                </div>
               </div>
-              <Separator />
-              <div className="flex items-center justify-between font-bold text-lg">
-                <span>Total</span>
-                <span className="text-primary">${(cart?.totalPrice ?? 0).toFixed(2)}</span>
-              </div>
-            </CardContent>
-            <CardFooter className="p-6 pt-0">
-              <Button className="w-full h-11 text-base" onClick={handleCheckout} disabled={checkingOut}>
-                {checkingOut ? 'Processing...' : 'Checkout'}
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

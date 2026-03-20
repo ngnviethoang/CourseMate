@@ -18,6 +18,7 @@ interface DataTableProps<T extends { id: string }> {
   onSort?: (sortKey: string) => void
   onEdit?: (row: T) => void
   onDelete?: (id: string) => void
+  onView?: (row: T) => void
 }
 
 export function DataTable<T extends { id: string }>({
@@ -27,9 +28,11 @@ export function DataTable<T extends { id: string }>({
   sorting,
   onSort,
   onEdit,
-  onDelete
+  onDelete,
+  onView
 }: DataTableProps<T>) {
   const hasActions = onEdit || onDelete
+
 
   function SortIcon({ sortKey }: { sortKey: string }) {
     if (!sorting) return <ArrowUpDown className="ml-1 h-3 w-3 opacity-40" />
@@ -89,7 +92,11 @@ export function DataTable<T extends { id: string }>({
             </TableRow>
           ) : (
             data.map(row => (
-              <TableRow key={row.id} className="hover:bg-muted/30 transition-colors">
+              <TableRow
+                key={row.id}
+                className={`hover:bg-muted/30 transition-colors ${onView ? 'cursor-pointer' : ''}`}
+                onClick={() => onView?.(row)}
+              >
                 {columns.map(col => (
                   <TableCell key={String(col.key)} className="text-sm">
                     {col.render ? col.render(row) : String((row as Record<string, unknown>)[col.key as string] ?? '')}
@@ -100,7 +107,7 @@ export function DataTable<T extends { id: string }>({
                     <div className="flex justify-end gap-1">
                       {onEdit && (
                         <button
-                          onClick={() => onEdit(row)}
+                          onClick={e => { e.stopPropagation(); onEdit(row) }}
                           className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
                         >
                           <Pencil className="h-4 w-4" />
@@ -108,7 +115,7 @@ export function DataTable<T extends { id: string }>({
                       )}
                       {onDelete && (
                         <button
-                          onClick={() => onDelete(row.id)}
+                          onClick={e => { e.stopPropagation(); onDelete(row.id) }}
                           className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
                         >
                           <Trash2 className="h-4 w-4" />
