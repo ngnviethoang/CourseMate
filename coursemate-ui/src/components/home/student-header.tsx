@@ -2,8 +2,11 @@
 
 import { useMemo } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { GraduationCap, ShoppingCart, ClipboardList, LogOut, User, ChevronDown } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import {
+  GraduationCap, ShoppingCart, LogOut, User, ChevronDown,
+  BookMarked, Trophy, Code2, Home
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -37,10 +40,17 @@ function getUserFromToken() {
   }
 }
 
+const NAV_LINKS = [
+  { href: '/', label: 'Trang chủ', icon: Home },
+  { href: '/my-courses', label: 'Khoá học của tôi', icon: BookMarked },
+  { href: '/contests', label: 'Cuộc thi', icon: Trophy },
+  { href: '/exercises', label: 'Bài tập', icon: Code2 }
+]
+
 export function StudentHeader() {
   const router = useRouter()
+  const pathname = usePathname()
   const user = useMemo(() => getUserFromToken(), [])
-
   const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : 'U'
 
   const handleLogout = () => {
@@ -50,22 +60,40 @@ export function StudentHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2 flex-shrink-0">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <GraduationCap className="h-5 w-5" />
           </div>
           <span className="text-lg font-bold tracking-tight">CourseMate</span>
         </Link>
 
-        <div className="flex items-center gap-1">
+        {/* Nav links */}
+        <nav className="hidden md:flex items-center gap-1 flex-1">
+          {NAV_LINKS.map(({ href, label }) => {
+            const active = pathname === href
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${active
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+              >
+                {label}
+              </Link>
+            )
+          })}
+        </nav>
+
+        {/* Right side actions */}
+        <div className="flex items-center gap-1 ml-auto">
           {user ? (
             <>
-              <Button variant="ghost" size="icon" className="rounded-full" render={<Link href="/cart" aria-label="Cart" />}>
+              <Button variant="ghost" size="icon" className="rounded-full" render={<Link href="/cart" aria-label="Giỏ hàng" />}>
                 <ShoppingCart className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="rounded-full" render={<Link href="/orders" aria-label="Orders" />}>
-                <ClipboardList className="h-5 w-5" />
               </Button>
 
               <DropdownMenu>
@@ -78,7 +106,7 @@ export function StudentHeader() {
                   <span className="hidden sm:block font-medium text-foreground">{user.name}</span>
                   <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align="end" className="w-52">
                   <DropdownMenuGroup>
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col gap-0.5">
@@ -93,18 +121,22 @@ export function StudentHeader() {
                   <DropdownMenuGroup>
                     <DropdownMenuItem onClick={() => router.push('/profile')}>
                       <User className="mr-2 h-4 w-4" />
-                      Profile
+                      Hồ sơ của tôi
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push('/my-courses')}>
+                      <BookMarked className="mr-2 h-4 w-4" />
+                      Khoá học của tôi
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => router.push('/orders')}>
-                      <ClipboardList className="mr-2 h-4 w-4" />
-                      My Orders
+                      <ShoppingCart className="mr-2 h-4 w-4" />
+                      Đơn hàng
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     <DropdownMenuItem variant="destructive" onClick={handleLogout}>
                       <LogOut className="mr-2 h-4 w-4" />
-                      Logout
+                      Đăng xuất
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
@@ -112,12 +144,31 @@ export function StudentHeader() {
             </>
           ) : (
             <Button size="sm" render={<Link href="/login" />}>
-              Sign In
+              Đăng nhập
             </Button>
           )}
         </div>
       </div>
+
+      {/* Mobile nav */}
+      <div className="md:hidden border-t px-4 py-2 flex gap-1 overflow-x-auto">
+        {NAV_LINKS.map(({ href, label, icon: Icon }) => {
+          const active = pathname === href
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 ${active
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                }`}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {label}
+            </Link>
+          )
+        })}
+      </div>
     </header>
   )
 }
-
