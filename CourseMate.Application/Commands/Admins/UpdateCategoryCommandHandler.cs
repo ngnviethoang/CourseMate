@@ -19,12 +19,11 @@ internal sealed class UpdateCategoryAbstractCommandHandler : AbstractCommandHand
 
     public override async Task Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
     {
-        Category? category = await DbContext.Categories
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        Category? category = await DbContext.Categories.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (category == null)
         {
-            throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
+            throw new EntityNotFoundException(nameof(Category), request.Id);
         }
 
         category.Name = request.Name;

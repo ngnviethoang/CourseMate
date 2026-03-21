@@ -1,10 +1,15 @@
+using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Students;
+using CourseMate.Contracts.Exceptions;
 using CourseMate.Infrastructure;
+using CourseMate.Infrastructure.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
-e CourseMate.Application.Commands.Students;
+namespace CourseMate.Application.Commands.Students;
 
-internal sealed class UpdateOrderCommandHandler : CommandHandler<UpdateOrderCommand>
+internal sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateOrderCommand>
 {
     public UpdateOrderCommandHandler(
         CourseMateDbContext dbContext,
@@ -19,7 +24,7 @@ internal sealed class UpdateOrderCommandHandler : CommandHandler<UpdateOrderComm
         Order? order = await DbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == studentId, cancellationToken);
         if (order == null)
         {
-            throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
+            throw new EntityNotFoundException(nameof(Order), request.Id);
         }
 
         order.Status = request.Status;

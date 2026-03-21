@@ -3,6 +3,7 @@ using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
+using CourseMate.Infrastructure.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,8 +38,7 @@ internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetList
         int total = await query.CountAsync(cancellationToken);
 
         List<CategoryDto> categories = await query
-            .Skip((request.PageIndex - 1) * request.PageSize)
-            .Take(request.PageSize)
+            .Paged(request.PageIndex, request.PageSize)
             .Select(i => new CategoryDto
             {
                 Id = i.Id,

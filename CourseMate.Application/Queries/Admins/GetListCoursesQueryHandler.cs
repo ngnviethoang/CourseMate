@@ -1,9 +1,10 @@
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
-
-AspNetCore.Http;
+using CourseMate.Infrastructure.ExtensionMethods;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Admins;
@@ -57,16 +58,14 @@ internal sealed class GetListCoursesQueryHandler : AbstractQueryHandler<GetListC
         int total = await query.CountAsync(cancellationToken);
 
         List<CourseDto> courses = await query
-            .Skip((request.PageIndex - 1) * request.PageSize)
-            .Take(request.PageSize)
+            .Paged(request.PageIndex, request.PageSize)
             .ToListAsync(cancellationToken);
 
         return new PagedDto<CourseDto>
         {
             Items = courses,
             PageIndex = request.PageIndex,
-            PageSize = requ
-            st.PageSize,
+            PageSize = request.PageSize,
             TotalCount = total
         };
     }

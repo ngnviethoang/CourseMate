@@ -1,5 +1,4 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.Exceptions;
@@ -38,6 +37,6 @@ internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUs
         }
 
         string errors = string.Join(", ", result.Errors.Select(e => e.Description));
-        throw new BusinessException($"{ExceptionMessages.EntityCreationFailed} {errors}");
+        throw new BusinessException(errors);
     }
 }

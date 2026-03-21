@@ -24,7 +24,7 @@ internal sealed class DeleteLessonAbstractCommandHandler : AbstractCommandHandle
 
         if (lesson == null)
         {
-            throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
+            return;
         }
 
         DbContext.Remove(lesson);

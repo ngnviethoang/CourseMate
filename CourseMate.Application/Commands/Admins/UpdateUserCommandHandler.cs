@@ -26,7 +26,7 @@ internal sealed class UpdateUserAbstractCommandHandler : AbstractCommandHandler<
 
         if (user == null)
         {
-            throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
+            throw new EntityNotFoundException(nameof(IdentityUser), request.Id);
         }
 
         user.UserName = request.UserName;
@@ -38,7 +38,7 @@ internal sealed class UpdateUserAbstractCommandHandler : AbstractCommandHandler<
         if (!result.Succeeded)
         {
             string errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new BusinessException($"{ExceptionMessages.EntityUpdateFailed} {errors}");
+            throw new BusinessException(errors);
         }
     }
 }

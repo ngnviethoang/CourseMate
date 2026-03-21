@@ -24,7 +24,7 @@ internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandl
 
         if (chapter == null)
         {
-            throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
+            throw new EntityNotFoundException(nameof(Chapter), request.Id);
         }
 
         chapter.CourseId = request.CourseId;

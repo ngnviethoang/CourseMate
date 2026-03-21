@@ -15,6 +15,6 @@ public abstract class AbstractRequestHandler
     protected Guid GetCurrentUserId()
     {
         string? userIdString = HttpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-        return Guid.TryParse(userIdString, out Guid parsedId) ? parsedId : Guid.Empty;
+        return Guid.TryParse(userIdString, out Guid userId) ? userId : throw new UnauthorizedAccessException();
     }
 }

@@ -24,7 +24,7 @@ internal sealed class UpdateCourseAbstractCommandHandler : AbstractCommandHandle
 
         if (course == null)
         {
-            throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
+            throw new EntityNotFoundException(nameof(Course), request.Id);
         }
 
         course.Title = request.Title;

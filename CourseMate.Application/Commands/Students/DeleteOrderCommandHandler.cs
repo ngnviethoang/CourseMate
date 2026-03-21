@@ -1,10 +1,16 @@
+using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Students;
+using CourseMate.Contracts.Exceptions;
 using CourseMate.Infrastructure;
+using CourseMate.Infrastructure.Entities;
+using CourseMate.Infrastructure.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
-e CourseMate.Application.Commands.Students;
+namespace CourseMate.Application.Commands.Students;
 
-internal sealed class DeleteOrderCommandHandler : CommandHandler<DeleteOrderCommand>
+internal sealed class DeleteOrderCommandHandler : AbstractCommandHandler<DeleteOrderCommand>
 {
     public DeleteOrderCommandHandler(
         CourseMateDbContext dbContext,
@@ -16,13 +22,12 @@ internal sealed class DeleteOrderCommandHandler : CommandHandler<DeleteOrderComm
     {
         Guid studentId = GetCurrentUserId();
 
-        Order? order = await DbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == studentId, cancellationToken);
-        if (order == null)
+        if (!await DbContext.Orders.AnyAsync(o => o.Id == request.Id && o.StudentId == studentId, cancellationToken))
         {
-            throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
+            return;
         }
 
-        DbContext.Orders.Remove(order);
+        await DbContext.Orders.RemoveByIdAsync(request.Id, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);
     }
 }

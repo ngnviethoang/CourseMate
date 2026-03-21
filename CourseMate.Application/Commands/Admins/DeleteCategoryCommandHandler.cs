@@ -1,9 +1,7 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Admins;
-using CourseMate.Contracts.Exceptions;
 using CourseMate.Infrastructure;
-using CourseMate.Infrastructure.Entities;
+using CourseMate.Infrastructure.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,15 +17,7 @@ internal sealed class DeleteCategoryAbstractCommandHandler : AbstractCommandHand
 
     public override async Task Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
     {
-        Category? category = await DbContext.Categories
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-
-        if (category == null)
-        {
-            throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
-        }
-
-        DbContext.Remove(category);
+        await DbContext.Categories.RemoveByIdAsync(request.Id, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);
     }
 }

@@ -1,7 +1,7 @@
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
-
-AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Admins;

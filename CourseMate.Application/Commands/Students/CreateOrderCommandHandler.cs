@@ -26,7 +26,7 @@ internal sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateO
         Cart? cart = await DbContext.Carts.FirstOrDefaultAsync(c => c.StudentId == studentId, cancellationToken);
         if (cart == null)
         {
-            throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
+            throw new EntityNotFoundException(nameof(Cart), Guid.Empty);
         }
 
         List<CartItem> cartItems = await DbContext.CartItems
@@ -35,7 +35,7 @@ internal sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateO
 
         if (cartItems.Count == 0)
         {
-            throw new BusinessException(ExceptionMessages.EntityCreationFailed);
+            throw new EntityNotFoundException(nameof(CartItem), Guid.Empty);
         }
 
         List<Guid> courseIds = cartItems.Select(ci => ci.CourseId).ToList();
@@ -54,9 +54,7 @@ internal sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateO
         }
 
         DbContext.CartItems.RemoveRange(cartItems);
-
         await DbContext.SaveChangesAsync(cancellationToken);
-
         return new ResultIdDto { Id = orderId };
     }
 }

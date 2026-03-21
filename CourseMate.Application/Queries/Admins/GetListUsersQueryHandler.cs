@@ -2,6 +2,7 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
+using CourseMate.Infrastructure.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,8 +26,7 @@ internal sealed class GetListUsersQueryHandler : AbstractQueryHandler<GetListUse
         }
 
         List<UserDto> users = await query
-            .Skip((request.PageIndex - 1) * request.PageSize)
-            .Take(request.PageSize)
+            .Paged(request.PageIndex, request.PageSize)
             .Select(x => new UserDto
             {
                 Id = x.Id,

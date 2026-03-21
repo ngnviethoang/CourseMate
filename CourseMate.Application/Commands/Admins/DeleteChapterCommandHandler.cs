@@ -4,6 +4,7 @@ using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
+using CourseMate.Infrastructure.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,15 +20,7 @@ internal sealed class DeleteChapterAbstractCommandHandler : AbstractCommandHandl
 
     public override async Task Handle(DeleteChapterCommand request, CancellationToken cancellationToken)
     {
-        Chapter? chapter = await DbContext.Chapters
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-
-        if (chapter == null)
-        {
-            throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
-        }
-
-        DbContext.Remove(chapter);
+        await DbContext.Chapters.RemoveByIdAsync(request.Id, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);
     }
 }

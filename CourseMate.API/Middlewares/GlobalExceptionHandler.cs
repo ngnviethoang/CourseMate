@@ -36,7 +36,7 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
                 httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                 problemDetails.Status = httpContext.Response.StatusCode;
                 problemDetails.Title = "Forbidden";
-                problemDetails.Detail = exception.Message;
+                problemDetails.Detail = "Entity Not Found";
                 problemDetails.Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3";
                 break;
             case UnauthorizedAccessException:

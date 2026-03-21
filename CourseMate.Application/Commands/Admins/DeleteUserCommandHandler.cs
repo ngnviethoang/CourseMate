@@ -23,18 +23,16 @@ internal sealed class DeleteUserAbstractCommandHandler : AbstractCommandHandler<
     public override async Task Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
         IdentityUser<Guid>? user = await _userManager.FindByIdAsync(request.Id.ToString());
-
         if (user == null)
         {
-            throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
+            return;
         }
 
         IdentityResult result = await _userManager.DeleteAsync(user);
-
         if (!result.Succeeded)
         {
             string errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new BusinessException($"{ExceptionMessages.EntityDeletionFailed} {errors}");
+            throw new BusinessException(errors);
         }
     }
 }

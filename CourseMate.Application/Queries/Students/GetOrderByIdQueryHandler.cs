@@ -25,7 +25,7 @@ internal sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderBy
 
         if (order == null)
         {
-            throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
+            throw new EntityNotFoundException(nameof(Order), request.Id);
         }
 
         List<OrderItemDto> items = await (from item in DbContext.OrderItems
