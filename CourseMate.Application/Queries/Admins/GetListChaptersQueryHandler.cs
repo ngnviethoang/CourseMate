@@ -1,24 +1,23 @@
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
-using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Admins;
 
-internal sealed class GetListChaptersQueryHandler : IRequestHandler<GetListChaptersQuery, PagedDto<ChapterDto>>
+internal sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetListChaptersQuery, PagedDto<ChapterDto>>
 {
-    private readonly CourseMateReadOnlyDbContext _dbContext;
-
-    public GetListChaptersQueryHandler(CourseMateReadOnlyDbContext dbContext)
+    public GetListChaptersQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
     }
 
-    public async Task<PagedDto<ChapterDto>> Handle(GetListChaptersQuery request, CancellationToken cancellationToken)
+    public override async Task<PagedDto<ChapterDto>> Handle(GetListChaptersQuery request, CancellationToken cancellationToken)
     {
-        IQueryable<Chapter> baseQuery = _dbContext.Chapters.AsQueryable();
+        IQueryable<Chapter> baseQuery = DbContext.Chapters.AsQueryable();
 
         if (!string.IsNullOrEmpty(request.Filter))
         {
@@ -26,7 +25,7 @@ internal sealed class GetListChaptersQueryHandler : IRequestHandler<GetListChapt
         }
 
         IQueryable<ChapterDto> query = from chapter in baseQuery
-            join course in _dbContext.Courses on chapter.CourseId equals course.Id
+            join course in DbContext.Courses on chapter.CourseId equals course.Id
             select new ChapterDto
             {
                 Id = chapter.Id,

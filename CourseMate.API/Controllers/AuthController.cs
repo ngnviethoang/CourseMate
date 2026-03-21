@@ -22,10 +22,10 @@ public class AuthController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("login")]
-    public async Task<IActionResult> LoginAsync(LoginCommand request)
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePasswordAsync(ChangePasswordCommand request)
     {
-        LoginResponse result = await _mediator.Send(request);
-        return Ok(result);
+        await _mediator.Send(request);
+        return NoContent();
     }
 }

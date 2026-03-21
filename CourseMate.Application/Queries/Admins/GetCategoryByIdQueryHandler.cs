@@ -1,22 +1,21 @@
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
-using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Admins;
 
-internal sealed class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, CategoryDto?>
+internal sealed class GetCategoryByIdQueryHandler : AbstractQueryHandler<GetCategoryByIdQuery, CategoryDto?>
 {
-    private readonly CourseMateReadOnlyDbContext _dbContext;
-
-    public GetCategoryByIdQueryHandler(CourseMateReadOnlyDbContext dbContext)
+    public GetCategoryByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
     }
 
-    public async Task<CategoryDto?> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<CategoryDto?> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
-        CategoryDto? category = await _dbContext.Categories
+        CategoryDto? category = await DbContext.Categories
             .Where(x => x.Id == request.Id)
             .Select(x => new CategoryDto
             {

@@ -1,22 +1,27 @@
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.Exceptions;
-using MediatR;
+using CourseMate.Infrastructure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Admins;
 
-internal sealed class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, ResultIdDto>
+internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUserCommand, ResultIdDto>
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
-    public CreateUserCommandHandler(UserManager<IdentityUser<Guid>> userManager)
+    public CreateUserCommandHandler(
+        CourseMateDbContext dbContext,
+        IHttpContextAccessor httpContextAccessor,
+        UserManager<IdentityUser<Guid>> userManager) : base(dbContext, httpContextAccessor)
     {
         _userManager = userManager;
     }
 
-    public async Task<ResultIdDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public override async Task<ResultIdDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         IdentityUser<Guid> user = new()
         {

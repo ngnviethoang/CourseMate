@@ -1,21 +1,26 @@
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.Exceptions;
-using MediatR;
+using CourseMate.Infrastructure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Admins;
 
-internal sealed class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand>
+internal sealed class DeleteUserAbstractCommandHandler : AbstractCommandHandler<DeleteUserCommand>
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
-    public DeleteUserCommandHandler(UserManager<IdentityUser<Guid>> userManager)
+    public DeleteUserAbstractCommandHandler(
+        CourseMateDbContext dbContext,
+        IHttpContextAccessor httpContextAccessor,
+        UserManager<IdentityUser<Guid>> userManager) : base(dbContext, httpContextAccessor)
     {
         _userManager = userManager;
     }
 
-    public async Task Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+    public override async Task Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
         IdentityUser<Guid>? user = await _userManager.FindByIdAsync(request.Id.ToString());
 

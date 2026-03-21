@@ -1,30 +1,24 @@
-using System.Security.Claims;
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Infrastructure;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Students;
 
-internal sealed class GetListOrdersQueryHandler : IRequestHandler<GetListOrdersQuery, PagedDto<OrderDto>>
+internal sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOrdersQuery, PagedDto<OrderDto>>
 {
-    private readonly CourseMateReadOnlyDbContext _dbContext;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
     public GetListOrdersQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
-        _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<PagedDto<OrderDto>> Handle(GetListOrdersQuery request, CancellationToken cancellationToken)
+    public override async Task<PagedDto<OrderDto>> Handle(GetListOrdersQuery request, CancellationToken cancellationToken)
     {
-        string? userIdString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-        Guid studentId = Guid.TryParse(userIdString, out Guid parsedId) ? parsedId : Guid.Empty;
+        Guid studentId = GetCurrentUserId();
 
-        IQueryable<OrderDto> query = _dbContext.Orders
+        IQueryable<OrderDto> query = DbContext.Orders
             .Where(o => o.StudentId == studentId)
             .Select(o => new OrderDto
             {
@@ -37,7 +31,7 @@ internal sealed class GetListOrdersQueryHandler : IRequestHandler<GetListOrdersQ
         int totalCount = await query.CountAsync(cancellationToken);
 
         List<OrderDto> orders = await query
-            .OrderBy(o => o.Id) // Basic sorting
+            .OrderBy(o => o.Id)
             .Skip((request.PageIndex - 1) * request.PageSize)
             .Take(request.PageSize)
             .ToListAsync(cancellationToken);

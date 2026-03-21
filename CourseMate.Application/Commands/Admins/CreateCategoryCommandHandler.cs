@@ -1,26 +1,26 @@
-﻿using CourseMate.Contracts.DTOs;
+﻿using CourseMate.Application.Shared;
+using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
-using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace CourseMate.Application.Commands.Admins;
 
-internal sealed class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, ResultIdDto>
+internal sealed class CreateCategoryCommandHandler : AbstractCommandHandler<CreateCategoryCommand, ResultIdDto>
 {
-    private readonly CourseMateDbContext _dbContext;
-
-    public CreateCategoryCommandHandler(CourseMateDbContext dbContext)
+    public CreateCategoryCommandHandler(
+        CourseMateDbContext dbContext,
+        IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
     }
 
-    public async Task<ResultIdDto> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+    public override async Task<ResultIdDto> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
         Category category = new(Guid.NewGuid(), request.Name, request.Description, request.IsActive);
 
-        await _dbContext.AddAsync(category, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await DbContext.AddAsync(category, cancellationToken);
+        await DbContext.SaveChangesAsync(cancellationToken);
 
         return new ResultIdDto { Id = category.Id };
     }

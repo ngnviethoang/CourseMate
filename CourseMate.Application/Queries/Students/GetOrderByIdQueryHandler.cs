@@ -1,32 +1,26 @@
-using System.Security.Claims;
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Students;
 
-internal sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderDto?>
+internal sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderByIdQuery, OrderDto?>
 {
-    private readonly CourseMateReadOnlyDbContext _dbContext;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
     public GetOrderByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
-        _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<OrderDto?> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<OrderDto?> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
     {
-        string? userIdString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-        Guid studentId = Guid.TryParse(userIdString, out Guid parsedId) ? parsedId : Guid.Empty;
+        Guid studentId = GetCurrentUserId();
 
-        Order? order = await _dbContext.Orders
+        Order? order = await DbContext.Orders
             .FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == studentId, cancellationToken);
 
         if (order == null)
@@ -34,8 +28,8 @@ internal sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQue
             throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
         }
 
-        List<OrderItemDto> items = await (from item in _dbContext.OrderItems
-            join course in _dbContext.Courses on item.CourseId equals course.Id
+        List<OrderItemDto> items = await (from item in DbContext.OrderItems
+            join course in DbContext.Courses on item.CourseId equals course.Id
             where item.OrderId == order.Id
             select new OrderItemDto
             {

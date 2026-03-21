@@ -1,32 +1,33 @@
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
-using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Admins;
 
-internal sealed class DeleteLessonCommandHandler : IRequestHandler<DeleteLessonCommand>
+internal sealed class DeleteLessonAbstractCommandHandler : AbstractCommandHandler<DeleteLessonCommand>
 {
-    private readonly CourseMateDbContext _dbContext;
-
-    public DeleteLessonCommandHandler(CourseMateDbContext dbContext)
+    public DeleteLessonAbstractCommandHandler(
+        CourseMateDbContext dbContext,
+        IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
     }
 
-    public async Task Handle(DeleteLessonCommand request, CancellationToken cancellationToken)
+    public override async Task Handle(DeleteLessonCommand request, CancellationToken cancellationToken)
     {
-        Lesson? lesson = await _dbContext.Lessons.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        Lesson? lesson = await DbContext.Lessons
+            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (lesson == null)
         {
             throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
         }
 
-        _dbContext.Remove(lesson);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        DbContext.Remove(lesson);
+        await DbContext.SaveChangesAsync(cancellationToken);
     }
 }

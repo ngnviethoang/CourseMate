@@ -1,24 +1,23 @@
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
-using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Admins;
 
-internal sealed class GetCourseByIdQueryHandler : IRequestHandler<GetCourseByIdQuery, CourseDto?>
+internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourseByIdQuery, CourseDto?>
 {
-    private readonly CourseMateReadOnlyDbContext _dbContext;
-
-    public GetCourseByIdQueryHandler(CourseMateReadOnlyDbContext dbContext)
+    public GetCourseByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
     }
 
-    public async Task<CourseDto?> Handle(GetCourseByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<CourseDto?> Handle(GetCourseByIdQuery request, CancellationToken cancellationToken)
     {
-        IQueryable<CourseDto> query = from course in _dbContext.Courses
-            join category in _dbContext.Categories on course.CategoryId equals category.Id
-            join instructor in _dbContext.Users on course.InstructorId equals instructor.Id
+        IQueryable<CourseDto> query = from course in DbContext.Courses
+            join category in DbContext.Categories on course.CategoryId equals category.Id
+            join instructor in DbContext.Users on course.InstructorId equals instructor.Id
             where course.Id == request.Id
             select new CourseDto
             {

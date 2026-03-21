@@ -1,25 +1,26 @@
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
-using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Admins;
 
-internal sealed class UpdateLessonCommandHandler : IRequestHandler<UpdateLessonCommand>
+internal sealed class UpdateLessonAbstractCommandHandler : AbstractCommandHandler<UpdateLessonCommand>
 {
-    private readonly CourseMateDbContext _dbContext;
-
-    public UpdateLessonCommandHandler(CourseMateDbContext dbContext)
+    public UpdateLessonAbstractCommandHandler(
+        CourseMateDbContext dbContext,
+        IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
     }
 
-    public async Task Handle(UpdateLessonCommand request, CancellationToken cancellationToken)
+    public override async Task Handle(UpdateLessonCommand request, CancellationToken cancellationToken)
     {
-        Lesson? lesson = await _dbContext.Lessons.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        Lesson? lesson = await DbContext.Lessons
+            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (lesson == null)
         {
@@ -32,7 +33,7 @@ internal sealed class UpdateLessonCommandHandler : IRequestHandler<UpdateLessonC
         lesson.LessonType = request.LessonType;
         lesson.Position = request.Position;
 
-        _dbContext.Update(lesson);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        DbContext.Update(lesson);
+        await DbContext.SaveChangesAsync(cancellationToken);
     }
 }

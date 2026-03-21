@@ -1,21 +1,21 @@
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
-using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace CourseMate.Application.Commands.Admins;
 
-internal sealed class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, ResultIdDto>
+internal sealed class CreateCourseCommandHandler : AbstractCommandHandler<CreateCourseCommand, ResultIdDto>
 {
-    private readonly CourseMateDbContext _dbContext;
-
-    public CreateCourseCommandHandler(CourseMateDbContext dbContext)
+    public CreateCourseCommandHandler(
+        CourseMateDbContext dbContext,
+        IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
     }
 
-    public async Task<ResultIdDto> Handle(CreateCourseCommand request, CancellationToken cancellationToken)
+    public override async Task<ResultIdDto> Handle(CreateCourseCommand request, CancellationToken cancellationToken)
     {
         Course course = new(
             Guid.NewGuid(),
@@ -28,8 +28,8 @@ internal sealed class CreateCourseCommandHandler : IRequestHandler<CreateCourseC
             request.InstructorId
         );
 
-        await _dbContext.AddAsync(course, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await DbContext.AddAsync(course, cancellationToken);
+        await DbContext.SaveChangesAsync(cancellationToken);
 
         return new ResultIdDto { Id = course.Id };
     }

@@ -82,6 +82,6 @@ app.UseCors();
 app.MapOpenApi();
 app.UseAuthentication();
 app.UseAuthorization();
-// app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
+app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
 app.MapControllers();
 await app.RunAsync();

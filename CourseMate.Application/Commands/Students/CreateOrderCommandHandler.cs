@@ -1,4 +1,4 @@
-using System.Security.Claims;
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Students;
@@ -6,35 +6,30 @@ using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Students;
 
-internal sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, ResultIdDto>
+internal sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateOrderCommand, ResultIdDto>
 {
-    private readonly CourseMateDbContext _dbContext;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public CreateOrderCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+    public CreateOrderCommandHandler(
+        CourseMateDbContext dbContext,
+        IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
-        _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<ResultIdDto> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+    public override async Task<ResultIdDto> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        string? userIdString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-        Guid studentId = Guid.TryParse(userIdString, out Guid parsedId) ? parsedId : Guid.Empty;
+        Guid studentId = GetCurrentUserId();
 
-        Cart? cart = await _dbContext.Carts.FirstOrDefaultAsync(c => c.StudentId == studentId, cancellationToken);
+        Cart? cart = await DbContext.Carts.FirstOrDefaultAsync(c => c.StudentId == studentId, cancellationToken);
         if (cart == null)
         {
             throw new EntityNotFoundException(ExceptionMessages.EntityNotFound);
         }
 
-        List<CartItem> cartItems = await _dbContext.CartItems
+        List<CartItem> cartItems = await DbContext.CartItems
             .Where(ci => ci.CartId == cart.Id)
             .ToListAsync(cancellationToken);
 
@@ -44,23 +39,23 @@ internal sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderCom
         }
 
         List<Guid> courseIds = cartItems.Select(ci => ci.CourseId).ToList();
-        List<Course> courses = await _dbContext.Courses.Where(c => courseIds.Contains(c.Id)).ToListAsync(cancellationToken);
+        List<Course> courses = await DbContext.Courses.Where(c => courseIds.Contains(c.Id)).ToListAsync(cancellationToken);
 
         Guid orderId = Guid.NewGuid();
         decimal totalAmount = courses.Sum(c => c.Price);
 
         Order order = new(orderId, studentId, totalAmount, OrderStatus.Pending);
-        _dbContext.Orders.Add(order);
+        DbContext.Orders.Add(order);
 
         foreach (Course course in courses)
         {
             OrderItem orderItem = new(Guid.NewGuid(), orderId, course.Id, course.Price);
-            _dbContext.OrderItems.Add(orderItem);
+            DbContext.OrderItems.Add(orderItem);
         }
 
-        _dbContext.CartItems.RemoveRange(cartItems);
+        DbContext.CartItems.RemoveRange(cartItems);
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await DbContext.SaveChangesAsync(cancellationToken);
 
         return new ResultIdDto { Id = orderId };
     }

@@ -2,23 +2,22 @@ using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
-using MediatR;
+
+AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Admins;
 
-internal sealed class GetListCoursesQueryHandler : IRequestHandler<GetListCoursesQuery, PagedDto<CourseDto>>
+internal sealed class GetListCoursesQueryHandler : AbstractQueryHandler<GetListCoursesQuery, PagedDto<CourseDto>>
 {
-    private readonly CourseMateReadOnlyDbContext _dbContext;
-
-    public GetListCoursesQueryHandler(CourseMateReadOnlyDbContext dbContext)
+    public GetListCoursesQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
     }
 
-    public async Task<PagedDto<CourseDto>> Handle(GetListCoursesQuery request, CancellationToken cancellationToken)
+    public override async Task<PagedDto<CourseDto>> Handle(GetListCoursesQuery request, CancellationToken cancellationToken)
     {
-        IQueryable<Course> baseQuery = _dbContext.Courses.AsQueryable();
+        IQueryable<Course> baseQuery = DbContext.Courses.AsQueryable();
 
         if (!string.IsNullOrEmpty(request.Filter))
         {
@@ -26,8 +25,8 @@ internal sealed class GetListCoursesQueryHandler : IRequestHandler<GetListCourse
         }
 
         IQueryable<CourseDto> query = from course in baseQuery
-            join category in _dbContext.Categories on course.CategoryId equals category.Id
-            join instructor in _dbContext.Users on course.InstructorId equals instructor.Id
+            join category in DbContext.Categories on course.CategoryId equals category.Id
+            join instructor in DbContext.Users on course.InstructorId equals instructor.Id
             select new CourseDto
             {
                 Id = course.Id,
@@ -66,7 +65,8 @@ internal sealed class GetListCoursesQueryHandler : IRequestHandler<GetListCourse
         {
             Items = courses,
             PageIndex = request.PageIndex,
-            PageSize = request.PageSize,
+            PageSize = requ
+            st.PageSize,
             TotalCount = total
         };
     }

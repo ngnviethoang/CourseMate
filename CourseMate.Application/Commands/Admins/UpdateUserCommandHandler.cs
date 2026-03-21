@@ -1,21 +1,26 @@
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.Exceptions;
-using MediatR;
+using CourseMate.Infrastructure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Admins;
 
-internal sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
+internal sealed class UpdateUserAbstractCommandHandler : AbstractCommandHandler<UpdateUserCommand>
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
-    public UpdateUserCommandHandler(UserManager<IdentityUser<Guid>> userManager)
+    public UpdateUserAbstractCommandHandler(
+        CourseMateDbContext dbContext,
+        IHttpContextAccessor httpContextAccessor,
+        UserManager<IdentityUser<Guid>> userManager) : base(dbContext, httpContextAccessor)
     {
         _userManager = userManager;
     }
 
-    public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    public override async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         IdentityUser<Guid>? user = await _userManager.FindByIdAsync(request.Id.ToString());
 

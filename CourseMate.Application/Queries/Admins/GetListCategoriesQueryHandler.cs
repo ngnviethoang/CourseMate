@@ -1,24 +1,23 @@
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
-using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Admins;
 
-internal sealed class GetListCategoryQueryHandler : IRequestHandler<GetListCategoriesQuery, PagedDto<CategoryDto>>
+internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetListCategoriesQuery, PagedDto<CategoryDto>>
 {
-    private readonly CourseMateReadOnlyDbContext _dbContext;
-
-    public GetListCategoryQueryHandler(CourseMateReadOnlyDbContext dbContext)
+    public GetListCategoryQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
     }
 
-    public async Task<PagedDto<CategoryDto>> Handle(GetListCategoriesQuery request, CancellationToken cancellationToken)
+    public override async Task<PagedDto<CategoryDto>> Handle(GetListCategoriesQuery request, CancellationToken cancellationToken)
     {
-        IQueryable<Category> query = _dbContext.Categories.AsQueryable();
+        IQueryable<Category> query = DbContext.Categories.AsQueryable();
 
         if (!string.IsNullOrEmpty(request.Filter))
         {

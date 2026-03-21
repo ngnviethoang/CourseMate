@@ -1,30 +1,24 @@
-using System.Security.Claims;
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Students;
 
-internal sealed class GetCartQueryHandler : IRequestHandler<GetCartQuery, CartDto?>
+internal sealed class GetCartQueryHandler : AbstractQueryHandler<GetCartQuery, CartDto?>
 {
-    private readonly CourseMateReadOnlyDbContext _dbContext;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
     public GetCartQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
-        _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<CartDto?> Handle(GetCartQuery request, CancellationToken cancellationToken)
+    public override async Task<CartDto?> Handle(GetCartQuery request, CancellationToken cancellationToken)
     {
-        string? userIdString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-        Guid studentId = Guid.TryParse(userIdString, out Guid parsedId) ? parsedId : Guid.Empty;
+        Guid studentId = GetCurrentUserId();
 
-        Cart? cart = await _dbContext.Carts
+        Cart? cart = await DbContext.Carts
             .FirstOrDefaultAsync(c => c.StudentId == studentId, cancellationToken);
 
         if (cart == null)
@@ -32,9 +26,9 @@ internal sealed class GetCartQueryHandler : IRequestHandler<GetCartQuery, CartDt
             return new CartDto { StudentId = studentId };
         }
 
-        List<CartItemDto> items = await (from item in _dbContext.CartItems
-            join course in _dbContext.Courses on item.CourseId equals course.Id
-            join instructor in _dbContext.Users on course.InstructorId equals instructor.Id
+        List<CartItemDto> items = await (from item in DbContext.CartItems
+            join course in DbContext.Courses on item.CourseId equals course.Id
+            join instructor in DbContext.Users on course.InstructorId equals instructor.Id
             where item.CartId == cart.Id
             select new CartItemDto
             {

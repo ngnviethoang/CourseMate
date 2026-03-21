@@ -2,23 +2,22 @@ using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
-using MediatR;
+
+AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Admins;
 
-internal sealed class GetListLessonsQueryHandler : IRequestHandler<GetListLessonsQuery, PagedDto<LessonDto>>
+internal sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListLessonsQuery, PagedDto<LessonDto>>
 {
-    private readonly CourseMateReadOnlyDbContext _dbContext;
-
-    public GetListLessonsQueryHandler(CourseMateReadOnlyDbContext dbContext)
+    public GetListLessonsQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
     }
 
-    public async Task<PagedDto<LessonDto>> Handle(GetListLessonsQuery request, CancellationToken cancellationToken)
+    public override async Task<PagedDto<LessonDto>> Handle(GetListLessonsQuery request, CancellationToken cancellationToken)
     {
-        IQueryable<Lesson> baseQuery = _dbContext.Lessons.AsQueryable();
+        IQueryable<Lesson> baseQuery = DbContext.Lessons.AsQueryable();
 
         if (!string.IsNullOrEmpty(request.Filter))
         {
@@ -26,8 +25,8 @@ internal sealed class GetListLessonsQueryHandler : IRequestHandler<GetListLesson
         }
 
         IQueryable<LessonDto> query = from lesson in baseQuery
-            join chapter in _dbContext.Chapters on lesson.ChapterId equals chapter.Id
-            join course in _dbContext.Courses on lesson.CourseId equals course.Id
+            join chapter in DbContext.Chapters on lesson.ChapterId equals chapter.Id
+            join course in DbContext.Courses on lesson.CourseId equals course.Id
             select new LessonDto
             {
                 Id = lesson.Id,
@@ -64,7 +63,8 @@ internal sealed class GetListLessonsQueryHandler : IRequestHandler<GetListLesson
         {
             Items = lessons,
             PageIndex = request.PageIndex,
-            PageSize = request.PageSize,
+            PageSize = requ
+            st.PageSize,
             TotalCount = total
         };
     }

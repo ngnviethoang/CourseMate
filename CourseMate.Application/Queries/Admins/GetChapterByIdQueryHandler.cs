@@ -1,23 +1,22 @@
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
-using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Admins;
 
-internal sealed class GetChapterByIdQueryHandler : IRequestHandler<GetChapterByIdQuery, ChapterDto?>
+internal sealed class GetChapterByIdQueryHandler : AbstractQueryHandler<GetChapterByIdQuery, ChapterDto?>
 {
-    private readonly CourseMateReadOnlyDbContext _dbContext;
-
-    public GetChapterByIdQueryHandler(CourseMateReadOnlyDbContext dbContext)
+    public GetChapterByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
     }
 
-    public async Task<ChapterDto?> Handle(GetChapterByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<ChapterDto?> Handle(GetChapterByIdQuery request, CancellationToken cancellationToken)
     {
-        IQueryable<ChapterDto> query = from chapter in _dbContext.Chapters
-            join course in _dbContext.Courses on chapter.CourseId equals course.Id
+        IQueryable<ChapterDto> query = from chapter in DbContext.Chapters
+            join course in DbContext.Courses on chapter.CourseId equals course.Id
             where chapter.Id == request.Id
             select new ChapterDto
             {

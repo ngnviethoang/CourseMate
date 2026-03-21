@@ -1,31 +1,25 @@
-using System.Security.Claims;
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Infrastructure;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Students;
 
-internal sealed class GetCourseByIdQueryHandler : IRequestHandler<GetCourseByIdQuery, CourseDetailDto?>
+internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourseByIdQuery, CourseDetailDto?>
 {
-    private readonly CourseMateReadOnlyDbContext _dbContext;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
     public GetCourseByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        : base(dbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
-        _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<CourseDetailDto?> Handle(GetCourseByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<CourseDetailDto?> Handle(GetCourseByIdQuery request, CancellationToken cancellationToken)
     {
-        string? userIdString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-        Guid studentId = Guid.TryParse(userIdString, out Guid parsedId) ? parsedId : Guid.Empty;
+        Guid studentId = GetCurrentUserId();
 
-        IQueryable<CourseDetailDto> courseQuery = from course in _dbContext.Courses
-            join category in _dbContext.Categories on course.CategoryId equals category.Id
-            join instructor in _dbContext.Users on course.InstructorId equals instructor.Id
+        IQueryable<CourseDetailDto> courseQuery = from course in DbContext.Courses
+            join category in DbContext.Categories on course.CategoryId equals category.Id
+            join instructor in DbContext.Users on course.InstructorId equals instructor.Id
             where course.Id == request.Id && course.IsPublished
             select new CourseDetailDto
             {
@@ -47,11 +41,11 @@ internal sealed class GetCourseByIdQueryHandler : IRequestHandler<GetCourseByIdQ
         }
 
         // Check enrollment
-        result.IsEnrolled = await _dbContext.Enrollments
+        result.IsEnrolled = await DbContext.Enrollments
             .AnyAsync(e => e.CourseId == request.Id && e.StudentId == studentId, cancellationToken);
 
         // Fetch Chapters and Lessons
-        var chapters = await _dbContext.Chapters
+        var chapters = await DbContext.Chapters
             .Where(c => c.CourseId == request.Id)
             .OrderBy(c => c.Position)
             .Select(c => new
@@ -62,7 +56,7 @@ internal sealed class GetCourseByIdQueryHandler : IRequestHandler<GetCourseByIdQ
             })
             .ToListAsync(cancellationToken);
 
-        var lessons = await _dbContext.Lessons
+        var lessons = await DbContext.Lessons
             .Where(l => l.CourseId == request.Id)
             .OrderBy(l => l.Position)
             .Select(l => new
@@ -81,7 +75,7 @@ internal sealed class GetCourseByIdQueryHandler : IRequestHandler<GetCourseByIdQ
         List<Guid> completedLessonIds = [];
         if (studentId != Guid.Empty && lessonIds.Count > 0)
         {
-            completedLessonIds = await _dbContext.UserLessonProgresses
+            completedLessonIds = await DbContext.UserLessonProgresses
                 .Where(p => p.StudentId == studentId && lessonIds.Contains(p.LessonId) && p.IsCompleted)
                 .Select(p => p.LessonId)
                 .ToListAsync(cancellationToken);
