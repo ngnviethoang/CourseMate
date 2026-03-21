@@ -1,4 +1,6 @@
+using System.Text.Json;
 using CourseMate.Contracts.Constants;
+using CourseMate.Infrastructure.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,35 +13,72 @@ public static class DbSeeder
         using IServiceScope scope = services.CreateScope();
         RoleManager<IdentityRole<Guid>> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
         UserManager<IdentityUser<Guid>> userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser<Guid>>>();
+        CourseMateDbContext dbContext = scope.ServiceProvider.GetRequiredService<CourseMateDbContext>();
 
-        string[] roles = [Roles.Admin, Roles.Instructor, Roles.Student];
+        IReadOnlyList<string> roles = [Roles.Admin, Roles.Instructor, Roles.Student];
         foreach (string role in roles)
         {
-            if (!await roleManager.RoleExistsAsync(role))
+            await roleManager.CreateAsync(new IdentityRole<Guid>(role));
+        }
+
+        IReadOnlyDictionary<string, string> userRoleDict = new Dictionary<string, string>
+        {
+            ["admin"] = Roles.Admin,
+            ["manager"] = Roles.Admin,
+            ["instructor1"] = Roles.Instructor,
+            ["instructor2"] = Roles.Instructor,
+            ["instructor3"] = Roles.Instructor,
+            ["student1"] = Roles.Student,
+            ["student2"] = Roles.Student,
+            ["student3"] = Roles.Student
+        };
+        List<Guid> instructorIds = [];
+        foreach (KeyValuePair<string, string> userRole in userRoleDict)
+        {
+            IdentityUser<Guid> user = new() { UserName = userRole.Key, Email = $"{userRole.Key}@example.com", EmailConfirmed = true };
+            await userManager.CreateAsync(user, "User@123");
+            await userManager.AddToRoleAsync(user, userRole.Value);
+            if (string.Equals(Roles.Instructor, userRole.Value))
             {
-                await roleManager.CreateAsync(new IdentityRole<Guid>(role));
+                instructorIds.Add(user.Id);
             }
         }
 
-        if (await userManager.FindByNameAsync("admin") == null)
+        string projectDomain = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())!.Parent!.FullName, "Seeds");
+        string jsonFilePath = Path.Combine(projectDomain, "categories.json");
+        string json = await File.ReadAllTextAsync(jsonFilePath);
+
+        List<Category> categories = JsonSerializer.Deserialize<List<Category>>(json)!;
+        categories.ForEach(i => i.IsActive = true);
+        await dbContext.Categories.AddRangeAsync(categories);
+
+        Random random = new();
+        jsonFilePath = Path.Combine(projectDomain, "courses.json");
+        json = await File.ReadAllTextAsync(jsonFilePath);
+        List<Course> courses = JsonSerializer.Deserialize<List<Course>>(json)!;
+        foreach (Course i in courses)
         {
-            IdentityUser<Guid> admin = new() { UserName = "admin", Email = "admin@example.com", EmailConfirmed = true };
-            await userManager.CreateAsync(admin, "Admin@123");
-            await userManager.AddToRoleAsync(admin, Roles.Admin);
+            i.InstructorId = instructorIds.ElementAtOrDefault(random.Next(instructorIds.Count));
         }
 
-        if (await userManager.FindByNameAsync("instructor") == null)
-        {
-            IdentityUser<Guid> instructor = new() { UserName = "instructor", Email = "instructor@example.com", EmailConfirmed = true };
-            await userManager.CreateAsync(instructor, "Instructor@123");
-            await userManager.AddToRoleAsync(instructor, Roles.Instructor);
-        }
+        await dbContext.Courses.AddRangeAsync(courses);
+        jsonFilePath = Path.Combine(projectDomain, "chapters.json");
+        json = await File.ReadAllTextAsync(jsonFilePath);
+        List<Chapter> chapters = JsonSerializer.Deserialize<List<Chapter>>(json)!;
+        Dictionary<Guid, Guid> chapterDict = chapters.ToDictionary(i => i.Id, i => i.CourseId);
+        await dbContext.Chapters.AddRangeAsync(chapters);
 
-        if (await userManager.FindByNameAsync("student") == null)
+        jsonFilePath = Path.Combine(projectDomain, "lessons.json");
+        json = await File.ReadAllTextAsync(jsonFilePath);
+        List<Lesson> lessons = JsonSerializer.Deserialize<List<Lesson>>(json)!;
+        lessons.ForEach(i =>
         {
-            IdentityUser<Guid> student = new() { UserName = "student", Email = "student@example.com", EmailConfirmed = true };
-            await userManager.CreateAsync(student, "Student@123");
-            await userManager.AddToRoleAsync(student, Roles.Student);
-        }
+            if (chapterDict.TryGetValue(i.ChapterId, out Guid courseId))
+            {
+                i.CourseId = courseId;
+            }
+        });
+        await dbContext.Lessons.AddRangeAsync(lessons);
+        await dbContext.SaveChangesAsync();
     }
 }

@@ -22,7 +22,7 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
             Instance = null,
             Title = "Internal Server Error",
             Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.1",
-            Detail = exception.Message,
+            Detail = "Internal Server Error",
             Extensions =
             {
                 ["traceId"] = httpContext.TraceIdentifier,

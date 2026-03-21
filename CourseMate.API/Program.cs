@@ -73,7 +73,7 @@ builder.Services.AddCors(options =>
 });
 
 WebApplication app = builder.Build();
-await app.Services.SeedAsync();
+// await app.Services.SeedAsync();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseExceptionHandler();

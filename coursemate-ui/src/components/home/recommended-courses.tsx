@@ -131,7 +131,7 @@ interface RecommendedCoursesProps {
 export function RecommendedCourses({ searchQuery }: RecommendedCoursesProps) {
   const [courses, setCourses] = useState<CourseDto[]>([])
   const [loading, setLoading] = useState(true)
-  const PAGE_SIZE = 100
+  const PAGE_SIZE = 12
 
   const fetchCourses = useCallback(async (filter?: string) => {
     setLoading(true)

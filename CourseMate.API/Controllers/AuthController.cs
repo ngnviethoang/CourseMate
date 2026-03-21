@@ -15,6 +15,13 @@ public class AuthController : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpPost("login")]
+    public async Task<IActionResult> LoginAsync(LoginCommand request)
+    {
+        LoginResponse result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
     [HttpPost("register")]
     public async Task<IActionResult> RegisterAsync(RegisterCommand request)
     {
