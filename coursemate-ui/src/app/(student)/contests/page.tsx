@@ -107,12 +107,13 @@ export default function ContestsPage() {
             <div className="mt-5 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
               <Flame className="h-5 w-5 text-emerald-600 flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-emerald-800 leading-tight line-clamp-1">
-                  {ongoing[0].title}
-                </p>
+                <p className="text-sm font-semibold text-emerald-800 leading-tight line-clamp-1">{ongoing[0].title}</p>
                 <p className="text-xs text-emerald-600 mt-0.5">đang diễn ra ngay bây giờ!</p>
               </div>
-              <Button size="sm" className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex-shrink-0 h-8 px-4 text-xs gap-1">
+              <Button
+                size="sm"
+                className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex-shrink-0 h-8 px-4 text-xs gap-1"
+              >
                 Tham gia <ChevronRight className="h-3.5 w-3.5" />
               </Button>
             </div>
@@ -154,8 +155,12 @@ export default function ContestsPage() {
                 <div className="flex-1 min-w-0">
                   {/* Status + difficulty badges */}
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-white ${STATUS_COLOR[contest.status]}`}>
-                      <span className={`h-1.5 w-1.5 rounded-full bg-white ${contest.status === 'ongoing' ? 'animate-pulse' : ''}`} />
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-white ${STATUS_COLOR[contest.status]}`}
+                    >
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full bg-white ${contest.status === 'ongoing' ? 'animate-pulse' : ''}`}
+                      />
                       {STATUS_LABEL[contest.status]}
                     </span>
                     <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${contest.difficultyColor}`}>
@@ -189,8 +194,10 @@ export default function ContestsPage() {
                     )}
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3.5 w-3.5" />
-                      {new Date(contest.status === 'ended' ? contest.endsAt : contest.startsAt)
-                        .toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      {new Date(contest.status === 'ended' ? contest.endsAt : contest.startsAt).toLocaleDateString(
+                        'vi-VN',
+                        { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }
+                      )}
                     </span>
                   </div>
 

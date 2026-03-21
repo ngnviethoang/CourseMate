@@ -1,7 +1,19 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { BarChart3, Briefcase, Camera, ChevronRight, Code2, Globe, Music, Palette, TrendingUp, BookOpen, Loader2 } from 'lucide-react'
+import {
+  BarChart3,
+  Briefcase,
+  Camera,
+  ChevronRight,
+  Code2,
+  Globe,
+  Music,
+  Palette,
+  TrendingUp,
+  BookOpen,
+  Loader2
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { studentService } from '@/lib/student-service'
 import { CategoryDto } from '@/lib/types'
@@ -33,10 +45,7 @@ function CategorySkeleton() {
   return (
     <div className="grid grid-cols-4 gap-3 sm:grid-cols-8">
       {Array.from({ length: 8 }).map((_, i) => (
-        <div
-          key={i}
-          className="flex flex-col items-center gap-2 rounded-xl border bg-card p-3 animate-pulse"
-        >
+        <div key={i} className="flex flex-col items-center gap-2 rounded-xl border bg-card p-3 animate-pulse">
           <div className="h-10 w-10 rounded-lg bg-muted" />
           <div className="h-3 w-14 rounded bg-muted" />
         </div>

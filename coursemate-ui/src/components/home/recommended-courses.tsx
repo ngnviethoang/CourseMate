@@ -61,21 +61,26 @@ function CourseCard({ course, index }: CourseCardProps) {
       <Link href={`/courses/${course.id}`} className="block relative overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={course.imageUrl || `https://placehold.co/400x225/6366f1/ffffff?text=${encodeURIComponent(course.title.slice(0, 15))}`}
+          src={
+            course.imageUrl ||
+            `https://placehold.co/400x225/6366f1/ffffff?text=${encodeURIComponent(course.title.slice(0, 15))}`
+          }
           alt={course.title}
           className="h-36 w-full object-cover transition-transform duration-300 group-hover:scale-105"
           onError={e => {
-            ; (e.target as HTMLImageElement).src = `https://placehold.co/400x225/6366f1/ffffff?text=${encodeURIComponent(course.categoryName)}`
+            ;(e.target as HTMLImageElement).src =
+              `https://placehold.co/400x225/6366f1/ffffff?text=${encodeURIComponent(course.categoryName)}`
           }}
         />
         {badge && (
           <Badge
-            className={`absolute left-2 top-2 text-[10px] shadow-sm ${badge === 'Bestseller'
-              ? 'bg-amber-500 text-white'
-              : badge === 'New'
-                ? 'bg-emerald-500 text-white'
-                : 'bg-blue-500 text-white'
-              }`}
+            className={`absolute left-2 top-2 text-[10px] shadow-sm ${
+              badge === 'Bestseller'
+                ? 'bg-amber-500 text-white'
+                : badge === 'New'
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-blue-500 text-white'
+            }`}
           >
             {badge}
           </Badge>
@@ -88,9 +93,7 @@ function CourseCard({ course, index }: CourseCardProps) {
             {course.title}
           </CardTitle>
         </Link>
-        <CardDescription className="text-xs">
-          {course.instructorName ?? 'Instructor'}
-        </CardDescription>
+        <CardDescription className="text-xs">{course.instructorName ?? 'Instructor'}</CardDescription>
       </CardHeader>
 
       <CardContent className="pb-1">
@@ -106,9 +109,7 @@ function CourseCard({ course, index }: CourseCardProps) {
       </CardContent>
 
       <CardFooter className="flex items-center justify-between pt-2">
-        <span className="text-sm font-bold text-primary">
-          {course.price === 0 ? 'Free' : `$${course.price}`}
-        </span>
+        <span className="text-sm font-bold text-primary">{course.price === 0 ? 'Free' : `$${course.price}`}</span>
         <Button
           size="sm"
           variant="outline"
@@ -132,29 +133,24 @@ export function RecommendedCourses({ searchQuery }: RecommendedCoursesProps) {
   const [loading, setLoading] = useState(true)
   const PAGE_SIZE = 100
 
-  const fetchCourses = useCallback(
-    async (filter?: string) => {
-      setLoading(true)
-      try {
-        const res = await studentService.getCourses(1, PAGE_SIZE, filter)
-        setCourses(res.items)
-      } catch {
-        // error handled by apiClient
-      } finally {
-        setLoading(false)
-      }
-    },
-    []
-  )
+  const fetchCourses = useCallback(async (filter?: string) => {
+    setLoading(true)
+    try {
+      const res = await studentService.getCourses(1, PAGE_SIZE, filter)
+      setCourses(res.items)
+    } catch {
+      // error handled by apiClient
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
   // Reset and search when query changes
   useEffect(() => {
     fetchCourses(searchQuery)
   }, [searchQuery, fetchCourses])
 
-  const title = searchQuery
-    ? `Search results for "${searchQuery}"`
-    : 'Recommended for You'
+  const title = searchQuery ? `Search results for "${searchQuery}"` : 'Recommended for You'
   const subtitle = searchQuery ? `${courses.length} courses found` : 'Based on latest courses'
 
   return (

@@ -147,9 +147,7 @@ export default function CheckoutPage() {
             <div className="md:col-span-3 space-y-6">
               <div>
                 <h2 className="text-lg font-bold">Chọn phương thức thanh toán</h2>
-                <p className="text-sm text-muted-foreground mt-0.5">
-                  Chọn hình thức thanh toán phù hợp với bạn
-                </p>
+                <p className="text-sm text-muted-foreground mt-0.5">Chọn hình thức thanh toán phù hợp với bạn</p>
               </div>
 
               <div className="space-y-3">
@@ -160,14 +158,16 @@ export default function CheckoutPage() {
                     <button
                       key={method.id}
                       onClick={() => setSelectedMethod(method.id)}
-                      className={`w-full flex items-center gap-4 rounded-2xl border-2 p-4 text-left transition-all duration-150 ${selected
+                      className={`w-full flex items-center gap-4 rounded-2xl border-2 p-4 text-left transition-all duration-150 ${
+                        selected
                           ? 'border-primary bg-primary/5 shadow-sm'
                           : 'border-border bg-card hover:border-primary/30 hover:bg-muted/40'
-                        }`}
+                      }`}
                     >
                       <div
-                        className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl transition-colors ${selected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                          }`}
+                        className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl transition-colors ${
+                          selected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                        }`}
                       >
                         <Icon className="h-5 w-5" />
                       </div>
@@ -183,8 +183,9 @@ export default function CheckoutPage() {
                         <p className="text-xs text-muted-foreground mt-0.5">{method.description}</p>
                       </div>
                       <div
-                        className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 transition-colors ${selected ? 'border-primary bg-primary' : 'border-muted-foreground/30'
-                          }`}
+                        className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                          selected ? 'border-primary bg-primary' : 'border-muted-foreground/30'
+                        }`}
                       >
                         {selected && <CheckCircle2 className="h-3 w-3 text-primary-foreground" />}
                       </div>
@@ -224,7 +225,7 @@ export default function CheckoutPage() {
                           alt={item.courseTitle}
                           className="h-10 w-14 rounded-lg object-cover flex-shrink-0"
                           onError={e => {
-                            ; (e.target as HTMLImageElement).src = 'https://placehold.co/48x36/6366f1/fff?text=K'
+                            ;(e.target as HTMLImageElement).src = 'https://placehold.co/48x36/6366f1/fff?text=K'
                           }}
                         />
                         <div className="flex-1 min-w-0">

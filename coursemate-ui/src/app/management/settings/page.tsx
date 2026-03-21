@@ -18,7 +18,8 @@ export default function SettingsPage() {
   const [showConfirm, setShowConfirm] = useState(false)
 
   const passwordMismatch = confirmPassword.length > 0 && form.newPassword !== confirmPassword
-  const canSubmit = form.currentPassword.length > 0 && form.newPassword.length >= 6 && form.newPassword === confirmPassword
+  const canSubmit =
+    form.currentPassword.length > 0 && form.newPassword.length >= 6 && form.newPassword === confirmPassword
 
   async function handleSubmit() {
     if (!canSubmit) return
@@ -117,9 +118,7 @@ export default function SettingsPage() {
               {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
-          {passwordMismatch && (
-            <p className="text-xs text-destructive">Passwords do not match.</p>
-          )}
+          {passwordMismatch && <p className="text-xs text-destructive">Passwords do not match.</p>}
         </div>
 
         <div className="flex justify-end pt-2">

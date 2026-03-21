@@ -7,15 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
-import {
-  ShoppingCart,
-  Trash2,
-  ArrowRight,
-  BookOpen,
-  Sparkles,
-  Loader2,
-  Tag
-} from 'lucide-react'
+import { ShoppingCart, Trash2, ArrowRight, BookOpen, Sparkles, Loader2, Tag } from 'lucide-react'
 import { studentService } from '@/lib/student-service'
 import { CartDto } from '@/lib/types'
 import { toast } from 'sonner'
@@ -69,11 +61,7 @@ function EmptyCart() {
           Bạn chưa thêm khoá học nào vào giỏ hàng. Hãy khám phá hàng nghìn khoá học chất lượng!
         </p>
       </div>
-      <Button
-        size="lg"
-        className="rounded-full gap-2 px-8"
-        onClick={() => router.push('/')}
-      >
+      <Button size="lg" className="rounded-full gap-2 px-8" onClick={() => router.push('/')}>
         <BookOpen className="h-4 w-4" />
         Khám phá khoá học
       </Button>
@@ -94,7 +82,7 @@ export default function CartPage() {
     studentService
       .getCart()
       .then(res => setCart(res))
-      .catch(() => { })
+      .catch(() => {})
       .finally(() => setLoading(false))
   }
 
@@ -130,9 +118,7 @@ export default function CartPage() {
               <h1 className="text-2xl font-bold tracking-tight">Giỏ hàng của tôi</h1>
               {!loading && (
                 <p className="text-sm text-muted-foreground">
-                  {items.length > 0
-                    ? `${items.length} khoá học đang chờ bạn`
-                    : 'Chưa có khoá học nào'}
+                  {items.length > 0 ? `${items.length} khoá học đang chờ bạn` : 'Chưa có khoá học nào'}
                 </p>
               )}
             </div>
@@ -161,8 +147,7 @@ export default function CartPage() {
                       alt={item.courseTitle}
                       className="h-32 w-full sm:w-44 rounded-xl object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                       onError={e => {
-                        ; (e.target as HTMLImageElement).src =
-                          'https://placehold.co/200x140/6366f1/ffffff?text=Khoá+học'
+                        ;(e.target as HTMLImageElement).src = 'https://placehold.co/200x140/6366f1/ffffff?text=Khoá+học'
                       }}
                     />
                   </Link>
@@ -174,9 +159,7 @@ export default function CartPage() {
                           {item.courseTitle}
                         </h3>
                       </Link>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {item.instructorName}
-                      </p>
+                      <p className="mt-1 text-sm text-muted-foreground">{item.instructorName}</p>
                       <Badge variant="secondary" className="mt-2 text-xs gap-1">
                         <Tag className="h-3 w-3" /> Khoá học trực tuyến
                       </Badge>
@@ -225,9 +208,7 @@ export default function CartPage() {
                         <span className="text-muted-foreground line-clamp-2 flex-1 leading-snug">
                           {item.courseTitle}
                         </span>
-                        <span className="font-medium flex-shrink-0">
-                          ${item.price.toFixed(2)}
-                        </span>
+                        <span className="font-medium flex-shrink-0">${item.price.toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
@@ -247,9 +228,7 @@ export default function CartPage() {
 
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-lg">Tổng cộng</span>
-                    <span className="text-xl font-bold text-primary">
-                      ${(cart?.totalPrice ?? 0).toFixed(2)}
-                    </span>
+                    <span className="text-xl font-bold text-primary">${(cart?.totalPrice ?? 0).toFixed(2)}</span>
                   </div>
 
                   <Button
@@ -260,9 +239,7 @@ export default function CartPage() {
                     <ArrowRight className="h-4 w-4" />
                   </Button>
 
-                  <p className="text-center text-xs text-muted-foreground">
-                    🔒 Thanh toán an toàn & bảo mật
-                  </p>
+                  <p className="text-center text-xs text-muted-foreground">🔒 Thanh toán an toàn & bảo mật</p>
                 </div>
               </div>
             </div>

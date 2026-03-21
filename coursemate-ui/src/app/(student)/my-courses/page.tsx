@@ -71,9 +71,7 @@ export default function MyCoursesPage() {
             <BookOpen className="h-6 w-6 text-primary" />
             Khoá học của tôi
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Bạn đang học {MY_COURSES.length} khoá học
-          </p>
+          <p className="text-sm text-muted-foreground mt-1">Bạn đang học {MY_COURSES.length} khoá học</p>
 
           {/* Stats */}
           <div className="mt-6 grid grid-cols-3 gap-4 max-w-sm">
@@ -126,7 +124,7 @@ export default function MyCoursesPage() {
   )
 }
 
-function CourseCard({ course }: { course: typeof MY_COURSES[0] }) {
+function CourseCard({ course }: { course: (typeof MY_COURSES)[0] }) {
   const done = course.progress === 100
 
   return (
@@ -178,11 +176,17 @@ function CourseCard({ course }: { course: typeof MY_COURSES[0] }) {
           render={<Link href={`/courses/${course.id}`} />}
         >
           {done ? (
-            <><BarChart2 className="h-3.5 w-3.5 mr-1" /> Xem lại</>
+            <>
+              <BarChart2 className="h-3.5 w-3.5 mr-1" /> Xem lại
+            </>
           ) : course.progress === 0 ? (
-            <><Play className="h-3.5 w-3.5 mr-1" /> Bắt đầu học</>
+            <>
+              <Play className="h-3.5 w-3.5 mr-1" /> Bắt đầu học
+            </>
           ) : (
-            <><Play className="h-3.5 w-3.5 mr-1" /> Tiếp tục học</>
+            <>
+              <Play className="h-3.5 w-3.5 mr-1" /> Tiếp tục học
+            </>
           )}
         </Button>
       </div>

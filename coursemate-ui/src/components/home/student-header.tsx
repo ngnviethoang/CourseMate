@@ -3,10 +3,7 @@
 import { useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import {
-  GraduationCap, ShoppingCart, LogOut, User, ChevronDown,
-  BookMarked, Trophy, Code2, Home
-} from 'lucide-react'
+import { GraduationCap, ShoppingCart, LogOut, User, ChevronDown, BookMarked, Trophy, Code2, Home } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -31,9 +28,7 @@ function getUserFromToken() {
       payload['sub'] ??
       'User'
     const role: string =
-      payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
-      payload['role'] ??
-      ''
+      payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? payload['role'] ?? ''
     return { name, role }
   } catch {
     return null
@@ -77,10 +72,9 @@ export function StudentHeader() {
               <Link
                 key={href}
                 href={href}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${active
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  }`}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  active ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                }`}
               >
                 {label}
               </Link>
@@ -92,7 +86,12 @@ export function StudentHeader() {
         <div className="flex items-center gap-1 ml-auto">
           {user ? (
             <>
-              <Button variant="ghost" size="icon" className="rounded-full" render={<Link href="/cart" aria-label="Giỏ hàng" />}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full"
+                render={<Link href="/cart" aria-label="Giỏ hàng" />}
+              >
                 <ShoppingCart className="h-5 w-5" />
               </Button>
 
@@ -111,9 +110,7 @@ export function StudentHeader() {
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col gap-0.5">
                         <span className="font-medium">{user.name}</span>
-                        {user.role && (
-                          <span className="text-xs text-muted-foreground capitalize">{user.role}</span>
-                        )}
+                        {user.role && <span className="text-xs text-muted-foreground capitalize">{user.role}</span>}
                       </div>
                     </DropdownMenuLabel>
                   </DropdownMenuGroup>
@@ -158,10 +155,9 @@ export function StudentHeader() {
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 ${active
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                }`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
+                active ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              }`}
             >
               <Icon className="h-3.5 w-3.5" />
               {label}

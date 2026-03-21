@@ -34,9 +34,7 @@ export default function AdminLoginPage() {
         document.cookie = `accessToken=${res.accessToken}; path=/; max-age=86400; samesite=strict`
         const payload = JSON.parse(atob(res.accessToken.split('.')[1]))
         const role: string =
-          payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
-          payload['role'] ??
-          ''
+          payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? payload['role'] ?? ''
         if (role.toLowerCase() === 'student') {
           toast.success('Welcome back!')
           router.push('/')

@@ -13,14 +13,19 @@ import { OrderDto } from '@/lib/types'
 // Category colour mapping based on course title keywords
 function getCategoryColor(title: string) {
   const t = title.toLowerCase()
-  if (t.includes('react') || t.includes('next') || t.includes('develop') || t.includes('javascript') || t.includes('typescript'))
+  if (
+    t.includes('react') ||
+    t.includes('next') ||
+    t.includes('develop') ||
+    t.includes('javascript') ||
+    t.includes('typescript')
+  )
     return { label: 'Development', color: 'bg-indigo-500' }
   if (t.includes('design') || t.includes('figma') || t.includes('ui') || t.includes('ux') || t.includes('css'))
     return { label: 'Design', color: 'bg-pink-500' }
   if (t.includes('data') || t.includes('machine') || t.includes('python') || t.includes('ai') || t.includes('ml'))
     return { label: 'Data Science', color: 'bg-emerald-500' }
-  if (t.includes('market') || t.includes('business'))
-    return { label: 'Business', color: 'bg-amber-500' }
+  if (t.includes('market') || t.includes('business')) return { label: 'Business', color: 'bg-amber-500' }
   return { label: 'Course', color: 'bg-primary' }
 }
 
@@ -64,7 +69,9 @@ export function ContinueLearning() {
           </div>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
+          {Array.from({ length: 3 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
       </section>
     )
@@ -95,7 +102,10 @@ export function ContinueLearning() {
           const progress = progressValues[idx % progressValues.length]
 
           return (
-            <Card key={item.id} className="group cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5 duration-200 overflow-hidden">
+            <Card
+              key={item.id}
+              className="group cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5 duration-200 overflow-hidden"
+            >
               <div className="relative overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -106,7 +116,7 @@ export function ContinueLearning() {
                   alt={item.courseTitle}
                   className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   onError={e => {
-                    ; (e.target as HTMLImageElement).src = `https://placehold.co/400x225/6366f1/ffffff?text=Course`
+                    ;(e.target as HTMLImageElement).src = `https://placehold.co/400x225/6366f1/ffffff?text=Course`
                   }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
@@ -114,9 +124,7 @@ export function ContinueLearning() {
                     <Play className="h-5 w-5 text-foreground" />
                   </div>
                 </div>
-                <Badge className={`absolute left-3 top-3 ${color} text-white shadow-sm`}>
-                  {label}
-                </Badge>
+                <Badge className={`absolute left-3 top-3 ${color} text-white shadow-sm`}>{label}</Badge>
               </div>
 
               <CardHeader className="pb-1">

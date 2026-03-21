@@ -9,15 +9,22 @@ import { ExerciseEditorModal, type ExerciseData } from '@/components/exercises/e
 
 const EXERCISES_DATA: Record<string, ExerciseData> = {
   ex1: {
-    id: 'ex1', title: 'Tổng hai số (Two Sum)', difficulty: 'Dễ', category: 'Array',
-    description: 'Cho một mảng số nguyên `nums` và một số nguyên `target`, hãy trả về **chỉ số** (index) của hai số trong mảng có tổng bằng `target`.\n\nBạn có thể giả định rằng mỗi đầu vào sẽ có **đúng một** nghiệm duy nhất, và bạn không được dùng cùng một phần tử hai lần.',
+    id: 'ex1',
+    title: 'Tổng hai số (Two Sum)',
+    difficulty: 'Dễ',
+    category: 'Array',
+    description:
+      'Cho một mảng số nguyên `nums` và một số nguyên `target`, hãy trả về **chỉ số** (index) của hai số trong mảng có tổng bằng `target`.\n\nBạn có thể giả định rằng mỗi đầu vào sẽ có **đúng một** nghiệm duy nhất, và bạn không được dùng cùng một phần tử hai lần.',
     examples: [
       { input: 'nums = [2,7,11,15], target = 9', output: '[0,1]', explanation: 'nums[0] + nums[1] = 2 + 7 = 9' },
       { input: 'nums = [3,2,4], target = 6', output: '[1,2]' },
       { input: 'nums = [3,3], target = 6', output: '[0,1]' }
     ],
     constraints: ['2 ≤ nums.length ≤ 10⁴', '-10⁹ ≤ nums[i] ≤ 10⁹', '-10⁹ ≤ target ≤ 10⁹', 'Chỉ có đúng một nghiệm'],
-    hints: ['Dùng HashMap để lưu các phần tử đã duyệt qua.', 'Với mỗi phần tử x, kiểm tra xem (target - x) đã tồn tại trong map chưa.'],
+    hints: [
+      'Dùng HashMap để lưu các phần tử đã duyệt qua.',
+      'Với mỗi phần tử x, kiểm tra xem (target - x) đã tồn tại trong map chưa.'
+    ],
     defaultCode: {
       javascript: `/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nfunction twoSum(nums, target) {\n    // Viết code của bạn ở đây\n    \n}`,
       python: `class Solution:\n    def twoSum(self, nums: list[int], target: int) -> list[int]:\n        pass`,
@@ -30,8 +37,12 @@ const EXERCISES_DATA: Record<string, ExerciseData> = {
     ]
   },
   ex2: {
-    id: 'ex2', title: 'Đảo ngược chuỗi (Reverse String)', difficulty: 'Dễ', category: 'String',
-    description: 'Viết hàm đảo ngược chuỗi ký tự. Input là một mảng ký tự `s`. Bạn phải thực hiện đảo ngược **in-place** với O(1) extra memory.',
+    id: 'ex2',
+    title: 'Đảo ngược chuỗi (Reverse String)',
+    difficulty: 'Dễ',
+    category: 'String',
+    description:
+      'Viết hàm đảo ngược chuỗi ký tự. Input là một mảng ký tự `s`. Bạn phải thực hiện đảo ngược **in-place** với O(1) extra memory.',
     examples: [{ input: 's = ["h","e","l","l","o"]', output: '["o","l","l","e","h"]' }],
     constraints: ['1 ≤ s.length ≤ 10⁵'],
     hints: ['Dùng hai con trỏ: một từ đầu, một từ cuối, swap rồi tiến vào giữa.'],
@@ -45,11 +56,20 @@ const EXERCISES_DATA: Record<string, ExerciseData> = {
     ]
   },
   ex5: {
-    id: 'ex5', title: 'Duyệt cây nhị phân theo tầng (BFS)', difficulty: 'Trung bình', category: 'Tree',
-    description: 'Cho một cây nhị phân, hãy trả về **danh sách các nút** theo từng tầng (từ trái sang phải, tầng trên xuống tầng dưới).',
+    id: 'ex5',
+    title: 'Duyệt cây nhị phân theo tầng (BFS)',
+    difficulty: 'Trung bình',
+    category: 'Tree',
+    description:
+      'Cho một cây nhị phân, hãy trả về **danh sách các nút** theo từng tầng (từ trái sang phải, tầng trên xuống tầng dưới).',
     examples: [
-      { input: 'root = [3,9,20,null,null,15,7]', output: '[[3],[9,20],[15,7]]', explanation: 'Tầng 1: [3], Tầng 2: [9,20], Tầng 3: [15,7]' },
-      { input: 'root = [1]', output: '[[1]]' }, { input: 'root = []', output: '[]' }
+      {
+        input: 'root = [3,9,20,null,null,15,7]',
+        output: '[[3],[9,20],[15,7]]',
+        explanation: 'Tầng 1: [3], Tầng 2: [9,20], Tầng 3: [15,7]'
+      },
+      { input: 'root = [1]', output: '[[1]]' },
+      { input: 'root = []', output: '[]' }
     ],
     constraints: ['0 ≤ số nút ≤ 2000', '-1000 ≤ Node.val ≤ 1000'],
     hints: ['Sử dụng hàng đợi (Queue) để duyệt BFS.', 'Tại mỗi tầng, xử lý tất cả các nút hiện có trong queue.'],
@@ -77,7 +97,9 @@ export default function ExerciseDetailPage({ params }: { params: Promise<{ id: s
       <div className="fixed inset-0 z-50 flex flex-col items-center justify-center h-screen gap-4 bg-[#0f0f14]">
         <Code2 className="h-12 w-12 text-neutral-500" />
         <p className="text-neutral-400">Không tìm thấy bài tập.</p>
-        <Link href="/exercises" className="text-sm text-blue-400 hover:underline">← Quay lại danh sách</Link>
+        <Link href="/exercises" className="text-sm text-blue-400 hover:underline">
+          ← Quay lại danh sách
+        </Link>
       </div>
     )
   }

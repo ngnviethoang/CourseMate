@@ -189,7 +189,6 @@ export interface ChangePasswordRequest {
   newPassword: string
 }
 
-
 // ─── Student Types ────────────────────────────────────────────────────────────
 
 export interface StudentLessonDetailDto {

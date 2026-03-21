@@ -33,7 +33,6 @@ export function DataTable<T extends { id: string }>({
 }: DataTableProps<T>) {
   const hasActions = onEdit || onDelete
 
-
   function SortIcon({ sortKey }: { sortKey: string }) {
     if (!sorting) return <ArrowUpDown className="ml-1 h-3 w-3 opacity-40" />
     if (sorting === sortKey) return <ArrowUp className="ml-1 h-3 w-3 text-primary" />
@@ -107,7 +106,10 @@ export function DataTable<T extends { id: string }>({
                     <div className="flex justify-end gap-1">
                       {onEdit && (
                         <button
-                          onClick={e => { e.stopPropagation(); onEdit(row) }}
+                          onClick={e => {
+                            e.stopPropagation()
+                            onEdit(row)
+                          }}
                           className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
                         >
                           <Pencil className="h-4 w-4" />
@@ -115,7 +117,10 @@ export function DataTable<T extends { id: string }>({
                       )}
                       {onDelete && (
                         <button
-                          onClick={e => { e.stopPropagation(); onDelete(row.id) }}
+                          onClick={e => {
+                            e.stopPropagation()
+                            onDelete(row.id)
+                          }}
                           className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
                         >
                           <Trash2 className="h-4 w-4" />

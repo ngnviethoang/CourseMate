@@ -87,7 +87,6 @@ export default function CoursesPage() {
     }
   }, [filter, sorting])
 
-
   useEffect(() => {
     const t = setTimeout(load, 300)
     return () => clearTimeout(t)
@@ -214,11 +213,20 @@ export default function CoursesPage() {
 
             {/* Media & Pricing */}
             <div className="space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Media &amp; Pricing</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Media &amp; Pricing
+              </p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <Label>Price ($)</Label>
-                  <Input type="number" min={0} step={0.01} placeholder="0.00" value={form.price} onChange={e => f('price', Number(e.target.value))} />
+                  <Input
+                    type="number"
+                    min={0}
+                    step={0.01}
+                    placeholder="0.00"
+                    value={form.price}
+                    onChange={e => f('price', Number(e.target.value))}
+                  />
                 </div>
                 <div className="space-y-1">
                   <Label>Image URL</Label>
@@ -236,27 +244,39 @@ export default function CoursesPage() {
                   <Select value={form.categoryId} onValueChange={v => f('categoryId', v)} disabled={loadingDropdowns}>
                     <SelectTrigger>
                       <SelectValue placeholder={loadingDropdowns ? 'Loading…' : 'Select category'}>
-                        {categories.find(c => c.id === form.categoryId)?.name ?? (loadingDropdowns ? 'Loading…' : 'Select category')}
+                        {categories.find(c => c.id === form.categoryId)?.name ??
+                          (loadingDropdowns ? 'Loading…' : 'Select category')}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map(c => (
-                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.name}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-1">
                   <Label>Instructor</Label>
-                  <Select value={form.instructorId} onValueChange={v => f('instructorId', v)} disabled={loadingDropdowns}>
+                  <Select
+                    value={form.instructorId}
+                    onValueChange={v => f('instructorId', v)}
+                    disabled={loadingDropdowns}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder={loadingDropdowns ? 'Loading…' : 'Select instructor'}>
-                        {(() => { const u = users.find(u => u.id === form.instructorId); return u ? (u.userName ?? u.email) : (loadingDropdowns ? 'Loading…' : 'Select instructor') })()}
+                        {(() => {
+                          const u = users.find(u => u.id === form.instructorId)
+                          return u ? (u.userName ?? u.email) : loadingDropdowns ? 'Loading…' : 'Select instructor'
+                        })()}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {users.map(u => (
-                        <SelectItem key={u.id} value={u.id}>{u.userName ?? u.email}</SelectItem>
+                        <SelectItem key={u.id} value={u.id}>
+                          {u.userName ?? u.email}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -275,7 +295,9 @@ export default function CoursesPage() {
           </div>
 
           <DialogFooter className="pt-2 border-t gap-2">
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleSave} disabled={saving}>
               {saving ? 'Saving…' : editing ? 'Save Changes' : 'Create Course'}
             </Button>

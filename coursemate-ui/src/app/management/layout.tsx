@@ -28,9 +28,7 @@ function getUserFromToken() {
       payload['sub'] ??
       'User'
     const role: string =
-      payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
-      payload['role'] ??
-      ''
+      payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? payload['role'] ?? ''
     return { name, role }
   } catch {
     return null
@@ -41,9 +39,7 @@ function UserDropdown() {
   const router = useRouter()
   const user = useMemo(() => getUserFromToken(), [])
 
-  const initials = user?.name
-    ? user.name.slice(0, 2).toUpperCase()
-    : 'U'
+  const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : 'U'
 
   const handleLogout = () => {
     document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
@@ -60,9 +56,7 @@ function UserDropdown() {
         </Avatar>
         <div className="hidden sm:flex flex-col items-start leading-none">
           <span className="font-medium text-foreground">{user?.name ?? 'User'}</span>
-          {user?.role && (
-            <span className="text-[11px] text-muted-foreground capitalize">{user.role}</span>
-          )}
+          {user?.role && <span className="text-[11px] text-muted-foreground capitalize">{user.role}</span>}
         </div>
         <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
       </DropdownMenuTrigger>
@@ -71,9 +65,7 @@ function UserDropdown() {
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col gap-0.5">
               <span className="font-medium">{user?.name ?? 'User'}</span>
-              {user?.role && (
-                <span className="text-xs text-muted-foreground capitalize">{user.role}</span>
-              )}
+              {user?.role && <span className="text-xs text-muted-foreground capitalize">{user.role}</span>}
             </div>
           </DropdownMenuLabel>
         </DropdownMenuGroup>

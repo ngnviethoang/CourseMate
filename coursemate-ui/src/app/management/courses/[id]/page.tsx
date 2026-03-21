@@ -6,9 +6,13 @@ import { ArrowLeft, Plus, Pencil, Trash2, ChevronDown, ChevronRight, Loader2, Bo
 import { toast } from 'sonner'
 import { courseService, chapterService, lessonService } from '@/lib/admin-service'
 import type {
-  CourseDto, ChapterDto, LessonDto,
-  CreateChapterRequest, UpdateChapterRequest,
-  CreateLessonRequest, UpdateLessonRequest,
+  CourseDto,
+  ChapterDto,
+  LessonDto,
+  CreateChapterRequest,
+  UpdateChapterRequest,
+  CreateLessonRequest,
+  UpdateLessonRequest,
   LessonType
 } from '@/lib/types'
 import { Button } from '@/components/ui/button'
@@ -17,8 +21,14 @@ import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
@@ -28,14 +38,14 @@ const LESSON_TYPE_COLOR: Record<LessonType, string> = {
   Video: 'bg-blue-500/10 text-blue-600 border-blue-200',
   Reading: 'bg-green-500/10 text-green-600 border-green-200',
   Quiz: 'bg-orange-500/10 text-orange-600 border-orange-200',
-  Coding: 'bg-purple-500/10 text-purple-600 border-purple-200',
+  Coding: 'bg-purple-500/10 text-purple-600 border-purple-200'
 }
 
 // ─── Chapter modal state ──────────────────────────────────────────────────────
 const emptyChapterForm = (courseId: string): CreateChapterRequest => ({
   courseId,
   title: '',
-  position: 1,
+  position: 1
 })
 
 // ─── Lesson modal state ───────────────────────────────────────────────────────
@@ -44,7 +54,7 @@ const emptyLessonForm = (courseId: string, chapterId: string): CreateLessonReque
   chapterId,
   title: '',
   lessonType: 'Video',
-  position: 1,
+  position: 1
 })
 
 // ─── ChapterRow component ─────────────────────────────────────────────────────
@@ -55,7 +65,7 @@ function ChapterRow({
   onDeleteChapter,
   onAddLesson,
   onEditLesson,
-  onDeleteLesson,
+  onDeleteLesson
 }: {
   chapter: ChapterDto
   courseId: string
@@ -85,7 +95,8 @@ function ChapterRow({
   }
 
   function refreshLessons() {
-    lessonService.list({ chapterId: chapter.id, pageSize: 25, sorting: 'position' })
+    lessonService
+      .list({ chapterId: chapter.id, pageSize: 25, sorting: 'position' })
       .then(res => setLessons(res.items))
       .catch(() => {})
   }
@@ -150,7 +161,9 @@ function ChapterRow({
                 <span className="text-xs text-muted-foreground w-4">{lesson.position}</span>
                 <BookOpen className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                 <span className="flex-1 text-sm">{lesson.title}</span>
-                <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${LESSON_TYPE_COLOR[lesson.lessonType as LessonType]}`}>
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full border font-medium ${LESSON_TYPE_COLOR[lesson.lessonType as LessonType]}`}
+                >
                   {lesson.lessonType}
                 </span>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -161,7 +174,10 @@ function ChapterRow({
                     <Pencil className="h-3 w-3" />
                   </button>
                   <button
-                    onClick={() => { onDeleteLesson(lesson.id); refreshLessons() }}
+                    onClick={() => {
+                      onDeleteLesson(lesson.id)
+                      refreshLessons()
+                    }}
                     className="inline-flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:text-destructive transition-colors"
                   >
                     <Trash2 className="h-3 w-3" />
@@ -204,7 +220,8 @@ export default function CourseDetailPage() {
   // Load course
   useEffect(() => {
     setCourseLoading(true)
-    courseService.getById(id)
+    courseService
+      .getById(id)
       .then(c => setCourse(c))
       .catch(() => toast.error('Course not found.'))
       .finally(() => setCourseLoading(false))
@@ -221,7 +238,9 @@ export default function CourseDetailPage() {
     }
   }, [id])
 
-  useEffect(() => { loadChapters() }, [loadChapters])
+  useEffect(() => {
+    loadChapters()
+  }, [loadChapters])
 
   // ─── Chapter handlers ───────────────────────────────────────────────────────
   function openCreateChapter() {
@@ -270,7 +289,13 @@ export default function CourseDetailPage() {
 
   function openEditLesson(l: LessonDto) {
     setEditingLesson(l)
-    setLessonForm({ courseId: l.courseId, chapterId: l.chapterId, title: l.title, lessonType: l.lessonType, position: l.position })
+    setLessonForm({
+      courseId: l.courseId,
+      chapterId: l.chapterId,
+      title: l.title,
+      lessonType: l.lessonType,
+      position: l.position
+    })
     setLessonDialog(true)
   }
 
@@ -299,8 +324,7 @@ export default function CourseDetailPage() {
 
   const cf = (field: keyof CreateChapterRequest, value: unknown) =>
     setChapterForm(prev => ({ ...prev, [field]: value }))
-  const lf = (field: keyof CreateLessonRequest, value: unknown) =>
-    setLessonForm(prev => ({ ...prev, [field]: value }))
+  const lf = (field: keyof CreateLessonRequest, value: unknown) => setLessonForm(prev => ({ ...prev, [field]: value }))
 
   // ─── Render ─────────────────────────────────────────────────────────────────
   if (courseLoading) {
@@ -344,7 +368,9 @@ export default function CourseDetailPage() {
       {/* Chapters section */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-semibold">Chapters <span className="text-muted-foreground font-normal text-sm">({chapters.length})</span></h2>
+          <h2 className="text-base font-semibold">
+            Chapters <span className="text-muted-foreground font-normal text-sm">({chapters.length})</span>
+          </h2>
           <Button size="sm" onClick={openCreateChapter} className="gap-1.5">
             <Plus className="h-3.5 w-3.5" /> Add Chapter
           </Button>
@@ -388,15 +414,26 @@ export default function CourseDetailPage() {
           <div className="space-y-4 py-2">
             <div className="space-y-1">
               <Label>Title</Label>
-              <Input placeholder="Chapter title" value={chapterForm.title} onChange={e => cf('title', e.target.value)} />
+              <Input
+                placeholder="Chapter title"
+                value={chapterForm.title}
+                onChange={e => cf('title', e.target.value)}
+              />
             </div>
             <div className="space-y-1">
               <Label>Position</Label>
-              <Input type="number" min={1} value={chapterForm.position} onChange={e => cf('position', Number(e.target.value))} />
+              <Input
+                type="number"
+                min={1}
+                value={chapterForm.position}
+                onChange={e => cf('position', Number(e.target.value))}
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setChapterDialog(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setChapterDialog(false)}>
+              Cancel
+            </Button>
             <Button onClick={saveChapter} disabled={savingChapter}>
               {savingChapter ? 'Saving…' : editingChapter ? 'Save Changes' : 'Create Chapter'}
             </Button>
@@ -424,19 +461,28 @@ export default function CourseDetailPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {LESSON_TYPES.map(t => (
-                      <SelectItem key={t} value={t}>{t}</SelectItem>
+                      <SelectItem key={t} value={t}>
+                        {t}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-1">
                 <Label>Position</Label>
-                <Input type="number" min={1} value={lessonForm.position} onChange={e => lf('position', Number(e.target.value))} />
+                <Input
+                  type="number"
+                  min={1}
+                  value={lessonForm.position}
+                  onChange={e => lf('position', Number(e.target.value))}
+                />
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setLessonDialog(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setLessonDialog(false)}>
+              Cancel
+            </Button>
             <Button onClick={saveLesson} disabled={savingLesson}>
               {savingLesson ? 'Saving…' : editingLesson ? 'Save Changes' : 'Create Lesson'}
             </Button>
@@ -453,7 +499,10 @@ export default function CourseDetailPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={deleteChapter}>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={deleteChapter}
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -469,7 +518,10 @@ export default function CourseDetailPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={deleteLesson}>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={deleteLesson}
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

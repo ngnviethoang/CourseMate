@@ -54,9 +54,10 @@ export function AdminSidebar() {
                     <button
                       onClick={() => router.push(href)}
                       className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-150
-                        ${active
-                          ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/30 font-medium'
-                          : 'text-foreground/70 hover:bg-primary/10 hover:text-primary'
+                        ${
+                          active
+                            ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/30 font-medium'
+                            : 'text-foreground/70 hover:bg-primary/10 hover:text-primary'
                         }`}
                     >
                       <Icon className="size-4 shrink-0" />

@@ -17,7 +17,8 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    profileService.getMe()
+    profileService
+      .getMe()
       .then(p => {
         setProfile(p)
         setForm({ userName: p.userName, email: p.email ?? '', phoneNumber: p.phoneNumber ?? '' })
@@ -31,7 +32,7 @@ export default function ProfilePage() {
     try {
       await profileService.updateProfile(form)
       toast.success('Profile updated successfully.')
-      setProfile(prev => prev ? { ...prev, ...form } : prev)
+      setProfile(prev => (prev ? { ...prev, ...form } : prev))
     } catch {
       toast.error('Failed to update profile.')
     } finally {
@@ -66,7 +67,8 @@ export default function ProfilePage() {
           <div className="flex gap-1.5 mt-1.5 flex-wrap">
             {profile?.roles.map(r => (
               <Badge key={r} variant="outline" className="text-xs capitalize gap-1">
-                <Shield className="h-2.5 w-2.5" />{r}
+                <Shield className="h-2.5 w-2.5" />
+                {r}
               </Badge>
             ))}
           </div>
@@ -79,7 +81,8 @@ export default function ProfilePage() {
 
         <div className="space-y-1">
           <Label className="flex items-center gap-2">
-            <User className="h-3.5 w-3.5 text-muted-foreground" />Username
+            <User className="h-3.5 w-3.5 text-muted-foreground" />
+            Username
           </Label>
           <Input
             value={form.userName}
@@ -90,7 +93,8 @@ export default function ProfilePage() {
 
         <div className="space-y-1">
           <Label className="flex items-center gap-2">
-            <Mail className="h-3.5 w-3.5 text-muted-foreground" />Email
+            <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+            Email
           </Label>
           <Input
             type="email"
@@ -102,7 +106,8 @@ export default function ProfilePage() {
 
         <div className="space-y-1">
           <Label className="flex items-center gap-2">
-            <Phone className="h-3.5 w-3.5 text-muted-foreground" />Phone Number
+            <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+            Phone Number
           </Label>
           <Input
             value={form.phoneNumber ?? ''}
