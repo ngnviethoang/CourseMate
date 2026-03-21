@@ -18,8 +18,7 @@ internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandl
 
     public override async Task Handle(UpdateChapterCommand request, CancellationToken cancellationToken)
     {
-        Chapter? chapter = await DbContext.Chapters
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        Chapter? chapter = await DbContext.Chapters.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (chapter == null)
         {

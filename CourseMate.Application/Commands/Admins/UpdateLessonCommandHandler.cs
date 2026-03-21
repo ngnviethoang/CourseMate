@@ -18,8 +18,7 @@ internal sealed class UpdateLessonAbstractCommandHandler : AbstractCommandHandle
 
     public override async Task Handle(UpdateLessonCommand request, CancellationToken cancellationToken)
     {
-        Lesson? lesson = await DbContext.Lessons
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        Lesson? lesson = await DbContext.Lessons.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (lesson == null)
         {

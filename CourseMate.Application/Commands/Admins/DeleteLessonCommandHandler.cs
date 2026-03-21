@@ -1,9 +1,8 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
-using CourseMate.Infrastructure.Entities;
+using CourseMate.Infrastructure.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Admins;
 
@@ -17,15 +16,7 @@ internal sealed class DeleteLessonAbstractCommandHandler : AbstractCommandHandle
 
     public override async Task Handle(DeleteLessonCommand request, CancellationToken cancellationToken)
     {
-        Lesson? lesson = await DbContext.Lessons
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-
-        if (lesson == null)
-        {
-            return;
-        }
-
-        DbContext.Remove(lesson);
+        await DbContext.Lessons.RemoveByIdAsync(request.Id, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);
     }
 }
