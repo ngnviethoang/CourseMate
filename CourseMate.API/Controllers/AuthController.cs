@@ -16,21 +16,35 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> LoginAsync(LoginCommand request)
+    public async Task<ActionResult> LoginAsync(LoginCommand request)
     {
         LoginResponse result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> RegisterAsync(RegisterCommand request)
+    public async Task<ActionResult> RegisterAsync(RegisterCommand request)
     {
         await _mediator.Send(request);
         return NoContent();
     }
 
     [HttpPost("change-password")]
-    public async Task<IActionResult> ChangePasswordAsync(ChangePasswordCommand request)
+    public async Task<ActionResult> ChangePasswordAsync(ChangePasswordCommand request)
+    {
+        await _mediator.Send(request);
+        return NoContent();
+    }
+
+    [HttpGet("profile")]
+    public async Task<ActionResult> GetProfileAsync()
+    {
+        ProfileDto result = await _mediator.Send(new GetProfileQuery());
+        return Ok(result);
+    }
+
+    [HttpPost("profile")]
+    public async Task<ActionResult> UpdateProfileAsync(UpdateProfileCommand request)
     {
         await _mediator.Send(request);
         return NoContent();

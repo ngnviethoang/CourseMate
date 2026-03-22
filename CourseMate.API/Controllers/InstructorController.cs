@@ -22,32 +22,32 @@ public class InstructorController : ControllerBase
     #region API Category
 
     [HttpGet("categories")]
-    public async Task<IActionResult> GetListCategoriesAsync([FromQuery] GetListCategoriesQuery request)
+    public async Task<ActionResult> GetListCategoriesAsync([FromQuery] GetListCategoriesQuery request)
     {
         PagedDto<CategoryDto> result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpGet("categories/{id:guid}")]
-    public async Task<IActionResult> GetCategoryByIdAsync(Guid id)
+    public async Task<ActionResult> GetCategoryByIdAsync(Guid id)
     {
         return Ok();
     }
 
     [HttpPost("categories")]
-    public async Task<IActionResult> CreateCategoryAsync()
+    public async Task<ActionResult> CreateCategoryAsync()
     {
         return Ok();
     }
 
     [HttpPut("categories/{id:guid}")]
-    public async Task<IActionResult> UpdateCategoryAsync(Guid id)
+    public async Task<ActionResult> UpdateCategoryAsync(Guid id)
     {
         return Ok();
     }
 
     [HttpDelete("categories/{id:guid}")]
-    public async Task<IActionResult> DeleteCategoryAsync(Guid id)
+    public async Task<ActionResult> DeleteCategoryAsync(Guid id)
     {
         return Ok();
     }
@@ -57,31 +57,31 @@ public class InstructorController : ControllerBase
     #region API Course
 
     [HttpGet("courses")]
-    public async Task<IActionResult> GetListCourseAsync([FromQuery] GetListCategoriesQuery request)
+    public async Task<ActionResult> GetListCourseAsync([FromQuery] GetListCategoriesQuery request)
     {
         return Ok();
     }
 
     [HttpGet("courses/{id:guid}")]
-    public async Task<IActionResult> GetCourseByIdAsync(Guid id)
+    public async Task<ActionResult> GetCourseByIdAsync(Guid id)
     {
         return Ok();
     }
 
     [HttpPost("courses")]
-    public async Task<IActionResult> CreateCourseAsync()
+    public async Task<ActionResult> CreateCourseAsync()
     {
         return Ok();
     }
 
     [HttpPut("courses/{id:guid}")]
-    public async Task<IActionResult> UpdateCourseAsync(Guid id)
+    public async Task<ActionResult> UpdateCourseAsync(Guid id)
     {
         return Ok();
     }
 
     [HttpDelete("courses/{id:guid}")]
-    public async Task<IActionResult> DeleteCourseAsync(Guid id)
+    public async Task<ActionResult> DeleteCourseAsync(Guid id)
     {
         return Ok();
     }
@@ -91,31 +91,31 @@ public class InstructorController : ControllerBase
     #region API Chapter
 
     [HttpGet("chapters")]
-    public async Task<IActionResult> GetListChapterAsync([FromQuery] GetListCategoriesQuery request)
+    public async Task<ActionResult> GetListChapterAsync([FromQuery] GetListCategoriesQuery request)
     {
         return Ok();
     }
 
     [HttpGet("chapters/{id:guid}")]
-    public async Task<IActionResult> GetChapterByIdAsync(Guid id)
+    public async Task<ActionResult> GetChapterByIdAsync(Guid id)
     {
         return Ok();
     }
 
     [HttpPost("chapters")]
-    public async Task<IActionResult> CreateChapterAsync()
+    public async Task<ActionResult> CreateChapterAsync()
     {
         return Ok();
     }
 
     [HttpPut("chapters/{id:guid}")]
-    public async Task<IActionResult> UpdateChapterAsync(Guid id)
+    public async Task<ActionResult> UpdateChapterAsync(Guid id)
     {
         return Ok();
     }
 
     [HttpDelete("chapters/{id:guid}")]
-    public async Task<IActionResult> DeleteChapterAsync(Guid id)
+    public async Task<ActionResult> DeleteChapterAsync(Guid id)
     {
         return Ok();
     }
@@ -125,31 +125,31 @@ public class InstructorController : ControllerBase
     #region API Lesson
 
     [HttpGet("lessons")]
-    public async Task<IActionResult> GetListLessonAsync([FromQuery] GetListCategoriesQuery request)
+    public async Task<ActionResult> GetListLessonAsync([FromQuery] GetListCategoriesQuery request)
     {
         return Ok();
     }
 
     [HttpGet("lessons/{id:guid}")]
-    public async Task<IActionResult> GetLessonByIdAsync(Guid id)
+    public async Task<ActionResult> GetLessonByIdAsync(Guid id)
     {
         return Ok();
     }
 
     [HttpPost("lessons")]
-    public async Task<IActionResult> CreateLessonAsync()
+    public async Task<ActionResult> CreateLessonAsync()
     {
         return Ok();
     }
 
     [HttpPut("lessons/{id:guid}")]
-    public async Task<IActionResult> UpdateLessonAsync(Guid id)
+    public async Task<ActionResult> UpdateLessonAsync(Guid id)
     {
         return Ok();
     }
 
     [HttpDelete("lessons/{id:guid}")]
-    public async Task<IActionResult> DeleteLessonAsync(Guid id)
+    public async Task<ActionResult> DeleteLessonAsync(Guid id)
     {
         return Ok();
     }

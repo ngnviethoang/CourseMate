@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace CourseMate.Core.Migrations
+namespace CourseMate.Infrastructure.Migrations
 {
     [DbContext(typeof(CourseMateDbContext))]
     partial class CourseMateDbContextModelSnapshot : ModelSnapshot

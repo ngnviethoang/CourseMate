@@ -22,28 +22,28 @@ public class AdminController : ControllerBase
     #region API Category
 
     [HttpGet("categories")]
-    public async Task<IActionResult> GetListCategoriesAsync([FromQuery] GetListCategoriesQuery request)
+    public async Task<ActionResult> GetListCategoriesAsync([FromQuery] GetListCategoriesQuery request)
     {
         PagedDto<CategoryDto> result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpGet("categories/{id:guid}")]
-    public async Task<IActionResult> GetCategoryByIdAsync(Guid id)
+    public async Task<ActionResult> GetCategoryByIdAsync(Guid id)
     {
         CategoryDto? result = await _mediator.Send(new GetCategoryByIdQuery { Id = id });
         return Ok(result);
     }
 
     [HttpPost("categories")]
-    public async Task<IActionResult> CreateCategoryAsync(CreateCategoryCommand request)
+    public async Task<ActionResult> CreateCategoryAsync(CreateCategoryCommand request)
     {
         ResultIdDto result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpPut("categories/{id:guid}")]
-    public async Task<IActionResult> UpdateCategoryAsync(Guid id, UpdateCategoryCommand request)
+    public async Task<ActionResult> UpdateCategoryAsync(Guid id, UpdateCategoryCommand request)
     {
         request.Id = id;
         await _mediator.Send(request);
@@ -51,7 +51,7 @@ public class AdminController : ControllerBase
     }
 
     [HttpDelete("categories/{id:guid}")]
-    public async Task<IActionResult> DeleteCategoryAsync(Guid id)
+    public async Task<ActionResult> DeleteCategoryAsync(Guid id)
     {
         await _mediator.Send(new DeleteCategoryCommand { Id = id });
         return NoContent();
@@ -62,28 +62,28 @@ public class AdminController : ControllerBase
     #region API Course
 
     [HttpGet("courses")]
-    public async Task<IActionResult> GetListCourseAsync([FromQuery] GetListCoursesQuery request)
+    public async Task<ActionResult> GetListCourseAsync([FromQuery] GetListCoursesQuery request)
     {
         PagedDto<CourseDto> result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpGet("courses/{id:guid}")]
-    public async Task<IActionResult> GetCourseByIdAsync(Guid id)
+    public async Task<ActionResult> GetCourseByIdAsync(Guid id)
     {
         CourseDto? result = await _mediator.Send(new GetCourseByIdQuery { Id = id });
         return Ok(result);
     }
 
     [HttpPost("courses")]
-    public async Task<IActionResult> CreateCourseAsync(CreateCourseCommand request)
+    public async Task<ActionResult> CreateCourseAsync(CreateCourseCommand request)
     {
         ResultIdDto result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpPut("courses/{id:guid}")]
-    public async Task<IActionResult> UpdateCourseAsync(Guid id, UpdateCourseCommand request)
+    public async Task<ActionResult> UpdateCourseAsync(Guid id, UpdateCourseCommand request)
     {
         request.Id = id;
         await _mediator.Send(request);
@@ -91,7 +91,7 @@ public class AdminController : ControllerBase
     }
 
     [HttpDelete("courses/{id:guid}")]
-    public async Task<IActionResult> DeleteCourseAsync(Guid id)
+    public async Task<ActionResult> DeleteCourseAsync(Guid id)
     {
         await _mediator.Send(new DeleteCourseCommand { Id = id });
         return NoContent();
@@ -102,28 +102,28 @@ public class AdminController : ControllerBase
     #region API Chapter
 
     [HttpGet("chapters")]
-    public async Task<IActionResult> GetListChapterAsync([FromQuery] GetListChaptersQuery request)
+    public async Task<ActionResult> GetListChapterAsync([FromQuery] GetListChaptersQuery request)
     {
         PagedDto<ChapterDto> result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpGet("chapters/{id:guid}")]
-    public async Task<IActionResult> GetChapterByIdAsync(Guid id)
+    public async Task<ActionResult> GetChapterByIdAsync(Guid id)
     {
         ChapterDto? result = await _mediator.Send(new GetChapterByIdQuery { Id = id });
         return Ok(result);
     }
 
     [HttpPost("chapters")]
-    public async Task<IActionResult> CreateChapterAsync(CreateChapterCommand request)
+    public async Task<ActionResult> CreateChapterAsync(CreateChapterCommand request)
     {
         ResultIdDto result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpPut("chapters/{id:guid}")]
-    public async Task<IActionResult> UpdateChapterAsync(Guid id, UpdateChapterCommand request)
+    public async Task<ActionResult> UpdateChapterAsync(Guid id, UpdateChapterCommand request)
     {
         request.Id = id;
         await _mediator.Send(request);
@@ -131,7 +131,7 @@ public class AdminController : ControllerBase
     }
 
     [HttpDelete("chapters/{id:guid}")]
-    public async Task<IActionResult> DeleteChapterAsync(Guid id)
+    public async Task<ActionResult> DeleteChapterAsync(Guid id)
     {
         await _mediator.Send(new DeleteChapterCommand { Id = id });
         return NoContent();
@@ -142,28 +142,28 @@ public class AdminController : ControllerBase
     #region API Lesson
 
     [HttpGet("lessons")]
-    public async Task<IActionResult> GetListLessonAsync([FromQuery] GetListLessonsQuery request)
+    public async Task<ActionResult> GetListLessonAsync([FromQuery] GetListLessonsQuery request)
     {
         PagedDto<LessonDto> result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpGet("lessons/{id:guid}")]
-    public async Task<IActionResult> GetLessonByIdAsync(Guid id)
+    public async Task<ActionResult> GetLessonByIdAsync(Guid id)
     {
         LessonDto? result = await _mediator.Send(new GetLessonByIdQuery { Id = id });
         return Ok(result);
     }
 
     [HttpPost("lessons")]
-    public async Task<IActionResult> CreateLessonAsync(CreateLessonCommand request)
+    public async Task<ActionResult> CreateLessonAsync(CreateLessonCommand request)
     {
         ResultIdDto result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpPut("lessons/{id:guid}")]
-    public async Task<IActionResult> UpdateLessonAsync(Guid id, UpdateLessonCommand request)
+    public async Task<ActionResult> UpdateLessonAsync(Guid id, UpdateLessonCommand request)
     {
         request.Id = id;
         await _mediator.Send(request);
@@ -171,7 +171,7 @@ public class AdminController : ControllerBase
     }
 
     [HttpDelete("lessons/{id:guid}")]
-    public async Task<IActionResult> DeleteLessonAsync(Guid id)
+    public async Task<ActionResult> DeleteLessonAsync(Guid id)
     {
         await _mediator.Send(new DeleteLessonCommand { Id = id });
         return NoContent();
@@ -182,28 +182,28 @@ public class AdminController : ControllerBase
     #region API User
 
     [HttpGet("users")]
-    public async Task<IActionResult> GetListUserAsync([FromQuery] GetListUsersQuery request)
+    public async Task<ActionResult> GetListUserAsync([FromQuery] GetListUsersQuery request)
     {
         PagedDto<UserDto> result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpGet("users/{id:guid}")]
-    public async Task<IActionResult> GetUserByIdAsync(Guid id)
+    public async Task<ActionResult> GetUserByIdAsync(Guid id)
     {
         UserDto? result = await _mediator.Send(new GetUserByIdQuery { Id = id });
         return Ok(result);
     }
 
     [HttpPost("users")]
-    public async Task<IActionResult> CreateUserAsync(CreateUserCommand request)
+    public async Task<ActionResult> CreateUserAsync(CreateUserCommand request)
     {
         ResultIdDto result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpPut("users/{id:guid}")]
-    public async Task<IActionResult> UpdateUserAsync(Guid id, UpdateUserCommand request)
+    public async Task<ActionResult> UpdateUserAsync(Guid id, UpdateUserCommand request)
     {
         request.Id = id;
         await _mediator.Send(request);
@@ -211,7 +211,7 @@ public class AdminController : ControllerBase
     }
 
     [HttpDelete("users/{id:guid}")]
-    public async Task<IActionResult> DeleteUserAsync(Guid id)
+    public async Task<ActionResult> DeleteUserAsync(Guid id)
     {
         await _mediator.Send(new DeleteUserCommand { Id = id });
         return NoContent();

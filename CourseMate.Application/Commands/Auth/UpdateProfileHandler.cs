@@ -1,0 +1,61 @@
+using CourseMate.Application.Shared;
+using CourseMate.Contracts.DTOs.Auth;
+using CourseMate.Contracts.Exceptions;
+using CourseMate.Infrastructure;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+
+namespace CourseMate.Application.Commands.Auth;
+
+internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfileCommand>
+{
+    private readonly UserManager<IdentityUser<Guid>> _userManager;
+
+    public UpdateProfileHandler(
+        CourseMateDbContext courseMateDbContext,
+        IHttpContextAccessor httpContextAccessor,
+        UserManager<IdentityUser<Guid>> userManager
+    ) : base(courseMateDbContext, httpContextAccessor)
+    {
+        _userManager = userManager;
+    }
+
+    public override async Task Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
+    {
+        Guid userId = GetCurrentUserId();
+        IdentityUser<Guid>? user = await _userManager.FindByIdAsync(userId.ToString());
+
+        if (user == null)
+        {
+            throw new EntityNotFoundException(nameof(IdentityUser), userId);
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.UserName) && user.UserName != request.UserName)
+        {
+            user.UserName = request.UserName;
+            user.NormalizedUserName = request.UserName.ToUpper();
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Email) && user.Email != request.Email)
+        {
+            user.Email = request.Email;
+            user.NormalizedEmail = request.Email.ToUpper();
+            user.EmailConfirmed = false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.PhoneNumber) && user.PhoneNumber != request.PhoneNumber)
+        {
+            user.PhoneNumber = request.PhoneNumber;
+            user.PhoneNumberConfirmed = false;
+        }
+
+        IdentityResult result = await _userManager.UpdateAsync(user);
+        if (result.Succeeded)
+        {
+            return;
+        }
+
+        string errors = string.Join(", ", result.Errors.Select(e => e.Description));
+        throw new BusinessException(errors);
+    }
+}

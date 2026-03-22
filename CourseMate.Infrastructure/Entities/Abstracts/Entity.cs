@@ -11,6 +11,9 @@ public abstract class Entity : IAuditable, ISoftDelete
 
     public Guid Id { get; set; }
 
+    [Timestamp]
+    public uint RowVersion { get; set; }
+
     public Guid? UserId { get; set; }
 
     public DateTimeOffset CreationTime { get; set; }
@@ -18,7 +21,4 @@ public abstract class Entity : IAuditable, ISoftDelete
     public DateTimeOffset? LastModificationTime { get; set; }
 
     public bool IsDeleted { get; set; }
-
-    [Timestamp]
-    public uint RowVersion { get; set; }
 }
