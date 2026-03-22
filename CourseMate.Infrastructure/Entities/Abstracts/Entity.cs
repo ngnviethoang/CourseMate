@@ -1,4 +1,6 @@
-﻿namespace CourseMate.Infrastructure.Entities.Abstracts;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CourseMate.Infrastructure.Entities.Abstracts;
 
 public abstract class Entity : IAuditable, ISoftDelete
 {
@@ -16,4 +18,7 @@ public abstract class Entity : IAuditable, ISoftDelete
     public DateTimeOffset? LastModificationTime { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    [Timestamp]
+    public uint RowVersion { get; set; }
 }
