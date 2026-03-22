@@ -1,6 +1,7 @@
 using System.Text;
 using CourseMate.API.Middlewares;
 using CourseMate.Application;
+using CourseMate.Contracts.Options;
 using CourseMate.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,7 @@ using Microsoft.OpenApi;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
+builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
     {

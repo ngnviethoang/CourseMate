@@ -1,5 +1,6 @@
 ﻿using CourseMate.Contracts.DTOs.Auth;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseMate.API.Controllers;
@@ -29,6 +30,7 @@ public class AuthController : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpPost("change-password")]
     public async Task<ActionResult> ChangePasswordAsync(ChangePasswordCommand request)
     {
@@ -36,6 +38,7 @@ public class AuthController : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpGet("profile")]
     public async Task<ActionResult> GetProfileAsync()
     {
@@ -43,6 +46,7 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize]
     [HttpPost("profile")]
     public async Task<ActionResult> UpdateProfileAsync(UpdateProfileCommand request)
     {

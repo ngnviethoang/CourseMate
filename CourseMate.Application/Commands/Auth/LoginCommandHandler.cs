@@ -32,7 +32,7 @@ internal sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginR
         IdentityUser<Guid>? user = await _userManager.FindByNameAsync(request.UserName);
         if (user == null)
         {
-            throw new BusinessException(ExceptionMessages.InvalidUsernameOrPassword);
+            throw new BusinessException(ErrorMessages.InvalidUsernameOrPassword);
         }
 
         SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
