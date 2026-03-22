@@ -25,6 +25,18 @@ internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<Ini
 
     public override async Task<InitVideoUploadResponse> Handle(InitVideoUploadCommand request, CancellationToken cancellationToken)
     {
+        if (".mp4".Equals(Path.GetExtension(request.FileName)))
+        {
+            throw new BusinessException(ErrorMessages.InvalidFileType);
+        }
+
+        if (_storageOptions.MaxSizeTrunkFile <= 0)
+        {
+            throw new BusinessException(string.Format(ErrorMessages.InvalidConfiguration, nameof(StorageOptions.MaxSizeTrunkFile)));
+        }
+
+        long maxTotalChunks = request.FileSize / _storageOptions.MaxSizeTrunkFile + 1;
+
         Guid uploadId = Guid.NewGuid();
         string tempDir = Path.Combine(_storageOptions.TempPath, uploadId.ToString());
         Directory.CreateDirectory(tempDir);
@@ -32,7 +44,7 @@ internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<Ini
         FileEntry fileEntry = new(
             uploadId,
             request.FileName,
-            request.ContentType,
+            "video/mp4",
             request.FileSize,
             string.Empty,
             tempDir,
@@ -46,17 +58,9 @@ internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<Ini
         await DbContext.FileEntries.AddAsync(fileEntry, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);
 
-
-        if (_storageOptions.MaxSizeTrunkFile <= 0)
-        {
-            throw new BusinessException(string.Format(ErrorMessages.InvalidConfiguration, "MaxSizeTrunkFile"));
-        }
-
-        long maxTotalChunks = request.FileSize / _storageOptions.MaxSizeTrunkFile;
-
         return new InitVideoUploadResponse
         {
-            UploadId = uploadId,
+            FileId = uploadId,
             MaxTotalTrunks = Math.Abs(maxTotalChunks)
         };
     }

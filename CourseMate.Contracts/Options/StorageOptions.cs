@@ -3,7 +3,7 @@ namespace CourseMate.Contracts.Options;
 public class StorageOptions
 {
     public string Path { get; set; } = string.Empty;
-    
+
     public int MaxSizeTrunkFile { get; set; }
 
     public string TempPath => System.IO.Path.Combine(Path, "temp");

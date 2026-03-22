@@ -3,28 +3,35 @@ using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Files;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
+using CourseMate.Contracts.Options;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace CourseMate.Application.Commands.Files;
 
 // TODO Refactor to background job
-internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler<CompleteVideoUploadCommand>
+internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler<CompletedVideoUploadCommand, CompleteVideoUploadResponse>
 {
+    private readonly StorageOptions _storageOptions;
+
     public CompleteVideoUploadCommandHandler(
         CourseMateDbContext dbContext,
-        IHttpContextAccessor httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor,
+        IOptions<StorageOptions> storageOptions)
         : base(dbContext, httpContextAccessor)
     {
+        _storageOptions = storageOptions.Value;
     }
 
-    public override async Task Handle(CompleteVideoUploadCommand request, CancellationToken cancellationToken)
+    public override async Task<CompleteVideoUploadResponse> Handle(CompletedVideoUploadCommand request, CancellationToken cancellationToken)
     {
         Guid userId = GetCurrentUserId();
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.UserId == userId)
+            .Where(f => f.Status == FileStatus.Uploading)
             .FirstOrDefaultAsync(f => f.Id == request.UploadId, cancellationToken);
 
         if (fileEntry == null)
@@ -32,84 +39,70 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
             throw new EntityNotFoundException(nameof(FileEntry), request.UploadId);
         }
 
-        if (fileEntry.Status != FileStatus.Uploading)
+        if (fileEntry.UploadedChunks < request.TotalChunks)
         {
-            throw new BusinessException(ErrorMessages.FileIsNotInUploadingState);
+            throw new BusinessException(string.Format(
+                ErrorMessages.UploadIncomplete,
+                fileEntry.UploadedChunks,
+                fileEntry.TotalChunks
+            ));
         }
 
-        if (fileEntry.UploadedChunks < fileEntry.TotalChunks)
+        string dirVideoPath = Path.Combine(_storageOptions.VideosPath, userId.ToString());
+        if (!Directory.Exists(dirVideoPath))
         {
-            throw new BusinessException($"Upload incomplete. {fileEntry.UploadedChunks}/{fileEntry.TotalChunks} chunks uploaded.");
+            Directory.CreateDirectory(dirVideoPath);
+        }
+
+        string fileName = $"{fileEntry.Id}{Path.GetExtension(fileEntry.FileName)}";
+        string filePath = Path.Combine(dirVideoPath, fileName);
+
+        List<FileChunk> fileTrunks = await DbContext.FileChunks
+            .Where(f => f.FileEntryId == fileEntry.Id)
+            .OrderBy(f => f.ChunkIndex)
+            .ToListAsync(cancellationToken);
+
+        foreach (FileChunk fileTrunk in fileTrunks)
+        {
+            if (!File.Exists(fileTrunk.ChunkPath))
+            {
+                throw new BusinessException(string.Format(ErrorMessages.ChunkFileMissing, fileTrunk.ChunkIndex, fileEntry.Id));
+            }
         }
 
         try
         {
-            string finalFileName = $"{fileEntry.Id}_{Path.GetFileNameWithoutExtension(fileEntry.FileName)}{Path.GetExtension(fileEntry.FileName)}";
-            string finalFilePath = Path.Combine("uploads", "videos", finalFileName);
-            string fullFinalPath = Path.Combine(Directory.GetCurrentDirectory(), finalFilePath);
-
-            Directory.CreateDirectory(Path.GetDirectoryName(fullFinalPath)!);
-
-            using (FileStream outputStream = new(fullFinalPath, FileMode.Create, FileAccess.Write))
+            await using (FileStream outputStream = new(filePath, FileMode.CreateNew, FileAccess.Write))
             {
-                for (int i = 0; i < fileEntry.TotalChunks; i++)
+                foreach (FileChunk fileTrunk in fileTrunks)
                 {
-                    string chunkFileName = $"chunk_{i:D5}.dat";
-                    string chunkFilePath = Path.Combine(fileEntry.TempFilePath!, chunkFileName);
-
-                    if (!File.Exists(chunkFilePath))
-                    {
-                        throw new BusinessException($"Chunk {i} is missing");
-                    }
-
-                    byte[] chunkData = await File.ReadAllBytesAsync(chunkFilePath, cancellationToken);
+                    byte[] chunkData = await File.ReadAllBytesAsync(fileTrunk.ChunkPath, cancellationToken);
                     await outputStream.WriteAsync(chunkData, cancellationToken);
                 }
             }
 
-            // Update file entry status
-            fileEntry.Status = FileStatus.Processing;
-            fileEntry.FilePath = finalFilePath;
-            fileEntry.CompletedAt = DateTime.UtcNow;
+            fileEntry.TotalChunks = request.TotalChunks;
+            fileEntry.Status = FileStatus.Completed;
+            fileEntry.FilePath = filePath;
+            fileEntry.CompletedAt = DateTimeOffset.UtcNow;
             await DbContext.SaveChangesAsync(cancellationToken);
 
-            // Clean up temporary files
-            if (Directory.Exists(fileEntry.TempFilePath))
-            {
-                Directory.Delete(fileEntry.TempFilePath, true);
-            }
-
-            // Trigger video processing asynchronously
-            _ = Task.Run(() => ProcessVideoAsync(fileEntry.Id.ToString(), cancellationToken), cancellationToken);
+            string tempPath = Path.Combine(_storageOptions.TempPath, fileEntry.Id.ToString());
+            Directory.Delete(tempPath, true);
         }
-        catch (Exception ex)
+        catch (OperationCanceledException ex)
         {
             fileEntry.Status = FileStatus.Failed;
             await DbContext.SaveChangesAsync(cancellationToken);
-            throw;
+            throw new BusinessException(ex.Message, ex);
         }
-    }
 
-    private async Task ProcessVideoAsync(string uploadId, CancellationToken cancellationToken)
-    {
-        try
+        HttpRequest? httpRequest = HttpContextAccessor.HttpContext!.Request;
+        string fileUrl = $"{httpRequest.Scheme}://{httpRequest.Host}/api/files/video/{fileEntry.Id}";
+        return new CompleteVideoUploadResponse
         {
-            FileEntry? fileEntry = await DbContext.FileEntries.FirstOrDefaultAsync(f => f.Id.ToString() == uploadId, cancellationToken);
-            if (fileEntry != null)
-            {
-                fileEntry.Status = FileStatus.Completed;
-                await DbContext.SaveChangesAsync(cancellationToken);
-            }
-        }
-        catch (Exception ex)
-        {
-            FileEntry? fileEntry = await DbContext.FileEntries.FirstOrDefaultAsync(f => f.Id.ToString() == uploadId, cancellationToken);
-            if (fileEntry != null)
-            {
-                fileEntry.Status = FileStatus.Failed;
-                fileEntry.ErrorMessage = ex.Message;
-                await DbContext.SaveChangesAsync(cancellationToken);
-            }
-        }
+            FileId = fileEntry.Id,
+            FileUrl = fileUrl
+        };
     }
 }

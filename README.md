@@ -14,3 +14,7 @@ The following accounts are available for testing:
 | student3    | User@123 | Student    |
 
 > ⚠️ These accounts are for development/testing purposes only.
+
+## 🎬 Split MP4 File Online
+
+👉 Try it here: https://split-video.com/

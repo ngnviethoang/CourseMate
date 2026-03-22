@@ -5,7 +5,7 @@ namespace CourseMate.Contracts.DTOs.Files;
 
 public class GetVideoUploadStatusQuery : IRequest<VideoUploadStatusDto?>
 {
-    public Guid UploadId { get; set; }
+    public Guid FileId { get; set; }
 }
 
 public class VideoUploadStatusDto

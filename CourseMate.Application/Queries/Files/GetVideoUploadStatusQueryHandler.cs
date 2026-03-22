@@ -22,7 +22,7 @@ internal sealed class GetVideoUploadStatusQueryHandler : AbstractQueryHandler<Ge
         Guid userId = GetCurrentUserId();
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.UserId == userId)
-            .FirstOrDefaultAsync(f => f.Id == request.UploadId, cancellationToken);
+            .FirstOrDefaultAsync(f => f.Id == request.FileId, cancellationToken);
         if (fileEntry == null)
         {
             return null;

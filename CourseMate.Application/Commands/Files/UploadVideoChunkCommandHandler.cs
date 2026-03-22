@@ -23,27 +23,30 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
         Guid userId = GetCurrentUserId();
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.UserId == userId)
-            .Where(f => f.Status != FileStatus.Uploading)
-            .Where(f => f.TotalChunks == 0 || f.TotalChunks == request.TotalChunks)
-            .FirstOrDefaultAsync(f => f.Id == request.UploadId, cancellationToken);
+            .Where(f => f.Status == FileStatus.Uploading)
+            .FirstOrDefaultAsync(f => f.Id == request.FileId, cancellationToken);
 
         if (fileEntry == null)
         {
-            throw new EntityNotFoundException(nameof(FileEntry), request.UploadId);
+            throw new EntityNotFoundException(nameof(FileEntry), request.FileId);
         }
 
         string chunkFileName = $"chunk_{request.ChunkIndex:D5}.dat";
         string chunkFilePath = Path.Combine(fileEntry.TempFilePath, chunkFileName);
-        FileChunk fileChunk = new(Guid.NewGuid(), fileEntry.Id, request.ChunkIndex, chunkFilePath, request.Content.LongLength, false);
-        await DbContext.FileChunks.AddAsync(fileChunk, cancellationToken);
-        await File.WriteAllBytesAsync(chunkFilePath, request.Content, cancellationToken);
+        if (File.Exists(chunkFilePath))
+        {
+            return;
+        }
 
-        fileChunk.IsUploaded = true;
-        DbContext.FileChunks.Update(fileChunk);
+        await using FileStream stream = new(chunkFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+        await stream.WriteAsync(request.Content, cancellationToken);
+
+        FileChunk fileChunk = new(Guid.NewGuid(), fileEntry.Id, request.ChunkIndex, chunkFilePath, request.Content.LongLength, true);
+        await DbContext.FileChunks.AddAsync(fileChunk, cancellationToken);
 
         fileEntry.UploadedChunks = await DbContext.FileChunks
             .Where(i => i.FileEntryId == fileEntry.Id)
-            .CountAsync(i => i.IsUploaded, cancellationToken: cancellationToken);
+            .CountAsync(i => i.IsUploaded, cancellationToken) + 1;
         DbContext.FileEntries.Update(fileEntry);
 
         await DbContext.SaveChangesAsync(cancellationToken);

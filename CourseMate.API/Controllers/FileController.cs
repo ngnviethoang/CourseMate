@@ -1,4 +1,5 @@
-﻿using CourseMate.Contracts.DTOs.Files;
+﻿using System.ComponentModel.DataAnnotations;
+using CourseMate.Contracts.DTOs.Files;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,45 +18,59 @@ public class FileController : ControllerBase
         _mediator = mediator;
     }
 
-    #region Video API
+    #region API Video
 
-    [HttpPost("videos/upload/init")]
-    public async Task<ActionResult> InitVideoAsync(InitVideoUploadCommand request)
+    [HttpPost("videos/init")]
+    public async Task<ActionResult> InitUploadVideoAsync(InitVideoUploadCommand request)
     {
         InitVideoUploadResponse result = await _mediator.Send(request);
         return Ok(result);
     }
 
-    [HttpPost("videos/upload/chunks")]
-    public async Task<ActionResult> UploadVideoChunkAsync(UploadVideoChunkCommand request)
+    [HttpPost("videos/{fileId:Guid}/chunks/{chunkIndex:int}")]
+    public async Task<ActionResult> UploadVideoChunkAsync([FromRoute] Guid fileId, [FromRoute] [Range(1, 100)] int chunkIndex, IFormFile file)
     {
-        await _mediator.Send(request);
+        using MemoryStream stream = new();
+        await file.CopyToAsync(stream);
+        await _mediator.Send(new UploadVideoChunkCommand
+        {
+            FileId = fileId,
+            ChunkIndex = chunkIndex,
+            Content = stream.ToArray()
+        });
         return NoContent();
     }
 
-    [HttpGet("videos/upload/status/{uploadId:guid}")]
-    public async Task<ActionResult> GetVideoUploadStatusAsync(Guid uploadId)
+    [HttpPost("videos/completed")]
+    public async Task<ActionResult> UploadVideoCompletedAsync(CompletedVideoUploadCommand request)
+    {
+        CompleteVideoUploadResponse result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
+    [HttpGet("videos/{fileId:guid}")]
+    public async Task<ActionResult> GetVideoUploadStatusAsync(Guid fileId)
     {
         VideoUploadStatusDto? result = await _mediator.Send(new GetVideoUploadStatusQuery
         {
-            UploadId = uploadId
+            FileId = fileId
         });
         return Ok(result);
     }
 
-    [HttpDelete("videos/upload/{uploadId:guid}")]
-    public async Task<ActionResult> DeleteVideoUploadAsync(Guid uploadId)
+    [HttpDelete("videos/{fileId:guid}")]
+    public async Task<ActionResult> DeleteVideoIdAsync(Guid fileId)
     {
-        await _mediator.Send(new DeleteVideoUploadCommand
+        await _mediator.Send(new DeleteVideoByIdCommand
         {
-            UploadId = uploadId
+            FileId = fileId
         });
         return NoContent();
     }
 
     #endregion
 
-    #region Image API
+    #region API Image
 
     [HttpPost("images")]
     public async Task<ActionResult> UploadImageAsync(IFormFile request)
