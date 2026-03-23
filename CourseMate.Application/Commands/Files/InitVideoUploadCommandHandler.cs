@@ -25,7 +25,7 @@ internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<Ini
 
     public override async Task<InitVideoUploadResponse> Handle(InitVideoUploadCommand request, CancellationToken cancellationToken)
     {
-        if (".mp4".Equals(Path.GetExtension(request.FileName)))
+        if (request.FileName.EndsWith(".mp4"))
         {
             throw new BusinessException(ErrorMessages.InvalidFileType);
         }
