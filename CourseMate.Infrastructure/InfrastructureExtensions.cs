@@ -15,7 +15,6 @@ public static class InfrastructureExtensions
                 options.UseNpgsql(connectionString);
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
-            services.AddHttpContextAccessor();
             return services;
         }
     }

@@ -12,6 +12,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
 builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
     {
