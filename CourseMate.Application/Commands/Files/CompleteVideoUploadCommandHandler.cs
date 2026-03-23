@@ -32,11 +32,11 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.UserId == userId)
             .Where(f => f.Status == FileStatus.Uploading)
-            .FirstOrDefaultAsync(f => f.Id == request.UploadId, cancellationToken);
+            .FirstOrDefaultAsync(f => f.Id == request.FileId, cancellationToken);
 
         if (fileEntry == null)
         {
-            throw new EntityNotFoundException(nameof(FileEntry), request.UploadId);
+            throw new EntityNotFoundException(nameof(FileEntry), request.FileId);
         }
 
         if (fileEntry.UploadedChunks < request.TotalChunks)
