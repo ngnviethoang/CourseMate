@@ -47,8 +47,7 @@ internal sealed class UploadImageCommandHandler : AbstractCommandHandler<UploadI
             1,
             1,
             DateTimeOffset.UtcNow,
-            FileType.Image,
-            string.Empty);
+            FileType.Image);
 
         await DbContext.FileEntries.AddAsync(fileEntry, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);

@@ -21,8 +21,7 @@ public class FileController : ControllerBase
     #region API Video
 
     /// <summary>
-    /// FileName is .mp4
-    /// FileSize is in MB
+    /// fileName is .mp4, fileSize is in MB
     /// </summary>
     [HttpPost("videos/init")]
     public async Task<ActionResult> InitUploadVideoAsync(InitVideoUploadCommand request)
