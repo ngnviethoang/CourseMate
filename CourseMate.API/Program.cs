@@ -1,4 +1,6 @@
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using CourseMate.API.Middlewares;
 using CourseMate.Application;
 using CourseMate.Contracts.Options;
@@ -7,84 +9,111 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
-builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
+new LoggerConfiguration().ReadFrom
+    .Configuration(configuration)
+    .CreateLogger();
+
+try
+{
+    builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddScoped<HttpLoggingMiddleware>();
+    builder.Services.AddAuthorization();
+    builder.Services.AddAuthentication(options =>
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = configuration["Jwt:Issuer"],
-            ValidAudience = configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
-        };
-    });
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = configuration["Jwt:Issuer"],
+                ValidAudience = configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
+            };
+        });
 
-builder.Services.AddIdentityCore<IdentityUser<Guid>>()
-    .AddSignInManager()
-    .AddRoles<IdentityRole<Guid>>()
-    .AddEntityFrameworkStores<CourseMateDbContext>();
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-";
-    options.User.RequireUniqueEmail = true;
-});
-builder.Services.AddApplication();
-builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate") ?? string.Empty);
-builder.Services.AddOpenApi();
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+    builder.Services.AddIdentityCore<IdentityUser<Guid>>()
+        .AddSignInManager()
+        .AddRoles<IdentityRole<Guid>>()
+        .AddEntityFrameworkStores<CourseMateDbContext>();
+    builder.Services.Configure<IdentityOptions>(options =>
     {
-        Type = SecuritySchemeType.Http,
-        Scheme = JwtBearerDefaults.AuthenticationScheme,
-        BearerFormat = "JWT",
-        Description = "JWT Authorization header using the Bearer scheme."
+        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-";
+        options.User.RequireUniqueEmail = true;
     });
-
-    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    builder.Services.AddApplication();
+    builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate") ?? string.Empty);
+    builder.Services.AddControllers().AddJsonOptions(options =>
     {
-        [new OpenApiSecuritySchemeReference(JwtBearerDefaults.AuthenticationScheme, document)] = []
+        options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
-});
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(options =>
+    {
+        options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = JwtBearerDefaults.AuthenticationScheme,
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "JWT Authorization header"
+        });
 
-builder.Services.AddProblemDetails().AddExceptionHandler<GlobalExceptionHandler>();
-builder.Services.AddCors(options =>
+        options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference(JwtBearerDefaults.AuthenticationScheme, document)] = []
+        });
+
+        options.DescribeAllParametersInCamelCase();
+    });
+
+    builder.Services.AddProblemDetails().AddExceptionHandler<GlobalExceptionHandler>();
+    builder.Services.AddCors(options =>
+    {
+        string[] allowedHosts = builder.Configuration["AllowedHosts"]!.ToLower().Trim().Split(',', StringSplitOptions.RemoveEmptyEntries);
+        options.AddPolicy("CorsPolicy", policy =>
+        {
+            policy.WithOrigins(allowedHosts)
+                .SetIsOriginAllowedToAllowWildcardSubdomains()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+    });
+
+    WebApplication app = builder.Build();
+    // await app.Services.SeedAsync();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    app.UseExceptionHandler();
+    app.UseHttpsRedirection();
+    app.UseCors("CorsPolicy");
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.UseMiddleware<HttpLoggingMiddleware>();
+    // app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
+    app.MapControllers();
+    await app.RunAsync();
+}
+catch (Exception ex)
 {
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.WithOrigins("http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
-    });
-});
-
-WebApplication app = builder.Build();
-// await app.Services.SeedAsync();
-app.UseSwagger();
-app.UseSwaggerUI();
-app.UseExceptionHandler();
-app.UseHttpsRedirection();
-app.UseCors();
-app.MapOpenApi();
-app.UseAuthentication();
-app.UseAuthorization();
-// app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
-app.MapControllers();
-await app.RunAsync();
+    Log.Fatal(ex, "Host terminated unexpectedly");
+    throw;
+}
+finally
+{
+    await Log.CloseAndFlushAsync();
+}

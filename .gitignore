@@ -254,3 +254,7 @@ paket-files/
 *.db-shm
 *.db-wal
 
+# CourseMate files
+/etc/uploads/
+/etc/logs/
+

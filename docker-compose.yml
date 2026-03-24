@@ -25,6 +25,8 @@
             - "7071:7071"
         environment:
             - ConnectionStrings__CourseMate=Host=db;Port=5432;Database=CourseMateV2;User ID=postgres;Password=postgres;
+        volumes:
+            - ./etc/uploads:/app/uploads
         depends_on:
             db:
                 condition: service_healthy

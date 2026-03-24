@@ -7,11 +7,13 @@ namespace CourseMate.API.Middlewares;
 
 public sealed class GlobalExceptionHandler : IExceptionHandler
 {
+    private readonly IWebHostEnvironment _env;
     private readonly IProblemDetailsService _problemDetailsService;
 
-    public GlobalExceptionHandler(IProblemDetailsService problemDetailsService)
+    public GlobalExceptionHandler(IProblemDetailsService problemDetailsService, IWebHostEnvironment env)
     {
         _problemDetailsService = problemDetailsService;
+        _env = env;
     }
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
@@ -22,7 +24,7 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
             Instance = null,
             Title = "Internal Server Error",
             Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.1",
-            Detail = "Internal Server Error",
+            Detail = _env.IsProduction() ? "Internal Server Error" : exception.Message,
             Extensions =
             {
                 ["traceId"] = httpContext.TraceIdentifier,
