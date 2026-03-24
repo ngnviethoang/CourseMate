@@ -31,6 +31,7 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
         Guid userId = GetCurrentUserId();
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.UserId == userId)
+            .Where(f => f.UploadedChunks <= f.TotalChunks)
             .Where(f => f.Status == FileStatus.Uploading)
             .FirstOrDefaultAsync(f => f.Id == request.FileId, cancellationToken);
 
@@ -41,11 +42,7 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
 
         if (fileEntry.UploadedChunks < request.TotalChunks)
         {
-            throw new BusinessException(string.Format(
-                ErrorMessages.UploadIncomplete,
-                fileEntry.UploadedChunks,
-                fileEntry.TotalChunks
-            ));
+            throw new BusinessException(string.Format(ErrorMessages.UploadIncomplete, fileEntry.UploadedChunks, request.TotalChunks));
         }
 
         string dirVideoPath = Path.Combine(_storageOptions.VideosPath, userId.ToString());
@@ -86,7 +83,6 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
             fileEntry.FilePath = filePath;
             fileEntry.CompletedAt = DateTimeOffset.UtcNow;
             await DbContext.SaveChangesAsync(cancellationToken);
-
             string tempPath = Path.Combine(_storageOptions.TempPath, fileEntry.Id.ToString());
             Directory.Delete(tempPath, true);
         }

@@ -7,9 +7,9 @@ namespace CourseMate.Infrastructure.Entities;
 
 public class FileEntry : Entity
 {
-    public FileEntry(Guid id, string fileName, string contentType, long fileSize, string filePath,
+    public FileEntry(Guid id, string fileName, string contentType, double fileSize, string filePath,
         string tempFilePath, FileStatus status, int totalChunks, int uploadedChunks,
-        DateTimeOffset? completedAt, FileType fileType, string errorMessage) : base(id)
+        DateTimeOffset? completedAt, FileType fileType) : base(id)
     {
         FileName = fileName;
         ContentType = contentType;
@@ -21,7 +21,6 @@ public class FileEntry : Entity
         UploadedChunks = uploadedChunks;
         CompletedAt = completedAt;
         FileType = fileType;
-        ErrorMessage = errorMessage;
     }
 
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
@@ -30,7 +29,7 @@ public class FileEntry : Entity
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
     public string ContentType { get; set; }
 
-    public long FileSize { get; set; }
+    public double FileSize { get; set; }
 
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
     public string FilePath { get; set; }
@@ -43,9 +42,6 @@ public class FileEntry : Entity
     public int TotalChunks { get; set; }
 
     public int UploadedChunks { get; set; }
-
-    [MaxLength(CourseMateConsts.DefaultMaxLength)]
-    public string ErrorMessage { get; set; }
 
     public DateTimeOffset? CompletedAt { get; set; }
 

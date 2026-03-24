@@ -30,38 +30,42 @@ internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<Ini
             throw new BusinessException(ErrorMessages.InvalidFileType);
         }
 
-        if (_storageOptions.MaxSizeTrunkFile <= 0)
+        if (_storageOptions.MaxSizeFileVideo <= 0)
         {
-            throw new BusinessException(string.Format(ErrorMessages.InvalidConfiguration, nameof(StorageOptions.MaxSizeTrunkFile)));
+            throw new ArgumentException(string.Format(ErrorMessages.InvalidConfiguration, nameof(StorageOptions.MaxSizeFileVideo)));
         }
 
-        long maxTotalChunks = request.FileSize / _storageOptions.MaxSizeTrunkFile + 1;
+        if (_storageOptions.MaxSizeTrunkFile <= 0)
+        {
+            throw new ArgumentException(string.Format(ErrorMessages.InvalidConfiguration, nameof(StorageOptions.MaxSizeTrunkFile)));
+        }
 
-        Guid uploadId = Guid.NewGuid();
-        string tempDir = Path.Combine(_storageOptions.TempPath, uploadId.ToString());
+        int maxTotalChunks = (int)Math.Ceiling(request.FileSize / _storageOptions.MaxSizeTrunkFile + 1);
+
+        Guid fileId = Guid.NewGuid();
+        string tempDir = Path.Combine(_storageOptions.TempPath, fileId.ToString());
         Directory.CreateDirectory(tempDir);
 
         FileEntry fileEntry = new(
-            uploadId,
+            fileId,
             request.FileName,
             "video/mp4",
             request.FileSize,
             string.Empty,
             tempDir,
             FileStatus.Uploading,
-            0,
+            maxTotalChunks,
             0,
             null,
-            FileType.Video,
-            string.Empty);
+            FileType.Video);
 
         await DbContext.FileEntries.AddAsync(fileEntry, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);
 
         return new InitVideoUploadResponse
         {
-            FileId = uploadId,
-            MaxTotalTrunks = Math.Abs(maxTotalChunks)
+            FileId = fileId,
+            MaxTotalTrunks = maxTotalChunks
         };
     }
 }

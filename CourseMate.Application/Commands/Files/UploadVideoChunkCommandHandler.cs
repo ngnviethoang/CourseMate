@@ -23,6 +23,7 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
         Guid userId = GetCurrentUserId();
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.UserId == userId)
+            .Where(f => f.UploadedChunks < f.TotalChunks)
             .Where(f => f.Status == FileStatus.Uploading)
             .FirstOrDefaultAsync(f => f.Id == request.FileId, cancellationToken);
 
@@ -35,7 +36,7 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
         string chunkFilePath = Path.Combine(fileEntry.TempFilePath, chunkFileName);
         if (File.Exists(chunkFilePath))
         {
-            return;
+            File.Delete(chunkFilePath);
         }
 
         await using FileStream stream = new(chunkFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
@@ -44,9 +45,7 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
         FileChunk fileChunk = new(Guid.NewGuid(), fileEntry.Id, request.ChunkIndex, chunkFilePath, request.Content.LongLength, true);
         await DbContext.FileChunks.AddAsync(fileChunk, cancellationToken);
 
-        fileEntry.UploadedChunks = await DbContext.FileChunks
-            .Where(i => i.FileEntryId == fileEntry.Id)
-            .CountAsync(i => i.IsUploaded, cancellationToken) + 1;
+        fileEntry.UploadedChunks += 1;
         DbContext.FileEntries.Update(fileEntry);
 
         await DbContext.SaveChangesAsync(cancellationToken);
