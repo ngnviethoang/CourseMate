@@ -36,6 +36,14 @@ export const studentService = {
     return api.get<StudentCourseDetailDto>(`/api/student/courses/${id}`)
   },
 
+  getRecommendedCourses: async (pageIndex = 1, pageSize = 12): Promise<PagedDto<CourseDto>> => {
+    const params = new URLSearchParams({
+      pageIndex: String(pageIndex),
+      pageSize: String(pageSize)
+    })
+    return api.get<PagedDto<CourseDto>>(`/api/student/courses/recommended?${params}`)
+  },
+
   // ─── Cart ──────────────────────────────────────────────────────────────────
 
   getCart: async (): Promise<CartDto> => {

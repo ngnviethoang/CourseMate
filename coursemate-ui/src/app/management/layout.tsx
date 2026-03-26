@@ -35,25 +35,11 @@ function getUserFromToken() {
   }
 }
 
-function UserDropdown() {
-  const router = useRouter()
-  const [user, setUser] = useState<{ name: string; role: string } | null>(null)
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setUser(getUserFromToken())
-    setMounted(true)
-  }, [])
-
+function UserDropdown({ user, mounted, onLogout }: { user: { name: string; role: string } | null, mounted: boolean, onLogout: () => void }) {
   // Use a stable initials value for the first render to match SSR
   const initials = mounted && user?.name ? user.name.slice(0, 2).toUpperCase() : 'U'
   const displayName = mounted && user?.name ? user.name : 'User'
   const displayRole = mounted && user?.role ? user.role : ''
-
-  const handleLogout = () => {
-    document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
-    router.push('/management/login')
-  }
 
   return (
     <DropdownMenu>
@@ -86,18 +72,18 @@ function UserDropdown() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push('/management/profile')}>
+          <DropdownMenuItem onClick={() => window.location.href = '/management/profile'}>
             <User className="mr-2 h-4 w-4" />
             Profile
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/management/settings')}>
+          <DropdownMenuItem onClick={() => window.location.href = '/management/settings'}>
             <Settings className="mr-2 h-4 w-4" />
             Settings
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+          <DropdownMenuItem variant="destructive" onClick={onLogout}>
             <LogOut className="mr-2 h-4 w-4" />
             Logout
           </DropdownMenuItem>
@@ -109,6 +95,19 @@ function UserDropdown() {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const router = useRouter()
+  const [user, setUser] = useState<{ name: string; role: string } | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setUser(getUserFromToken())
+    setMounted(true)
+  }, [])
+
+  const handleLogout = () => {
+    document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+    router.push('/management/login')
+  }
 
   if (pathname === '/management/login') {
     return <>{children}</>
@@ -117,16 +116,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <SidebarProvider>
       <AdminSidebar />
-      <main className="flex-1 flex flex-col min-h-screen bg-muted/30">
-        <header className="flex h-14 items-center gap-3 border-b bg-background/95 backdrop-blur px-4 shadow-sm">
-          <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
-          <div className="h-5 w-px bg-border" />
-          <span className="text-sm font-semibold text-primary">Admin Dashboard</span>
+      <main className="flex-1 flex flex-col min-h-screen bg-muted/20">
+        <header className="flex h-20 items-center gap-4 border-b bg-background/95 backdrop-blur px-8 shadow-sm transition-all">
+          <SidebarTrigger className="h-10 w-10 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all" />
+          <div className="h-6 w-px bg-border" />
+          <span className="text-lg font-bold tracking-tight text-foreground">{user?.role === 'Instructor' ? 'Hệ thống Giảng viên' : 'Hệ thống Quản trị'}</span>
           <div className="ml-auto">
-            <UserDropdown />
+            <UserDropdown user={user} mounted={mounted} onLogout={handleLogout} />
           </div>
         </header>
-        <div className="flex-1 p-6 space-y-6">{children}</div>
+        <div className="flex-1 p-10 space-y-10 max-w-[1700px] mx-auto w-full">{children}</div>
       </main>
     </SidebarProvider>
   )

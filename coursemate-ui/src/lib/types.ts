@@ -310,3 +310,32 @@ export interface UploadVideoCompleteRequest {
   fileId: string,
   totalChunks: number,
 }
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+export interface MonthlyRevenueDto {
+  month: string
+  revenue: number
+}
+
+export interface TopCourseDto {
+  id: string
+  title: string
+  enrollmentCount: number
+  revenue: number
+}
+
+export interface TopInstructorDto {
+  id: string
+  name: string
+  courseCount: number
+  totalRevenue: number
+}
+
+export interface DashboardDto {
+  totalRevenue: number
+  totalStudents: number
+  totalCourses: number
+  totalOrders: number
+  revenueByMonth: MonthlyRevenueDto[]
+  topCourses: TopCourseDto[]
+  topInstructors: TopInstructorDto[]
+}

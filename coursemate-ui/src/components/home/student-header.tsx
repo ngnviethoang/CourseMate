@@ -1,9 +1,10 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { GraduationCap, ShoppingCart, LogOut, User, ChevronDown, BookMarked, Trophy, Code2, Home } from 'lucide-react'
+import { ShoppingCart, LogOut, User, ChevronDown, BookMarked, Trophy, Code2, Home } from 'lucide-react'
+import { CourseMateLogoIcon } from '@/components/icons/coursemate-logo'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -68,9 +69,7 @@ export function StudentHeader() {
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <GraduationCap className="h-5 w-5" />
-          </div>
+          <CourseMateLogoIcon className="h-8 w-8" />
           <span className="text-lg font-bold tracking-tight">CourseMate</span>
         </Link>
 

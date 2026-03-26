@@ -11,26 +11,86 @@ import {
   Music,
   Palette,
   TrendingUp,
-  BookOpen,
-  Loader2
+  BookOpen
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { studentService } from '@/lib/student-service'
 import { CategoryDto } from '@/lib/types'
 
-// Icon + colour mapping by keyword
-const ICON_MAP: Record<string, { icon: typeof Code2; color: string }> = {
-  development: { icon: Code2, color: 'bg-indigo-100 text-indigo-600' },
-  design: { icon: Palette, color: 'bg-pink-100 text-pink-600' },
-  ui: { icon: Palette, color: 'bg-pink-100 text-pink-600' },
-  ux: { icon: Palette, color: 'bg-pink-100 text-pink-600' },
-  'data science': { icon: BarChart3, color: 'bg-emerald-100 text-emerald-600' },
-  data: { icon: BarChart3, color: 'bg-emerald-100 text-emerald-600' },
-  business: { icon: Briefcase, color: 'bg-amber-100 text-amber-600' },
-  marketing: { icon: TrendingUp, color: 'bg-orange-100 text-orange-600' },
-  language: { icon: Globe, color: 'bg-sky-100 text-sky-600' },
-  music: { icon: Music, color: 'bg-purple-100 text-purple-600' },
-  photo: { icon: Camera, color: 'bg-rose-100 text-rose-600' }
+// Icon + gradient mapping by keyword
+const ICON_MAP: Record<string, { icon: typeof Code2; gradient: string; iconColor: string; shadow: string }> = {
+  development: {
+    icon: Code2,
+    gradient: 'from-indigo-500 to-blue-600',
+    iconColor: 'text-white',
+    shadow: 'shadow-indigo-200 dark:shadow-indigo-900/40'
+  },
+  design: {
+    icon: Palette,
+    gradient: 'from-pink-500 to-rose-500',
+    iconColor: 'text-white',
+    shadow: 'shadow-pink-200 dark:shadow-pink-900/40'
+  },
+  ui: {
+    icon: Palette,
+    gradient: 'from-pink-500 to-rose-500',
+    iconColor: 'text-white',
+    shadow: 'shadow-pink-200 dark:shadow-pink-900/40'
+  },
+  ux: {
+    icon: Palette,
+    gradient: 'from-pink-500 to-rose-500',
+    iconColor: 'text-white',
+    shadow: 'shadow-pink-200 dark:shadow-pink-900/40'
+  },
+  'data science': {
+    icon: BarChart3,
+    gradient: 'from-emerald-500 to-teal-600',
+    iconColor: 'text-white',
+    shadow: 'shadow-emerald-200 dark:shadow-emerald-900/40'
+  },
+  data: {
+    icon: BarChart3,
+    gradient: 'from-emerald-500 to-teal-600',
+    iconColor: 'text-white',
+    shadow: 'shadow-emerald-200 dark:shadow-emerald-900/40'
+  },
+  business: {
+    icon: Briefcase,
+    gradient: 'from-amber-500 to-orange-500',
+    iconColor: 'text-white',
+    shadow: 'shadow-amber-200 dark:shadow-amber-900/40'
+  },
+  marketing: {
+    icon: TrendingUp,
+    gradient: 'from-orange-500 to-red-500',
+    iconColor: 'text-white',
+    shadow: 'shadow-orange-200 dark:shadow-orange-900/40'
+  },
+  language: {
+    icon: Globe,
+    gradient: 'from-sky-500 to-cyan-500',
+    iconColor: 'text-white',
+    shadow: 'shadow-sky-200 dark:shadow-sky-900/40'
+  },
+  music: {
+    icon: Music,
+    gradient: 'from-violet-500 to-purple-600',
+    iconColor: 'text-white',
+    shadow: 'shadow-violet-200 dark:shadow-violet-900/40'
+  },
+  photo: {
+    icon: Camera,
+    gradient: 'from-rose-500 to-pink-600',
+    iconColor: 'text-white',
+    shadow: 'shadow-rose-200 dark:shadow-rose-900/40'
+  }
+}
+
+const FALLBACK = {
+  icon: BookOpen,
+  gradient: 'from-slate-500 to-gray-600',
+  iconColor: 'text-white',
+  shadow: 'shadow-slate-200 dark:shadow-slate-900/40'
 }
 
 function getCategoryMeta(name: string) {
@@ -38,16 +98,20 @@ function getCategoryMeta(name: string) {
   for (const [key, val] of Object.entries(ICON_MAP)) {
     if (lower.includes(key)) return val
   }
-  return { icon: BookOpen, color: 'bg-gray-100 text-gray-600' }
+  return FALLBACK
 }
 
 function CategorySkeleton() {
   return (
-    <div className="grid grid-cols-4 gap-3 sm:grid-cols-8">
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="flex flex-col items-center gap-2 rounded-xl border bg-card p-3 animate-pulse">
-          <div className="h-10 w-10 rounded-lg bg-muted" />
-          <div className="h-3 w-14 rounded bg-muted" />
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      {Array.from({ length: 10 }).map((_, i) => (
+        <div
+          key={i}
+          className="flex flex-col items-center gap-3 rounded-2xl border bg-card p-5 animate-pulse"
+        >
+          <div className="h-14 w-14 rounded-2xl bg-muted" />
+          <div className="h-3 w-20 rounded-full bg-muted" />
+          <div className="h-2.5 w-14 rounded-full bg-muted/60" />
         </div>
       ))}
     </div>
@@ -68,31 +132,50 @@ export function Categories() {
 
   return (
     <section>
-      <div className="mb-5 flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Browse Categories</h2>
-        <Button variant="ghost" size="sm" className="gap-1 text-primary">
-          All categories <ChevronRight className="h-4 w-4" />
-        </Button>
+      {/* Header */}
+      <div className="mb-6 flex items-end justify-between">
+        <div>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-primary">Khám phá</p>
+          <h2 className="text-2xl font-bold tracking-tight">Danh mục khoá học</h2>
+        </div>
+        <button className="group flex items-center gap-1 rounded-full border px-4 py-1.5 text-sm font-medium text-muted-foreground transition-all hover:border-primary hover:text-primary">
+          Xem tất cả
+          <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        </button>
       </div>
 
       {loading ? (
         <CategorySkeleton />
       ) : categories.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No categories found.</p>
+        <p className="text-sm text-muted-foreground">Không tìm thấy danh mục.</p>
       ) : (
-        <div className="grid grid-cols-4 gap-3 sm:grid-cols-8">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {categories.map(cat => {
-            const { icon: Icon, color } = getCategoryMeta(cat.name)
+            const { icon: Icon, gradient, shadow } = getCategoryMeta(cat.name)
             return (
               <button
                 key={cat.id}
                 title={cat.description}
-                className="group flex flex-col items-center gap-2 rounded-xl border bg-card p-3 text-center shadow-xs transition-all hover:border-primary/30 hover:shadow-sm"
+                className="group relative flex flex-col items-center gap-3 rounded-2xl border border-transparent bg-card p-5 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-lg"
               >
-                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${color}`}>
-                  <Icon className="h-5 w-5" />
+                {/* Icon container with gradient */}
+                <div
+                  className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${gradient} shadow-lg ${shadow} transition-transform duration-300 group-hover:scale-110`}
+                >
+                  <Icon className="h-7 w-7 text-white" />
                 </div>
-                <span className="text-xs font-medium leading-tight">{cat.name}</span>
+
+                {/* Category name */}
+                <div>
+                  <span className="block text-sm font-semibold leading-tight text-foreground">
+                    {cat.name}
+                  </span>
+                </div>
+
+                {/* Subtle hover glow */}
+                <div
+                  className={`pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br ${gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-[0.04]`}
+                />
               </button>
             )
           })}

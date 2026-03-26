@@ -5,7 +5,7 @@ import { Search, Eye } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
-import { orderService } from '@/lib/admin-service'
+import { orderService, getRole } from '@/lib/admin-service'
 import type { AdminOrderDto, UpdateOrderRequest } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Input } from '@/components/ui/input'
@@ -63,6 +63,13 @@ export default function OrdersPage() {
   const [editing, setEditing] = useState<AdminOrderDto | null>(null)
   const [statusVal, setStatusVal] = useState<string>('Draft')
   const [saving, setSaving] = useState(false)
+  const [userRole, setUserRole] = useState<string[]>([])
+
+  useEffect(() => {
+    setUserRole(getRole())
+  }, [])
+
+  const isAdmin = userRole.includes('Admin')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -104,20 +111,18 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Orders</h1>
-          <p className="text-sm text-muted-foreground">Manage student course purchases and enrollments</p>
-        </div>
+    <div className="space-y-10 max-w-[1600px] mx-auto pb-10">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-4xl font-bold tracking-tight">{isAdmin ? 'All Orders' : 'My Course Sales'}</h1>
+        <p className="text-lg text-muted-foreground">{isAdmin ? 'Manage student course purchases and enrollments' : 'Monitor sales and student enrollments for your courses'}</p>
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="relative max-w-sm flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
           <Input
-            className="pl-9"
-            placeholder="Search by order ID, student name, or email..."
+            className="pl-11 h-12 text-base rounded-xl border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+            placeholder="Search by student name or email..."
             value={filter}
             onChange={e => {
               setFilter(e.target.value)
@@ -127,21 +132,23 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={items}
-        loading={loading}
-        sorting={sorting}
-        onSort={setSorting}
-        onView={handleView}
-        onEdit={handleEdit}
-        pagination={{
-          pageIndex,
-          pageSize,
-          totalCount,
-          onPageChange: setPageIndex
-        }}
-      />
+      <div className="rounded-2xl border bg-card shadow-xl shadow-foreground/5 overflow-hidden">
+        <DataTable
+          columns={columns}
+          data={items}
+          loading={loading}
+          sorting={sorting}
+          onSort={setSorting}
+          onView={handleView}
+          onEdit={isAdmin ? handleEdit : undefined}
+          pagination={{
+            pageIndex,
+            pageSize,
+            totalCount,
+            onPageChange: setPageIndex
+          }}
+        />
+      </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { LayoutGrid, BookOpen, Users, Tag, GraduationCap, LogOut, ShoppingCart } from 'lucide-react'
 import {
@@ -15,16 +16,32 @@ import {
 } from '@/components/ui/sidebar'
 
 const navItems = [
-  { href: '/management', label: 'Dashboard', icon: LayoutGrid },
-  { href: '/management/categories', label: 'Categories', icon: Tag },
-  { href: '/management/courses', label: 'Courses', icon: BookOpen },
-  { href: '/management/users', label: 'Users', icon: Users },
-  { href: '/management/orders', label: 'Orders', icon: ShoppingCart }
+  { href: '/management', label: 'Dashboard', icon: LayoutGrid, roles: ['Admin', 'Instructor'] },
+  { href: '/management/categories', label: 'Categories', icon: Tag, roles: ['Admin'] },
+  { href: '/management/courses', label: 'Courses', icon: BookOpen, roles: ['Admin', 'Instructor'] },
+  { href: '/management/users', label: 'Users', icon: Users, roles: ['Admin'] },
+  { href: '/management/orders', label: 'Orders', icon: ShoppingCart, roles: ['Admin', 'Instructor'] }
 ]
 
 export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter()
+  const [role, setRole] = useState('')
+
+  useEffect(() => {
+    const match = document.cookie.match(/(?:^|;\s*)accessToken=([^;]+)/)
+    if (match) {
+      try {
+        const payload = JSON.parse(atob(match[1].split('.')[1]))
+        const r = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? payload['role'] ?? ''
+        setRole(r)
+      } catch (e) {
+        console.error('Failed to parse token', e)
+      }
+    }
+  }, [])
+
+  const filteredItems = navItems.filter(item => !item.roles || item.roles.includes(role) || (Array.isArray(role) && role.some(r => item.roles.includes(r))))
 
   return (
     <Sidebar className="border-r border-border/50">
@@ -36,7 +53,7 @@ export function AdminSidebar() {
           </div>
           <div>
             <p className="text-sm font-bold text-white leading-none">CourseMate</p>
-            <p className="text-[11px] text-white/70 mt-0.5">Admin Panel</p>
+            <p className="text-[11px] text-white/70 mt-0.5">{role === 'Instructor' ? 'Instructor Panel' : 'Admin Panel'}</p>
           </div>
         </div>
       </SidebarHeader>
@@ -48,7 +65,7 @@ export function AdminSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-0.5 px-2">
-              {navItems.map(({ href, label, icon: Icon }) => {
+              {filteredItems.map(({ href, label, icon: Icon }) => {
                 const active = pathname === href
                 return (
                   <SidebarMenuItem key={href}>
