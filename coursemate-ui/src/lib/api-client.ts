@@ -48,7 +48,7 @@ async function apiClient<T>(url: string, options: FetchOptions = {}): Promise<T>
     reqHeaders['Authorization'] = `Bearer ${token}`
   }
 
-  if (process.env.NEXT_PUBLIC_API_BASE_URL?.includes('ngrok-free.dev')) {
+  if (BASE_URL?.includes('ngrok-free.dev')) {
     reqHeaders['ngrok-skip-browser-warning'] = 'true'
   }
 
