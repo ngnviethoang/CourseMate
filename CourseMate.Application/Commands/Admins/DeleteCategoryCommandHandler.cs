@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.ExtensionMethods;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace CourseMate.Application.Commands.Admins;
 
-internal sealed class DeleteCategoryAbstractCommandHandler : AbstractCommandHandler<DeleteCategoryCommand>
+internal sealed class DeleteCategoryAbstractCommandHandler : AbstractCommandHandler<DeleteCategoryCommand, int>
 {
     public DeleteCategoryAbstractCommandHandler(
         CourseMateDbContext dbContext,
@@ -14,9 +15,9 @@ internal sealed class DeleteCategoryAbstractCommandHandler : AbstractCommandHand
     {
     }
 
-    public override async Task Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
     {
         await DbContext.Categories.RemoveByIdAsync(request.Id, cancellationToken);
-        await DbContext.SaveChangesAsync(cancellationToken);
+        return Codes.Success;
     }
 }

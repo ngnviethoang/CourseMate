@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Auth;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Infrastructure;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Auth;
 
-internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfileCommand>
+internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfileCommand, int>
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
@@ -20,7 +21,7 @@ internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfil
         _userManager = userManager;
     }
 
-    public override async Task Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
     {
         Guid userId = GetCurrentUserId();
         IdentityUser<Guid>? user = await _userManager.FindByIdAsync(userId.ToString());
@@ -52,7 +53,7 @@ internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfil
         IdentityResult result = await _userManager.UpdateAsync(user);
         if (result.Succeeded)
         {
-            return;
+            return Codes.Success;
         }
 
         string errors = string.Join(", ", result.Errors.Select(e => e.Description));

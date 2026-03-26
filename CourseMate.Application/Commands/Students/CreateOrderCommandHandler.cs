@@ -44,16 +44,16 @@ internal sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateO
         decimal totalAmount = courses.Sum(c => c.Price);
 
         Order order = new(orderId, studentId, totalAmount, OrderStatus.Pending);
-        DbContext.Orders.Add(order);
+        await DbContext.Orders.AddAsync(order, cancellationToken);
 
         foreach (Course course in courses)
         {
             OrderItem orderItem = new(Guid.NewGuid(), orderId, course.Id, course.Price);
-            DbContext.OrderItems.Add(orderItem);
+            await DbContext.OrderItems.AddAsync(orderItem, cancellationToken);
         }
 
         DbContext.CartItems.RemoveRange(cartItems);
-        await DbContext.SaveChangesAsync(cancellationToken);
+
         return new ResultIdDto { Id = orderId };
     }
 }

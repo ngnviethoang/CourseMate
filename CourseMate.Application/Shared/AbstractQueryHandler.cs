@@ -18,18 +18,3 @@ public abstract class AbstractQueryHandler<TRequest, TResponse> : AbstractReques
 
     public abstract Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
 }
-
-public abstract class AbstractQueryHandler<TRequest> : AbstractRequestHandler, IRequestHandler<TRequest>
-    where TRequest : IRequest
-{
-    protected readonly CourseMateReadOnlyDbContext DbContext;
-
-    protected AbstractQueryHandler(
-        CourseMateReadOnlyDbContext dbContext,
-        IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
-    {
-        DbContext = dbContext;
-    }
-
-    public abstract Task Handle(TRequest request, CancellationToken cancellationToken);
-}

@@ -1,4 +1,4 @@
-﻿using CourseMate.Application.Shared;
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Files;
 using CourseMate.Contracts.Enums;
 using CourseMate.Infrastructure;

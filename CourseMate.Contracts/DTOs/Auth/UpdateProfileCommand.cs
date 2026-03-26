@@ -3,7 +3,7 @@ using MediatR;
 
 namespace CourseMate.Contracts.DTOs.Auth;
 
-public class UpdateProfileCommand : IRequest
+public class UpdateProfileCommand : IRequest<int>
 {
     [EmailAddress]
     public string? Email { get; set; }

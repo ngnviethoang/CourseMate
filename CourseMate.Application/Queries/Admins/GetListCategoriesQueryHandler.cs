@@ -2,6 +2,7 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Infrastructure;
+using CourseMate.Infrastructure.Entities;
 using CourseMate.Infrastructure.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -17,17 +18,8 @@ internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetList
 
     public override async Task<PagedDto<CategoryDto>> Handle(GetListCategoriesQuery request, CancellationToken cancellationToken)
     {
-        IQueryable<CategoryDto> query = DbContext.Categories.Select(i => new CategoryDto
-        {
-            Id = i.Id,
-            Name = i.Name,
-            Description = i.Description,
-            IsActive = i.IsActive,
-            CreationTime = i.CreationTime,
-            LastModificationTime = i.LastModificationTime
-        });
-
-        query = query.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Name, $"%{request.Filter}%"));
+        IQueryable<Category> query = DbContext.Categories
+            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Name, $"%{request.Filter}%"));
 
         query = request.Sorting switch
         {
@@ -43,6 +35,15 @@ internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetList
 
         List<CategoryDto> categories = await query
             .Paged(request.PageIndex, request.PageSize)
+            .Select(i => new CategoryDto
+            {
+                Id = i.Id,
+                Name = i.Name,
+                Description = i.Description,
+                IsActive = i.IsActive,
+                CreationTime = i.CreationTime,
+                LastModificationTime = i.LastModificationTime
+            })
             .ToListAsync(cancellationToken);
 
         return new PagedDto<CategoryDto>

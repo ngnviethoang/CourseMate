@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Students;
 
-internal sealed class DeleteCartCommandHandler : AbstractCommandHandler<DeleteCartCommand>
+internal sealed class DeleteCartCommandHandler : AbstractCommandHandler<DeleteCartCommand, int>
 {
     public DeleteCartCommandHandler(
         CourseMateDbContext dbContext,
@@ -16,23 +17,23 @@ internal sealed class DeleteCartCommandHandler : AbstractCommandHandler<DeleteCa
     {
     }
 
-    public override async Task Handle(DeleteCartCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(DeleteCartCommand request, CancellationToken cancellationToken)
     {
         Guid studentId = GetCurrentUserId();
 
         Cart? cart = await DbContext.Carts.FirstOrDefaultAsync(c => c.StudentId == studentId, cancellationToken);
         if (cart == null)
         {
-            return;
+            return Codes.Success;
         }
 
         CartItem? cartItem = await DbContext.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cart.Id && ci.Id == request.CartItemId, cancellationToken);
         if (cartItem == null)
         {
-            return;
+            return Codes.Success;
         }
 
         await DbContext.CartItems.RemoveByIdAsync(request.CartItemId, cancellationToken);
-        await DbContext.SaveChangesAsync(cancellationToken);
+        return Codes.Success;
     }
 }

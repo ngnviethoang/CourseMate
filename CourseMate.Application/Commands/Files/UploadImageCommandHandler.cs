@@ -58,7 +58,6 @@ internal sealed class UploadImageCommandHandler : AbstractCommandHandler<UploadI
             FileType.Image);
 
         await DbContext.FileEntries.AddAsync(fileEntry, cancellationToken);
-        await DbContext.SaveChangesAsync(cancellationToken);
 
         HttpRequest? httpRequest = HttpContextAccessor.HttpContext!.Request;
         string fileUrl = $"{httpRequest.Scheme}://{httpRequest.Host}/api/files/images/{fileId}";

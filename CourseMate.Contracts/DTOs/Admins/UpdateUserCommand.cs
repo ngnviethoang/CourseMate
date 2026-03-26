@@ -2,7 +2,7 @@ using MediatR;
 
 namespace CourseMate.Contracts.DTOs.Admins;
 
-public class UpdateUserCommand : IRequest
+public class UpdateUserCommand : IRequest<int>
 {
     public Guid Id { get; set; }
 

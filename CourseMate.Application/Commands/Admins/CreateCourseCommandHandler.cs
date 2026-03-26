@@ -29,8 +29,6 @@ internal sealed class CreateCourseCommandHandler : AbstractCommandHandler<Create
         );
 
         await DbContext.AddAsync(course, cancellationToken);
-        await DbContext.SaveChangesAsync(cancellationToken);
-
         return new ResultIdDto { Id = course.Id };
     }
 }

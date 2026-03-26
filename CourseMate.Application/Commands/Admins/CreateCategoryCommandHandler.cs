@@ -18,10 +18,7 @@ internal sealed class CreateCategoryCommandHandler : AbstractCommandHandler<Crea
     public override async Task<ResultIdDto> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
         Category category = new(Guid.NewGuid(), request.Name, request.Description, request.IsActive);
-
         await DbContext.AddAsync(category, cancellationToken);
-        await DbContext.SaveChangesAsync(cancellationToken);
-
         return new ResultIdDto { Id = category.Id };
     }
 }

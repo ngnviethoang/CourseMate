@@ -2,7 +2,7 @@ using MediatR;
 
 namespace CourseMate.Contracts.DTOs.Files;
 
-public class UploadVideoChunkCommand : IRequest
+public class UploadVideoChunkCommand : IRequest<int>
 {
     public Guid FileId { get; set; }
 

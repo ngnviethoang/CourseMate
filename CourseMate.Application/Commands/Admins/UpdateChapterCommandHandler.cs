@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Infrastructure;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Admins;
 
-internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandler<UpdateChapterCommand>
+internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandler<UpdateChapterCommand, int>
 {
     public UpdateChapterAbstractCommandHandler(
         CourseMateDbContext dbContext,
@@ -16,7 +17,7 @@ internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandl
     {
     }
 
-    public override async Task Handle(UpdateChapterCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(UpdateChapterCommand request, CancellationToken cancellationToken)
     {
         Chapter? chapter = await DbContext.Chapters.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
@@ -30,6 +31,6 @@ internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandl
         chapter.Position = request.Position;
 
         DbContext.Update(chapter);
-        await DbContext.SaveChangesAsync(cancellationToken);
+        return Codes.Success;
     }
 }

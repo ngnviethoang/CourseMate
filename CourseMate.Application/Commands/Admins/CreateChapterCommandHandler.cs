@@ -24,8 +24,6 @@ internal sealed class CreateChapterCommandHandler : AbstractCommandHandler<Creat
         );
 
         await DbContext.AddAsync(chapter, cancellationToken);
-        await DbContext.SaveChangesAsync(cancellationToken);
-
         return new ResultIdDto { Id = chapter.Id };
     }
 }

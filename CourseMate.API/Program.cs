@@ -67,7 +67,6 @@ try
         string xmlFile = $"{AssemblyReference.Assembly.GetName().Name}.xml";
         string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
         options.IncludeXmlComments(xmlPath);
-
         options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
         {
             Name = "Authorization",

@@ -24,7 +24,7 @@ internal sealed class CreateCartCommandHandler : AbstractCommandHandler<CreateCa
         if (cart == null)
         {
             cart = new Cart(Guid.NewGuid(), studentId);
-            DbContext.Carts.Add(cart);
+            await DbContext.Carts.AddAsync(cart, cancellationToken);
         }
 
         CartItem? existingItem = await DbContext.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cart.Id && ci.CourseId == request.CourseId, cancellationToken);
@@ -34,9 +34,7 @@ internal sealed class CreateCartCommandHandler : AbstractCommandHandler<CreateCa
         }
 
         CartItem cartItem = new(Guid.NewGuid(), cart.Id, request.CourseId);
-        DbContext.CartItems.Add(cartItem);
-
-        await DbContext.SaveChangesAsync(cancellationToken);
+        await DbContext.CartItems.AddAsync(cartItem, cancellationToken);
 
         return new ResultIdDto { Id = cartItem.Id };
     }

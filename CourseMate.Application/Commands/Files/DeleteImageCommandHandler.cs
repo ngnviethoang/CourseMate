@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Files;
 using CourseMate.Contracts.Enums;
 using CourseMate.Infrastructure;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Files;
 
-internal sealed class DeleteImageCommandHandler : AbstractCommandHandler<DeleteImageCommand>
+internal sealed class DeleteImageCommandHandler : AbstractCommandHandler<DeleteImageCommand, int>
 {
     public DeleteImageCommandHandler(
         CourseMateDbContext dbContext,
@@ -17,7 +18,7 @@ internal sealed class DeleteImageCommandHandler : AbstractCommandHandler<DeleteI
     {
     }
 
-    public override async Task Handle(DeleteImageCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(DeleteImageCommand request, CancellationToken cancellationToken)
     {
         Guid userId = GetCurrentUserId();
         FileEntry? fileEntry = await DbContext.FileEntries
@@ -27,7 +28,7 @@ internal sealed class DeleteImageCommandHandler : AbstractCommandHandler<DeleteI
 
         if (fileEntry == null)
         {
-            return;
+            return Codes.Success;
         }
 
         if (File.Exists(fileEntry.FilePath))
@@ -36,6 +37,6 @@ internal sealed class DeleteImageCommandHandler : AbstractCommandHandler<DeleteI
         }
 
         DbContext.FileEntries.Remove(fileEntry);
-        await DbContext.SaveChangesAsync(cancellationToken);
+        return Codes.Success;
     }
 }

@@ -8,7 +8,7 @@ public class AdminOrderItemDto
 
     public Guid CourseId { get; set; }
 
-    public string? CourseTitle { get; set; }
+    public string CourseTitle { get; set; } = string.Empty;
 
     public decimal Price { get; set; }
 }

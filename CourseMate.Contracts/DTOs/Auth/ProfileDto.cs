@@ -1,4 +1,4 @@
-namespace CourseMate.Contracts.DTOs.Auth;
+﻿namespace CourseMate.Contracts.DTOs.Auth;
 
 public class ProfileDto
 {

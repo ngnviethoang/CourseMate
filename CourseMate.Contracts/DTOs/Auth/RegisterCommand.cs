@@ -4,7 +4,7 @@ using MediatR;
 
 namespace CourseMate.Contracts.DTOs.Auth;
 
-public class RegisterCommand : IRequest
+public class RegisterCommand : IRequest<int>
 {
     [EmailAddress]
     public string Email { get; set; } = string.Empty;

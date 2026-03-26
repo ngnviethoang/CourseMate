@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.ExtensionMethods;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Students;
 
-internal sealed class DeleteOrderCommandHandler : AbstractCommandHandler<DeleteOrderCommand>
+internal sealed class DeleteOrderCommandHandler : AbstractCommandHandler<DeleteOrderCommand, int>
 {
     public DeleteOrderCommandHandler(
         CourseMateDbContext dbContext,
@@ -15,16 +16,16 @@ internal sealed class DeleteOrderCommandHandler : AbstractCommandHandler<DeleteO
     {
     }
 
-    public override async Task Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
     {
         Guid studentId = GetCurrentUserId();
 
         if (!await DbContext.Orders.AnyAsync(o => o.Id == request.Id && o.StudentId == studentId, cancellationToken))
         {
-            return;
+            return Codes.Success;
         }
 
         await DbContext.Orders.RemoveByIdAsync(request.Id, cancellationToken);
-        await DbContext.SaveChangesAsync(cancellationToken);
+        return Codes.Success;
     }
 }

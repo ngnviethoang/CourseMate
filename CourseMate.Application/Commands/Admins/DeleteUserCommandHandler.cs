@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Infrastructure;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Admins;
 
-internal sealed class DeleteUserAbstractCommandHandler : AbstractCommandHandler<DeleteUserCommand>
+internal sealed class DeleteUserAbstractCommandHandler : AbstractCommandHandler<DeleteUserCommand, int>
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
@@ -19,12 +20,12 @@ internal sealed class DeleteUserAbstractCommandHandler : AbstractCommandHandler<
         _userManager = userManager;
     }
 
-    public override async Task Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
         IdentityUser<Guid>? user = await _userManager.FindByIdAsync(request.Id.ToString());
         if (user == null)
         {
-            return;
+            return Codes.Success;
         }
 
         IdentityResult result = await _userManager.DeleteAsync(user);
@@ -33,5 +34,7 @@ internal sealed class DeleteUserAbstractCommandHandler : AbstractCommandHandler<
             string errors = string.Join(", ", result.Errors.Select(e => e.Description));
             throw new BusinessException(errors);
         }
+
+        return Codes.Success;
     }
 }

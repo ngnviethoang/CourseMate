@@ -1,3 +1,4 @@
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Auth;
 using CourseMate.Contracts.Exceptions;
 using MediatR;
@@ -5,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Auth;
 
-internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand>
+internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, int>
 {
     private readonly IUserEmailStore<IdentityUser<Guid>> _emailStore;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
@@ -20,7 +21,7 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand>
         _emailStore = (IUserEmailStore<IdentityUser<Guid>>)userStore;
     }
 
-    public async Task Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         IdentityUser<Guid> user = new(request.UserName);
         await _userStore.SetUserNameAsync(user, request.UserName, CancellationToken.None);
@@ -35,5 +36,6 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand>
         await _userManager.AddToRoleAsync(user, request.Role.ToString());
 
         // TODO SendConfirmationEmailAsync
+        return Codes.Success;
     }
 }

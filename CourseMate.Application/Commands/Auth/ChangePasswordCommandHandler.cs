@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Auth;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Infrastructure;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Auth;
 
-internal sealed class ChangePasswordCommandHandler : AbstractCommandHandler<ChangePasswordCommand>
+internal sealed class ChangePasswordCommandHandler : AbstractCommandHandler<ChangePasswordCommand, int>
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
@@ -20,7 +21,7 @@ internal sealed class ChangePasswordCommandHandler : AbstractCommandHandler<Chan
         _userManager = userManager;
     }
 
-    public override async Task Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
         Guid userId = GetCurrentUserId();
         IdentityUser<Guid>? user = await _userManager.FindByIdAsync(userId.ToString());
@@ -32,7 +33,7 @@ internal sealed class ChangePasswordCommandHandler : AbstractCommandHandler<Chan
         IdentityResult changePasswordResult = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
         if (changePasswordResult.Succeeded)
         {
-            return;
+            return Codes.Success;
         }
 
         string errors = string.Join(", ", changePasswordResult.Errors.Select(e => e.Description));

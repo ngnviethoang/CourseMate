@@ -81,15 +81,13 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
             fileEntry.Status = FileStatus.Completed;
             fileEntry.FilePath = filePath;
             fileEntry.CompletedAt = DateTimeOffset.UtcNow;
-            await DbContext.SaveChangesAsync(cancellationToken);
+            fileEntry.TotalChunks = fileTrunks.Count;
             string tempPath = Path.Combine(_storageOptions.TempPath, fileEntry.Id.ToString());
             Directory.Delete(tempPath, true);
         }
-        catch (OperationCanceledException ex)
+        catch (OperationCanceledException)
         {
             fileEntry.Status = FileStatus.Failed;
-            await DbContext.SaveChangesAsync(cancellationToken);
-            throw new BusinessException(ex.Message, ex);
         }
 
         HttpRequest? httpRequest = HttpContextAccessor.HttpContext!.Request;

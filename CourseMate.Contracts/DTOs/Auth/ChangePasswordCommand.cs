@@ -2,7 +2,7 @@
 
 namespace CourseMate.Contracts.DTOs.Auth;
 
-public class ChangePasswordCommand : IRequest
+public class ChangePasswordCommand : IRequest<int>
 {
     public string NewPassword { get; set; } = string.Empty;
 

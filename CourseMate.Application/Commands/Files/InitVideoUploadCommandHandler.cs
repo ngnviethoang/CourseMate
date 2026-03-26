@@ -59,7 +59,6 @@ internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<Ini
             FileType.Video);
 
         await DbContext.FileEntries.AddAsync(fileEntry, cancellationToken);
-        await DbContext.SaveChangesAsync(cancellationToken);
 
         return new InitVideoUploadResponse
         {

@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Files;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Files;
 
-internal sealed class DeleteVideoUploadCommandHandler : AbstractCommandHandler<DeleteVideoByIdCommand>
+internal sealed class DeleteVideoUploadCommandHandler : AbstractCommandHandler<DeleteVideoByIdCommand, int>
 {
     public DeleteVideoUploadCommandHandler(
         CourseMateDbContext dbContext,
@@ -16,12 +17,12 @@ internal sealed class DeleteVideoUploadCommandHandler : AbstractCommandHandler<D
     {
     }
 
-    public override async Task Handle(DeleteVideoByIdCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(DeleteVideoByIdCommand request, CancellationToken cancellationToken)
     {
         FileEntry? fileEntry = await DbContext.FileEntries.FirstOrDefaultAsync(f => f.Id == request.FileId, cancellationToken);
         if (fileEntry == null)
         {
-            return;
+            return Codes.Success;
         }
 
         if (!string.IsNullOrEmpty(fileEntry.TempFilePath) && Directory.Exists(fileEntry.TempFilePath))
@@ -35,6 +36,6 @@ internal sealed class DeleteVideoUploadCommandHandler : AbstractCommandHandler<D
         }
 
         DbContext.FileEntries.Remove(fileEntry);
-        await DbContext.SaveChangesAsync(cancellationToken);
+        return Codes.Success;
     }
 }
