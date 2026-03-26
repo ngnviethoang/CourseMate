@@ -2,6 +2,7 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Contracts.Enums;
 using CourseMate.Infrastructure;
+using CourseMate.Infrastructure.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,7 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
     {
         Guid studentId = GetCurrentUserId();
 
-        var lesson = await DbContext.Lessons
+        LessonDetailDto? lesson = await DbContext.Lessons
             .Where(l => l.Id == request.Id)
             .Select(l => new LessonDetailDto
             {
@@ -42,17 +43,17 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
         switch (lesson.LessonType)
         {
             case LessonType.Video:
-                var video = await DbContext.LessonVideos
+                LessonVideo? video = await DbContext.LessonVideos
                     .FirstOrDefaultAsync(v => v.LessonId == request.Id, cancellationToken);
                 lesson.VideoUrl = video?.VideoUrl;
                 break;
             case LessonType.Reading:
-                var reading = await DbContext.LessonReadings
+                LessonReading? reading = await DbContext.LessonReadings
                     .FirstOrDefaultAsync(r => r.LessonId == request.Id, cancellationToken);
                 lesson.ReadingContent = reading?.Content;
                 break;
             case LessonType.Coding:
-                var coding = await DbContext.LessonCodings
+                LessonCoding? coding = await DbContext.LessonCodings
                     .FirstOrDefaultAsync(c => c.LessonId == request.Id, cancellationToken);
                 if (coding != null)
                 {
@@ -60,15 +61,17 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
                     lesson.StarterCode = coding.StarterCode;
                     lesson.ExpectedOutput = coding.ExpectedOutput;
                 }
+
                 break;
             case LessonType.Quiz:
-                var quiz = await DbContext.LessonQuizzes
+                LessonQuiz? quiz = await DbContext.LessonQuizzes
                     .FirstOrDefaultAsync(q => q.LessonId == request.Id, cancellationToken);
                 if (quiz != null)
                 {
                     lesson.QuizDescription = quiz.Description;
                     lesson.QuizPassingScore = quiz.PassingScore;
                 }
+
                 break;
         }
 

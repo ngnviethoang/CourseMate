@@ -1,5 +1,4 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
@@ -38,7 +37,7 @@ internal sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateO
             IEnumerable<Enrollment> enrollments = courseIds.Select(courseId => new Enrollment(Guid.NewGuid(), order.StudentId, courseId));
             await DbContext.Enrollments.AddRangeAsync(enrollments, cancellationToken);
         }
-        
+
         await DbContext.SaveChangesAsync(cancellationToken);
     }
 }

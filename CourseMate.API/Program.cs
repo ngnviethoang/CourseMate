@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Serilog;
+using AssemblyReference = CourseMate.API.AssemblyReference;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -63,10 +64,10 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>
     {
-        string xmlFile = $"{CourseMate.API.AssemblyReference.Assembly.GetName().Name}.xml";
+        string xmlFile = $"{AssemblyReference.Assembly.GetName().Name}.xml";
         string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
         options.IncludeXmlComments(xmlPath);
-        
+
         options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
         {
             Name = "Authorization",

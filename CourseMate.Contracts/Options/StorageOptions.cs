@@ -3,27 +3,27 @@ namespace CourseMate.Contracts.Options;
 public class StorageOptions
 {
     /// <summary>
-    /// Folder path to store uploaded files
+    ///     Folder path to store uploaded files
     /// </summary>
     public string Path { get; set; } = string.Empty;
 
     /// <summary>
-    /// Maximum size of each upload chunk in MB
+    ///     Maximum size of each upload chunk in MB
     /// </summary>
     public int MaxSizeTrunkFile { get; set; }
 
     /// <summary>
-    /// Maximum video file size in MB
+    ///     Maximum video file size in MB
     /// </summary>
     public int MaxSizeFileVideo { get; set; }
 
     /// <summary>
-    /// Maximum image file size in MB
+    ///     Maximum image file size in MB
     /// </summary>
     public int MaxSizeFileImage { get; set; }
 
     /// <summary>
-    /// Maximum document file size in MB
+    ///     Maximum document file size in MB
     /// </summary>
     public int MaxSizeFileDocument { get; set; }
 

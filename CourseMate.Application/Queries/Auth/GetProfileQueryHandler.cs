@@ -24,7 +24,7 @@ internal sealed class GetProfileQueryHandler : AbstractQueryHandler<GetProfileQu
             return null;
         }
 
-        var roles = await DbContext.UserRoles
+        List<string> roles = await DbContext.UserRoles
             .Where(r => r.UserId == userId)
             .Join(DbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name!)
             .ToListAsync(cancellationToken);

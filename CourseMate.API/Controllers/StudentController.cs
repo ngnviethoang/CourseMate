@@ -30,6 +30,17 @@ public class StudentController : ControllerBase
 
     #endregion
 
+    #region API Lesson
+
+    [HttpGet("lessons/{id:guid}")]
+    public async Task<ActionResult> GetLessonByIdAsync(Guid id)
+    {
+        LessonDetailDto? result = await _mediator.Send(new GetLessonByIdQuery { Id = id });
+        return Ok(result);
+    }
+
+    #endregion
+
     #region API Cart
 
     [HttpGet("carts")]
@@ -124,17 +135,6 @@ public class StudentController : ControllerBase
     {
         await _mediator.Send(new DeleteOrderCommand { Id = id });
         return NoContent();
-    }
-
-    #endregion
-
-    #region API Lesson
-
-    [HttpGet("lessons/{id:guid}")]
-    public async Task<ActionResult> GetLessonByIdAsync(Guid id)
-    {
-        LessonDetailDto? result = await _mediator.Send(new GetLessonByIdQuery { Id = id });
-        return Ok(result);
     }
 
     #endregion

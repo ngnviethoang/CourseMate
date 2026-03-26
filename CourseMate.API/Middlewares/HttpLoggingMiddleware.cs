@@ -4,13 +4,13 @@ namespace CourseMate.API.Middlewares;
 
 public class HttpLoggingMiddleware : IMiddleware
 {
-    private readonly ILogger<HttpLoggingMiddleware> _logger;
-
     /// <summary>
-    ///  Client can pass 'x-request-id' on the header to the API service.
-    /// If this is not given, API service will randomly generate one at the beginning of the API call.
+    ///     Client can pass 'x-request-id' on the header to the API service.
+    ///     If this is not given, API service will randomly generate one at the beginning of the API call.
     /// </summary>
     private const string RequestIdKey = "x-request-id";
+
+    private readonly ILogger<HttpLoggingMiddleware> _logger;
 
     public HttpLoggingMiddleware(ILogger<HttpLoggingMiddleware> logger)
     {
