@@ -12,15 +12,16 @@ using Microsoft.OpenApi;
 using Serilog;
 using AssemblyReference = CourseMate.API.AssemblyReference;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-ConfigurationManager configuration = builder.Configuration;
-
-new LoggerConfiguration().ReadFrom
-    .Configuration(configuration)
-    .CreateLogger();
-
 try
 {
+    WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+    ConfigurationManager configuration = builder.Configuration;
+
+    Log.Logger = new LoggerConfiguration().ReadFrom
+        .Configuration(configuration)
+        .CreateLogger();
+    builder.Host.UseSerilog();
+
     builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<HttpLoggingMiddleware>();
@@ -111,6 +112,8 @@ try
     app.UseMiddleware<HttpLoggingMiddleware>();
     // app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
     app.MapControllers();
+
+    Log.Information("Starting web host");
     await app.RunAsync();
 }
 catch (Exception ex)
