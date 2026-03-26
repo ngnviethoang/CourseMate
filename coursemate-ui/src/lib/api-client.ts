@@ -34,9 +34,14 @@ async function apiClient<T>(url: string, options: FetchOptions = {}): Promise<T>
         ?.split('=')[1] ?? ''
   }
 
+  const isFormData = typeof FormData !== 'undefined' && body instanceof FormData
+
   const reqHeaders: Record<string, string> = {
-    'Content-Type': 'application/json',
     ...(headers as Record<string, string>)
+  }
+
+  if (!isFormData && !reqHeaders['Content-Type']) {
+    reqHeaders['Content-Type'] = 'application/json'
   }
 
   if (token) {
@@ -46,7 +51,7 @@ async function apiClient<T>(url: string, options: FetchOptions = {}): Promise<T>
   const res = await fetch(`${BASE_URL}${url}`, {
     ...rest,
     headers: reqHeaders,
-    body: body !== undefined ? JSON.stringify(body) : undefined
+    body: isFormData ? (body as FormData) : body !== undefined ? JSON.stringify(body) : undefined
   })
 
   if (!res.ok) {

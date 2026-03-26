@@ -5,7 +5,12 @@ import { BookOpen, Clock, Search, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-export function HeroSection() {
+interface HeroSectionProps {
+  searchQuery?: string
+  onSearch?: (query: string) => void
+}
+
+export function HeroSection({ searchQuery = '', onSearch }: HeroSectionProps) {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-indigo-50 py-16">
       {/* decorative blobs */}
@@ -28,9 +33,11 @@ export function HeroSection() {
               <Input
                 placeholder="Search for courses, topics, instructors…"
                 className="pl-9 h-11 rounded-full shadow-sm"
+                value={searchQuery}
+                onChange={e => onSearch?.(e.target.value)}
               />
             </div>
-            <Button className="h-11 rounded-full px-6 shadow-sm">Search</Button>
+            <Button className="h-11 rounded-full px-6 shadow-sm" onClick={() => onSearch?.(searchQuery)}>Search</Button>
           </div>
 
           {/* CTA Buttons */}

@@ -17,7 +17,7 @@ import {
   Code2
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 
 // ─── Shared mock data (same as contests list) ─────────────────────────────────
@@ -65,7 +65,7 @@ Bạn sẽ có 90 phút để hoàn thành tất cả các bài. Điểm số đ
     endsAt: '2026-03-20T20:00:00+07:00',
     startsAt: '2026-03-20T10:00:00+07:00',
     tags: ['Đồ thị', 'BFS', 'DFS'],
-    prize: 'Top 3 nhận voucher khoá học $50',
+    prize: 'Top 3 nhận voucher khoá học 1.250.000 VNĐ',
     organizer: 'CourseMate Team',
     problems: [
       {
@@ -252,9 +252,9 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <Trophy className="h-12 w-12 text-muted-foreground opacity-40" />
         <p className="text-muted-foreground">Không tìm thấy cuộc thi.</p>
-        <Button variant="outline" render={<Link href="/contests" />}>
+        <Link href="/contests" className={buttonVariants({ variant: 'outline' })}>
           ← Quay lại
-        </Button>
+        </Link>
       </div>
     )
   }

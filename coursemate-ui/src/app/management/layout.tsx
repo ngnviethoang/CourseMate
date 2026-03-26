@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AdminSidebar } from '@/components/admin/admin-sidebar'
@@ -37,9 +37,18 @@ function getUserFromToken() {
 
 function UserDropdown() {
   const router = useRouter()
-  const user = useMemo(() => getUserFromToken(), [])
+  const [user, setUser] = useState<{ name: string; role: string } | null>(null)
+  const [mounted, setMounted] = useState(false)
 
-  const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : 'U'
+  useEffect(() => {
+    setUser(getUserFromToken())
+    setMounted(true)
+  }, [])
+
+  // Use a stable initials value for the first render to match SSR
+  const initials = mounted && user?.name ? user.name.slice(0, 2).toUpperCase() : 'U'
+  const displayName = mounted && user?.name ? user.name : 'User'
+  const displayRole = mounted && user?.role ? user.role : ''
 
   const handleLogout = () => {
     document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
@@ -48,15 +57,21 @@ function UserDropdown() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-muted transition-colors outline-none">
+      <DropdownMenuTrigger 
+        className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-muted transition-colors outline-none"
+        style={{ opacity: mounted ? 1 : 0.7 }}
+      >
         <Avatar className="h-7 w-7">
-          <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
+          <AvatarFallback 
+            className="bg-primary text-primary-foreground text-xs font-semibold"
+            suppressHydrationWarning
+          >
             {initials}
           </AvatarFallback>
         </Avatar>
         <div className="hidden sm:flex flex-col items-start leading-none">
-          <span className="font-medium text-foreground">{user?.name ?? 'User'}</span>
-          {user?.role && <span className="text-[11px] text-muted-foreground capitalize">{user.role}</span>}
+          <span className="font-medium text-foreground" suppressHydrationWarning>{displayName}</span>
+          {displayRole && <span className="text-[11px] text-muted-foreground capitalize" suppressHydrationWarning>{displayRole}</span>}
         </div>
         <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
       </DropdownMenuTrigger>
@@ -64,8 +79,8 @@ function UserDropdown() {
         <DropdownMenuGroup>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col gap-0.5">
-              <span className="font-medium">{user?.name ?? 'User'}</span>
-              {user?.role && <span className="text-xs text-muted-foreground capitalize">{user.role}</span>}
+              <span className="font-medium" suppressHydrationWarning>{displayName}</span>
+              {displayRole && <span className="text-xs text-muted-foreground capitalize" suppressHydrationWarning>{displayRole}</span>}
             </div>
           </DropdownMenuLabel>
         </DropdownMenuGroup>

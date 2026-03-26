@@ -10,6 +10,7 @@ import { Search } from 'lucide-react'
 import { studentService } from '@/lib/student-service'
 import { CourseDto, CategoryDto } from '@/lib/types'
 import { toast } from 'sonner'
+import { formatCurrency } from '@/lib/utils'
 
 export default function CatalogPage() {
   const router = useRouter()
@@ -125,7 +126,7 @@ export default function CatalogPage() {
               </CardContent>
 
               <CardFooter className="p-4 pt-0 flex items-center justify-between border-t mt-auto">
-                <span className="text-lg font-bold text-primary">${course.price.toFixed(2)}</span>
+                <span className="text-lg font-bold text-primary">{formatCurrency(course.price)}</span>
                 <Button size="sm" variant="default" className="rounded-full">
                   View Details
                 </Button>

@@ -2,6 +2,7 @@
 
 import { ArrowDown, ArrowUp, ArrowUpDown, Pencil, Trash2, Loader2 } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Pagination } from './pagination'
 
 export interface Column<T> {
   key: keyof T | string
@@ -19,6 +20,12 @@ interface DataTableProps<T extends { id: string }> {
   onEdit?: (row: T) => void
   onDelete?: (id: string) => void
   onView?: (row: T) => void
+  pagination?: {
+    pageIndex: number
+    pageSize: number
+    totalCount: number
+    onPageChange: (pageIndex: number) => void
+  }
 }
 
 export function DataTable<T extends { id: string }>({
@@ -29,7 +36,8 @@ export function DataTable<T extends { id: string }>({
   onSort,
   onEdit,
   onDelete,
-  onView
+  onView,
+  pagination
 }: DataTableProps<T>) {
   const hasActions = onEdit || onDelete
 
@@ -134,6 +142,14 @@ export function DataTable<T extends { id: string }>({
           )}
         </TableBody>
       </Table>
+      {pagination && (
+        <Pagination
+          pageIndex={pagination.pageIndex}
+          pageSize={pagination.pageSize}
+          totalCount={pagination.totalCount}
+          onPageChange={pagination.onPageChange}
+        />
+      )}
     </div>
   )
 }

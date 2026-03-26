@@ -4,11 +4,12 @@ import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { BookOpen, ChevronRight, Loader2, Star, Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { studentService } from '@/lib/student-service'
 import { CourseDto } from '@/lib/types'
 import { toast } from 'sonner'
+import { formatCurrency } from '@/lib/utils'
 
 // Static mock reviews – no review API yet
 function getReview(idx: number) {
@@ -109,7 +110,7 @@ function CourseCard({ course, index }: CourseCardProps) {
       </CardContent>
 
       <CardFooter className="flex items-center justify-between pt-2">
-        <span className="text-sm font-bold text-primary">{course.price === 0 ? 'Free' : `$${course.price}`}</span>
+        <span className="text-sm font-bold text-primary">{formatCurrency(course.price)}</span>
         <Button
           size="sm"
           variant="outline"
@@ -161,9 +162,9 @@ export function RecommendedCourses({ searchQuery }: RecommendedCoursesProps) {
           <p className="text-sm text-muted-foreground">{subtitle}</p>
         </div>
         {!searchQuery && (
-          <Button variant="ghost" size="sm" className="gap-1 text-primary" render={<Link href="/courses" />}>
+          <Link href="/courses" className={buttonVariants({ variant: 'ghost', size: 'sm', className: 'gap-1 text-primary' })}>
             View all <ChevronRight className="h-4 w-4" />
-          </Button>
+          </Link>
         )}
       </div>
 

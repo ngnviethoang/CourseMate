@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ChevronRight, Play, BookOpen } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { studentService } from '@/lib/student-service'
 import { OrderDto } from '@/lib/types'
+import { formatCurrency } from '@/lib/utils'
 
 // Category colour mapping based on course title keywords
 function getCategoryColor(title: string) {
@@ -56,7 +57,7 @@ export function ContinueLearning() {
 
   // Flatten all items from completed/paid orders
   const enrolledItems = orders
-    .filter(o => o.status === 1) // status 1 = paid/completed
+    .filter(o => o.status === 'Paid') // status Paid
     .flatMap(o => o.items)
 
   if (loading) {
@@ -89,9 +90,9 @@ export function ContinueLearning() {
           <h2 className="text-xl font-semibold">Continue Learning</h2>
           <p className="text-sm text-muted-foreground">Pick up where you left off</p>
         </div>
-        <Button variant="ghost" size="sm" className="gap-1 text-primary" render={<Link href="/orders" />}>
+        <Link href="/orders" className={buttonVariants({ variant: 'ghost', size: 'sm', className: 'gap-1 text-primary' })}>
           See all <ChevronRight className="h-4 w-4" />
-        </Button>
+        </Link>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -133,7 +134,7 @@ export function ContinueLearning() {
                     {item.courseTitle}
                   </CardTitle>
                 </Link>
-                <CardDescription className="text-xs">${item.price}</CardDescription>
+                <CardDescription className="text-xs">{formatCurrency(item.price)}</CardDescription>
               </CardHeader>
 
               <CardContent className="space-y-1.5 pb-0">
@@ -147,9 +148,9 @@ export function ContinueLearning() {
               </CardContent>
 
               <CardFooter>
-                <Button size="sm" className="w-full rounded-full" render={<Link href={`/courses/${item.courseId}`} />}>
+                <Link href={`/courses/${item.courseId}`} className={buttonVariants({ size: 'sm', className: 'w-full rounded-full' })}>
                   <Play className="mr-1.5 h-3.5 w-3.5" /> Resume
-                </Button>
+                </Link>
               </CardFooter>
             </Card>
           )

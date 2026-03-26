@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import { chapterService } from '@/lib/admin-service'
@@ -38,10 +39,14 @@ const columns: Column<ChapterDto>[] = [
 const emptyForm: CreateChapterRequest = { courseId: '', title: '', position: 1 }
 
 export default function ChaptersPage() {
+  const router = useRouter()
   const [items, setItems] = useState<ChapterDto[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')
   const [sorting, setSorting] = useState('creationTime_desc')
+  const [pageIndex, setPageIndex] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
+  const pageSize = 10
   const [dialogOpen, setDialogOpen] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [editing, setEditing] = useState<ChapterDto | null>(null)
@@ -51,12 +56,13 @@ export default function ChaptersPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await chapterService.list({ filter, pageSize: 10, sorting })
+      const res = await chapterService.list({ filter, pageSize, pageIndex, sorting })
       setItems(res.items)
+      setTotalCount(res.totalCount)
     } finally {
       setLoading(false)
     }
-  }, [filter, sorting])
+  }, [filter, sorting, pageIndex])
 
   useEffect(() => {
     const t = setTimeout(load, 300)
@@ -131,6 +137,13 @@ export default function ChaptersPage() {
         onSort={setSorting}
         onEdit={openEdit}
         onDelete={setDeleteId}
+        onView={row => router.push(`/management/chapters/${row.id}`)}
+        pagination={{
+          pageIndex,
+          pageSize,
+          totalCount,
+          onPageChange: setPageIndex
+        }}
       />
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

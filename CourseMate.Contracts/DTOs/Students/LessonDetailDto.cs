@@ -13,4 +13,18 @@ public class LessonDetailDto
     public int Position { get; set; }
 
     public bool IsCompleted { get; set; }
+
+    public string? VideoUrl { get; set; }
+
+    public string? ReadingContent { get; set; }
+
+    public string? ProblemStatement { get; set; }
+
+    public string? StarterCode { get; set; }
+
+    public string? ExpectedOutput { get; set; }
+
+    public string? QuizDescription { get; set; }
+
+    public int? QuizPassingScore { get; set; }
 }

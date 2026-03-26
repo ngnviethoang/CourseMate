@@ -24,6 +24,11 @@ internal sealed class GetProfileQueryHandler : AbstractQueryHandler<GetProfileQu
             return null;
         }
 
+        var roles = await DbContext.UserRoles
+            .Where(r => r.UserId == userId)
+            .Join(DbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name!)
+            .ToListAsync(cancellationToken);
+
         return new ProfileDto
         {
             Id = user.Id,
@@ -31,7 +36,8 @@ internal sealed class GetProfileQueryHandler : AbstractQueryHandler<GetProfileQu
             UserName = user.UserName ?? string.Empty,
             PhoneNumber = user.PhoneNumber ?? string.Empty,
             EmailConfirmed = user.EmailConfirmed,
-            PhoneNumberConfirmed = user.PhoneNumberConfirmed
+            PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+            Roles = roles
         };
     }
 }

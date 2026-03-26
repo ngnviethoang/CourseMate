@@ -1,17 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using MediatR;
 
 namespace CourseMate.Contracts.DTOs.Auth;
 
 public class UpdateProfileCommand : IRequest
 {
-    [Required]
     [EmailAddress]
-    public string Email { get; set; } = string.Empty;
+    public string? Email { get; set; }
 
-    [Required]
-    public string PhoneNumber { get; set; } = string.Empty;
+    public string? PhoneNumber { get; set; }
 
-    [Required]
-    public string UserName { get; set; } = string.Empty;
+    public string? UserName { get; set; }
 }

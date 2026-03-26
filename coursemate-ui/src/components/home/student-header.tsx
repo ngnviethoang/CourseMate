@@ -1,10 +1,10 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { GraduationCap, ShoppingCart, LogOut, User, ChevronDown, BookMarked, Trophy, Code2, Home } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -45,8 +45,18 @@ const NAV_LINKS = [
 export function StudentHeader() {
   const router = useRouter()
   const pathname = usePathname()
-  const user = useMemo(() => getUserFromToken(), [])
-  const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : 'U'
+  
+  const [user, setUser] = useState<{ name: string; role: string } | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setUser(getUserFromToken())
+    setMounted(true)
+  }, [])
+
+  const initials = mounted && user?.name ? user.name.slice(0, 2).toUpperCase() : 'U'
+  const displayName = mounted && user?.name ? user.name : 'User'
+  const displayRole = mounted && user?.role ? user.role : ''
 
   const handleLogout = () => {
     document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
@@ -86,31 +96,36 @@ export function StudentHeader() {
         <div className="flex items-center gap-1 ml-auto">
           {user ? (
             <>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full"
-                render={<Link href="/cart" aria-label="Giỏ hàng" />}
+              <Link
+                href="/cart"
+                aria-label="Giỏ hàng"
+                className={buttonVariants({ variant: 'ghost', size: 'icon', className: 'rounded-full' })}
               >
                 <ShoppingCart className="h-5 w-5" />
-              </Button>
+              </Link>
 
               <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-muted transition-colors outline-none ml-1">
+                <DropdownMenuTrigger 
+                  className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-muted transition-colors outline-none ml-1"
+                  style={{ opacity: mounted ? 1 : 0.7 }}
+                >
                   <Avatar className="h-7 w-7">
-                    <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
+                    <AvatarFallback 
+                      className="bg-primary text-primary-foreground text-xs font-semibold"
+                      suppressHydrationWarning
+                    >
                       {initials}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="hidden sm:block font-medium text-foreground">{user.name}</span>
+                  <span className="hidden sm:block font-medium text-foreground" suppressHydrationWarning>{displayName}</span>
                   <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-52">
                   <DropdownMenuGroup>
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col gap-0.5">
-                        <span className="font-medium">{user.name}</span>
-                        {user.role && <span className="text-xs text-muted-foreground capitalize">{user.role}</span>}
+                        <span className="font-medium" suppressHydrationWarning>{displayName}</span>
+                        {displayRole && <span className="text-xs text-muted-foreground capitalize" suppressHydrationWarning>{displayRole}</span>}
                       </div>
                     </DropdownMenuLabel>
                   </DropdownMenuGroup>
@@ -140,9 +155,9 @@ export function StudentHeader() {
               </DropdownMenu>
             </>
           ) : (
-            <Button size="sm" render={<Link href="/login" />}>
+            <Link href="/login" className={buttonVariants({ size: 'sm' })}>
               Đăng nhập
-            </Button>
+            </Link>
           )}
         </div>
       </div>

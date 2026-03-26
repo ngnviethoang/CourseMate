@@ -1,0 +1,183 @@
+'use client'
+
+import { useEffect, useState, useCallback } from 'react'
+import { Search, Eye } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import { formatCurrency } from '@/lib/utils'
+import { orderService } from '@/lib/admin-service'
+import type { AdminOrderDto, UpdateOrderRequest } from '@/lib/types'
+import { DataTable, type Column } from '@/components/admin/data-table'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+
+const STATUS_MAP: Record<string, { label: string; color: string }> = {
+  'Draft': { label: 'Draft', color: 'bg-gray-100 text-gray-800 hover:bg-gray-200' },
+  'Pending': { label: 'Pending', color: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' },
+  'Paid': { label: 'Paid', color: 'bg-green-100 text-green-800 hover:bg-green-200' },
+  'Failed': { label: 'Failed', color: 'bg-red-100 text-red-800 hover:bg-red-200' },
+  'Refunded': { label: 'Refunded', color: 'bg-orange-100 text-orange-800 hover:bg-orange-200' }
+}
+
+
+
+const columns: Column<AdminOrderDto>[] = [
+  { key: 'id', header: 'Order ID', render: row => <span className="text-xs font-mono">{row.id.substring(0, 8)}...</span> },
+  { key: 'studentName', header: 'Student' },
+  { key: 'studentEmail', header: 'Email' },
+  {
+    key: 'totalAmount',
+    header: 'Total',
+    render: row => <span className="font-medium">{formatCurrency(row.totalAmount)}</span>
+  },
+  {
+    key: 'status',
+    header: 'Status',
+    render: row => {
+      const status = STATUS_MAP[row.status] || { label: 'Unknown', color: 'bg-gray-100 text-gray-800' }
+      return <Badge className={`${status.color} border-transparent shadow-none`}>{status.label}</Badge>
+    }
+  },
+  {
+    key: 'creationTime',
+    header: 'Date',
+    render: row => new Date(row.creationTime).toLocaleDateString()
+  }
+]
+
+export default function OrdersPage() {
+  const router = useRouter()
+  const [items, setItems] = useState<AdminOrderDto[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState('')
+  const [sorting, setSorting] = useState('')
+  const [pageIndex, setPageIndex] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
+  const pageSize = 10
+
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [editing, setEditing] = useState<AdminOrderDto | null>(null)
+  const [statusVal, setStatusVal] = useState<string>('Draft')
+  const [saving, setSaving] = useState(false)
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res = await orderService.list({ filter, pageIndex, pageSize, sorting })
+      setItems(res.items)
+      setTotalCount(res.totalCount)
+    } finally {
+      setLoading(false)
+    }
+  }, [filter, sorting, pageIndex])
+
+  useEffect(() => {
+    const t = setTimeout(load, 300)
+    return () => clearTimeout(t)
+  }, [load])
+
+  function handleView(row: AdminOrderDto) {
+    router.push(`/management/orders/${row.id}`)
+  }
+
+  function handleEdit(row: AdminOrderDto) {
+    setEditing(row)
+    setStatusVal(String(row.status))
+    setDialogOpen(true)
+  }
+
+  async function handleSaveStatus() {
+    if (!editing) return
+    setSaving(true)
+    try {
+      await orderService.update(editing.id, { id: editing.id, status: statusVal })
+      toast.success('Order status updated.')
+      setDialogOpen(false)
+      load()
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Orders</h1>
+          <p className="text-sm text-muted-foreground">Manage student course purchases and enrollments</p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <div className="relative max-w-sm flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="pl-9"
+            placeholder="Search by order ID, student name, or email..."
+            value={filter}
+            onChange={e => {
+              setFilter(e.target.value)
+              setPageIndex(0)
+            }}
+          />
+        </div>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={items}
+        loading={loading}
+        sorting={sorting}
+        onSort={setSorting}
+        onView={handleView}
+        onEdit={handleEdit}
+        pagination={{
+          pageIndex,
+          pageSize,
+          totalCount,
+          onPageChange: setPageIndex
+        }}
+      />
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update Order Status</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Order ID</Label>
+              <div className="text-sm font-mono bg-muted p-2 rounded-md">{editing?.id}</div>
+            </div>
+            <div className="space-y-2">
+              <Label>Current Status</Label>
+              <Select value={statusVal} onValueChange={(val) => val && setStatusVal(val)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(STATUS_MAP).map(([val, { label }]) => (
+                    <SelectItem key={val} value={val}>{label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Note: Updating order status to <strong>Paid</strong> will automatically enroll the student into the purchased courses.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleSaveStatus} disabled={saving}>
+              {saving ? 'Updating...' : 'Update Status'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}

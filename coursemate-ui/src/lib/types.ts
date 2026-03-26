@@ -52,6 +52,33 @@ export interface UpdateCategoryRequest {
   isActive: boolean
 }
 
+
+// order 
+export interface AdminOrderItemDto {
+  id: string
+  orderId: string
+  courseId: string
+  courseTitle: string
+  price: number
+}
+
+export interface AdminOrderDto {
+  id: string
+  studentId: string
+  studentName: string
+  studentEmail: string
+  totalAmount: number
+  status: string
+  itemsCount: number
+  creationTime: string
+  items: AdminOrderItemDto[]
+}
+
+export interface UpdateOrderRequest {
+  id: string
+  status: string
+}
+
 // ─── Course ───────────────────────────────────────────────────────────────────
 
 export interface CourseDto {
@@ -189,14 +216,28 @@ export interface ChangePasswordRequest {
   newPassword: string
 }
 
+export interface StudentMyCourseDto extends CourseDto {
+  progressPercentage: number
+  totalLessons: number
+  completedLessons: number
+  lastLessonTitle?: string
+}
+
 // ─── Student Types ────────────────────────────────────────────────────────────
 
 export interface StudentLessonDetailDto {
   id: string
   title: string
-  lessonType: string
+  lessonType: LessonType
   position: number
   isCompleted: boolean
+  videoUrl?: string
+  readingContent?: string
+  problemStatement?: string
+  starterCode?: string
+  expectedOutput?: string
+  quizDescription?: string
+  quizPassingScore?: number
 }
 
 export interface StudentChapterDetailDto {
@@ -249,6 +290,23 @@ export interface OrderDto {
   id: string
   studentId: string
   totalAmount: number
-  status: number
+  status: string
   items: OrderItemDto[]
+}
+
+// upload 
+export interface UploadVideoInitRequest {
+  fileName: string,
+  fileSize: number,
+}
+
+export interface UploadVideoChunkRequest {
+  fileId: string,
+  chunkIndex: number,
+  file: File,
+}
+
+export interface UploadVideoCompleteRequest {
+  fileId: string,
+  totalChunks: number,
 }

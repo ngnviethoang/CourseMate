@@ -1,11 +1,24 @@
 import { api } from './api-client'
-import { PagedDto, CategoryDto, CourseDto, StudentCourseDetailDto, CartDto, OrderDto, ResultIdDto } from './types'
+import { PagedDto, CategoryDto, CourseDto, StudentCourseDetailDto, CartDto, OrderDto, ResultIdDto, StudentMyCourseDto, StudentLessonDetailDto } from './types'
 
 export const studentService = {
   // ─── Categories ────────────────────────────────────────────────────────────
 
   getCategories: async (pageSize = 25): Promise<PagedDto<CategoryDto>> => {
     return api.get<PagedDto<CategoryDto>>(`/api/student/categories?pageSize=${pageSize}&pageIndex=1`)
+  },
+
+  // profile 
+  getMyCourse: async (pageIndex = 1, pageSize = 12, filter?: string): Promise<PagedDto<StudentMyCourseDto>> => {
+    const params = new URLSearchParams({
+      pageIndex: String(pageIndex),
+      pageSize: String(pageSize)
+    })
+    if (filter) params.set('filter', filter)
+    return api.get<PagedDto<StudentMyCourseDto>>(`/api/student/courses/my?${params}`)
+  },
+  getLessonById: async (id: string): Promise<StudentLessonDetailDto> => {
+    return api.get<StudentLessonDetailDto>(`/api/student/lessons/${id}`)
   },
 
   // ─── Courses ───────────────────────────────────────────────────────────────
@@ -50,4 +63,6 @@ export const studentService = {
   createOrder: async (): Promise<ResultIdDto> => {
     return api.post<ResultIdDto>('/api/student/orders')
   }
+
+
 }

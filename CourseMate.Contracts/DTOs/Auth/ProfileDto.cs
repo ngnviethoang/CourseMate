@@ -1,4 +1,6 @@
-﻿namespace CourseMate.Contracts.DTOs.Auth;
+using System.Collections.Generic;
+
+namespace CourseMate.Contracts.DTOs.Auth;
 
 public class ProfileDto
 {
@@ -8,4 +10,5 @@ public class ProfileDto
     public string PhoneNumber { get; set; } = string.Empty;
     public bool EmailConfirmed { get; set; }
     public bool PhoneNumberConfirmed { get; set; }
+    public List<string> Roles { get; set; } = [];
 }

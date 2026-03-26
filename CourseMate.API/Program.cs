@@ -83,6 +83,7 @@ try
         });
 
         options.DescribeAllParametersInCamelCase();
+        options.CustomSchemaIds(x => x.FullName);
     });
 
     builder.Services.AddProblemDetails().AddExceptionHandler<GlobalExceptionHandler>();

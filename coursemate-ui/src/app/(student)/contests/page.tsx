@@ -23,7 +23,7 @@ const CONTESTS = [
     endsAt: '2026-03-20T20:00:00+07:00',
     startsAt: '2026-03-20T10:00:00+07:00',
     tags: ['Đồ thị', 'BFS', 'DFS'],
-    prize: 'Top 3 nhận voucher $50'
+    prize: 'Top 3 nhận voucher 1.250.000 VNĐ'
   },
   {
     id: 'ct2',

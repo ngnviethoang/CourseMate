@@ -75,6 +75,13 @@ public class StudentController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("courses/my")]
+    public async Task<ActionResult> GetMyCoursesAsync([FromQuery] GetMyCoursesQuery request)
+    {
+        PagedDto<StudentMyCourseDto> result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
     #endregion
 
     #region API Order
@@ -117,6 +124,17 @@ public class StudentController : ControllerBase
     {
         await _mediator.Send(new DeleteOrderCommand { Id = id });
         return NoContent();
+    }
+
+    #endregion
+
+    #region API Lesson
+
+    [HttpGet("lessons/{id:guid}")]
+    public async Task<ActionResult> GetLessonByIdAsync(Guid id)
+    {
+        LessonDetailDto? result = await _mediator.Send(new GetLessonByIdQuery { Id = id });
+        return Ok(result);
     }
 
     #endregion

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
+import { formatCurrency } from '@/lib/utils'
 import { courseService, categoryService, userService } from '@/lib/admin-service'
 import type { CategoryDto, CourseDto, CreateCourseRequest, UserDto } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
@@ -34,7 +35,7 @@ const columns: Column<CourseDto>[] = [
     key: 'price',
     header: 'Price',
     sortKey: 'price',
-    render: row => `$${row.price.toFixed(2)}`
+    render: row => formatCurrency(row.price)
   },
   {
     key: 'isPublished',
@@ -68,6 +69,9 @@ export default function CoursesPage() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')
   const [sorting, setSorting] = useState('creationTime_desc')
+  const [pageIndex, setPageIndex] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
+  const pageSize = 10
   const [dialogOpen, setDialogOpen] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [editing, setEditing] = useState<CourseDto | null>(null)
@@ -80,12 +84,13 @@ export default function CoursesPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await courseService.list({ filter, pageSize: 10, sorting })
+      const res = await courseService.list({ filter, pageSize, pageIndex, sorting })
       setItems(res.items)
+      setTotalCount(res.totalCount)
     } finally {
       setLoading(false)
     }
-  }, [filter, sorting])
+  }, [filter, sorting, pageIndex])
 
   useEffect(() => {
     const t = setTimeout(load, 300)
@@ -184,6 +189,12 @@ export default function CoursesPage() {
         onView={row => router.push(`/management/courses/${row.id}`)}
         onEdit={openEdit}
         onDelete={setDeleteId}
+        pagination={{
+          pageIndex,
+          pageSize,
+          totalCount,
+          onPageChange: setPageIndex
+        }}
       />
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -218,7 +229,7 @@ export default function CoursesPage() {
               </p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label>Price ($)</Label>
+                  <Label>Price (VNĐ)</Label>
                   <Input
                     type="number"
                     min={0}

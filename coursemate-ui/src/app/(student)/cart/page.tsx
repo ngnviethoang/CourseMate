@@ -11,6 +11,7 @@ import { ShoppingCart, Trash2, ArrowRight, BookOpen, Sparkles, Loader2, Tag } fr
 import { studentService } from '@/lib/student-service'
 import { CartDto } from '@/lib/types'
 import { toast } from 'sonner'
+import { formatCurrency } from '@/lib/utils'
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 
@@ -167,7 +168,7 @@ export default function CartPage() {
 
                     <div className="mt-4 flex items-center justify-between">
                       <span className="text-xl font-bold text-primary">
-                        {item.price === 0 ? 'Miễn phí' : `$${item.price.toFixed(2)}`}
+                        {formatCurrency(item.price)}
                       </span>
                       <Button
                         variant="ghost"
@@ -208,7 +209,7 @@ export default function CartPage() {
                         <span className="text-muted-foreground line-clamp-2 flex-1 leading-snug">
                           {item.courseTitle}
                         </span>
-                        <span className="font-medium flex-shrink-0">${item.price.toFixed(2)}</span>
+                        <span className="font-medium flex-shrink-0">{formatCurrency(item.price)}</span>
                       </div>
                     ))}
                   </div>
@@ -217,18 +218,18 @@ export default function CartPage() {
 
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Tạm tính</span>
-                    <span className="font-medium">${(cart?.totalPrice ?? 0).toFixed(2)}</span>
+                    <span className="font-medium">{formatCurrency(cart?.totalPrice ?? 0)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Giảm giá</span>
-                    <span className="text-emerald-600 font-medium">$0.00</span>
+                    <span className="text-emerald-600 font-medium">{formatCurrency(0)}</span>
                   </div>
 
                   <Separator />
 
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-lg">Tổng cộng</span>
-                    <span className="text-xl font-bold text-primary">${(cart?.totalPrice ?? 0).toFixed(2)}</span>
+                    <span className="text-xl font-bold text-primary">{formatCurrency(cart?.totalPrice ?? 0)}</span>
                   </div>
 
                   <Button

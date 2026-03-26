@@ -20,6 +20,7 @@ import {
 import { studentService } from '@/lib/student-service'
 import { CartDto } from '@/lib/types'
 import { toast } from 'sonner'
+import { formatCurrency } from '@/lib/utils'
 
 // ─── Payment Methods ───────────────────────────────────────────────────────────
 
@@ -233,7 +234,7 @@ export default function CheckoutPage() {
                           <p className="text-xs text-muted-foreground mt-0.5">{item.instructorName}</p>
                         </div>
                         <span className="text-xs font-semibold flex-shrink-0">
-                          {item.price === 0 ? 'Miễn phí' : `$${item.price.toFixed(2)}`}
+                          {formatCurrency(item.price)}
                         </span>
                       </div>
                     ))}
@@ -244,11 +245,11 @@ export default function CheckoutPage() {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Tạm tính</span>
-                      <span>${total.toFixed(2)}</span>
+                      <span>{formatCurrency(total)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Giảm giá</span>
-                      <span className="text-emerald-600">-$0.00</span>
+                      <span className="text-emerald-600">{formatCurrency(0)}</span>
                     </div>
                   </div>
 
@@ -256,7 +257,7 @@ export default function CheckoutPage() {
 
                   <div className="flex items-center justify-between">
                     <span className="font-bold">Tổng cộng</span>
-                    <span className="text-xl font-bold text-primary">${total.toFixed(2)}</span>
+                    <span className="text-xl font-bold text-primary">{formatCurrency(total)}</span>
                   </div>
 
                   <Button

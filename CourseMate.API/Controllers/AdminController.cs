@@ -218,4 +218,30 @@ public class AdminController : ControllerBase
     }
 
     #endregion
+
+    #region API Order
+
+    [HttpGet("orders")]
+    public async Task<ActionResult> GetListOrderAsync([FromQuery] GetListOrdersQuery request)
+    {
+        PagedDto<AdminOrderDto> result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
+    [HttpGet("orders/{id:guid}")]
+    public async Task<ActionResult> GetOrderByIdAsync(Guid id)
+    {
+        AdminOrderDto? result = await _mediator.Send(new GetOrderByIdQuery { Id = id });
+        return Ok(result);
+    }
+
+    [HttpPut("orders/{id:guid}")]
+    public async Task<ActionResult> UpdateOrderAsync(Guid id, UpdateOrderCommand request)
+    {
+        request.Id = id;
+        await _mediator.Send(request);
+        return NoContent();
+    }
+
+    #endregion
 }

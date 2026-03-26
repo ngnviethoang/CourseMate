@@ -9,6 +9,7 @@ import { PlayCircle, FileText, CheckCircle2, Users, BookOpen, ShoppingCart } fro
 import { studentService } from '@/lib/student-service'
 import { StudentCourseDetailDto } from '@/lib/types'
 import { toast } from 'sonner'
+import { formatCurrency } from '@/lib/utils'
 
 export default function CourseDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -16,6 +17,7 @@ export default function CourseDetailPage() {
   const [course, setCourse] = useState<StudentCourseDetailDto | null>(null)
   const [loading, setLoading] = useState(true)
   const [addingToCart, setAddingToCart] = useState(false)
+  const [showFullDesc, setShowFullDesc] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -66,7 +68,6 @@ export default function CourseDetailPage() {
         <div className="space-y-6">
           <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-0">{course.categoryName}</Badge>
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight">{course.title}</h1>
-          <p className="text-lg text-muted-foreground leading-relaxed">{course.description}</p>
 
           <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
@@ -94,16 +95,27 @@ export default function CourseDetailPage() {
               </Button>
             ) : (
               <>
-                <div className="text-3xl font-bold text-primary">${course.price.toFixed(2)}</div>
-                <Button
-                  size="lg"
-                  className="w-full md:w-auto h-12 px-8 gap-2"
-                  onClick={handleAddToCart}
-                  disabled={addingToCart}
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                  {addingToCart ? 'Adding...' : 'Add to Cart'}
-                </Button>
+                <div className="text-3xl font-bold text-primary">{formatCurrency(course.price)}</div>
+                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                  <Button
+                    size="lg"
+                    className="h-12 px-8 gap-2 flex-1 sm:flex-initial"
+                    onClick={handleAddToCart}
+                    disabled={addingToCart}
+                  >
+                    <ShoppingCart className="h-5 w-5" />
+                    {addingToCart ? 'Adding...' : 'Add to Cart'}
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="h-12 px-8 gap-2 flex-1 sm:flex-initial border-primary text-primary hover:bg-primary/5"
+                    onClick={() => router.push(`/learning/${course.id}`)}
+                  >
+                    <BookOpen className="h-5 w-5" />
+                    Học thử
+                  </Button>
+                </div>
               </>
             )}
           </div>
@@ -118,6 +130,29 @@ export default function CourseDetailPage() {
           />
         </div>
       </div>
+
+      {/* Course Description */}
+      {course.description && (
+        <div className="space-y-6 pt-8 border-t">
+          <h2 className="text-2xl font-bold">About this course</h2>
+          <div className="relative flex flex-col rounded-xl bg-card border p-6 md:p-8 shadow-sm">
+            <div
+              className={`prose prose-sm md:prose-base max-w-none dark:prose-invert prose-img:rounded-lg prose-img:mx-auto transition-all duration-300 ${!showFullDesc ? 'max-h-64 overflow-hidden' : ''}`}
+              dangerouslySetInnerHTML={{ __html: course.description }}
+            />
+            {!showFullDesc && (
+              <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-card to-transparent pointer-events-none rounded-b-xl" />
+            )}
+            <Button
+              variant="outline"
+              onClick={() => setShowFullDesc(!showFullDesc)}
+              className="mt-6 self-center w-full max-w-xs font-medium"
+            >
+              {showFullDesc ? 'Show less' : 'Show more description'}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Syllabus Section */}
       <div className="space-y-6 pt-8 border-t">

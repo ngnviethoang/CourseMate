@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import { lessonService } from '@/lib/admin-service'
@@ -54,10 +55,14 @@ const emptyForm: CreateLessonRequest = {
 }
 
 export default function LessonsPage() {
+  const router = useRouter()
   const [items, setItems] = useState<LessonDto[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')
   const [sorting, setSorting] = useState('creationTime_desc')
+  const [pageIndex, setPageIndex] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
+  const pageSize = 10
   const [dialogOpen, setDialogOpen] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [editing, setEditing] = useState<LessonDto | null>(null)
@@ -67,12 +72,13 @@ export default function LessonsPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await lessonService.list({ filter, pageSize: 10, sorting })
+      const res = await lessonService.list({ filter, pageSize, pageIndex, sorting })
       setItems(res.items)
+      setTotalCount(res.totalCount)
     } finally {
       setLoading(false)
     }
-  }, [filter, sorting])
+  }, [filter, sorting, pageIndex])
 
   useEffect(() => {
     const t = setTimeout(load, 300)
@@ -153,6 +159,13 @@ export default function LessonsPage() {
         onSort={setSorting}
         onEdit={openEdit}
         onDelete={setDeleteId}
+        onView={row => router.push(`/management/lessons/${row.id}`)}
+        pagination={{
+          pageIndex,
+          pageSize,
+          totalCount,
+          onPageChange: setPageIndex
+        }}
       />
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

@@ -8,11 +8,14 @@ import { ClipboardList, ChevronRight } from 'lucide-react'
 import { studentService } from '@/lib/student-service'
 import { OrderDto } from '@/lib/types'
 import { toast } from 'sonner'
+import { formatCurrency } from '@/lib/utils'
 
-const STATUS_MAP: Record<number, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-  0: { label: 'Pending', variant: 'secondary' },
-  1: { label: 'Completed', variant: 'default' },
-  2: { label: 'Cancelled', variant: 'destructive' }
+const STATUS_MAP: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+  'Pending': { label: 'Pending', variant: 'secondary' },
+  'Paid': { label: 'Completed', variant: 'default' },
+  'Failed': { label: 'Failed', variant: 'destructive' },
+  'Refunded': { label: 'Refunded', variant: 'destructive' },
+  'Draft': { label: 'Draft', variant: 'outline' }
 }
 
 export default function OrdersPage() {
@@ -88,7 +91,7 @@ export default function OrdersPage() {
                       </span>
                       <Badge variant={status.variant}>{status.label}</Badge>
                     </div>
-                    <p className="text-lg font-bold text-primary">${order.totalAmount.toFixed(2)}</p>
+                    <p className="text-lg font-bold text-primary">{formatCurrency(order.totalAmount)}</p>
                   </div>
                   <ChevronRight className="h-5 w-5 text-muted-foreground" />
                 </CardContent>
@@ -133,13 +136,13 @@ export default function OrdersPage() {
                       <div className="flex-1 overflow-hidden">
                         <p className="font-medium text-sm line-clamp-1">{item.courseTitle}</p>
                       </div>
-                      <span className="text-sm font-semibold flex-shrink-0">${item.price.toFixed(2)}</span>
+                      <span className="text-sm font-semibold flex-shrink-0">{formatCurrency(item.price)}</span>
                     </div>
                   ))}
                 </div>
                 <div className="border-t pt-4 flex justify-between font-bold">
                   <span>Total</span>
-                  <span className="text-primary">${selected.totalAmount.toFixed(2)}</span>
+                  <span className="text-primary">{formatCurrency(selected.totalAmount)}</span>
                 </div>
               </div>
             )

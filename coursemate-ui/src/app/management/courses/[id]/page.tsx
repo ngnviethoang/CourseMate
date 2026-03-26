@@ -2,23 +2,25 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Plus, Pencil, Trash2, ChevronDown, ChevronRight, Loader2, BookOpen } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { ArrowLeft, Plus, Pencil, Trash2, Loader2, Settings } from 'lucide-react'
 import { toast } from 'sonner'
-import { courseService, chapterService, lessonService } from '@/lib/admin-service'
+import { formatCurrency } from '@/lib/utils'
+import { courseService, chapterService } from '@/lib/admin-service'
+import { Pagination } from '@/components/admin/pagination'
+import 'react-quill-new/dist/quill.snow.css'
 import type {
   CourseDto,
   ChapterDto,
-  LessonDto,
   CreateChapterRequest,
   UpdateChapterRequest,
-  CreateLessonRequest,
-  UpdateLessonRequest,
-  LessonType
+  UpdateCourseRequest
 } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import {
   AlertDialog,
@@ -30,16 +32,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
-const LESSON_TYPES: LessonType[] = ['Video', 'Reading', 'Quiz', 'Coding']
-
-const LESSON_TYPE_COLOR: Record<LessonType, string> = {
-  Video: 'bg-blue-500/10 text-blue-600 border-blue-200',
-  Reading: 'bg-green-500/10 text-green-600 border-green-200',
-  Quiz: 'bg-orange-500/10 text-orange-600 border-orange-200',
-  Coding: 'bg-purple-500/10 text-purple-600 border-purple-200'
-}
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false })
 
 // ─── Chapter modal state ──────────────────────────────────────────────────────
 const emptyChapterForm = (courseId: string): CreateChapterRequest => ({
@@ -48,146 +42,42 @@ const emptyChapterForm = (courseId: string): CreateChapterRequest => ({
   position: 1
 })
 
-// ─── Lesson modal state ───────────────────────────────────────────────────────
-const emptyLessonForm = (courseId: string, chapterId: string): CreateLessonRequest => ({
-  courseId,
-  chapterId,
-  title: '',
-  lessonType: 'Video',
-  position: 1
-})
-
-// ─── ChapterRow component ─────────────────────────────────────────────────────
 function ChapterRow({
   chapter,
-  courseId,
   onEditChapter,
-  onDeleteChapter,
-  onAddLesson,
-  onEditLesson,
-  onDeleteLesson
+  onDeleteChapter
 }: {
   chapter: ChapterDto
-  courseId: string
   onEditChapter: (c: ChapterDto) => void
   onDeleteChapter: (id: string) => void
-  onAddLesson: (chapterId: string) => void
-  onEditLesson: (l: LessonDto) => void
-  onDeleteLesson: (id: string) => void
 }) {
-  const [expanded, setExpanded] = useState(false)
-  const [lessons, setLessons] = useState<LessonDto[]>([])
-  const [loadingLessons, setLoadingLessons] = useState(false)
-  const [loaded, setLoaded] = useState(false)
-
-  async function toggle() {
-    if (!expanded && !loaded) {
-      setLoadingLessons(true)
-      try {
-        const res = await lessonService.list({ chapterId: chapter.id, pageSize: 25, sorting: 'position' })
-        setLessons(res.items)
-        setLoaded(true)
-      } finally {
-        setLoadingLessons(false)
-      }
-    }
-    setExpanded(prev => !prev)
-  }
-
-  function refreshLessons() {
-    lessonService
-      .list({ chapterId: chapter.id, pageSize: 25, sorting: 'position' })
-      .then(res => setLessons(res.items))
-      .catch(() => {})
-  }
-
-  // expose refresh upward when a lesson is added/edited/deleted
-  useEffect(() => {
-    if (loaded && expanded) refreshLessons()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loaded])
+  const router = useRouter()
 
   return (
-    <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
-      {/* Chapter header */}
-      <div
-        className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-muted/40 transition-colors select-none"
-        onClick={toggle}
-      >
-        <span className="text-muted-foreground">
-          {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </span>
-        <span className="flex-1 font-medium text-sm">
-          <span className="text-muted-foreground mr-2 text-xs">#{chapter.position}</span>
-          {chapter.title}
-        </span>
-        <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-          <button
-            onClick={() => onAddLesson(chapter.id)}
-            className="inline-flex items-center gap-1 h-7 px-2 rounded-md text-xs text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
-          >
-            <Plus className="h-3 w-3" /> Lesson
-          </button>
-          <button
-            onClick={() => onEditChapter(chapter)}
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
-          >
-            <Pencil className="h-3.5 w-3.5" />
-          </button>
-          <button
-            onClick={() => onDeleteChapter(chapter.id)}
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
-        </div>
+    <div
+      className="flex items-center gap-3 px-4 py-3 rounded-xl border bg-card shadow-sm cursor-pointer hover:border-primary/30 transition-colors group select-none"
+      onClick={() => router.push(`/management/chapters/${chapter.id}`)}
+    >
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+        <span className="text-sm font-medium">{chapter.position}</span>
       </div>
-
-      {/* Lessons list */}
-      {expanded && (
-        <div className="border-t bg-muted/20 px-4 py-3 space-y-2">
-          {loadingLessons ? (
-            <div className="flex justify-center py-4">
-              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-            </div>
-          ) : lessons.length === 0 ? (
-            <p className="text-xs text-muted-foreground text-center py-3">No lessons yet. Add your first lesson.</p>
-          ) : (
-            lessons.map(lesson => (
-              <div
-                key={lesson.id}
-                className="flex items-center gap-3 px-3 py-2 rounded-lg bg-background border hover:border-primary/30 transition-colors group"
-              >
-                <span className="text-xs text-muted-foreground w-4">{lesson.position}</span>
-                <BookOpen className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                <span className="flex-1 text-sm">{lesson.title}</span>
-                <span
-                  className={`text-xs px-2 py-0.5 rounded-full border font-medium ${LESSON_TYPE_COLOR[lesson.lessonType as LessonType]}`}
-                >
-                  {lesson.lessonType}
-                </span>
-                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={() => onEditLesson(lesson)}
-                    className="inline-flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <Pencil className="h-3 w-3" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      onDeleteLesson(lesson.id)
-                      refreshLessons()
-                    }}
-                    className="inline-flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:text-destructive transition-colors"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
+      <span className="flex-1 font-medium text-sm">
+        {chapter.title}
+      </span>
+      <div className="flex gap-1.5" onClick={e => e.stopPropagation()}>
+        <button
+          onClick={() => onEditChapter(chapter)}
+          className="inline-flex h-8 w-8 items-center justify-center rounded-md border bg-background text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </button>
+        <button
+          onClick={() => onDeleteChapter(chapter.id)}
+          className="inline-flex h-8 w-8 items-center justify-center rounded-md border bg-background text-muted-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-colors"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      </div>
     </div>
   )
 }
@@ -202,6 +92,9 @@ export default function CourseDetailPage() {
 
   const [chapters, setChapters] = useState<ChapterDto[]>([])
   const [chaptersLoading, setChaptersLoading] = useState(true)
+  const [pageIndex, setPageIndex] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
+  const pageSize = 10
 
   // Chapter modal
   const [chapterDialog, setChapterDialog] = useState(false)
@@ -210,37 +103,82 @@ export default function CourseDetailPage() {
   const [savingChapter, setSavingChapter] = useState(false)
   const [deleteChapterId, setDeleteChapterId] = useState<string | null>(null)
 
-  // Lesson modal
-  const [lessonDialog, setLessonDialog] = useState(false)
-  const [editingLesson, setEditingLesson] = useState<LessonDto | null>(null)
-  const [lessonForm, setLessonForm] = useState<CreateLessonRequest>(emptyLessonForm(id, ''))
-  const [savingLesson, setSavingLesson] = useState(false)
-  const [deleteLessonId, setDeleteLessonId] = useState<string | null>(null)
+  // UI state
+  const [showFullDesc, setShowFullDesc] = useState(false)
+
+  // Course edit modal
+  const [courseDialog, setCourseDialog] = useState(false)
+  const [savingCourse, setSavingCourse] = useState(false)
+  const [courseForm, setCourseForm] = useState<UpdateCourseRequest>({
+    title: '', description: '', price: 0, imageUrl: '', isPublished: false, categoryId: '', instructorId: ''
+  })
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Load course
-  useEffect(() => {
+  const loadCourse = useCallback(async () => {
     setCourseLoading(true)
-    courseService
-      .getById(id)
-      .then(c => setCourse(c))
-      .catch(() => toast.error('Course not found.'))
-      .finally(() => setCourseLoading(false))
+    try {
+      const c = await courseService.getById(id)
+      setCourse(c)
+    } catch {
+      toast.error('Course not found.')
+    } finally {
+      setCourseLoading(false)
+    }
   }, [id])
+
+  useEffect(() => {
+    loadCourse()
+  }, [loadCourse])
 
   // Load chapters
   const loadChapters = useCallback(async () => {
     setChaptersLoading(true)
     try {
-      const res = await chapterService.list({ courseId: id, pageSize: 25, sorting: 'position' })
+      const res = await chapterService.list({ courseId: id, pageSize, pageIndex, sorting: 'position' })
       setChapters(res.items)
+      setTotalCount(res.totalCount)
     } finally {
       setChaptersLoading(false)
     }
-  }, [id])
+  }, [id, pageIndex])
 
   useEffect(() => {
     loadChapters()
   }, [loadChapters])
+
+  // ─── Course handlers ────────────────────────────────────────────────────────
+  function openEditCourse() {
+    if (!course) return
+    setCourseForm({
+      title: course.title,
+      description: course.description || '',
+      price: course.price,
+      imageUrl: course.imageUrl || '',
+      isPublished: course.isPublished,
+      categoryId: course.categoryId,
+      instructorId: course.instructorId || ''
+    })
+    setCourseDialog(true)
+  }
+
+  async function saveCourse() {
+    setSavingCourse(true)
+    try {
+      await courseService.update(id, courseForm)
+      toast.success('Course updated successfully.')
+      setCourseDialog(false)
+      loadCourse()
+    } catch {
+      toast.error('Failed to update course.')
+    } finally {
+      setSavingCourse(false)
+    }
+  }
 
   // ─── Chapter handlers ───────────────────────────────────────────────────────
   function openCreateChapter() {
@@ -280,51 +218,8 @@ export default function CourseDetailPage() {
     loadChapters()
   }
 
-  // ─── Lesson handlers ────────────────────────────────────────────────────────
-  function openAddLesson(chapterId: string) {
-    setEditingLesson(null)
-    setLessonForm(emptyLessonForm(id, chapterId))
-    setLessonDialog(true)
-  }
-
-  function openEditLesson(l: LessonDto) {
-    setEditingLesson(l)
-    setLessonForm({
-      courseId: l.courseId,
-      chapterId: l.chapterId,
-      title: l.title,
-      lessonType: l.lessonType,
-      position: l.position
-    })
-    setLessonDialog(true)
-  }
-
-  async function saveLesson() {
-    setSavingLesson(true)
-    try {
-      if (editingLesson) {
-        await lessonService.update(editingLesson.id, lessonForm as UpdateLessonRequest)
-        toast.success('Lesson updated.')
-      } else {
-        await lessonService.create(lessonForm)
-        toast.success('Lesson created.')
-      }
-      setLessonDialog(false)
-    } finally {
-      setSavingLesson(false)
-    }
-  }
-
-  async function deleteLesson() {
-    if (!deleteLessonId) return
-    await lessonService.delete(deleteLessonId)
-    toast.success('Lesson deleted.')
-    setDeleteLessonId(null)
-  }
-
   const cf = (field: keyof CreateChapterRequest, value: unknown) =>
     setChapterForm(prev => ({ ...prev, [field]: value }))
-  const lf = (field: keyof CreateLessonRequest, value: unknown) => setLessonForm(prev => ({ ...prev, [field]: value }))
 
   // ─── Render ─────────────────────────────────────────────────────────────────
   if (courseLoading) {
@@ -354,16 +249,40 @@ export default function CourseDetailPage() {
           <div className="flex flex-wrap items-center gap-3 mt-1 text-sm text-muted-foreground">
             <span>📂 {course.categoryName}</span>
             <span>👤 {course.instructorName ?? 'No instructor'}</span>
-            <span>💵 ${course.price.toFixed(2)}</span>
+            <span>💵 {formatCurrency(course.price)}</span>
             <Badge variant={course.isPublished ? 'default' : 'secondary'}>
               {course.isPublished ? 'Published' : 'Draft'}
             </Badge>
           </div>
-          {course.description && (
-            <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{course.description}</p>
-          )}
         </div>
+        <Button size="sm" variant="outline" className="h-9 gap-2 shadow-sm shrink-0" onClick={openEditCourse}>
+          <Settings className="h-4 w-4" /> Edit Course
+        </Button>
       </div>
+
+      {/* Description section */}
+      {course.description && (
+        <div className="rounded-xl border bg-card p-6 shadow-sm overflow-hidden flex flex-col">
+          <h2 className="text-base font-semibold mb-4">Course Description</h2>
+          <div className="relative">
+            <div
+              className={`prose prose-sm max-w-none dark:prose-invert prose-img:rounded-md prose-img:mx-auto transition-all duration-300 ${!showFullDesc ? 'max-h-64 overflow-hidden' : ''}`}
+              dangerouslySetInnerHTML={{ __html: course.description }}
+            />
+            {!showFullDesc && (
+              <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-card to-transparent pointer-events-none" />
+            )}
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowFullDesc(!showFullDesc)}
+            className="mt-2 self-center text-muted-foreground hover:text-foreground"
+          >
+            {showFullDesc ? 'Show less' : 'Show more'}
+          </Button>
+        </div>
+      )}
 
       {/* Chapters section */}
       <div>
@@ -393,14 +312,18 @@ export default function CourseDetailPage() {
               <ChapterRow
                 key={ch.id}
                 chapter={ch}
-                courseId={id}
                 onEditChapter={openEditChapter}
                 onDeleteChapter={setDeleteChapterId}
-                onAddLesson={openAddLesson}
-                onEditLesson={openEditLesson}
-                onDeleteLesson={setDeleteLessonId}
               />
             ))}
+            <div className="pt-2">
+              <Pagination
+                pageIndex={pageIndex}
+                pageSize={pageSize}
+                totalCount={totalCount}
+                onPageChange={setPageIndex}
+              />
+            </div>
           </div>
         )}
       </div>
@@ -441,54 +364,7 @@ export default function CourseDetailPage() {
         </DialogContent>
       </Dialog>
 
-      {/* ── Lesson Modal ── */}
-      <Dialog open={lessonDialog} onOpenChange={setLessonDialog}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{editingLesson ? 'Edit Lesson' : 'New Lesson'}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="space-y-1">
-              <Label>Title</Label>
-              <Input placeholder="Lesson title" value={lessonForm.title} onChange={e => lf('title', e.target.value)} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <Label>Type</Label>
-                <Select value={lessonForm.lessonType} onValueChange={v => lf('lessonType', v as LessonType)}>
-                  <SelectTrigger>
-                    <SelectValue>{lessonForm.lessonType}</SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {LESSON_TYPES.map(t => (
-                      <SelectItem key={t} value={t}>
-                        {t}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1">
-                <Label>Position</Label>
-                <Input
-                  type="number"
-                  min={1}
-                  value={lessonForm.position}
-                  onChange={e => lf('position', Number(e.target.value))}
-                />
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setLessonDialog(false)}>
-              Cancel
-            </Button>
-            <Button onClick={saveLesson} disabled={savingLesson}>
-              {savingLesson ? 'Saving…' : editingLesson ? 'Save Changes' : 'Create Lesson'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+
 
       {/* ── Delete Chapter Confirm ── */}
       <AlertDialog open={!!deleteChapterId} onOpenChange={open => !open && setDeleteChapterId(null)}>
@@ -509,24 +385,94 @@ export default function CourseDetailPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* ── Delete Lesson Confirm ── */}
-      <AlertDialog open={!!deleteLessonId} onOpenChange={open => !open && setDeleteLessonId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete lesson?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={deleteLesson}
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <Dialog open={courseDialog} onOpenChange={setCourseDialog}>
+        <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+          {mounted && (
+            <>
+              <DialogHeader>
+                <DialogTitle>Edit Course Information</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-6 py-2">
+                <div className="space-y-1.5">
+                  <Label>Title</Label>
+                  <Input
+                    value={courseForm.title}
+                    onChange={e => setCourseForm(f => ({ ...f, title: e.target.value }))}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label>Category ID</Label>
+                    <Input
+                      value={courseForm.categoryId}
+                      onChange={e => setCourseForm(f => ({ ...f, categoryId: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Instructor ID</Label>
+                    <Input
+                      value={courseForm.instructorId}
+                      onChange={e => setCourseForm(f => ({ ...f, instructorId: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Price (VNĐ)</Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      step={0.01}
+                      value={courseForm.price}
+                      onChange={e => setCourseForm(f => ({ ...f, price: Number(e.target.value) }))}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Image URL (Thumbnail)</Label>
+                    <Input
+                      value={courseForm.imageUrl}
+                      onChange={e => setCourseForm(f => ({ ...f, imageUrl: e.target.value }))}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between rounded-lg border p-4 bg-muted/20">
+                  <div className="space-y-0.5">
+                    <Label className="text-base">Publish Course</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Make this course visible to students. Select to publish.
+                    </p>
+                  </div>
+                  <Switch
+                    checked={courseForm.isPublished}
+                    onCheckedChange={checked => setCourseForm(f => ({ ...f, isPublished: checked }))}
+                  />
+                </div>
+
+                <div className="space-y-1.5 pt-2">
+                  <Label>Description <span className="text-muted-foreground font-normal">(Rich Text)</span></Label>
+                  <div className="h-72 mb-10 overflow-hidden rounded-md border">
+                    <ReactQuill
+                      theme="snow"
+                      value={courseForm.description}
+                      onChange={val => setCourseForm(f => ({ ...f, description: val }))}
+                      className="h-full"
+                    />
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setCourseDialog(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={saveCourse} disabled={savingCourse}>
+                  {savingCourse ? 'Saving…' : 'Save Changes'}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+
     </div>
   )
 }
