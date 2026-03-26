@@ -18,22 +18,21 @@ internal sealed class GetListUsersQueryHandler : AbstractQueryHandler<GetListUse
 
     public override async Task<PagedDto<UserDto>> Handle(GetListUsersQuery request, CancellationToken cancellationToken)
     {
-        IQueryable<IdentityUser<Guid>> query = DbContext.Users.AsQueryable();
-
-        if (!string.IsNullOrEmpty(request.Filter))
-        {
-            query = query.Where(x => x.UserName != null && x.Email != null && (x.UserName.Contains(request.Filter) || x.Email.Contains(request.Filter)));
-        }
-
-        List<UserDto> users = await query
-            .Paged(request.PageIndex, request.PageSize)
+        IQueryable<UserDto> query = DbContext.Users
             .Select(x => new UserDto
             {
                 Id = x.Id,
                 UserName = x.UserName,
                 Email = x.Email,
                 PhoneNumber = x.PhoneNumber
-            })
+            });
+
+        query = query.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x =>
+            (x.UserName != null && EF.Functions.ILike(x.UserName, $"%{request.Filter}%")) ||
+            (x.Email != null && EF.Functions.ILike(x.Email, $"%{request.Filter}%")));
+
+        List<UserDto> users = await query
+            .Paged(request.PageIndex, request.PageSize)
             .ToListAsync(cancellationToken);
 
         return new PagedDto<UserDto>
