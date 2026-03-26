@@ -18,12 +18,17 @@ internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetList
 
     public override async Task<PagedDto<CategoryDto>> Handle(GetListCategoriesQuery request, CancellationToken cancellationToken)
     {
-        IQueryable<Category> query = DbContext.Categories.AsQueryable();
-
-        if (!string.IsNullOrEmpty(request.Filter))
+        IQueryable<CategoryDto> query = DbContext.Categories.Select(i => new CategoryDto
         {
-            query = query.Where(x => x.Name.Contains(request.Filter));
-        }
+            Id = i.Id,
+            Name = i.Name,
+            Description = i.Description,
+            IsActive = i.IsActive,
+            CreationTime = i.CreationTime,
+            LastModificationTime = i.LastModificationTime
+        });
+
+        query = query.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Name, $"%{request.Filter}%"));
 
         query = request.Sorting switch
         {
@@ -39,15 +44,6 @@ internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetList
 
         List<CategoryDto> categories = await query
             .Paged(request.PageIndex, request.PageSize)
-            .Select(i => new CategoryDto
-            {
-                Id = i.Id,
-                Name = i.Name,
-                Description = i.Description,
-                IsActive = i.IsActive,
-                CreationTime = i.CreationTime,
-                LastModificationTime = i.LastModificationTime
-            })
             .ToListAsync(cancellationToken);
 
         return new PagedDto<CategoryDto>

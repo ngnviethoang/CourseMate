@@ -18,14 +18,7 @@ internal sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetList
 
     public override async Task<PagedDto<ChapterDto>> Handle(GetListChaptersQuery request, CancellationToken cancellationToken)
     {
-        IQueryable<Chapter> baseQuery = DbContext.Chapters.AsQueryable();
-
-        if (!string.IsNullOrEmpty(request.Filter))
-        {
-            baseQuery = baseQuery.Where(x => x.Title.Contains(request.Filter));
-        }
-
-        IQueryable<ChapterDto> query = from chapter in baseQuery
+        IQueryable<ChapterDto> query = from chapter in DbContext.Chapters
             join course in DbContext.Courses on chapter.CourseId equals course.Id
             select new ChapterDto
             {
@@ -37,6 +30,8 @@ internal sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetList
                 CreationTime = chapter.CreationTime,
                 LastModificationTime = chapter.LastModificationTime
             };
+
+        query = query.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
 
         query = request.Sorting switch
         {

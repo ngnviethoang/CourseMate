@@ -18,14 +18,7 @@ internal sealed class GetListCoursesQueryHandler : AbstractQueryHandler<GetListC
 
     public override async Task<PagedDto<CourseDto>> Handle(GetListCoursesQuery request, CancellationToken cancellationToken)
     {
-        IQueryable<Course> baseQuery = DbContext.Courses.AsQueryable();
-
-        if (!string.IsNullOrEmpty(request.Filter))
-        {
-            baseQuery = baseQuery.Where(x => x.Title.Contains(request.Filter));
-        }
-
-        IQueryable<CourseDto> query = from course in baseQuery
+        IQueryable<CourseDto> query = from course in DbContext.Courses
             join category in DbContext.Categories on course.CategoryId equals category.Id
             join instructor in DbContext.Users on course.InstructorId equals instructor.Id
             select new CourseDto
@@ -43,6 +36,8 @@ internal sealed class GetListCoursesQueryHandler : AbstractQueryHandler<GetListC
                 CreationTime = course.CreationTime,
                 LastModificationTime = course.LastModificationTime
             };
+
+        query = query.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
 
         query = request.Sorting switch
         {
