@@ -13,6 +13,7 @@ namespace CourseMate.Application.Commands.Files;
 
 internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<InitVideoUploadCommand, InitVideoUploadResponse>
 {
+    private readonly IEnumerable<string> _allowedImageExtensions = [".mp4"];
     private readonly StorageOptions _storageOptions;
 
     public InitVideoUploadCommandHandler(
@@ -25,7 +26,7 @@ internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<Ini
 
     public override async Task<InitVideoUploadResponse> Handle(InitVideoUploadCommand request, CancellationToken cancellationToken)
     {
-        if (!".mp4".Equals(Path.GetExtension(request.FileName)))
+        if (!_allowedImageExtensions.Contains(Path.GetExtension(request.FileName), StringComparer.OrdinalIgnoreCase))
         {
             throw new BusinessException(ErrorMessages.InvalidFileType);
         }
@@ -40,8 +41,6 @@ internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<Ini
             throw new ArgumentException(string.Format(ErrorMessages.InvalidConfiguration, nameof(StorageOptions.MaxSizeTrunkFile)));
         }
 
-        int maxTotalChunks = (int)Math.Ceiling(request.FileSize / _storageOptions.MaxSizeTrunkFile + 1);
-
         Guid fileId = Guid.NewGuid();
         string tempDir = Path.Combine(_storageOptions.TempPath, fileId.ToString());
         Directory.CreateDirectory(tempDir);
@@ -50,11 +49,11 @@ internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<Ini
             fileId,
             request.FileName,
             "video/mp4",
-            request.FileSize,
+            0,
             string.Empty,
             tempDir,
             FileStatus.Uploading,
-            maxTotalChunks,
+            0,
             0,
             null,
             FileType.Video);
@@ -64,8 +63,7 @@ internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<Ini
 
         return new InitVideoUploadResponse
         {
-            FileId = fileId,
-            MaxTotalTrunks = maxTotalChunks
+            FileId = fileId
         };
     }
 }

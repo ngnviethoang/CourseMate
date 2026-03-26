@@ -21,7 +21,7 @@ public class FileController : ControllerBase
     #region API Video
 
     /// <summary>
-    /// fileName is .mp4, fileSize is in MB
+    ///     fileName is .mp4
     /// </summary>
     [HttpPost("videos/init")]
     public async Task<ActionResult> InitUploadVideoAsync(InitVideoUploadCommand request)
@@ -38,6 +38,7 @@ public class FileController : ControllerBase
         await _mediator.Send(new UploadVideoChunkCommand
         {
             FileId = fileId,
+            FileName = file.FileName,
             ChunkIndex = chunkIndex,
             Content = stream.ToArray()
         });
@@ -69,6 +70,25 @@ public class FileController : ControllerBase
             FileId = fileId
         });
         return NoContent();
+    }
+
+    [AllowAnonymous]
+    [Obsolete("Disabled in Swagger UI.")]
+    [HttpGet("videos/stream/{fileId:guid}")]
+    public async Task<ActionResult> StreamVideoAsync(Guid fileId)
+    {
+        VideoFilePathDto? result = await _mediator.Send(new GetVideoFilePathQuery
+        {
+            FileId = fileId
+        });
+
+        if (result == null || !System.IO.File.Exists(result.FilePath))
+        {
+            return NotFound();
+        }
+
+        FileStream stream = new(result.FilePath, FileMode.Open, FileAccess.Read);
+        return File(stream, "video/mp4", true);
     }
 
     #endregion
@@ -106,6 +126,7 @@ public class FileController : ControllerBase
         return NoContent();
     }
 
+    [AllowAnonymous]
     [HttpGet("images/{fileId:Guid}")]
     public async Task<IActionResult> GetImageAsync(Guid fileId)
     {

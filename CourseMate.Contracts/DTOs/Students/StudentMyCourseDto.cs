@@ -8,5 +8,5 @@ public class StudentMyCourseDto : CourseDto
 
     public int CompletedLessons { get; set; }
 
-    public string? LastLessonTitle { get; set; }
+    public string LastLessonTitle { get; set; } = string.Empty;
 }

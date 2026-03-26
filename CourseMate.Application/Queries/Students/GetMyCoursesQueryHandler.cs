@@ -1,7 +1,6 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Students;
-using CourseMate.Contracts.Enums;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
@@ -20,22 +19,12 @@ internal sealed class GetMyCoursesQueryHandler : AbstractQueryHandler<GetMyCours
     {
         Guid studentId = GetCurrentUserId();
 
-        // Get course IDs for this student (as a sub-query)
-        var orderedCourseIds = DbContext.Orders
-            .Where(o => o.StudentId == studentId && o.Status == OrderStatus.Paid)
-            .Join(DbContext.OrderItems, o => o.Id, oi => oi.OrderId, (o, oi) => oi.CourseId);
-
-        var enrolledCourseIds = DbContext.Enrollments
-            .Where(e => e.StudentId == studentId)
-            .Select(e => e.CourseId);
-
-        var myCourseIdsQuery = orderedCourseIds.Union(enrolledCourseIds);
-
-        // Fetch courses, counts, and progress
-        var query = from course in DbContext.Courses
+        IQueryable<StudentMyCourseDto> query =
+            from enrollment in DbContext.Enrollments
+            join course in DbContext.Courses on enrollment.CourseId equals course.Id
             join category in DbContext.Categories on course.CategoryId equals category.Id
             join instructor in DbContext.Users on course.InstructorId equals instructor.Id
-            where myCourseIdsQuery.Contains(course.Id)
+            where enrollment.StudentId == studentId
             select new StudentMyCourseDto
             {
                 Id = course.Id,
@@ -52,49 +41,66 @@ internal sealed class GetMyCoursesQueryHandler : AbstractQueryHandler<GetMyCours
                 LastModificationTime = course.LastModificationTime
             };
 
-        if (!string.IsNullOrEmpty(request.Filter))
-        {
-            query = query.Where(x => x.Title.Contains(request.Filter));
-        }
-
+        query = query.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
         query = request.Sorting switch
         {
             "title" => query.OrderBy(x => x.Title),
             "title_desc" => query.OrderByDescending(x => x.Title),
             _ => query.OrderByDescending(x => x.CreationTime)
         };
-
+        List<StudentMyCourseDto> courses = await query.Paged(request.PageIndex, request.PageSize).ToListAsync(cancellationToken);
         int total = await query.CountAsync(cancellationToken);
 
-        List<StudentMyCourseDto> courses = await query
-            .Paged(request.PageIndex, request.PageSize)
-            .ToListAsync(cancellationToken);
-
-        // Fill progress metrics
-        foreach (var course in courses)
+        List<Guid> courseIds = courses.Select(c => c.Id).ToList();
+        if (courseIds.Any())
         {
-            int totalLessons = await DbContext.Lessons.CountAsync(l => l.CourseId == course.Id, cancellationToken);
-            
-            // Join with Lessons to filter progresses by CourseId since UserLessonProgress doesn't have CourseId
-            int completedLessons = await DbContext.UserLessonProgresses
-                .Join(DbContext.Lessons, p => p.LessonId, l => l.Id, (p, l) => new { p.StudentId, l.CourseId, p.IsCompleted })
-                .CountAsync(x => x.StudentId == studentId && x.CourseId == course.Id && x.IsCompleted, cancellationToken);
+            Dictionary<Guid, int> totalLessonsDict = await (
+                from lesson in DbContext.Lessons
+                where courseIds.Contains(lesson.CourseId)
+                group lesson by lesson.CourseId
+                into grouping
+                select new CourseLessonCountDto(grouping.Key, grouping.Count())
+            ).ToDictionaryAsync(x => x.CourseId, x => x.Count, cancellationToken);
 
-            course.TotalLessons = totalLessons;
-            course.CompletedLessons = completedLessons;
-            course.ProgressPercentage = totalLessons > 0 
-                ? Math.Round((double)completedLessons / totalLessons * 100, 2) 
-                : 0;
+            Dictionary<Guid, int> completedLessonsDict = await (
+                from userLessonProgress in DbContext.UserLessonProgresses
+                where userLessonProgress.StudentId == studentId && userLessonProgress.IsCompleted
+                join lesson in DbContext.Lessons on userLessonProgress.LessonId equals lesson.Id
+                where courseIds.Contains(lesson.CourseId)
+                group lesson by lesson.CourseId
+                into grouping
+                select new CourseLessonCountDto(grouping.Key, grouping.Count())
+            ).ToDictionaryAsync(x => x.CourseId, x => x.Count, cancellationToken);
 
-            // Fetch last lesson title (the one with the latest progress record)
-            var lastLessonProgress = await DbContext.UserLessonProgresses
-                .Join(DbContext.Lessons, p => p.LessonId, l => l.Id, (p, l) => new { p.StudentId, l.CourseId, l.Title, p.LastModificationTime })
-                .Where(x => x.StudentId == studentId && x.CourseId == course.Id)
-                .OrderByDescending(x => x.LastModificationTime)
-                .Select(x => x.Title)
-                .FirstOrDefaultAsync(cancellationToken);
+            List<LessonProgressItemDto> lessonProgresses = await (
+                from userLessonProgress in DbContext.UserLessonProgresses
+                where userLessonProgress.StudentId == studentId
+                join lesson in DbContext.Lessons on userLessonProgress.LessonId equals lesson.Id
+                where courseIds.Contains(lesson.CourseId)
+                select new LessonProgressItemDto(lesson.CourseId, lesson.Title, userLessonProgress.LastModificationTime)
+            ).ToListAsync(cancellationToken);
 
-            course.LastLessonTitle = lastLessonProgress;
+            Dictionary<Guid, string?> lastLessonDict = (
+                from lessonProgressItemDto in lessonProgresses
+                group lessonProgressItemDto by lessonProgressItemDto.CourseId
+                into grouping
+                select new CourseLastLessonDto(grouping.Key, grouping
+                    .OrderByDescending(item => item.LastModificationTime)
+                    .Select(item => item.Title)
+                    .FirstOrDefault()
+                )
+            ).ToDictionary(x => x.CourseId, x => x.LastLessonTitle);
+
+            foreach (StudentMyCourseDto course in courses)
+            {
+                int totalLessons = totalLessonsDict.GetValueOrDefault(course.Id, 0);
+                int completedLessons = completedLessonsDict.GetValueOrDefault(course.Id, 0);
+
+                course.TotalLessons = totalLessons;
+                course.CompletedLessons = completedLessons;
+                course.ProgressPercentage = totalLessons > 0 ? Math.Round((double)completedLessons / totalLessons * 100, 2) : 0;
+                course.LastLessonTitle = lastLessonDict.GetValueOrDefault(course.Id, string.Empty) ?? string.Empty;
+            }
         }
 
         return new PagedDto<StudentMyCourseDto>
@@ -105,4 +111,10 @@ internal sealed class GetMyCoursesQueryHandler : AbstractQueryHandler<GetMyCours
             TotalCount = total
         };
     }
+
+    private sealed record CourseLessonCountDto(Guid CourseId, int Count);
+
+    private sealed record CourseLastLessonDto(Guid CourseId, string? LastLessonTitle);
+
+    private sealed record LessonProgressItemDto(Guid CourseId, string Title, DateTimeOffset? LastModificationTime);
 }

@@ -1,6 +1,8 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Files;
 using CourseMate.Contracts.Enums;
+using CourseMate.Contracts.Exceptions;
 using CourseMate.Contracts.Options;
 using CourseMate.Infrastructure;
 using CourseMate.Infrastructure.Entities;
@@ -11,6 +13,7 @@ namespace CourseMate.Application.Commands.Files;
 
 internal sealed class UploadImageCommandHandler : AbstractCommandHandler<UploadImageCommand, UploadImageResponse>
 {
+    private readonly IEnumerable<string> _allowedImageExtensions = [".jpg", ".jpeg", ".png"];
     private readonly StorageOptions _storageOptions;
 
     public UploadImageCommandHandler(
@@ -24,6 +27,11 @@ internal sealed class UploadImageCommandHandler : AbstractCommandHandler<UploadI
 
     public override async Task<UploadImageResponse> Handle(UploadImageCommand request, CancellationToken cancellationToken)
     {
+        if (!_allowedImageExtensions.Contains(Path.GetExtension(request.FileName), StringComparer.OrdinalIgnoreCase))
+        {
+            throw new BusinessException(ErrorMessages.InvalidFileType);
+        }
+
         Guid userId = GetCurrentUserId();
         string userDir = Path.Combine(_storageOptions.ImagesPath, userId.ToString());
         if (!Directory.Exists(userDir))
@@ -38,7 +46,7 @@ internal sealed class UploadImageCommandHandler : AbstractCommandHandler<UploadI
 
         FileEntry fileEntry = new(
             fileId,
-            request.FileName,
+            fileName,
             request.ContentType,
             request.Content.Length,
             filePath,

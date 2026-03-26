@@ -8,9 +8,9 @@ public class AdminOrderDto
 
     public Guid StudentId { get; set; }
 
-    public string? StudentName { get; set; }
+    public string StudentName { get; set; } = string.Empty;
 
-    public string? StudentEmail { get; set; }
+    public string StudentEmail { get; set; } = string.Empty;
 
     public decimal TotalAmount { get; set; }
 

@@ -9,6 +9,8 @@ public static class InfrastructureExtensions
     {
         public IServiceCollection AddInfrastructure(string connectionString)
         {
+            // https://www.npgsql.org/efcore/release-notes/6.0.html#opting-out-of-the-new-timestamp-mapping-logic
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             services.AddDbContextPool<CourseMateDbContext>(options => options.UseNpgsql(connectionString));
             services.AddDbContextPool<CourseMateReadOnlyDbContext>(options =>
             {

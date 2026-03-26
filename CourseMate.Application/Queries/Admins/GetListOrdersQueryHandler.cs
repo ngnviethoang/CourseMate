@@ -17,31 +17,24 @@ internal sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOr
 
     public override async Task<PagedDto<AdminOrderDto>> Handle(GetListOrdersQuery request, CancellationToken cancellationToken)
     {
-        var query = from order in DbContext.Orders
+        IQueryable<AdminOrderDto> query =
+            from order in DbContext.Orders
             join student in DbContext.Users on order.StudentId equals student.Id
             select new AdminOrderDto
             {
                 Id = order.Id,
                 StudentId = order.StudentId,
-                StudentName = student.UserName,
-                StudentEmail = student.Email,
+                StudentName = student.UserName ?? string.Empty,
+                StudentEmail = student.Email ?? string.Empty,
                 TotalAmount = order.TotalAmount,
                 Status = order.Status,
-                CreationTime = order.CreationTime
+                CreationTime = order.CreationTime,
+                ItemsCount = DbContext.OrderItems.Count(i => i.OrderId == order.Id)
             };
 
-        if (request.Status.HasValue)
-        {
-            query = query.Where(x => x.Status == request.Status.Value);
-        }
-
-        if (!string.IsNullOrEmpty(request.Filter))
-        {
-            query = query.Where(x => 
-                (x.StudentName != null && x.StudentName.Contains(request.Filter)) || 
-                (x.StudentEmail != null && x.StudentEmail.Contains(request.Filter)) ||
-                x.Id.ToString().Contains(request.Filter));
-        }
+        query = query.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), i =>
+            EF.Functions.ILike(i.StudentName, $"%{request.Filter}%") ||
+            EF.Functions.ILike(i.StudentEmail ?? "", $"%{request.Filter}%"));
 
         query = request.Sorting switch
         {
@@ -55,12 +48,6 @@ internal sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOr
         List<AdminOrderDto> orders = await query
             .Paged(request.PageIndex, request.PageSize)
             .ToListAsync(cancellationToken);
-
-        // Fetch items count for each order
-        foreach (var order in orders)
-        {
-            order.ItemsCount = await DbContext.OrderItems.CountAsync(x => x.OrderId == order.Id, cancellationToken);
-        }
 
         return new PagedDto<AdminOrderDto>
         {

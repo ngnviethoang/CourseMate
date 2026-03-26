@@ -31,7 +31,6 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
         Guid userId = GetCurrentUserId();
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.UserId == userId)
-            .Where(f => f.UploadedChunks <= f.TotalChunks)
             .Where(f => f.Status == FileStatus.Uploading)
             .FirstOrDefaultAsync(f => f.Id == request.FileId, cancellationToken);
 

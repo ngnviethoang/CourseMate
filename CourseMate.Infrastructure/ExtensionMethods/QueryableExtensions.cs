@@ -7,33 +7,44 @@ namespace CourseMate.Infrastructure.ExtensionMethods;
 
 public static class QueryableExtensions
 {
-    public static IQueryable<T> Paged<T>(this IQueryable<T> source, int pageIndex, int pageSize)
+    extension<T>(IQueryable<T> source)
     {
-        return source.Skip((pageIndex - 1) * pageSize).Take(pageSize);
-    }
-
-    public static async Task EnsureExistsAsync<T>(this DbSet<T> source, Guid id, CancellationToken cancellationToken) where T : Entity
-    {
-        if (!await source.AnyAsync(i => i.Id == id, cancellationToken))
+        public IQueryable<T> Paged(int pageIndex, int pageSize)
         {
-            throw new EntityNotFoundException(nameof(T), id);
+            return source.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+        }
+
+        public IQueryable<T> WhereIf(bool condition, Expression<Func<T, bool>> predicate)
+        {
+            return condition ? source.Where(predicate) : source;
         }
     }
 
-    public static async Task EnsureExistsAsync<T>(this DbSet<T> source, Expression<Func<T, bool>> predicate, CancellationToken cancellationToken) where T : Entity
+    extension<T>(DbSet<T> source) where T : Entity
     {
-        if (!await source.AnyAsync(predicate, cancellationToken))
+        public async Task EnsureExistsAsync(Guid id, CancellationToken cancellationToken)
         {
-            throw new EntityNotFoundException(nameof(T), Guid.Empty);
+            if (!await source.AnyAsync(i => i.Id == id, cancellationToken))
+            {
+                throw new EntityNotFoundException(nameof(T), id);
+            }
         }
-    }
 
-    public static async Task RemoveByIdAsync<T>(this DbSet<T> source, Guid id, CancellationToken cancellationToken) where T : Entity
-    {
-        T? entity = await source.FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
-        if (entity != null)
+        public async Task EnsureExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)
         {
-            source.Remove(entity);
+            if (!await source.AnyAsync(predicate, cancellationToken))
+            {
+                throw new EntityNotFoundException(nameof(T), Guid.Empty);
+            }
+        }
+
+        public async Task RemoveByIdAsync(Guid id, CancellationToken cancellationToken)
+        {
+            T? entity = await source.FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
+            if (entity != null)
+            {
+                source.Remove(entity);
+            }
         }
     }
 }
