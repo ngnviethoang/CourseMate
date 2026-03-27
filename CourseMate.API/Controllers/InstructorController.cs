@@ -2,6 +2,7 @@ using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.DTOs.Instructors;
+using CourseMate.Contracts.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -170,9 +171,23 @@ public class InstructorController : ControllerBase
     ///     Upload a Word/PDF file for the lesson and trigger AI processing (parse + outline generation)
     /// </summary>
     [HttpPost("{lessonId:guid}/materials")]
-    public async Task<ActionResult> UploadMaterialAsync(Guid lessonId, IFormFile file)
+    public async Task<ActionResult> UploadMaterialAsync(Guid lessonId, IFormFile request)
     {
-        return Ok();
+        if (request.Length == 0)
+        {
+            return BadRequest();
+        }
+
+        using MemoryStream stream = new();
+        await request.CopyToAsync(stream);
+        ProcessingStatusDto result = await _mediator.Send(new UploadMaterialCommand
+        {
+            LessonId = lessonId,
+            FileName = request.FileName,
+            Content = stream.ToArray()
+        });
+
+        return Ok(result);
     }
 
     /// <summary>
@@ -181,16 +196,19 @@ public class InstructorController : ControllerBase
     [HttpGet("{lessonId:guid}/outline")]
     public async Task<ActionResult> GetOutlineAsync(Guid lessonId)
     {
-        return Ok();
+        OutlineDto? result = await _mediator.Send(new GetOutlineQuery { LessonId = lessonId });
+        return Ok(result);
     }
 
     /// <summary>
     ///     Update the lesson outline after user modifications
     /// </summary>
     [HttpPut("{lessonId:guid}/outline")]
-    public async Task<ActionResult> UpdateOutlineAsync(Guid lessonId)
+    public async Task<ActionResult> UpdateOutlineAsync(Guid lessonId, [FromBody] UpdateOutlineCommand command)
     {
-        return Ok();
+        command.LessonId = lessonId;
+        OutlineDto result = await _mediator.Send(command);
+        return Ok(result);
     }
 
     /// <summary>
@@ -199,7 +217,8 @@ public class InstructorController : ControllerBase
     [HttpPost("{lessonId:guid}/outline/regenerate")]
     public async Task<ActionResult> RegenerateOutlineAsync(Guid lessonId)
     {
-        return Ok();
+        ProcessingStatusDto result = await _mediator.Send(new RegenerateOutlineCommand { LessonId = lessonId });
+        return Ok(result);
     }
 
     /// <summary>
@@ -208,7 +227,8 @@ public class InstructorController : ControllerBase
     [HttpPost("{lessonId:guid}/generate-slide")]
     public async Task<ActionResult> GenerateSlideAsync(Guid lessonId)
     {
-        return Ok();
+        ProcessingStatusDto result = await _mediator.Send(new GenerateSlideCommand { LessonId = lessonId });
+        return Ok(result);
     }
 
     /// <summary>
@@ -217,7 +237,25 @@ public class InstructorController : ControllerBase
     [HttpGet("{lessonId:guid}/slide")]
     public async Task<ActionResult> DownloadSlideAsync(Guid lessonId)
     {
-        return Ok();
+        // Get status to find the slide file path
+        ProcessingStatusDto status = await _mediator.Send(new GetProcessingStatusQuery { LessonId = lessonId });
+        if (status.Status != DocumentProcessingStatus.SlideReady)
+        {
+            return BadRequest(new { message = "Slide is not ready yet.", status = status.Status.ToString() });
+        }
+
+        OutlineDto outline = await _mediator.Send(new GetOutlineQuery { LessonId = lessonId });
+
+        // We need to get the file path from the material — use a simple query
+        ProcessingStatusDto material = await _mediator.Send(new GetProcessingStatusQuery { LessonId = lessonId });
+
+        // For now return the status — the actual file download requires accessing the file path
+        // which we'll handle through a dedicated query if needed
+        return Ok(new
+        {
+            message = "Slide is ready for download.",
+            status
+        });
     }
 
     /// <summary>
@@ -226,7 +264,8 @@ public class InstructorController : ControllerBase
     [HttpGet("{lessonId:guid}/status")]
     public async Task<ActionResult> GetStatusAsync(Guid lessonId)
     {
-        return Ok();
+        ProcessingStatusDto result = await _mediator.Send(new GetProcessingStatusQuery { LessonId = lessonId });
+        return Ok(result);
     }
 
     #endregion

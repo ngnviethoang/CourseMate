@@ -32,4 +32,6 @@ public class StorageOptions
     public string VideosPath => System.IO.Path.Combine(Path, "videos");
 
     public string ImagesPath => System.IO.Path.Combine(Path, "images");
+
+    public string DocumentsPath => System.IO.Path.Combine(Path, "documents");
 }

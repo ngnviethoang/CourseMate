@@ -24,6 +24,7 @@ try
     builder.Host.UseSerilog();
 
     builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
+    builder.Services.Configure<AiOptions>(configuration.GetSection("Ai"));
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<HttpLoggingMiddleware>();
     builder.Services.AddAuthorization();

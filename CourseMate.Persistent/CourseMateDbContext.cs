@@ -41,6 +41,7 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
     public DbSet<UserLessonProgress> UserLessonProgresses { get; set; }
     public DbSet<FileEntry> FileEntries { get; set; }
     public DbSet<FileChunk> FileChunks { get; set; }
+    public DbSet<LessonMaterial> LessonMaterials { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
