@@ -1,6 +1,7 @@
-﻿using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Contracts.DTOs.Instructors;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,13 @@ public class InstructorController : ControllerBase
     public InstructorController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    [HttpGet("dashboard")]
+    public async Task<ActionResult> GetDashboardDataAsync()
+    {
+        DashboardDto result = await _mediator.Send(new GetInstructorDashboardDataQuery());
+        return Ok(result);
     }
 
     #region API Category

@@ -79,6 +79,13 @@ public class StudentController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("courses/recommended")]
+    public async Task<ActionResult> GetRecommendedCoursesAsync([FromQuery] GetRecommendedCoursesQuery request)
+    {
+        PagedDto<CourseDto> result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
     [HttpGet("courses/{id:guid}")]
     public async Task<ActionResult> GetCourseByIdAsync(Guid id)
     {

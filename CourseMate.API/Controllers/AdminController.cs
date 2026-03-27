@@ -19,6 +19,13 @@ public class AdminController : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpGet("dashboard")]
+    public async Task<ActionResult> GetDashboardDataAsync()
+    {
+        DashboardDto result = await _mediator.Send(new GetDashboardDataQuery());
+        return Ok(result);
+    }
+
     #region API Category
 
     [HttpGet("categories")]
