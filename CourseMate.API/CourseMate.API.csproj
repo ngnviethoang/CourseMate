@@ -32,7 +32,7 @@
     <ItemGroup>
         <ProjectReference Include="..\CourseMate.Application\CourseMate.Application.csproj"/>
         <ProjectReference Include="..\CourseMate.Contracts\CourseMate.Contracts.csproj"/>
-        <ProjectReference Include="..\CourseMate.Infrastructure\CourseMate.Infrastructure.csproj"/>
+        <ProjectReference Include="..\CourseMate.Persistent\CourseMate.Persistent.csproj"/>
     </ItemGroup>
 
 </Project>

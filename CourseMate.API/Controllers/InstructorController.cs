@@ -163,4 +163,71 @@ public class InstructorController : ControllerBase
     }
 
     #endregion
+
+    #region API AI Process Document
+
+    /// <summary>
+    ///     Upload a Word/PDF file for the lesson and trigger AI processing (parse + outline generation)
+    /// </summary>
+    [HttpPost("{lessonId:guid}/materials")]
+    public async Task<ActionResult> UploadMaterialAsync(Guid lessonId, IFormFile file)
+    {
+        return Ok();
+    }
+
+    /// <summary>
+    ///     Retrieve the AI-generated outline for the lesson
+    /// </summary>
+    [HttpGet("{lessonId:guid}/outline")]
+    public async Task<ActionResult> GetOutlineAsync(Guid lessonId)
+    {
+        return Ok();
+    }
+
+    /// <summary>
+    ///     Update the lesson outline after user modifications
+    /// </summary>
+    [HttpPut("{lessonId:guid}/outline")]
+    public async Task<ActionResult> UpdateOutlineAsync(Guid lessonId)
+    {
+        return Ok();
+    }
+
+    /// <summary>
+    ///     Regenerate the lesson outline using AI
+    /// </summary>
+    [HttpPost("{lessonId:guid}/outline/regenerate")]
+    public async Task<ActionResult> RegenerateOutlineAsync(Guid lessonId)
+    {
+        return Ok();
+    }
+
+    /// <summary>
+    ///     Generate slide content from the approved lesson outline.
+    /// </summary>
+    [HttpPost("{lessonId:guid}/generate-slide")]
+    public async Task<ActionResult> GenerateSlideAsync(Guid lessonId)
+    {
+        return Ok();
+    }
+
+    /// <summary>
+    ///     Download the generated slide file.
+    /// </summary>
+    [HttpGet("{lessonId:guid}/slide")]
+    public async Task<ActionResult> DownloadSlideAsync(Guid lessonId)
+    {
+        return Ok();
+    }
+
+    /// <summary>
+    ///     Get the current processing status of the lesson.
+    /// </summary>
+    [HttpGet("{lessonId:guid}/status")]
+    public async Task<ActionResult> GetStatusAsync(Guid lessonId)
+    {
+        return Ok();
+    }
+
+    #endregion
 }

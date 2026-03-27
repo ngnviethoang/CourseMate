@@ -4,7 +4,8 @@ using System.Text.Json.Serialization;
 using CourseMate.API.Middlewares;
 using CourseMate.Application;
 using CourseMate.Contracts.Options;
-using CourseMate.Infrastructure;
+using CourseMate.Persistent;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -55,7 +56,7 @@ try
         options.User.RequireUniqueEmail = true;
     });
     builder.Services.AddApplication();
-    builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate") ?? string.Empty);
+    builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate")!);
     builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
@@ -112,7 +113,7 @@ try
     app.UseMiddleware<HttpLoggingMiddleware>();
     // app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
     app.MapControllers();
-
+    app.MapHangfireDashboard();
     Log.Information("Starting web host");
     await app.RunAsync();
 }

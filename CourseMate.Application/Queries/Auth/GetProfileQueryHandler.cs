@@ -1,6 +1,6 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Auth;
-using CourseMate.Infrastructure;
+using CourseMate.Persistent;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

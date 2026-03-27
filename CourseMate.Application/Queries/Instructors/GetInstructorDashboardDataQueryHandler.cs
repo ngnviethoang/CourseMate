@@ -2,7 +2,7 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.DTOs.Instructors;
 using CourseMate.Contracts.Enums;
-using CourseMate.Infrastructure;
+using CourseMate.Persistent;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,4 +1,4 @@
-﻿using CourseMate.Infrastructure;
+﻿using CourseMate.Persistent;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;

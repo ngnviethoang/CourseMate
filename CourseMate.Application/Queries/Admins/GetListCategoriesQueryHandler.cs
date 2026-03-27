@@ -1,9 +1,9 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.DTOs.Commons;
-using CourseMate.Infrastructure;
-using CourseMate.Infrastructure.Entities;
-using CourseMate.Infrastructure.ExtensionMethods;
+using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
+using CourseMate.Persistent.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 

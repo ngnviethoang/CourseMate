@@ -10,7 +10,7 @@ trigger: always_on
 - **API** – Presentation layer
 - **Application** – Business logic & use cases
 - **Contracts** – Shared DTOs, enums, constants
-- **Infrastructure** – Database & external services
+- **Persistent** – Database
 - **coursemate-ui** – Frontend
 
 ---
@@ -81,8 +81,8 @@ trigger: always_on
   - Command DTO: Create[Entity]Command, Update[Entity]Command, Delete[Entity]Command
 ---
 
-### Infrastructure
-- Handles database & external services
+### Persistent
+- Handles database
 - No business logic
 - Contains:
   - Entities

@@ -1,0 +1,14 @@
+using CourseMate.Persistent.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace CourseMate.Persistent.DbConfigurations;
+
+public class FileChunkConfiguration : IEntityTypeConfiguration<FileChunk>
+{
+    public void Configure(EntityTypeBuilder<FileChunk> builder)
+    {
+        builder.ToTable("FileChunks");
+        builder.HasOne<FileEntry>().WithMany().HasForeignKey(c => c.FileEntryId).OnDelete(DeleteBehavior.Cascade);
+    }
+}

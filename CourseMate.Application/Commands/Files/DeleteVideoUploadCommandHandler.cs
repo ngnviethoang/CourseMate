@@ -1,8 +1,8 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Files;
-using CourseMate.Infrastructure;
-using CourseMate.Infrastructure.Entities;
+using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
