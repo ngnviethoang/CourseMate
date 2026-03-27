@@ -1,6 +1,6 @@
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.DTOs.Instructors;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

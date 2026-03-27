@@ -1,5 +1,6 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Enums;
 using CourseMate.Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -29,14 +30,15 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
         DateTimeOffset twelveMonthsAgo = DateTimeOffset.UtcNow.AddMonths(-11);
         twelveMonthsAgo = new DateTimeOffset(twelveMonthsAgo.Year, twelveMonthsAgo.Month, 1, 0, 0, 0, twelveMonthsAgo.Offset);
 
-        var monthlyOrders = await DbContext.Orders
+        List<MonthlyOrderDto> monthlyOrders = await DbContext.Orders
             .Where(o => o.Status == OrderStatus.Paid && o.CreationTime >= twelveMonthsAgo)
-            .Select(o => new { o.TotalAmount, o.CreationTime })
+            .Select(o => new MonthlyOrderDto(o.TotalAmount, o.CreationTime))
             .ToListAsync(cancellationToken);
 
-        var revenueByMonth = monthlyOrders
+        List<MonthlyRevenueDto> revenueByMonth = monthlyOrders
             .GroupBy(o => new { o.CreationTime.Month, o.CreationTime.Year })
-            .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
+            .OrderBy(g => g.Key.Year)
+            .ThenBy(g => g.Key.Month)
             .Select(g => new MonthlyRevenueDto
             {
                 Month = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMM yyyy"),
@@ -45,12 +47,13 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
             .ToList();
 
         // 3. Top 5 Courses
-        var topCourses = await (
+        List<TopCourseDto> topCourses = await (
             from orderItem in DbContext.OrderItems
             join order in DbContext.Orders on orderItem.OrderId equals order.Id
             join course in DbContext.Courses on orderItem.CourseId equals course.Id
             where order.Status == OrderStatus.Paid
-            group new { orderItem, course } by new { course.Id, course.Title } into g
+            group new { orderItem, course } by new { course.Id, course.Title }
+            into g
             orderby g.Sum(x => x.orderItem.Price) descending
             select new TopCourseDto
             {
@@ -62,13 +65,14 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
         ).Take(5).ToListAsync(cancellationToken);
 
         // 4. Top 5 Instructors
-        var topInstructors = await (
+        List<TopInstructorDto> topInstructors = await (
             from orderItem in DbContext.OrderItems
             join order in DbContext.Orders on orderItem.OrderId equals order.Id
             join course in DbContext.Courses on orderItem.CourseId equals course.Id
             join instructor in DbContext.Users on course.InstructorId equals instructor.Id
             where order.Status == OrderStatus.Paid
-            group new { orderItem, instructor } by new { instructor.Id, instructor.UserName } into g
+            group new { orderItem, instructor } by new { instructor.Id, instructor.UserName }
+            into g
             orderby g.Sum(x => x.orderItem.Price) descending
             select new TopInstructorDto
             {
@@ -90,4 +94,6 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
             TopInstructors = topInstructors
         };
     }
+
+    private sealed record MonthlyOrderDto(decimal TotalAmount, DateTimeOffset CreationTime);
 }

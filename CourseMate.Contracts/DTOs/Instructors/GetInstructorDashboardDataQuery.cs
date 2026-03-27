@@ -1,4 +1,4 @@
-using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Contracts.DTOs.Commons;
 using MediatR;
 
 namespace CourseMate.Contracts.DTOs.Instructors;

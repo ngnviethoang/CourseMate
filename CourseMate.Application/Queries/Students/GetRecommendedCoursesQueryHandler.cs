@@ -1,5 +1,5 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.DTOs;
+using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Contracts.Enums;
 using CourseMate.Infrastructure;
@@ -56,17 +56,9 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
                 LastModificationTime = course.LastModificationTime
             };
 
-        // 3. Apply recommendation logic
-        if (purchasedCategoryIds.Any())
-        {
-            // Recommend courses in the same categories, excluding already purchased ones
-            query = query.Where(c => purchasedCategoryIds.Contains(c.CategoryId) && !purchasedCourseIds.Contains(c.Id));
-        }
-        else
-        {
-            // If no purchases, just exclude what they already have (if any) and show popular ones
-            query = query.Where(c => !purchasedCourseIds.Contains(c.Id));
-        }
+        query = query
+            .WhereIf(purchasedCategoryIds.Any(), c => purchasedCategoryIds.Contains(c.CategoryId) && !purchasedCourseIds.Contains(c.Id))
+            .Where(c => !purchasedCourseIds.Contains(c.Id));
 
         // 4. Order by popularity (paid enrollment count) and creation time
         IQueryable<CourseDto> finalQuery = query

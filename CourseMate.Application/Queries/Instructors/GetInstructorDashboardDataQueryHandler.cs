@@ -1,5 +1,5 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.DTOs.Instructors;
 using CourseMate.Contracts.Enums;
 using CourseMate.Infrastructure;
@@ -20,7 +20,7 @@ internal sealed class GetInstructorDashboardDataQueryHandler : AbstractQueryHand
         Guid instructorId = GetCurrentUserId();
 
         // 1. Basic Stats for this instructor
-        var instructorCourseIds = await DbContext.Courses
+        List<Guid> instructorCourseIds = await DbContext.Courses
             .Where(c => c.InstructorId == instructorId)
             .Select(c => c.Id)
             .ToListAsync(cancellationToken);
@@ -40,7 +40,7 @@ internal sealed class GetInstructorDashboardDataQueryHandler : AbstractQueryHand
         ).Distinct().CountAsync(cancellationToken);
 
         int totalCourses = instructorCourseIds.Count;
-        
+
         int totalOrders = await (
             from orderItem in DbContext.OrderItems
             join order in DbContext.Orders on orderItem.OrderId equals order.Id
@@ -52,14 +52,14 @@ internal sealed class GetInstructorDashboardDataQueryHandler : AbstractQueryHand
         DateTimeOffset twelveMonthsAgo = DateTimeOffset.UtcNow.AddMonths(-11);
         twelveMonthsAgo = new DateTimeOffset(twelveMonthsAgo.Year, twelveMonthsAgo.Month, 1, 0, 0, 0, twelveMonthsAgo.Offset);
 
-        var monthlyRevenueData = await (
+        List<MonthlyOrderDto> monthlyRevenueData = await (
             from orderItem in DbContext.OrderItems
             join order in DbContext.Orders on orderItem.OrderId equals order.Id
             where instructorCourseIds.Contains(orderItem.CourseId) && order.Status == OrderStatus.Paid && order.CreationTime >= twelveMonthsAgo
-            select new { orderItem.Price, order.CreationTime }
+            select new MonthlyOrderDto(orderItem.Price, order.CreationTime)
         ).ToListAsync(cancellationToken);
 
-        var revenueByMonth = monthlyRevenueData
+        List<MonthlyRevenueDto> revenueByMonth = monthlyRevenueData
             .GroupBy(o => new { o.CreationTime.Month, o.CreationTime.Year })
             .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
             .Select(g => new MonthlyRevenueDto
@@ -70,12 +70,13 @@ internal sealed class GetInstructorDashboardDataQueryHandler : AbstractQueryHand
             .ToList();
 
         // 3. Top 5 Courses for this instructor
-        var topCourses = await (
+        List<TopCourseDto> topCourses = await (
             from orderItem in DbContext.OrderItems
             join order in DbContext.Orders on orderItem.OrderId equals order.Id
             join course in DbContext.Courses on orderItem.CourseId equals course.Id
             where course.InstructorId == instructorId && order.Status == OrderStatus.Paid
-            group new { orderItem, course } by new { course.Id, course.Title } into g
+            group new { orderItem, course } by new { course.Id, course.Title }
+            into g
             orderby g.Sum(x => x.orderItem.Price) descending
             select new TopCourseDto
             {
@@ -94,7 +95,9 @@ internal sealed class GetInstructorDashboardDataQueryHandler : AbstractQueryHand
             TotalOrders = totalOrders,
             RevenueByMonth = revenueByMonth,
             TopCourses = topCourses,
-            TopInstructors = [] // Instructors don't see a ranking of other instructors in their personal dashboard
+            TopInstructors = []
         };
     }
+
+    private sealed record MonthlyOrderDto(decimal Price, DateTimeOffset CreationTime);
 }

@@ -1,5 +1,5 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.DTOs;
+using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Infrastructure;
 using Microsoft.AspNetCore.Http;

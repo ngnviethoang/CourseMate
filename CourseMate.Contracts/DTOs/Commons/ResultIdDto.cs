@@ -1,4 +1,4 @@
-﻿namespace CourseMate.Contracts.DTOs;
+﻿namespace CourseMate.Contracts.DTOs.Commons;
 
 public class ResultIdDto
 {

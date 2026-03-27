@@ -1,3 +1,4 @@
+using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Enums;
 using MediatR;
 
