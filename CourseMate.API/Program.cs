@@ -57,6 +57,7 @@ try
     });
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate")!);
+    builder.Services.AddHangfireServer();
     builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;

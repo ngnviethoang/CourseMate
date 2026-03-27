@@ -1,6 +1,6 @@
-﻿dotnet ef migrations add --project CourseMate.Infrastructure\CourseMate.Infrastructure.csproj --startup-project CourseMate.API\CourseMate.API.csproj --context CourseMateDbContext --configuration Debug Initial --output-dir Migrations
+﻿dotnet ef migrations add --project CourseMate.Persistent\CourseMate.Persistent.csproj --startup-project CourseMate.API\CourseMate.API.csproj --context CourseMateDbContext --configuration Debug Initial --output-dir Migrations
 
-dotnet ef database update --project CourseMate.Infrastructure\CourseMate.Infrastructure.csproj --startup-project CourseMate.API\CourseMate.API.csproj --context CourseMateDbContext --configuration Debug 20260318164822_AddUserLessonProgressesTable
+dotnet ef database update --project CourseMate.Persistent\CourseMate.Persistent.csproj --startup-project CourseMate.API\CourseMate.API.csproj --context CourseMateDbContext --configuration Debug 20260318164822_AddUserLessonProgressesTable
 
 dotnet run --launch-profile https --project CourseMate.API/CourseMate.API.csproj
 
