@@ -11,7 +11,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace CourseMate.Application.Commands.SlideGen;
+namespace CourseMate.Application.Commands.Instructors;
 
 internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandler<CreateLessonMaterialCommand, ProcessingStatusDto>
 {

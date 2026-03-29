@@ -1,7 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using CourseMate.Contracts.Enums;
 using MediatR;
 
-namespace CourseMate.Contracts.DTOs.Admins;
+namespace CourseMate.Contracts.DTOs.Instructors;
 
 public class UpdateLessonCommand : IRequest<int>
 {
@@ -11,6 +12,7 @@ public class UpdateLessonCommand : IRequest<int>
 
     public Guid CourseId { get; set; }
 
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
     public string Title { get; set; } = string.Empty;
 
     public LessonType LessonType { get; set; }

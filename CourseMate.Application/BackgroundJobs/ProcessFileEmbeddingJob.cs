@@ -43,6 +43,14 @@ public class ProcessFileEmbeddingJob
             return;
         }
 
+        string? parentPath = Path.GetDirectoryName(fileEntry.FilePath);
+
+        if (parentPath is null)
+        {
+            _logger.LogWarning("Cannot get parent directory from file path: {FilePath} for file ID: {FileId}", fileEntry.FilePath, fileEntry.Id);
+            return;
+        }
+
         string fileExtension = Path.GetExtension(fileEntry.FileName).ToLowerInvariant();
         if (fileExtension is ".doc" or ".docx" or ".pdf" or ".txt")
         {
@@ -57,8 +65,9 @@ public class ProcessFileEmbeddingJob
             foreach (Chunk chunk in chunks)
             {
                 _logger.LogDebug("Generating embedding for chunk {ChunkIndex} of file {FileId}", chunkCount, fileId);
+
                 string chunkFileName = $"{fileId}_chunk{chunkCount}.txt";
-                string chunkFilePath = Path.Combine(fileEntry.FilePath, chunkFileName);
+                string chunkFilePath = Path.Combine(parentPath, chunkFileName);
                 await using FileStream stream = new(chunkFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
                 await stream.WriteAsync(Encoding.UTF8.GetBytes(chunk.Content), cancellationToken);
                 FileChunk fileChunk = new(Guid.NewGuid(), fileEntry.Id, chunkCount, chunkFilePath, chunk.Content.Length, true);

@@ -1,8 +1,9 @@
+using System.ComponentModel.DataAnnotations;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Enums;
 using MediatR;
 
-namespace CourseMate.Contracts.DTOs.Admins;
+namespace CourseMate.Contracts.DTOs.Instructors;
 
 public class CreateLessonCommand : IRequest<ResultIdDto>
 {
@@ -10,6 +11,7 @@ public class CreateLessonCommand : IRequest<ResultIdDto>
 
     public Guid CourseId { get; set; }
 
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
     public string Title { get; set; } = string.Empty;
 
     public LessonType LessonType { get; set; }
