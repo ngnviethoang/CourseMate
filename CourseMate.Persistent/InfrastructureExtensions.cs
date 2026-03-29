@@ -1,4 +1,4 @@
-﻿using Hangfire;
+using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,11 +14,11 @@ public static class InfrastructureExtensions
             // https://www.npgsql.org/efcore/release-notes/6.0.html#opting-out-of-the-new-timestamp-mapping-logic
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-            services.AddDbContextPool<CourseMateDbContext>(options => options.UseNpgsql(courseMateConnection));
+            services.AddDbContextPool<CourseMateDbContext>(options => options.UseNpgsql(courseMateConnection, o => o.UseVector()));
 
             services.AddDbContextPool<CourseMateReadOnlyDbContext>(options =>
             {
-                options.UseNpgsql(courseMateConnection);
+                options.UseNpgsql(courseMateConnection, o => o.UseVector());
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 

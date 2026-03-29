@@ -13,17 +13,17 @@ using Microsoft.Extensions.Options;
 
 namespace CourseMate.Application.Commands.SlideGen;
 
-internal sealed class UploadMaterialCommandHandler : AbstractCommandHandler<UploadMaterialCommand, ProcessingStatusDto>
+internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandler<CreateLessonMaterialCommand, ProcessingStatusDto>
 {
     private readonly IEnumerable<string> _allowedImageExtensions = [".doc", ".docx", ".pdf"];
     private readonly StorageOptions _storageOptions;
 
-    public UploadMaterialCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor, IOptions<StorageOptions> storageOptions) : base(dbContext, httpContextAccessor)
+    public CreateLessonMaterialCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor, IOptions<StorageOptions> storageOptions) : base(dbContext, httpContextAccessor)
     {
         _storageOptions = storageOptions.Value;
     }
 
-    public override async Task<ProcessingStatusDto> Handle(UploadMaterialCommand request, CancellationToken cancellationToken)
+    public override async Task<ProcessingStatusDto> Handle(CreateLessonMaterialCommand request, CancellationToken cancellationToken)
     {
         string fileExtension = Path.GetExtension(request.FileName);
         if (!_allowedImageExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
@@ -38,29 +38,33 @@ internal sealed class UploadMaterialCommandHandler : AbstractCommandHandler<Uplo
             Directory.CreateDirectory(documentsDir);
         }
 
-        Guid materialId = Guid.NewGuid();
-        string fileName = $"{materialId:N}{fileExtension}";
+        Guid fileEntryId = Guid.NewGuid();
+        string fileName = $"{fileEntryId}{fileExtension}";
         string filePath = Path.Combine(documentsDir, fileName);
 
         await using FileStream stream = new(filePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
         await stream.WriteAsync(request.Content, cancellationToken);
 
-        string jobId = BackgroundJob.Enqueue<ParseDocumentJob>(job => job.ExecuteAsync(materialId, cancellationToken));
-        LessonMaterial material = new(materialId,
-            request.LessonId,
+        FileEntry fileEntry = new(fileEntryId,
+            fileName,
+            request.Content.LongLength,
             filePath,
             string.Empty,
-            string.Empty,
-            string.Empty,
-            DocumentProcessingStatus.Uploaded,
-            jobId);
-        DbContext.LessonMaterials.Add(material);
+            FileStatus.Processing,
+            0,
+            0, DateTimeOffset.UtcNow,
+            FileType.Document);
+
+        DbContext.FileEntries.Add(fileEntry);
+
+        string embeddingJobId = BackgroundJob.Enqueue<ProcessFileEmbeddingJob>(job => job.ExecuteAsync(fileEntryId, cancellationToken));
+        BackgroundJob.ContinueJobWith<GenerateOutlineJob>(embeddingJobId, job => job.ExecuteAsync(request.LessonId, fileEntryId, cancellationToken));
 
         return new ProcessingStatusDto
         {
-            LessonMaterialId = materialId,
+            LessonMaterialId = fileEntryId,
             LessonId = request.LessonId,
-            Status = DocumentProcessingStatus.Uploaded
+            Status = ProcessingStatus.Processing
         };
     }
 }

@@ -2,7 +2,6 @@ using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.DTOs.Instructors;
-using CourseMate.Contracts.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -171,7 +170,7 @@ public class InstructorController : ControllerBase
     ///     Upload a Word/PDF file for the lesson and trigger AI processing (parse + outline generation)
     /// </summary>
     [HttpPost("{lessonId:guid}/materials")]
-    public async Task<ActionResult> UploadMaterialAsync(Guid lessonId, IFormFile request)
+    public async Task<ActionResult> CreateLessonMaterialAsync(Guid lessonId, IFormFile request)
     {
         if (request.Length == 0)
         {
@@ -180,7 +179,7 @@ public class InstructorController : ControllerBase
 
         using MemoryStream stream = new();
         await request.CopyToAsync(stream);
-        ProcessingStatusDto result = await _mediator.Send(new UploadMaterialCommand
+        ProcessingStatusDto result = await _mediator.Send(new CreateLessonMaterialCommand
         {
             LessonId = lessonId,
             FileName = request.FileName,
@@ -237,25 +236,7 @@ public class InstructorController : ControllerBase
     [HttpGet("{lessonId:guid}/slide")]
     public async Task<ActionResult> DownloadSlideAsync(Guid lessonId)
     {
-        // Get status to find the slide file path
-        ProcessingStatusDto status = await _mediator.Send(new GetProcessingStatusQuery { LessonId = lessonId });
-        if (status.Status != DocumentProcessingStatus.SlideReady)
-        {
-            return BadRequest(new { message = "Slide is not ready yet.", status = status.Status.ToString() });
-        }
-
-        OutlineDto outline = await _mediator.Send(new GetOutlineQuery { LessonId = lessonId });
-
-        // We need to get the file path from the material — use a simple query
-        ProcessingStatusDto material = await _mediator.Send(new GetProcessingStatusQuery { LessonId = lessonId });
-
-        // For now return the status — the actual file download requires accessing the file path
-        // which we'll handle through a dedicated query if needed
-        return Ok(new
-        {
-            message = "Slide is ready for download.",
-            status
-        });
+        return Ok();
     }
 
     /// <summary>

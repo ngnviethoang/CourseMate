@@ -41,12 +41,14 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
     public DbSet<UserLessonProgress> UserLessonProgresses { get; set; }
     public DbSet<FileEntry> FileEntries { get; set; }
     public DbSet<FileChunk> FileChunks { get; set; }
+    public DbSet<FileEntryEmbedding> FileEntryEmbeddings { get; set; }
     public DbSet<LessonMaterial> LessonMaterials { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.HasPostgresExtension("citext");
+        modelBuilder.HasPostgresExtension("vector");
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
         foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
         {

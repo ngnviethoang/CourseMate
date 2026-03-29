@@ -47,7 +47,6 @@ internal sealed class UploadImageCommandHandler : AbstractCommandHandler<UploadI
         FileEntry fileEntry = new(
             fileId,
             fileName,
-            request.ContentType,
             request.Content.Length,
             filePath,
             string.Empty,

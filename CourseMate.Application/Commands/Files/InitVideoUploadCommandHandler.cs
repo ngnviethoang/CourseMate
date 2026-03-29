@@ -48,7 +48,6 @@ internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<Ini
         FileEntry fileEntry = new(
             fileId,
             request.FileName,
-            "video/mp4",
             0,
             string.Empty,
             tempDir,

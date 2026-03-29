@@ -1,7 +1,7 @@
-﻿services:
+services:
     db:
         container_name: db
-        image: postgres:16-alpine
+        image: pgvector/pgvector:pg16-trixie
         ports:
             - "5432:5432"
         restart: always

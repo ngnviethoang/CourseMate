@@ -35,6 +35,7 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<IdentityUser
     public DbSet<UserLessonProgress> UserLessonProgresses { get; set; }
     public DbSet<FileEntry> FileEntries { get; set; }
     public DbSet<FileChunk> FileChunks { get; set; }
+    public DbSet<FileEntryEmbedding> FileEntryEmbeddings { get; set; }
     public DbSet<LessonMaterial> LessonMaterials { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

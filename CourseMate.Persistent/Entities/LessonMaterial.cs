@@ -7,33 +7,23 @@ namespace CourseMate.Persistent.Entities;
 
 public class LessonMaterial : Entity
 {
-    public LessonMaterial(Guid id, Guid lessonId, string documentFilePath, string parsedContent, string outline, string slideFilePath, DocumentProcessingStatus status, string hangfireJobId) : base(id)
+    public LessonMaterial(Guid id, Guid lessonId, Guid documentFileId, LessonMaterialState status, string outline, Guid? slideFileId) : base(id)
     {
         LessonId = lessonId;
-        DocumentFilePath = documentFilePath;
-        ParsedContent = parsedContent;
         Outline = outline;
-        SlideFilePath = slideFilePath;
+        SlideFileId = slideFileId;
+        DocumentFileId = documentFileId;
         Status = status;
-        HangfireJobId = hangfireJobId;
     }
 
     public Guid LessonId { get; set; }
 
-    [MaxLength(CourseMateConsts.DefaultMaxLength)]
-    public string DocumentFilePath { get; set; }
-
-    [MaxLength(CourseMateConsts.ContentMaxLength)]
-    public string ParsedContent { get; set; }
-
     [MaxLength(CourseMateConsts.ContentMaxLength)]
     public string Outline { get; set; }
 
-    [MaxLength(CourseMateConsts.DefaultMaxLength)]
-    public string SlideFilePath { get; set; }
+    public Guid? SlideFileId { get; set; }
 
-    public DocumentProcessingStatus Status { get; set; }
+    public Guid DocumentFileId { get; set; }
 
-    [MaxLength(CourseMateConsts.DefaultMaxLength)]
-    public string HangfireJobId { get; set; }
+    public LessonMaterialState Status { get; set; }
 }

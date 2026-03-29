@@ -4,6 +4,7 @@ using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Files;
@@ -33,11 +34,17 @@ internal sealed class GetImageFileQueryHandler : AbstractQueryHandler<GetImageFi
 
         byte[] fileData = await File.ReadAllBytesAsync(fileEntry.FilePath, cancellationToken);
 
+        FileExtensionContentTypeProvider provider = new();
+        if (!provider.TryGetContentType(fileEntry.FileName, out string? contentType))
+        {
+            contentType = "application/octet-stream";
+        }
+
         return new ImageFileResponse
         {
             FileName = fileEntry.FileName,
-            ContentType = fileEntry.ContentType,
-            Content = fileData
+            Content = fileData,
+            ContentType = contentType
         };
     }
 }

@@ -1,80 +1,119 @@
-using System.Text.Json;
-using CourseMate.Application.Services.AiResearchServices;
-using CourseMate.Contracts.DTOs.Instructors;
+using CourseMate.Application.Services.AI;
 using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Pgvector;
+using Pgvector.EntityFrameworkCore;
 
 namespace CourseMate.Application.BackgroundJobs;
 
 public class GenerateOutlineJob
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = false
-    };
-
-    private readonly IAiResearchService _aiResearchService;
+    private readonly IAiService _aiService;
     private readonly CourseMateDbContext _dbContext;
     private readonly ILogger<GenerateOutlineJob> _logger;
 
     public GenerateOutlineJob(
         CourseMateDbContext dbContext,
-        IAiResearchService aiResearchService,
-        ILogger<GenerateOutlineJob> logger)
+        ILogger<GenerateOutlineJob> logger,
+        IAiService aiService)
     {
         _dbContext = dbContext;
-        _aiResearchService = aiResearchService;
         _logger = logger;
+        _aiService = aiService;
     }
 
     [AutomaticRetry(Attempts = 2)]
-    public async Task ExecuteAsync(Guid materialId, CancellationToken cancellationToken)
+    public async Task ExecuteAsync(Guid lessonId, Guid documentFileId, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("GenerateOutlineJob started for MaterialId: {MaterialId}", materialId);
+        _logger.LogInformation("Start GenerateOutline {FileEntryId}", documentFileId);
 
-        LessonMaterial? material = await _dbContext.LessonMaterials.FirstOrDefaultAsync(m => m.Id == materialId, cancellationToken);
+        // 1. Create query embedding
+        ReadOnlyMemory<float> embedding = await _aiService.GenerateVectorAsync("main topics, key concepts, lesson structure", cancellationToken);
+        Vector queryVector = new(embedding);
 
-        if (material is null)
+        // 2. Search relevant chunks
+        List<Guid> fileChunkIds = await _dbContext.FileEntryEmbeddings
+            .Where(x => x.FileEntryId == documentFileId)
+            .OrderBy(x => x.Embedding.CosineDistance(queryVector))
+            .Take(10)
+            .Select(x => x.FileChunkId)
+            .ToListAsync(cancellationToken);
+
+        // 3. Build context
+        List<FileChunk> fileChunks = await _dbContext.FileChunks
+            .Where(i => fileChunkIds.Contains(i.Id))
+            .ToListAsync(cancellationToken);
+        List<string> chunks = [];
+        foreach (FileChunk fileChunk in fileChunks)
         {
-            _logger.LogWarning("Material {MaterialId} not found", materialId);
-            return;
+            chunks.Add(await File.ReadAllTextAsync(fileChunk.ChunkPath, cancellationToken));
         }
 
-        if (string.IsNullOrEmpty(material.ParsedContent))
-        {
-            _logger.LogWarning("Material {MaterialId} has no parsed content", materialId);
-            material.Status = DocumentProcessingStatus.Failed;
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            return;
-        }
+        string docContext = string.Join("\n\n---\n\n", chunks);
 
-        try
-        {
-            // Update status
-            material.Status = DocumentProcessingStatus.GeneratingOutline;
-            await _dbContext.SaveChangesAsync(cancellationToken);
+        // 4. External research (LLM simulate search)
+        string externalContext = await ExternalSearchAsync(docContext, cancellationToken);
 
-            // Call AI
-            List<OutlineSectionDto> outline = await _aiResearchService.GenerateOutlineAsync(material.ParsedContent, cancellationToken);
+        // 6. Generate outline
+        string outlineJson = await GenerateOutlineAsync(docContext, externalContext, cancellationToken);
 
-            // Save outline
-            material.Outline = JsonSerializer.Serialize(outline, JsonOptions);
-            material.Status = DocumentProcessingStatus.OutlineReady;
-            await _dbContext.SaveChangesAsync(cancellationToken);
+        // 7. Save
+        LessonMaterial material = new(Guid.NewGuid(),
+            lessonId,
+            documentFileId,
+            LessonMaterialState.GeneratingEmbedding,
+            outlineJson,
+            null);
+        await _dbContext.LessonMaterials.AddAsync(material, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Outline generated with {SectionCount} sections for MaterialId: {MaterialId}", outline.Count, materialId);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to generate outline for MaterialId: {MaterialId}", materialId);
-            material.Status = DocumentProcessingStatus.Failed;
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            throw;
-        }
+        _logger.LogInformation("Finished GenerateOutline {FileEntryId}", documentFileId);
+    }
+
+    private async Task<string> ExternalSearchAsync(string context, CancellationToken ct)
+    {
+        string prompt = $$"""
+                          You are a research assistant.
+                          Search and summarize knowledge about:
+                          {{context}}
+
+                          Include:
+                          - Key concepts
+                          - Best practices
+                          - Real-world examples
+
+                          Keep concise.
+                          """;
+
+        return await _aiService.DeepResearchAsync(prompt, ct);
+    }
+
+    private async Task<string> GenerateOutlineAsync(string docContext, string externalContext, CancellationToken ct)
+    {
+        string prompt = $$"""
+                          You are an expert educator.
+                          Create a lesson outline from:
+
+                          DOCUMENT: {{docContext}}
+
+                          EXTERNAL: {{externalContext}}
+
+                          Return JSON array:
+                          [
+                            {
+                              "order": 1,
+                              "title": "...",
+                              "bullets": ["..."],
+                              "speakerNotes": "...",
+                              "imageSuggestion": "..."
+                            }
+                          ]
+                          """;
+
+        return await _aiService.GenerateContentAsync(prompt, ct);
     }
 }

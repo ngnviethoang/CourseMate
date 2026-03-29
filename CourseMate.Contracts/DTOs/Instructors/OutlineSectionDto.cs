@@ -1,4 +1,4 @@
-﻿namespace CourseMate.Contracts.DTOs.Instructors;
+namespace CourseMate.Contracts.DTOs.Instructors;
 
 public class OutlineSectionDto
 {

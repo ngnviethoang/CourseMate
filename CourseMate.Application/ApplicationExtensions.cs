@@ -1,7 +1,5 @@
 using CourseMate.Application.Behaviors;
-using CourseMate.Application.Services.AiResearchServices;
-using CourseMate.Application.Services.SlideGeneratorServices;
-using CourseMate.Application.Services.WordParserServices;
+using CourseMate.Application.Services.AI;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CourseMate.Application;
@@ -20,9 +18,7 @@ public static class ApplicationExtensions
                 cfg.AddOpenBehavior(typeof(TransactionPipelineBehavior<,>));
             });
 
-            services.AddScoped<IWordParserService, WordParserService>();
-            services.AddScoped<IAiResearchService, AiResearchService>();
-            services.AddScoped<ISlideGeneratorService, SlideGeneratorService>();
+            services.AddTransient<IAiService, GoogleAiService>();
 
             return services;
         }
