@@ -10,6 +10,8 @@ import { CourseDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 
+import { useRouter } from 'next/navigation'
+
 // Static mock reviews – no review API yet
 function getReview(idx: number) {
   const ratings = [4.9, 4.8, 4.7, 4.6, 4.8, 4.5, 4.9, 4.7]
@@ -65,6 +67,7 @@ interface CourseCardProps {
 }
 
 function CourseCard({ course, index }: CourseCardProps) {
+  const router = useRouter()
   const { rating, students, badge } = getReview(index)
   const [adding, setAdding] = useState(false)
   const gradient = GRADIENT_FALLBACKS[index % GRADIENT_FALLBACKS.length]
@@ -72,6 +75,14 @@ function CourseCard({ course, index }: CourseCardProps) {
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    
+    // Redirect logic: if there is no accessToken, jump to login.
+    const hasToken = document.cookie.includes('accessToken=')
+    if (!hasToken) {
+      router.push('/login')
+      return
+    }
+
     try {
       setAdding(true)
       await studentService.addToCart(course.id)

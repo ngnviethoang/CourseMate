@@ -36,6 +36,13 @@ export default function CourseDetailPage() {
 
   const handleAddToCart = async () => {
     if (!course) return
+
+    const hasToken = document.cookie.includes('accessToken=')
+    if (!hasToken) {
+      router.push('/login')
+      return
+    }
+
     setAddingToCart(true)
     try {
       await studentService.addToCart(course.id)

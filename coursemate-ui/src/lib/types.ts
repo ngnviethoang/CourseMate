@@ -187,6 +187,7 @@ export interface CreateUserRequest {
   email: string
   phoneNumber: string
   password: string
+  role?: string
 }
 
 export interface UpdateUserRequest {

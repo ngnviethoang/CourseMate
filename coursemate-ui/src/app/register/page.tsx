@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { GraduationCap, ArrowRight, Loader2, Lock, User, Mail, BookOpen, Briefcase } from 'lucide-react'
+import { GraduationCap, ArrowRight, Loader2, Lock, User, Mail, BookOpen, Briefcase, Info } from 'lucide-react'
 import { authService } from '@/lib/auth-service'
 import { toast } from 'sonner'
 import type { RegisterCommand } from '@/lib/types'
@@ -38,7 +38,12 @@ export default function RegisterPage() {
 
     try {
       await authService.register(payload)
-      toast.success('Registration successful! You can now sign in.')
+      if (payload.role === 'Instructor') {
+        toast.success('Instructor registration successful! Your account is pending admin approval.')
+      } else {
+        toast.success('Registration successful! You can now sign in.')
+      }
+      
       // For now, redirect to the admin login page or home page until generic login is implemented
       router.push('/management/login')
     } catch (err: unknown) {
@@ -102,11 +107,20 @@ export default function RegisterPage() {
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         ) : (
           <>
-            Create Account
+            {role === 'Instructor' ? 'Apply to Teach' : 'Create Account'}
             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
           </>
         )}
       </Button>
+
+      {role === 'Instructor' && (
+        <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/30 p-3 rounded-md mt-4">
+          <Info className="w-4 h-4 shrink-0 text-primary" />
+          <p>
+            Instructor accounts require admin approval before you can start creating courses. You will be notified once approved.
+          </p>
+        </div>
+      )}
     </div>
   )
 
