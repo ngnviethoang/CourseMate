@@ -15,7 +15,7 @@ public static class DbSeeder
         UserManager<IdentityUser<Guid>> userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser<Guid>>>();
         CourseMateDbContext dbContext = scope.ServiceProvider.GetRequiredService<CourseMateDbContext>();
 
-        IReadOnlyList<string> roles = [Roles.Admin, Roles.Instructor, Roles.Student];
+        IReadOnlyList<string> roles = [Roles.Admin, Roles.Instructor, Roles.Student, Roles.PendingInstructor];
         foreach (string role in roles)
         {
             await roleManager.CreateAsync(new IdentityRole<Guid>(role));

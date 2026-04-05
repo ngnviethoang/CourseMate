@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
 namespace CourseMate.Application.Shared;
@@ -16,5 +16,11 @@ public abstract class AbstractRequestHandler
     {
         string? userIdString = HttpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
         return Guid.TryParse(userIdString, out Guid userId) ? userId : throw new UnauthorizedAccessException();
+    }
+
+    protected Guid? TryGetCurrentUserId()
+    {
+        string? userIdString = HttpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(userIdString, out Guid userId) ? userId : null;
     }
 }

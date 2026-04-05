@@ -33,7 +33,11 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
             throw new BusinessException(result.Errors.FirstOrDefault()?.Description ?? string.Empty);
         }
 
-        await _userManager.AddToRoleAsync(user, request.Role.ToString());
+        string assignedRole = request.Role == RegisterRole.Instructor 
+            ? Roles.PendingInstructor 
+            : request.Role.ToString();
+
+        await _userManager.AddToRoleAsync(user, assignedRole);
 
         // TODO SendConfirmationEmailAsync
         return Codes.Success;

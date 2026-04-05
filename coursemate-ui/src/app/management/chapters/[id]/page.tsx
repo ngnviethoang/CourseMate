@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Plus, Trash2, Loader2, BookOpen, Sparkles, ChevronDown, ChevronUp } from 'lucide-react'
 import { toast } from 'sonner'
-import { chapterService, lessonService, courseService } from '@/lib/admin-service'
+import { chapterService, lessonService, courseService, aiService } from '@/lib/admin-service'
 import { Pagination } from '@/components/admin/pagination'
 import type {
   ChapterDto,
@@ -34,20 +34,22 @@ import Link from 'next/link'
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
-const LESSON_TYPES: LessonType[] = ['Video', 'Reading', 'Quiz', 'Coding']
+const LESSON_TYPES: LessonType[] = ['Video', 'Reading', 'Quiz', 'Coding', 'Slide']
 
 const LESSON_TYPE_COLOR: Record<LessonType, string> = {
   Video: 'bg-blue-500/10 text-blue-600 border-blue-200',
   Reading: 'bg-green-500/10 text-green-600 border-green-200',
   Quiz: 'bg-orange-500/10 text-orange-600 border-orange-200',
-  Coding: 'bg-purple-500/10 text-purple-600 border-purple-200'
+  Coding: 'bg-purple-500/10 text-purple-600 border-purple-200',
+  Slide: 'bg-teal-500/10 text-teal-600 border-teal-200'
 }
 
 const LESSON_TYPE_ICON: Record<LessonType, string> = {
   Video: '🎬',
   Reading: '📖',
   Quiz: '📝',
-  Coding: '💻'
+  Coding: '💻',
+  Slide: '📽️'
 }
 
 const SYSTEM_PROMPT = `Role: Bạn là một chuyên gia thiết kế chương trình đào tạo và lập trình viên Full-stack.
@@ -158,6 +160,23 @@ print(f"Kết quả: {result}")  # Output: 10
         explanation: 'Dependency Injection (DI) cho phép object nhận dependencies từ bên ngoài, giúp code dễ test và bảo trì.'
       }
     ]
+  }),
+  Slide: (name, raw) => ({
+    lesson_info: {
+      title: name || 'Bài giảng Slide',
+      summary: 'Tóm tắt bài giảng',
+      learning_outcomes: ['Hiểu tổng quan', 'Nắm được các vấn đề cốt lõi']
+    },
+    slides: [
+      {
+        slide_number: 1,
+        title: name || 'Tiêu đề Slide',
+        type: 'content_slide',
+        bullet_points: ['Ý chính 1', 'Ý chính 2'],
+        explanation_for_teacher: 'Giải thích...',
+        visual_idea: 'Gợi ý hình ảnh'
+      }
+    ]
   })
 }
 
@@ -199,6 +218,7 @@ export default function ChapterDetailPage() {
 
   // AI Generation state
   const [aiRawContent, setAiRawContent] = useState('')
+  const [aiFile, setAiFile] = useState<File | null>(null)
   const [aiGenerating, setAiGenerating] = useState(false)
   const [showPrompt, setShowPrompt] = useState(false)
   const [aiMode, setAiMode] = useState(false)
@@ -239,6 +259,7 @@ export default function ChapterDetailPage() {
   function openAddLesson() {
     setLessonForm(emptyLessonForm(chapter?.courseId || '', id))
     setAiRawContent('')
+    setAiFile(null)
     setAiMode(false)
     setShowPrompt(false)
     setLessonDialog(true)
@@ -270,13 +291,20 @@ export default function ChapterDetailPage() {
     }
     setAiGenerating(true)
     try {
-      // Simulate AI processing
-      await new Promise(r => setTimeout(r, 2200))
-      const generator = MOCK_AI_DATA[lessonForm.lessonType]
-      const aiContent = generator(lessonForm.title, aiRawContent)
+      let aiContent
+
+      if (lessonForm.lessonType === 'Slide') {
+        const response = await aiService.generateLesson(aiRawContent || lessonForm.title, aiFile || undefined)
+        aiContent = response
+      } else {
+        // Simulate AI processing for Mock Data
+        await new Promise(r => setTimeout(r, 2200))
+        const generator = MOCK_AI_DATA[lessonForm.lessonType]
+        aiContent = generator(lessonForm.title, aiRawContent)
+      }
 
       // Use the generated title if available
-      const generatedTitle = (aiContent as Record<string, string>).title || lessonForm.title
+      const generatedTitle = (aiContent?.lesson_info?.title) || (aiContent as Record<string, string>)?.title || lessonForm.title
 
       // Create the real lesson via API
       const createdLesson = await lessonService.create({ ...lessonForm, title: generatedTitle })
@@ -447,7 +475,7 @@ export default function ChapterDetailPage() {
                 onClick={() => setAiMode(true)}
                 className={`flex-1 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-1.5 ${aiMode ? 'bg-purple-600 text-white shadow' : 'text-muted-foreground hover:text-foreground'}`}
               >
-                <Sparkles className="h-3.5 w-3.5" /> Tạo bằng AI
+                <Sparkles className="h-3.5 w-3.5" /> Hỗ trợ soạn bài
               </button>
             </div>
 
@@ -497,33 +525,43 @@ export default function ChapterDetailPage() {
                     <Sparkles className="h-4 w-4 text-purple-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-purple-700 dark:text-purple-400">AI Content Generator</p>
+                    <p className="text-sm font-semibold text-purple-700 dark:text-purple-400">Trợ lý Phân tích và Phân rã tài liệu</p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      AI sẽ tạo nội dung bài học <Badge variant="outline" className="text-xs inline-flex h-4 px-1 text-purple-600 border-purple-300">{lessonForm.lessonType}</Badge> đầy đủ và tự động lưu vào hệ thống.
+                      Hệ thống sẽ tự động bóc tách tài liệu thành phân đoạn bài học <Badge variant="outline" className="text-xs inline-flex h-4 px-1 text-purple-600 border-purple-300">{lessonForm.lessonType}</Badge> đầy đủ và chuẩn xác.
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Mô tả sơ lược nội dung (tuỳ chọn)</Label>
-                  <Textarea
-                    placeholder={`Nhập mô tả ngắn để AI tạo nội dung phù hợp hơn...`}
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-medium">Nội dung tài liệu thô <span className="text-destructive">*</span></Label>
+                    <span className="text-xs text-muted-foreground">PDF / Word / TXT</span>
+                  </div>
+                  <Input
+                    type="file"
+                    accept=".pdf,.docx,.txt,.md"
+                    onChange={e => setAiFile(e.target.files?.[0] || null)}
+                    className="text-xs file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                  />
+                  {/* <Textarea
+                    placeholder="Hoặc dán toàn bộ nội dung tài liệu, outline báo cáo, bài viết thô vào đây để trợ lý tự động chuyển đổi..."
                     value={aiRawContent}
                     onChange={e => setAiRawContent(e.target.value)}
-                    rows={2}
-                    className="resize-none text-sm"
-                  />
+                    rows={6}
+                    className="resize-none text-sm font-mono bg-background mt-2"
+                  /> */}
                 </div>
 
-                <div className="rounded-lg bg-card border p-3 text-xs space-y-1 text-muted-foreground">
+                {/* <div className="rounded-lg bg-card border p-3 text-xs space-y-1 text-muted-foreground">
                   <p className="font-medium text-foreground mb-1.5">📦 Nội dung sẽ được tạo và lưu:</p>
                   {lessonForm.lessonType === 'Video' && (<><p>• Script 3 phân đoạn + 5 Timestamps</p></>)}
                   {lessonForm.lessonType === 'Reading' && (<><p>• Bài đọc Markdown đầy đủ (H1, H2, Code Block)</p></>)}
                   {lessonForm.lessonType === 'Coding' && (<><p>• Đề bài + Boilerplate + Solution + 5 Test Cases</p></>)}
                   {lessonForm.lessonType === 'Quiz' && (<><p>• 5 câu hỏi trắc nghiệm + Đáp án + Giải thích</p></>)}
-                </div>
+                  {lessonForm.lessonType === 'Slide' && (<><p>• Outline bài học + Danh sách Slides chi tiết</p></>)}
+                </div> */}
 
-                <div className="rounded-lg border bg-muted/30">
+                {/* <div className="rounded-lg border bg-muted/30">
                   <button
                     type="button"
                     onClick={() => setShowPrompt(p => !p)}
@@ -539,7 +577,7 @@ export default function ChapterDetailPage() {
                       </pre>
                     </div>
                   )}
-                </div>
+                </div> */}
               </div>
             )}
           </div>
@@ -551,13 +589,13 @@ export default function ChapterDetailPage() {
             {aiMode ? (
               <Button
                 onClick={generateAndCreateLesson}
-                disabled={aiGenerating || !lessonForm.title.trim()}
+                disabled={aiGenerating || !lessonForm.title.trim() || (!aiRawContent.trim() && !aiFile)}
                 className="gap-2 bg-purple-600 hover:bg-purple-700 text-white min-w-[200px]"
               >
                 {aiGenerating ? (
-                  <><Loader2 className="h-4 w-4 animate-spin" /> Đang tạo nội dung AI...</>
+                  <><Loader2 className="h-4 w-4 animate-spin" /> Đang bóc tách & xử lý...</>
                 ) : (
-                  <><Sparkles className="h-4 w-4" /> Tạo bài học bằng AI</>
+                  <><Sparkles className="h-4 w-4" /> Bắt đầu tạo tự động</>
                 )}
               </Button>
             ) : (

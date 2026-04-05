@@ -147,8 +147,8 @@ export const chapterService = {
 
 // ─── Lesson ──────────────────────────────────────────────────────────────────
 
-const LESSON_TYPE_TO_NUMBER: Record<string, number> = { Video: 1, Reading: 2, Coding: 3, Quiz: 4 }
-const NUMBER_TO_LESSON_TYPE: Record<number, string> = { 1: 'Video', 2: 'Reading', 3: 'Coding', 4: 'Quiz' }
+const LESSON_TYPE_TO_NUMBER: Record<string, number> = { Video: 1, Reading: 2, Coding: 3, Quiz: 4, Slide: 5 }
+const NUMBER_TO_LESSON_TYPE: Record<number, string> = { 1: 'Video', 2: 'Reading', 3: 'Coding', 4: 'Quiz', 5: 'Slide' }
 
 export const lessonService = {
   list: async (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string; chapterId?: string }) => {
@@ -227,3 +227,15 @@ export const profileService = {
   updateProfile: (body: UpdateProfileRequest) => api.put<void>('/api/auth/profile', body),
   changePassword: (body: ChangePasswordRequest) => api.post<void>('/api/auth/change-password', body)
 }
+
+// ─── AI ───────────────────────────────────────────────────────────────────────
+
+export const aiService = {
+  generateLesson: (rawContent?: string, file?: File) => {
+    const formData = new FormData()
+    if (rawContent) formData.append('rawContent', rawContent)
+    if (file) formData.append('file', file)
+    return api.post<any>('/api/ai/generate-lesson', formData)
+  }
+}
+

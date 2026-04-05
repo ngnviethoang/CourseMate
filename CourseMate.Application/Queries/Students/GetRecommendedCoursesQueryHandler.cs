@@ -18,21 +18,27 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
 
     public override async Task<PagedDto<CourseDto>> Handle(GetRecommendedCoursesQuery request, CancellationToken cancellationToken)
     {
-        Guid studentId = GetCurrentUserId();
+        Guid? studentId = TryGetCurrentUserId();
 
-        // 1. Get categories of courses the student has already purchased (Paid orders)
-        List<Guid> purchasedCourseIds = await (
-            from order in DbContext.Orders
-            join orderItem in DbContext.OrderItems on order.Id equals orderItem.OrderId
-            where order.StudentId == studentId && order.Status == OrderStatus.Paid
-            select orderItem.CourseId
-        ).ToListAsync(cancellationToken);
+        List<Guid> purchasedCourseIds = [];
+        List<Guid> purchasedCategoryIds = [];
 
-        List<Guid> purchasedCategoryIds = await (
-            from course in DbContext.Courses
-            where purchasedCourseIds.Contains(course.Id)
-            select course.CategoryId
-        ).Distinct().ToListAsync(cancellationToken);
+        // Only fetch purchase history if user is authenticated
+        if (studentId.HasValue)
+        {
+            purchasedCourseIds = await (
+                from order in DbContext.Orders
+                join orderItem in DbContext.OrderItems on order.Id equals orderItem.OrderId
+                where order.StudentId == studentId.Value && order.Status == OrderStatus.Paid
+                select orderItem.CourseId
+            ).ToListAsync(cancellationToken);
+
+            purchasedCategoryIds = await (
+                from course in DbContext.Courses
+                where purchasedCourseIds.Contains(course.Id)
+                select course.CategoryId
+            ).Distinct().ToListAsync(cancellationToken);
+        }
 
         // 2. Query published courses
         IQueryable<CourseDto> query =
@@ -56,9 +62,12 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
                 LastModificationTime = course.LastModificationTime
             };
 
-        query = query
-            .WhereIf(purchasedCategoryIds.Any(), c => purchasedCategoryIds.Contains(c.CategoryId) && !purchasedCourseIds.Contains(c.Id))
-            .Where(c => !purchasedCourseIds.Contains(c.Id));
+        if (purchasedCourseIds.Count > 0)
+        {
+            query = query
+                .WhereIf(purchasedCategoryIds.Any(), c => purchasedCategoryIds.Contains(c.CategoryId) && !purchasedCourseIds.Contains(c.Id))
+                .Where(c => !purchasedCourseIds.Contains(c.Id));
+        }
 
         // 4. Order by popularity (paid enrollment count) and creation time
         IQueryable<CourseDto> finalQuery = query

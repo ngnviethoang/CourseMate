@@ -16,6 +16,19 @@ services:
             timeout: 5s
             retries: 5
 
+    chromadb:
+        container_name: chromadb
+        image: ghcr.io/chroma-core/chroma:latest
+        ports:
+            - "8000:8000"
+        restart: always
+        environment:
+            - IS_PERSISTENT=TRUE
+            - PERSIST_DIRECTORY=/chroma/chroma
+        volumes:
+            - ./etc/chroma:/chroma/chroma
+
+
     api:
         container_name: api
         build:

@@ -227,6 +227,31 @@ public class AdminController : ControllerBase
 
     #endregion
 
+    #region API Pending Instructors
+
+    [HttpGet("pending-instructors")]
+    public async Task<ActionResult> GetPendingInstructorsAsync([FromQuery] GetListPendingInstructorsQuery request)
+    {
+        PagedDto<UserDto> result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
+    [HttpPut("pending-instructors/{id:guid}/approve")]
+    public async Task<ActionResult> ApproveInstructorAsync(Guid id)
+    {
+        await _mediator.Send(new ApproveInstructorCommand { Id = id });
+        return NoContent();
+    }
+
+    [HttpPut("pending-instructors/{id:guid}/reject")]
+    public async Task<ActionResult> RejectInstructorAsync(Guid id)
+    {
+        await _mediator.Send(new RejectInstructorCommand { Id = id });
+        return NoContent();
+    }
+
+    #endregion
+
     #region API Order
 
     [HttpGet("orders")]

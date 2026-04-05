@@ -2,6 +2,7 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Exceptions;
+using CourseMate.Contracts.Constants;
 using CourseMate.Persistent;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -33,6 +34,8 @@ internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUs
 
         if (result.Succeeded)
         {
+            string roleToAssign = string.IsNullOrWhiteSpace(request.Role) ? Roles.Student : request.Role;
+            await _userManager.AddToRoleAsync(user, roleToAssign);
             return new ResultIdDto { Id = user.Id };
         }
 

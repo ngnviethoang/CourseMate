@@ -142,7 +142,7 @@ export interface UpdateChapterRequest {
 
 // ─── Lesson ───────────────────────────────────────────────────────────────────
 
-export type LessonType = 'Video' | 'Reading' | 'Quiz' | 'Coding'
+export type LessonType = 'Video' | 'Reading' | 'Quiz' | 'Coding' | 'Slide'
 
 export interface LessonDto {
   id: string
