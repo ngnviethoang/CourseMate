@@ -115,7 +115,9 @@ export default function CoursesPage() {
       ]
 
       if (isAdmin) {
-        promises.push(userService.list({ filter: '', pageSize: 25, sorting: 'userName' }).then(res => setUsers(res.items)))
+        promises.push(
+          userService.list({ filter: '', pageSize: 25, sorting: 'userName' }).then(res => setUsers(res.items))
+        )
       }
 
       await Promise.all(promises)
@@ -185,7 +187,10 @@ export default function CoursesPage() {
             {isAdmin ? 'Manage all courses in the platform' : 'Manage your courses and content'}
           </p>
         </div>
-        <Button onClick={openCreate} className="gap-2 h-12 px-6 text-base shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95">
+        <Button
+          onClick={openCreate}
+          className="gap-2 h-12 px-6 text-base shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+        >
           <Plus className="h-5 w-5" /> New Course
         </Button>
       </div>
@@ -229,8 +234,12 @@ export default function CoursesPage() {
                 <Plus className="h-8 w-8" />
               </div>
               <div>
-                <DialogTitle className="text-3xl font-black">{editing ? 'Edit Course' : 'Create New Course'}</DialogTitle>
-                <p className="text-primary-foreground/80 font-medium mt-1">Fill in the details below to {editing ? 'update' : 'publish'} your course</p>
+                <DialogTitle className="text-3xl font-black">
+                  {editing ? 'Edit Course' : 'Create New Course'}
+                </DialogTitle>
+                <p className="text-primary-foreground/80 font-medium mt-1">
+                  Fill in the details below to {editing ? 'update' : 'publish'} your course
+                </p>
               </div>
             </div>
           </DialogHeader>
@@ -238,13 +247,14 @@ export default function CoursesPage() {
           <div className="px-10 py-10 space-y-12 max-h-[60vh] overflow-y-auto custom-scrollbar bg-background">
             {/* Main Content Area - Grid Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-
               {/* Left Column - General Info & Assignment (2/3 width) */}
               <div className="lg:col-span-2 space-y-12">
                 <section className="space-y-6">
                   <div className="flex items-center gap-3 border-b border-primary/10 pb-3">
                     <div className="h-3 w-3 rounded-full bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
-                    <h3 className="text-base font-black uppercase tracking-[0.2em] text-foreground/80">General Information</h3>
+                    <h3 className="text-base font-black uppercase tracking-[0.2em] text-foreground/80">
+                      General Information
+                    </h3>
                   </div>
 
                   <div className="grid gap-8">
@@ -273,19 +283,29 @@ export default function CoursesPage() {
                 <section className="space-y-6">
                   <div className="flex items-center gap-3 border-b border-primary/10 pb-3">
                     <div className="h-3 w-3 rounded-full bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
-                    <h3 className="text-base font-black uppercase tracking-[0.2em] text-foreground/80">Classification & Assignment</h3>
+                    <h3 className="text-base font-black uppercase tracking-[0.2em] text-foreground/80">
+                      Classification & Assignment
+                    </h3>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
                       <Label className="text-lg font-bold">Course Category</Label>
-                      <Select value={form.categoryId?.toLowerCase() || undefined} onValueChange={v => f('categoryId', v)} disabled={loadingDropdowns}>
+                      <Select
+                        value={form.categoryId?.toLowerCase() || undefined}
+                        onValueChange={v => f('categoryId', v)}
+                        disabled={loadingDropdowns}
+                      >
                         <SelectTrigger className="h-12 text-base rounded-xl border-muted-foreground/20 bg-muted/5 focus:bg-background transition-all">
                           <SelectValue placeholder={loadingDropdowns ? 'Loading categories…' : 'Select a category'} />
                         </SelectTrigger>
                         <SelectContent className="rounded-2xl shadow-2xl border-muted-foreground/10">
                           {categories.map(c => (
-                            <SelectItem key={c.id} value={c.id.toLowerCase()} className="text-base py-3 hover:bg-primary/5 transition-colors">
+                            <SelectItem
+                              key={c.id}
+                              value={c.id.toLowerCase()}
+                              className="text-base py-3 hover:bg-primary/5 transition-colors"
+                            >
                               {c.name}
                             </SelectItem>
                           ))}
@@ -302,11 +322,17 @@ export default function CoursesPage() {
                           disabled={loadingDropdowns}
                         >
                           <SelectTrigger className="h-12 text-base rounded-xl border-muted-foreground/20 bg-muted/5 focus:bg-background transition-all">
-                            <SelectValue placeholder={loadingDropdowns ? 'Loading instructors…' : 'Assign to instructor'} />
+                            <SelectValue
+                              placeholder={loadingDropdowns ? 'Loading instructors…' : 'Assign to instructor'}
+                            />
                           </SelectTrigger>
                           <SelectContent className="rounded-2xl shadow-2xl border-muted-foreground/10">
                             {users.map(u => (
-                              <SelectItem key={u.id} value={u.id.toLowerCase()} className="text-base py-3 hover:bg-primary/5 transition-colors">
+                              <SelectItem
+                                key={u.id}
+                                value={u.id.toLowerCase()}
+                                className="text-base py-3 hover:bg-primary/5 transition-colors"
+                              >
                                 {u.userName ?? u.email}
                               </SelectItem>
                             ))}
@@ -338,9 +364,13 @@ export default function CoursesPage() {
                         value={form.price}
                         onChange={e => f('price', Number(e.target.value))}
                       />
-                      <div className="absolute right-5 top-1/2 -translate-y-1/2 text-primary/60 font-black text-lg">VNĐ</div>
+                      <div className="absolute right-5 top-1/2 -translate-y-1/2 text-primary/60 font-black text-lg">
+                        VNĐ
+                      </div>
                     </div>
-                    <p className="text-sm text-center text-muted-foreground font-medium pt-1">Enter 0 for a free course</p>
+                    <p className="text-sm text-center text-muted-foreground font-medium pt-1">
+                      Enter 0 for a free course
+                    </p>
                   </div>
                 </section>
 
@@ -352,7 +382,9 @@ export default function CoursesPage() {
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label className="text-sm font-bold uppercase tracking-wider text-muted-foreground/70">Image URL</Label>
+                      <Label className="text-sm font-bold uppercase tracking-wider text-muted-foreground/70">
+                        Image URL
+                      </Label>
                       <Input
                         className="h-12 text-base rounded-xl border-muted-foreground/20 bg-muted/5"
                         placeholder="https://images.unsplash.com/..."
@@ -369,7 +401,9 @@ export default function CoursesPage() {
                             alt="Preview"
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4 text-white font-bold tracking-widest text-xs uppercase">Live Preview</div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4 text-white font-bold tracking-widest text-xs uppercase">
+                            Live Preview
+                          </div>
                         </>
                       ) : (
                         <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground gap-3">
@@ -385,15 +419,22 @@ export default function CoursesPage() {
 
                 {/* Status Switcher - Pushed to right column */}
                 <div className="pt-4">
-                  <div className={cn(
-                    "flex flex-col gap-6 rounded-[2.5rem] border-4 p-8 transition-all duration-300",
-                    form.isPublished
-                      ? "border-primary/20 bg-primary/5 shadow-xl shadow-primary/5 ring-4 ring-primary/5"
-                      : "border-muted bg-muted/30"
-                  )}>
+                  <div
+                    className={cn(
+                      'flex flex-col gap-6 rounded-[2.5rem] border-4 p-8 transition-all duration-300',
+                      form.isPublished
+                        ? 'border-primary/20 bg-primary/5 shadow-xl shadow-primary/5 ring-4 ring-primary/5'
+                        : 'border-muted bg-muted/30'
+                    )}
+                  >
                     <div className="flex items-center justify-between">
                       <div className="p-4 rounded-3xl bg-background shadow-lg">
-                        <BookOpen className={cn("h-8 w-8 transition-colors", form.isPublished ? "text-primary" : "text-muted-foreground")} />
+                        <BookOpen
+                          className={cn(
+                            'h-8 w-8 transition-colors',
+                            form.isPublished ? 'text-primary' : 'text-muted-foreground'
+                          )}
+                        />
                       </div>
                       <Switch
                         className="scale-[2] data-[state=checked]:bg-primary transition-all duration-500"
@@ -402,7 +443,12 @@ export default function CoursesPage() {
                       />
                     </div>
                     <div>
-                      <p className={cn("text-xl font-black tracking-tight transition-colors", form.isPublished ? "text-primary" : "text-foreground")}>
+                      <p
+                        className={cn(
+                          'text-xl font-black tracking-tight transition-colors',
+                          form.isPublished ? 'text-primary' : 'text-foreground'
+                        )}
+                      >
                         {form.isPublished ? 'Course is LIVE' : 'Still in Draft'}
                       </p>
                       <p className="text-sm text-muted-foreground mt-1 font-medium leading-relaxed">
@@ -439,7 +485,11 @@ export default function CoursesPage() {
                     <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     <span>Saving...</span>
                   </div>
-                ) : editing ? 'Update Course' : 'Launch Course'}
+                ) : editing ? (
+                  'Update Course'
+                ) : (
+                  'Launch Course'
+                )}
               </Button>
             </div>
           </DialogFooter>

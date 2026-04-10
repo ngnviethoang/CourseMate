@@ -46,7 +46,7 @@ const NAV_LINKS = [
 export function StudentHeader() {
   const router = useRouter()
   const pathname = usePathname()
-  
+
   const [user, setUser] = useState<{ name: string; role: string } | null>(null)
   const [mounted, setMounted] = useState(false)
 
@@ -104,27 +104,35 @@ export function StudentHeader() {
               </Link>
 
               <DropdownMenu>
-                <DropdownMenuTrigger 
+                <DropdownMenuTrigger
                   className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-muted transition-colors outline-none ml-1"
                   style={{ opacity: mounted ? 1 : 0.7 }}
                 >
                   <Avatar className="h-7 w-7">
-                    <AvatarFallback 
+                    <AvatarFallback
                       className="bg-primary text-primary-foreground text-xs font-semibold"
                       suppressHydrationWarning
                     >
                       {initials}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="hidden sm:block font-medium text-foreground" suppressHydrationWarning>{displayName}</span>
+                  <span className="hidden sm:block font-medium text-foreground" suppressHydrationWarning>
+                    {displayName}
+                  </span>
                   <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-52">
                   <DropdownMenuGroup>
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col gap-0.5">
-                        <span className="font-medium" suppressHydrationWarning>{displayName}</span>
-                        {displayRole && <span className="text-xs text-muted-foreground capitalize" suppressHydrationWarning>{displayRole}</span>}
+                        <span className="font-medium" suppressHydrationWarning>
+                          {displayName}
+                        </span>
+                        {displayRole && (
+                          <span className="text-xs text-muted-foreground capitalize" suppressHydrationWarning>
+                            {displayRole}
+                          </span>
+                        )}
                       </div>
                     </DropdownMenuLabel>
                   </DropdownMenuGroup>

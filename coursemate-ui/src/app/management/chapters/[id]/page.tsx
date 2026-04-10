@@ -6,13 +6,7 @@ import { ArrowLeft, Plus, Trash2, Loader2, BookOpen, Sparkles, ChevronDown, Chev
 import { toast } from 'sonner'
 import { chapterService, lessonService, courseService, aiService } from '@/lib/admin-service'
 import { Pagination } from '@/components/admin/pagination'
-import type {
-  ChapterDto,
-  LessonDto,
-  CreateLessonRequest,
-  LessonType,
-  CourseDto
-} from '@/lib/types'
+import type { ChapterDto, LessonDto, CreateLessonRequest, LessonType, CourseDto } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -67,8 +61,14 @@ const MOCK_AI_DATA: Record<LessonType, (name: string, raw: string) => object> = 
   Video: (name, raw) => ({
     title: name || 'Giới thiệu về Lập trình Hướng đối tượng',
     segments: [
-      { time: '00:00 - 03:00', script: `Giới thiệu tổng quan về ${raw || name}. Đây là một trong những khái niệm nền tảng quan trọng nhất trong lập trình hiện đại.` },
-      { time: '03:00 - 08:00', script: `Phân tích 4 trụ cột: Encapsulation, Inheritance, Polymorphism, Abstraction. ${raw ? `Áp dụng vào ngữ cảnh ${raw}.` : ''}` },
+      {
+        time: '00:00 - 03:00',
+        script: `Giới thiệu tổng quan về ${raw || name}. Đây là một trong những khái niệm nền tảng quan trọng nhất trong lập trình hiện đại.`
+      },
+      {
+        time: '03:00 - 08:00',
+        script: `Phân tích 4 trụ cột: Encapsulation, Inheritance, Polymorphism, Abstraction. ${raw ? `Áp dụng vào ngữ cảnh ${raw}.` : ''}`
+      },
       { time: '08:00 - 12:00', script: 'Demo thực tế với code mẫu và bài tập thực hành để củng cố kiến thức.' }
     ],
     timestamps: [
@@ -126,14 +126,20 @@ print(f"Kết quả: {result}")  # Output: 10
       { input: 'n = 0', output: '[]', hidden: true }
     ]
   }),
-  Quiz: (name) => ({
+  Quiz: name => ({
     title: name || 'Bài kiểm tra',
     questions: [
       {
         q: 'Encapsulation trong OOP có nghĩa là gì?',
-        options: ['Ẩn chi tiết và chỉ lộ interface cần thiết', 'Cho phép lớp con kế thừa lớp cha', 'Một hàm có nhiều dạng khác nhau', 'Tách biệt interface khỏi implementation'],
+        options: [
+          'Ẩn chi tiết và chỉ lộ interface cần thiết',
+          'Cho phép lớp con kế thừa lớp cha',
+          'Một hàm có nhiều dạng khác nhau',
+          'Tách biệt interface khỏi implementation'
+        ],
         ans: 0,
-        explanation: 'Encapsulation (Đóng gói) ẩn chi tiết triển khai nội bộ, chỉ cung cấp interface công khai cần thiết.'
+        explanation:
+          'Encapsulation (Đóng gói) ẩn chi tiết triển khai nội bộ, chỉ cung cấp interface công khai cần thiết.'
       },
       {
         q: 'Độ phức tạp thời gian của Binary Search là gì?',
@@ -157,7 +163,8 @@ print(f"Kết quả: {result}")  # Output: 10
         q: 'Design pattern nào giúp giảm sự phụ thuộc giữa các module?',
         options: ['Singleton', 'Dependency Injection', 'Factory', 'Observer'],
         ans: 1,
-        explanation: 'Dependency Injection (DI) cho phép object nhận dependencies từ bên ngoài, giúp code dễ test và bảo trì.'
+        explanation:
+          'Dependency Injection (DI) cho phép object nhận dependencies từ bên ngoài, giúp code dễ test và bảo trì.'
       }
     ]
   }),
@@ -232,7 +239,10 @@ export default function ChapterDetailPage() {
         setChapter(ch)
         setLessonForm(emptyLessonForm(ch?.courseId || '', id))
         if (ch?.courseId) {
-          courseService.getById(ch.courseId).then(c => setCourse(c)).catch(() => { })
+          courseService
+            .getById(ch.courseId)
+            .then(c => setCourse(c))
+            .catch(() => {})
         }
       })
       .catch(() => toast.error('Chapter not found.'))
@@ -252,7 +262,9 @@ export default function ChapterDetailPage() {
     }
   }, [id, pageIndex])
 
-  useEffect(() => { loadLessons() }, [loadLessons])
+  useEffect(() => {
+    loadLessons()
+  }, [loadLessons])
 
   // ─── Handlers ──────────────────────────────────────────────────────────────
 
@@ -304,7 +316,8 @@ export default function ChapterDetailPage() {
       }
 
       // Use the generated title if available
-      const generatedTitle = (aiContent?.lesson_info?.title) || (aiContent as Record<string, string>)?.title || lessonForm.title
+      const generatedTitle =
+        aiContent?.lesson_info?.title || (aiContent as Record<string, string>)?.title || lessonForm.title
 
       // Create the real lesson via API
       const createdLesson = await lessonService.create({ ...lessonForm, title: generatedTitle })
@@ -338,8 +351,7 @@ export default function ChapterDetailPage() {
     }
   }
 
-  const lf = (field: keyof CreateLessonRequest, value: unknown) =>
-    setLessonForm(prev => ({ ...prev, [field]: value }))
+  const lf = (field: keyof CreateLessonRequest, value: unknown) => setLessonForm(prev => ({ ...prev, [field]: value }))
 
   if (chapterLoading) {
     return (
@@ -365,7 +377,10 @@ export default function ChapterDetailPage() {
         </button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <Link href={`/management/courses/${chapter.courseId}`} className="text-sm font-medium text-primary hover:underline">
+            <Link
+              href={`/management/courses/${chapter.courseId}`}
+              className="text-sm font-medium text-primary hover:underline"
+            >
               {course ? course.title : chapter.courseName || 'Course'}
             </Link>
             <span className="text-muted-foreground text-sm">/</span>
@@ -425,7 +440,9 @@ export default function ChapterDetailPage() {
                 </div>
                 <span className="text-base">{LESSON_TYPE_ICON[lesson.lessonType as LessonType]}</span>
                 <span className="flex-1 font-medium">{lesson.title}</span>
-                <span className={`text-xs px-2.5 py-1 rounded-full border font-medium ${LESSON_TYPE_COLOR[lesson.lessonType as LessonType]}`}>
+                <span
+                  className={`text-xs px-2.5 py-1 rounded-full border font-medium ${LESSON_TYPE_COLOR[lesson.lessonType as LessonType]}`}
+                >
                   {lesson.lessonType}
                 </span>
                 <div className="flex gap-1.5 ml-2" onClick={e => e.stopPropagation()}>
@@ -482,7 +499,9 @@ export default function ChapterDetailPage() {
             {/* Basic fields */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5 sm:col-span-2">
-                <Label>Lesson Title <span className="text-destructive">*</span></Label>
+                <Label>
+                  Lesson Title <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   placeholder="Nhập tên bài học..."
                   value={lessonForm.title}
@@ -500,7 +519,9 @@ export default function ChapterDetailPage() {
                   <SelectContent>
                     {LESSON_TYPES.map(t => (
                       <SelectItem key={t} value={t}>
-                        <span className="flex items-center gap-2">{LESSON_TYPE_ICON[t]} {t}</span>
+                        <span className="flex items-center gap-2">
+                          {LESSON_TYPE_ICON[t]} {t}
+                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -525,16 +546,27 @@ export default function ChapterDetailPage() {
                     <Sparkles className="h-4 w-4 text-purple-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-purple-700 dark:text-purple-400">Trợ lý Phân tích và Phân rã tài liệu</p>
+                    <p className="text-sm font-semibold text-purple-700 dark:text-purple-400">
+                      Trợ lý Phân tích và Phân rã tài liệu
+                    </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      Hệ thống sẽ tự động bóc tách tài liệu thành phân đoạn bài học <Badge variant="outline" className="text-xs inline-flex h-4 px-1 text-purple-600 border-purple-300">{lessonForm.lessonType}</Badge> đầy đủ và chuẩn xác.
+                      Hệ thống sẽ tự động bóc tách tài liệu thành phân đoạn bài học{' '}
+                      <Badge
+                        variant="outline"
+                        className="text-xs inline-flex h-4 px-1 text-purple-600 border-purple-300"
+                      >
+                        {lessonForm.lessonType}
+                      </Badge>{' '}
+                      đầy đủ và chuẩn xác.
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <Label className="text-sm font-medium">Nội dung tài liệu thô <span className="text-destructive">*</span></Label>
+                    <Label className="text-sm font-medium">
+                      Nội dung tài liệu thô <span className="text-destructive">*</span>
+                    </Label>
                     <span className="text-xs text-muted-foreground">PDF / Word / TXT</span>
                   </div>
                   <Input
@@ -593,9 +625,13 @@ export default function ChapterDetailPage() {
                 className="gap-2 bg-purple-600 hover:bg-purple-700 text-white min-w-[200px]"
               >
                 {aiGenerating ? (
-                  <><Loader2 className="h-4 w-4 animate-spin" /> Đang bóc tách & xử lý...</>
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" /> Đang bóc tách & xử lý...
+                  </>
                 ) : (
-                  <><Sparkles className="h-4 w-4" /> Bắt đầu tạo tự động</>
+                  <>
+                    <Sparkles className="h-4 w-4" /> Bắt đầu tạo tự động
+                  </>
                 )}
               </Button>
             ) : (
@@ -612,7 +648,9 @@ export default function ChapterDetailPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete lesson?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone. AI content for this lesson will also be removed.</AlertDialogDescription>
+            <AlertDialogDescription>
+              This action cannot be undone. AI content for this lesson will also be removed.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>

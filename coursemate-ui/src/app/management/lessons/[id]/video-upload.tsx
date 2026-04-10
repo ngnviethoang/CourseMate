@@ -52,7 +52,6 @@ export function VideoUploadSection({ lessonId }: { lessonId: string }) {
       setVideoUrl(fileUrl)
       setStatus('success')
       toast.success('Video uploaded successfully!')
-
     } catch (error) {
       console.error(error)
       setStatus('error')
@@ -100,11 +99,7 @@ export function VideoUploadSection({ lessonId }: { lessonId: string }) {
             </div>
           )}
 
-          <Button
-            onClick={handleUpload}
-            disabled={uploading}
-            className="w-full gap-2"
-          >
+          <Button onClick={handleUpload} disabled={uploading} className="w-full gap-2">
             {uploading && <Loader2 className="h-4 w-4 animate-spin" />}
             {uploading ? 'Uploading...' : 'Start Upload'}
           </Button>
@@ -116,7 +111,12 @@ export function VideoUploadSection({ lessonId }: { lessonId: string }) {
           <CheckCircle2 className="h-8 w-8 text-green-600 mb-2" />
           <h4 className="font-medium">Upload Complete!</h4>
           {videoUrl && (
-            <a href={videoUrl} target="_blank" rel="noreferrer" className="text-sm font-medium underline hover:text-green-800 break-all mt-2">
+            <a
+              href={videoUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm font-medium underline hover:text-green-800 break-all mt-2"
+            >
               {videoUrl}
             </a>
           )}

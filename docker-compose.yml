@@ -28,6 +28,14 @@ services:
         volumes:
             - ./etc/chroma:/chroma/chroma
 
+    ollama:
+        image: ollama/ollama:0.20.5-rocm
+        container_name: ollama
+        restart: unless-stopped
+        ports:
+            - "11434:11434"
+        volumes:
+            - docker-volumes/ollama-data:/root/.ollama
 
     api:
         container_name: api

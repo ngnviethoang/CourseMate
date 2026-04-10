@@ -9,14 +9,14 @@ namespace CourseMate.Application.Commands.Auth;
 internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, int>
 {
     private readonly IUserEmailStore<IdentityUser<Guid>> _emailStore;
-    private readonly RoleManager<IdentityUser<Guid>> _roleManager;
+    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
     private readonly IUserStore<IdentityUser<Guid>> _userStore;
 
     public RegisterCommandHandler(
         UserManager<IdentityUser<Guid>> userManager,
         IUserStore<IdentityUser<Guid>> userStore,
-        RoleManager<IdentityUser<Guid>> roleManager)
+        RoleManager<IdentityRole<Guid>> roleManager)
     {
         _userManager = userManager;
         _userStore = userStore;

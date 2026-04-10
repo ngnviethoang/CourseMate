@@ -11,14 +11,14 @@ namespace CourseMate.Application.Commands.Admins;
 
 internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUserCommand, ResultIdDto>
 {
-    private readonly RoleManager<IdentityUser<Guid>> _roleManager;
+    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
     public CreateUserCommandHandler(
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor,
         UserManager<IdentityUser<Guid>> userManager,
-        RoleManager<IdentityUser<Guid>> roleManager
+        RoleManager<IdentityRole<Guid>> roleManager
     ) : base(dbContext, httpContextAccessor)
     {
         _userManager = userManager;

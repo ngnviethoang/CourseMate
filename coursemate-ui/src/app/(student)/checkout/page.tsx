@@ -233,9 +233,7 @@ export default function CheckoutPage() {
                           <p className="text-xs font-medium line-clamp-2 leading-snug">{item.courseTitle}</p>
                           <p className="text-xs text-muted-foreground mt-0.5">{item.instructorName}</p>
                         </div>
-                        <span className="text-xs font-semibold flex-shrink-0">
-                          {formatCurrency(item.price)}
-                        </span>
+                        <span className="text-xs font-semibold flex-shrink-0">{formatCurrency(item.price)}</span>
                       </div>
                     ))}
                   </div>

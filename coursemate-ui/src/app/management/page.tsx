@@ -2,35 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { 
-  BarChart3, 
-  DollarSign, 
-  Users, 
-  BookOpen, 
-  ShoppingBag, 
-  TrendingUp,
-  ArrowUpRight,
-  Loader2
-} from 'lucide-react'
-import { 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer 
-} from 'recharts'
+import { BarChart3, DollarSign, Users, BookOpen, ShoppingBag, TrendingUp, ArrowUpRight, Loader2 } from 'lucide-react'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { dashboardService } from '@/lib/admin-service'
@@ -48,12 +24,10 @@ export default function ManagementPage() {
       try {
         const userProfile = await authService.getProfile()
         setProfile(userProfile)
-        
+
         const isAdmin = userProfile.roles.includes('Admin')
-        const res = isAdmin 
-          ? await dashboardService.getAdminStats() 
-          : await dashboardService.getInstructorStats()
-          
+        const res = isAdmin ? await dashboardService.getAdminStats() : await dashboardService.getInstructorStats()
+
         setData(res)
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error)
@@ -116,9 +90,14 @@ export default function ManagementPage() {
       {/* Stats Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, i) => (
-          <Card key={i} className="overflow-hidden border-none shadow-xl shadow-foreground/5 rounded-2xl transition-all hover:scale-[1.02]">
+          <Card
+            key={i}
+            className="overflow-hidden border-none shadow-xl shadow-foreground/5 rounded-2xl transition-all hover:scale-[1.02]"
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-              <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground">{stat.title}</CardTitle>
+              <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                {stat.title}
+              </CardTitle>
               <div className={`rounded-xl p-3 ${stat.bg}`}>
                 <stat.icon className={`h-6 w-6 ${stat.color}`} />
               </div>
@@ -146,35 +125,35 @@ export default function ManagementPage() {
               <AreaChart data={data.revenueByMonth}>
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.1} />
+                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="month" 
-                  axisLine={false} 
-                  tickLine={false} 
+                <XAxis
+                  dataKey="month"
+                  axisLine={false}
+                  tickLine={false}
                   tick={{ fontSize: 12, fill: '#888' }}
                   dy={10}
                 />
-                <YAxis 
-                  axisLine={false} 
-                  tickLine={false} 
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
                   tick={{ fontSize: 12, fill: '#888' }}
-                  tickFormatter={(val) => `${val / 1000000}M`}
+                  tickFormatter={val => `${val / 1000000}M`}
                 />
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                   formatter={(val: number) => [formatCurrency(val), 'Doanh thu']}
                 />
-                <Area 
-                  type="monotone" 
-                  dataKey="revenue" 
-                  stroke="#3B82F6" 
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#3B82F6"
                   strokeWidth={2}
-                  fillOpacity={1} 
-                  fill="url(#colorRevenue)" 
+                  fillOpacity={1}
+                  fill="url(#colorRevenue)"
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -187,26 +166,38 @@ export default function ManagementPage() {
             <CardHeader className="flex flex-row items-center justify-between bg-primary text-primary-foreground py-6">
               <div>
                 <CardTitle className="text-xl font-bold">Cá nhân xuất sắc</CardTitle>
-                <CardDescription className="text-primary-foreground/70 font-medium">Top giảng viên có doanh thu cao nhất.</CardDescription>
+                <CardDescription className="text-primary-foreground/70 font-medium">
+                  Top giảng viên có doanh thu cao nhất.
+                </CardDescription>
               </div>
               <BarChart3 className="h-6 w-6" />
             </CardHeader>
             <CardContent className="pt-8">
               <div className="space-y-8">
                 {data.topInstructors.map((instructor, i) => (
-                  <div key={instructor.id} className="flex items-center justify-between p-2 rounded-xl hover:bg-muted/50 transition-colors">
+                  <div
+                    key={instructor.id}
+                    className="flex items-center justify-between p-2 rounded-xl hover:bg-muted/50 transition-colors"
+                  >
                     <div className="flex items-center gap-4">
                       <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground font-black text-lg shadow-lg shadow-primary/20">
                         {i + 1}
                       </div>
                       <div className="space-y-1">
                         <p className="text-base font-bold leading-none">{instructor.name}</p>
-                        <p className="text-sm text-muted-foreground font-medium">{instructor.courseCount} khoá học đã giảng dạy</p>
+                        <p className="text-sm text-muted-foreground font-medium">
+                          {instructor.courseCount} khoá học đã giảng dạy
+                        </p>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="text-lg font-black tracking-tight">{formatCurrency(instructor.totalRevenue)}</div>
-                      <Badge variant="outline" className="text-[11px] font-bold px-2 py-0 h-5 mt-1 border-emerald-200 bg-emerald-50 text-emerald-700">Level {4 - i}</Badge>
+                      <Badge
+                        variant="outline"
+                        className="text-[11px] font-bold px-2 py-0 h-5 mt-1 border-emerald-200 bg-emerald-50 text-emerald-700"
+                      >
+                        Level {4 - i}
+                      </Badge>
                     </div>
                   </div>
                 ))}
@@ -243,11 +234,16 @@ export default function ManagementPage() {
         <CardHeader className="flex flex-row items-center justify-between py-6">
           <div>
             <CardTitle className="text-2xl font-bold">Khoá học bán chạy</CardTitle>
-            <CardDescription className="text-base font-medium">Danh sách các khoá học có hiệu suất tốt nhất.</CardDescription>
+            <CardDescription className="text-base font-medium">
+              Danh sách các khoá học có hiệu suất tốt nhất.
+            </CardDescription>
           </div>
-          <Link 
-            href="/management/courses" 
-            className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), "flex items-center gap-2 h-12 rounded-xl px-6 border-muted-foreground/20 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all")}
+          <Link
+            href="/management/courses"
+            className={cn(
+              buttonVariants({ variant: 'outline', size: 'lg' }),
+              'flex items-center gap-2 h-12 rounded-xl px-6 border-muted-foreground/20 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all'
+            )}
           >
             Quản lý khoá học <ArrowUpRight className="ml-2 h-5 w-5" />
           </Link>
@@ -263,13 +259,19 @@ export default function ManagementPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.topCourses.map((course) => (
+              {data.topCourses.map(course => (
                 <TableRow key={course.id} className="h-20 hover:bg-muted/30 transition-colors">
                   <TableCell className="font-bold text-lg px-8">{course.title}</TableCell>
-                  <TableCell className="text-right text-lg font-medium px-8">{course.enrollmentCount} học viên</TableCell>
-                  <TableCell className="text-right font-black text-xl px-8 text-primary">{formatCurrency(course.revenue)}</TableCell>
+                  <TableCell className="text-right text-lg font-medium px-8">
+                    {course.enrollmentCount} học viên
+                  </TableCell>
+                  <TableCell className="text-right font-black text-xl px-8 text-primary">
+                    {formatCurrency(course.revenue)}
+                  </TableCell>
                   <TableCell className="text-right px-8">
-                    <Badge className="bg-emerald-500/10 text-emerald-600 border-none px-4 py-1.5 text-sm font-bold rounded-full">Active</Badge>
+                    <Badge className="bg-emerald-500/10 text-emerald-600 border-none px-4 py-1.5 text-sm font-bold rounded-full">
+                      Active
+                    </Badge>
                   </TableCell>
                 </TableRow>
               ))}

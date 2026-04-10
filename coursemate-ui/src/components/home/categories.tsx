@@ -105,10 +105,7 @@ function CategorySkeleton() {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
       {Array.from({ length: 10 }).map((_, i) => (
-        <div
-          key={i}
-          className="flex flex-col items-center gap-3 rounded-2xl border bg-card p-5 animate-pulse"
-        >
+        <div key={i} className="flex flex-col items-center gap-3 rounded-2xl border bg-card p-5 animate-pulse">
           <div className="h-14 w-14 rounded-2xl bg-muted" />
           <div className="h-3 w-20 rounded-full bg-muted" />
           <div className="h-2.5 w-14 rounded-full bg-muted/60" />
@@ -167,9 +164,7 @@ export function Categories() {
 
                 {/* Category name */}
                 <div>
-                  <span className="block text-sm font-semibold leading-tight text-foreground">
-                    {cat.name}
-                  </span>
+                  <span className="block text-sm font-semibold leading-tight text-foreground">{cat.name}</span>
                 </div>
 
                 {/* Subtle hover glow */}

@@ -15,21 +15,21 @@ export function Pagination({ pageIndex, pageSize, totalCount, onPageChange }: Pa
   if (totalPages <= 1) return null
 
   const pages: (number | string)[] = []
-  
+
   // Logic to show a specific range of page numbers
   if (totalPages <= 7) {
     for (let i = 0; i < totalPages; i++) pages.push(i)
   } else {
     pages.push(0)
     if (pageIndex > 3) pages.push('...')
-    
+
     const start = Math.max(1, pageIndex - 1)
     const end = Math.min(totalPages - 2, pageIndex + 1)
-    
+
     for (let i = start; i <= end; i++) {
       if (!pages.includes(i)) pages.push(i)
     }
-    
+
     if (pageIndex < totalPages - 4) pages.push('...')
     pages.push(totalPages - 1)
   }
@@ -51,7 +51,7 @@ export function Pagination({ pageIndex, pageSize, totalCount, onPageChange }: Pa
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        
+
         {pages.map((p, i) => (
           <div key={i}>
             {typeof p === 'number' ? (

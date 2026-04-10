@@ -8,7 +8,15 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog'
 import { toast } from 'sonner'
 import { Loader2, User, Mail, Shield, Key, Lock, CheckCircle2 } from 'lucide-react'
 
@@ -26,7 +34,8 @@ export default function StudentProfilePage() {
   })
 
   useEffect(() => {
-    profileService.getMe()
+    profileService
+      .getMe()
       .then(res => setUser(res))
       .catch(() => toast.error('Failed to load profile.'))
       .finally(() => setLoading(false))
@@ -122,7 +131,9 @@ export default function StudentProfilePage() {
             <CardTitle className="flex items-center gap-2 text-lg text-white">
               <Lock className="h-5 w-5 text-amber-400" /> Security
             </CardTitle>
-            <CardDescription className="text-slate-400">Protect your account by managing your password.</CardDescription>
+            <CardDescription className="text-slate-400">
+              Protect your account by managing your password.
+            </CardDescription>
           </CardHeader>
           <CardContent className="pt-4 pb-8">
             <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-4 shadow-inner">
