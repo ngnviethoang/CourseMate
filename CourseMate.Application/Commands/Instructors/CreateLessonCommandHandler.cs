@@ -20,7 +20,7 @@ internal sealed class CreateLessonCommandHandler : AbstractCommandHandler<Create
     public override async Task<ResultIdDto> Handle(CreateLessonCommand request, CancellationToken cancellationToken)
     {
         Guid instructorId = GetCurrentUserId();
-        bool isOwnerCourse = await DbContext.Courses.AnyAsync(course => course.Id == request.CourseId && course.InstructorId == instructorId, cancellationToken: cancellationToken);
+        bool isOwnerCourse = await DbContext.Courses.AnyAsync(course => course.Id == request.CourseId && course.InstructorId == instructorId, cancellationToken);
         if (!isOwnerCourse)
         {
             throw new UnauthorizedAccessException();

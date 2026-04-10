@@ -3,6 +3,8 @@ using System.Text.RegularExpressions;
 using CourseMate.Application.Services.AI;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -57,7 +59,7 @@ public class ProcessFileEmbeddingJob
             _logger.LogInformation("Reading file content for: {FileName} (FileID: {FileId})", fileEntry.FileName, fileId);
             // NOTE: ReadAllTextAsync may not work properly for binary files like .pdf/.docx without a library.
             // This seems to be the current implementation, logging it clearly.
-            string content = await File.ReadAllTextAsync(fileEntry.FilePath, cancellationToken);
+            string content = ReadWordText(fileEntry.FilePath);
 
             IEnumerable<Chunk> chunks = ChunkSentences(content);
             int chunkCount = 1;
@@ -93,6 +95,26 @@ public class ProcessFileEmbeddingJob
             await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Successfully processed file {FileId} with {ChunkCount} embeddings.", fileId, chunkCount);
         }
+    }
+
+    private static string ReadWordText(string filePath)
+    {
+        StringBuilder sb = new();
+        using WordprocessingDocument doc = WordprocessingDocument.Open(filePath, false);
+        Body? body = doc.MainDocumentPart?.Document?.Body;
+
+        if (body == null)
+        {
+            return string.Empty;
+        }
+
+        foreach (Text text in body.Descendants<Text>())
+        {
+            sb.Append(text.Text.Trim());
+            sb.Append(" ");
+        }
+
+        return sb.ToString();
     }
 
     private static IEnumerable<Chunk> ChunkSentences(string text, int maxTokens = 800)
