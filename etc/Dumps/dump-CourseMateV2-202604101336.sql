@@ -5,7 +5,7 @@
 -- Dumped from database version 16.13 (Debian 16.13-1.pgdg13+1)
 -- Dumped by pg_dump version 17.0
 
--- Started on 2026-04-10 11:31:11
+-- Started on 2026-04-10 13:36:31
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -20,25 +20,414 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 6 (class 2615 OID 2200)
--- Name: public; Type: SCHEMA; Schema: -; Owner: -
+-- TOC entry 8 (class 2615 OID 17260)
+-- Name: hangfire; Type: SCHEMA; Schema: -; Owner: -
 --
 
-CREATE SCHEMA public;
+CREATE SCHEMA hangfire;
 
 
 --
--- TOC entry 4073 (class 0 OID 0)
--- Dependencies: 6
--- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
+-- TOC entry 2 (class 3079 OID 16395)
+-- Name: citext; Type: EXTENSION; Schema: -; Owner: -
 --
 
-COMMENT ON SCHEMA public IS 'standard public schema';
+CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+
+
+--
+-- TOC entry 4170 (class 0 OID 0)
+-- Dependencies: 2
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+--
+-- TOC entry 3 (class 3079 OID 16500)
+-- Name: vector; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS vector WITH SCHEMA public;
+
+
+--
+-- TOC entry 4171 (class 0 OID 0)
+-- Dependencies: 3
+-- Name: EXTENSION vector; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION vector IS 'vector data type and ivfflat and hnsw access methods';
 
 
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
+
+--
+-- TOC entry 270 (class 1259 OID 17552)
+-- Name: aggregatedcounter; Type: TABLE; Schema: hangfire; Owner: -
+--
+
+CREATE TABLE hangfire.aggregatedcounter (
+    id bigint NOT NULL,
+    key text NOT NULL,
+    value bigint NOT NULL,
+    expireat timestamp with time zone
+);
+
+
+--
+-- TOC entry 269 (class 1259 OID 17551)
+-- Name: aggregatedcounter_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
+--
+
+CREATE SEQUENCE hangfire.aggregatedcounter_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 4172 (class 0 OID 0)
+-- Dependencies: 269
+-- Name: aggregatedcounter_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
+--
+
+ALTER SEQUENCE hangfire.aggregatedcounter_id_seq OWNED BY hangfire.aggregatedcounter.id;
+
+
+--
+-- TOC entry 252 (class 1259 OID 17267)
+-- Name: counter; Type: TABLE; Schema: hangfire; Owner: -
+--
+
+CREATE TABLE hangfire.counter (
+    id bigint NOT NULL,
+    key text NOT NULL,
+    value bigint NOT NULL,
+    expireat timestamp with time zone
+);
+
+
+--
+-- TOC entry 251 (class 1259 OID 17266)
+-- Name: counter_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
+--
+
+CREATE SEQUENCE hangfire.counter_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 4173 (class 0 OID 0)
+-- Dependencies: 251
+-- Name: counter_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
+--
+
+ALTER SEQUENCE hangfire.counter_id_seq OWNED BY hangfire.counter.id;
+
+
+--
+-- TOC entry 254 (class 1259 OID 17275)
+-- Name: hash; Type: TABLE; Schema: hangfire; Owner: -
+--
+
+CREATE TABLE hangfire.hash (
+    id bigint NOT NULL,
+    key text NOT NULL,
+    field text NOT NULL,
+    value text,
+    expireat timestamp with time zone,
+    updatecount integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- TOC entry 253 (class 1259 OID 17274)
+-- Name: hash_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
+--
+
+CREATE SEQUENCE hangfire.hash_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 4174 (class 0 OID 0)
+-- Dependencies: 253
+-- Name: hash_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
+--
+
+ALTER SEQUENCE hangfire.hash_id_seq OWNED BY hangfire.hash.id;
+
+
+--
+-- TOC entry 256 (class 1259 OID 17286)
+-- Name: job; Type: TABLE; Schema: hangfire; Owner: -
+--
+
+CREATE TABLE hangfire.job (
+    id bigint NOT NULL,
+    stateid bigint,
+    statename text,
+    invocationdata jsonb NOT NULL,
+    arguments jsonb NOT NULL,
+    createdat timestamp with time zone NOT NULL,
+    expireat timestamp with time zone,
+    updatecount integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- TOC entry 255 (class 1259 OID 17285)
+-- Name: job_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
+--
+
+CREATE SEQUENCE hangfire.job_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 4175 (class 0 OID 0)
+-- Dependencies: 255
+-- Name: job_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
+--
+
+ALTER SEQUENCE hangfire.job_id_seq OWNED BY hangfire.job.id;
+
+
+--
+-- TOC entry 267 (class 1259 OID 17346)
+-- Name: jobparameter; Type: TABLE; Schema: hangfire; Owner: -
+--
+
+CREATE TABLE hangfire.jobparameter (
+    id bigint NOT NULL,
+    jobid bigint NOT NULL,
+    name text NOT NULL,
+    value text,
+    updatecount integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- TOC entry 266 (class 1259 OID 17345)
+-- Name: jobparameter_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
+--
+
+CREATE SEQUENCE hangfire.jobparameter_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 4176 (class 0 OID 0)
+-- Dependencies: 266
+-- Name: jobparameter_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
+--
+
+ALTER SEQUENCE hangfire.jobparameter_id_seq OWNED BY hangfire.jobparameter.id;
+
+
+--
+-- TOC entry 260 (class 1259 OID 17311)
+-- Name: jobqueue; Type: TABLE; Schema: hangfire; Owner: -
+--
+
+CREATE TABLE hangfire.jobqueue (
+    id bigint NOT NULL,
+    jobid bigint NOT NULL,
+    queue text NOT NULL,
+    fetchedat timestamp with time zone,
+    updatecount integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- TOC entry 259 (class 1259 OID 17310)
+-- Name: jobqueue_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
+--
+
+CREATE SEQUENCE hangfire.jobqueue_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 4177 (class 0 OID 0)
+-- Dependencies: 259
+-- Name: jobqueue_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
+--
+
+ALTER SEQUENCE hangfire.jobqueue_id_seq OWNED BY hangfire.jobqueue.id;
+
+
+--
+-- TOC entry 262 (class 1259 OID 17319)
+-- Name: list; Type: TABLE; Schema: hangfire; Owner: -
+--
+
+CREATE TABLE hangfire.list (
+    id bigint NOT NULL,
+    key text NOT NULL,
+    value text,
+    expireat timestamp with time zone,
+    updatecount integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- TOC entry 261 (class 1259 OID 17318)
+-- Name: list_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
+--
+
+CREATE SEQUENCE hangfire.list_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 4178 (class 0 OID 0)
+-- Dependencies: 261
+-- Name: list_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
+--
+
+ALTER SEQUENCE hangfire.list_id_seq OWNED BY hangfire.list.id;
+
+
+--
+-- TOC entry 268 (class 1259 OID 17360)
+-- Name: lock; Type: TABLE; Schema: hangfire; Owner: -
+--
+
+CREATE TABLE hangfire.lock (
+    resource text NOT NULL,
+    updatecount integer DEFAULT 0 NOT NULL,
+    acquired timestamp with time zone
+);
+
+
+--
+-- TOC entry 250 (class 1259 OID 17261)
+-- Name: schema; Type: TABLE; Schema: hangfire; Owner: -
+--
+
+CREATE TABLE hangfire.schema (
+    version integer NOT NULL
+);
+
+
+--
+-- TOC entry 263 (class 1259 OID 17327)
+-- Name: server; Type: TABLE; Schema: hangfire; Owner: -
+--
+
+CREATE TABLE hangfire.server (
+    id text NOT NULL,
+    data jsonb,
+    lastheartbeat timestamp with time zone NOT NULL,
+    updatecount integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- TOC entry 265 (class 1259 OID 17335)
+-- Name: set; Type: TABLE; Schema: hangfire; Owner: -
+--
+
+CREATE TABLE hangfire.set (
+    id bigint NOT NULL,
+    key text NOT NULL,
+    score double precision NOT NULL,
+    value text NOT NULL,
+    expireat timestamp with time zone,
+    updatecount integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- TOC entry 264 (class 1259 OID 17334)
+-- Name: set_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
+--
+
+CREATE SEQUENCE hangfire.set_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 4179 (class 0 OID 0)
+-- Dependencies: 264
+-- Name: set_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
+--
+
+ALTER SEQUENCE hangfire.set_id_seq OWNED BY hangfire.set.id;
+
+
+--
+-- TOC entry 258 (class 1259 OID 17296)
+-- Name: state; Type: TABLE; Schema: hangfire; Owner: -
+--
+
+CREATE TABLE hangfire.state (
+    id bigint NOT NULL,
+    jobid bigint NOT NULL,
+    name text NOT NULL,
+    reason text,
+    createdat timestamp with time zone NOT NULL,
+    data jsonb,
+    updatecount integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- TOC entry 257 (class 1259 OID 17295)
+-- Name: state_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
+--
+
+CREATE SEQUENCE hangfire.state_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 4180 (class 0 OID 0)
+-- Dependencies: 257
+-- Name: state_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
+--
+
+ALTER SEQUENCE hangfire.state_id_seq OWNED BY hangfire.state.id;
+
 
 --
 -- TOC entry 225 (class 1259 OID 16864)
@@ -578,7 +967,177 @@ CREATE TABLE public."__EFMigrationsHistory" (
 
 
 --
--- TOC entry 4043 (class 0 OID 16864)
+-- TOC entry 3791 (class 2604 OID 17555)
+-- Name: aggregatedcounter id; Type: DEFAULT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.aggregatedcounter ALTER COLUMN id SET DEFAULT nextval('hangfire.aggregatedcounter_id_seq'::regclass);
+
+
+--
+-- TOC entry 3774 (class 2604 OID 17393)
+-- Name: counter id; Type: DEFAULT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.counter ALTER COLUMN id SET DEFAULT nextval('hangfire.counter_id_seq'::regclass);
+
+
+--
+-- TOC entry 3775 (class 2604 OID 17402)
+-- Name: hash id; Type: DEFAULT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.hash ALTER COLUMN id SET DEFAULT nextval('hangfire.hash_id_seq'::regclass);
+
+
+--
+-- TOC entry 3777 (class 2604 OID 17412)
+-- Name: job id; Type: DEFAULT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.job ALTER COLUMN id SET DEFAULT nextval('hangfire.job_id_seq'::regclass);
+
+
+--
+-- TOC entry 3788 (class 2604 OID 17462)
+-- Name: jobparameter id; Type: DEFAULT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.jobparameter ALTER COLUMN id SET DEFAULT nextval('hangfire.jobparameter_id_seq'::regclass);
+
+
+--
+-- TOC entry 3781 (class 2604 OID 17485)
+-- Name: jobqueue id; Type: DEFAULT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.jobqueue ALTER COLUMN id SET DEFAULT nextval('hangfire.jobqueue_id_seq'::regclass);
+
+
+--
+-- TOC entry 3783 (class 2604 OID 17505)
+-- Name: list id; Type: DEFAULT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.list ALTER COLUMN id SET DEFAULT nextval('hangfire.list_id_seq'::regclass);
+
+
+--
+-- TOC entry 3786 (class 2604 OID 17514)
+-- Name: set id; Type: DEFAULT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.set ALTER COLUMN id SET DEFAULT nextval('hangfire.set_id_seq'::regclass);
+
+
+--
+-- TOC entry 3779 (class 2604 OID 17439)
+-- Name: state id; Type: DEFAULT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.state ALTER COLUMN id SET DEFAULT nextval('hangfire.state_id_seq'::regclass);
+
+
+--
+-- TOC entry 4164 (class 0 OID 17552)
+-- Dependencies: 270
+-- Data for Name: aggregatedcounter; Type: TABLE DATA; Schema: hangfire; Owner: -
+--
+
+
+
+--
+-- TOC entry 4146 (class 0 OID 17267)
+-- Dependencies: 252
+-- Data for Name: counter; Type: TABLE DATA; Schema: hangfire; Owner: -
+--
+
+
+
+--
+-- TOC entry 4148 (class 0 OID 17275)
+-- Dependencies: 254
+-- Data for Name: hash; Type: TABLE DATA; Schema: hangfire; Owner: -
+--
+
+
+
+--
+-- TOC entry 4150 (class 0 OID 17286)
+-- Dependencies: 256
+-- Data for Name: job; Type: TABLE DATA; Schema: hangfire; Owner: -
+--
+
+
+
+--
+-- TOC entry 4161 (class 0 OID 17346)
+-- Dependencies: 267
+-- Data for Name: jobparameter; Type: TABLE DATA; Schema: hangfire; Owner: -
+--
+
+
+
+--
+-- TOC entry 4154 (class 0 OID 17311)
+-- Dependencies: 260
+-- Data for Name: jobqueue; Type: TABLE DATA; Schema: hangfire; Owner: -
+--
+
+
+
+--
+-- TOC entry 4156 (class 0 OID 17319)
+-- Dependencies: 262
+-- Data for Name: list; Type: TABLE DATA; Schema: hangfire; Owner: -
+--
+
+
+
+--
+-- TOC entry 4162 (class 0 OID 17360)
+-- Dependencies: 268
+-- Data for Name: lock; Type: TABLE DATA; Schema: hangfire; Owner: -
+--
+
+
+
+--
+-- TOC entry 4144 (class 0 OID 17261)
+-- Dependencies: 250
+-- Data for Name: schema; Type: TABLE DATA; Schema: hangfire; Owner: -
+--
+
+INSERT INTO hangfire.schema VALUES (23);
+
+
+--
+-- TOC entry 4157 (class 0 OID 17327)
+-- Dependencies: 263
+-- Data for Name: server; Type: TABLE DATA; Schema: hangfire; Owner: -
+--
+
+INSERT INTO hangfire.server VALUES ('laptop-km4uhqhf:23704:40c9ab77-ccb1-4fde-86d3-5076bf0cbde3', '{"Queues": ["default"], "StartedAt": "2026-04-10T04:43:35.5162272Z", "WorkerCount": 20}', '2026-04-10 04:55:06.374096+00', 0);
+
+
+--
+-- TOC entry 4159 (class 0 OID 17335)
+-- Dependencies: 265
+-- Data for Name: set; Type: TABLE DATA; Schema: hangfire; Owner: -
+--
+
+
+
+--
+-- TOC entry 4152 (class 0 OID 17296)
+-- Dependencies: 258
+-- Data for Name: state; Type: TABLE DATA; Schema: hangfire; Owner: -
+--
+
+
+
+--
+-- TOC entry 4119 (class 0 OID 16864)
 -- Dependencies: 225
 -- Data for Name: AspNetRoleClaims; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -586,7 +1145,7 @@ CREATE TABLE public."__EFMigrationsHistory" (
 
 
 --
--- TOC entry 4037 (class 0 OID 16828)
+-- TOC entry 4113 (class 0 OID 16828)
 -- Dependencies: 219
 -- Data for Name: AspNetRoles; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -597,7 +1156,7 @@ INSERT INTO public."AspNetRoles" VALUES ('019d75a6-f064-7e46-804e-c03114aee039',
 
 
 --
--- TOC entry 4045 (class 0 OID 16877)
+-- TOC entry 4121 (class 0 OID 16877)
 -- Dependencies: 227
 -- Data for Name: AspNetUserClaims; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -605,7 +1164,7 @@ INSERT INTO public."AspNetRoles" VALUES ('019d75a6-f064-7e46-804e-c03114aee039',
 
 
 --
--- TOC entry 4046 (class 0 OID 16889)
+-- TOC entry 4122 (class 0 OID 16889)
 -- Dependencies: 228
 -- Data for Name: AspNetUserLogins; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -613,7 +1172,7 @@ INSERT INTO public."AspNetRoles" VALUES ('019d75a6-f064-7e46-804e-c03114aee039',
 
 
 --
--- TOC entry 4047 (class 0 OID 16901)
+-- TOC entry 4123 (class 0 OID 16901)
 -- Dependencies: 229
 -- Data for Name: AspNetUserRoles; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -629,7 +1188,7 @@ INSERT INTO public."AspNetUserRoles" VALUES ('019d75a6-f47c-7f6e-8b79-c24f068de9
 
 
 --
--- TOC entry 4048 (class 0 OID 16916)
+-- TOC entry 4124 (class 0 OID 16916)
 -- Dependencies: 230
 -- Data for Name: AspNetUserTokens; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -637,7 +1196,7 @@ INSERT INTO public."AspNetUserRoles" VALUES ('019d75a6-f47c-7f6e-8b79-c24f068de9
 
 
 --
--- TOC entry 4038 (class 0 OID 16835)
+-- TOC entry 4114 (class 0 OID 16835)
 -- Dependencies: 220
 -- Data for Name: AspNetUsers; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -653,7 +1212,7 @@ INSERT INTO public."AspNetUsers" VALUES ('019d75a6-f47c-7f6e-8b79-c24f068de902',
 
 
 --
--- TOC entry 4055 (class 0 OID 17003)
+-- TOC entry 4131 (class 0 OID 17003)
 -- Dependencies: 237
 -- Data for Name: CartItems; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -661,7 +1220,7 @@ INSERT INTO public."AspNetUsers" VALUES ('019d75a6-f47c-7f6e-8b79-c24f068de902',
 
 
 --
--- TOC entry 4049 (class 0 OID 16928)
+-- TOC entry 4125 (class 0 OID 16928)
 -- Dependencies: 231
 -- Data for Name: Carts; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -669,7 +1228,7 @@ INSERT INTO public."AspNetUsers" VALUES ('019d75a6-f47c-7f6e-8b79-c24f068de902',
 
 
 --
--- TOC entry 4039 (class 0 OID 16842)
+-- TOC entry 4115 (class 0 OID 16842)
 -- Dependencies: 221
 -- Data for Name: Categories; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -694,7 +1253,7 @@ INSERT INTO public."Categories" VALUES ('fbb5c2ee-0724-4bbc-a075-450004d1f20c', 
 
 
 --
--- TOC entry 4056 (class 0 OID 17018)
+-- TOC entry 4132 (class 0 OID 17018)
 -- Dependencies: 238
 -- Data for Name: Chapters; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -804,64 +1363,11 @@ INSERT INTO public."Chapters" VALUES ('ff613291-f29e-4aba-a90f-43566082e70f', '9
 
 
 --
--- TOC entry 4052 (class 0 OID 16962)
+-- TOC entry 4128 (class 0 OID 16962)
 -- Dependencies: 234
 -- Data for Name: Courses; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public."Courses" VALUES ('00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Hoàn thiện ứng dụng web thực tế với C# và .NET Core', '<p>Kh&oacute;a học n&agrave;y được thiết kế để hướng dẫn học vi&ecirc;n x&acirc;y dựng một ứng dụng web ho&agrave;n chỉnh từ đầu đến cuối bằng .NET Core, bao gồm tất cả c&aacute;c giai đoạn từ ph&acirc;n t&iacute;ch y&ecirc;u cầu, lập tr&igrave;nh cho đến triển khai tr&ecirc;n m&ocirc;i trường thực tế. D&ugrave; bạn l&agrave; người mới với những kiến thức cơ bản về C# v&agrave; c&aacute;c c&ocirc;ng nghệ web, hay đ&atilde; l&agrave; lập tr&igrave;nh vi&ecirc;n muốn n&acirc;ng cao kỹ năng, kh&oacute;a học sẽ mang lại trải nghiệm thực tiễn v&agrave; đầy đủ về ph&aacute;t triển ứng dụng hiện đại.</p>
-<h4><strong>Những g&igrave; bạn sẽ học được</strong></h4>
-<ol>
-<li>
-<p><strong>Ph&acirc;n t&iacute;ch v&agrave; lập kế hoạch y&ecirc;u cầu:</strong></p>
-<ul>
-<li>Hiểu c&aacute;ch ph&acirc;n t&iacute;ch y&ecirc;u cầu thực tế v&agrave; chuyển đổi th&agrave;nh c&aacute;c t&iacute;nh năng kỹ thuật cụ thể.</li>
-<li>Tạo user stories v&agrave; x&aacute;c định c&aacute;c chức năng ch&iacute;nh của ứng dụng.</li>
-</ul>
-</li>
-<li>
-<p><strong>Ph&aacute;t triển Backend với .NET Core:</strong></p>
-<ul>
-<li>X&acirc;y dựng API RESTful bằng .NET Core 8.</li>
-<li>Nắm vững hai phương ph&aacute;p l&agrave;m việc với cơ sở dữ liệu: <strong>Database First</strong> v&agrave; <strong>Code First</strong> với Entity Framework.</li>
-<li>Triển khai t&iacute;nh năng x&aacute;c thực v&agrave; ph&acirc;n quyền sử dụng <strong>JWT Tokens</strong>.</li>
-</ul>
-</li>
-<li>
-<p><strong>Ph&aacute;t triển Frontend:</strong></p>
-<ul>
-<li>Thiết kế giao diện người d&ugrave;ng (UI) linh hoạt với <strong>HTML</strong>, <strong>JavaScript</strong>&nbsp;v&agrave; <strong>CSS</strong>.</li>
-</ul>
-</li>
-<li>
-<p><strong>Quản l&yacute; cơ sở dữ liệu với PostgreSQL:</strong></p>
-<ul>
-<li>Thiết lập v&agrave; quản l&yacute; cơ sở dữ liệu PostgreSQL.</li>
-</ul>
-</li>
-<li>
-<p><strong>Tối ưu h&oacute;a hiệu năng:</strong></p>
-<ul>
-<li>T&iacute;ch hợp <strong>Redis</strong> để lưu trữ cache, cải thiện tốc độ v&agrave; khả năng mở rộng ứng dụng.</li>
-</ul>
-</li>
-<li>
-<p><strong>Triển khai v&agrave; sử dụng dịch vụ đ&aacute;m m&acirc;y:</strong></p>
-<ul>
-<li>Học c&aacute;ch triển khai ứng dụng tr&ecirc;n nền tảng <strong>AWS Cloud Services</strong>, đảm bảo hiệu suất v&agrave; t&iacute;nh ổn định.</li>
-</ul>
-</li>
-</ol>
-<h4><strong>Điểm nổi bật của kh&oacute;a học:</strong></h4>
-<ul>
-<li><strong>Dự &aacute;n thực tế:</strong> Học vi&ecirc;n sẽ tự tay x&acirc;y dựng một ứng dụng quản l&yacute; c&ocirc;ng việc đầy đủ chức năng.</li>
-<li>So s&aacute;nh v&agrave; &aacute;p dụng hai phương ph&aacute;p <strong>Code First</strong> v&agrave; <strong>Database First</strong> trong t&igrave;nh huống thực tế.</li>
-<li>Ph&aacute;t triển ứng dụng dựa tr&ecirc;n kiến tr&uacute;c <strong>Microservices.</strong></li>
-<li>Học c&aacute;ch quản l&yacute; v&agrave; triển khai ứng dụng tr&ecirc;n nền tảng đ&aacute;m m&acirc;y hiện đại.</li>
-<li><strong>Tương t&aacute;c với giảng vi&ecirc;n:</strong> C&aacute;c b&agrave;i tập giữa kh&oacute;a được thiết kế để bạn &aacute;p dụng kiến thức ngay lập tức. B&agrave;i l&agrave;m của bạn sẽ được đội ngũ chuy&ecirc;n gia đ&aacute;nh gi&aacute; v&agrave; nhận x&eacute;t chi tiết, gi&uacute;p bạn nhận ra ưu điểm cũng như cải thiện kỹ năng lập tr&igrave;nh.</li>
-</ul>
-<h4><strong>Kết quả sau kh&oacute;a học:</strong></h4>
-<p>Sau kh&oacute;a học, bạn sẽ c&oacute; khả năng tự x&acirc;y dựng v&agrave; triển khai một ứng dụng web thực tế bằng .NET Core, đồng thời nắm vững c&aacute;c c&ocirc;ng nghệ hiện đại để mở rộng v&agrave; ph&aacute;t triển dự &aacute;n trong tương lai.</p>', 1000000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/csharp-fullstack_8_63694c3f5e9d48d2b826de8ccb411b82.png', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('3600145f-dbec-412b-94f1-08942f6afa16', 'Python nâng cao', '<p><span style="font-size: 18pt; color: #304090;"><strong>Kh&aacute;m ph&aacute; sức mạnh thực sự của Python với kh&oacute;a học n&acirc;ng cao!</strong></span></p>
 <p>Bạn đ&atilde; nắm vững c&aacute;c kiến thức cơ bản về Python v&agrave; đang t&igrave;m kiếm một cơ hội để n&acirc;ng cao kỹ năng lập tr&igrave;nh của m&igrave;nh?</p>
 <p>Kh&oacute;a học <strong>Python N&acirc;ng Cao</strong> của ch&uacute;ng t&ocirc;i ch&iacute;nh l&agrave; ch&igrave;a kh&oacute;a để bạn mở ra những tiềm năng mới, từ việc l&agrave;m chủ c&aacute;c kiểu dữ liệu phức hợp cho đến lập tr&igrave;nh hướng đối tượng, xử l&yacute; lỗi chuy&ecirc;n nghiệp, v&agrave; nhiều hơn thế nữa. Đ&acirc;y l&agrave; cơ hội để bạn n&acirc;ng tầm sự nghiệp lập tr&igrave;nh v&agrave; trở th&agrave;nh chuy&ecirc;n gia trong lĩnh vực n&agrave;y.</p>
@@ -886,614 +1392,7 @@ INSERT INTO public."Courses" VALUES ('3600145f-dbec-412b-94f1-08942f6afa16', 'Py
 <p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/4380747_b33b0943c490448cb1e216c06ed02956.jpg" width="501" height="501" /></p>
 <p><span style="font-size: 18pt; color: #304090;"><strong>Đăng k&yacute; ngay</strong></span></p>
 <p>Đừng chần chừ! Mỗi ng&agrave;y tr&ocirc;i qua l&agrave; một cơ hội bị bỏ lỡ. H&atilde;y đăng k&yacute; ngay h&ocirc;m nay để kh&aacute;m ph&aacute; v&agrave; chinh phục những thử th&aacute;ch mới với Python N&acirc;ng Cao. C&ugrave;ng ch&uacute;ng t&ocirc;i bước v&agrave;o thế giới lập tr&igrave;nh hiện đại v&agrave; mở ra những cơ hội nghề nghiệp mới đầy triển vọng!</p>
-<p>Nắm bắt cơ hội, tiến tới th&agrave;nh c&ocirc;ng. Đăng k&yacute; ngay h&ocirc;m nay v&agrave; trở th&agrave;nh một lập tr&igrave;nh vi&ecirc;n Python thực thụ!</p>', 900000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/Python_-_Ad_3561581c4f074d9694a4704ed184b60e.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('3a705a75-7389-4e97-aeb8-58a58616032b', 'Lập trình hướng đối tượng trong C++', '<div style="text-align: justify;"><strong>Khi nhắc tới lập tr&igrave;nh hướng đối tượng chắc bạn sẽ nghĩ ngay tới 4 t&iacute;nh chất l&agrave; t&iacute;nh đ&oacute;ng g&oacute;i, t&iacute;nh kế thừa, t&iacute;nh đa h&igrave;nh v&agrave; t&iacute;nh trừu tượng. Thực chất th&igrave; 4 t&iacute;nh chất n&agrave;y chỉ giống như c&aacute;c nguy&ecirc;n liệu để x&acirc;y dựng chương tr&igrave;nh theo phương ph&aacute;p hướng đối tượng, quan trọng nhất vẫn l&agrave; c&aacute;ch m&agrave; bạn sử dụng c&aacute;c nguy&ecirc;n liệu n&agrave;y để x&acirc;y dựng chương tr&igrave;nh như thế n&agrave;o.</strong></div>
-<h3 style="text-align: justify;">Vậy lập tr&igrave;nh hướng đối tượng l&agrave; g&igrave;?</h3>
-<div style="text-align: justify;">Lập tr&igrave;nh hướng đối tượng được hiểu đơn giản l&agrave; một phương ph&aacute;p để giải quyết b&agrave;i to&aacute;n lập tr&igrave;nh m&agrave; khi &aacute;p dụng th&igrave; code sẽ trở n&ecirc;n dễ ph&aacute;t triển v&agrave; dễ bảo tr&igrave; hơn. Phương ph&aacute;p n&agrave;y sẽ chia nhỏ chương tr&igrave;nh th&agrave;nh c&aacute;c đối tượng v&agrave; c&aacute;c mối quan hệ, mỗi đối tượng sẽ c&oacute; c&aacute;c thuộc t&iacute;nh (dữ liệu) v&agrave; h&agrave;nh vi (phương thức). Để c&oacute; thể lập tr&igrave;nh v&agrave; thiết kế chương tr&igrave;nh theo phương ph&aacute;p n&agrave;y th&igrave; chắc chắn bạn cần hiểu r&otilde; về 4 t&iacute;nh chất l&agrave; l&agrave; t&iacute;nh đ&oacute;ng g&oacute;i, t&iacute;nh kế thừa, t&iacute;nh đa h&igrave;nh v&agrave; t&iacute;nh trừu tượng.</div>
-<div><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/Untitled-4.png" alt="" width="649" height="496" /></div>
-<div style="text-align: justify;">&nbsp;</div>
-<h3 style="text-align: justify;">1. T&iacute;nh đ&oacute;ng g&oacute;i (Encapsulation)</h3>
-<div style="text-align: justify;">Đ&acirc;y l&agrave; kỹ thuật gi&uacute;p bạn che giấu đi những th&ocirc;ng tin b&ecirc;n trong đối tượng bằng c&aacute;ch sử dụng phạm vi truy cập private cho c&aacute;c thuộc t&iacute;nh, muốn giao tiếp hay lấy ra c&aacute;c th&ocirc;ng tin của đối tượng th&igrave; phải th&ocirc;ng qua c&aacute;c phương thức public, từ đ&oacute; sẽ hạn chế được c&aacute;c lỗi khi ph&aacute;t triển chương tr&igrave;nh. T&iacute;nh chất n&agrave;y cũng giống với trong thực tế, bạn kh&ocirc;ng thể thấy được c&aacute;c thuộc t&iacute;nh thực của một người (t&iacute;nh c&aacute;ch, sở th&iacute;ch, c&aacute;c th&ocirc;ng tin ri&ecirc;ng tư kh&aacute;c, ...), những thứ m&agrave; bạn biết đều l&agrave; th&ocirc;ng qua c&aacute;c h&agrave;nh động của người đ&oacute;. V&iacute; dụ người đ&oacute; n&oacute;i cho bạn biết về sở th&iacute;ch, tuổi, ... nhưng c&aacute;c th&ocirc;ng tin n&agrave;y chưa chắc đ&atilde; thực sự l&agrave; thuộc t&iacute;nh thật của người đ&oacute; (giống với việc c&aacute;c getter kh&ocirc;ng trả về gi&aacute; trị thực của thuộc t&iacute;nh m&agrave; trả về một gi&aacute; trị kh&aacute;c).</div>
-<div><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/lap-trinh-huong-doi-tuong-phan-5-63729265681.6431.jpg" alt="" width="513" height="321" /> <br />
-<p>C&aacute;c lợi &iacute;ch ch&iacute;nh m&agrave; t&iacute;nh đ&oacute;ng g&oacute;i đem lại:</p>
-<ul>
-<li>Hạn chế được c&aacute;c truy xuất kh&ocirc;ng hợp lệ tới c&aacute;c thuộc t&iacute;nh của đối tượng.</li>
-<li>Gi&uacute;p cho trạng th&aacute;i của c&aacute;c đối tượng lu&ocirc;n đ&uacute;ng. V&iacute; dụ nếu thuộc t&iacute;nh&nbsp;<code>gpa</code>&nbsp;của lớp&nbsp;<code>Student</code>&nbsp;l&agrave;&nbsp;<code>public</code>&nbsp;th&igrave; sẽ rất kh&oacute; kiểm so&aacute;t được gi&aacute; trị, bạn c&oacute; thể thay đổi&nbsp;<code>gpa</code>&nbsp;th&agrave;nh bất kỳ gi&aacute; trị n&agrave;o. Ngược lại, nếu bạn để thuộc t&iacute;nh&nbsp;<code>gpa</code>&nbsp;l&agrave;&nbsp;<code>private</code>&nbsp;v&agrave; cung cấp h&agrave;m&nbsp;<code>setGpa()</code>&nbsp;giống như sau:</li>
-</ul>
-<pre class="language-cpp"><code>void setGpa(double gpa) {
-		if (gpa &gt;= 0 &amp;&amp; gpa &lt;= 4) {
-			this-&gt;gpa = gpa;
-		} else {
-			cout &lt;&lt; "gpa is invalid";
-		}
-	}​</code></pre>
-<p>th&igrave; l&uacute;c n&agrave;y gi&aacute; trị của thuộc t&iacute;nh&nbsp;<code>gpa</code>&nbsp;sẽ lu&ocirc;n được đảm bảo l&agrave; kh&ocirc;ng &acirc;m v&agrave; nhỏ hơn hoặc bằng&nbsp;<code>4</code>&nbsp;(do muốn thay đổi&nbsp;<code>gpa</code>&nbsp;th&igrave; phải th&ocirc;ng qua h&agrave;m&nbsp;<code>setGpa()</code>).</p>
-<ul>
-<li>Gi&uacute;p ẩn đi những th&ocirc;ng tin kh&ocirc;ng cần thiết về đối tượng.</li>
-<li>Cho ph&eacute;p bạn thay đổi cấu tr&uacute;c b&ecirc;n trong lớp m&agrave; kh&ocirc;ng ảnh hưởng tới lớp kh&aacute;c. V&iacute; dụ ban đầu bạn thiết kế lớp&nbsp;<code>Student</code>&nbsp;giống như sau:</li>
-</ul>
-<pre class="language-cpp"><code>class Student {
-private: 
-	string firstName;
-	string lastName;
-public:
-	Student() {
-		...
-	}
-	string getFullName() {
-		return firstName + lastName;
-	}
-};</code></pre>
-<p>Sau n&agrave;y nếu bạn muốn gộp 2 thuộc t&iacute;nh&nbsp;<code>firstName</code>&nbsp;v&agrave;&nbsp;<code>lastName</code>&nbsp;th&agrave;nh&nbsp;<code>fullName</code>&nbsp;th&igrave; lớp&nbsp;<code>Student</code>&nbsp;sẽ&nbsp;giống như sau:</p>
-<pre class="language-cpp"><code>class Student {
-private:
-	string fullName;
-public:
-	Student() {
-		...
-	}
-	string getFullName() {
-		return fullName;
-	}
-};</code></pre>
-<p>L&uacute;c n&agrave;y cấu tr&uacute;c lớp&nbsp;<code>Student</code>&nbsp;đ&atilde; bị thay đổi nhưng c&aacute;c đối tượng sử dụng lớp n&agrave;y vẫn kh&ocirc;ng cần phải thay đổi do c&aacute;c đối tượng n&agrave;y chỉ quan t&acirc;m tới phương thức&nbsp;<code>getFullName()</code>. Nếu kh&ocirc;ng c&oacute; phương thức n&agrave;y th&igrave; bạn phải sửa tất cả những chỗ sử dụng thuộc t&iacute;nh&nbsp;<code>firstName</code>&nbsp;v&agrave;&nbsp;<code>lastName</code>&nbsp;của lớp&nbsp;<code>Student</code>.</p>
-<p>Lưu &yacute;:&nbsp;h&atilde;y lu&ocirc;n nhớ rằng mục đ&iacute;ch ch&iacute;nh của t&iacute;nh đ&oacute;ng g&oacute;i l&agrave; để hạn chế c&aacute;c lỗi khi ph&aacute;t triển chương tr&igrave;nh chứ kh&ocirc;ng phải l&agrave; bảo mật hay che giấu th&ocirc;ng tin.</p>
-</div>
-<h3 style="text-align: justify;">2. T&iacute;nh kế thừa (Inheritance)</h3>
-<p style="text-align: justify;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/Shanghaik/Pictures/dad.jpg" alt="" width="418" height="418" /></p>
-<div style="text-align: justify;">Khi lập tr&igrave;nh chắc chắn sẽ c&oacute; những trường hợp m&agrave; c&aacute;c đối tượng c&oacute; chung một số thuộc t&iacute;nh v&agrave; phương thức. V&iacute; dụ như khi bạn viết chương tr&igrave;nh lưu th&ocirc;ng tin về c&aacute;c học sinh v&agrave; gi&aacute;o vi&ecirc;n. Với học sinh th&igrave; cần lưu th&ocirc;ng tin về t&ecirc;n, tuổi, địa chỉ, điểm v&agrave; với gi&aacute;o vi&ecirc;n th&igrave; cần lưu th&ocirc;ng tin về t&ecirc;n, tuổi, địa chỉ, tiền lương =&gt; l&uacute;c n&agrave;y code sẽ bị tr&ugrave;ng lặp kh&aacute; nhiều (từ c&aacute;c thuộc t&iacute;nh cho tới c&aacute;c setter, getter, ...) v&agrave; n&oacute; vi phạm một trong những nguy&ecirc;n tắc cơ bản nhất khi lập tr&igrave;nh l&agrave; DRY (Don''t Repeat Yourself - đừng bao giờ lặp lại code). Để thấy r&otilde; hơn th&igrave; bạn h&atilde;y xem sơ đồ lớp sau:</div>
-<div style="text-align: center;"><img src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/1_c1cffb641bc14b69958870dedbd2328b.png" /></div>
-<div style="text-align: justify;">Với kế thừa th&igrave; vấn đề n&agrave;y sẽ được giải quyết, kế thừa trong lập tr&igrave;nh hướng đối tượng ch&iacute;nh l&agrave; thừa hưởng lại những thuộc t&iacute;nh v&agrave; phương thức của một lớp. C&oacute; nghĩa l&agrave; nếu lớp A kế thừa lớp B th&igrave; lớp A sẽ c&oacute; những thuộc t&iacute;nh v&agrave; phương thức của lớp B. Do đ&oacute;, từ sơ đồ tr&ecirc;n bạn c&oacute; thể t&aacute;ch c&aacute;c thuộc t&iacute;nh v&agrave; phương thức tr&ugrave;ng nhau ra một lớp mới t&ecirc;n l&agrave;&nbsp;<code>Person</code>&nbsp;v&agrave; cho lớp&nbsp;<code>Student</code>&nbsp;v&agrave;&nbsp;<code>Teacher</code>&nbsp;kế thừa lớp n&agrave;y giống như sau:</div>
-<div style="text-align: justify;"><img src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/2_952c2cadf9d44245b93bdc389799597d.png" /></div>
-<div style="text-align: justify;">C&oacute; thể thấy với sơ đồ n&agrave;y th&igrave; lớp&nbsp;<code>Student</code>&nbsp;v&agrave;&nbsp;<code>Teacher</code>&nbsp;sẽ được thừa hưởng lại c&aacute;c thuộc t&iacute;nh chung từ lớp&nbsp;<code>Person</code>&nbsp;v&agrave; code sẽ kh&ocirc;ng c&ograve;n bị tr&ugrave;ng lặp. Đ&oacute; ch&iacute;nh l&agrave; lợi &iacute;ch của t&iacute;nh kế thừa.</div>
-<h3 style="text-align: justify;">3. T&iacute;nh đa h&igrave;nh (Polymorphism)</h3>
-<div style="text-align: justify;">Như bạn đ&atilde; biết, lập tr&igrave;nh hướng đối tượng l&agrave; phương ph&aacute;p tư duy v&agrave; giải quyết b&agrave;i to&aacute;n lập tr&igrave;nh theo hướng thực tế. Do đ&oacute;, c&aacute;c t&iacute;nh chất của n&oacute; cũng sẽ gắn liền với thực tế n&ecirc;n trước hết bạn cần hiểu về t&iacute;nh đa h&igrave;nh trong thực tế. Đa h&igrave;nh được hiểu l&agrave; trong từng ho&agrave;n cảnh, từng trường hợp kh&aacute;c nhau th&igrave; c&aacute;c đối tượng sẽ đ&oacute;ng c&aacute;c vai tr&ograve; kh&aacute;c nhau. V&iacute; dụ, c&ugrave;ng l&agrave; một người nhưng khi ở c&ocirc;ng ty th&igrave; c&oacute; vai tr&ograve; l&agrave; nh&acirc;n vi&ecirc;n, khi đi si&ecirc;u thị th&igrave; c&oacute; vai tr&ograve; l&agrave; kh&aacute;ch h&agrave;ng, hay khi ở trường th&igrave; lại c&oacute; vai tr&ograve; l&agrave; học sinh, ... =&gt; c&ugrave;ng l&agrave; một người nhưng c&oacute; nhiều vai tr&ograve; kh&aacute;c nhau n&ecirc;n đ&acirc;y ch&iacute;nh l&agrave; đa h&igrave;nh trong thực tế.</div>
-<div style="text-align: justify;">Trong lập tr&igrave;nh th&igrave; khi một đối tượng hay một phương thức c&oacute; nhiều hơn một h&igrave;nh th&aacute;i th&igrave; đ&oacute; ch&iacute;nh l&agrave; đa h&igrave;nh. T&iacute;nh đa h&igrave;nh được thể hiện dưới 3 h&igrave;nh thức:</div>
-<div style="text-align: justify;">
-<p><strong><em>3.1. Đa h&igrave;nh với nạp chồng phương thức</em></strong></p>
-<p>V&iacute; dụ: phương thức cộng sẽ c&oacute; c&aacute;c h&igrave;nh th&aacute;i l&agrave; cộng 2 số nguy&ecirc;n, cộng 2 số thực, cộng 3 số nguy&ecirc;n, v/v. C&oacute; thể thấy c&ugrave;ng l&agrave; phương thức cộng nhưng lại c&oacute; nhiều h&igrave;nh th&aacute;i kh&aacute;c nhau&nbsp;n&ecirc;n đ&acirc;y ch&iacute;nh l&agrave; biểu hiện của t&iacute;nh đa h&igrave;nh. V&iacute; dụ về đa h&igrave;nh với nạp chồng phương thức:&nbsp;</p>
-<pre class="language-cpp"><code>#include &lt;iostream&gt;
-
-using namespace std;
-
-class Calculator {
-public:
-	int add(int a, int b) {
-		return a + b;
-	}
-
-	double add(double a, double b) {
-		return a + b;
-	}
-
-	int add(int a, int b, int c) {
-		return a + b + c;
-	}
-};
-
-int main() {
-	Calculator c;
-	cout &lt;&lt; c.add(1, 2) &lt;&lt; endl;
-	cout &lt;&lt; c.add(3.3, 4.2) &lt;&lt; endl;
-	cout &lt;&lt; c.add(1, 2, 3) &lt;&lt; endl;
-	return 0;
-}</code></pre>
-<p>Kết quả khi chạy chương tr&igrave;nh:</p>
-<pre class="language-markup"><code>3
-7.5
-6
-</code></pre>
-<p><strong><em>3.2. Đa h&igrave;nh với ghi đ&egrave; phương thức</em></strong></p>
-<p>V&iacute; dụ phương thức&nbsp;<code>getSalary()</code>&nbsp;d&ugrave;ng để t&iacute;nh lương sẽ c&oacute; c&aacute;c h&igrave;nh th&aacute;i l&agrave; t&iacute;nh lương cho quản l&yacute;, t&iacute;nh lương cho nh&acirc;n vi&ecirc;n:</p>
-<pre class="language-cpp"><code>class Employee {
-private:
-	string name;
-	int salary;
-
-public:
-	Employee(string name, int salary) {
-		this-&gt;name = name;
-		this-&gt;salary = salary;
-	}
-
-	string getName() {
-		return name;
-	}
-
-	void setName(string name) {
-		this-&gt;name = name;
-	}
-
-	int getSalary() {
-		return salary;
-	}
-
-	void setSalary(int salary) {
-		this-&gt;salary = salary;
-	}
-
-	void display() {
-		cout &lt;&lt; "Name: " &lt;&lt; getName() &lt;&lt; endl;
-		cout &lt;&lt; "Salary: " &lt;&lt; getSalary() &lt;&lt; endl;
-	}
-};
-
-class Manager : Employee {
-private:
-	int bonus;
-public:
-	Manager(string name, int salary, int bonus) : Employee(name, salary) {
-		this-&gt;bonus = bonus;
-	}
-
-	int getBonus() {
-		return bonus;
-	}
-
-	void setBonus(int bonus) {
-		this-&gt;bonus = bonus;
-	}
-
-	int getSalary() {
-		return Employee::getSalary() + bonus;
-	}
-};
-</code></pre>
-<p>Đều l&agrave; t&iacute;nh lương nhưng với mỗi đối tượng lại c&oacute; một c&aacute;ch t&iacute;nh kh&aacute;c nhau, đ&oacute; ch&iacute;nh l&agrave; t&iacute;nh đa h&igrave;nh.</p>
-<p><strong><em>3.3 Đa h&igrave;nh th&ocirc;ng qua c&aacute;c&nbsp;đối tượng đa h&igrave;nh (polymorphic objects)</em></strong></p>
-<p><img src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/polymorphism.png" alt="" width="620" height="431" /></p>
-<p>Biến thuộc lớp cha c&oacute; thể tham chiếu tới đối tượng của c&aacute;c lớp con, vậy biến thuộc lớp cha cũng c&oacute; nhiều h&igrave;nh th&aacute;i n&ecirc;n đ&acirc;y cũng l&agrave; đa h&igrave;nh. V&iacute; dụ:</p>
-<pre class="language-cpp"><code>#include &lt;iostream&gt;
-
-using namespace std;
-
-class Animal {
-public:
-	virtual void sound() {
-		cout &lt;&lt; "some sound" &lt;&lt; endl;
-	}
-};
-
-class Dog : public Animal {
-public:
-	void sound() {
-		cout &lt;&lt; "bow wow" &lt;&lt; endl;
-	}
-};
-
-class Cat : public Animal {
-public:
-	void sound() {
-		cout &lt;&lt; "meow meow" &lt;&lt; endl;
-	}
-};
-
-class Duck : public Animal {
-public:
-	void sound() {
-		cout &lt;&lt; "quack quack" &lt;&lt; endl;
-	}
-};
-
-int main() {
-	Animal* animal = new Animal();
-	animal-&gt;sound();
-	animal = new Dog();
-	animal-&gt;sound();
-	animal = new Duck();
-	animal-&gt;sound();
-	animal = new Cat();
-	animal-&gt;sound();
-	return 0;
-}</code></pre>
-<p>Kết quả khi chạy chương tr&igrave;nh:</p>
-<pre class="language-java"><code>some sound
-bow wow
-quack quack
-meow meow​</code></pre>
-</div>
-<h3 style="text-align: justify;"><br />4.T&iacute;nh trừu tượng (Abstraction)</h3>
-<div style="text-align: justify;">Trừu tượng l&agrave; t&iacute;nh chất m&agrave; đơn giản h&oacute;a đi những th&ocirc;ng tin b&ecirc;n trong đối tượng, n&oacute; cho ph&eacute;p ta giao tiếp với c&aacute;c th&agrave;nh phần của đối tượng m&agrave; kh&ocirc;ng cần phải biết về c&aacute;ch m&agrave; c&aacute;c th&agrave;nh phần n&agrave;y được x&acirc;y dựng (ch&iacute;nh x&aacute;c hơn l&agrave; kh&ocirc;ng cần biết c&aacute;c th&agrave;nh phần n&agrave;y được code như thế n&agrave;o m&agrave; chỉ cần biết c&aacute;c th&agrave;nh phần n&agrave;y được d&ugrave;ng để l&agrave;m g&igrave;). Trước hết, h&atilde;y c&ugrave;ng xem một v&iacute; dụ thực tế về t&iacute;nh trừu tượng:<br />Khi bạn đi r&uacute;t tiền ở c&acirc;y ATM th&igrave; bạn kh&ocirc;ng cần quan t&acirc;m tới c&aacute;ch m&agrave; c&acirc;y ATM hoạt động hay c&aacute;c th&agrave;nh phần c&oacute; trong c&acirc;y ATM, c&aacute;i m&agrave; bạn quan t&acirc;m duy nhất đ&oacute; l&agrave; t&iacute;nh năng r&uacute;t tiền. Trong trường hợp n&agrave;y c&aacute;c th&ocirc;ng tin kh&ocirc;ng cần thiết của c&acirc;y ATM như đếm tiền, trừ tiền trong t&agrave;i khoản, gửi dữ liệu về m&aacute;y chủ đ&atilde; được ẩn đi. C&aacute;i m&agrave; bạn nh&igrave;n thấy về đối tượng c&acirc;y ATM ch&iacute;nh l&agrave; r&uacute;t tiền =&gt; c&acirc;y ATM đ&atilde; ẩn đi những chi tiết kh&ocirc;ng cần thiết v&agrave; đ&oacute; ch&iacute;nh l&agrave; t&iacute;nh trừu tượng.<br />Tương tự trong lập tr&igrave;nh cũng vậy, khi gọi tới c&aacute;c phương thức của một đối tượng th&igrave; bạn chỉ cần quan t&acirc;m tới phương thức đ&oacute; được d&ugrave;ng để l&agrave;m g&igrave; chứ kh&ocirc;ng cần quan t&acirc;m tới phương thức đ&oacute; được code như thế n&agrave;o. T&iacute;nh chất n&agrave;y rất c&oacute; &iacute;ch khi l&agrave;m việc nh&oacute;m, bạn chỉ cần quan t&acirc;m tới chức năng của c&aacute;c phương thức m&agrave; đồng nghiệp code chứ kh&ocirc;ng cần biết n&oacute; được c&agrave;i đặt như thế n&agrave;o. Để thực hiện t&iacute;nh trừu tượng th&igrave; bạn c&oacute; thể sử dụng c&aacute;c abstract class v&agrave; interface v&igrave; n&oacute; chỉ chứa phần khai b&aacute;o chứ kh&ocirc;ng c&oacute; phần c&agrave;i đặt (ở một số ng&ocirc;n ngữ kh&ocirc;ng c&oacute; kh&aacute;i niệm về interface n&ecirc;n nếu bạn chưa biết về interface th&igrave; c&oacute; thể hiểu interface ch&iacute;nh l&agrave; abstract class với c&aacute;c phương thức đều l&agrave; trừu tượng).</div>
-<div style="text-align: justify;">Trong thực tế, khi đi l&agrave;m bạn sẽ sử dụng tới interface rất nhiều, với mỗi lớp bạn thường tạo ra 1 interface ri&ecirc;ng để thể hiện c&aacute;c t&iacute;nh năng của lớp đ&oacute; v&agrave; sử dụng interface n&agrave;y để giao tiếp với đối tượng. V&iacute; dụ lớp Customer sẽ c&oacute; interface ICustomer, c&aacute;c đối tượng kh&aacute;c muốn giao tiếp với lớp Customer th&igrave; đều phải th&ocirc;ng qua interface tr&ecirc;n..</div>
-<h3 style="text-align: justify;">Kết luận</h3>
-<div style="text-align: justify;">Lập tr&igrave;nh hướng đối tượng kh&ocirc;ng chỉ g&oacute;i gọn trong 4 t&iacute;nh chất tr&ecirc;n, để viết được một chương tr&igrave;nh tốt th&igrave; bạn c&ograve;n phải biết th&ecirc;m rất nhiều nguy&ecirc;n liệu kh&aacute;c như OOP design, Software Architecture, ... trong b&agrave;i n&agrave;y m&igrave;nh chỉ t&oacute;m tắt về lập tr&igrave;nh hướng đối tượng v&agrave; 4 t&iacute;nh chất ch&iacute;nh, nếu muốn học chi tiết hơn th&igrave; bạn c&oacute; thể tham khảo th&ecirc;m tại kh&oacute;a học <a href="https://codelearn.io/learning/lap-trinh-huong-doi-tuong-trong-cpp">C++ OOP</a> v&agrave; <a href="https://codelearn.io/learning/java-oop">Java OOP</a> tr&ecirc;n hệ thống. C&ograve;n về c&aacute;c chủ đề kh&aacute;c trong OOP th&igrave; m&igrave;nh sẽ giới thiệu trong c&aacute;c b&agrave;i viết tiếp theo.</div>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/lap-trinh-huong-doi-tuong-trong-cpp_653cb309970b492ca7f69162384814f8.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Java cơ bản', '<p>Ng&ocirc;n ngữ Java được lựa chọn để tạo ra c&aacute;c website, ứng dụng di động, phần mềm t&ugrave;y chỉnh, cổng th&ocirc;ng tin điện tử,&hellip; v&agrave; được coi như&nbsp;một trong những ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất tr&ecirc;n thế giới hiện nay. Nhiều nh&agrave; ph&aacute;t triển phần mềm khởi đầu với Java v&agrave; đi theo n&oacute; qua rất nhiều dự &aacute;n cho đến tận b&acirc;y giờ. Java l&agrave; một chương tr&igrave;nh mặc định trong c&aacute;c hệ điều h&agrave;nh v&agrave; vai tr&ograve; của n&oacute; đối với ch&uacute;ng ta l&agrave; v&ocirc; c&ugrave;ng to lớn.</p>
-<h3><strong>Java l&agrave; g&igrave;?</strong></h3>
-<p>Java l&agrave;&nbsp;ng&ocirc;n ngữ lập tr&igrave;nh&nbsp;bậc cao, được ph&aacute;t triển bởi Sun Microsystems, do James Gosling khởi xướng v&agrave; ph&aacute;t h&agrave;nh v&agrave;o năm 1995 như l&agrave; một th&agrave;nh phần cốt l&otilde;i của nền tảng Java của Sun Microsystems (Java 1.0 [J2SE]).&nbsp;Java chạy tr&ecirc;n rất nhiều nền tảng kh&aacute;c nhau, như Windows, Mac v&agrave; c&aacute;c phi&ecirc;n bản kh&aacute;c nhau của UNIX.&nbsp;</p>
-<p>Java được hiểu l&agrave; một loại ng&ocirc;n ngữ lập tr&igrave;nh hướng đối tượng (OOP) v&agrave; dựa tr&ecirc;n c&aacute;c lớp. Kh&ocirc;ng giống với những ng&ocirc;n ngữ lập tr&igrave;nh th&ocirc;ng thường, thay v&igrave; việc bi&ecirc;n dịch m&atilde; nguồn trở th&agrave;nh m&atilde; nguồn m&aacute;y hoặc trực tiếp th&ocirc;ng dịch m&atilde; nguồn khi chạy th&igrave; Java được thiết kế để bi&ecirc;n dịch m&atilde; nguồn th&agrave;nh bytecode. Sau đ&oacute;, bytecode sẽ được m&ocirc;i trường thực thi (runtime environment).</p>
-<h3><strong>Đặc điểm của Java</strong></h3>
-<ul>
-<li><strong style="font-style: inherit;">Hướng đối tượng:&nbsp;</strong>Trong Java, mọi thứ đều l&agrave; Object. Java c&oacute; thể mở rộng v&igrave; n&oacute; dựa tr&ecirc;n m&ocirc; h&igrave;nh Object.</li>
-<li><strong style="font-style: inherit;">Nền tảng độc lập:&nbsp;</strong>Kh&ocirc;ng giống như nhiều&nbsp;ng&ocirc;n ngữ lập tr&igrave;nh&nbsp;kh&aacute;c (C, C++), khi Java được bi&ecirc;n dịch, n&oacute; kh&ocirc;ng bi&ecirc;n dịch sang một m&aacute;y t&iacute;nh cụ thể tr&ecirc;n nền tảng n&agrave;o, thay v&agrave;o đ&oacute; l&agrave; những byte code độc lập với nền tảng. Byte code n&agrave;y được ph&acirc;n phối tr&ecirc;n web v&agrave; được th&ocirc;ng dịch bằng Virtual Machine (JVM) tr&ecirc;n bất cứ nền tảng n&agrave;o m&agrave; n&oacute; đang chạy.</li>
-<li><strong style="font-style: inherit;">Đơn giản:&nbsp;</strong>Java được thiết kế để dễ học. Nếu bạn hiểu cơ bản về kh&aacute;i niệm lập tr&igrave;nh hướng đối tượng Java, th&igrave; c&oacute; thể nắm bắt ng&ocirc;n ngữ n&agrave;y rất nhanh.</li>
-<li><strong style="font-style: inherit;">Bảo mật:&nbsp;</strong>Với t&iacute;nh năng an to&agrave;n của Java, n&oacute; cho ph&eacute;p ph&aacute;t triển những hệ thống kh&ocirc;ng c&oacute; virus, giả mạo. C&aacute;c kỹ thuật x&aacute;c thực dựa tr&ecirc;n m&atilde; h&oacute;a c&ocirc;ng khai.</li>
-<li><strong style="font-style: inherit;">Kiến tr&uacute;c trung lập:&nbsp;</strong>Tr&igrave;nh bi&ecirc;n dịch của Java tạo ra một định dạng file object c&oacute; kiến tr&uacute;c trung lập, l&agrave;m cho code sau khi bi&ecirc;n dịch c&oacute; thể chạy tr&ecirc;n nhiều bộ vi xử l&yacute;, với sự hiện diện của&nbsp;Java runtime system.</li>
-<li><strong style="font-style: inherit;">Portable:&nbsp;</strong>L&agrave; kiến tr&uacute;c trung lập v&agrave; kh&ocirc;ng phụ thuộc v&agrave;o việc thực hiện l&agrave; những đặc điểm ch&iacute;nh nhất khi n&oacute;i về kh&iacute;a cạnh Portable của Java. Tr&igrave;nh bi&ecirc;n dịch trong Java được viết bằng ANSI C với một ranh giới portable gọn g&agrave;ng, đ&oacute; l&agrave; một subset POSIX (giao diện hệ điều h&agrave;nh linh động). Bạn c&oacute; thể mang byte code của Java l&ecirc;n bất cứ nền tảng n&agrave;o.</li>
-<li><strong style="font-style: inherit;">Mạnh mẽ:&nbsp;</strong>Java nỗ lực loại trừ những t&igrave;nh huống dễ bị lỗi bằng c&aacute;ch nhấn mạnh chủ yếu l&agrave; kiểm tra lỗi thời gian bi&ecirc;n dịch v&agrave; kiểm tra runtime.</li>
-<li><strong style="font-style: inherit;">Đa luồng:&nbsp;</strong>Với t&iacute;nh năng đa luồng của Java, bạn c&oacute; thể viết c&aacute;c chương tr&igrave;nh c&oacute; thể thực hiện nhiều t&aacute;c vụ đồng thời. T&iacute;nh năng n&agrave;y cho ph&eacute;p c&aacute;c nh&agrave; ph&aacute;t triển x&acirc;y dựng c&aacute;c ứng dụng tương t&aacute;c c&oacute; thể chạy trơn tru.</li>
-<li><strong style="font-style: inherit;">Th&ocirc;ng dịch:&nbsp;</strong>Byte code của Java được dịch trực tiếp tới c&aacute;c nền tảng gốc v&agrave; n&oacute; kh&ocirc;ng được lưu trữ ở bất cứ đ&acirc;u.&nbsp;</li>
-<li><strong style="font-style: inherit;">Hiệu suất cao:&nbsp;</strong>Với việc sử dụng tr&igrave;nh bi&ecirc;n dịch Just-In-Time, Java cho ph&eacute;p thực thi với hiệu suất cao, nhanh ch&oacute;ng ph&aacute;t hiện, gỡ lỗi.</li>
-<li><strong style="font-style: inherit;">Ph&acirc;n t&aacute;n:&nbsp;</strong>Java được thiết kế cho m&ocirc;i trường ph&acirc;n t&aacute;n của Internet.</li>
-<li><strong style="font-style: inherit;">Linh động:&nbsp;</strong>Java được coi l&agrave; năng động hơn C hay C++ v&igrave; n&oacute; được thiết kế để th&iacute;ch nghi với m&ocirc;i trường đang ph&aacute;t triển. C&aacute;c chương tr&igrave;nh Java c&oacute; thể mang theo một lượng lớn th&ocirc;ng tin run-time, được sử dụng để x&aacute;c minh v&agrave; giải quyết c&aacute;c truy cập đến đối tượng trong thời gian chạy.</li>
-</ul>
-<h3><strong>Ứng dụng của JAVA</strong></h3>
-<p>C&oacute; 4 loại ứng dụng ch&iacute;nh m&agrave; c&oacute; thể được tạo bởi sử dụng ng&ocirc;n ngữ lập tr&igrave;nh Java:</p>
-<ul>
-<li><strong>Standalone App<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/Java_appp.png" alt="" width="638" height="555" /> <br /></strong>N&oacute; c&ograve;n được biết đến với t&ecirc;n gọi kh&aacute;c l&agrave; Destop App hoặc Windows-based App. Một ứng dụng m&agrave; ch&uacute;ng ta cần c&agrave;i đặt tr&ecirc;n mỗi thiết bị như media player, antivirus, &hellip; AWT v&agrave; Swing được sử dụng trong Java để tạo c&aacute;c Standalone App.</li>
-<li><strong>Web App<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/java_web.gif" alt="" width="662" height="377" /> <img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/java_web2.jpg" alt="" width="934" height="1085" /> </strong><br />Một ứng dụng m&agrave; chạy tr&ecirc;n Server Side v&agrave; tạo Dynamic Page, được gọi l&agrave; Web App. Hiện tại, c&aacute;c c&ocirc;ng nghệ Servlet, JSP, Struts, JSF, &hellip; được sử dụng để tạo Web App trong Java.</li>
-<li><strong>Enterprise App<br /></strong>Một ứng dụng dạng như Banking App, c&oacute; lợi thế l&agrave; t&iacute;nh bảo mật cao, c&acirc;n bằng tải (load balancing) v&agrave; clustering. Trong java, EJB được sử dụng để tạo c&aacute;c Enterprise App.</li>
-<li><strong>Mobile App<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/Java_mobileApp.jpg" alt="" width="664" height="436" /> </strong><br />Đ&acirc;y l&agrave; loại ứng dụng được tạo cho thiết bị mobile. Hiện tại th&igrave; Android v&agrave; Java ME được sử dụng để tạo loại ứng dụng n&agrave;y.</li>
-</ul>
-<hr />
-<h3>Mục ti&ecirc;u của kh&oacute;a học.</h3>
-<ul>
-<li>L&agrave;m quen được ng&ocirc;n ngữ Java, biết viết chương tr&igrave;nh Java.</li>
-<li>Biết c&aacute;ch khai b&aacute;o v&agrave; sử dụng c&aacute;c biến v&agrave; kiểu dữ liệu.</li>
-<li>Sử dụng được c&aacute;c to&aacute;n tử trong Java.</li>
-<li>Biết r&otilde; v&agrave; sử dụng được một số kiến thức cơ bản của ng&ocirc;n ngữ Java như:
-<ul>
-<li>C&acirc;u lệnh điều kiện.</li>
-<li>V&ograve;ng lặp.</li>
-<li>Cấu tr&uacute;c mảng.</li>
-<li>Strings v&agrave; StringBuilder</li>
-<li>Collections</li>
-</ul>
-</li>
-<li>C&aacute;ch phương thức xử l&yacute; số học trong Java.</li>
-<li>Biết viết v&agrave; sử dụng h&agrave;m trong Java.</li>
-</ul>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/java-co-ban_18f86065cf1d4640ae1ee476da5acf49.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Lập trình C++ cơ bản', '<p>C++ l&agrave; một trong những ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất, đặc biệt trong lập tr&igrave;nh thi đấu. Hiện nay, đa số c&aacute;c bạn trẻ đều ưu ti&ecirc;n chọn học C++ để x&acirc;y dựng nền tảng v&agrave; tư duy lập tr&igrave;nh khi mới bắt đầu kh&aacute;m ph&aacute; lập tr&igrave;nh. Kh&oacute;a học C++ cơ bản được thiết kế với những kiến thức cơ bản v&agrave; dễ hiểu nhất để gi&uacute;p c&aacute;c bạn tiếp cận dễ d&agrave;ng.</p>
-<h2><strong>Mục ti&ecirc;u của kh&oacute;a học:</strong></h2>
-<ul data-sourcepos="7:1-11:0">
-<li data-sourcepos="7:1-7:66">Gi&uacute;p bạn <strong>học C++ từ con số 0</strong> một c&aacute;ch nhanh ch&oacute;ng v&agrave; dễ hiểu.</li>
-<li data-sourcepos="8:1-8:91">Trang bị cho bạn kiến thức v&agrave; kỹ năng cần thiết để <strong>viết c&aacute;c chương tr&igrave;nh C++ đơn giản.</strong></li>
-<li data-sourcepos="9:1-9:131">Gi&uacute;p bạn <strong>hiểu v&agrave; sử dụng c&aacute;c kh&aacute;i niệm quan trọng</strong> trong C++.</li>
-<li data-sourcepos="10:1-11:0"><strong>Tạo nền tảng</strong> cho bạn để tự học v&agrave; ph&aacute;t triển c&aacute;c chương tr&igrave;nh C++ phức tạp hơn.</li>
-</ul>
-<h2 data-sourcepos="12:1-12:23"><strong>Đối tượng học vi&ecirc;n:</strong></h2>
-<ul data-sourcepos="14:1-17:0">
-<li style="text-align: left;" data-sourcepos="14:1-14:97">Kh&oacute;a học n&agrave;y d&agrave;nh cho những người mới bắt đầu ho&agrave;n to&agrave;n chưa c&oacute; kiến thức về lập tr&igrave;nh, hoặc những bạn mất căn bản muốn lấy lại kiến thức nền tảng lập tr&igrave;nh, cụ thể l&agrave; C++.</li>
-</ul>
-<h2 data-sourcepos="29:1-29:26"><strong>Phương ph&aacute;p giảng dạy:</strong></h2>
-<ul data-sourcepos="31:1-34:0">
-<li data-sourcepos="31:1-31:88">Kh&oacute;a học được kết hợp&nbsp;giữa <strong>l&yacute; thuyết</strong> v&agrave; <strong>thực h&agrave;nh</strong>.</li>
-<li data-sourcepos="32:1-32:146">Học vi&ecirc;n sẽ được học qua c&aacute;c video b&agrave;i giảng, b&agrave;i đọc l&yacute; thuyết, b&agrave;i tập thực h&agrave;nh v&agrave; b&agrave;i tập trắc nghiệm l&yacute; thuyết<strong>.</strong></li>
-<li data-sourcepos="32:1-32:146">Học vi&ecirc;n sẽ được trao đổi hỏi đ&aacute;p những thắc mắc trực tiếp với c&aacute;c bạn c&ugrave;ng kh&oacute;a v&agrave; với người quản l&yacute; kh&oacute;a học.</li>
-</ul>', 720000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/lap-trinh-cpp-co-ban_4af6f617fbec4380b4e046a7797624e1.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('3d68c61e-6eec-4416-8214-21930ae35f02', 'Cấu trúc dữ liệu và giải thuật', '<h3 data-start="258" data-end="316">Giới thiệu về kh&oacute;a học "Cấu tr&uacute;c dữ liệu v&agrave; giải thuật"</h3>
-<p class="" data-start="318" data-end="658">Kh&oacute;a học n&agrave;y sẽ gi&uacute;p bạn <strong data-start="343" data-end="425">hiểu r&otilde; c&aacute;ch c&agrave;i đặt v&agrave; vận h&agrave;nh của c&aacute;c h&agrave;m trong c&aacute;c cấu tr&uacute;c dữ liệu cơ bản</strong>, đồng thời <strong data-start="437" data-end="499">nắm vững nguy&ecirc;n l&yacute; v&agrave; ứng dụng của c&aacute;c thuật to&aacute;n phổ biến</strong>. Đ&acirc;y l&agrave; nền tảng quan trọng cho mọi lập tr&igrave;nh vi&ecirc;n, đặc biệt l&agrave; những người muốn ph&aacute;t triển trong lĩnh vực kỹ thuật phần mềm, ph&acirc;n t&iacute;ch dữ liệu hoặc kỹ sư AI.</p>
-<h3 data-start="665" data-end="716">Tại sao phải học cấu tr&uacute;c dữ liệu v&agrave; giải thuật?</h3>
-<p class="" data-start="718" data-end="860">Cấu tr&uacute;c dữ liệu v&agrave; giải thuật l&agrave; xương sống của mọi chương tr&igrave;nh m&aacute;y t&iacute;nh. Khi bạn hiểu r&otilde; c&aacute;ch dữ liệu được lưu trữ v&agrave; thao t&aacute;c, bạn c&oacute; thể:</p>
-<ul data-start="862" data-end="1009">
-<li class="" data-start="862" data-end="885">
-<p class="" data-start="864" data-end="885">Viết m&atilde; hiệu quả hơn.</p>
-</li>
-<li class="" data-start="886" data-end="937">
-<p class="" data-start="888" data-end="937">Giải quyết c&aacute;c b&agrave;i to&aacute;n phức tạp một c&aacute;ch tối ưu.</p>
-</li>
-<li class="" data-start="938" data-end="1009">
-<p class="" data-start="940" data-end="1009">Th&agrave;nh c&ocirc;ng hơn trong c&aacute;c kỳ thi tuyển dụng tại c&aacute;c c&ocirc;ng ty c&ocirc;ng nghệ.</p>
-</li>
-</ul>
-<p class="" data-start="1011" data-end="1133">D&ugrave; bạn học Python, Java, C++ hay bất kỳ ng&ocirc;n ngữ n&agrave;o, tư duy về thuật to&aacute;n v&agrave; cấu tr&uacute;c dữ liệu l&agrave; kỹ năng kh&ocirc;ng thể thiếu.</p>
-<h3 data-start="1140" data-end="1174">C&aacute;c chủ đề ch&iacute;nh trong kh&oacute;a học</h3>
-<h4 data-start="1176" data-end="1199">🔹 Cấu tr&uacute;c dữ liệu</h4>
-<p class="" data-start="1201" data-end="1280">Bạn sẽ được t&igrave;m hiểu c&aacute;ch x&acirc;y dựng v&agrave; vận h&agrave;nh c&aacute;c cấu tr&uacute;c dữ liệu quan trọng:</p>
-<ul data-start="1282" data-end="1433">
-<li class="" data-start="1282" data-end="1302">
-<p class="" data-start="1284" data-end="1302"><strong data-start="1284" data-end="1300">Mảng (Array)</strong></p>
-</li>
-<li class="" data-start="1303" data-end="1327">
-<p class="" data-start="1305" data-end="1327"><strong data-start="1305" data-end="1325">Ngăn xếp (Stack)</strong></p>
-</li>
-<li class="" data-start="1328" data-end="1352">
-<p class="" data-start="1330" data-end="1352"><strong data-start="1330" data-end="1350">H&agrave;ng đợi (Queue)</strong></p>
-</li>
-<li class="" data-start="1353" data-end="1393">
-<p class="" data-start="1355" data-end="1393"><strong data-start="1355" data-end="1391">Danh s&aacute;ch li&ecirc;n kết (Linked List)</strong></p>
-</li>
-<li class="" data-start="1394" data-end="1412">
-<p class="" data-start="1396" data-end="1412"><strong data-start="1396" data-end="1410">C&acirc;y (Tree)</strong></p>
-</li>
-<li class="" data-start="1413" data-end="1433">
-<p class="" data-start="1415" data-end="1433"><strong data-start="1415" data-end="1433">Đồ thị (Graph)</strong></p>
-</li>
-</ul>
-<p class="" data-start="1435" data-end="1559">Mỗi cấu tr&uacute;c dữ liệu đều được giảng dạy c&ugrave;ng với c&aacute;c thao t&aacute;c cơ bản (th&ecirc;m, x&oacute;a, t&igrave;m kiếm...) v&agrave; c&aacute;c v&iacute; dụ ứng dụng thực tế.</p>
-<h4 data-start="1561" data-end="1585">🔹 Thuật to&aacute;n cơ bản</h4>
-<p class="" data-start="1587" data-end="1670">Kh&oacute;a học cũng trang bị cho bạn tư duy v&agrave; kỹ năng c&agrave;i đặt c&aacute;c thuật to&aacute;n thường gặp:</p>
-<ul data-start="1672" data-end="1905">
-<li class="" data-start="1672" data-end="1699">
-<p class="" data-start="1674" data-end="1699"><strong data-start="1674" data-end="1697">Thuật to&aacute;n t&igrave;m kiếm</strong></p>
-</li>
-<li class="" data-start="1700" data-end="1726">
-<p class="" data-start="1702" data-end="1726"><strong data-start="1702" data-end="1724">Thuật to&aacute;n sắp xếp</strong></p>
-</li>
-<li class="" data-start="1727" data-end="1752">
-<p class="" data-start="1729" data-end="1752"><strong data-start="1729" data-end="1750">Thuật to&aacute;n đệ quy</strong></p>
-</li>
-<li class="" data-start="1753" data-end="1808">
-<p class="" data-start="1755" data-end="1808"><strong data-start="1755" data-end="1806">Thuật to&aacute;n quy hoạch động (Dynamic Programming)</strong></p>
-</li>
-<li class="" data-start="1809" data-end="1855">
-<p class="" data-start="1811" data-end="1855"><strong data-start="1811" data-end="1853">Thuật to&aacute;n tham lam (Greedy Algorithm)</strong></p>
-</li>
-<li class="" data-start="1856" data-end="1905">
-<p class="" data-start="1858" data-end="1905"><strong data-start="1858" data-end="1905">Thuật to&aacute;n chia để trị (Divide and Conquer)</strong></p>
-</li>
-</ul>
-<h3 data-start="1912" data-end="1934">Đối tượng hướng đến</h3>
-<p class="" data-start="1936" data-end="1957">Kh&oacute;a học ph&ugrave; hợp với:</p>
-<ul data-start="1959" data-end="2154">
-<li class="" data-start="1959" data-end="2011">
-<p class="" data-start="1961" data-end="2011">Sinh vi&ecirc;n CNTT hoặc người đang theo học lập tr&igrave;nh.</p>
-</li>
-<li class="" data-start="2012" data-end="2090">
-<p class="" data-start="2014" data-end="2090">Người đ&atilde; biết lập tr&igrave;nh cơ bản v&agrave; muốn cải thiện khả năng tư duy giải thuật.</p>
-</li>
-<li class="" data-start="2091" data-end="2154">
-<p class="" data-start="2093" data-end="2154">Người chuẩn bị phỏng vấn lập tr&igrave;nh tại c&aacute;c c&ocirc;ng ty c&ocirc;ng nghệ.</p>
-</li>
-</ul>
-<h3 data-start="2161" data-end="2184">Điều kiện ti&ecirc;n quyết</h3>
-<p class="" data-start="2186" data-end="2225">Để tham gia kh&oacute;a học hiệu quả, bạn n&ecirc;n:</p>
-<ul data-start="2227" data-end="2373">
-<li class="" data-start="2227" data-end="2297">
-<p class="" data-start="2229" data-end="2297">C&oacute; kiến thức lập tr&igrave;nh cơ bản (biết sử dụng biến, h&agrave;m, v&ograve;ng lặp...).</p>
-</li>
-<li class="" data-start="2298" data-end="2373">
-<p class="" data-start="2300" data-end="2373">Biết c&aacute;ch sử dụng &iacute;t nhất một ng&ocirc;n ngữ lập tr&igrave;nh như Python, C++, Java...</p>
-</li>
-</ul>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/cau-truc-du-lieu-va-giai-thuat_ef33392c074c4cd29a9892f11abbc2bc.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Tự động hóa công việc hàng ngày với Python', '<h2><strong>Kh&oacute;a học Tự động h&oacute;a c&ocirc;ng việc h&agrave;ng ng&agrave;y với Python: Biến Python th&agrave;nh c&ocirc;ng cụ tự động h&oacute;a mạnh mẽ!</strong></h2>
-<h3><strong>Lộ tr&igrave;nh học Python ho&agrave;n chỉnh</strong></h3>
-<p>Để đảm bảo h&agrave;nh tr&igrave;nh học tập hiệu quả, ch&uacute;ng t&ocirc;i đề xuất lộ tr&igrave;nh học như sau:</p>
-<ul>
-<li><a href="https://codelearn.io/learning/python-cho-nguoi-moi-bat-dau" target="_blank" rel="noopener">Python Cơ bản</a>: Nền tảng vững chắc cho người mới bắt đầu</li>
-<li><a href="https://codelearn.io/learning/python-nang-cao" target="_blank" rel="noopener">Python N&acirc;ng cao</a>: Đi s&acirc;u v&agrave;o c&aacute;c kh&aacute;i niệm phức tạp</li>
-</ul>
-<h3><strong>Sẵn s&agrave;ng n&acirc;ng cao kỹ năng Python của bạn?</strong></h3>
-<p>Kh&oacute;a học <strong>Tự động h&oacute;a c&ocirc;ng việc h&agrave;ng ng&agrave;y với Python</strong>&nbsp;l&agrave; bước tiến quan trọng cho những học vi&ecirc;n đ&atilde; ho&agrave;n th&agrave;nh c&aacute;c kh&oacute;a Python cơ bản v&agrave; n&acirc;ng cao. Kh&oacute;a học n&agrave;y tập trung v&agrave;o việc chuyển đổi kiến thức l&yacute; thuyết th&agrave;nh c&aacute;c ứng dụng thực tế, đặc biệt l&agrave; <strong>sử dụng Python để tạo ra c&aacute;c c&ocirc;ng cụ tự động h&oacute;a</strong> mạnh mẽ.</p>
-<h3><strong>Điểm nổi bật của kh&oacute;a học:</strong></h3>
-<ul>
-<li>
-<p><strong>Học thực tiễn</strong>: X&acirc;y dựng c&aacute;c dự &aacute;n tự động h&oacute;a thực tế như hệ thống gửi email tự động, quản l&yacute; dữ liệu, v&agrave; tối ưu h&oacute;a quy tr&igrave;nh l&agrave;m việc.</p>
-</li>
-<li>
-<p><strong>Tăng hiệu suất c&ocirc;ng việc</strong>: Tiết kiệm h&agrave;ng giờ l&agrave;m việc mỗi tuần th&ocirc;ng qua việc tự động h&oacute;a c&aacute;c t&aacute;c vụ lặp lại, giảm thiểu sai s&oacute;t v&agrave; tăng năng suất.</p>
-</li>
-<li>
-<p><strong>Chứng chỉ chuy&ecirc;n nghiệp</strong>: Nhận chứng chỉ c&oacute; gi&aacute; trị sau khi ho&agrave;n th&agrave;nh kh&oacute;a học, chứng minh khả năng tự động h&oacute;a với Python của bạn.</p>
-</li>
-</ul>
-<h3><strong>Đối tượng ph&ugrave; hợp:</strong></h3>
-<ul>
-<li>Học vi&ecirc;n đ&atilde; ho&agrave;n th&agrave;nh kh&oacute;a Python Cơ bản v&agrave; N&acirc;ng cao</li>
-<li>Chuy&ecirc;n gia v&agrave; lập tr&igrave;nh vi&ecirc;n muốn tối ưu h&oacute;a quy tr&igrave;nh l&agrave;m việc</li>
-<li>Người đang t&igrave;m kiếm giải ph&aacute;p tự động h&oacute;a cho c&ocirc;ng việc h&agrave;ng ng&agrave;y</li>
-</ul>
-<h3><strong>Phương ph&aacute;p đ&agrave;o tạo:</strong></h3>
-<ul>
-<li>
-<p><strong>Học tập to&agrave;n diện</strong>: Kết hợp l&yacute; thuyết với thực h&agrave;nh qua c&aacute;c dự &aacute;n thực tế</p>
-</li>
-<li>
-<p><strong>Hướng dẫn chuy&ecirc;n s&acirc;u</strong>: Được đ&agrave;o tạo bởi c&aacute;c chuy&ecirc;n gia c&oacute; nhiều năm kinh nghiệm trong lĩnh vực tự động h&oacute;a</p>
-</li>
-<li>
-<p><strong>Hỗ trợ li&ecirc;n tục</strong>: Được mentor hỗ trợ trong suốt qu&aacute; tr&igrave;nh học tập</p>
-</li>
-</ul>
-<h3><strong>Sẵn s&agrave;ng trở th&agrave;nh chuy&ecirc;n gia Python Automation?</strong></h3>
-<p>H&atilde;y tham gia kh&oacute;a học <strong>Tự động h&oacute;a c&ocirc;ng việc h&agrave;ng ng&agrave;y với Python</strong>&nbsp;ngay h&ocirc;m nay để n&acirc;ng cao kỹ năng lập tr&igrave;nh v&agrave; tạo ra sự kh&aacute;c biệt trong sự nghiệp của bạn. Với lộ tr&igrave;nh học được thiết kế chuy&ecirc;n nghiệp, ch&uacute;ng t&ocirc;i cam kết gi&uacute;p bạn l&agrave;m chủ kỹ năng tự động h&oacute;a với Python một c&aacute;ch hiệu quả nhất.</p>', 1099000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/Python-automation_db4c892cc03f4cae8bcedd5d81358bc6.jpg', true, '087499f3-3cc2-4d25-8ad5-8c63c6b74c44', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('3ffa0664-7966-4aa4-9557-049c00d033b7', 'Giải thuật cho Python', '<p style="line-height: 1.5;"><span style="font-size: 20pt; color: #304090;"><strong>Kh&aacute;m ph&aacute; sức mạnh của "Giải Thuật" trong Python!</strong></span></p>
-<p style="line-height: 1.5;"><span style="font-size: 14pt;"><strong>Bạn đ&atilde; sẵn s&agrave;ng để chinh phục thế giới của lập tr&igrave;nh với những giải thuật mạnh mẽ?</strong></span></p>
-<p style="line-height: 1.5;">Ch&agrave;o mừng bạn đến với kh&oacute;a học "<strong>Giải thuật cho Python"</strong>&nbsp;- nơi bạn sẽ kh&aacute;m ph&aacute; những b&iacute; mật đằng sau những d&ograve;ng m&atilde; lệnh kỳ diệu v&agrave; trở th&agrave;nh bậc thầy trong việc giải quyết c&aacute;c vấn đề phức tạp.</p>
-<p style="line-height: 1.5;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/A1_4c7c5f3532d041ceb43528852442ca5a.png" width="650" height="587" /></p>
-<p style="line-height: 1.5;"><span style="font-size: 20pt; color: #304090;"><strong>Tại sao bạn n&ecirc;n tham gia kh&oacute;a học n&agrave;y?</strong></span></p>
-<p style="line-height: 1.5;"><strong>Thực h&agrave;nh qua c&aacute;c b&agrave;i tập thực tế:</strong> Mỗi phần học đều đi k&egrave;m với c&aacute;c b&agrave;i tập thực h&agrave;nh gi&uacute;p bạn &aacute;p dụng ngay kiến thức đ&atilde; học.</p>
-<p style="line-height: 1.5;"><strong>Giảng vi&ecirc;n nhiệt huyết:</strong> Được hướng dẫn bởi những chuy&ecirc;n gia h&agrave;ng đầu với nhiều năm kinh nghiệm trong lĩnh vực.</p>
-<p style="line-height: 1.5;"><strong>Cộng đồng học tập s&ocirc;i nổi:</strong> Kết nối với h&agrave;ng ngh&igrave;n học vi&ecirc;n kh&aacute;c, c&ugrave;ng nhau thảo luận v&agrave; giải quyết c&aacute;c b&agrave;i to&aacute;n kh&oacute;.</p>
-<p style="line-height: 1.5;"><strong>Chứng chỉ uy t&iacute;n:</strong> Ho&agrave;n th&agrave;nh kh&oacute;a học v&agrave; nhận chứng chỉ c&ocirc;ng nhận, gi&uacute;p n&acirc;ng cao gi&aacute; trị bản th&acirc;n tr&ecirc;n thị trường lao động.</p>
-<p style="line-height: 1.5;"><strong>Hỗ trợ 24/7:</strong>&nbsp;Lu&ocirc;n c&oacute; đội ngũ hỗ trợ sẵn s&agrave;ng gi&uacute;p đỡ bạn vượt qua mọi kh&oacute; khăn trong qu&aacute; tr&igrave;nh học tập.</p>
-<p style="line-height: 1.5;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/A2_123aa699051d4ad28d66bb9c95a05739.png" width="651" height="423" /></p>
-<p style="line-height: 1.5;"><span style="font-size: 20pt; color: #304090;"><strong>Đừng bỏ lỡ cơ hội để</strong></span></p>
-<p style="line-height: 1.5;"><strong>Tăng cường kỹ năng lập tr&igrave;nh:</strong>&nbsp;Hiểu s&acirc;u hơn về c&aacute;ch c&aacute;c thuật to&aacute;n hoạt động v&agrave; l&agrave;m thế n&agrave;o để &aacute;p dụng ch&uacute;ng hiệu quả.</p>
-<p style="line-height: 1.5;"><strong>N&acirc;ng cao tư duy giải quyết vấn đề: </strong>Ph&aacute;t triển khả năng ph&acirc;n t&iacute;ch v&agrave; giải quyết c&aacute;c b&agrave;i to&aacute;n phức tạp một c&aacute;ch logic v&agrave; s&aacute;ng tạo.</p>
-<p style="line-height: 1.5;"><strong>Chuẩn bị cho tương lai:</strong>&nbsp;D&ugrave; bạn muốn trở th&agrave;nh nh&agrave; ph&aacute;t triển phần mềm, nh&agrave; khoa học dữ liệu hay chuy&ecirc;n gia AI, kiến thức về giải thuật l&agrave; nền tảng vững chắc cho mọi lĩnh vực.</p>
-<p style="line-height: 1.5;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/A3_3ce089ededfc4daab3907c20805cefde.png" width="651" height="522" /></p>
-<p style="line-height: 1.5;">&nbsp;</p>
-<p style="line-height: 1.5;"><span style="font-size: 20pt; color: #304090;"><strong>H&atilde;y bắt đầu h&agrave;nh tr&igrave;nh trở th&agrave;nh chuy&ecirc;n gia giải thuật ngay h&ocirc;m nay!</strong></span></p>
-<p style="line-height: 1.5;">Đăng k&yacute; ngay để kh&ocirc;ng bỏ lỡ cơ hội n&acirc;ng cao kỹ năng lập tr&igrave;nh v&agrave; mở rộng tư duy thuật to&aacute;n của bạn. Ch&uacute;ng t&ocirc;i tin rằng với kiến thức v&agrave; kỹ năng học được từ kh&oacute;a học, bạn sẽ tự tin đối mặt với mọi th&aacute;ch thức trong lập tr&igrave;nh.</p>', 900000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/Python_-_Algorithms_6865856c821b4bbe88a9b9e88dba2208.png', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'C cho người mới bắt đầu', '<h3>Tổng quan về ng&ocirc;n ngữ C:</h3>
-<ul>
-<li>Ng&ocirc;n ngữ C l&agrave; một ng&ocirc;n ngữ đ&atilde; c&oacute; mặt từ rất l&acirc;u,&nbsp;l&agrave; ng&ocirc;n ngữ mệnh lệnh được ra đời từ đầu thập ni&ecirc;n 70.</li>
-<li>Ng&ocirc;n ngữ C l&agrave; một ng&ocirc;n ngữ cấu tr&uacute;c v&agrave; xếp v&agrave;o loại ng&ocirc;n ngữ bậc 3 (loại ng&ocirc;n ngữ cao cấp hơn ng&ocirc;n ngữ m&atilde; m&aacute;y v&agrave; thấp hơn ng&ocirc;n ngữ hướng đối tượng &ndash; bậc 4).</li>
-<li>Ng&ocirc;n ngữ C kh&ocirc;ng chỉ được ưa chuộng trong việc viết c&aacute;c ứng dụng. M&agrave; c&ograve;n l&agrave; ng&ocirc;n ngữ rất hiệu quả trong việc&nbsp;viết c&aacute;c&nbsp;phần mềm hệ thống.</li>
-<li>Được ph&aacute;t triển ban đầu bởi Dennis Ritchie để ph&aacute;t triển hệ thống lập tr&igrave;nh UNIX ở Bell Labs.</li>
-<li>Những&nbsp;hệ điều h&agrave;nh&nbsp;lớn Windows, Linux,&hellip;đều chịu ảnh hưởng từ ng&ocirc;n ngữ C.</li>
-</ul>
-<hr />
-<h3>Ứng dụng của ng&ocirc;n ngữ C:</h3>
-<h4><span id="He_dieu_hanh">Hệ điều h&agrave;nh.</span></h4>
-<p>Ng&ocirc;n ngữ lập tr&igrave;nh C c&oacute; thể được sử dụng để thiết kế phần mềm hệ thống. Như l&agrave; hệ điều h&agrave;nh v&agrave; Tr&igrave;nh bi&ecirc;n dịch.&nbsp;Viết kịch bản hệ điều h&agrave;nh UNIX l&agrave; mục đ&iacute;ch ch&iacute;nh của việc tạo ra C. Ng&ocirc;n ngữ C l&agrave; một phần kh&ocirc;ng thể thiếu trong qu&aacute; tr&igrave;nh ph&aacute;t triển của nhiều hệ điều h&agrave;nh. Unix-Kernel, c&aacute;c tiện &iacute;ch v&agrave; ứng dụng hệ điều h&agrave;nh Microsoft Windows v&agrave; một bộ phận lớn hệ điều h&agrave;nh Android đều đ&atilde; được viết kịch bản trong C.</p>
-<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/C_HeDieuHanh.png" alt="" width="674" height="434" /></p>
-<h4><span id="Phat_trien_ngon_ngu_moi">Ph&aacute;t triển ng&ocirc;n ngữ mới</span></h4>
-<p>Ứng dụng thứ 2 của ng&ocirc;n ngữ c đ&oacute; l&agrave; n&oacute; l&agrave; cơ sở để ph&aacute;t triển ng&ocirc;n ngữ mới. Bởi n&oacute; c&oacute;&nbsp;ảnh hưởng trực tiếp hoặc gi&aacute;n tiếp đến sự ph&aacute;t triển của nhiều ng&ocirc;n ngữ bao gồm C ++ l&agrave; C với c&aacute;c lớp, C #, D, Java, Limbo, JavaScript, Perl, UNIX&rsquo;s C Shell, PHP v&agrave; Python v&agrave; Verilog.&nbsp;C&aacute;c ng&ocirc;n ngữ n&agrave;y sử dụng C trong khả năng biến đổi: v&iacute; dụ, trong Python. C được sử dụng để x&acirc;y dựng c&aacute;c thư viện chuẩn. Trong khi c&aacute;c ng&ocirc;n ngữ kh&aacute;c như C ++, Perl v&agrave; PHP c&oacute; cấu tr&uacute;c c&uacute; ph&aacute;p v&agrave; điều khiển dựa tr&ecirc;n C. Ch&iacute;nh v&igrave; vậy m&agrave; n&oacute; được mệnh danh l&agrave; &rdquo; &ocirc;ng nội&rdquo; của c&aacute;c ng&ocirc;n ngữ lập tr&igrave;nh.</p>
-<h4><span id="Nen_tang_tinh_toan">Nền tảng t&iacute;nh to&aacute;n</span></h4>
-<p>Ng&ocirc;n ngữ C thực hiện c&aacute;c thuật to&aacute;n v&agrave; cấu tr&uacute;c dữ liệu nhanh ch&oacute;ng. Tạo điều kiện cho việc t&iacute;nh to&aacute;n nhanh hơn trong c&aacute;c chương tr&igrave;nh.&nbsp;Điều n&agrave;y đ&atilde; cho ph&eacute;p sử dụng C trong c&aacute;c ứng dụng y&ecirc;u cầu mức độ t&iacute;nh to&aacute;n cao hơn như MATLAB v&agrave; Mathematica.</p>
-<h4><span id="He_thong_nhung">Hệ thống nh&uacute;ng</span></h4>
-<p>C&aacute;c t&iacute;nh năng của C bao như l&agrave; truy cập trực tiếp v&agrave;o API phần cứng của m&aacute;y, sự hiện diện của tr&igrave;nh bi&ecirc;n dịch C. Ngo&agrave;i ra&nbsp;<strong>lập tr&igrave;nh C</strong>&nbsp;c&ograve;n sử dụng t&agrave;i nguy&ecirc;n x&aacute;c định v&agrave; ph&acirc;n bổ bộ nhớ động Đ&atilde; l&agrave;m cho ng&ocirc;n ngữ C trở th&agrave;nh lựa chọn tối ưu cho c&aacute;c ứng dụng v&agrave; tr&igrave;nh điều khiển của c&aacute;c hệ thống nh&uacute;ng.</p>
-<h4><span id="Do_hoa_va_tro_choi">Đồ họa v&agrave; tr&ograve; chơi</span></h4>
-<p>Ngo&agrave;i c&aacute;c ứng dụng tr&ecirc;n th&igrave; ng&ocirc;n ngữ C c&ograve;n được d&ugrave;ng trong đồ họa v&agrave; lập tr&igrave;nh game. N&oacute; đ&atilde; được sử dụng để&nbsp;&nbsp;ph&aacute;t triển một loạt c&aacute;c ứng dụng đồ họa v&agrave; chơi game, như cờ vua, b&oacute;ng nảy, bắn cung, v.v.</p>
-<p>Như vậy ta c&oacute; thể thấy rằng ng&ocirc;n ngữ tuy đ&atilde; xuất hiện từ l&acirc;u, nhưng những ứng dụng v&agrave; sự phổ biến của n&oacute; c&ograve;n rất lớn. Với những t&iacute;nh năng v&agrave; ứng dụng rộng r&atilde;i,&nbsp;lập tr&igrave;nh C&nbsp;vẫn l&agrave; một &ldquo;l&atilde;o l&agrave;ng&rdquo; trong ng&agrave;nh lập tr&igrave;nh.</p>
-<hr />
-<h3>Học vi&ecirc;n sẽ nhận được những g&igrave; trong kh&oacute;a học:</h3>
-<ul>
-<li>Hiểu c&aacute;ch sử dụng ng&ocirc;n ngữ C:
-<ul>
-<li>Biết c&aacute;ch th&ecirc;m c&aacute;c thư viện.</li>
-<li>Biết r&otilde; c&aacute;ch khai b&aacute;o biến.</li>
-<li>Biết c&aacute;ch nhập xuất dữ liệu.</li>
-</ul>
-</li>
-<li>Hiểu được c&aacute;ch hoạt động của v&agrave;o lặp (Trong C cũng như c&aacute;c ng&ocirc;n ngữ kh&aacute;c):
-<ul>
-<li>V&ograve;ng lặp for.</li>
-<li>V&ograve;ng lặp while, do-while.</li>
-</ul>
-</li>
-<li>Hiểu r&otilde; c&aacute;ch cấu tr&uacute;c cơ bản của một ng&ocirc;n ngữ lập tr&igrave;nh:
-<ul>
-<li>Cấu tr&uacute;c mảng.</li>
-<li>Cấu tr&uacute;c chuỗi.</li>
-</ul>
-</li>
-<li>L&agrave;m quen với một số giải thuật cơ bản,
-<ul>
-<li>Biết c&aacute;ch viết c&aacute;c h&agrave;m.</li>
-<li>L&agrave;m quen với giải thuật đệ quy.</li>
-</ul>
-</li>
-</ul>
-<hr /><hr />
-<p>Bạn cũng c&oacute; thể t&igrave;m hiểu s&acirc;u v&agrave; ng&ocirc;n ngữ C v&agrave; ứng dụng của n&oacute; <a href="https://vi.wikipedia.org/wiki/C_(ng%C3%B4n_ng%E1%BB%AF_l%E1%BA%ADp_tr%C3%ACnh)" target="_blank" rel="noopener">Tại đ&acirc;y</a>.</p>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/c-cho-nguoi-moi-bat-dau_e9ad9934d71443f7b64f446fe7375c9f.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Phần cứng máy tính', '<h3>Tổng quan về Phần cứng m&aacute;y t&iacute;nh</h3>
-<ul>
-<li>Phần cứng m&aacute;y t&iacute;nh n&oacute;i chung c&oacute; thể tạm hiểu l&agrave; tất cả thiết bị cấu th&agrave;nh n&ecirc;n một chiếc m&aacute;y t&iacute;nh, chẳng hạn như m&agrave;n h&igrave;nh, bộ xử l&yacute;, card mạng, ổ cứng, b&agrave;n ph&iacute;m v&agrave; chuột.</li>
-<li>
-<p>Phần cứng thường được hướng dẫn (điều khiển) bởi phần mềm để thực hiện c&aacute;c lệnh. Sự kết hợp giữa phần cứng v&agrave; phần mềm một c&aacute;ch ph&ugrave; hợp tạo th&agrave;nh một hệ thống m&aacute;y t&iacute;nh c&oacute; thể sử dụng được.</p>
-</li>
-<li>
-<p>Lịch sử h&igrave;nh th&agrave;nh của m&aacute;y t&iacute;nh n&oacute;i chung cũng ch&iacute;nh l&agrave; lịch sử cải tiến của Phần cứng m&aacute;y t&iacute;nh. Cho tới nay c&oacute; thể được ph&acirc;n th&agrave;nh bốn thế hệ, mỗi thế hệ được đặc trưng bởi một sự thay đổi quan trọng về c&ocirc;ng nghệ.</p>
-</li>
-<li>Ng&agrave;y nay m&aacute;y t&iacute;nh được cải tiến li&ecirc;n tục với tốc độ v&agrave; khả năng xử l&yacute; mạnh mẽ. Sở dĩ vậy ch&iacute;nh l&agrave; nhờ sự ph&aacute;t triển kh&ocirc;ng ngừng về c&ocirc;ng nghệ sản xuất phần cứng.</li>
-</ul>
-<hr />
-<h3>Ứng dụng của Phần cứng m&aacute;y t&iacute;nh</h3>
-<p>Phần cứng m&aacute;y t&iacute;nh ch&iacute;nh l&agrave; phần "th&acirc;n x&aacute;c" của m&aacute;y t&iacute;nh, kh&ocirc;ng c&oacute; phần cứng m&aacute;y t&iacute;nh th&igrave; kh&ocirc;ng thể c&oacute; m&aacute;y t&iacute;nh. Phần cứng, kết hợp với phần mềm m&aacute;y t&iacute;nh tạo ra một chiếc m&aacute;y t&iacute;nh ho&agrave;n chỉnh c&oacute; thể chạy được. Số lượng m&aacute;y t&iacute;nh nhiều v&agrave; chất lượng ch&iacute;nh l&agrave; một trong c&aacute;c ti&ecirc;u ch&iacute; đ&aacute;nh gi&aacute; mức độ ph&aacute;t triển của c&aacute;c c&ocirc;ng ty, quốc gia...</p>
-<h4>C&aacute;c c&ocirc;ng ty lớn về c&ocirc;ng nghệ đều sản xuất phần cứng m&aacute;y t&iacute;nh.</h4>
-<p>Để gi&uacute;p c&aacute;c bạn thấy được phần cứng m&aacute;y t&iacute;nh c&oacute; vai tr&ograve; quan trọng như thế n&agrave;o, h&atilde;y xem danh s&aacute;ch c&aacute;c c&ocirc;ng ty c&ocirc;ng nghệ lớn nhất thế giới, tất cả đều sản xuất m&aacute;y t&iacute;nh v&agrave; phần cứng m&aacute;y t&iacute;nh.</p>
-<figure id="attachment_1505" class="wp-caption aligncenter" aria-describedby="caption-attachment-1505"><img src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/Shanghaik/Pictures/hardware.png" alt="" width="797" height="405" /></figure>
-<p>Như bạn thấy, phần cứng m&aacute;y t&iacute;nh gắn liền mật thiết với c&aacute;c c&ocirc;ng ty c&ocirc;ng nghệ h&agrave;ng đầu, c&aacute;c thương hiệu m&aacute;y t&iacute;nh ứng với c&aacute;c doanh nghiệp tr&ecirc;n l&agrave; v&ocirc; c&ugrave;ng nổi tiếng, chỉ cần n&oacute;i đến t&ecirc;n c&aacute;c thương hiệu ta sẽ nghĩ ngay đến m&aacute;y t&iacute;nh.</p>
-<h4>Ph&acirc;n loại phần cứng</h4>
-<p>Phần cứng m&aacute;y t&iacute;nh c&oacute; thể được ph&acirc;n loại theo nhiều c&aacute;ch thức kh&aacute;c nhau. Ta c&oacute; thể ph&acirc;n loại theo chức năng, hoặc theo c&aacute;c phần cụ thể, một m&aacute;y t&iacute;nh cơ bản thường c&oacute; c&aacute;c phần như sau</p>
-<p style="padding-left: 30px;"><img src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/Shanghaik/Pictures/hardware2.png" alt="" width="493" height="466" /></p>
-<h4><strong>Phần cứng mở rộng</strong></h4>
-<p>Kh&ocirc;ng chỉ ở mức sử dụng cơ bản, ng&agrave;y nay phần cứng m&aacute;y t&iacute;nh c&oacute; thể mở rộng theo nhu cầu sử dụng. Ch&uacute;ng ta sẽ được t&igrave;m hiểu về ch&uacute;ng trong c&aacute;c b&agrave;i học.</p>
-<p style="padding-left: 30px;"><img src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/Shanghaik/Pictures/hardware3.png" alt="" width="406" height="383" /></p>
-<hr />
-<h3>Học vi&ecirc;n sẽ nhận được những g&igrave; trong kh&oacute;a học:</h3>
-<ul>
-<li>Hiểu c&aacute;ch ph&acirc;n biệt v&agrave; c&ocirc;ng dụng của phần cứng m&aacute;y t&iacute;nh.
-<ul>
-<li>Biết c&aacute;ch x&aacute;c định x&aacute;c th&agrave;nh phần phần cứng m&aacute;y t&iacute;nh.</li>
-<li>Biết r&otilde; cấu tr&uacute;c của c&aacute;c th&agrave;nh phần phần cứng.</li>
-<li>Biết c&aacute;ch m&agrave; phần cứng m&aacute;y t&iacute;nh t&aacute;c động l&ecirc;n th&ocirc;ng tin.</li>
-</ul>
-</li>
-<li>Hiểu được c&aacute;ch hoạt động phần cứng m&aacute;y t&iacute;nh.
-<ul>
-<li>Hiểu c&aacute;ch m&agrave; phần cứng tương t&aacute;c với phần mềm v&agrave; th&ocirc;ng tin.</li>
-<li>Phần cứng v&agrave; cấu tr&uacute;c ho&agrave;n thiện của một m&aacute;y t&iacute;nh.</li>
-</ul>
-</li>
-<li>Biết c&aacute;ch chọn một chiếc m&aacute;y t&iacute;nh ph&ugrave; hợp cho m&igrave;nh.
-<ul>
-<li>Nhu cầu cho giải tr&iacute;.</li>
-<li>Nhu cầu cho l&agrave;m việc.</li>
-<li>Nhu cầu cho học tập.</li>
-</ul>
-</li>
-</ul>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/phan-cung-may-tinh_f02bceb8b60e4a2794b73a5e751b34a7.png', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Scratch Nâng Cao', '<h3>GIỚI THIỆU KH&Oacute;A HỌC LẬP TR&Igrave;NH SCRATCH N&Acirc;NG CAO</h3>
-<p>Kh&oacute;a học lập tr&igrave;nh <strong>Scratch N&acirc;ng Cao</strong>&nbsp;l&agrave; bước tiếp theo để ph&aacute;t triển khả năng tư duy logic v&agrave; s&aacute;ng tạo qua việc lập tr&igrave;nh c&aacute;c dự &aacute;n phức tạp hơn. Th&ocirc;ng qua kh&oacute;a học n&agrave;y, c&aacute;c bạn nhỏ sẽ bước s&acirc;u hơn v&agrave;o thế giới lập tr&igrave;nh, học c&aacute;ch x&acirc;y dựng c&aacute;c tr&ograve; chơi ho&agrave;n chỉnh v&agrave; ứng dụng những kiến thức to&aacute;n học v&agrave;o lập tr&igrave;nh. Đ&acirc;y l&agrave; kh&oacute;a học gi&uacute;p c&aacute;c bạn trẻ kh&ocirc;ng chỉ r&egrave;n luyện kỹ năng lập tr&igrave;nh m&agrave; c&ograve;n k&iacute;ch th&iacute;ch tư duy t&iacute;nh to&aacute;n v&agrave; s&aacute;ng tạo, chuẩn bị cho c&aacute;c bước tiến xa hơn trong thế giới c&ocirc;ng nghệ.</p>
-<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/S1_864621c3042844e488dc13147b49941d.jpg" width="700" height="700" /></p>
-<h4>TẠI SAO N&Ecirc;N HỌC LẬP TR&Igrave;NH SCRATCH N&Acirc;NG CAO?</h4>
-<ul>
-<li><strong>X&acirc;y dựng game của ri&ecirc;ng bạn</strong>: Kh&oacute;a học n&agrave;y tập trung v&agrave;o việc hướng dẫn c&aacute;c bạn trẻ tự tay thiết kế, ph&aacute;t triển v&agrave; ho&agrave;n thiện tr&ograve; chơi của m&igrave;nh. Bạn sẽ kh&ocirc;ng chỉ lập tr&igrave;nh c&aacute;c khối lệnh đơn giản nữa m&agrave; sẽ kết hợp ch&uacute;ng để tạo ra những sản phẩm phức tạp v&agrave; hấp dẫn hơn.</li>
-<li><strong>Ứng dụng to&aacute;n học v&agrave;o lập tr&igrave;nh</strong>: Scratch n&acirc;ng cao gi&uacute;p bạn hiểu r&otilde; hơn về c&aacute;ch to&aacute;n học được ứng dụng trong lập tr&igrave;nh. Bạn sẽ học c&aacute;ch sử dụng c&aacute;c ph&eacute;p t&iacute;nh, h&agrave;m to&aacute;n học v&agrave; cấu tr&uacute;c điều kiện để x&acirc;y dựng c&aacute;c tr&ograve; chơi mang t&iacute;nh thử th&aacute;ch cao hơn.</li>
-<li><strong>Ph&aacute;t triển tư duy logic</strong>: Khi thực hiện c&aacute;c dự &aacute;n n&acirc;ng cao, bạn sẽ phải đối mặt với những b&agrave;i to&aacute;n lập tr&igrave;nh đ&ograve;i hỏi khả năng tư duy logic, c&aacute;ch ph&acirc;n t&iacute;ch v&agrave; giải quyết vấn đề hiệu quả. Điều n&agrave;y gi&uacute;p bạn trở th&agrave;nh những lập tr&igrave;nh vi&ecirc;n tiềm năng, sẵn s&agrave;ng đối mặt với c&aacute;c thử th&aacute;ch lớn hơn trong tương lai.</li>
-</ul>
-<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/S2_db30d1e5fce54c3fb3992d0cd22eb1bc.jpg" width="700" height="700" /></p>
-<h4>ƯU ĐIỂM CỦA KH&Oacute;A HỌC SCRATCH N&Acirc;NG CAO</h4>
-<ul>
-<li><strong>Đ&agrave;o s&acirc;u hơn v&agrave;o lập tr&igrave;nh</strong>: Kh&ocirc;ng c&ograve;n l&agrave; những thao t&aacute;c k&eacute;o thả đơn giản, bạn sẽ học c&aacute;ch kết hợp nhiều khối lệnh v&agrave; tư duy s&aacute;ng tạo để tạo ra những tr&ograve; chơi phức tạp.</li>
-<li><strong>Lập tr&igrave;nh dựa tr&ecirc;n to&aacute;n học</strong>: Th&ocirc;ng qua c&aacute;c b&agrave;i tập sử dụng to&aacute;n học, bạn sẽ thấy c&aacute;ch lập tr&igrave;nh c&oacute; thể được &aacute;p dụng v&agrave;o c&aacute;c kh&iacute;a cạnh kh&aacute;c nhau của cuộc sống, đặc biệt l&agrave; trong giải quyết c&aacute;c b&agrave;i to&aacute;n thực tế.</li>
-<li><strong>Ph&aacute;t triển khả năng giải quyết vấn đề</strong>: Mỗi b&agrave;i tập đều y&ecirc;u cầu bạn suy nghĩ, thử nghiệm v&agrave; t&igrave;m ra c&aacute;c giải ph&aacute;p thay thế khi gặp lỗi, từ đ&oacute; r&egrave;n luyện kỹ năng lập tr&igrave;nh chuy&ecirc;n nghiệp.</li>
-<li><strong>Tăng cường sự s&aacute;ng tạo</strong>: Kh&oacute;a học gi&uacute;p bạn kh&ocirc;ng chỉ lập tr&igrave;nh m&agrave; c&ograve;n s&aacute;ng tạo ra những thế giới tr&ograve; chơi mới, thể hiện &yacute; tưởng của ri&ecirc;ng m&igrave;nh qua từng dự &aacute;n.</li>
-</ul>
-<h4>ĐIỂM NỔI BẬT CỦA KH&Oacute;A HỌC</h4>
-<ul>
-<li><strong>Gi&aacute;o vi&ecirc;n nhiệt huyết</strong>: Đội ngũ gi&aacute;o vi&ecirc;n d&agrave;y dặn kinh nghiệm sẽ theo s&aacute;t, hướng dẫn bạn từng bước v&agrave; hỗ trợ bạn trong suốt kh&oacute;a học.</li>
-<li><strong>Cơ hội tham gia c&aacute;c cuộc thi lập tr&igrave;nh</strong>: Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học, bạn sẽ c&oacute; cơ hội tham gia c&aacute;c cuộc thi lập tr&igrave;nh trẻ như Tin học trẻ, v&agrave; thậm ch&iacute; c&oacute; thể tiến xa hơn trong c&aacute;c cuộc thi quốc tế về lập tr&igrave;nh.</li>
-<li><strong>Ph&aacute;t triển dự &aacute;n thực tế</strong>: C&aacute;c bạn trẻ sẽ tự tay x&acirc;y dựng c&aacute;c tr&ograve; chơi v&agrave; ứng dụng học tập của ri&ecirc;ng m&igrave;nh, c&oacute; thể chia sẻ với bạn b&egrave; v&agrave; cộng đồng lập tr&igrave;nh tr&ecirc;n to&agrave;n thế giới.</li>
-</ul>
-<h3>MỤC TI&Ecirc;U KH&Oacute;A HỌC</h3>
-<ul>
-<li><strong>L&agrave;m chủ tư duy logic</strong>: Học c&aacute;ch giải quyết vấn đề th&ocirc;ng qua lập tr&igrave;nh, ph&aacute;t triển tư duy ph&acirc;n t&iacute;ch v&agrave; suy nghĩ hệ thống.</li>
-<li><strong>S&aacute;ng tạo kh&ocirc;ng giới hạn</strong>: Tự do s&aacute;ng tạo ra c&aacute;c tr&ograve; chơi của ri&ecirc;ng m&igrave;nh với nội dung v&agrave; c&aacute;ch chơi độc đ&aacute;o.</li>
-<li><strong>Học c&aacute;ch l&agrave;m việc độc lập v&agrave; theo nh&oacute;m</strong>: Bạn sẽ biết c&aacute;ch hợp t&aacute;c với bạn b&egrave; hoặc tự m&igrave;nh ho&agrave;n th&agrave;nh c&aacute;c dự &aacute;n lập tr&igrave;nh.</li>
-</ul>
-<p>Kh&oacute;a học Scratch n&acirc;ng cao sẽ đưa c&aacute;c bạn nhỏ đi xa hơn tr&ecirc;n h&agrave;nh tr&igrave;nh lập tr&igrave;nh, mở ra cơ hội để kh&aacute;m ph&aacute; những tiềm năng v&ocirc; tận trong thế giới số. Tham gia ngay để c&ugrave;ng ch&uacute;ng t&ocirc;i chinh phục c&aacute;c thử th&aacute;ch lập tr&igrave;nh v&agrave; kh&aacute;m ph&aacute; những điều kỳ diệu của c&ocirc;ng nghệ!</p>', 600000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/khoa-hoc-scratch-nang-cao__3__9206393c701e4bee961b84bdf6367fa8.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('737b5551-e148-4e64-aa54-2e85f82a30ff', 'C# cơ bản', '<p style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;">C# l&agrave; một ng&ocirc;n ngữ lập tr&igrave;nh đơn giản, hiện đại, mục đ&iacute;ch tổng qu&aacute;t, hướng đối tượng được ph&aacute;t triển bởi Microsoft b&ecirc;n trong phần khởi đầu .NET của họ, được ph&aacute;t triển chủ yếu bởi Anders Hejlsberg, một kiến tr&uacute;c sư phần mềm nổi tiếng với c&aacute;c sản phẩm Turbo Pascal, Delphi, J++, WFC. Kh&oacute;a học n&agrave;y sẽ cung cấp cho bạn kiến thức cơ bản về lập tr&igrave;nh C# qua c&aacute;c kh&aacute;i niệm từ cơ bản v&agrave; c&aacute;c b&agrave;i tập thực tế bằng ng&ocirc;n ngữ lập tr&igrave;nh C#.</p>
-<h3><strong>Đặc trưng cơ bản của ng&ocirc;n ngữ C#:</strong></h3>
-<ul>
-<li style="text-align: justify; line-height: 18pt;">L&agrave; một ng&ocirc;n ngữ&nbsp;thuần hướng đối tượng&nbsp;(hướng đối tượng l&agrave; g&igrave; sẽ được tr&igrave;nh b&agrave;y trong kh&oacute;a học C# Advance)</li>
-<li style="text-align: justify; line-height: 18pt;">L&agrave; ng&ocirc;n ngữ kh&aacute; đơn giản, chỉ c&oacute; khoảng 80 từ kh&oacute;a v&agrave; hơn mười kiểu dữ liệu được dựng sẵn.</li>
-<li style="text-align: justify; line-height: 18pt;">Cung cấp những đặc t&iacute;nh hướng th&agrave;nh phần (component-oriented) như l&agrave; Property, Event</li>
-<li style="text-align: justify; line-height: 18pt;">C# c&oacute; bộ&nbsp;Garbage Collector&nbsp;sẽ&nbsp;tự động thu gom v&ugrave;ng nhớ&nbsp;khi kh&ocirc;ng c&ograve;n sử dụng nữa.</li>
-</ul>
-<h3 style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;"><strong>Ứng dụng của C#</strong></h3>
-<ul>
-<li style="text-align: start; line-height: 18pt; box-sizing: border-box; font-variant-ligatures: normal; font-variant-caps: normal; orphans: 2; widows: 2; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; word-spacing: 0px;"><strong>Ứng dụng tr&ecirc;n Windows:<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/A2_4a0918575fdb4a598759686cec0620ab.png" /><br /></strong>Với sự trợ gi&uacute;p của bộ khung .Net, &ldquo;C#&rdquo; được sử dụng để ph&aacute;t triển c&aacute;c ứng dụng dựa tr&ecirc;n c&aacute;c cửa sổ cho m&aacute;y t&iacute;nh để b&agrave;n. Nhiều ứng dụng Windows phổ biến như c&aacute;c c&ocirc;ng cụ Microsoft Office, Skype, Photoshop v&agrave; Visual Studio được ph&aacute;t triển bằng ng&ocirc;n ngữ n&agrave;y.</li>
-<li style="text-align: start; line-height: 18pt; box-sizing: border-box; font-variant-ligatures: normal; font-variant-caps: normal; orphans: 2; widows: 2; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; word-spacing: 0px;"><strong>C&aacute;c th&agrave;nh phần v&agrave; điều khiển:<br /></strong>C&aacute;c th&agrave;nh phần v&agrave; điều khiển l&agrave; c&aacute;c thư viện c&oacute; thể được sử dụng để tạo ra một thứ dễ ph&acirc;n phối v&agrave; c&oacute; thể chia sẻ được. Thư viện GPS l&agrave; một v&iacute; dụ tuyệt vời cho một thư viện c&oacute; thể được một lập tr&igrave;nh vi&ecirc;n x&acirc;y dựng v&agrave; dễ d&agrave;ng ph&acirc;n phối cho c&aacute;c lập tr&igrave;nh vi&ecirc;n kh&aacute;c để sử dụng trong c&aacute;c ứng dụng của họ. N&oacute; cũng được sử dụng để x&acirc;y dựng c&aacute;c th&agrave;nh phần m&aacute;y chủ v&agrave; nhiều c&ocirc;ng việc kh&aacute;c nữa.</li>
-<li style="text-align: start; line-height: 18pt; box-sizing: border-box; font-variant-ligatures: normal; font-variant-caps: normal; orphans: 2; widows: 2; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; word-spacing: 0px;"><strong>Ứng dụng Web:<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/A1_8a4efcbe8355487ebe053fa1a6313020.png" /><br /></strong>Với sự trợ gi&uacute;p của bộ khung .NET, C# c&oacute; khả năng tạo ra nhiều ứng dụng web bằng c&aacute;ch sử dụng asp.net. Đ&oacute; l&agrave; một ng&ocirc;n ngữ phổ biến kh&aacute;c m&agrave; ai ai c&oacute; thể học ngay lập tức khi muốn l&agrave;m cho ứng dụng web chạy trơn tru tr&ecirc;n một m&aacute;y chủ web. C&aacute;c ứng dụng Windows chạy tr&ecirc;n cả m&aacute;y chủ cũng như trong tr&igrave;nh duyệt của m&aacute;y kh&aacute;ch, t&ugrave;y thuộc v&agrave;o c&aacute;ch viết m&atilde;. Nếu C# được sử dụng dưới h&igrave;nh thức m&atilde; h&oacute;a ở backend, th&igrave; m&atilde; C# chạy tr&ecirc;n m&aacute;y chủ v&agrave; HTML frontend chạy trong tr&igrave;nh duyệt của m&aacute;y kh&aacute;ch.</li>
-</ul>
-<hr />
-<h3 style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;"><strong>Mục ti&ecirc;u của kh&oacute;a học.</strong></h3>
-<ul>
-<li>Viết th&agrave;nh thạo c&aacute;c chương tr&igrave;nh cơ bản bằng ng&ocirc;n ngữ C#.</li>
-<li>Hiểu r&otilde; c&aacute;ch kiểu dữ liệu của biến v&agrave; sử dụng n&oacute; một c&aacute;ch ph&ugrave; hợp.</li>
-<li>Sử dụng được c&aacute;c to&aacute;n tử trong C#.</li>
-<li>Hiểu r&otilde; bản chất một số c&aacute;c trong dữ lệnh cũng như c&aacute;c c&acirc;u lệnh trong C#:
-<ul>
-<li>Cấu tr&uacute;c mảng.</li>
-<li>Cấu tr&uacute;c chuỗi.</li>
-<li>C&acirc;u lệnh điều kiện.</li>
-<li>V&ograve;ng lặp.</li>
-</ul>
-</li>
-<li>T&igrave;m hiểu về class DateTime trong C#.</li>
-<li>Hiểu r&otilde; v&agrave; sử dụng cũng như viết được c&aacute;c h&agrave;m trong C#.</li>
-</ul>
-<hr />
-<h3 style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;"><strong>Lời kết: </strong></h3>
-<p style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;">Hướng tới mục đ&iacute;ch dạy lập tr&igrave;nh cho c&aacute;c đối tượng chưa biết, chưa t&igrave;m hiểu về lập tr&igrave;nh. Trong khu&ocirc;n khổ kh&oacute;a học n&agrave;y, ch&uacute;ng ta sẽ chỉ t&igrave;m hiểu kh&aacute;i niệm cơ bản nhất về lập tr&igrave;nh v&agrave; thực h&agrave;nh tr&ecirc;n ng&ocirc;n ngữ C#.</p>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/csharp-co-ban_96ca03bee27f454eb1f1c86e1fc5ef74.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Java cho người mới bắt đầu', '<p class="first-token" data-sourcepos="1:1-1:147">Java l&agrave; một trong những ng&ocirc;n ngữ lập tr&igrave;nh phổ biến v&agrave; được ứng dụng rộng r&atilde;i nhất tr&ecirc;n thế giới, từ c&aacute;c ứng dụng di động đến hệ thống doanh nghiệp lớn. Với t&iacute;nh đa nền tảng v&agrave; cộng đồng hỗ trợ mạnh mẽ, Java l&agrave; lựa chọn l&yacute; tưởng cho những ai muốn x&acirc;y dựng sự nghiệp trong lĩnh vực ph&aacute;t triển phần mềm. Kh&oacute;a học Java cơ bản n&agrave;y được thiết kế đặc biệt để gi&uacute;p bạn l&agrave;m quen với ng&ocirc;n ngữ một c&aacute;ch dễ d&agrave;ng v&agrave; hiệu quả nhất.</p>
-<h2 data-sourcepos="3:1-3:26"><strong>Mục ti&ecirc;u của kh&oacute;a học:</strong></h2>
-<ul data-sourcepos="5:1-5:70">
-<li data-sourcepos="5:1-5:70">Gi&uacute;p bạn <strong>học Java từ con số 0</strong> một c&aacute;ch nhanh ch&oacute;ng v&agrave; dễ hiểu.</li>
-<li data-sourcepos="6:1-6:95">Trang bị cho bạn kiến thức v&agrave; kỹ năng cần thiết để <strong>viết c&aacute;c chương tr&igrave;nh Java đơn giản</strong>.</li>
-<li data-sourcepos="8:1-9:0">Tạo nền tảng vững chắc <strong>cho bạn để tự học v&agrave; ph&aacute;t triển c&aacute;c chương tr&igrave;nh Java phức tạp hơn</strong>.</li>
-</ul>
-<h2 data-sourcepos="10:1-10:23"><strong>Đối tượng học vi&ecirc;n:</strong></h2>
-<ul data-sourcepos="12:1-12:142">
-<li data-sourcepos="12:1-12:142">Kh&oacute;a học n&agrave;y d&agrave;nh cho những người <strong>mới bắt đầu ho&agrave;n to&agrave;n chưa c&oacute; kiến thức về lập tr&igrave;nh</strong>, hoặc những bạn <strong>mất căn bản muốn lấy lại kiến thức nền tảng lập tr&igrave;nh</strong>, cụ thể l&agrave; Java.</li>
-</ul>
-<h2 data-sourcepos="14:1-14:26"><strong>Phương ph&aacute;p giảng dạy:</strong></h2>
-<ul data-sourcepos="16:1-19:0">
-<li data-sourcepos="16:1-16:58">Kh&oacute;a học được kết hợp <strong>giữa l&yacute; thuyết v&agrave; thực h&agrave;nh</strong>.</li>
-<li data-sourcepos="17:1-17:136">Học vi&ecirc;n sẽ được học qua c&aacute;c <strong>video b&agrave;i giảng</strong>, <strong>b&agrave;i đọc l&yacute; thuyết</strong>, <strong>b&agrave;i tập thực h&agrave;nh</strong> v&agrave; <strong>b&agrave;i tập trắc nghiệm l&yacute; thuyết</strong>.</li>
-<li data-sourcepos="18:1-19:0">Học vi&ecirc;n sẽ được <strong>giải đ&aacute;p</strong> những thắc mắc trực tiếp qua phần b&igrave;nh luận.</li>
-</ul>
-<h2 data-sourcepos="20:1-20:38"><strong>Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học, bạn sẽ c&oacute; thể:</strong></h2>
-<ul data-sourcepos="22:1-25:122">
-<li data-sourcepos="22:1-22:64">Hiểu r&otilde; về <strong>c&uacute; ph&aacute;p v&agrave; cấu tr&uacute;c cơ bản</strong> của ng&ocirc;n ngữ Java.</li>
-<li data-sourcepos="23:1-23:105">Sử dụng th&agrave;nh thạo c&aacute;c <strong>kiểu dữ liệu</strong>, <strong>biến</strong>, <strong>to&aacute;n tử</strong> v&agrave; <strong>c&acirc;u lệnh điều khiển</strong> trong Java.</li>
-<li data-sourcepos="24:1-24:78">Viết c&aacute;c <strong>chương tr&igrave;nh Java đơn giản</strong> để giải quyết c&aacute;c b&agrave;i to&aacute;n cơ bản.</li>
-<li data-sourcepos="25:1-25:122">C&oacute; <strong>nền tảng vững chắc</strong> để tiếp tục học c&aacute;c kh&oacute;a học Java n&acirc;ng cao v&agrave; ph&aacute;t triển sự nghiệp trong lĩnh vực lập tr&igrave;nh.</li>
-</ul>', 720000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/java-cho-nguoi-moi-bat-dau_9a1c4247a23441d9874bb3caca9ea497.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+<p>Nắm bắt cơ hội, tiến tới th&agrave;nh c&ocirc;ng. Đăng k&yacute; ngay h&ocirc;m nay v&agrave; trở th&agrave;nh một lập tr&igrave;nh vi&ecirc;n Python thực thụ!</p>', 900000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Python_-_Ad_3561581c4f074d9694a4704ed184b60e.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Làm quen với SQL', '<h3 data-start="191" data-end="211">Giới thiệu về SQL</h3>
 <p class="" data-start="213" data-end="430"><strong data-start="213" data-end="248">SQL (Structured Query Language)</strong> &ndash; hay c&ograve;n gọi l&agrave; <em data-start="266" data-end="297">Ng&ocirc;n ngữ truy vấn c&oacute; cấu tr&uacute;c</em> &ndash; l&agrave; ng&ocirc;n ngữ ti&ecirc;u chuẩn d&ugrave;ng để <strong data-start="331" data-end="373">truy xuất, quản l&yacute; v&agrave; thao t&aacute;c dữ liệu</strong> trong c&aacute;c <strong data-start="384" data-end="421">hệ quản trị cơ sở dữ liệu quan hệ</strong> (RDBMS).</p>
 <p class="" data-start="432" data-end="691">Nếu bạn đang t&igrave;m kiếm một c&aacute;ch tiếp cận nhanh ch&oacute;ng v&agrave; hiệu quả để bắt đầu với SQL, kh&oacute;a học n&agrave;y sẽ l&agrave; người bạn đồng h&agrave;nh l&yacute; tưởng. N&oacute; bao gồm những chủ đề quan trọng nhất gi&uacute;p bạn hiểu c&aacute;ch thức hoạt động của SQL v&agrave; ứng dụng thực tế của n&oacute; trong c&ocirc;ng việc.</p>
@@ -1550,7 +1449,7 @@ INSERT INTO public."Courses" VALUES ('7e7c3458-5caa-43c3-84d7-383ac98097f1', 'L�
 <li class="" data-start="2178" data-end="2259">
 <p class="" data-start="2180" data-end="2259"><strong data-start="2180" data-end="2209">Ng&ocirc;n ngữ lập tr&igrave;nh cơ bản</strong> &ndash; kh&ocirc;ng bắt buộc nhưng sẽ gi&uacute;p bạn học nhanh hơn.</p>
 </li>
-</ul>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/lam-quen-voi-sql_2f374a8d41f34eceab306830d4aea433.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+</ul>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/lam-quen-voi-sql_2f374a8d41f34eceab306830d4aea433.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'JavaScript cơ bản', '<p>JavaScript l&agrave; một ng&ocirc;n ngữ gia th&ecirc;m khả năng tương t&aacute;c cho website của bạn&nbsp;(v&iacute; dụ: tr&ograve; chơi, c&aacute;c phản hồi khi c&aacute;c n&uacute;t được nhấn hoặc nhập dữ liệu tr&ecirc;n form, kiểu&nbsp;động, hoạt họa). B&agrave;i viết n&agrave;y sẽ gi&uacute;p bạn khởi động với&nbsp;ng&ocirc;n ngữ th&uacute; vị n&agrave;y v&agrave; cho bạn&nbsp;&yacute; tưởng về những g&igrave; c&oacute; thể xảy ra.</p>
 <h3><strong>JavaScript l&agrave; g&igrave; ?</strong></h3>
 <p>JavaScript&nbsp;(viết tắt l&agrave; "js") l&agrave; một ng&ocirc;n ngữ lập tr&igrave;nh mang đầy đủ t&iacute;nh năng&nbsp;của một&nbsp;ng&ocirc;n ngữ lập tr&igrave;nh động&nbsp;m&agrave; khi n&oacute; được &aacute;p dụng&nbsp;v&agrave;o một t&agrave;i liệu&nbsp;HTML, n&oacute;&nbsp;c&oacute; thể đem lại khả năng tương t&aacute;c động tr&ecirc;n c&aacute;c trang web. Cha đẻ của ng&ocirc;n ngữ n&agrave;y l&agrave;&nbsp;Brendan Eich, đồng s&aacute;ng lập dự &aacute;n&nbsp;Mozilla,&nbsp;quỹ&nbsp;Mozilla, v&agrave; tập đo&agrave;n&nbsp;Mozilla.</p>
@@ -1586,46 +1485,7 @@ INSERT INTO public."Courses" VALUES ('820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Ja
 </ul>
 </li>
 <li>Biết c&aacute;c thư viện li&ecirc;n quan đến thuật to&aacute;n.</li>
-</ul>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/Javascript-co-ban__2__be74112f409f47e9874f0da758c1d7cb.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('961ac01c-382c-4aa5-bae1-d1429f27f06a', 'Lập trình C++ nâng cao', '<p>C++ l&agrave; một trong những ng&ocirc;n ngữ lập tr&igrave;nh mạnh mẽ v&agrave; linh hoạt nhất, được sử dụng rộng r&atilde;i trong c&aacute;c ứng dụng c&ocirc;ng nghiệp v&agrave; ph&aacute;t triển phần mềm cao cấp. Kh&oacute;a học C++ n&acirc;ng cao n&agrave;y được thiết kế để gi&uacute;p c&aacute;c lập tr&igrave;nh vi&ecirc;n đ&atilde; c&oacute; kiến thức cơ bản về C++ tiếp tục ph&aacute;t triển v&agrave; nắm vững c&aacute;c kỹ thuật n&acirc;ng cao. Kh&oacute;a học sẽ đi s&acirc;u v&agrave;o c&aacute;c chủ đề phức tạp hơn, gi&uacute;p bạn viết m&atilde; hiệu quả, tối ưu h&oacute;a v&agrave; &aacute;p dụng trong c&aacute;c dự &aacute;n thực tế.</p>
-<h1>Mục ti&ecirc;u của kh&oacute;a học</h1>
-<ul>
-<li><strong>Nắm vững c&aacute;c t&iacute;nh năng n&acirc;ng cao của C++:</strong> Hiểu r&otilde; v&agrave; &aacute;p dụng c&aacute;c kỹ thuật như quản l&yacute; bộ nhớ, cấp ph&aacute;t động, con trỏ v&agrave; xử l&yacute; ngoại lệ.</li>
-<li><strong>Thực h&agrave;nh v&agrave; n&acirc;ng cao khả năng lập tr&igrave;nh:</strong> &Aacute;p dụng kiến thức học được v&agrave;o c&aacute;c b&agrave;i to&aacute;n, n&acirc;ng cao kỹ năng lập tr&igrave;nh th&ocirc;ng qua việc thực h&agrave;nh li&ecirc;n tục.</li>
-<li><strong>Tăng cường khả năng giải quyết vấn đề:</strong> Ph&aacute;t triển khả năng tư duy logic v&agrave; giải quyết c&aacute;c vấn đề phức tạp trong lập tr&igrave;nh.</li>
-<li><strong>Sử dụng th&agrave;nh thạo c&aacute;c thư viện ti&ecirc;u chuẩn:</strong> Hiểu v&agrave; sử dụng c&aacute;c thư viện ti&ecirc;u chuẩn của C++ như STL v&agrave; c&aacute;c thư viện phổ biến kh&aacute;c.</li>
-</ul>
-<h1>Đối tượng học vi&ecirc;n</h1>
-<p>Kh&oacute;a học n&agrave;y d&agrave;nh cho những học vi&ecirc;n đ&atilde; ho&agrave;n th&agrave;nh kh&oacute;a học C++ cơ bản hoặc c&oacute; kiến thức tương đương. Những ai mong muốn n&acirc;ng cao kỹ năng lập tr&igrave;nh của m&igrave;nh, ứng dụng C++ v&agrave;o c&aacute;c dự &aacute;n thực tế v&agrave; muốn hiểu s&acirc;u hơn về c&aacute;c kh&iacute;a cạnh phức tạp của ng&ocirc;n ngữ n&agrave;y sẽ t&igrave;m thấy nhiều gi&aacute; trị từ kh&oacute;a học.</p>
-<h1>Phương ph&aacute;p giảng dạy</h1>
-<ul>
-<li><strong>Kết hợp giữa l&yacute; thuyết v&agrave; thực h&agrave;nh:</strong> Kh&oacute;a học bao gồm c&aacute;c b&agrave;i giảng l&yacute; thuyết, b&agrave;i tập thực h&agrave;nh v&agrave; c&aacute;c dự &aacute;n thực tế.</li>
-<li><strong>Học qua c&aacute;c video b&agrave;i giảng:</strong> Học vi&ecirc;n sẽ tiếp cận c&aacute;c kiến thức th&ocirc;ng qua video b&agrave;i giảng chi tiết v&agrave; dễ hiểu.</li>
-<li><strong>B&agrave;i tập thực h&agrave;nh v&agrave; trắc nghiệm:</strong> Để củng cố kiến thức, học vi&ecirc;n sẽ l&agrave;m c&aacute;c b&agrave;i tập thực h&agrave;nh v&agrave; trắc nghiệm l&yacute; thuyết.</li>
-<li><strong>Hỗ trợ v&agrave; trao đổi:</strong> Học vi&ecirc;n c&oacute; thể trao đổi, hỏi đ&aacute;p những thắc mắc với giảng vi&ecirc;n v&agrave; c&aacute;c bạn c&ugrave;ng kh&oacute;a th&ocirc;ng qua diễn đ&agrave;n.</li>
-</ul>
-<h1>Kỹ năng đạt được</h1>
-<ul>
-<li><strong>Quản l&yacute; bộ nhớ hiệu quả:</strong> Sử dụng c&aacute;c kỹ thuật quản l&yacute; bộ nhớ động, tr&aacute;nh r&ograve; rỉ bộ nhớ v&agrave; tối ưu h&oacute;a hiệu suất chương tr&igrave;nh.</li>
-<li><strong>Xử l&yacute; ngoại lệ:</strong> Nắm vững c&aacute;ch xử l&yacute; ngoại lệ trong C++ để viết m&atilde; an to&agrave;n v&agrave; dễ bảo tr&igrave;.</li>
-<li><strong>Sử dụng thư viện ti&ecirc;u chuẩn:</strong> Th&agrave;nh thạo việc sử dụng c&aacute;c thư viện ti&ecirc;u chuẩn v&agrave; mở rộng của C++ để tối ưu h&oacute;a qu&aacute; tr&igrave;nh ph&aacute;t triển phần mềm.</li>
-<li><strong>C&aacute;c kĩ thuật n&acirc;ng cao:&nbsp;</strong>stack,queue,list,set... ứng dụng v&agrave;o giải b&agrave;i tập.</li>
-</ul>
-<p>Kh&oacute;a học C++ n&acirc;ng cao n&agrave;y sẽ gi&uacute;p bạn n&acirc;ng cao kỹ năng lập tr&igrave;nh, sẵn s&agrave;ng đối mặt với những thử th&aacute;ch lớn trong ng&agrave;nh c&ocirc;ng nghệ th&ocirc;ng tin v&agrave; đạt được những th&agrave;nh tựu mới trong sự nghiệp lập tr&igrave;nh của m&igrave;nh. H&atilde;y đăng k&yacute; ngay để bắt đầu h&agrave;nh tr&igrave;nh học tập v&agrave; ph&aacute;t triển kỹ năng của bạn!</p>', 900000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/C___Advance-1_75d4679945874883b8dbf3f942970a89.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('97f41add-6aa0-4c20-8ad1-aba7ce768046', 'SQL cho người mới bắt đầu', '<p>Kh&oacute;a học "<strong>SQL cho người mới bắt đầu</strong>" được thiết kế đặc biệt d&agrave;nh cho c&aacute;c em học sinh từ lớp 6 trở l&ecirc;n, nhằm giới thiệu v&agrave; hướng dẫn c&aacute;c em những kiến thức cơ bản về SQL (Structured Query Language) - ng&ocirc;n ngữ truy vấn cấu tr&uacute;c d&ugrave;ng để quản l&yacute; v&agrave; thao t&aacute;c với cơ sở dữ liệu. Th&ocirc;ng qua kh&oacute;a học n&agrave;y, c&aacute;c em sẽ nắm bắt được c&aacute;ch tổ chức, truy vấn v&agrave; xử l&yacute; dữ liệu một c&aacute;ch hiệu quả v&agrave; th&uacute; vị.</p>
-<p>Với phương ph&aacute;p giảng dạy th&acirc;n thiện trực quan:</p>
-<ul>
-<li><strong>Học từ thực tế:</strong> C&aacute;c b&agrave;i học được thiết kế gần gũi với cuộc sống thực tiễn, gi&uacute;p c&aacute;c em hứng th&uacute; v&agrave; dễ d&agrave;ng tiếp thu kiến thức.</li>
-<li><strong>Thực h&agrave;nh trực tiếp:</strong> Mỗi buổi học đều c&oacute; b&agrave;i thực h&agrave;nh ngay tr&ecirc;n hệ thống, gi&uacute;p c&aacute;c em l&agrave;m quen với m&ocirc;i trường l&agrave;m việc thực tế của SQL.</li>
-<li><strong>Giảng vi&ecirc;n tận t&acirc;m:</strong> Đội ngũ giảng vi&ecirc;n gi&agrave;u kinh nghiệm, y&ecirc;u trẻ v&agrave; hiểu biết s&acirc;u rộng về SQL sẽ lu&ocirc;n sẵn s&agrave;ng hỗ trợ c&aacute;c em trong suốt qu&aacute; tr&igrave;nh học.</li>
-</ul>
-<p>Kh&oacute;a học sẽ đem lại lợi &iacute;ch to lớn:</p>
-<ul>
-<li><strong>Ph&aacute;t triển tư duy logic:</strong> Học SQL gi&uacute;p c&aacute;c em r&egrave;n luyện khả năng tư duy logic, giải quyết vấn đề một c&aacute;ch hệ thống v&agrave; c&oacute; tổ chức.</li>
-<li><strong>Kỹ năng tin học:</strong> Trang bị cho c&aacute;c em một kỹ năng quan trọng v&agrave; hữu &iacute;ch trong thời đại c&ocirc;ng nghệ hiện nay.</li>
-<li><strong>Chuẩn bị cho tương lai:</strong> SQL l&agrave; một ng&ocirc;n ngữ quan trọng trong lĩnh vực c&ocirc;ng nghệ th&ocirc;ng tin v&agrave; quản trị dữ liệu, gi&uacute;p c&aacute;c em c&oacute; nền tảng vững chắc cho c&aacute;c ng&agrave;nh nghề tương lai</li>
-</ul>
-<p>Ch&uacute;ng t&ocirc;i mong muốn được ch&agrave;o đ&oacute;n c&aacute;c em học sinh trong kh&oacute;a học "<strong>SQL cho người mới bắt đầu</strong>" v&agrave; c&ugrave;ng nhau kh&aacute;m ph&aacute; thế giới th&uacute; vị của cơ sở dữ liệu!</p>', 720000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/image_c2c5d691850c4b728435b10d05005813.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+</ul>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Javascript-co-ban__2__be74112f409f47e9874f0da758c1d7cb.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Điện toán đám mây', '<h3 data-start="221" data-end="314">Kh&oacute;a học <strong data-start="233" data-end="253">Cloud Essentials</strong> &ndash; Nền tảng vững chắc để bước v&agrave;o thế giới điện to&aacute;n đ&aacute;m m&acirc;y!</h3>
 <p class="" data-start="316" data-end="685">Trong thời đại số, <strong data-start="335" data-end="374">điện to&aacute;n đ&aacute;m m&acirc;y (cloud computing)</strong> đ&atilde; trở th&agrave;nh nền tảng kh&ocirc;ng thể thiếu cho mọi tổ chức v&agrave; c&aacute; nh&acirc;n trong việc ph&aacute;t triển ứng dụng, lưu trữ dữ liệu v&agrave; vận h&agrave;nh hệ thống. Kh&oacute;a học <strong data-start="519" data-end="539">Cloud Essentials</strong> sẽ gi&uacute;p bạn <strong data-start="552" data-end="585">hiểu r&otilde; c&aacute;c kh&aacute;i niệm cốt l&otilde;i</strong> về cloud, từ đ&oacute; sẵn s&agrave;ng cho h&agrave;nh tr&igrave;nh ứng dụng v&agrave; ph&aacute;t triển trong m&ocirc;i trường c&ocirc;ng nghệ hiện đại.</p>
 <h3 data-start="692" data-end="730">Bạn sẽ học được g&igrave; từ kh&oacute;a học n&agrave;y?</h3>
@@ -1659,7 +1519,7 @@ INSERT INTO public."Courses" VALUES ('a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Đ
 </li>
 </ul>
 <h3 data-start="2620" data-end="2665">Sẵn s&agrave;ng cho tương lai với nền tảng Cloud!</h3>
-<p>Nếu bạn muốn <strong data-start="2685" data-end="2713">nắm bắt xu thế c&ocirc;ng nghệ</strong> v&agrave; <strong data-start="2717" data-end="2762">ứng dụng cloud v&agrave;o c&ocirc;ng việc hoặc học tập</strong>, kh&oacute;a học n&agrave;y ch&iacute;nh l&agrave; lựa chọn l&yacute; tưởng để bạn bắt đầu.</p>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/phan-mem-may-tinh_e0361af5faa9440491151521f56d1259.png', true, '9483a3b6-2fc1-4536-9792-d998b843da73', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+<p>Nếu bạn muốn <strong data-start="2685" data-end="2713">nắm bắt xu thế c&ocirc;ng nghệ</strong> v&agrave; <strong data-start="2717" data-end="2762">ứng dụng cloud v&agrave;o c&ocirc;ng việc hoặc học tập</strong>, kh&oacute;a học n&agrave;y ch&iacute;nh l&agrave; lựa chọn l&yacute; tưởng để bạn bắt đầu.</p>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/phan-mem-may-tinh_e0361af5faa9440491151521f56d1259.png', true, '9483a3b6-2fc1-4536-9792-d998b843da73', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm máy tính', '<h3>Tổng quan về Phần mềm m&aacute;y t&iacute;nh</h3>
 <ul>
 <li>
@@ -1711,7 +1571,7 @@ INSERT INTO public."Courses" VALUES ('a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Ph
 <li>Nhu cầu cho học tập.</li>
 </ul>
 </li>
-</ul>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/phan-mem-may-tinh_73b00ecd5b2c41ac84c0ad0a2261021b.png', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+</ul>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/phan-mem-may-tinh_73b00ecd5b2c41ac84c0ad0a2261021b.png', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('acdafa98-5779-491b-b172-a6aeb14c5af1', 'Lập trình hướng đối tượng trong java', '<h3 data-start="158" data-end="249">Kh&aacute;m ph&aacute; sức mạnh của "Lập tr&igrave;nh Hướng đối tượng" trong Java!</h3>
 <p class="" data-start="251" data-end="635">Trong kỷ nguy&ecirc;n c&ocirc;ng nghệ hiện nay, việc hiểu v&agrave; th&agrave;nh thạo lập tr&igrave;nh hướng đối tượng (OOP) l&agrave; <strong data-start="346" data-end="396">ch&igrave;a kh&oacute;a mở ra c&aacute;nh cửa s&aacute;ng tạo v&agrave; hiệu suất</strong> cho bất kỳ lập tr&igrave;nh vi&ecirc;n n&agrave;o. Java, với c&uacute; ph&aacute;p r&otilde; r&agrave;ng v&agrave; t&iacute;nh ổn định cao, kh&ocirc;ng chỉ l&agrave; một trong những ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất thế giới m&agrave; c&ograve;n l&agrave; nền tảng mạnh mẽ để ph&aacute;t triển ứng dụng theo m&ocirc; h&igrave;nh lập tr&igrave;nh hướng đối tượng.</p>
 <h3 data-start="642" data-end="676">Bạn sẽ học được g&igrave; từ kh&oacute;a học?</h3>
@@ -1770,211 +1630,7 @@ INSERT INTO public."Courses" VALUES ('acdafa98-5779-491b-b172-a6aeb14c5af1', 'L�
 </li>
 </ul>
 <h3 data-start="3553" data-end="3581">H&atilde;y bắt đầu ngay h&ocirc;m nay!</h3>
-<p class="" data-start="3583" data-end="3733">Nếu bạn đang t&igrave;m kiếm cơ hội để <strong data-start="3615" data-end="3645">n&acirc;ng cao kỹ năng lập tr&igrave;nh</strong> v&agrave; <strong data-start="3649" data-end="3683">x&acirc;y dựng ứng dụng Java mạnh mẽ</strong>, đ&acirc;y ch&iacute;nh l&agrave; nơi khởi đầu l&yacute; tưởng d&agrave;nh cho bạn.</p>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/lap-trinh-huong-doi-tuong-trong-java_da49c404556247e898bbc0e435476936.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('b154a3c3-6727-4332-a637-07eb142657c8', 'Trọn bộ kiến thức Scratch cho học sinh', '<p data-sourcepos="1:1-1:56"><span style="font-size: 18pt;"><strong>COMBO KH&Oacute;A HỌC SCRATCH S&Aacute;NG TẠO - TỪ CƠ BẢN ĐẾN N&Acirc;NG CAO</strong></span></p>
-<p data-sourcepos="3:1-3:295">Bạn muốn khơi dậy niềm đam m&ecirc; lập tr&igrave;nh cho con trẻ một c&aacute;ch th&uacute; vị v&agrave; trực quan? Bạn đang t&igrave;m kiếm một lộ tr&igrave;nh học Scratch b&agrave;i bản từ cơ bản đến n&acirc;ng cao? Combo kh&oacute;a học Scratch s&aacute;ng tạo của ch&uacute;ng t&ocirc;i sẽ l&agrave; người bạn đồng h&agrave;nh tuyệt vời tr&ecirc;n h&agrave;nh tr&igrave;nh kh&aacute;m ph&aacute; thế giới lập tr&igrave;nh đầy m&agrave;u sắc.</p>
-<p data-sourcepos="5:2-5:38"><strong>1. Game "ăn liền" c&ugrave;ng Scratch</strong></p>
-<ul>
-<li><strong>L&agrave;m quen với giao diện Scratch:</strong> T&igrave;m hiểu về c&aacute;c th&agrave;nh phần tr&ecirc;n m&agrave;n h&igrave;nh, c&aacute;ch sử dụng c&aacute;c c&ocirc;ng cụ v&agrave; l&agrave;m việc với c&aacute;c khối lệnh.</li>
-<li><strong>C&aacute;c khối lệnh cơ bản:&nbsp;</strong>C&aacute;c khối di chuyển hiển thị v&agrave; điều khiển</li>
-</ul>
-<p data-sourcepos="12:2-12:25"><strong>2. Scratch n&acirc;ng cao</strong></p>
-<ul>
-<li>Biến số v&agrave; to&aacute;n tử: Sử dụng to&aacute;n học để thực hiện c&aacute;c ph&eacute;p to&aacute;n trong chương tr&igrave;nh</li>
-<li>Khối lệnh t&ugrave;y chỉnh: Tạo ra c&aacute;c khối lệnh ri&ecirc;ng t&aacute;i sử dụng</li>
-<li>X&acirc;y dựng game ri&ecirc;ng cho bản th&acirc;n: Học về vẽ h&igrave;nh, &acirc;m thanh,.. kết hợp để trở th&agrave;nh một sản phẩm ho&agrave;n chỉnh</li>
-</ul>
-<p><strong>3.&nbsp;Lợi &iacute;ch khi tham gia Combo</strong></p>
-<ul>
-<li>Tiết kiệm chi ph&iacute; so với việc đăng k&yacute; từng kh&oacute;a ri&ecirc;ng lẻ.</li>
-<li>Lộ tr&igrave;nh học tập r&otilde; r&agrave;ng, b&agrave;i bản, từ cơ bản đến n&acirc;ng cao.</li>
-<li>M&ocirc;i trường học tập tương t&aacute;c, khuyến kh&iacute;ch sự s&aacute;ng tạo.</li>
-<li>Gi&uacute;p trẻ ph&aacute;t triển tư duy logic, khả năng giải quyết vấn đề v&agrave; kỹ năng l&agrave;m việc nh&oacute;m.</li>
-<li>Tạo nền tảng vững chắc cho việc học c&aacute;c ng&ocirc;n ngữ lập tr&igrave;nh kh&aacute;c trong tương lai.</li>
-</ul>', 960000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/Full-Scratch_2a0fb6560651441c9cf5561ddd1620c0.jpg', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('b5502f31-c785-439c-bd18-c15b25dab111', 'Hệ thống khóa học SQL (Cơ bản & Nâng cao)', '<p data-sourcepos="14:1-14:59"><span style="font-size: 18pt;"><strong>Combo Kh&oacute;a học SQL Cơ bản v&agrave; N&acirc;ng cao bao gồm những g&igrave;?</strong></span></p>
-<p data-sourcepos="16:1-16:138">Combo n&agrave;y được thiết kế để cung cấp cho bạn một lộ tr&igrave;nh học tập to&agrave;n diện, từ những kh&aacute;i niệm cơ bản đến c&aacute;c kỹ thuật n&acirc;ng cao trong SQL.</p>
-<p data-sourcepos="18:1-18:27"><strong>1. Kh&oacute;a học SQL Cơ bản:</strong></p>
-<ul>
-<li><strong>Giới thiệu về cơ sở dữ liệu v&agrave; SQL</strong>: Kh&aacute;i niệm cơ bản về cơ sở dữ liệu quan hệ, c&aacute;c loại cơ sở dữ liệu, v&agrave; vai tr&ograve; của SQL.</li>
-<li><strong>C&aacute;c lệnh SQL cơ bản</strong>: SELECT, INSERT, UPDATE,...</li>
-<li><strong>C&aacute;c mệnh đề quan trọng</strong>: WHERE, ORDER BY,...</li>
-</ul>
-<p><strong>2. Kh&oacute;a học SQL N&acirc;ng cao:</strong></p>
-<ul>
-<li><strong>C&aacute;c h&agrave;m quan trọng</strong>: SUBSTRING, DATE, MONTH,...</li>
-<li><strong>Truy vấn con</strong>: Sử dụng truy vấn b&ecirc;n trong một truy vấn kh&aacute;c.</li>
-<li><strong>View v&agrave; bảng tạm: </strong>Tạo c&aacute;c đối tượng ảo để đơn giản h&oacute;a truy vấn phức tạp.</li>
-</ul>
-<p data-sourcepos="55:1-55:31"><strong>Lợi &iacute;ch khi tham gia Combo:</strong></p>
-<ul>
-<li><strong>Tiết kiệm chi ph&iacute;:</strong> So với việc đăng k&yacute; từng kh&oacute;a ri&ecirc;ng lẻ.</li>
-<li><strong>Lộ tr&igrave;nh học tập li&ecirc;n tục:</strong> Được thiết kế logic, gi&uacute;p bạn nắm vững kiến thức từ cơ bản đến n&acirc;ng cao một c&aacute;ch hệ thống.</li>
-<li><strong>Thực h&agrave;nh chuy&ecirc;n s&acirc;u:</strong> C&aacute;c b&agrave;i tập v&agrave; dự &aacute;n thực tế gi&uacute;p bạn &aacute;p dụng kiến thức v&agrave;o thực tiễn.</li>
-</ul>', 1620000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/SQL-A-Z_fd124876d86343328f62d23318e13d70.jpg', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Truyền thông và Mạng máy tính', '<h3 data-start="279" data-end="309">Giới thiệu về Mạng m&aacute;y t&iacute;nh</h3>
-<p class="" data-start="315" data-end="693"><strong data-start="315" data-end="332">Mạng m&aacute;y t&iacute;nh</strong> l&agrave; nền tảng cốt l&otilde;i cho c&aacute;c hệ thống th&ocirc;ng tin hiện đại, đ&oacute;ng vai tr&ograve; kết nối c&aacute;c thiết bị để chia sẻ t&agrave;i nguy&ecirc;n, dữ liệu v&agrave; dịch vụ. Kh&oacute;a học n&agrave;y cung cấp cho bạn c&aacute;i nh&igrave;n to&agrave;n diện về <strong data-start="519" data-end="569">c&aacute;c kh&aacute;i niệm, th&agrave;nh phần v&agrave; ứng dụng của mạng</strong>, từ cơ bản đến thực tế, gi&uacute;p bạn tự tin hơn khi sử dụng hoặc thiết lập mạng trong m&ocirc;i trường học tập, l&agrave;m việc v&agrave; gia đ&igrave;nh.</p>
-<h3 data-start="700" data-end="739">🔍 Tại sao n&ecirc;n học về Mạng m&aacute;y t&iacute;nh?</h3>
-<p class="" data-start="745" data-end="840">Việc hiểu biết về mạng kh&ocirc;ng chỉ gi&uacute;p bạn sử dụng c&ocirc;ng nghệ một c&aacute;ch hiệu quả, m&agrave; c&ograve;n gi&uacute;p bạn:</p>
-<ul data-start="842" data-end="1284">
-<li class="" data-start="842" data-end="951">
-<p class="" data-start="844" data-end="951"><strong data-start="844" data-end="903">Hiểu được c&aacute;ch c&aacute;c thiết bị kết nối v&agrave; trao đổi dữ liệu</strong>, từ mạng nội bộ (LAN) đến mạng diện rộng (WAN).</p>
-</li>
-<li class="" data-start="952" data-end="1056">
-<p class="" data-start="954" data-end="1056"><strong data-start="954" data-end="997">L&agrave;m chủ c&aacute;c kiến thức về truyền dữ liệu</strong>, băng th&ocirc;ng, tốc độ kết nối v&agrave; c&aacute;c phương tiện truyền dẫn.</p>
-</li>
-<li class="" data-start="1057" data-end="1177">
-<p class="" data-start="1059" data-end="1177"><strong data-start="1059" data-end="1132">Ph&acirc;n biệt v&agrave; lựa chọn đ&uacute;ng c&aacute;c loại h&igrave;nh v&agrave; thiết bị kết nối Internet</strong>, từ ADSL, FTTH cho tới kh&ocirc;ng d&acirc;y v&agrave; vệ tinh.</p>
-</li>
-<li class="" data-start="1178" data-end="1284">
-<p class="" data-start="1180" data-end="1284"><strong data-start="1180" data-end="1255">Biết c&aacute;ch tự cấu h&igrave;nh v&agrave; bảo tr&igrave; mạng trong gia đ&igrave;nh hoặc văn ph&ograve;ng nhỏ</strong> &ndash; một kỹ năng rất thực tiễn.</p>
-</li>
-</ul>
-<h3 data-start="1291" data-end="1326">🌐 Ứng dụng thực tế của kh&oacute;a học</h3>
-<p class="" data-start="1332" data-end="1380">Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học, bạn sẽ c&oacute; khả năng:</p>
-<p class="" data-start="1384" data-end="1491">✅ Hiểu r&otilde; <strong data-start="1394" data-end="1446">kh&aacute;i niệm mạng m&aacute;y t&iacute;nh, vai tr&ograve;, ph&acirc;n loại mạng</strong> v&agrave; mối quan hệ giữa c&aacute;c thiết bị trong mạng.</p>
-<p class="" data-start="1494" data-end="1600">✅ Hiểu được <strong data-start="1506" data-end="1548">c&aacute;ch dữ liệu được truyền tải tr&ecirc;n mạng</strong>, c&aacute;c th&ocirc;ng số quan trọng như bps, kbps, Mbps, Gbps.</p>
-<p class="" data-start="1603" data-end="1720">✅ <strong data-start="1605" data-end="1647">Ph&acirc;n biệt c&aacute;c phương tiện truyền th&ocirc;ng</strong>, từ c&oacute; d&acirc;y như c&aacute;p quang, c&aacute;p đồng trục đến kh&ocirc;ng d&acirc;y như s&oacute;ng v&ocirc; tuyến.</p>
-<p class="" data-start="1723" data-end="1824">✅ <strong data-start="1725" data-end="1778">Ph&acirc;n biệt v&agrave; hiểu r&otilde; Internet, intranet, extranet</strong>, cũng như c&aacute;c thao t&aacute;c tải dữ liệu l&ecirc;n/xuống.</p>
-<p class="" data-start="1827" data-end="1918">✅ Biết được <strong data-start="1839" data-end="1884">c&aacute;c h&igrave;nh thức v&agrave; dịch vụ kết nối Internet</strong> ph&ugrave; hợp với từng nhu cầu sử dụng.</p>
-<p class="" data-start="1921" data-end="2014">✅ <strong data-start="1923" data-end="1973">Nhận diện v&agrave; đ&aacute;nh gi&aacute; c&aacute;c thiết bị mạng cơ bản</strong>: modem, router, switch, access point,...</p>
-<p class="" data-start="2017" data-end="2111">✅ <strong data-start="2019" data-end="2080">Thiết lập mạng LAN/WiFi trong gia đ&igrave;nh hoặc văn ph&ograve;ng nhỏ</strong>, đ&aacute;p ứng theo nhu cầu thực tế.</p>
-<p class="" data-start="2114" data-end="2177">✅ Xử l&yacute; sự cố mạng cơ bản, hiểu nguy&ecirc;n nh&acirc;n v&agrave; hướng khắc phục.</p>
-<p class="" data-start="2180" data-end="2282">✅ <strong data-start="2182" data-end="2218">Đ&aacute;nh gi&aacute; chất lượng dịch vụ mạng</strong> v&agrave; lựa chọn thiết bị ph&ugrave; hợp với ng&acirc;n s&aacute;ch v&agrave; mục đ&iacute;ch sử dụng.</p>
-<h3 data-start="2289" data-end="2317">🎯 Đối tượng của kh&oacute;a học</h3>
-<p class="" data-start="2323" data-end="2344">Kh&oacute;a học ph&ugrave; hợp với:</p>
-<ul data-start="2346" data-end="2677">
-<li class="" data-start="2346" data-end="2419">
-<p class="" data-start="2348" data-end="2419">Học sinh, sinh vi&ecirc;n, người mới bắt đầu t&igrave;m hiểu về c&ocirc;ng nghệ th&ocirc;ng tin.</p>
-</li>
-<li class="" data-start="2420" data-end="2492">
-<p class="" data-start="2422" data-end="2492">Người d&ugrave;ng phổ th&ocirc;ng muốn tự thiết lập v&agrave; bảo tr&igrave; mạng trong gia đ&igrave;nh.</p>
-</li>
-<li class="" data-start="2493" data-end="2576">
-<p class="" data-start="2495" data-end="2576">Nh&acirc;n vi&ecirc;n văn ph&ograve;ng, quản trị hệ thống nhỏ cần nắm vững kiến thức cơ bản về mạng.</p>
-</li>
-<li class="" data-start="2577" data-end="2677">
-<p class="" data-start="2579" data-end="2677">Người chuẩn bị học c&aacute;c chuy&ecirc;n ng&agrave;nh IT chuy&ecirc;n s&acirc;u như quản trị mạng, bảo mật hoặc cloud computing.</p>
-</li>
-</ul>
-<h3 data-start="2684" data-end="2709">Điều kiện ti&ecirc;n quyết</h3>
-<p class="" data-start="2715" data-end="2793">Kh&ocirc;ng y&ecirc;u cầu kiến thức chuy&ecirc;n s&acirc;u. Tuy nhi&ecirc;n, bạn sẽ học hiệu quả hơn nếu c&oacute;:</p>
-<ul data-start="2795" data-end="2929">
-<li class="" data-start="2795" data-end="2864">
-<p class="" data-start="2797" data-end="2864">Kiến thức cơ bản về sử dụng m&aacute;y t&iacute;nh, hệ điều h&agrave;nh (Windows/Linux).</p>
-</li>
-<li class="" data-start="2865" data-end="2929">
-<p class="" data-start="2867" data-end="2929">Tư duy logic v&agrave; sẵn s&agrave;ng thực h&agrave;nh qua c&aacute;c t&igrave;nh huống thực tế.</p>
-</li>
-</ul>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/truyen-thong-va-mang-may-tinh_eb79a9f8aa854b059e7fc39155fef863.png', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('cb8d4b28-4c56-431f-b29a-e1f497c10175', 'Thành thạo C++ từ cơ bản đến nâng cao', '<p data-sourcepos="1:1-2:138"><span style="font-size: 18pt;"><strong>Combo Kh&oacute;a học C++ Cơ bản v&agrave; N&acirc;ng cao bao gồm những g&igrave;? </strong></span></p>
-<p data-sourcepos="1:1-2:138">Combo n&agrave;y được thiết kế để cung cấp cho bạn một lộ tr&igrave;nh học tập to&agrave;n diện, từ những kh&aacute;i niệm cơ bản đến c&aacute;c kỹ thuật n&acirc;ng cao trong C++.</p>
-<p><strong>1. Kh&oacute;a học C++ Cơ bản:</strong></p>
-<ul>
-<li data-sourcepos="5:1-8:25"><strong>Giới thiệu về lập tr&igrave;nh v&agrave; C++</strong>: Kh&aacute;i niệm cơ bản về thuật to&aacute;n,...</li>
-<li data-sourcepos="5:1-8:25"><strong>Kiểu dữ liệu, biến v&agrave; to&aacute;n tử</strong>: C&aacute;c kiểu dữ liệu cơ bản (int, float,...),...</li>
-<li data-sourcepos="5:1-8:25"><strong>Cấu tr&uacute;c điều khiển</strong>: C&acirc;u lệnh điều kiện (if, else,...),...</li>
-</ul>
-<p data-sourcepos="5:1-8:25"><strong>2. Kh&oacute;a học C++ N&acirc;ng cao:</strong></p>
-<ul>
-<li data-sourcepos="10:1-13:27">C&aacute;c h&agrave;m quan trọng như to&aacute;n học, l&agrave;m tr&ograve;n,...</li>
-<li data-sourcepos="10:1-13:27">Con trỏ: sử dụng con trỏ để thao t&aacute;c với dữ liệu</li>
-<li data-sourcepos="10:1-13:27">Template: X&acirc;y dựng c&aacute;c h&agrave;m v&agrave; lớp tổng qu&aacute;t...</li>
-</ul>
-<p data-sourcepos="10:1-13:27"><strong>3. Lợi &iacute;ch khi tham gia Combo:</strong></p>
-<ul>
-<li data-sourcepos="15:1-18:35">Tiết kiệm chi ph&iacute;: So với việc đăng k&yacute; từng kh&oacute;a ri&ecirc;ng lẻ.</li>
-<li data-sourcepos="15:1-18:35">Lộ tr&igrave;nh học tập li&ecirc;n tục: Được thiết kế logic,...</li>
-<li data-sourcepos="15:1-18:35">Thực h&agrave;nh chuy&ecirc;n s&acirc;u: C&aacute;c b&agrave;i tập v&agrave; dự &aacute;n thực tế... viết t&oacute;m tắt ngắn gọn trong một c&acirc;u</li>
-</ul>', 1620000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/C__-tu-co-ban-đen-nang-cao_caa4b3036a214a92b4491447e9676944.jpg', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('ce685ee8-dca7-4304-befd-139a5700bc68', 'Thư viện chuẩn C++', '<h3 data-start="206" data-end="305">L&agrave;m chủ Standard Template Library (STL) trong C++ &ndash; Tối ưu ho&aacute; hiệu suất v&agrave; t&aacute;i sử dụng m&atilde; nguồn</h3>
-<p class="" data-start="307" data-end="619">Kh&oacute;a học n&agrave;y cung cấp kiến thức to&agrave;n diện về <strong data-start="352" data-end="387">STL (Standard Template Library)</strong> &ndash; một trong những c&ocirc;ng cụ mạnh mẽ v&agrave; thiết thực nhất trong lập tr&igrave;nh C++. Bạn sẽ được trang bị kỹ năng sử dụng c&aacute;c <strong data-start="503" data-end="530">cấu tr&uacute;c dữ liệu c&oacute; sẵn</strong>, <strong data-start="532" data-end="553">thuật to&aacute;n tối ưu</strong>, v&agrave; c&aacute;ch <strong data-start="563" data-end="587">mở rộng thư viện STL</strong> để ph&ugrave; hợp với y&ecirc;u cầu thực tế.</p>
-<h3 data-start="626" data-end="673">Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học, bạn sẽ c&oacute; thể:</h3>
-<ul data-start="675" data-end="1168">
-<li class="" data-start="675" data-end="842">
-<p class="" data-start="677" data-end="842">✅ <strong data-start="679" data-end="730">Sử dụng th&agrave;nh thạo c&aacute;c cấu tr&uacute;c dữ liệu của STL</strong> như <code data-start="735" data-end="743">vector</code>, <code data-start="745" data-end="751">list</code>, <code data-start="753" data-end="758">map</code>, <code data-start="760" data-end="765">set</code>, v&agrave; c&aacute;c iterator để xử l&yacute; v&agrave; lưu trữ dữ liệu một c&aacute;ch linh hoạt v&agrave; hiệu quả.</p>
-</li>
-<li class="" data-start="844" data-end="1011">
-<p class="" data-start="846" data-end="1011">✅ <strong data-start="848" data-end="891">&Aacute;p dụng c&aacute;c thuật to&aacute;n c&oacute; sẵn trong STL</strong> như <code data-start="896" data-end="902">sort</code>, <code data-start="904" data-end="910">find</code>, <code data-start="912" data-end="919">count</code>, <code data-start="921" data-end="933">accumulate</code>, <code data-start="935" data-end="946">transform</code>... nhằm tăng tốc độ ph&aacute;t triển phần mềm v&agrave; tối ưu h&oacute;a hiệu suất.</p>
-</li>
-<li class="" data-start="1013" data-end="1168">
-<p class="" data-start="1015" data-end="1168">✅ <strong data-start="1017" data-end="1047">Tự thiết kế v&agrave; mở rộng STL</strong> bằng c&aacute;ch tạo c&aacute;c lớp v&agrave; thuật to&aacute;n t&ugrave;y chỉnh, t&iacute;ch hợp h&agrave;i h&ograve;a với hệ sinh th&aacute;i STL để giải quyết c&aacute;c b&agrave;i to&aacute;n đặc th&ugrave;.</p>
-</li>
-</ul>
-<h3 class="" data-start="1175" data-end="1197">Đối tượng ph&ugrave; hợp:</h3>
-<ul data-start="1199" data-end="1461">
-<li class="" data-start="1199" data-end="1290">
-<p class="" data-start="1201" data-end="1290">Lập tr&igrave;nh vi&ecirc;n C++ từ mức trung cấp trở l&ecirc;n muốn tối ưu h&oacute;a khả năng ph&aacute;t triển phần mềm.</p>
-</li>
-<li class="" data-start="1291" data-end="1384">
-<p class="" data-start="1293" data-end="1384">Người chuẩn bị tham gia c&aacute;c cuộc thi lập tr&igrave;nh hoặc phỏng vấn kỹ thuật y&ecirc;u cầu sử dụng STL.</p>
-</li>
-<li class="" data-start="1385" data-end="1461">
-<p class="" data-start="1387" data-end="1461">Sinh vi&ecirc;n CNTT cần củng cố v&agrave; n&acirc;ng cao kỹ năng sử dụng thư viện chuẩn C++.</p>
-</li>
-</ul>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/thu-vien-chuan-cpp_5dd3fda99ce1421e90b211d414c4a40d.png', true, '087499f3-3cc2-4d25-8ad5-8c63c6b74c44', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('d1839060-39f5-4877-a610-7036e35dbcaa', 'Python cho người mới bắt đầu', '<p><span style="font-size: 18pt; color: #304090;"><strong>Ng&ocirc;n ngữ lập tr&igrave;nh "B&Iacute; K&Iacute;P" vươn m&igrave;nh trong thời đại kỷ nguy&ecirc;n số</strong></span></p>
-<p style="text-align: justify;"><span style="color: #111928;">Sự b&ugrave;ng nổ của c&ocirc;ng nghệ Robot, tr&iacute; nh&acirc;n tạo Al dẫn đến sự thay đổi trong c&aacute;c lĩnh vực ng&agrave;nh nghề. CNTT trở th&agrave;nh lựa chọn số 1 gi&uacute;p con người kiểm so&aacute;t v&agrave; ph&aacute;t triển c&aacute;c c&ocirc;ng nghệ đỉnh cao. Để đ&aacute;p ứng được nhu cầu ph&aacute;t triển x&atilde; hội, Codelearn x&acirc;y dựng hệ thống học lập tr&igrave;nh trực tuyến nhằm gi&uacute;p c&aacute;c bạn trẻ &amp; người mới bắt đầu dễ d&agrave;ng tiếp cận với m&ocirc;n học, khơi dậy đam m&ecirc; c&ocirc;ng nghệ.</span></p>
-<p style="text-align: justify;">&nbsp;</p>
-<p><span style="font-size: 24pt; color: #250989;"><strong><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/BieuDo_70a10bfe0e77473b85274f3c0e6353ce.png" width="592" height="322" /><br /></strong></span></p>
-<p style="text-align: center;">Độ phổ biến của c&aacute;c ng&ocirc;n ngữ lập tr&igrave;nh</p>
-<p><img style="display: block; margin-left: auto; margin-right: auto;" src="blob:https://codelearn.io/d6ccb77e-80bb-42c0-9747-98309e5bcfa9" alt="" /></p>
-<p style="text-align: justify;"><img style="display: block; margin-left: auto; margin-right: auto;" src="blob:https://codelearn.io/d6ccb77e-80bb-42c0-9747-98309e5bcfa9" alt="" /></p>
-<p style="text-align: justify;"><span style="font-size: 18pt; color: #304090;"><strong>L&yacute; do học sinh &amp; người mới bắt đầu n&ecirc;n học Python?</strong></span></p>
-<p><span style="color: #506cf0; font-size: 16pt;"><strong>Ng&ocirc;n ngữ lập tr&igrave;nh dễ học</strong></span></p>
-<p><span style="color: #111928;">Python được đ&aacute;nh gi&aacute; l&agrave; ng&ocirc;n ngữ lập tr&igrave;nh dễ học nhất hiện nay, c&uacute; ph&aacute;p đơn giản v&agrave; gần gũi với ng&ocirc;n ngữ tự nhi&ecirc;n.</span></p>
-<p><span style="color: #111928;">Đặc biệt, m&atilde; lệnh của python ngắn gọn, dễ đọc v&agrave; dễ ghi nhớ hơn. So với code Java, code Python ngắn hơn tới 3 - 5 lần, thậm ch&iacute; l&agrave; 5 - 10 lần so với code C++.</span></p>
-<p><span style="font-size: 16pt; color: #506cf0;"><strong>Ứng dụng rộng r&atilde;i v&agrave; linh hoạt</strong></span></p>
-<p><span style="color: #111928;">Python trở th&agrave;nh ng&ocirc;n ngữ lập tr&igrave;nh số 1 hiện tại với sự ứng dụng rộng r&atilde;i trong c&aacute;ch lĩnh vực:</span></p>
-<ul>
-<li><span style="color: #111928;">Tr&iacute; tuệ nh&acirc;n tạo (Al) &amp; M&aacute;y học (ML)</span></li>
-<li><span style="color: #111928;">Ph&acirc;n t&iacute;ch dữ liệu</span></li>
-<li><span style="color: #111928;">Lập tr&igrave;nh web</span></li>
-<li><span style="color: #111928;">Ph&aacute;t triển game</span></li>
-</ul>
-<p><span style="font-size: 16pt; color: #506cf0;"><strong>Giải ph&aacute;p tốt nhất cho mọi vấn đề</strong></span></p>
-<p><span style="color: #111928;">Python c&oacute; một thư viện ti&ecirc;u chuấn lớn, chứa nhiều d&ograve;ng m&atilde; c&oacute; thể t&aacute;i sử dụng cho hầu hết mọi t&aacute;c vụ. Nhờ đ&oacute;, c&aacute;c nh&agrave; ph&aacute;t triển sẽ kh&ocirc;ng cần phải viết mă từ đầu.</span></p>
-<p><span style="color: #506cf0; font-size: 16pt;"><strong>Cộng đồng mạnh mẽ</strong></span></p>
-<p>Cộng đồng Python nhiệt t&igrave;nh với nhiều c&ocirc;ng cụ hỗ trợ, s&atilde;̃n s&agrave;ng gi&uacute;p c&aacute;c em học sinh &amp; người mới bắt đầu th&aacute;o gỡ thắc mắc trong qu&aacute; tr&igrave;nh tiếp cận, học tập v&agrave; thực h&agrave;nh.</p>', 722000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/python-cho-nguoi-moi-bat-dau_f1a0ae13118c411ab7068e248f9f0206.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('fc632885-682d-40c5-8b20-23c4c1627995', 'Lộ trình Python A-Z', '<p><span style="font-size: 18pt;"><strong>COMBO KH&Oacute;A HỌC PYTHON TO&Agrave;N DIỆN - TỪ CƠ BẢN ĐẾN N&Acirc;NG CAO</strong></span></p>
-<p><span data-teams="true">Bạn muốn học lập tr&igrave;nh bằng Python nhưng kh&ocirc;ng biết bắt đầu từ đ&acirc;u? Bạn đang t&igrave;m kiếm 1 lộ tr&igrave;nh học Python thống nhất từ cơ bản tới n&acirc;ng cao? Combo kh&oacute;a học Python to&agrave;n diện của ch&uacute;ng t&ocirc;i sẽ đồng h&agrave;nh c&ugrave;ng bạn trong h&agrave;nh tr&igrave;nh chinh phục ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất hiện nay.</span></p>
-<p><strong>🔰 Kh&oacute;a 1: Python cho người mới bắt đầu</strong></p>
-<ul>
-<li>L&agrave;m quen với lập tr&igrave;nh v&agrave; Python từ con số 0</li>
-<li>Nắm vững c&uacute; ph&aacute;p cơ bản: biến, điều kiện, v&ograve;ng lặp, h&agrave;m</li>
-<li>Thực h&agrave;nh với c&aacute;c b&agrave;i tập từ đơn giản đến phức tạp</li>
-</ul>
-<p><strong>🚀 Kh&oacute;a 2: Python n&acirc;ng cao</strong></p>
-<ul>
-<li>Lập tr&igrave;nh hướng đối tượng (OOP) trong Python</li>
-<li>Xử l&yacute; tệp tin, thư mục</li>
-<li>L&agrave;m việc với c&aacute;c Module v&agrave; Packages</li>
-</ul>', 1620000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/Python-A-Z_a410095bb212468fbd948d1224ec5801.jpg', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('d1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'HTML & CSS cho người mới bắt đầu', '<h3>Kh&oacute;a Học HTML &amp; CSS &ndash; Tạo Nền Tảng Vững Chắc Cho Thiết Kế Web</h3>
-<p data-start="165" data-end="348"><span data-teams="true">Kh&oacute;a học n&agrave;y d&agrave;nh cho người mới bắt đầu, gi&uacute;p bạn từng bước đạt đến tr&igrave;nh độ trung cấp, đồng thời trang bị kiến thức nền tảng c&ugrave;ng kỹ năng thực h&agrave;nh cần thiết để x&acirc;y dựng v&agrave; thiết kế c&aacute;c trang web chuy&ecirc;n nghiệp.</span></p>
-<h3 data-start="350" data-end="444"><strong data-start="354" data-end="442">Ch&agrave;o mừng bạn đến với kh&oacute;a học HTML &amp; CSS &ndash; nơi bạn l&agrave;m chủ thiết kế web!</strong></h3>
-<p data-start="446" data-end="711">Trong thời đại số, một website chuy&ecirc;n nghiệp kh&ocirc;ng chỉ l&agrave; bộ mặt của doanh nghiệp m&agrave; c&ograve;n l&agrave; c&ocirc;ng cụ mạnh mẽ để kết nối với thế giới. Việc nắm vững HTML &amp; CSS gi&uacute;p bạn kiểm so&aacute;t giao diện trang web, tối ưu trải nghiệm người d&ugrave;ng v&agrave; tạo n&ecirc;n những thiết kế ấn tượng.</p>
-<h3 data-start="446" data-end="711">Tại sao n&ecirc;n học HTML &amp; CSS?</h3>
-<ul>
-<li><strong data-start="754" data-end="778">Kiến thức to&agrave;n diện:</strong> Từ những kh&aacute;i niệm cơ bản đến kỹ năng thực tế trong thiết kế v&agrave; quản l&yacute; giao diện web.</li>
-<li><strong data-start="872" data-end="895">Cơ hội nghề nghiệp:</strong> Kỹ năng thiết kế web gi&uacute;p bạn mở rộng cơ hội l&agrave;m việc trong lĩnh vực lập tr&igrave;nh, thiết kế giao diện v&agrave; ph&aacute;t triển sản phẩm số.</li>
-<li><strong data-start="1028" data-end="1050">Tiết kiệm chi ph&iacute;:</strong> Tự thiết kế v&agrave; chỉnh sửa website của m&igrave;nh m&agrave; kh&ocirc;ng cần thu&ecirc; lập tr&igrave;nh vi&ecirc;n.</li>
-<li><strong data-start="1133" data-end="1157">Khơi nguồn s&aacute;ng tạo:</strong> Kiến thức về HTML &amp; CSS gi&uacute;p bạn thiết kế giao diện chuy&ecirc;n nghiệp, s&aacute;ng tạo v&agrave; tối ưu trải nghiệm người d&ugrave;ng.</li>
-</ul>
-<h3>Ai n&ecirc;n tham gia kh&oacute;a học n&agrave;y?</h3>
-<ul>
-<li><strong data-start="1317" data-end="1339">Người mới bắt đầu:</strong> Kh&ocirc;ng y&ecirc;u cầu kiến thức trước đ&oacute;, kh&oacute;a học sẽ hướng dẫn từ những bước cơ bản nhất.</li>
-<li><strong data-start="1430" data-end="1449">Lập tr&igrave;nh vi&ecirc;n:</strong> Mở rộng hiểu biết về HTML &amp; CSS để tối ưu giao diện v&agrave; hiệu suất trang web.</li>
-<li><strong data-start="1532" data-end="1560">Nh&agrave; thiết kế &amp; Marketer:</strong> Học c&aacute;ch chỉnh sửa, tối ưu h&oacute;a nội dung v&agrave; thiết kế web hiệu quả.</li>
-<li><strong data-start="1633" data-end="1657">Người y&ecirc;u c&ocirc;ng nghệ:</strong> Chuyển hướng sang lĩnh vực thiết kế web v&agrave; quản l&yacute; nội dung số.</li>
-</ul>
-<h3>Điều g&igrave; l&agrave;m kh&oacute;a học n&agrave;y đặc biệt?</h3>
-<ul>
-<li data-start="2496" data-end="2592"><strong data-start="2499" data-end="2521">Học qua thực h&agrave;nh:</strong> Nhiều b&agrave;i tập, dự &aacute;n thực tế gi&uacute;p bạn &aacute;p dụng ngay kiến thức đ&atilde; học.</li>
-<li data-start="2496" data-end="2592"><strong data-start="2597" data-end="2634">Hỗ trợ từ giảng vi&ecirc;n &amp; cộng đồng:</strong> Kết nối với những người học c&ugrave;ng ch&iacute; hướng v&agrave; nhận phản hồi từ chuy&ecirc;n gia.</li>
-<li data-start="2496" data-end="2592"><strong data-start="2716" data-end="2738">Nội dung cập nhật:</strong> Kiến thức li&ecirc;n tục được l&agrave;m mới để ph&ugrave; hợp với xu hướng ph&aacute;t triển web hiện đại.</li>
-</ul>
-<p>Bắt đầu ngay h&ocirc;m nay v&agrave; l&agrave;m chủ kỹ năng thiết kế web với HTML &amp; CSS! <em><strong>Đăng k&yacute; ngay!</strong></em></p>', 720000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/html-css-cho-nguoi-moi-bat-dau_3867537473444f328a4de0fa0231a6ea.jpg', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+<p class="" data-start="3583" data-end="3733">Nếu bạn đang t&igrave;m kiếm cơ hội để <strong data-start="3615" data-end="3645">n&acirc;ng cao kỹ năng lập tr&igrave;nh</strong> v&agrave; <strong data-start="3649" data-end="3683">x&acirc;y dựng ứng dụng Java mạnh mẽ</strong>, đ&acirc;y ch&iacute;nh l&agrave; nơi khởi đầu l&yacute; tưởng d&agrave;nh cho bạn.</p>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/lap-trinh-huong-doi-tuong-trong-java_da49c404556247e898bbc0e435476936.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Thực hành với SQL', '<p>Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học n&agrave;y, bạn sẽ c&oacute; c&aacute;c kỹ năng cần thiết để ph&acirc;n t&iacute;ch những b&agrave;i to&aacute;n dữ liệu một c&aacute;ch nhanh ch&oacute;ng v&agrave; dễ d&agrave;ng.</p>
 <p>- Bạn sẽ biết c&aacute;c sử dụng c&aacute;c c&acirc;u lệnh CASE, truy vấn con v&agrave; c&aacute;c h&agrave;m cửa sổ.<br />- Bạn sẽ biết đến một số kh&aacute;i niệm trong kh&oacute;a học n&agrave;y như xử l&yacute; dữ liệu bị thiếu, l&agrave;m việc với ng&agrave;y th&aacute;ng v&agrave; t&iacute;nh to&aacute;n thống k&ecirc; t&oacute;m tắt bằng c&aacute;c truy vấn n&acirc;ng cao.</p>
 <p><span style="text-decoration: underline;"><strong>Y&ecirc;u cầu:</strong></span> Bạn cần ho&agrave;n th&agrave;nh kh&oacute;a <a href="https://codelearn.io/learning/lam-quen-voi-sql"><strong>L&agrave;m quen với SQL</strong></a> để c&oacute; kiến thức cơ bản trước khi tham gia kh&oacute;a học n&agrave;y.</p>
@@ -2405,7 +2061,7 @@ INSERT INTO public."Courses" VALUES ('dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Th
 <td width="50%">Windown function review (2)</td>
 </tr>
 </tbody>
-</table>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/thuc-hanh-voi-sql_563ab47a356c46e89762c2772b1c1edc.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+</table>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/thuc-hanh-voi-sql_563ab47a356c46e89762c2772b1c1edc.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('e166a9f1-6df5-4b31-86b6-66b419634bd9', 'C++ cho người mới bắt đầu', '<h4>Giới thiệu về ng&ocirc;n ngữ lập tr&igrave;nh C++</h4>
 <p>C++ l&agrave; một ng&ocirc;n ngữ lập tr&igrave;nh bậc trung, được ph&aacute;t triển bởi&nbsp;<strong>Bjarne Stroustrup</strong>&nbsp;năm 1979 tại Bell Labs.&nbsp;Từ thập ni&ecirc;n 1990, C++ đ&atilde; trở th&agrave;nh một trong những ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất tr&ecirc;n thế giới.</p>
 <p><img src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/Cpp_Basic_To_Advance/BjarneStroustrup.jpg" alt="" width="432" height="324" /></p>
@@ -2456,7 +2112,930 @@ INSERT INTO public."Courses" VALUES ('e166a9f1-6df5-4b31-86b6-66b419634bd9', 'C+
 <li>L&agrave;m quen với giải thuật đệ quy.</li>
 </ul>
 </li>
-</ul>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/cpp-cho-nguoi-moi-bat-dau_09e94813a177425db74fb7c23e65c859.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+</ul>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/cpp-cho-nguoi-moi-bat-dau_09e94813a177425db74fb7c23e65c859.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('f996fe4f-4ab1-4979-9193-3881a8a806c9', 'C++ nâng cao', '<h3 data-start="170" data-end="266">C++ N&acirc;ng Cao -&gt; Kh&oacute;a học chuy&ecirc;n s&acirc;u về con trỏ v&agrave; quản l&yacute; bộ nhớ</h3>
+<p class="" data-start="268" data-end="580">Trong lập tr&igrave;nh hệ thống, hiểu r&otilde; <strong data-start="302" data-end="313">con trỏ</strong>, <strong data-start="315" data-end="325">bộ nhớ</strong>, v&agrave; c&aacute;c cấu tr&uacute;c dữ liệu cơ bản l&agrave; nền tảng kh&ocirc;ng thể thiếu để ph&aacute;t triển phần mềm hiệu quả v&agrave; tối ưu. Kh&oacute;a học n&agrave;y sẽ gi&uacute;p bạn <strong data-start="454" data-end="493">nắm vững từ l&yacute; thuyết đến thực h&agrave;nh</strong> c&aacute;c kh&aacute;i niệm cốt l&otilde;i trong lập tr&igrave;nh C/C++, từ đ&oacute; x&acirc;y dựng tư duy hệ thống vững chắc.</p>
+<h3 data-start="587" data-end="615">Qua kh&oacute;a học n&agrave;y, bạn sẽ:</h3>
+<p class="" data-start="619" data-end="766">✅ <strong data-start="621" data-end="666">Hiểu r&otilde; về con trỏ từ cơ bản đến n&acirc;ng cao</strong>: nắm được c&aacute;ch khai b&aacute;o, sử dụng con trỏ, con trỏ h&agrave;m, con trỏ trỏ tới con trỏ v&agrave; ứng dụng thực tế.</p>
+<p class="" data-start="772" data-end="889">✅ <strong data-start="774" data-end="830">Hiểu s&acirc;u về mảng v&agrave; mối li&ecirc;n hệ giữa mảng v&agrave; con trỏ</strong>: bao gồm mảng một chiều, hai chiều, mảng k&yacute; tự, mảng động.</p>
+<p class="" data-start="893" data-end="1023">✅ <strong data-start="895" data-end="950">Ph&acirc;n biệt được truyền tham trị v&agrave; truyền tham chiếu</strong>: l&yacute; giải r&otilde; bản chất hoạt động của từng phương thức v&agrave; ứng dụng ph&ugrave; hợp.</p>
+<p class="" data-start="1027" data-end="1088">✅ <strong data-start="1029" data-end="1087">Hiểu v&agrave; sử dụng th&agrave;nh thạo 3 h&igrave;nh thức cấp ph&aacute;t bộ nhớ</strong>:</p>
+<ul data-start="1091" data-end="1231">
+<li class="" data-start="1091" data-end="1125">
+<p class="" data-start="1093" data-end="1125">Cấp ph&aacute;t bộ nhớ tự động (stack),</p>
+</li>
+<li class="" data-start="1128" data-end="1167">Cấp ph&aacute;t bộ nhớ tĩnh (static memory),</li>
+<li class="" data-start="1170" data-end="1231">
+<p class="" data-start="1172" data-end="1231">Cấp ph&aacute;t bộ nhớ động (heap) với <code data-start="1204" data-end="1212">malloc</code>, <code data-start="1214" data-end="1222">calloc</code>, <code data-start="1224" data-end="1230">free</code>.</p>
+</li>
+</ul>
+<p class="" data-start="1172" data-end="1231">✅ <strong data-start="1237" data-end="1269">L&agrave;m chủ c&aacute;c to&aacute;n tử tr&ecirc;n bit</strong>: thao t&aacute;c bitwise để xử l&yacute; dữ liệu ở mức thấp, tối ưu bộ nhớ v&agrave; tốc độ.</p>
+<p class="" data-start="1345" data-end="1457">✅ <strong data-start="1347" data-end="1391">Hiểu v&agrave; sử dụng kiểu dữ liệu c&oacute; cấu tr&uacute;c</strong>: như <code data-start="1397" data-end="1405">struct</code>, <code data-start="1407" data-end="1414">union</code>, v&agrave; c&aacute;c kỹ thuật tổ chức dữ liệu n&acirc;ng cao.</p>
+<p class="" data-start="1461" data-end="1598">✅ <strong data-start="1463" data-end="1491">Hiểu về struct alignment</strong> v&agrave; <strong data-start="1495" data-end="1540">t&iacute;nh to&aacute;n ch&iacute;nh x&aacute;c k&iacute;ch thước của struct</strong> trong bộ nhớ, từ đ&oacute; tối ưu hiệu quả lưu trữ v&agrave; truy xuất.</p>
+<h3 data-start="1605" data-end="1629">Kh&oacute;a học d&agrave;nh cho ai?</h3>
+<ul data-start="1631" data-end="1950">
+<li class="" data-start="1631" data-end="1707">
+<p class="" data-start="1633" data-end="1707">Sinh vi&ecirc;n c&ocirc;ng nghệ th&ocirc;ng tin, kỹ thuật phần mềm đang học lập tr&igrave;nh C/C++.</p>
+</li>
+<li class="" data-start="1708" data-end="1790">
+<p class="" data-start="1710" data-end="1790">Người học lập tr&igrave;nh hệ thống, muốn hiểu r&otilde; c&aacute;ch hoạt động của bộ nhớ v&agrave; con trỏ.</p>
+</li>
+<li class="" data-start="1791" data-end="1867">
+<p class="" data-start="1793" data-end="1867">Người chuẩn bị học lập tr&igrave;nh nh&uacute;ng hoặc ph&aacute;t triển phần mềm hiệu năng cao.</p>
+</li>
+<li class="" data-start="1868" data-end="1950">
+<p class="" data-start="1870" data-end="1950">Bất kỳ ai muốn <strong data-start="1885" data-end="1949">đ&agrave;o s&acirc;u tư duy lập tr&igrave;nh v&agrave; kỹ năng thao t&aacute;c bộ nhớ hiệu quả</strong>.</p>
+</li>
+</ul>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/C___Advance_1c572a2e59e5405cb057e864d3590d34.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Hoàn thiện ứng dụng web thực tế với C# và .NET Core', '<p>Kh&oacute;a học n&agrave;y được thiết kế để hướng dẫn học vi&ecirc;n x&acirc;y dựng một ứng dụng web ho&agrave;n chỉnh từ đầu đến cuối bằng .NET Core, bao gồm tất cả c&aacute;c giai đoạn từ ph&acirc;n t&iacute;ch y&ecirc;u cầu, lập tr&igrave;nh cho đến triển khai tr&ecirc;n m&ocirc;i trường thực tế. D&ugrave; bạn l&agrave; người mới với những kiến thức cơ bản về C# v&agrave; c&aacute;c c&ocirc;ng nghệ web, hay đ&atilde; l&agrave; lập tr&igrave;nh vi&ecirc;n muốn n&acirc;ng cao kỹ năng, kh&oacute;a học sẽ mang lại trải nghiệm thực tiễn v&agrave; đầy đủ về ph&aacute;t triển ứng dụng hiện đại.</p>
+<h4><strong>Những g&igrave; bạn sẽ học được</strong></h4>
+<ol>
+<li>
+<p><strong>Ph&acirc;n t&iacute;ch v&agrave; lập kế hoạch y&ecirc;u cầu:</strong></p>
+<ul>
+<li>Hiểu c&aacute;ch ph&acirc;n t&iacute;ch y&ecirc;u cầu thực tế v&agrave; chuyển đổi th&agrave;nh c&aacute;c t&iacute;nh năng kỹ thuật cụ thể.</li>
+<li>Tạo user stories v&agrave; x&aacute;c định c&aacute;c chức năng ch&iacute;nh của ứng dụng.</li>
+</ul>
+</li>
+<li>
+<p><strong>Ph&aacute;t triển Backend với .NET Core:</strong></p>
+<ul>
+<li>X&acirc;y dựng API RESTful bằng .NET Core 8.</li>
+<li>Nắm vững hai phương ph&aacute;p l&agrave;m việc với cơ sở dữ liệu: <strong>Database First</strong> v&agrave; <strong>Code First</strong> với Entity Framework.</li>
+<li>Triển khai t&iacute;nh năng x&aacute;c thực v&agrave; ph&acirc;n quyền sử dụng <strong>JWT Tokens</strong>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Ph&aacute;t triển Frontend:</strong></p>
+<ul>
+<li>Thiết kế giao diện người d&ugrave;ng (UI) linh hoạt với <strong>HTML</strong>, <strong>JavaScript</strong>&nbsp;v&agrave; <strong>CSS</strong>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Quản l&yacute; cơ sở dữ liệu với PostgreSQL:</strong></p>
+<ul>
+<li>Thiết lập v&agrave; quản l&yacute; cơ sở dữ liệu PostgreSQL.</li>
+</ul>
+</li>
+<li>
+<p><strong>Tối ưu h&oacute;a hiệu năng:</strong></p>
+<ul>
+<li>T&iacute;ch hợp <strong>Redis</strong> để lưu trữ cache, cải thiện tốc độ v&agrave; khả năng mở rộng ứng dụng.</li>
+</ul>
+</li>
+<li>
+<p><strong>Triển khai v&agrave; sử dụng dịch vụ đ&aacute;m m&acirc;y:</strong></p>
+<ul>
+<li>Học c&aacute;ch triển khai ứng dụng tr&ecirc;n nền tảng <strong>AWS Cloud Services</strong>, đảm bảo hiệu suất v&agrave; t&iacute;nh ổn định.</li>
+</ul>
+</li>
+</ol>
+<h4><strong>Điểm nổi bật của kh&oacute;a học:</strong></h4>
+<ul>
+<li><strong>Dự &aacute;n thực tế:</strong> Học vi&ecirc;n sẽ tự tay x&acirc;y dựng một ứng dụng quản l&yacute; c&ocirc;ng việc đầy đủ chức năng.</li>
+<li>So s&aacute;nh v&agrave; &aacute;p dụng hai phương ph&aacute;p <strong>Code First</strong> v&agrave; <strong>Database First</strong> trong t&igrave;nh huống thực tế.</li>
+<li>Ph&aacute;t triển ứng dụng dựa tr&ecirc;n kiến tr&uacute;c <strong>Microservices.</strong></li>
+<li>Học c&aacute;ch quản l&yacute; v&agrave; triển khai ứng dụng tr&ecirc;n nền tảng đ&aacute;m m&acirc;y hiện đại.</li>
+<li><strong>Tương t&aacute;c với giảng vi&ecirc;n:</strong> C&aacute;c b&agrave;i tập giữa kh&oacute;a được thiết kế để bạn &aacute;p dụng kiến thức ngay lập tức. B&agrave;i l&agrave;m của bạn sẽ được đội ngũ chuy&ecirc;n gia đ&aacute;nh gi&aacute; v&agrave; nhận x&eacute;t chi tiết, gi&uacute;p bạn nhận ra ưu điểm cũng như cải thiện kỹ năng lập tr&igrave;nh.</li>
+</ul>
+<h4><strong>Kết quả sau kh&oacute;a học:</strong></h4>
+<p>Sau kh&oacute;a học, bạn sẽ c&oacute; khả năng tự x&acirc;y dựng v&agrave; triển khai một ứng dụng web thực tế bằng .NET Core, đồng thời nắm vững c&aacute;c c&ocirc;ng nghệ hiện đại để mở rộng v&agrave; ph&aacute;t triển dự &aacute;n trong tương lai.</p>', 1000000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/csharp-fullstack_8_63694c3f5e9d48d2b826de8ccb411b82.png', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('3a705a75-7389-4e97-aeb8-58a58616032b', 'Lập trình hướng đối tượng trong C++', '<div style="text-align: justify;"><strong>Khi nhắc tới lập tr&igrave;nh hướng đối tượng chắc bạn sẽ nghĩ ngay tới 4 t&iacute;nh chất l&agrave; t&iacute;nh đ&oacute;ng g&oacute;i, t&iacute;nh kế thừa, t&iacute;nh đa h&igrave;nh v&agrave; t&iacute;nh trừu tượng. Thực chất th&igrave; 4 t&iacute;nh chất n&agrave;y chỉ giống như c&aacute;c nguy&ecirc;n liệu để x&acirc;y dựng chương tr&igrave;nh theo phương ph&aacute;p hướng đối tượng, quan trọng nhất vẫn l&agrave; c&aacute;ch m&agrave; bạn sử dụng c&aacute;c nguy&ecirc;n liệu n&agrave;y để x&acirc;y dựng chương tr&igrave;nh như thế n&agrave;o.</strong></div>
+<h3 style="text-align: justify;">Vậy lập tr&igrave;nh hướng đối tượng l&agrave; g&igrave;?</h3>
+<div style="text-align: justify;">Lập tr&igrave;nh hướng đối tượng được hiểu đơn giản l&agrave; một phương ph&aacute;p để giải quyết b&agrave;i to&aacute;n lập tr&igrave;nh m&agrave; khi &aacute;p dụng th&igrave; code sẽ trở n&ecirc;n dễ ph&aacute;t triển v&agrave; dễ bảo tr&igrave; hơn. Phương ph&aacute;p n&agrave;y sẽ chia nhỏ chương tr&igrave;nh th&agrave;nh c&aacute;c đối tượng v&agrave; c&aacute;c mối quan hệ, mỗi đối tượng sẽ c&oacute; c&aacute;c thuộc t&iacute;nh (dữ liệu) v&agrave; h&agrave;nh vi (phương thức). Để c&oacute; thể lập tr&igrave;nh v&agrave; thiết kế chương tr&igrave;nh theo phương ph&aacute;p n&agrave;y th&igrave; chắc chắn bạn cần hiểu r&otilde; về 4 t&iacute;nh chất l&agrave; l&agrave; t&iacute;nh đ&oacute;ng g&oacute;i, t&iacute;nh kế thừa, t&iacute;nh đa h&igrave;nh v&agrave; t&iacute;nh trừu tượng.</div>
+<div><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/Untitled-4.png" alt="" width="649" height="496" /></div>
+<div style="text-align: justify;">&nbsp;</div>
+<h3 style="text-align: justify;">1. T&iacute;nh đ&oacute;ng g&oacute;i (Encapsulation)</h3>
+<div style="text-align: justify;">Đ&acirc;y l&agrave; kỹ thuật gi&uacute;p bạn che giấu đi những th&ocirc;ng tin b&ecirc;n trong đối tượng bằng c&aacute;ch sử dụng phạm vi truy cập private cho c&aacute;c thuộc t&iacute;nh, muốn giao tiếp hay lấy ra c&aacute;c th&ocirc;ng tin của đối tượng th&igrave; phải th&ocirc;ng qua c&aacute;c phương thức public, từ đ&oacute; sẽ hạn chế được c&aacute;c lỗi khi ph&aacute;t triển chương tr&igrave;nh. T&iacute;nh chất n&agrave;y cũng giống với trong thực tế, bạn kh&ocirc;ng thể thấy được c&aacute;c thuộc t&iacute;nh thực của một người (t&iacute;nh c&aacute;ch, sở th&iacute;ch, c&aacute;c th&ocirc;ng tin ri&ecirc;ng tư kh&aacute;c, ...), những thứ m&agrave; bạn biết đều l&agrave; th&ocirc;ng qua c&aacute;c h&agrave;nh động của người đ&oacute;. V&iacute; dụ người đ&oacute; n&oacute;i cho bạn biết về sở th&iacute;ch, tuổi, ... nhưng c&aacute;c th&ocirc;ng tin n&agrave;y chưa chắc đ&atilde; thực sự l&agrave; thuộc t&iacute;nh thật của người đ&oacute; (giống với việc c&aacute;c getter kh&ocirc;ng trả về gi&aacute; trị thực của thuộc t&iacute;nh m&agrave; trả về một gi&aacute; trị kh&aacute;c).</div>
+<div><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/lap-trinh-huong-doi-tuong-phan-5-63729265681.6431.jpg" alt="" width="513" height="321" /> <br />
+<p>C&aacute;c lợi &iacute;ch ch&iacute;nh m&agrave; t&iacute;nh đ&oacute;ng g&oacute;i đem lại:</p>
+<ul>
+<li>Hạn chế được c&aacute;c truy xuất kh&ocirc;ng hợp lệ tới c&aacute;c thuộc t&iacute;nh của đối tượng.</li>
+<li>Gi&uacute;p cho trạng th&aacute;i của c&aacute;c đối tượng lu&ocirc;n đ&uacute;ng. V&iacute; dụ nếu thuộc t&iacute;nh&nbsp;<code>gpa</code>&nbsp;của lớp&nbsp;<code>Student</code>&nbsp;l&agrave;&nbsp;<code>public</code>&nbsp;th&igrave; sẽ rất kh&oacute; kiểm so&aacute;t được gi&aacute; trị, bạn c&oacute; thể thay đổi&nbsp;<code>gpa</code>&nbsp;th&agrave;nh bất kỳ gi&aacute; trị n&agrave;o. Ngược lại, nếu bạn để thuộc t&iacute;nh&nbsp;<code>gpa</code>&nbsp;l&agrave;&nbsp;<code>private</code>&nbsp;v&agrave; cung cấp h&agrave;m&nbsp;<code>setGpa()</code>&nbsp;giống như sau:</li>
+</ul>
+<pre class="language-cpp"><code>void setGpa(double gpa) {
+		if (gpa &gt;= 0 &amp;&amp; gpa &lt;= 4) {
+			this-&gt;gpa = gpa;
+		} else {
+			cout &lt;&lt; "gpa is invalid";
+		}
+	}​</code></pre>
+<p>th&igrave; l&uacute;c n&agrave;y gi&aacute; trị của thuộc t&iacute;nh&nbsp;<code>gpa</code>&nbsp;sẽ lu&ocirc;n được đảm bảo l&agrave; kh&ocirc;ng &acirc;m v&agrave; nhỏ hơn hoặc bằng&nbsp;<code>4</code>&nbsp;(do muốn thay đổi&nbsp;<code>gpa</code>&nbsp;th&igrave; phải th&ocirc;ng qua h&agrave;m&nbsp;<code>setGpa()</code>).</p>
+<ul>
+<li>Gi&uacute;p ẩn đi những th&ocirc;ng tin kh&ocirc;ng cần thiết về đối tượng.</li>
+<li>Cho ph&eacute;p bạn thay đổi cấu tr&uacute;c b&ecirc;n trong lớp m&agrave; kh&ocirc;ng ảnh hưởng tới lớp kh&aacute;c. V&iacute; dụ ban đầu bạn thiết kế lớp&nbsp;<code>Student</code>&nbsp;giống như sau:</li>
+</ul>
+<pre class="language-cpp"><code>class Student {
+private: 
+	string firstName;
+	string lastName;
+public:
+	Student() {
+		...
+	}
+	string getFullName() {
+		return firstName + lastName;
+	}
+};</code></pre>
+<p>Sau n&agrave;y nếu bạn muốn gộp 2 thuộc t&iacute;nh&nbsp;<code>firstName</code>&nbsp;v&agrave;&nbsp;<code>lastName</code>&nbsp;th&agrave;nh&nbsp;<code>fullName</code>&nbsp;th&igrave; lớp&nbsp;<code>Student</code>&nbsp;sẽ&nbsp;giống như sau:</p>
+<pre class="language-cpp"><code>class Student {
+private:
+	string fullName;
+public:
+	Student() {
+		...
+	}
+	string getFullName() {
+		return fullName;
+	}
+};</code></pre>
+<p>L&uacute;c n&agrave;y cấu tr&uacute;c lớp&nbsp;<code>Student</code>&nbsp;đ&atilde; bị thay đổi nhưng c&aacute;c đối tượng sử dụng lớp n&agrave;y vẫn kh&ocirc;ng cần phải thay đổi do c&aacute;c đối tượng n&agrave;y chỉ quan t&acirc;m tới phương thức&nbsp;<code>getFullName()</code>. Nếu kh&ocirc;ng c&oacute; phương thức n&agrave;y th&igrave; bạn phải sửa tất cả những chỗ sử dụng thuộc t&iacute;nh&nbsp;<code>firstName</code>&nbsp;v&agrave;&nbsp;<code>lastName</code>&nbsp;của lớp&nbsp;<code>Student</code>.</p>
+<p>Lưu &yacute;:&nbsp;h&atilde;y lu&ocirc;n nhớ rằng mục đ&iacute;ch ch&iacute;nh của t&iacute;nh đ&oacute;ng g&oacute;i l&agrave; để hạn chế c&aacute;c lỗi khi ph&aacute;t triển chương tr&igrave;nh chứ kh&ocirc;ng phải l&agrave; bảo mật hay che giấu th&ocirc;ng tin.</p>
+</div>
+<h3 style="text-align: justify;">2. T&iacute;nh kế thừa (Inheritance)</h3>
+<p style="text-align: justify;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/Shanghaik/Pictures/dad.jpg" alt="" width="418" height="418" /></p>
+<div style="text-align: justify;">Khi lập tr&igrave;nh chắc chắn sẽ c&oacute; những trường hợp m&agrave; c&aacute;c đối tượng c&oacute; chung một số thuộc t&iacute;nh v&agrave; phương thức. V&iacute; dụ như khi bạn viết chương tr&igrave;nh lưu th&ocirc;ng tin về c&aacute;c học sinh v&agrave; gi&aacute;o vi&ecirc;n. Với học sinh th&igrave; cần lưu th&ocirc;ng tin về t&ecirc;n, tuổi, địa chỉ, điểm v&agrave; với gi&aacute;o vi&ecirc;n th&igrave; cần lưu th&ocirc;ng tin về t&ecirc;n, tuổi, địa chỉ, tiền lương =&gt; l&uacute;c n&agrave;y code sẽ bị tr&ugrave;ng lặp kh&aacute; nhiều (từ c&aacute;c thuộc t&iacute;nh cho tới c&aacute;c setter, getter, ...) v&agrave; n&oacute; vi phạm một trong những nguy&ecirc;n tắc cơ bản nhất khi lập tr&igrave;nh l&agrave; DRY (Don''t Repeat Yourself - đừng bao giờ lặp lại code). Để thấy r&otilde; hơn th&igrave; bạn h&atilde;y xem sơ đồ lớp sau:</div>
+<div style="text-align: center;"><img src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/1_c1cffb641bc14b69958870dedbd2328b.png" /></div>
+<div style="text-align: justify;">Với kế thừa th&igrave; vấn đề n&agrave;y sẽ được giải quyết, kế thừa trong lập tr&igrave;nh hướng đối tượng ch&iacute;nh l&agrave; thừa hưởng lại những thuộc t&iacute;nh v&agrave; phương thức của một lớp. C&oacute; nghĩa l&agrave; nếu lớp A kế thừa lớp B th&igrave; lớp A sẽ c&oacute; những thuộc t&iacute;nh v&agrave; phương thức của lớp B. Do đ&oacute;, từ sơ đồ tr&ecirc;n bạn c&oacute; thể t&aacute;ch c&aacute;c thuộc t&iacute;nh v&agrave; phương thức tr&ugrave;ng nhau ra một lớp mới t&ecirc;n l&agrave;&nbsp;<code>Person</code>&nbsp;v&agrave; cho lớp&nbsp;<code>Student</code>&nbsp;v&agrave;&nbsp;<code>Teacher</code>&nbsp;kế thừa lớp n&agrave;y giống như sau:</div>
+<div style="text-align: justify;"><img src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/2_952c2cadf9d44245b93bdc389799597d.png" /></div>
+<div style="text-align: justify;">C&oacute; thể thấy với sơ đồ n&agrave;y th&igrave; lớp&nbsp;<code>Student</code>&nbsp;v&agrave;&nbsp;<code>Teacher</code>&nbsp;sẽ được thừa hưởng lại c&aacute;c thuộc t&iacute;nh chung từ lớp&nbsp;<code>Person</code>&nbsp;v&agrave; code sẽ kh&ocirc;ng c&ograve;n bị tr&ugrave;ng lặp. Đ&oacute; ch&iacute;nh l&agrave; lợi &iacute;ch của t&iacute;nh kế thừa.</div>
+<h3 style="text-align: justify;">3. T&iacute;nh đa h&igrave;nh (Polymorphism)</h3>
+<div style="text-align: justify;">Như bạn đ&atilde; biết, lập tr&igrave;nh hướng đối tượng l&agrave; phương ph&aacute;p tư duy v&agrave; giải quyết b&agrave;i to&aacute;n lập tr&igrave;nh theo hướng thực tế. Do đ&oacute;, c&aacute;c t&iacute;nh chất của n&oacute; cũng sẽ gắn liền với thực tế n&ecirc;n trước hết bạn cần hiểu về t&iacute;nh đa h&igrave;nh trong thực tế. Đa h&igrave;nh được hiểu l&agrave; trong từng ho&agrave;n cảnh, từng trường hợp kh&aacute;c nhau th&igrave; c&aacute;c đối tượng sẽ đ&oacute;ng c&aacute;c vai tr&ograve; kh&aacute;c nhau. V&iacute; dụ, c&ugrave;ng l&agrave; một người nhưng khi ở c&ocirc;ng ty th&igrave; c&oacute; vai tr&ograve; l&agrave; nh&acirc;n vi&ecirc;n, khi đi si&ecirc;u thị th&igrave; c&oacute; vai tr&ograve; l&agrave; kh&aacute;ch h&agrave;ng, hay khi ở trường th&igrave; lại c&oacute; vai tr&ograve; l&agrave; học sinh, ... =&gt; c&ugrave;ng l&agrave; một người nhưng c&oacute; nhiều vai tr&ograve; kh&aacute;c nhau n&ecirc;n đ&acirc;y ch&iacute;nh l&agrave; đa h&igrave;nh trong thực tế.</div>
+<div style="text-align: justify;">Trong lập tr&igrave;nh th&igrave; khi một đối tượng hay một phương thức c&oacute; nhiều hơn một h&igrave;nh th&aacute;i th&igrave; đ&oacute; ch&iacute;nh l&agrave; đa h&igrave;nh. T&iacute;nh đa h&igrave;nh được thể hiện dưới 3 h&igrave;nh thức:</div>
+<div style="text-align: justify;">
+<p><strong><em>3.1. Đa h&igrave;nh với nạp chồng phương thức</em></strong></p>
+<p>V&iacute; dụ: phương thức cộng sẽ c&oacute; c&aacute;c h&igrave;nh th&aacute;i l&agrave; cộng 2 số nguy&ecirc;n, cộng 2 số thực, cộng 3 số nguy&ecirc;n, v/v. C&oacute; thể thấy c&ugrave;ng l&agrave; phương thức cộng nhưng lại c&oacute; nhiều h&igrave;nh th&aacute;i kh&aacute;c nhau&nbsp;n&ecirc;n đ&acirc;y ch&iacute;nh l&agrave; biểu hiện của t&iacute;nh đa h&igrave;nh. V&iacute; dụ về đa h&igrave;nh với nạp chồng phương thức:&nbsp;</p>
+<pre class="language-cpp"><code>#include &lt;iostream&gt;
+
+using namespace std;
+
+class Calculator {
+public:
+	int add(int a, int b) {
+		return a + b;
+	}
+
+	double add(double a, double b) {
+		return a + b;
+	}
+
+	int add(int a, int b, int c) {
+		return a + b + c;
+	}
+};
+
+int main() {
+	Calculator c;
+	cout &lt;&lt; c.add(1, 2) &lt;&lt; endl;
+	cout &lt;&lt; c.add(3.3, 4.2) &lt;&lt; endl;
+	cout &lt;&lt; c.add(1, 2, 3) &lt;&lt; endl;
+	return 0;
+}</code></pre>
+<p>Kết quả khi chạy chương tr&igrave;nh:</p>
+<pre class="language-markup"><code>3
+7.5
+6
+</code></pre>
+<p><strong><em>3.2. Đa h&igrave;nh với ghi đ&egrave; phương thức</em></strong></p>
+<p>V&iacute; dụ phương thức&nbsp;<code>getSalary()</code>&nbsp;d&ugrave;ng để t&iacute;nh lương sẽ c&oacute; c&aacute;c h&igrave;nh th&aacute;i l&agrave; t&iacute;nh lương cho quản l&yacute;, t&iacute;nh lương cho nh&acirc;n vi&ecirc;n:</p>
+<pre class="language-cpp"><code>class Employee {
+private:
+	string name;
+	int salary;
+
+public:
+	Employee(string name, int salary) {
+		this-&gt;name = name;
+		this-&gt;salary = salary;
+	}
+
+	string getName() {
+		return name;
+	}
+
+	void setName(string name) {
+		this-&gt;name = name;
+	}
+
+	int getSalary() {
+		return salary;
+	}
+
+	void setSalary(int salary) {
+		this-&gt;salary = salary;
+	}
+
+	void display() {
+		cout &lt;&lt; "Name: " &lt;&lt; getName() &lt;&lt; endl;
+		cout &lt;&lt; "Salary: " &lt;&lt; getSalary() &lt;&lt; endl;
+	}
+};
+
+class Manager : Employee {
+private:
+	int bonus;
+public:
+	Manager(string name, int salary, int bonus) : Employee(name, salary) {
+		this-&gt;bonus = bonus;
+	}
+
+	int getBonus() {
+		return bonus;
+	}
+
+	void setBonus(int bonus) {
+		this-&gt;bonus = bonus;
+	}
+
+	int getSalary() {
+		return Employee::getSalary() + bonus;
+	}
+};
+</code></pre>
+<p>Đều l&agrave; t&iacute;nh lương nhưng với mỗi đối tượng lại c&oacute; một c&aacute;ch t&iacute;nh kh&aacute;c nhau, đ&oacute; ch&iacute;nh l&agrave; t&iacute;nh đa h&igrave;nh.</p>
+<p><strong><em>3.3 Đa h&igrave;nh th&ocirc;ng qua c&aacute;c&nbsp;đối tượng đa h&igrave;nh (polymorphic objects)</em></strong></p>
+<p><img src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/polymorphism.png" alt="" width="620" height="431" /></p>
+<p>Biến thuộc lớp cha c&oacute; thể tham chiếu tới đối tượng của c&aacute;c lớp con, vậy biến thuộc lớp cha cũng c&oacute; nhiều h&igrave;nh th&aacute;i n&ecirc;n đ&acirc;y cũng l&agrave; đa h&igrave;nh. V&iacute; dụ:</p>
+<pre class="language-cpp"><code>#include &lt;iostream&gt;
+
+using namespace std;
+
+class Animal {
+public:
+	virtual void sound() {
+		cout &lt;&lt; "some sound" &lt;&lt; endl;
+	}
+};
+
+class Dog : public Animal {
+public:
+	void sound() {
+		cout &lt;&lt; "bow wow" &lt;&lt; endl;
+	}
+};
+
+class Cat : public Animal {
+public:
+	void sound() {
+		cout &lt;&lt; "meow meow" &lt;&lt; endl;
+	}
+};
+
+class Duck : public Animal {
+public:
+	void sound() {
+		cout &lt;&lt; "quack quack" &lt;&lt; endl;
+	}
+};
+
+int main() {
+	Animal* animal = new Animal();
+	animal-&gt;sound();
+	animal = new Dog();
+	animal-&gt;sound();
+	animal = new Duck();
+	animal-&gt;sound();
+	animal = new Cat();
+	animal-&gt;sound();
+	return 0;
+}</code></pre>
+<p>Kết quả khi chạy chương tr&igrave;nh:</p>
+<pre class="language-java"><code>some sound
+bow wow
+quack quack
+meow meow​</code></pre>
+</div>
+<h3 style="text-align: justify;"><br />4.T&iacute;nh trừu tượng (Abstraction)</h3>
+<div style="text-align: justify;">Trừu tượng l&agrave; t&iacute;nh chất m&agrave; đơn giản h&oacute;a đi những th&ocirc;ng tin b&ecirc;n trong đối tượng, n&oacute; cho ph&eacute;p ta giao tiếp với c&aacute;c th&agrave;nh phần của đối tượng m&agrave; kh&ocirc;ng cần phải biết về c&aacute;ch m&agrave; c&aacute;c th&agrave;nh phần n&agrave;y được x&acirc;y dựng (ch&iacute;nh x&aacute;c hơn l&agrave; kh&ocirc;ng cần biết c&aacute;c th&agrave;nh phần n&agrave;y được code như thế n&agrave;o m&agrave; chỉ cần biết c&aacute;c th&agrave;nh phần n&agrave;y được d&ugrave;ng để l&agrave;m g&igrave;). Trước hết, h&atilde;y c&ugrave;ng xem một v&iacute; dụ thực tế về t&iacute;nh trừu tượng:<br />Khi bạn đi r&uacute;t tiền ở c&acirc;y ATM th&igrave; bạn kh&ocirc;ng cần quan t&acirc;m tới c&aacute;ch m&agrave; c&acirc;y ATM hoạt động hay c&aacute;c th&agrave;nh phần c&oacute; trong c&acirc;y ATM, c&aacute;i m&agrave; bạn quan t&acirc;m duy nhất đ&oacute; l&agrave; t&iacute;nh năng r&uacute;t tiền. Trong trường hợp n&agrave;y c&aacute;c th&ocirc;ng tin kh&ocirc;ng cần thiết của c&acirc;y ATM như đếm tiền, trừ tiền trong t&agrave;i khoản, gửi dữ liệu về m&aacute;y chủ đ&atilde; được ẩn đi. C&aacute;i m&agrave; bạn nh&igrave;n thấy về đối tượng c&acirc;y ATM ch&iacute;nh l&agrave; r&uacute;t tiền =&gt; c&acirc;y ATM đ&atilde; ẩn đi những chi tiết kh&ocirc;ng cần thiết v&agrave; đ&oacute; ch&iacute;nh l&agrave; t&iacute;nh trừu tượng.<br />Tương tự trong lập tr&igrave;nh cũng vậy, khi gọi tới c&aacute;c phương thức của một đối tượng th&igrave; bạn chỉ cần quan t&acirc;m tới phương thức đ&oacute; được d&ugrave;ng để l&agrave;m g&igrave; chứ kh&ocirc;ng cần quan t&acirc;m tới phương thức đ&oacute; được code như thế n&agrave;o. T&iacute;nh chất n&agrave;y rất c&oacute; &iacute;ch khi l&agrave;m việc nh&oacute;m, bạn chỉ cần quan t&acirc;m tới chức năng của c&aacute;c phương thức m&agrave; đồng nghiệp code chứ kh&ocirc;ng cần biết n&oacute; được c&agrave;i đặt như thế n&agrave;o. Để thực hiện t&iacute;nh trừu tượng th&igrave; bạn c&oacute; thể sử dụng c&aacute;c abstract class v&agrave; interface v&igrave; n&oacute; chỉ chứa phần khai b&aacute;o chứ kh&ocirc;ng c&oacute; phần c&agrave;i đặt (ở một số ng&ocirc;n ngữ kh&ocirc;ng c&oacute; kh&aacute;i niệm về interface n&ecirc;n nếu bạn chưa biết về interface th&igrave; c&oacute; thể hiểu interface ch&iacute;nh l&agrave; abstract class với c&aacute;c phương thức đều l&agrave; trừu tượng).</div>
+<div style="text-align: justify;">Trong thực tế, khi đi l&agrave;m bạn sẽ sử dụng tới interface rất nhiều, với mỗi lớp bạn thường tạo ra 1 interface ri&ecirc;ng để thể hiện c&aacute;c t&iacute;nh năng của lớp đ&oacute; v&agrave; sử dụng interface n&agrave;y để giao tiếp với đối tượng. V&iacute; dụ lớp Customer sẽ c&oacute; interface ICustomer, c&aacute;c đối tượng kh&aacute;c muốn giao tiếp với lớp Customer th&igrave; đều phải th&ocirc;ng qua interface tr&ecirc;n..</div>
+<h3 style="text-align: justify;">Kết luận</h3>
+<div style="text-align: justify;">Lập tr&igrave;nh hướng đối tượng kh&ocirc;ng chỉ g&oacute;i gọn trong 4 t&iacute;nh chất tr&ecirc;n, để viết được một chương tr&igrave;nh tốt th&igrave; bạn c&ograve;n phải biết th&ecirc;m rất nhiều nguy&ecirc;n liệu kh&aacute;c như OOP design, Software Architecture, ... trong b&agrave;i n&agrave;y m&igrave;nh chỉ t&oacute;m tắt về lập tr&igrave;nh hướng đối tượng v&agrave; 4 t&iacute;nh chất ch&iacute;nh, nếu muốn học chi tiết hơn th&igrave; bạn c&oacute; thể tham khảo th&ecirc;m tại kh&oacute;a học <a href="https://codelearn.io/learning/lap-trinh-huong-doi-tuong-trong-cpp">C++ OOP</a> v&agrave; <a href="https://codelearn.io/learning/java-oop">Java OOP</a> tr&ecirc;n hệ thống. C&ograve;n về c&aacute;c chủ đề kh&aacute;c trong OOP th&igrave; m&igrave;nh sẽ giới thiệu trong c&aacute;c b&agrave;i viết tiếp theo.</div>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/lap-trinh-huong-doi-tuong-trong-cpp_653cb309970b492ca7f69162384814f8.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Java cơ bản', '<p>Ng&ocirc;n ngữ Java được lựa chọn để tạo ra c&aacute;c website, ứng dụng di động, phần mềm t&ugrave;y chỉnh, cổng th&ocirc;ng tin điện tử,&hellip; v&agrave; được coi như&nbsp;một trong những ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất tr&ecirc;n thế giới hiện nay. Nhiều nh&agrave; ph&aacute;t triển phần mềm khởi đầu với Java v&agrave; đi theo n&oacute; qua rất nhiều dự &aacute;n cho đến tận b&acirc;y giờ. Java l&agrave; một chương tr&igrave;nh mặc định trong c&aacute;c hệ điều h&agrave;nh v&agrave; vai tr&ograve; của n&oacute; đối với ch&uacute;ng ta l&agrave; v&ocirc; c&ugrave;ng to lớn.</p>
+<h3><strong>Java l&agrave; g&igrave;?</strong></h3>
+<p>Java l&agrave;&nbsp;ng&ocirc;n ngữ lập tr&igrave;nh&nbsp;bậc cao, được ph&aacute;t triển bởi Sun Microsystems, do James Gosling khởi xướng v&agrave; ph&aacute;t h&agrave;nh v&agrave;o năm 1995 như l&agrave; một th&agrave;nh phần cốt l&otilde;i của nền tảng Java của Sun Microsystems (Java 1.0 [J2SE]).&nbsp;Java chạy tr&ecirc;n rất nhiều nền tảng kh&aacute;c nhau, như Windows, Mac v&agrave; c&aacute;c phi&ecirc;n bản kh&aacute;c nhau của UNIX.&nbsp;</p>
+<p>Java được hiểu l&agrave; một loại ng&ocirc;n ngữ lập tr&igrave;nh hướng đối tượng (OOP) v&agrave; dựa tr&ecirc;n c&aacute;c lớp. Kh&ocirc;ng giống với những ng&ocirc;n ngữ lập tr&igrave;nh th&ocirc;ng thường, thay v&igrave; việc bi&ecirc;n dịch m&atilde; nguồn trở th&agrave;nh m&atilde; nguồn m&aacute;y hoặc trực tiếp th&ocirc;ng dịch m&atilde; nguồn khi chạy th&igrave; Java được thiết kế để bi&ecirc;n dịch m&atilde; nguồn th&agrave;nh bytecode. Sau đ&oacute;, bytecode sẽ được m&ocirc;i trường thực thi (runtime environment).</p>
+<h3><strong>Đặc điểm của Java</strong></h3>
+<ul>
+<li><strong style="font-style: inherit;">Hướng đối tượng:&nbsp;</strong>Trong Java, mọi thứ đều l&agrave; Object. Java c&oacute; thể mở rộng v&igrave; n&oacute; dựa tr&ecirc;n m&ocirc; h&igrave;nh Object.</li>
+<li><strong style="font-style: inherit;">Nền tảng độc lập:&nbsp;</strong>Kh&ocirc;ng giống như nhiều&nbsp;ng&ocirc;n ngữ lập tr&igrave;nh&nbsp;kh&aacute;c (C, C++), khi Java được bi&ecirc;n dịch, n&oacute; kh&ocirc;ng bi&ecirc;n dịch sang một m&aacute;y t&iacute;nh cụ thể tr&ecirc;n nền tảng n&agrave;o, thay v&agrave;o đ&oacute; l&agrave; những byte code độc lập với nền tảng. Byte code n&agrave;y được ph&acirc;n phối tr&ecirc;n web v&agrave; được th&ocirc;ng dịch bằng Virtual Machine (JVM) tr&ecirc;n bất cứ nền tảng n&agrave;o m&agrave; n&oacute; đang chạy.</li>
+<li><strong style="font-style: inherit;">Đơn giản:&nbsp;</strong>Java được thiết kế để dễ học. Nếu bạn hiểu cơ bản về kh&aacute;i niệm lập tr&igrave;nh hướng đối tượng Java, th&igrave; c&oacute; thể nắm bắt ng&ocirc;n ngữ n&agrave;y rất nhanh.</li>
+<li><strong style="font-style: inherit;">Bảo mật:&nbsp;</strong>Với t&iacute;nh năng an to&agrave;n của Java, n&oacute; cho ph&eacute;p ph&aacute;t triển những hệ thống kh&ocirc;ng c&oacute; virus, giả mạo. C&aacute;c kỹ thuật x&aacute;c thực dựa tr&ecirc;n m&atilde; h&oacute;a c&ocirc;ng khai.</li>
+<li><strong style="font-style: inherit;">Kiến tr&uacute;c trung lập:&nbsp;</strong>Tr&igrave;nh bi&ecirc;n dịch của Java tạo ra một định dạng file object c&oacute; kiến tr&uacute;c trung lập, l&agrave;m cho code sau khi bi&ecirc;n dịch c&oacute; thể chạy tr&ecirc;n nhiều bộ vi xử l&yacute;, với sự hiện diện của&nbsp;Java runtime system.</li>
+<li><strong style="font-style: inherit;">Portable:&nbsp;</strong>L&agrave; kiến tr&uacute;c trung lập v&agrave; kh&ocirc;ng phụ thuộc v&agrave;o việc thực hiện l&agrave; những đặc điểm ch&iacute;nh nhất khi n&oacute;i về kh&iacute;a cạnh Portable của Java. Tr&igrave;nh bi&ecirc;n dịch trong Java được viết bằng ANSI C với một ranh giới portable gọn g&agrave;ng, đ&oacute; l&agrave; một subset POSIX (giao diện hệ điều h&agrave;nh linh động). Bạn c&oacute; thể mang byte code của Java l&ecirc;n bất cứ nền tảng n&agrave;o.</li>
+<li><strong style="font-style: inherit;">Mạnh mẽ:&nbsp;</strong>Java nỗ lực loại trừ những t&igrave;nh huống dễ bị lỗi bằng c&aacute;ch nhấn mạnh chủ yếu l&agrave; kiểm tra lỗi thời gian bi&ecirc;n dịch v&agrave; kiểm tra runtime.</li>
+<li><strong style="font-style: inherit;">Đa luồng:&nbsp;</strong>Với t&iacute;nh năng đa luồng của Java, bạn c&oacute; thể viết c&aacute;c chương tr&igrave;nh c&oacute; thể thực hiện nhiều t&aacute;c vụ đồng thời. T&iacute;nh năng n&agrave;y cho ph&eacute;p c&aacute;c nh&agrave; ph&aacute;t triển x&acirc;y dựng c&aacute;c ứng dụng tương t&aacute;c c&oacute; thể chạy trơn tru.</li>
+<li><strong style="font-style: inherit;">Th&ocirc;ng dịch:&nbsp;</strong>Byte code của Java được dịch trực tiếp tới c&aacute;c nền tảng gốc v&agrave; n&oacute; kh&ocirc;ng được lưu trữ ở bất cứ đ&acirc;u.&nbsp;</li>
+<li><strong style="font-style: inherit;">Hiệu suất cao:&nbsp;</strong>Với việc sử dụng tr&igrave;nh bi&ecirc;n dịch Just-In-Time, Java cho ph&eacute;p thực thi với hiệu suất cao, nhanh ch&oacute;ng ph&aacute;t hiện, gỡ lỗi.</li>
+<li><strong style="font-style: inherit;">Ph&acirc;n t&aacute;n:&nbsp;</strong>Java được thiết kế cho m&ocirc;i trường ph&acirc;n t&aacute;n của Internet.</li>
+<li><strong style="font-style: inherit;">Linh động:&nbsp;</strong>Java được coi l&agrave; năng động hơn C hay C++ v&igrave; n&oacute; được thiết kế để th&iacute;ch nghi với m&ocirc;i trường đang ph&aacute;t triển. C&aacute;c chương tr&igrave;nh Java c&oacute; thể mang theo một lượng lớn th&ocirc;ng tin run-time, được sử dụng để x&aacute;c minh v&agrave; giải quyết c&aacute;c truy cập đến đối tượng trong thời gian chạy.</li>
+</ul>
+<h3><strong>Ứng dụng của JAVA</strong></h3>
+<p>C&oacute; 4 loại ứng dụng ch&iacute;nh m&agrave; c&oacute; thể được tạo bởi sử dụng ng&ocirc;n ngữ lập tr&igrave;nh Java:</p>
+<ul>
+<li><strong>Standalone App<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/Java_appp.png" alt="" width="638" height="555" /> <br /></strong>N&oacute; c&ograve;n được biết đến với t&ecirc;n gọi kh&aacute;c l&agrave; Destop App hoặc Windows-based App. Một ứng dụng m&agrave; ch&uacute;ng ta cần c&agrave;i đặt tr&ecirc;n mỗi thiết bị như media player, antivirus, &hellip; AWT v&agrave; Swing được sử dụng trong Java để tạo c&aacute;c Standalone App.</li>
+<li><strong>Web App<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/java_web.gif" alt="" width="662" height="377" /> <img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/java_web2.jpg" alt="" width="934" height="1085" /> </strong><br />Một ứng dụng m&agrave; chạy tr&ecirc;n Server Side v&agrave; tạo Dynamic Page, được gọi l&agrave; Web App. Hiện tại, c&aacute;c c&ocirc;ng nghệ Servlet, JSP, Struts, JSF, &hellip; được sử dụng để tạo Web App trong Java.</li>
+<li><strong>Enterprise App<br /></strong>Một ứng dụng dạng như Banking App, c&oacute; lợi thế l&agrave; t&iacute;nh bảo mật cao, c&acirc;n bằng tải (load balancing) v&agrave; clustering. Trong java, EJB được sử dụng để tạo c&aacute;c Enterprise App.</li>
+<li><strong>Mobile App<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/Java_mobileApp.jpg" alt="" width="664" height="436" /> </strong><br />Đ&acirc;y l&agrave; loại ứng dụng được tạo cho thiết bị mobile. Hiện tại th&igrave; Android v&agrave; Java ME được sử dụng để tạo loại ứng dụng n&agrave;y.</li>
+</ul>
+<hr />
+<h3>Mục ti&ecirc;u của kh&oacute;a học.</h3>
+<ul>
+<li>L&agrave;m quen được ng&ocirc;n ngữ Java, biết viết chương tr&igrave;nh Java.</li>
+<li>Biết c&aacute;ch khai b&aacute;o v&agrave; sử dụng c&aacute;c biến v&agrave; kiểu dữ liệu.</li>
+<li>Sử dụng được c&aacute;c to&aacute;n tử trong Java.</li>
+<li>Biết r&otilde; v&agrave; sử dụng được một số kiến thức cơ bản của ng&ocirc;n ngữ Java như:
+<ul>
+<li>C&acirc;u lệnh điều kiện.</li>
+<li>V&ograve;ng lặp.</li>
+<li>Cấu tr&uacute;c mảng.</li>
+<li>Strings v&agrave; StringBuilder</li>
+<li>Collections</li>
+</ul>
+</li>
+<li>C&aacute;ch phương thức xử l&yacute; số học trong Java.</li>
+<li>Biết viết v&agrave; sử dụng h&agrave;m trong Java.</li>
+</ul>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/java-co-ban_18f86065cf1d4640ae1ee476da5acf49.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Lập trình C++ cơ bản', '<p>C++ l&agrave; một trong những ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất, đặc biệt trong lập tr&igrave;nh thi đấu. Hiện nay, đa số c&aacute;c bạn trẻ đều ưu ti&ecirc;n chọn học C++ để x&acirc;y dựng nền tảng v&agrave; tư duy lập tr&igrave;nh khi mới bắt đầu kh&aacute;m ph&aacute; lập tr&igrave;nh. Kh&oacute;a học C++ cơ bản được thiết kế với những kiến thức cơ bản v&agrave; dễ hiểu nhất để gi&uacute;p c&aacute;c bạn tiếp cận dễ d&agrave;ng.</p>
+<h2><strong>Mục ti&ecirc;u của kh&oacute;a học:</strong></h2>
+<ul data-sourcepos="7:1-11:0">
+<li data-sourcepos="7:1-7:66">Gi&uacute;p bạn <strong>học C++ từ con số 0</strong> một c&aacute;ch nhanh ch&oacute;ng v&agrave; dễ hiểu.</li>
+<li data-sourcepos="8:1-8:91">Trang bị cho bạn kiến thức v&agrave; kỹ năng cần thiết để <strong>viết c&aacute;c chương tr&igrave;nh C++ đơn giản.</strong></li>
+<li data-sourcepos="9:1-9:131">Gi&uacute;p bạn <strong>hiểu v&agrave; sử dụng c&aacute;c kh&aacute;i niệm quan trọng</strong> trong C++.</li>
+<li data-sourcepos="10:1-11:0"><strong>Tạo nền tảng</strong> cho bạn để tự học v&agrave; ph&aacute;t triển c&aacute;c chương tr&igrave;nh C++ phức tạp hơn.</li>
+</ul>
+<h2 data-sourcepos="12:1-12:23"><strong>Đối tượng học vi&ecirc;n:</strong></h2>
+<ul data-sourcepos="14:1-17:0">
+<li style="text-align: left;" data-sourcepos="14:1-14:97">Kh&oacute;a học n&agrave;y d&agrave;nh cho những người mới bắt đầu ho&agrave;n to&agrave;n chưa c&oacute; kiến thức về lập tr&igrave;nh, hoặc những bạn mất căn bản muốn lấy lại kiến thức nền tảng lập tr&igrave;nh, cụ thể l&agrave; C++.</li>
+</ul>
+<h2 data-sourcepos="29:1-29:26"><strong>Phương ph&aacute;p giảng dạy:</strong></h2>
+<ul data-sourcepos="31:1-34:0">
+<li data-sourcepos="31:1-31:88">Kh&oacute;a học được kết hợp&nbsp;giữa <strong>l&yacute; thuyết</strong> v&agrave; <strong>thực h&agrave;nh</strong>.</li>
+<li data-sourcepos="32:1-32:146">Học vi&ecirc;n sẽ được học qua c&aacute;c video b&agrave;i giảng, b&agrave;i đọc l&yacute; thuyết, b&agrave;i tập thực h&agrave;nh v&agrave; b&agrave;i tập trắc nghiệm l&yacute; thuyết<strong>.</strong></li>
+<li data-sourcepos="32:1-32:146">Học vi&ecirc;n sẽ được trao đổi hỏi đ&aacute;p những thắc mắc trực tiếp với c&aacute;c bạn c&ugrave;ng kh&oacute;a v&agrave; với người quản l&yacute; kh&oacute;a học.</li>
+</ul>', 720000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/lap-trinh-cpp-co-ban_4af6f617fbec4380b4e046a7797624e1.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('3d68c61e-6eec-4416-8214-21930ae35f02', 'Cấu trúc dữ liệu và giải thuật', '<h3 data-start="258" data-end="316">Giới thiệu về kh&oacute;a học "Cấu tr&uacute;c dữ liệu v&agrave; giải thuật"</h3>
+<p class="" data-start="318" data-end="658">Kh&oacute;a học n&agrave;y sẽ gi&uacute;p bạn <strong data-start="343" data-end="425">hiểu r&otilde; c&aacute;ch c&agrave;i đặt v&agrave; vận h&agrave;nh của c&aacute;c h&agrave;m trong c&aacute;c cấu tr&uacute;c dữ liệu cơ bản</strong>, đồng thời <strong data-start="437" data-end="499">nắm vững nguy&ecirc;n l&yacute; v&agrave; ứng dụng của c&aacute;c thuật to&aacute;n phổ biến</strong>. Đ&acirc;y l&agrave; nền tảng quan trọng cho mọi lập tr&igrave;nh vi&ecirc;n, đặc biệt l&agrave; những người muốn ph&aacute;t triển trong lĩnh vực kỹ thuật phần mềm, ph&acirc;n t&iacute;ch dữ liệu hoặc kỹ sư AI.</p>
+<h3 data-start="665" data-end="716">Tại sao phải học cấu tr&uacute;c dữ liệu v&agrave; giải thuật?</h3>
+<p class="" data-start="718" data-end="860">Cấu tr&uacute;c dữ liệu v&agrave; giải thuật l&agrave; xương sống của mọi chương tr&igrave;nh m&aacute;y t&iacute;nh. Khi bạn hiểu r&otilde; c&aacute;ch dữ liệu được lưu trữ v&agrave; thao t&aacute;c, bạn c&oacute; thể:</p>
+<ul data-start="862" data-end="1009">
+<li class="" data-start="862" data-end="885">
+<p class="" data-start="864" data-end="885">Viết m&atilde; hiệu quả hơn.</p>
+</li>
+<li class="" data-start="886" data-end="937">
+<p class="" data-start="888" data-end="937">Giải quyết c&aacute;c b&agrave;i to&aacute;n phức tạp một c&aacute;ch tối ưu.</p>
+</li>
+<li class="" data-start="938" data-end="1009">
+<p class="" data-start="940" data-end="1009">Th&agrave;nh c&ocirc;ng hơn trong c&aacute;c kỳ thi tuyển dụng tại c&aacute;c c&ocirc;ng ty c&ocirc;ng nghệ.</p>
+</li>
+</ul>
+<p class="" data-start="1011" data-end="1133">D&ugrave; bạn học Python, Java, C++ hay bất kỳ ng&ocirc;n ngữ n&agrave;o, tư duy về thuật to&aacute;n v&agrave; cấu tr&uacute;c dữ liệu l&agrave; kỹ năng kh&ocirc;ng thể thiếu.</p>
+<h3 data-start="1140" data-end="1174">C&aacute;c chủ đề ch&iacute;nh trong kh&oacute;a học</h3>
+<h4 data-start="1176" data-end="1199">🔹 Cấu tr&uacute;c dữ liệu</h4>
+<p class="" data-start="1201" data-end="1280">Bạn sẽ được t&igrave;m hiểu c&aacute;ch x&acirc;y dựng v&agrave; vận h&agrave;nh c&aacute;c cấu tr&uacute;c dữ liệu quan trọng:</p>
+<ul data-start="1282" data-end="1433">
+<li class="" data-start="1282" data-end="1302">
+<p class="" data-start="1284" data-end="1302"><strong data-start="1284" data-end="1300">Mảng (Array)</strong></p>
+</li>
+<li class="" data-start="1303" data-end="1327">
+<p class="" data-start="1305" data-end="1327"><strong data-start="1305" data-end="1325">Ngăn xếp (Stack)</strong></p>
+</li>
+<li class="" data-start="1328" data-end="1352">
+<p class="" data-start="1330" data-end="1352"><strong data-start="1330" data-end="1350">H&agrave;ng đợi (Queue)</strong></p>
+</li>
+<li class="" data-start="1353" data-end="1393">
+<p class="" data-start="1355" data-end="1393"><strong data-start="1355" data-end="1391">Danh s&aacute;ch li&ecirc;n kết (Linked List)</strong></p>
+</li>
+<li class="" data-start="1394" data-end="1412">
+<p class="" data-start="1396" data-end="1412"><strong data-start="1396" data-end="1410">C&acirc;y (Tree)</strong></p>
+</li>
+<li class="" data-start="1413" data-end="1433">
+<p class="" data-start="1415" data-end="1433"><strong data-start="1415" data-end="1433">Đồ thị (Graph)</strong></p>
+</li>
+</ul>
+<p class="" data-start="1435" data-end="1559">Mỗi cấu tr&uacute;c dữ liệu đều được giảng dạy c&ugrave;ng với c&aacute;c thao t&aacute;c cơ bản (th&ecirc;m, x&oacute;a, t&igrave;m kiếm...) v&agrave; c&aacute;c v&iacute; dụ ứng dụng thực tế.</p>
+<h4 data-start="1561" data-end="1585">🔹 Thuật to&aacute;n cơ bản</h4>
+<p class="" data-start="1587" data-end="1670">Kh&oacute;a học cũng trang bị cho bạn tư duy v&agrave; kỹ năng c&agrave;i đặt c&aacute;c thuật to&aacute;n thường gặp:</p>
+<ul data-start="1672" data-end="1905">
+<li class="" data-start="1672" data-end="1699">
+<p class="" data-start="1674" data-end="1699"><strong data-start="1674" data-end="1697">Thuật to&aacute;n t&igrave;m kiếm</strong></p>
+</li>
+<li class="" data-start="1700" data-end="1726">
+<p class="" data-start="1702" data-end="1726"><strong data-start="1702" data-end="1724">Thuật to&aacute;n sắp xếp</strong></p>
+</li>
+<li class="" data-start="1727" data-end="1752">
+<p class="" data-start="1729" data-end="1752"><strong data-start="1729" data-end="1750">Thuật to&aacute;n đệ quy</strong></p>
+</li>
+<li class="" data-start="1753" data-end="1808">
+<p class="" data-start="1755" data-end="1808"><strong data-start="1755" data-end="1806">Thuật to&aacute;n quy hoạch động (Dynamic Programming)</strong></p>
+</li>
+<li class="" data-start="1809" data-end="1855">
+<p class="" data-start="1811" data-end="1855"><strong data-start="1811" data-end="1853">Thuật to&aacute;n tham lam (Greedy Algorithm)</strong></p>
+</li>
+<li class="" data-start="1856" data-end="1905">
+<p class="" data-start="1858" data-end="1905"><strong data-start="1858" data-end="1905">Thuật to&aacute;n chia để trị (Divide and Conquer)</strong></p>
+</li>
+</ul>
+<h3 data-start="1912" data-end="1934">Đối tượng hướng đến</h3>
+<p class="" data-start="1936" data-end="1957">Kh&oacute;a học ph&ugrave; hợp với:</p>
+<ul data-start="1959" data-end="2154">
+<li class="" data-start="1959" data-end="2011">
+<p class="" data-start="1961" data-end="2011">Sinh vi&ecirc;n CNTT hoặc người đang theo học lập tr&igrave;nh.</p>
+</li>
+<li class="" data-start="2012" data-end="2090">
+<p class="" data-start="2014" data-end="2090">Người đ&atilde; biết lập tr&igrave;nh cơ bản v&agrave; muốn cải thiện khả năng tư duy giải thuật.</p>
+</li>
+<li class="" data-start="2091" data-end="2154">
+<p class="" data-start="2093" data-end="2154">Người chuẩn bị phỏng vấn lập tr&igrave;nh tại c&aacute;c c&ocirc;ng ty c&ocirc;ng nghệ.</p>
+</li>
+</ul>
+<h3 data-start="2161" data-end="2184">Điều kiện ti&ecirc;n quyết</h3>
+<p class="" data-start="2186" data-end="2225">Để tham gia kh&oacute;a học hiệu quả, bạn n&ecirc;n:</p>
+<ul data-start="2227" data-end="2373">
+<li class="" data-start="2227" data-end="2297">
+<p class="" data-start="2229" data-end="2297">C&oacute; kiến thức lập tr&igrave;nh cơ bản (biết sử dụng biến, h&agrave;m, v&ograve;ng lặp...).</p>
+</li>
+<li class="" data-start="2298" data-end="2373">
+<p class="" data-start="2300" data-end="2373">Biết c&aacute;ch sử dụng &iacute;t nhất một ng&ocirc;n ngữ lập tr&igrave;nh như Python, C++, Java...</p>
+</li>
+</ul>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/cau-truc-du-lieu-va-giai-thuat_ef33392c074c4cd29a9892f11abbc2bc.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Tự động hóa công việc hàng ngày với Python', '<h2><strong>Kh&oacute;a học Tự động h&oacute;a c&ocirc;ng việc h&agrave;ng ng&agrave;y với Python: Biến Python th&agrave;nh c&ocirc;ng cụ tự động h&oacute;a mạnh mẽ!</strong></h2>
+<h3><strong>Lộ tr&igrave;nh học Python ho&agrave;n chỉnh</strong></h3>
+<p>Để đảm bảo h&agrave;nh tr&igrave;nh học tập hiệu quả, ch&uacute;ng t&ocirc;i đề xuất lộ tr&igrave;nh học như sau:</p>
+<ul>
+<li><a href="https://codelearn.io/learning/python-cho-nguoi-moi-bat-dau" target="_blank" rel="noopener">Python Cơ bản</a>: Nền tảng vững chắc cho người mới bắt đầu</li>
+<li><a href="https://codelearn.io/learning/python-nang-cao" target="_blank" rel="noopener">Python N&acirc;ng cao</a>: Đi s&acirc;u v&agrave;o c&aacute;c kh&aacute;i niệm phức tạp</li>
+</ul>
+<h3><strong>Sẵn s&agrave;ng n&acirc;ng cao kỹ năng Python của bạn?</strong></h3>
+<p>Kh&oacute;a học <strong>Tự động h&oacute;a c&ocirc;ng việc h&agrave;ng ng&agrave;y với Python</strong>&nbsp;l&agrave; bước tiến quan trọng cho những học vi&ecirc;n đ&atilde; ho&agrave;n th&agrave;nh c&aacute;c kh&oacute;a Python cơ bản v&agrave; n&acirc;ng cao. Kh&oacute;a học n&agrave;y tập trung v&agrave;o việc chuyển đổi kiến thức l&yacute; thuyết th&agrave;nh c&aacute;c ứng dụng thực tế, đặc biệt l&agrave; <strong>sử dụng Python để tạo ra c&aacute;c c&ocirc;ng cụ tự động h&oacute;a</strong> mạnh mẽ.</p>
+<h3><strong>Điểm nổi bật của kh&oacute;a học:</strong></h3>
+<ul>
+<li>
+<p><strong>Học thực tiễn</strong>: X&acirc;y dựng c&aacute;c dự &aacute;n tự động h&oacute;a thực tế như hệ thống gửi email tự động, quản l&yacute; dữ liệu, v&agrave; tối ưu h&oacute;a quy tr&igrave;nh l&agrave;m việc.</p>
+</li>
+<li>
+<p><strong>Tăng hiệu suất c&ocirc;ng việc</strong>: Tiết kiệm h&agrave;ng giờ l&agrave;m việc mỗi tuần th&ocirc;ng qua việc tự động h&oacute;a c&aacute;c t&aacute;c vụ lặp lại, giảm thiểu sai s&oacute;t v&agrave; tăng năng suất.</p>
+</li>
+<li>
+<p><strong>Chứng chỉ chuy&ecirc;n nghiệp</strong>: Nhận chứng chỉ c&oacute; gi&aacute; trị sau khi ho&agrave;n th&agrave;nh kh&oacute;a học, chứng minh khả năng tự động h&oacute;a với Python của bạn.</p>
+</li>
+</ul>
+<h3><strong>Đối tượng ph&ugrave; hợp:</strong></h3>
+<ul>
+<li>Học vi&ecirc;n đ&atilde; ho&agrave;n th&agrave;nh kh&oacute;a Python Cơ bản v&agrave; N&acirc;ng cao</li>
+<li>Chuy&ecirc;n gia v&agrave; lập tr&igrave;nh vi&ecirc;n muốn tối ưu h&oacute;a quy tr&igrave;nh l&agrave;m việc</li>
+<li>Người đang t&igrave;m kiếm giải ph&aacute;p tự động h&oacute;a cho c&ocirc;ng việc h&agrave;ng ng&agrave;y</li>
+</ul>
+<h3><strong>Phương ph&aacute;p đ&agrave;o tạo:</strong></h3>
+<ul>
+<li>
+<p><strong>Học tập to&agrave;n diện</strong>: Kết hợp l&yacute; thuyết với thực h&agrave;nh qua c&aacute;c dự &aacute;n thực tế</p>
+</li>
+<li>
+<p><strong>Hướng dẫn chuy&ecirc;n s&acirc;u</strong>: Được đ&agrave;o tạo bởi c&aacute;c chuy&ecirc;n gia c&oacute; nhiều năm kinh nghiệm trong lĩnh vực tự động h&oacute;a</p>
+</li>
+<li>
+<p><strong>Hỗ trợ li&ecirc;n tục</strong>: Được mentor hỗ trợ trong suốt qu&aacute; tr&igrave;nh học tập</p>
+</li>
+</ul>
+<h3><strong>Sẵn s&agrave;ng trở th&agrave;nh chuy&ecirc;n gia Python Automation?</strong></h3>
+<p>H&atilde;y tham gia kh&oacute;a học <strong>Tự động h&oacute;a c&ocirc;ng việc h&agrave;ng ng&agrave;y với Python</strong>&nbsp;ngay h&ocirc;m nay để n&acirc;ng cao kỹ năng lập tr&igrave;nh v&agrave; tạo ra sự kh&aacute;c biệt trong sự nghiệp của bạn. Với lộ tr&igrave;nh học được thiết kế chuy&ecirc;n nghiệp, ch&uacute;ng t&ocirc;i cam kết gi&uacute;p bạn l&agrave;m chủ kỹ năng tự động h&oacute;a với Python một c&aacute;ch hiệu quả nhất.</p>', 1099000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Python-automation_db4c892cc03f4cae8bcedd5d81358bc6.jpg', true, '087499f3-3cc2-4d25-8ad5-8c63c6b74c44', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('3ffa0664-7966-4aa4-9557-049c00d033b7', 'Giải thuật cho Python', '<p style="line-height: 1.5;"><span style="font-size: 20pt; color: #304090;"><strong>Kh&aacute;m ph&aacute; sức mạnh của "Giải Thuật" trong Python!</strong></span></p>
+<p style="line-height: 1.5;"><span style="font-size: 14pt;"><strong>Bạn đ&atilde; sẵn s&agrave;ng để chinh phục thế giới của lập tr&igrave;nh với những giải thuật mạnh mẽ?</strong></span></p>
+<p style="line-height: 1.5;">Ch&agrave;o mừng bạn đến với kh&oacute;a học "<strong>Giải thuật cho Python"</strong>&nbsp;- nơi bạn sẽ kh&aacute;m ph&aacute; những b&iacute; mật đằng sau những d&ograve;ng m&atilde; lệnh kỳ diệu v&agrave; trở th&agrave;nh bậc thầy trong việc giải quyết c&aacute;c vấn đề phức tạp.</p>
+<p style="line-height: 1.5;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/A1_4c7c5f3532d041ceb43528852442ca5a.png" width="650" height="587" /></p>
+<p style="line-height: 1.5;"><span style="font-size: 20pt; color: #304090;"><strong>Tại sao bạn n&ecirc;n tham gia kh&oacute;a học n&agrave;y?</strong></span></p>
+<p style="line-height: 1.5;"><strong>Thực h&agrave;nh qua c&aacute;c b&agrave;i tập thực tế:</strong> Mỗi phần học đều đi k&egrave;m với c&aacute;c b&agrave;i tập thực h&agrave;nh gi&uacute;p bạn &aacute;p dụng ngay kiến thức đ&atilde; học.</p>
+<p style="line-height: 1.5;"><strong>Giảng vi&ecirc;n nhiệt huyết:</strong> Được hướng dẫn bởi những chuy&ecirc;n gia h&agrave;ng đầu với nhiều năm kinh nghiệm trong lĩnh vực.</p>
+<p style="line-height: 1.5;"><strong>Cộng đồng học tập s&ocirc;i nổi:</strong> Kết nối với h&agrave;ng ngh&igrave;n học vi&ecirc;n kh&aacute;c, c&ugrave;ng nhau thảo luận v&agrave; giải quyết c&aacute;c b&agrave;i to&aacute;n kh&oacute;.</p>
+<p style="line-height: 1.5;"><strong>Chứng chỉ uy t&iacute;n:</strong> Ho&agrave;n th&agrave;nh kh&oacute;a học v&agrave; nhận chứng chỉ c&ocirc;ng nhận, gi&uacute;p n&acirc;ng cao gi&aacute; trị bản th&acirc;n tr&ecirc;n thị trường lao động.</p>
+<p style="line-height: 1.5;"><strong>Hỗ trợ 24/7:</strong>&nbsp;Lu&ocirc;n c&oacute; đội ngũ hỗ trợ sẵn s&agrave;ng gi&uacute;p đỡ bạn vượt qua mọi kh&oacute; khăn trong qu&aacute; tr&igrave;nh học tập.</p>
+<p style="line-height: 1.5;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/A2_123aa699051d4ad28d66bb9c95a05739.png" width="651" height="423" /></p>
+<p style="line-height: 1.5;"><span style="font-size: 20pt; color: #304090;"><strong>Đừng bỏ lỡ cơ hội để</strong></span></p>
+<p style="line-height: 1.5;"><strong>Tăng cường kỹ năng lập tr&igrave;nh:</strong>&nbsp;Hiểu s&acirc;u hơn về c&aacute;ch c&aacute;c thuật to&aacute;n hoạt động v&agrave; l&agrave;m thế n&agrave;o để &aacute;p dụng ch&uacute;ng hiệu quả.</p>
+<p style="line-height: 1.5;"><strong>N&acirc;ng cao tư duy giải quyết vấn đề: </strong>Ph&aacute;t triển khả năng ph&acirc;n t&iacute;ch v&agrave; giải quyết c&aacute;c b&agrave;i to&aacute;n phức tạp một c&aacute;ch logic v&agrave; s&aacute;ng tạo.</p>
+<p style="line-height: 1.5;"><strong>Chuẩn bị cho tương lai:</strong>&nbsp;D&ugrave; bạn muốn trở th&agrave;nh nh&agrave; ph&aacute;t triển phần mềm, nh&agrave; khoa học dữ liệu hay chuy&ecirc;n gia AI, kiến thức về giải thuật l&agrave; nền tảng vững chắc cho mọi lĩnh vực.</p>
+<p style="line-height: 1.5;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/A3_3ce089ededfc4daab3907c20805cefde.png" width="651" height="522" /></p>
+<p style="line-height: 1.5;">&nbsp;</p>
+<p style="line-height: 1.5;"><span style="font-size: 20pt; color: #304090;"><strong>H&atilde;y bắt đầu h&agrave;nh tr&igrave;nh trở th&agrave;nh chuy&ecirc;n gia giải thuật ngay h&ocirc;m nay!</strong></span></p>
+<p style="line-height: 1.5;">Đăng k&yacute; ngay để kh&ocirc;ng bỏ lỡ cơ hội n&acirc;ng cao kỹ năng lập tr&igrave;nh v&agrave; mở rộng tư duy thuật to&aacute;n của bạn. Ch&uacute;ng t&ocirc;i tin rằng với kiến thức v&agrave; kỹ năng học được từ kh&oacute;a học, bạn sẽ tự tin đối mặt với mọi th&aacute;ch thức trong lập tr&igrave;nh.</p>', 900000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Python_-_Algorithms_6865856c821b4bbe88a9b9e88dba2208.png', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'C cho người mới bắt đầu', '<h3>Tổng quan về ng&ocirc;n ngữ C:</h3>
+<ul>
+<li>Ng&ocirc;n ngữ C l&agrave; một ng&ocirc;n ngữ đ&atilde; c&oacute; mặt từ rất l&acirc;u,&nbsp;l&agrave; ng&ocirc;n ngữ mệnh lệnh được ra đời từ đầu thập ni&ecirc;n 70.</li>
+<li>Ng&ocirc;n ngữ C l&agrave; một ng&ocirc;n ngữ cấu tr&uacute;c v&agrave; xếp v&agrave;o loại ng&ocirc;n ngữ bậc 3 (loại ng&ocirc;n ngữ cao cấp hơn ng&ocirc;n ngữ m&atilde; m&aacute;y v&agrave; thấp hơn ng&ocirc;n ngữ hướng đối tượng &ndash; bậc 4).</li>
+<li>Ng&ocirc;n ngữ C kh&ocirc;ng chỉ được ưa chuộng trong việc viết c&aacute;c ứng dụng. M&agrave; c&ograve;n l&agrave; ng&ocirc;n ngữ rất hiệu quả trong việc&nbsp;viết c&aacute;c&nbsp;phần mềm hệ thống.</li>
+<li>Được ph&aacute;t triển ban đầu bởi Dennis Ritchie để ph&aacute;t triển hệ thống lập tr&igrave;nh UNIX ở Bell Labs.</li>
+<li>Những&nbsp;hệ điều h&agrave;nh&nbsp;lớn Windows, Linux,&hellip;đều chịu ảnh hưởng từ ng&ocirc;n ngữ C.</li>
+</ul>
+<hr />
+<h3>Ứng dụng của ng&ocirc;n ngữ C:</h3>
+<h4><span id="He_dieu_hanh">Hệ điều h&agrave;nh.</span></h4>
+<p>Ng&ocirc;n ngữ lập tr&igrave;nh C c&oacute; thể được sử dụng để thiết kế phần mềm hệ thống. Như l&agrave; hệ điều h&agrave;nh v&agrave; Tr&igrave;nh bi&ecirc;n dịch.&nbsp;Viết kịch bản hệ điều h&agrave;nh UNIX l&agrave; mục đ&iacute;ch ch&iacute;nh của việc tạo ra C. Ng&ocirc;n ngữ C l&agrave; một phần kh&ocirc;ng thể thiếu trong qu&aacute; tr&igrave;nh ph&aacute;t triển của nhiều hệ điều h&agrave;nh. Unix-Kernel, c&aacute;c tiện &iacute;ch v&agrave; ứng dụng hệ điều h&agrave;nh Microsoft Windows v&agrave; một bộ phận lớn hệ điều h&agrave;nh Android đều đ&atilde; được viết kịch bản trong C.</p>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/C_HeDieuHanh.png" alt="" width="674" height="434" /></p>
+<h4><span id="Phat_trien_ngon_ngu_moi">Ph&aacute;t triển ng&ocirc;n ngữ mới</span></h4>
+<p>Ứng dụng thứ 2 của ng&ocirc;n ngữ c đ&oacute; l&agrave; n&oacute; l&agrave; cơ sở để ph&aacute;t triển ng&ocirc;n ngữ mới. Bởi n&oacute; c&oacute;&nbsp;ảnh hưởng trực tiếp hoặc gi&aacute;n tiếp đến sự ph&aacute;t triển của nhiều ng&ocirc;n ngữ bao gồm C ++ l&agrave; C với c&aacute;c lớp, C #, D, Java, Limbo, JavaScript, Perl, UNIX&rsquo;s C Shell, PHP v&agrave; Python v&agrave; Verilog.&nbsp;C&aacute;c ng&ocirc;n ngữ n&agrave;y sử dụng C trong khả năng biến đổi: v&iacute; dụ, trong Python. C được sử dụng để x&acirc;y dựng c&aacute;c thư viện chuẩn. Trong khi c&aacute;c ng&ocirc;n ngữ kh&aacute;c như C ++, Perl v&agrave; PHP c&oacute; cấu tr&uacute;c c&uacute; ph&aacute;p v&agrave; điều khiển dựa tr&ecirc;n C. Ch&iacute;nh v&igrave; vậy m&agrave; n&oacute; được mệnh danh l&agrave; &rdquo; &ocirc;ng nội&rdquo; của c&aacute;c ng&ocirc;n ngữ lập tr&igrave;nh.</p>
+<h4><span id="Nen_tang_tinh_toan">Nền tảng t&iacute;nh to&aacute;n</span></h4>
+<p>Ng&ocirc;n ngữ C thực hiện c&aacute;c thuật to&aacute;n v&agrave; cấu tr&uacute;c dữ liệu nhanh ch&oacute;ng. Tạo điều kiện cho việc t&iacute;nh to&aacute;n nhanh hơn trong c&aacute;c chương tr&igrave;nh.&nbsp;Điều n&agrave;y đ&atilde; cho ph&eacute;p sử dụng C trong c&aacute;c ứng dụng y&ecirc;u cầu mức độ t&iacute;nh to&aacute;n cao hơn như MATLAB v&agrave; Mathematica.</p>
+<h4><span id="He_thong_nhung">Hệ thống nh&uacute;ng</span></h4>
+<p>C&aacute;c t&iacute;nh năng của C bao như l&agrave; truy cập trực tiếp v&agrave;o API phần cứng của m&aacute;y, sự hiện diện của tr&igrave;nh bi&ecirc;n dịch C. Ngo&agrave;i ra&nbsp;<strong>lập tr&igrave;nh C</strong>&nbsp;c&ograve;n sử dụng t&agrave;i nguy&ecirc;n x&aacute;c định v&agrave; ph&acirc;n bổ bộ nhớ động Đ&atilde; l&agrave;m cho ng&ocirc;n ngữ C trở th&agrave;nh lựa chọn tối ưu cho c&aacute;c ứng dụng v&agrave; tr&igrave;nh điều khiển của c&aacute;c hệ thống nh&uacute;ng.</p>
+<h4><span id="Do_hoa_va_tro_choi">Đồ họa v&agrave; tr&ograve; chơi</span></h4>
+<p>Ngo&agrave;i c&aacute;c ứng dụng tr&ecirc;n th&igrave; ng&ocirc;n ngữ C c&ograve;n được d&ugrave;ng trong đồ họa v&agrave; lập tr&igrave;nh game. N&oacute; đ&atilde; được sử dụng để&nbsp;&nbsp;ph&aacute;t triển một loạt c&aacute;c ứng dụng đồ họa v&agrave; chơi game, như cờ vua, b&oacute;ng nảy, bắn cung, v.v.</p>
+<p>Như vậy ta c&oacute; thể thấy rằng ng&ocirc;n ngữ tuy đ&atilde; xuất hiện từ l&acirc;u, nhưng những ứng dụng v&agrave; sự phổ biến của n&oacute; c&ograve;n rất lớn. Với những t&iacute;nh năng v&agrave; ứng dụng rộng r&atilde;i,&nbsp;lập tr&igrave;nh C&nbsp;vẫn l&agrave; một &ldquo;l&atilde;o l&agrave;ng&rdquo; trong ng&agrave;nh lập tr&igrave;nh.</p>
+<hr />
+<h3>Học vi&ecirc;n sẽ nhận được những g&igrave; trong kh&oacute;a học:</h3>
+<ul>
+<li>Hiểu c&aacute;ch sử dụng ng&ocirc;n ngữ C:
+<ul>
+<li>Biết c&aacute;ch th&ecirc;m c&aacute;c thư viện.</li>
+<li>Biết r&otilde; c&aacute;ch khai b&aacute;o biến.</li>
+<li>Biết c&aacute;ch nhập xuất dữ liệu.</li>
+</ul>
+</li>
+<li>Hiểu được c&aacute;ch hoạt động của v&agrave;o lặp (Trong C cũng như c&aacute;c ng&ocirc;n ngữ kh&aacute;c):
+<ul>
+<li>V&ograve;ng lặp for.</li>
+<li>V&ograve;ng lặp while, do-while.</li>
+</ul>
+</li>
+<li>Hiểu r&otilde; c&aacute;ch cấu tr&uacute;c cơ bản của một ng&ocirc;n ngữ lập tr&igrave;nh:
+<ul>
+<li>Cấu tr&uacute;c mảng.</li>
+<li>Cấu tr&uacute;c chuỗi.</li>
+</ul>
+</li>
+<li>L&agrave;m quen với một số giải thuật cơ bản,
+<ul>
+<li>Biết c&aacute;ch viết c&aacute;c h&agrave;m.</li>
+<li>L&agrave;m quen với giải thuật đệ quy.</li>
+</ul>
+</li>
+</ul>
+<hr /><hr />
+<p>Bạn cũng c&oacute; thể t&igrave;m hiểu s&acirc;u v&agrave; ng&ocirc;n ngữ C v&agrave; ứng dụng của n&oacute; <a href="https://vi.wikipedia.org/wiki/C_(ng%C3%B4n_ng%E1%BB%AF_l%E1%BA%ADp_tr%C3%ACnh)" target="_blank" rel="noopener">Tại đ&acirc;y</a>.</p>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/c-cho-nguoi-moi-bat-dau_e9ad9934d71443f7b64f446fe7375c9f.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Phần cứng máy tính', '<h3>Tổng quan về Phần cứng m&aacute;y t&iacute;nh</h3>
+<ul>
+<li>Phần cứng m&aacute;y t&iacute;nh n&oacute;i chung c&oacute; thể tạm hiểu l&agrave; tất cả thiết bị cấu th&agrave;nh n&ecirc;n một chiếc m&aacute;y t&iacute;nh, chẳng hạn như m&agrave;n h&igrave;nh, bộ xử l&yacute;, card mạng, ổ cứng, b&agrave;n ph&iacute;m v&agrave; chuột.</li>
+<li>
+<p>Phần cứng thường được hướng dẫn (điều khiển) bởi phần mềm để thực hiện c&aacute;c lệnh. Sự kết hợp giữa phần cứng v&agrave; phần mềm một c&aacute;ch ph&ugrave; hợp tạo th&agrave;nh một hệ thống m&aacute;y t&iacute;nh c&oacute; thể sử dụng được.</p>
+</li>
+<li>
+<p>Lịch sử h&igrave;nh th&agrave;nh của m&aacute;y t&iacute;nh n&oacute;i chung cũng ch&iacute;nh l&agrave; lịch sử cải tiến của Phần cứng m&aacute;y t&iacute;nh. Cho tới nay c&oacute; thể được ph&acirc;n th&agrave;nh bốn thế hệ, mỗi thế hệ được đặc trưng bởi một sự thay đổi quan trọng về c&ocirc;ng nghệ.</p>
+</li>
+<li>Ng&agrave;y nay m&aacute;y t&iacute;nh được cải tiến li&ecirc;n tục với tốc độ v&agrave; khả năng xử l&yacute; mạnh mẽ. Sở dĩ vậy ch&iacute;nh l&agrave; nhờ sự ph&aacute;t triển kh&ocirc;ng ngừng về c&ocirc;ng nghệ sản xuất phần cứng.</li>
+</ul>
+<hr />
+<h3>Ứng dụng của Phần cứng m&aacute;y t&iacute;nh</h3>
+<p>Phần cứng m&aacute;y t&iacute;nh ch&iacute;nh l&agrave; phần "th&acirc;n x&aacute;c" của m&aacute;y t&iacute;nh, kh&ocirc;ng c&oacute; phần cứng m&aacute;y t&iacute;nh th&igrave; kh&ocirc;ng thể c&oacute; m&aacute;y t&iacute;nh. Phần cứng, kết hợp với phần mềm m&aacute;y t&iacute;nh tạo ra một chiếc m&aacute;y t&iacute;nh ho&agrave;n chỉnh c&oacute; thể chạy được. Số lượng m&aacute;y t&iacute;nh nhiều v&agrave; chất lượng ch&iacute;nh l&agrave; một trong c&aacute;c ti&ecirc;u ch&iacute; đ&aacute;nh gi&aacute; mức độ ph&aacute;t triển của c&aacute;c c&ocirc;ng ty, quốc gia...</p>
+<h4>C&aacute;c c&ocirc;ng ty lớn về c&ocirc;ng nghệ đều sản xuất phần cứng m&aacute;y t&iacute;nh.</h4>
+<p>Để gi&uacute;p c&aacute;c bạn thấy được phần cứng m&aacute;y t&iacute;nh c&oacute; vai tr&ograve; quan trọng như thế n&agrave;o, h&atilde;y xem danh s&aacute;ch c&aacute;c c&ocirc;ng ty c&ocirc;ng nghệ lớn nhất thế giới, tất cả đều sản xuất m&aacute;y t&iacute;nh v&agrave; phần cứng m&aacute;y t&iacute;nh.</p>
+<figure id="attachment_1505" class="wp-caption aligncenter" aria-describedby="caption-attachment-1505"><img src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/Shanghaik/Pictures/hardware.png" alt="" width="797" height="405" /></figure>
+<p>Như bạn thấy, phần cứng m&aacute;y t&iacute;nh gắn liền mật thiết với c&aacute;c c&ocirc;ng ty c&ocirc;ng nghệ h&agrave;ng đầu, c&aacute;c thương hiệu m&aacute;y t&iacute;nh ứng với c&aacute;c doanh nghiệp tr&ecirc;n l&agrave; v&ocirc; c&ugrave;ng nổi tiếng, chỉ cần n&oacute;i đến t&ecirc;n c&aacute;c thương hiệu ta sẽ nghĩ ngay đến m&aacute;y t&iacute;nh.</p>
+<h4>Ph&acirc;n loại phần cứng</h4>
+<p>Phần cứng m&aacute;y t&iacute;nh c&oacute; thể được ph&acirc;n loại theo nhiều c&aacute;ch thức kh&aacute;c nhau. Ta c&oacute; thể ph&acirc;n loại theo chức năng, hoặc theo c&aacute;c phần cụ thể, một m&aacute;y t&iacute;nh cơ bản thường c&oacute; c&aacute;c phần như sau</p>
+<p style="padding-left: 30px;"><img src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/Shanghaik/Pictures/hardware2.png" alt="" width="493" height="466" /></p>
+<h4><strong>Phần cứng mở rộng</strong></h4>
+<p>Kh&ocirc;ng chỉ ở mức sử dụng cơ bản, ng&agrave;y nay phần cứng m&aacute;y t&iacute;nh c&oacute; thể mở rộng theo nhu cầu sử dụng. Ch&uacute;ng ta sẽ được t&igrave;m hiểu về ch&uacute;ng trong c&aacute;c b&agrave;i học.</p>
+<p style="padding-left: 30px;"><img src="https://s3-hfx03.fptcloud.com//codelearnstorage/Media/Default/Users/Shanghaik/Pictures/hardware3.png" alt="" width="406" height="383" /></p>
+<hr />
+<h3>Học vi&ecirc;n sẽ nhận được những g&igrave; trong kh&oacute;a học:</h3>
+<ul>
+<li>Hiểu c&aacute;ch ph&acirc;n biệt v&agrave; c&ocirc;ng dụng của phần cứng m&aacute;y t&iacute;nh.
+<ul>
+<li>Biết c&aacute;ch x&aacute;c định x&aacute;c th&agrave;nh phần phần cứng m&aacute;y t&iacute;nh.</li>
+<li>Biết r&otilde; cấu tr&uacute;c của c&aacute;c th&agrave;nh phần phần cứng.</li>
+<li>Biết c&aacute;ch m&agrave; phần cứng m&aacute;y t&iacute;nh t&aacute;c động l&ecirc;n th&ocirc;ng tin.</li>
+</ul>
+</li>
+<li>Hiểu được c&aacute;ch hoạt động phần cứng m&aacute;y t&iacute;nh.
+<ul>
+<li>Hiểu c&aacute;ch m&agrave; phần cứng tương t&aacute;c với phần mềm v&agrave; th&ocirc;ng tin.</li>
+<li>Phần cứng v&agrave; cấu tr&uacute;c ho&agrave;n thiện của một m&aacute;y t&iacute;nh.</li>
+</ul>
+</li>
+<li>Biết c&aacute;ch chọn một chiếc m&aacute;y t&iacute;nh ph&ugrave; hợp cho m&igrave;nh.
+<ul>
+<li>Nhu cầu cho giải tr&iacute;.</li>
+<li>Nhu cầu cho l&agrave;m việc.</li>
+<li>Nhu cầu cho học tập.</li>
+</ul>
+</li>
+</ul>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/phan-cung-may-tinh_f02bceb8b60e4a2794b73a5e751b34a7.png', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Scratch Nâng Cao', '<h3>GIỚI THIỆU KH&Oacute;A HỌC LẬP TR&Igrave;NH SCRATCH N&Acirc;NG CAO</h3>
+<p>Kh&oacute;a học lập tr&igrave;nh <strong>Scratch N&acirc;ng Cao</strong>&nbsp;l&agrave; bước tiếp theo để ph&aacute;t triển khả năng tư duy logic v&agrave; s&aacute;ng tạo qua việc lập tr&igrave;nh c&aacute;c dự &aacute;n phức tạp hơn. Th&ocirc;ng qua kh&oacute;a học n&agrave;y, c&aacute;c bạn nhỏ sẽ bước s&acirc;u hơn v&agrave;o thế giới lập tr&igrave;nh, học c&aacute;ch x&acirc;y dựng c&aacute;c tr&ograve; chơi ho&agrave;n chỉnh v&agrave; ứng dụng những kiến thức to&aacute;n học v&agrave;o lập tr&igrave;nh. Đ&acirc;y l&agrave; kh&oacute;a học gi&uacute;p c&aacute;c bạn trẻ kh&ocirc;ng chỉ r&egrave;n luyện kỹ năng lập tr&igrave;nh m&agrave; c&ograve;n k&iacute;ch th&iacute;ch tư duy t&iacute;nh to&aacute;n v&agrave; s&aacute;ng tạo, chuẩn bị cho c&aacute;c bước tiến xa hơn trong thế giới c&ocirc;ng nghệ.</p>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/S1_864621c3042844e488dc13147b49941d.jpg" width="700" height="700" /></p>
+<h4>TẠI SAO N&Ecirc;N HỌC LẬP TR&Igrave;NH SCRATCH N&Acirc;NG CAO?</h4>
+<ul>
+<li><strong>X&acirc;y dựng game của ri&ecirc;ng bạn</strong>: Kh&oacute;a học n&agrave;y tập trung v&agrave;o việc hướng dẫn c&aacute;c bạn trẻ tự tay thiết kế, ph&aacute;t triển v&agrave; ho&agrave;n thiện tr&ograve; chơi của m&igrave;nh. Bạn sẽ kh&ocirc;ng chỉ lập tr&igrave;nh c&aacute;c khối lệnh đơn giản nữa m&agrave; sẽ kết hợp ch&uacute;ng để tạo ra những sản phẩm phức tạp v&agrave; hấp dẫn hơn.</li>
+<li><strong>Ứng dụng to&aacute;n học v&agrave;o lập tr&igrave;nh</strong>: Scratch n&acirc;ng cao gi&uacute;p bạn hiểu r&otilde; hơn về c&aacute;ch to&aacute;n học được ứng dụng trong lập tr&igrave;nh. Bạn sẽ học c&aacute;ch sử dụng c&aacute;c ph&eacute;p t&iacute;nh, h&agrave;m to&aacute;n học v&agrave; cấu tr&uacute;c điều kiện để x&acirc;y dựng c&aacute;c tr&ograve; chơi mang t&iacute;nh thử th&aacute;ch cao hơn.</li>
+<li><strong>Ph&aacute;t triển tư duy logic</strong>: Khi thực hiện c&aacute;c dự &aacute;n n&acirc;ng cao, bạn sẽ phải đối mặt với những b&agrave;i to&aacute;n lập tr&igrave;nh đ&ograve;i hỏi khả năng tư duy logic, c&aacute;ch ph&acirc;n t&iacute;ch v&agrave; giải quyết vấn đề hiệu quả. Điều n&agrave;y gi&uacute;p bạn trở th&agrave;nh những lập tr&igrave;nh vi&ecirc;n tiềm năng, sẵn s&agrave;ng đối mặt với c&aacute;c thử th&aacute;ch lớn hơn trong tương lai.</li>
+</ul>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/S2_db30d1e5fce54c3fb3992d0cd22eb1bc.jpg" width="700" height="700" /></p>
+<h4>ƯU ĐIỂM CỦA KH&Oacute;A HỌC SCRATCH N&Acirc;NG CAO</h4>
+<ul>
+<li><strong>Đ&agrave;o s&acirc;u hơn v&agrave;o lập tr&igrave;nh</strong>: Kh&ocirc;ng c&ograve;n l&agrave; những thao t&aacute;c k&eacute;o thả đơn giản, bạn sẽ học c&aacute;ch kết hợp nhiều khối lệnh v&agrave; tư duy s&aacute;ng tạo để tạo ra những tr&ograve; chơi phức tạp.</li>
+<li><strong>Lập tr&igrave;nh dựa tr&ecirc;n to&aacute;n học</strong>: Th&ocirc;ng qua c&aacute;c b&agrave;i tập sử dụng to&aacute;n học, bạn sẽ thấy c&aacute;ch lập tr&igrave;nh c&oacute; thể được &aacute;p dụng v&agrave;o c&aacute;c kh&iacute;a cạnh kh&aacute;c nhau của cuộc sống, đặc biệt l&agrave; trong giải quyết c&aacute;c b&agrave;i to&aacute;n thực tế.</li>
+<li><strong>Ph&aacute;t triển khả năng giải quyết vấn đề</strong>: Mỗi b&agrave;i tập đều y&ecirc;u cầu bạn suy nghĩ, thử nghiệm v&agrave; t&igrave;m ra c&aacute;c giải ph&aacute;p thay thế khi gặp lỗi, từ đ&oacute; r&egrave;n luyện kỹ năng lập tr&igrave;nh chuy&ecirc;n nghiệp.</li>
+<li><strong>Tăng cường sự s&aacute;ng tạo</strong>: Kh&oacute;a học gi&uacute;p bạn kh&ocirc;ng chỉ lập tr&igrave;nh m&agrave; c&ograve;n s&aacute;ng tạo ra những thế giới tr&ograve; chơi mới, thể hiện &yacute; tưởng của ri&ecirc;ng m&igrave;nh qua từng dự &aacute;n.</li>
+</ul>
+<h4>ĐIỂM NỔI BẬT CỦA KH&Oacute;A HỌC</h4>
+<ul>
+<li><strong>Gi&aacute;o vi&ecirc;n nhiệt huyết</strong>: Đội ngũ gi&aacute;o vi&ecirc;n d&agrave;y dặn kinh nghiệm sẽ theo s&aacute;t, hướng dẫn bạn từng bước v&agrave; hỗ trợ bạn trong suốt kh&oacute;a học.</li>
+<li><strong>Cơ hội tham gia c&aacute;c cuộc thi lập tr&igrave;nh</strong>: Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học, bạn sẽ c&oacute; cơ hội tham gia c&aacute;c cuộc thi lập tr&igrave;nh trẻ như Tin học trẻ, v&agrave; thậm ch&iacute; c&oacute; thể tiến xa hơn trong c&aacute;c cuộc thi quốc tế về lập tr&igrave;nh.</li>
+<li><strong>Ph&aacute;t triển dự &aacute;n thực tế</strong>: C&aacute;c bạn trẻ sẽ tự tay x&acirc;y dựng c&aacute;c tr&ograve; chơi v&agrave; ứng dụng học tập của ri&ecirc;ng m&igrave;nh, c&oacute; thể chia sẻ với bạn b&egrave; v&agrave; cộng đồng lập tr&igrave;nh tr&ecirc;n to&agrave;n thế giới.</li>
+</ul>
+<h3>MỤC TI&Ecirc;U KH&Oacute;A HỌC</h3>
+<ul>
+<li><strong>L&agrave;m chủ tư duy logic</strong>: Học c&aacute;ch giải quyết vấn đề th&ocirc;ng qua lập tr&igrave;nh, ph&aacute;t triển tư duy ph&acirc;n t&iacute;ch v&agrave; suy nghĩ hệ thống.</li>
+<li><strong>S&aacute;ng tạo kh&ocirc;ng giới hạn</strong>: Tự do s&aacute;ng tạo ra c&aacute;c tr&ograve; chơi của ri&ecirc;ng m&igrave;nh với nội dung v&agrave; c&aacute;ch chơi độc đ&aacute;o.</li>
+<li><strong>Học c&aacute;ch l&agrave;m việc độc lập v&agrave; theo nh&oacute;m</strong>: Bạn sẽ biết c&aacute;ch hợp t&aacute;c với bạn b&egrave; hoặc tự m&igrave;nh ho&agrave;n th&agrave;nh c&aacute;c dự &aacute;n lập tr&igrave;nh.</li>
+</ul>
+<p>Kh&oacute;a học Scratch n&acirc;ng cao sẽ đưa c&aacute;c bạn nhỏ đi xa hơn tr&ecirc;n h&agrave;nh tr&igrave;nh lập tr&igrave;nh, mở ra cơ hội để kh&aacute;m ph&aacute; những tiềm năng v&ocirc; tận trong thế giới số. Tham gia ngay để c&ugrave;ng ch&uacute;ng t&ocirc;i chinh phục c&aacute;c thử th&aacute;ch lập tr&igrave;nh v&agrave; kh&aacute;m ph&aacute; những điều kỳ diệu của c&ocirc;ng nghệ!</p>', 600000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/khoa-hoc-scratch-nang-cao__3__9206393c701e4bee961b84bdf6367fa8.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('737b5551-e148-4e64-aa54-2e85f82a30ff', 'C# cơ bản', '<p style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;">C# l&agrave; một ng&ocirc;n ngữ lập tr&igrave;nh đơn giản, hiện đại, mục đ&iacute;ch tổng qu&aacute;t, hướng đối tượng được ph&aacute;t triển bởi Microsoft b&ecirc;n trong phần khởi đầu .NET của họ, được ph&aacute;t triển chủ yếu bởi Anders Hejlsberg, một kiến tr&uacute;c sư phần mềm nổi tiếng với c&aacute;c sản phẩm Turbo Pascal, Delphi, J++, WFC. Kh&oacute;a học n&agrave;y sẽ cung cấp cho bạn kiến thức cơ bản về lập tr&igrave;nh C# qua c&aacute;c kh&aacute;i niệm từ cơ bản v&agrave; c&aacute;c b&agrave;i tập thực tế bằng ng&ocirc;n ngữ lập tr&igrave;nh C#.</p>
+<h3><strong>Đặc trưng cơ bản của ng&ocirc;n ngữ C#:</strong></h3>
+<ul>
+<li style="text-align: justify; line-height: 18pt;">L&agrave; một ng&ocirc;n ngữ&nbsp;thuần hướng đối tượng&nbsp;(hướng đối tượng l&agrave; g&igrave; sẽ được tr&igrave;nh b&agrave;y trong kh&oacute;a học C# Advance)</li>
+<li style="text-align: justify; line-height: 18pt;">L&agrave; ng&ocirc;n ngữ kh&aacute; đơn giản, chỉ c&oacute; khoảng 80 từ kh&oacute;a v&agrave; hơn mười kiểu dữ liệu được dựng sẵn.</li>
+<li style="text-align: justify; line-height: 18pt;">Cung cấp những đặc t&iacute;nh hướng th&agrave;nh phần (component-oriented) như l&agrave; Property, Event</li>
+<li style="text-align: justify; line-height: 18pt;">C# c&oacute; bộ&nbsp;Garbage Collector&nbsp;sẽ&nbsp;tự động thu gom v&ugrave;ng nhớ&nbsp;khi kh&ocirc;ng c&ograve;n sử dụng nữa.</li>
+</ul>
+<h3 style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;"><strong>Ứng dụng của C#</strong></h3>
+<ul>
+<li style="text-align: start; line-height: 18pt; box-sizing: border-box; font-variant-ligatures: normal; font-variant-caps: normal; orphans: 2; widows: 2; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; word-spacing: 0px;"><strong>Ứng dụng tr&ecirc;n Windows:<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/A2_4a0918575fdb4a598759686cec0620ab.png" /><br /></strong>Với sự trợ gi&uacute;p của bộ khung .Net, &ldquo;C#&rdquo; được sử dụng để ph&aacute;t triển c&aacute;c ứng dụng dựa tr&ecirc;n c&aacute;c cửa sổ cho m&aacute;y t&iacute;nh để b&agrave;n. Nhiều ứng dụng Windows phổ biến như c&aacute;c c&ocirc;ng cụ Microsoft Office, Skype, Photoshop v&agrave; Visual Studio được ph&aacute;t triển bằng ng&ocirc;n ngữ n&agrave;y.</li>
+<li style="text-align: start; line-height: 18pt; box-sizing: border-box; font-variant-ligatures: normal; font-variant-caps: normal; orphans: 2; widows: 2; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; word-spacing: 0px;"><strong>C&aacute;c th&agrave;nh phần v&agrave; điều khiển:<br /></strong>C&aacute;c th&agrave;nh phần v&agrave; điều khiển l&agrave; c&aacute;c thư viện c&oacute; thể được sử dụng để tạo ra một thứ dễ ph&acirc;n phối v&agrave; c&oacute; thể chia sẻ được. Thư viện GPS l&agrave; một v&iacute; dụ tuyệt vời cho một thư viện c&oacute; thể được một lập tr&igrave;nh vi&ecirc;n x&acirc;y dựng v&agrave; dễ d&agrave;ng ph&acirc;n phối cho c&aacute;c lập tr&igrave;nh vi&ecirc;n kh&aacute;c để sử dụng trong c&aacute;c ứng dụng của họ. N&oacute; cũng được sử dụng để x&acirc;y dựng c&aacute;c th&agrave;nh phần m&aacute;y chủ v&agrave; nhiều c&ocirc;ng việc kh&aacute;c nữa.</li>
+<li style="text-align: start; line-height: 18pt; box-sizing: border-box; font-variant-ligatures: normal; font-variant-caps: normal; orphans: 2; widows: 2; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; word-spacing: 0px;"><strong>Ứng dụng Web:<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/A1_8a4efcbe8355487ebe053fa1a6313020.png" /><br /></strong>Với sự trợ gi&uacute;p của bộ khung .NET, C# c&oacute; khả năng tạo ra nhiều ứng dụng web bằng c&aacute;ch sử dụng asp.net. Đ&oacute; l&agrave; một ng&ocirc;n ngữ phổ biến kh&aacute;c m&agrave; ai ai c&oacute; thể học ngay lập tức khi muốn l&agrave;m cho ứng dụng web chạy trơn tru tr&ecirc;n một m&aacute;y chủ web. C&aacute;c ứng dụng Windows chạy tr&ecirc;n cả m&aacute;y chủ cũng như trong tr&igrave;nh duyệt của m&aacute;y kh&aacute;ch, t&ugrave;y thuộc v&agrave;o c&aacute;ch viết m&atilde;. Nếu C# được sử dụng dưới h&igrave;nh thức m&atilde; h&oacute;a ở backend, th&igrave; m&atilde; C# chạy tr&ecirc;n m&aacute;y chủ v&agrave; HTML frontend chạy trong tr&igrave;nh duyệt của m&aacute;y kh&aacute;ch.</li>
+</ul>
+<hr />
+<h3 style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;"><strong>Mục ti&ecirc;u của kh&oacute;a học.</strong></h3>
+<ul>
+<li>Viết th&agrave;nh thạo c&aacute;c chương tr&igrave;nh cơ bản bằng ng&ocirc;n ngữ C#.</li>
+<li>Hiểu r&otilde; c&aacute;ch kiểu dữ liệu của biến v&agrave; sử dụng n&oacute; một c&aacute;ch ph&ugrave; hợp.</li>
+<li>Sử dụng được c&aacute;c to&aacute;n tử trong C#.</li>
+<li>Hiểu r&otilde; bản chất một số c&aacute;c trong dữ lệnh cũng như c&aacute;c c&acirc;u lệnh trong C#:
+<ul>
+<li>Cấu tr&uacute;c mảng.</li>
+<li>Cấu tr&uacute;c chuỗi.</li>
+<li>C&acirc;u lệnh điều kiện.</li>
+<li>V&ograve;ng lặp.</li>
+</ul>
+</li>
+<li>T&igrave;m hiểu về class DateTime trong C#.</li>
+<li>Hiểu r&otilde; v&agrave; sử dụng cũng như viết được c&aacute;c h&agrave;m trong C#.</li>
+</ul>
+<hr />
+<h3 style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;"><strong>Lời kết: </strong></h3>
+<p style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;">Hướng tới mục đ&iacute;ch dạy lập tr&igrave;nh cho c&aacute;c đối tượng chưa biết, chưa t&igrave;m hiểu về lập tr&igrave;nh. Trong khu&ocirc;n khổ kh&oacute;a học n&agrave;y, ch&uacute;ng ta sẽ chỉ t&igrave;m hiểu kh&aacute;i niệm cơ bản nhất về lập tr&igrave;nh v&agrave; thực h&agrave;nh tr&ecirc;n ng&ocirc;n ngữ C#.</p>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/csharp-co-ban_96ca03bee27f454eb1f1c86e1fc5ef74.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Java cho người mới bắt đầu', '<p class="first-token" data-sourcepos="1:1-1:147">Java l&agrave; một trong những ng&ocirc;n ngữ lập tr&igrave;nh phổ biến v&agrave; được ứng dụng rộng r&atilde;i nhất tr&ecirc;n thế giới, từ c&aacute;c ứng dụng di động đến hệ thống doanh nghiệp lớn. Với t&iacute;nh đa nền tảng v&agrave; cộng đồng hỗ trợ mạnh mẽ, Java l&agrave; lựa chọn l&yacute; tưởng cho những ai muốn x&acirc;y dựng sự nghiệp trong lĩnh vực ph&aacute;t triển phần mềm. Kh&oacute;a học Java cơ bản n&agrave;y được thiết kế đặc biệt để gi&uacute;p bạn l&agrave;m quen với ng&ocirc;n ngữ một c&aacute;ch dễ d&agrave;ng v&agrave; hiệu quả nhất.</p>
+<h2 data-sourcepos="3:1-3:26"><strong>Mục ti&ecirc;u của kh&oacute;a học:</strong></h2>
+<ul data-sourcepos="5:1-5:70">
+<li data-sourcepos="5:1-5:70">Gi&uacute;p bạn <strong>học Java từ con số 0</strong> một c&aacute;ch nhanh ch&oacute;ng v&agrave; dễ hiểu.</li>
+<li data-sourcepos="6:1-6:95">Trang bị cho bạn kiến thức v&agrave; kỹ năng cần thiết để <strong>viết c&aacute;c chương tr&igrave;nh Java đơn giản</strong>.</li>
+<li data-sourcepos="8:1-9:0">Tạo nền tảng vững chắc <strong>cho bạn để tự học v&agrave; ph&aacute;t triển c&aacute;c chương tr&igrave;nh Java phức tạp hơn</strong>.</li>
+</ul>
+<h2 data-sourcepos="10:1-10:23"><strong>Đối tượng học vi&ecirc;n:</strong></h2>
+<ul data-sourcepos="12:1-12:142">
+<li data-sourcepos="12:1-12:142">Kh&oacute;a học n&agrave;y d&agrave;nh cho những người <strong>mới bắt đầu ho&agrave;n to&agrave;n chưa c&oacute; kiến thức về lập tr&igrave;nh</strong>, hoặc những bạn <strong>mất căn bản muốn lấy lại kiến thức nền tảng lập tr&igrave;nh</strong>, cụ thể l&agrave; Java.</li>
+</ul>
+<h2 data-sourcepos="14:1-14:26"><strong>Phương ph&aacute;p giảng dạy:</strong></h2>
+<ul data-sourcepos="16:1-19:0">
+<li data-sourcepos="16:1-16:58">Kh&oacute;a học được kết hợp <strong>giữa l&yacute; thuyết v&agrave; thực h&agrave;nh</strong>.</li>
+<li data-sourcepos="17:1-17:136">Học vi&ecirc;n sẽ được học qua c&aacute;c <strong>video b&agrave;i giảng</strong>, <strong>b&agrave;i đọc l&yacute; thuyết</strong>, <strong>b&agrave;i tập thực h&agrave;nh</strong> v&agrave; <strong>b&agrave;i tập trắc nghiệm l&yacute; thuyết</strong>.</li>
+<li data-sourcepos="18:1-19:0">Học vi&ecirc;n sẽ được <strong>giải đ&aacute;p</strong> những thắc mắc trực tiếp qua phần b&igrave;nh luận.</li>
+</ul>
+<h2 data-sourcepos="20:1-20:38"><strong>Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học, bạn sẽ c&oacute; thể:</strong></h2>
+<ul data-sourcepos="22:1-25:122">
+<li data-sourcepos="22:1-22:64">Hiểu r&otilde; về <strong>c&uacute; ph&aacute;p v&agrave; cấu tr&uacute;c cơ bản</strong> của ng&ocirc;n ngữ Java.</li>
+<li data-sourcepos="23:1-23:105">Sử dụng th&agrave;nh thạo c&aacute;c <strong>kiểu dữ liệu</strong>, <strong>biến</strong>, <strong>to&aacute;n tử</strong> v&agrave; <strong>c&acirc;u lệnh điều khiển</strong> trong Java.</li>
+<li data-sourcepos="24:1-24:78">Viết c&aacute;c <strong>chương tr&igrave;nh Java đơn giản</strong> để giải quyết c&aacute;c b&agrave;i to&aacute;n cơ bản.</li>
+<li data-sourcepos="25:1-25:122">C&oacute; <strong>nền tảng vững chắc</strong> để tiếp tục học c&aacute;c kh&oacute;a học Java n&acirc;ng cao v&agrave; ph&aacute;t triển sự nghiệp trong lĩnh vực lập tr&igrave;nh.</li>
+</ul>', 720000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/java-cho-nguoi-moi-bat-dau_9a1c4247a23441d9874bb3caca9ea497.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('961ac01c-382c-4aa5-bae1-d1429f27f06a', 'Lập trình C++ nâng cao', '<p>C++ l&agrave; một trong những ng&ocirc;n ngữ lập tr&igrave;nh mạnh mẽ v&agrave; linh hoạt nhất, được sử dụng rộng r&atilde;i trong c&aacute;c ứng dụng c&ocirc;ng nghiệp v&agrave; ph&aacute;t triển phần mềm cao cấp. Kh&oacute;a học C++ n&acirc;ng cao n&agrave;y được thiết kế để gi&uacute;p c&aacute;c lập tr&igrave;nh vi&ecirc;n đ&atilde; c&oacute; kiến thức cơ bản về C++ tiếp tục ph&aacute;t triển v&agrave; nắm vững c&aacute;c kỹ thuật n&acirc;ng cao. Kh&oacute;a học sẽ đi s&acirc;u v&agrave;o c&aacute;c chủ đề phức tạp hơn, gi&uacute;p bạn viết m&atilde; hiệu quả, tối ưu h&oacute;a v&agrave; &aacute;p dụng trong c&aacute;c dự &aacute;n thực tế.</p>
+<h1>Mục ti&ecirc;u của kh&oacute;a học</h1>
+<ul>
+<li><strong>Nắm vững c&aacute;c t&iacute;nh năng n&acirc;ng cao của C++:</strong> Hiểu r&otilde; v&agrave; &aacute;p dụng c&aacute;c kỹ thuật như quản l&yacute; bộ nhớ, cấp ph&aacute;t động, con trỏ v&agrave; xử l&yacute; ngoại lệ.</li>
+<li><strong>Thực h&agrave;nh v&agrave; n&acirc;ng cao khả năng lập tr&igrave;nh:</strong> &Aacute;p dụng kiến thức học được v&agrave;o c&aacute;c b&agrave;i to&aacute;n, n&acirc;ng cao kỹ năng lập tr&igrave;nh th&ocirc;ng qua việc thực h&agrave;nh li&ecirc;n tục.</li>
+<li><strong>Tăng cường khả năng giải quyết vấn đề:</strong> Ph&aacute;t triển khả năng tư duy logic v&agrave; giải quyết c&aacute;c vấn đề phức tạp trong lập tr&igrave;nh.</li>
+<li><strong>Sử dụng th&agrave;nh thạo c&aacute;c thư viện ti&ecirc;u chuẩn:</strong> Hiểu v&agrave; sử dụng c&aacute;c thư viện ti&ecirc;u chuẩn của C++ như STL v&agrave; c&aacute;c thư viện phổ biến kh&aacute;c.</li>
+</ul>
+<h1>Đối tượng học vi&ecirc;n</h1>
+<p>Kh&oacute;a học n&agrave;y d&agrave;nh cho những học vi&ecirc;n đ&atilde; ho&agrave;n th&agrave;nh kh&oacute;a học C++ cơ bản hoặc c&oacute; kiến thức tương đương. Những ai mong muốn n&acirc;ng cao kỹ năng lập tr&igrave;nh của m&igrave;nh, ứng dụng C++ v&agrave;o c&aacute;c dự &aacute;n thực tế v&agrave; muốn hiểu s&acirc;u hơn về c&aacute;c kh&iacute;a cạnh phức tạp của ng&ocirc;n ngữ n&agrave;y sẽ t&igrave;m thấy nhiều gi&aacute; trị từ kh&oacute;a học.</p>
+<h1>Phương ph&aacute;p giảng dạy</h1>
+<ul>
+<li><strong>Kết hợp giữa l&yacute; thuyết v&agrave; thực h&agrave;nh:</strong> Kh&oacute;a học bao gồm c&aacute;c b&agrave;i giảng l&yacute; thuyết, b&agrave;i tập thực h&agrave;nh v&agrave; c&aacute;c dự &aacute;n thực tế.</li>
+<li><strong>Học qua c&aacute;c video b&agrave;i giảng:</strong> Học vi&ecirc;n sẽ tiếp cận c&aacute;c kiến thức th&ocirc;ng qua video b&agrave;i giảng chi tiết v&agrave; dễ hiểu.</li>
+<li><strong>B&agrave;i tập thực h&agrave;nh v&agrave; trắc nghiệm:</strong> Để củng cố kiến thức, học vi&ecirc;n sẽ l&agrave;m c&aacute;c b&agrave;i tập thực h&agrave;nh v&agrave; trắc nghiệm l&yacute; thuyết.</li>
+<li><strong>Hỗ trợ v&agrave; trao đổi:</strong> Học vi&ecirc;n c&oacute; thể trao đổi, hỏi đ&aacute;p những thắc mắc với giảng vi&ecirc;n v&agrave; c&aacute;c bạn c&ugrave;ng kh&oacute;a th&ocirc;ng qua diễn đ&agrave;n.</li>
+</ul>
+<h1>Kỹ năng đạt được</h1>
+<ul>
+<li><strong>Quản l&yacute; bộ nhớ hiệu quả:</strong> Sử dụng c&aacute;c kỹ thuật quản l&yacute; bộ nhớ động, tr&aacute;nh r&ograve; rỉ bộ nhớ v&agrave; tối ưu h&oacute;a hiệu suất chương tr&igrave;nh.</li>
+<li><strong>Xử l&yacute; ngoại lệ:</strong> Nắm vững c&aacute;ch xử l&yacute; ngoại lệ trong C++ để viết m&atilde; an to&agrave;n v&agrave; dễ bảo tr&igrave;.</li>
+<li><strong>Sử dụng thư viện ti&ecirc;u chuẩn:</strong> Th&agrave;nh thạo việc sử dụng c&aacute;c thư viện ti&ecirc;u chuẩn v&agrave; mở rộng của C++ để tối ưu h&oacute;a qu&aacute; tr&igrave;nh ph&aacute;t triển phần mềm.</li>
+<li><strong>C&aacute;c kĩ thuật n&acirc;ng cao:&nbsp;</strong>stack,queue,list,set... ứng dụng v&agrave;o giải b&agrave;i tập.</li>
+</ul>
+<p>Kh&oacute;a học C++ n&acirc;ng cao n&agrave;y sẽ gi&uacute;p bạn n&acirc;ng cao kỹ năng lập tr&igrave;nh, sẵn s&agrave;ng đối mặt với những thử th&aacute;ch lớn trong ng&agrave;nh c&ocirc;ng nghệ th&ocirc;ng tin v&agrave; đạt được những th&agrave;nh tựu mới trong sự nghiệp lập tr&igrave;nh của m&igrave;nh. H&atilde;y đăng k&yacute; ngay để bắt đầu h&agrave;nh tr&igrave;nh học tập v&agrave; ph&aacute;t triển kỹ năng của bạn!</p>', 900000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/C___Advance-1_75d4679945874883b8dbf3f942970a89.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('97f41add-6aa0-4c20-8ad1-aba7ce768046', 'SQL cho người mới bắt đầu', '<p>Kh&oacute;a học "<strong>SQL cho người mới bắt đầu</strong>" được thiết kế đặc biệt d&agrave;nh cho c&aacute;c em học sinh từ lớp 6 trở l&ecirc;n, nhằm giới thiệu v&agrave; hướng dẫn c&aacute;c em những kiến thức cơ bản về SQL (Structured Query Language) - ng&ocirc;n ngữ truy vấn cấu tr&uacute;c d&ugrave;ng để quản l&yacute; v&agrave; thao t&aacute;c với cơ sở dữ liệu. Th&ocirc;ng qua kh&oacute;a học n&agrave;y, c&aacute;c em sẽ nắm bắt được c&aacute;ch tổ chức, truy vấn v&agrave; xử l&yacute; dữ liệu một c&aacute;ch hiệu quả v&agrave; th&uacute; vị.</p>
+<p>Với phương ph&aacute;p giảng dạy th&acirc;n thiện trực quan:</p>
+<ul>
+<li><strong>Học từ thực tế:</strong> C&aacute;c b&agrave;i học được thiết kế gần gũi với cuộc sống thực tiễn, gi&uacute;p c&aacute;c em hứng th&uacute; v&agrave; dễ d&agrave;ng tiếp thu kiến thức.</li>
+<li><strong>Thực h&agrave;nh trực tiếp:</strong> Mỗi buổi học đều c&oacute; b&agrave;i thực h&agrave;nh ngay tr&ecirc;n hệ thống, gi&uacute;p c&aacute;c em l&agrave;m quen với m&ocirc;i trường l&agrave;m việc thực tế của SQL.</li>
+<li><strong>Giảng vi&ecirc;n tận t&acirc;m:</strong> Đội ngũ giảng vi&ecirc;n gi&agrave;u kinh nghiệm, y&ecirc;u trẻ v&agrave; hiểu biết s&acirc;u rộng về SQL sẽ lu&ocirc;n sẵn s&agrave;ng hỗ trợ c&aacute;c em trong suốt qu&aacute; tr&igrave;nh học.</li>
+</ul>
+<p>Kh&oacute;a học sẽ đem lại lợi &iacute;ch to lớn:</p>
+<ul>
+<li><strong>Ph&aacute;t triển tư duy logic:</strong> Học SQL gi&uacute;p c&aacute;c em r&egrave;n luyện khả năng tư duy logic, giải quyết vấn đề một c&aacute;ch hệ thống v&agrave; c&oacute; tổ chức.</li>
+<li><strong>Kỹ năng tin học:</strong> Trang bị cho c&aacute;c em một kỹ năng quan trọng v&agrave; hữu &iacute;ch trong thời đại c&ocirc;ng nghệ hiện nay.</li>
+<li><strong>Chuẩn bị cho tương lai:</strong> SQL l&agrave; một ng&ocirc;n ngữ quan trọng trong lĩnh vực c&ocirc;ng nghệ th&ocirc;ng tin v&agrave; quản trị dữ liệu, gi&uacute;p c&aacute;c em c&oacute; nền tảng vững chắc cho c&aacute;c ng&agrave;nh nghề tương lai</li>
+</ul>
+<p>Ch&uacute;ng t&ocirc;i mong muốn được ch&agrave;o đ&oacute;n c&aacute;c em học sinh trong kh&oacute;a học "<strong>SQL cho người mới bắt đầu</strong>" v&agrave; c&ugrave;ng nhau kh&aacute;m ph&aacute; thế giới th&uacute; vị của cơ sở dữ liệu!</p>', 720000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/image_c2c5d691850c4b728435b10d05005813.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('b154a3c3-6727-4332-a637-07eb142657c8', 'Trọn bộ kiến thức Scratch cho học sinh', '<p data-sourcepos="1:1-1:56"><span style="font-size: 18pt;"><strong>COMBO KH&Oacute;A HỌC SCRATCH S&Aacute;NG TẠO - TỪ CƠ BẢN ĐẾN N&Acirc;NG CAO</strong></span></p>
+<p data-sourcepos="3:1-3:295">Bạn muốn khơi dậy niềm đam m&ecirc; lập tr&igrave;nh cho con trẻ một c&aacute;ch th&uacute; vị v&agrave; trực quan? Bạn đang t&igrave;m kiếm một lộ tr&igrave;nh học Scratch b&agrave;i bản từ cơ bản đến n&acirc;ng cao? Combo kh&oacute;a học Scratch s&aacute;ng tạo của ch&uacute;ng t&ocirc;i sẽ l&agrave; người bạn đồng h&agrave;nh tuyệt vời tr&ecirc;n h&agrave;nh tr&igrave;nh kh&aacute;m ph&aacute; thế giới lập tr&igrave;nh đầy m&agrave;u sắc.</p>
+<p data-sourcepos="5:2-5:38"><strong>1. Game "ăn liền" c&ugrave;ng Scratch</strong></p>
+<ul>
+<li><strong>L&agrave;m quen với giao diện Scratch:</strong> T&igrave;m hiểu về c&aacute;c th&agrave;nh phần tr&ecirc;n m&agrave;n h&igrave;nh, c&aacute;ch sử dụng c&aacute;c c&ocirc;ng cụ v&agrave; l&agrave;m việc với c&aacute;c khối lệnh.</li>
+<li><strong>C&aacute;c khối lệnh cơ bản:&nbsp;</strong>C&aacute;c khối di chuyển hiển thị v&agrave; điều khiển</li>
+</ul>
+<p data-sourcepos="12:2-12:25"><strong>2. Scratch n&acirc;ng cao</strong></p>
+<ul>
+<li>Biến số v&agrave; to&aacute;n tử: Sử dụng to&aacute;n học để thực hiện c&aacute;c ph&eacute;p to&aacute;n trong chương tr&igrave;nh</li>
+<li>Khối lệnh t&ugrave;y chỉnh: Tạo ra c&aacute;c khối lệnh ri&ecirc;ng t&aacute;i sử dụng</li>
+<li>X&acirc;y dựng game ri&ecirc;ng cho bản th&acirc;n: Học về vẽ h&igrave;nh, &acirc;m thanh,.. kết hợp để trở th&agrave;nh một sản phẩm ho&agrave;n chỉnh</li>
+</ul>
+<p><strong>3.&nbsp;Lợi &iacute;ch khi tham gia Combo</strong></p>
+<ul>
+<li>Tiết kiệm chi ph&iacute; so với việc đăng k&yacute; từng kh&oacute;a ri&ecirc;ng lẻ.</li>
+<li>Lộ tr&igrave;nh học tập r&otilde; r&agrave;ng, b&agrave;i bản, từ cơ bản đến n&acirc;ng cao.</li>
+<li>M&ocirc;i trường học tập tương t&aacute;c, khuyến kh&iacute;ch sự s&aacute;ng tạo.</li>
+<li>Gi&uacute;p trẻ ph&aacute;t triển tư duy logic, khả năng giải quyết vấn đề v&agrave; kỹ năng l&agrave;m việc nh&oacute;m.</li>
+<li>Tạo nền tảng vững chắc cho việc học c&aacute;c ng&ocirc;n ngữ lập tr&igrave;nh kh&aacute;c trong tương lai.</li>
+</ul>', 960000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Full-Scratch_2a0fb6560651441c9cf5561ddd1620c0.jpg', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('b5502f31-c785-439c-bd18-c15b25dab111', 'Hệ thống khóa học SQL (Cơ bản & Nâng cao)', '<p data-sourcepos="14:1-14:59"><span style="font-size: 18pt;"><strong>Combo Kh&oacute;a học SQL Cơ bản v&agrave; N&acirc;ng cao bao gồm những g&igrave;?</strong></span></p>
+<p data-sourcepos="16:1-16:138">Combo n&agrave;y được thiết kế để cung cấp cho bạn một lộ tr&igrave;nh học tập to&agrave;n diện, từ những kh&aacute;i niệm cơ bản đến c&aacute;c kỹ thuật n&acirc;ng cao trong SQL.</p>
+<p data-sourcepos="18:1-18:27"><strong>1. Kh&oacute;a học SQL Cơ bản:</strong></p>
+<ul>
+<li><strong>Giới thiệu về cơ sở dữ liệu v&agrave; SQL</strong>: Kh&aacute;i niệm cơ bản về cơ sở dữ liệu quan hệ, c&aacute;c loại cơ sở dữ liệu, v&agrave; vai tr&ograve; của SQL.</li>
+<li><strong>C&aacute;c lệnh SQL cơ bản</strong>: SELECT, INSERT, UPDATE,...</li>
+<li><strong>C&aacute;c mệnh đề quan trọng</strong>: WHERE, ORDER BY,...</li>
+</ul>
+<p><strong>2. Kh&oacute;a học SQL N&acirc;ng cao:</strong></p>
+<ul>
+<li><strong>C&aacute;c h&agrave;m quan trọng</strong>: SUBSTRING, DATE, MONTH,...</li>
+<li><strong>Truy vấn con</strong>: Sử dụng truy vấn b&ecirc;n trong một truy vấn kh&aacute;c.</li>
+<li><strong>View v&agrave; bảng tạm: </strong>Tạo c&aacute;c đối tượng ảo để đơn giản h&oacute;a truy vấn phức tạp.</li>
+</ul>
+<p data-sourcepos="55:1-55:31"><strong>Lợi &iacute;ch khi tham gia Combo:</strong></p>
+<ul>
+<li><strong>Tiết kiệm chi ph&iacute;:</strong> So với việc đăng k&yacute; từng kh&oacute;a ri&ecirc;ng lẻ.</li>
+<li><strong>Lộ tr&igrave;nh học tập li&ecirc;n tục:</strong> Được thiết kế logic, gi&uacute;p bạn nắm vững kiến thức từ cơ bản đến n&acirc;ng cao một c&aacute;ch hệ thống.</li>
+<li><strong>Thực h&agrave;nh chuy&ecirc;n s&acirc;u:</strong> C&aacute;c b&agrave;i tập v&agrave; dự &aacute;n thực tế gi&uacute;p bạn &aacute;p dụng kiến thức v&agrave;o thực tiễn.</li>
+</ul>', 1620000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/SQL-A-Z_fd124876d86343328f62d23318e13d70.jpg', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Truyền thông và Mạng máy tính', '<h3 data-start="279" data-end="309">Giới thiệu về Mạng m&aacute;y t&iacute;nh</h3>
+<p class="" data-start="315" data-end="693"><strong data-start="315" data-end="332">Mạng m&aacute;y t&iacute;nh</strong> l&agrave; nền tảng cốt l&otilde;i cho c&aacute;c hệ thống th&ocirc;ng tin hiện đại, đ&oacute;ng vai tr&ograve; kết nối c&aacute;c thiết bị để chia sẻ t&agrave;i nguy&ecirc;n, dữ liệu v&agrave; dịch vụ. Kh&oacute;a học n&agrave;y cung cấp cho bạn c&aacute;i nh&igrave;n to&agrave;n diện về <strong data-start="519" data-end="569">c&aacute;c kh&aacute;i niệm, th&agrave;nh phần v&agrave; ứng dụng của mạng</strong>, từ cơ bản đến thực tế, gi&uacute;p bạn tự tin hơn khi sử dụng hoặc thiết lập mạng trong m&ocirc;i trường học tập, l&agrave;m việc v&agrave; gia đ&igrave;nh.</p>
+<h3 data-start="700" data-end="739">🔍 Tại sao n&ecirc;n học về Mạng m&aacute;y t&iacute;nh?</h3>
+<p class="" data-start="745" data-end="840">Việc hiểu biết về mạng kh&ocirc;ng chỉ gi&uacute;p bạn sử dụng c&ocirc;ng nghệ một c&aacute;ch hiệu quả, m&agrave; c&ograve;n gi&uacute;p bạn:</p>
+<ul data-start="842" data-end="1284">
+<li class="" data-start="842" data-end="951">
+<p class="" data-start="844" data-end="951"><strong data-start="844" data-end="903">Hiểu được c&aacute;ch c&aacute;c thiết bị kết nối v&agrave; trao đổi dữ liệu</strong>, từ mạng nội bộ (LAN) đến mạng diện rộng (WAN).</p>
+</li>
+<li class="" data-start="952" data-end="1056">
+<p class="" data-start="954" data-end="1056"><strong data-start="954" data-end="997">L&agrave;m chủ c&aacute;c kiến thức về truyền dữ liệu</strong>, băng th&ocirc;ng, tốc độ kết nối v&agrave; c&aacute;c phương tiện truyền dẫn.</p>
+</li>
+<li class="" data-start="1057" data-end="1177">
+<p class="" data-start="1059" data-end="1177"><strong data-start="1059" data-end="1132">Ph&acirc;n biệt v&agrave; lựa chọn đ&uacute;ng c&aacute;c loại h&igrave;nh v&agrave; thiết bị kết nối Internet</strong>, từ ADSL, FTTH cho tới kh&ocirc;ng d&acirc;y v&agrave; vệ tinh.</p>
+</li>
+<li class="" data-start="1178" data-end="1284">
+<p class="" data-start="1180" data-end="1284"><strong data-start="1180" data-end="1255">Biết c&aacute;ch tự cấu h&igrave;nh v&agrave; bảo tr&igrave; mạng trong gia đ&igrave;nh hoặc văn ph&ograve;ng nhỏ</strong> &ndash; một kỹ năng rất thực tiễn.</p>
+</li>
+</ul>
+<h3 data-start="1291" data-end="1326">🌐 Ứng dụng thực tế của kh&oacute;a học</h3>
+<p class="" data-start="1332" data-end="1380">Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học, bạn sẽ c&oacute; khả năng:</p>
+<p class="" data-start="1384" data-end="1491">✅ Hiểu r&otilde; <strong data-start="1394" data-end="1446">kh&aacute;i niệm mạng m&aacute;y t&iacute;nh, vai tr&ograve;, ph&acirc;n loại mạng</strong> v&agrave; mối quan hệ giữa c&aacute;c thiết bị trong mạng.</p>
+<p class="" data-start="1494" data-end="1600">✅ Hiểu được <strong data-start="1506" data-end="1548">c&aacute;ch dữ liệu được truyền tải tr&ecirc;n mạng</strong>, c&aacute;c th&ocirc;ng số quan trọng như bps, kbps, Mbps, Gbps.</p>
+<p class="" data-start="1603" data-end="1720">✅ <strong data-start="1605" data-end="1647">Ph&acirc;n biệt c&aacute;c phương tiện truyền th&ocirc;ng</strong>, từ c&oacute; d&acirc;y như c&aacute;p quang, c&aacute;p đồng trục đến kh&ocirc;ng d&acirc;y như s&oacute;ng v&ocirc; tuyến.</p>
+<p class="" data-start="1723" data-end="1824">✅ <strong data-start="1725" data-end="1778">Ph&acirc;n biệt v&agrave; hiểu r&otilde; Internet, intranet, extranet</strong>, cũng như c&aacute;c thao t&aacute;c tải dữ liệu l&ecirc;n/xuống.</p>
+<p class="" data-start="1827" data-end="1918">✅ Biết được <strong data-start="1839" data-end="1884">c&aacute;c h&igrave;nh thức v&agrave; dịch vụ kết nối Internet</strong> ph&ugrave; hợp với từng nhu cầu sử dụng.</p>
+<p class="" data-start="1921" data-end="2014">✅ <strong data-start="1923" data-end="1973">Nhận diện v&agrave; đ&aacute;nh gi&aacute; c&aacute;c thiết bị mạng cơ bản</strong>: modem, router, switch, access point,...</p>
+<p class="" data-start="2017" data-end="2111">✅ <strong data-start="2019" data-end="2080">Thiết lập mạng LAN/WiFi trong gia đ&igrave;nh hoặc văn ph&ograve;ng nhỏ</strong>, đ&aacute;p ứng theo nhu cầu thực tế.</p>
+<p class="" data-start="2114" data-end="2177">✅ Xử l&yacute; sự cố mạng cơ bản, hiểu nguy&ecirc;n nh&acirc;n v&agrave; hướng khắc phục.</p>
+<p class="" data-start="2180" data-end="2282">✅ <strong data-start="2182" data-end="2218">Đ&aacute;nh gi&aacute; chất lượng dịch vụ mạng</strong> v&agrave; lựa chọn thiết bị ph&ugrave; hợp với ng&acirc;n s&aacute;ch v&agrave; mục đ&iacute;ch sử dụng.</p>
+<h3 data-start="2289" data-end="2317">🎯 Đối tượng của kh&oacute;a học</h3>
+<p class="" data-start="2323" data-end="2344">Kh&oacute;a học ph&ugrave; hợp với:</p>
+<ul data-start="2346" data-end="2677">
+<li class="" data-start="2346" data-end="2419">
+<p class="" data-start="2348" data-end="2419">Học sinh, sinh vi&ecirc;n, người mới bắt đầu t&igrave;m hiểu về c&ocirc;ng nghệ th&ocirc;ng tin.</p>
+</li>
+<li class="" data-start="2420" data-end="2492">
+<p class="" data-start="2422" data-end="2492">Người d&ugrave;ng phổ th&ocirc;ng muốn tự thiết lập v&agrave; bảo tr&igrave; mạng trong gia đ&igrave;nh.</p>
+</li>
+<li class="" data-start="2493" data-end="2576">
+<p class="" data-start="2495" data-end="2576">Nh&acirc;n vi&ecirc;n văn ph&ograve;ng, quản trị hệ thống nhỏ cần nắm vững kiến thức cơ bản về mạng.</p>
+</li>
+<li class="" data-start="2577" data-end="2677">
+<p class="" data-start="2579" data-end="2677">Người chuẩn bị học c&aacute;c chuy&ecirc;n ng&agrave;nh IT chuy&ecirc;n s&acirc;u như quản trị mạng, bảo mật hoặc cloud computing.</p>
+</li>
+</ul>
+<h3 data-start="2684" data-end="2709">Điều kiện ti&ecirc;n quyết</h3>
+<p class="" data-start="2715" data-end="2793">Kh&ocirc;ng y&ecirc;u cầu kiến thức chuy&ecirc;n s&acirc;u. Tuy nhi&ecirc;n, bạn sẽ học hiệu quả hơn nếu c&oacute;:</p>
+<ul data-start="2795" data-end="2929">
+<li class="" data-start="2795" data-end="2864">
+<p class="" data-start="2797" data-end="2864">Kiến thức cơ bản về sử dụng m&aacute;y t&iacute;nh, hệ điều h&agrave;nh (Windows/Linux).</p>
+</li>
+<li class="" data-start="2865" data-end="2929">
+<p class="" data-start="2867" data-end="2929">Tư duy logic v&agrave; sẵn s&agrave;ng thực h&agrave;nh qua c&aacute;c t&igrave;nh huống thực tế.</p>
+</li>
+</ul>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/truyen-thong-va-mang-may-tinh_eb79a9f8aa854b059e7fc39155fef863.png', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('cb8d4b28-4c56-431f-b29a-e1f497c10175', 'Thành thạo C++ từ cơ bản đến nâng cao', '<p data-sourcepos="1:1-2:138"><span style="font-size: 18pt;"><strong>Combo Kh&oacute;a học C++ Cơ bản v&agrave; N&acirc;ng cao bao gồm những g&igrave;? </strong></span></p>
+<p data-sourcepos="1:1-2:138">Combo n&agrave;y được thiết kế để cung cấp cho bạn một lộ tr&igrave;nh học tập to&agrave;n diện, từ những kh&aacute;i niệm cơ bản đến c&aacute;c kỹ thuật n&acirc;ng cao trong C++.</p>
+<p><strong>1. Kh&oacute;a học C++ Cơ bản:</strong></p>
+<ul>
+<li data-sourcepos="5:1-8:25"><strong>Giới thiệu về lập tr&igrave;nh v&agrave; C++</strong>: Kh&aacute;i niệm cơ bản về thuật to&aacute;n,...</li>
+<li data-sourcepos="5:1-8:25"><strong>Kiểu dữ liệu, biến v&agrave; to&aacute;n tử</strong>: C&aacute;c kiểu dữ liệu cơ bản (int, float,...),...</li>
+<li data-sourcepos="5:1-8:25"><strong>Cấu tr&uacute;c điều khiển</strong>: C&acirc;u lệnh điều kiện (if, else,...),...</li>
+</ul>
+<p data-sourcepos="5:1-8:25"><strong>2. Kh&oacute;a học C++ N&acirc;ng cao:</strong></p>
+<ul>
+<li data-sourcepos="10:1-13:27">C&aacute;c h&agrave;m quan trọng như to&aacute;n học, l&agrave;m tr&ograve;n,...</li>
+<li data-sourcepos="10:1-13:27">Con trỏ: sử dụng con trỏ để thao t&aacute;c với dữ liệu</li>
+<li data-sourcepos="10:1-13:27">Template: X&acirc;y dựng c&aacute;c h&agrave;m v&agrave; lớp tổng qu&aacute;t...</li>
+</ul>
+<p data-sourcepos="10:1-13:27"><strong>3. Lợi &iacute;ch khi tham gia Combo:</strong></p>
+<ul>
+<li data-sourcepos="15:1-18:35">Tiết kiệm chi ph&iacute;: So với việc đăng k&yacute; từng kh&oacute;a ri&ecirc;ng lẻ.</li>
+<li data-sourcepos="15:1-18:35">Lộ tr&igrave;nh học tập li&ecirc;n tục: Được thiết kế logic,...</li>
+<li data-sourcepos="15:1-18:35">Thực h&agrave;nh chuy&ecirc;n s&acirc;u: C&aacute;c b&agrave;i tập v&agrave; dự &aacute;n thực tế... viết t&oacute;m tắt ngắn gọn trong một c&acirc;u</li>
+</ul>', 1620000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/C__-tu-co-ban-đen-nang-cao_caa4b3036a214a92b4491447e9676944.jpg', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('ce685ee8-dca7-4304-befd-139a5700bc68', 'Thư viện chuẩn C++', '<h3 data-start="206" data-end="305">L&agrave;m chủ Standard Template Library (STL) trong C++ &ndash; Tối ưu ho&aacute; hiệu suất v&agrave; t&aacute;i sử dụng m&atilde; nguồn</h3>
+<p class="" data-start="307" data-end="619">Kh&oacute;a học n&agrave;y cung cấp kiến thức to&agrave;n diện về <strong data-start="352" data-end="387">STL (Standard Template Library)</strong> &ndash; một trong những c&ocirc;ng cụ mạnh mẽ v&agrave; thiết thực nhất trong lập tr&igrave;nh C++. Bạn sẽ được trang bị kỹ năng sử dụng c&aacute;c <strong data-start="503" data-end="530">cấu tr&uacute;c dữ liệu c&oacute; sẵn</strong>, <strong data-start="532" data-end="553">thuật to&aacute;n tối ưu</strong>, v&agrave; c&aacute;ch <strong data-start="563" data-end="587">mở rộng thư viện STL</strong> để ph&ugrave; hợp với y&ecirc;u cầu thực tế.</p>
+<h3 data-start="626" data-end="673">Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học, bạn sẽ c&oacute; thể:</h3>
+<ul data-start="675" data-end="1168">
+<li class="" data-start="675" data-end="842">
+<p class="" data-start="677" data-end="842">✅ <strong data-start="679" data-end="730">Sử dụng th&agrave;nh thạo c&aacute;c cấu tr&uacute;c dữ liệu của STL</strong> như <code data-start="735" data-end="743">vector</code>, <code data-start="745" data-end="751">list</code>, <code data-start="753" data-end="758">map</code>, <code data-start="760" data-end="765">set</code>, v&agrave; c&aacute;c iterator để xử l&yacute; v&agrave; lưu trữ dữ liệu một c&aacute;ch linh hoạt v&agrave; hiệu quả.</p>
+</li>
+<li class="" data-start="844" data-end="1011">
+<p class="" data-start="846" data-end="1011">✅ <strong data-start="848" data-end="891">&Aacute;p dụng c&aacute;c thuật to&aacute;n c&oacute; sẵn trong STL</strong> như <code data-start="896" data-end="902">sort</code>, <code data-start="904" data-end="910">find</code>, <code data-start="912" data-end="919">count</code>, <code data-start="921" data-end="933">accumulate</code>, <code data-start="935" data-end="946">transform</code>... nhằm tăng tốc độ ph&aacute;t triển phần mềm v&agrave; tối ưu h&oacute;a hiệu suất.</p>
+</li>
+<li class="" data-start="1013" data-end="1168">
+<p class="" data-start="1015" data-end="1168">✅ <strong data-start="1017" data-end="1047">Tự thiết kế v&agrave; mở rộng STL</strong> bằng c&aacute;ch tạo c&aacute;c lớp v&agrave; thuật to&aacute;n t&ugrave;y chỉnh, t&iacute;ch hợp h&agrave;i h&ograve;a với hệ sinh th&aacute;i STL để giải quyết c&aacute;c b&agrave;i to&aacute;n đặc th&ugrave;.</p>
+</li>
+</ul>
+<h3 class="" data-start="1175" data-end="1197">Đối tượng ph&ugrave; hợp:</h3>
+<ul data-start="1199" data-end="1461">
+<li class="" data-start="1199" data-end="1290">
+<p class="" data-start="1201" data-end="1290">Lập tr&igrave;nh vi&ecirc;n C++ từ mức trung cấp trở l&ecirc;n muốn tối ưu h&oacute;a khả năng ph&aacute;t triển phần mềm.</p>
+</li>
+<li class="" data-start="1291" data-end="1384">
+<p class="" data-start="1293" data-end="1384">Người chuẩn bị tham gia c&aacute;c cuộc thi lập tr&igrave;nh hoặc phỏng vấn kỹ thuật y&ecirc;u cầu sử dụng STL.</p>
+</li>
+<li class="" data-start="1385" data-end="1461">
+<p class="" data-start="1387" data-end="1461">Sinh vi&ecirc;n CNTT cần củng cố v&agrave; n&acirc;ng cao kỹ năng sử dụng thư viện chuẩn C++.</p>
+</li>
+</ul>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/thu-vien-chuan-cpp_5dd3fda99ce1421e90b211d414c4a40d.png', true, '087499f3-3cc2-4d25-8ad5-8c63c6b74c44', '019d75a6-f26c-7376-b5c5-115afe44e848', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('d1839060-39f5-4877-a610-7036e35dbcaa', 'Python cho người mới bắt đầu', '<p><span style="font-size: 18pt; color: #304090;"><strong>Ng&ocirc;n ngữ lập tr&igrave;nh "B&Iacute; K&Iacute;P" vươn m&igrave;nh trong thời đại kỷ nguy&ecirc;n số</strong></span></p>
+<p style="text-align: justify;"><span style="color: #111928;">Sự b&ugrave;ng nổ của c&ocirc;ng nghệ Robot, tr&iacute; nh&acirc;n tạo Al dẫn đến sự thay đổi trong c&aacute;c lĩnh vực ng&agrave;nh nghề. CNTT trở th&agrave;nh lựa chọn số 1 gi&uacute;p con người kiểm so&aacute;t v&agrave; ph&aacute;t triển c&aacute;c c&ocirc;ng nghệ đỉnh cao. Để đ&aacute;p ứng được nhu cầu ph&aacute;t triển x&atilde; hội, Codelearn x&acirc;y dựng hệ thống học lập tr&igrave;nh trực tuyến nhằm gi&uacute;p c&aacute;c bạn trẻ &amp; người mới bắt đầu dễ d&agrave;ng tiếp cận với m&ocirc;n học, khơi dậy đam m&ecirc; c&ocirc;ng nghệ.</span></p>
+<p style="text-align: justify;">&nbsp;</p>
+<p><span style="font-size: 24pt; color: #250989;"><strong><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/BieuDo_70a10bfe0e77473b85274f3c0e6353ce.png" width="592" height="322" /><br /></strong></span></p>
+<p style="text-align: center;">Độ phổ biến của c&aacute;c ng&ocirc;n ngữ lập tr&igrave;nh</p>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="blob:https://codelearn.io/d6ccb77e-80bb-42c0-9747-98309e5bcfa9" alt="" /></p>
+<p style="text-align: justify;"><img style="display: block; margin-left: auto; margin-right: auto;" src="blob:https://codelearn.io/d6ccb77e-80bb-42c0-9747-98309e5bcfa9" alt="" /></p>
+<p style="text-align: justify;"><span style="font-size: 18pt; color: #304090;"><strong>L&yacute; do học sinh &amp; người mới bắt đầu n&ecirc;n học Python?</strong></span></p>
+<p><span style="color: #506cf0; font-size: 16pt;"><strong>Ng&ocirc;n ngữ lập tr&igrave;nh dễ học</strong></span></p>
+<p><span style="color: #111928;">Python được đ&aacute;nh gi&aacute; l&agrave; ng&ocirc;n ngữ lập tr&igrave;nh dễ học nhất hiện nay, c&uacute; ph&aacute;p đơn giản v&agrave; gần gũi với ng&ocirc;n ngữ tự nhi&ecirc;n.</span></p>
+<p><span style="color: #111928;">Đặc biệt, m&atilde; lệnh của python ngắn gọn, dễ đọc v&agrave; dễ ghi nhớ hơn. So với code Java, code Python ngắn hơn tới 3 - 5 lần, thậm ch&iacute; l&agrave; 5 - 10 lần so với code C++.</span></p>
+<p><span style="font-size: 16pt; color: #506cf0;"><strong>Ứng dụng rộng r&atilde;i v&agrave; linh hoạt</strong></span></p>
+<p><span style="color: #111928;">Python trở th&agrave;nh ng&ocirc;n ngữ lập tr&igrave;nh số 1 hiện tại với sự ứng dụng rộng r&atilde;i trong c&aacute;ch lĩnh vực:</span></p>
+<ul>
+<li><span style="color: #111928;">Tr&iacute; tuệ nh&acirc;n tạo (Al) &amp; M&aacute;y học (ML)</span></li>
+<li><span style="color: #111928;">Ph&acirc;n t&iacute;ch dữ liệu</span></li>
+<li><span style="color: #111928;">Lập tr&igrave;nh web</span></li>
+<li><span style="color: #111928;">Ph&aacute;t triển game</span></li>
+</ul>
+<p><span style="font-size: 16pt; color: #506cf0;"><strong>Giải ph&aacute;p tốt nhất cho mọi vấn đề</strong></span></p>
+<p><span style="color: #111928;">Python c&oacute; một thư viện ti&ecirc;u chuấn lớn, chứa nhiều d&ograve;ng m&atilde; c&oacute; thể t&aacute;i sử dụng cho hầu hết mọi t&aacute;c vụ. Nhờ đ&oacute;, c&aacute;c nh&agrave; ph&aacute;t triển sẽ kh&ocirc;ng cần phải viết mă từ đầu.</span></p>
+<p><span style="color: #506cf0; font-size: 16pt;"><strong>Cộng đồng mạnh mẽ</strong></span></p>
+<p>Cộng đồng Python nhiệt t&igrave;nh với nhiều c&ocirc;ng cụ hỗ trợ, s&atilde;̃n s&agrave;ng gi&uacute;p c&aacute;c em học sinh &amp; người mới bắt đầu th&aacute;o gỡ thắc mắc trong qu&aacute; tr&igrave;nh tiếp cận, học tập v&agrave; thực h&agrave;nh.</p>', 722000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/python-cho-nguoi-moi-bat-dau_f1a0ae13118c411ab7068e248f9f0206.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('d1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'HTML & CSS cho người mới bắt đầu', '<h3>Kh&oacute;a Học HTML &amp; CSS &ndash; Tạo Nền Tảng Vững Chắc Cho Thiết Kế Web</h3>
+<p data-start="165" data-end="348"><span data-teams="true">Kh&oacute;a học n&agrave;y d&agrave;nh cho người mới bắt đầu, gi&uacute;p bạn từng bước đạt đến tr&igrave;nh độ trung cấp, đồng thời trang bị kiến thức nền tảng c&ugrave;ng kỹ năng thực h&agrave;nh cần thiết để x&acirc;y dựng v&agrave; thiết kế c&aacute;c trang web chuy&ecirc;n nghiệp.</span></p>
+<h3 data-start="350" data-end="444"><strong data-start="354" data-end="442">Ch&agrave;o mừng bạn đến với kh&oacute;a học HTML &amp; CSS &ndash; nơi bạn l&agrave;m chủ thiết kế web!</strong></h3>
+<p data-start="446" data-end="711">Trong thời đại số, một website chuy&ecirc;n nghiệp kh&ocirc;ng chỉ l&agrave; bộ mặt của doanh nghiệp m&agrave; c&ograve;n l&agrave; c&ocirc;ng cụ mạnh mẽ để kết nối với thế giới. Việc nắm vững HTML &amp; CSS gi&uacute;p bạn kiểm so&aacute;t giao diện trang web, tối ưu trải nghiệm người d&ugrave;ng v&agrave; tạo n&ecirc;n những thiết kế ấn tượng.</p>
+<h3 data-start="446" data-end="711">Tại sao n&ecirc;n học HTML &amp; CSS?</h3>
+<ul>
+<li><strong data-start="754" data-end="778">Kiến thức to&agrave;n diện:</strong> Từ những kh&aacute;i niệm cơ bản đến kỹ năng thực tế trong thiết kế v&agrave; quản l&yacute; giao diện web.</li>
+<li><strong data-start="872" data-end="895">Cơ hội nghề nghiệp:</strong> Kỹ năng thiết kế web gi&uacute;p bạn mở rộng cơ hội l&agrave;m việc trong lĩnh vực lập tr&igrave;nh, thiết kế giao diện v&agrave; ph&aacute;t triển sản phẩm số.</li>
+<li><strong data-start="1028" data-end="1050">Tiết kiệm chi ph&iacute;:</strong> Tự thiết kế v&agrave; chỉnh sửa website của m&igrave;nh m&agrave; kh&ocirc;ng cần thu&ecirc; lập tr&igrave;nh vi&ecirc;n.</li>
+<li><strong data-start="1133" data-end="1157">Khơi nguồn s&aacute;ng tạo:</strong> Kiến thức về HTML &amp; CSS gi&uacute;p bạn thiết kế giao diện chuy&ecirc;n nghiệp, s&aacute;ng tạo v&agrave; tối ưu trải nghiệm người d&ugrave;ng.</li>
+</ul>
+<h3>Ai n&ecirc;n tham gia kh&oacute;a học n&agrave;y?</h3>
+<ul>
+<li><strong data-start="1317" data-end="1339">Người mới bắt đầu:</strong> Kh&ocirc;ng y&ecirc;u cầu kiến thức trước đ&oacute;, kh&oacute;a học sẽ hướng dẫn từ những bước cơ bản nhất.</li>
+<li><strong data-start="1430" data-end="1449">Lập tr&igrave;nh vi&ecirc;n:</strong> Mở rộng hiểu biết về HTML &amp; CSS để tối ưu giao diện v&agrave; hiệu suất trang web.</li>
+<li><strong data-start="1532" data-end="1560">Nh&agrave; thiết kế &amp; Marketer:</strong> Học c&aacute;ch chỉnh sửa, tối ưu h&oacute;a nội dung v&agrave; thiết kế web hiệu quả.</li>
+<li><strong data-start="1633" data-end="1657">Người y&ecirc;u c&ocirc;ng nghệ:</strong> Chuyển hướng sang lĩnh vực thiết kế web v&agrave; quản l&yacute; nội dung số.</li>
+</ul>
+<h3>Điều g&igrave; l&agrave;m kh&oacute;a học n&agrave;y đặc biệt?</h3>
+<ul>
+<li data-start="2496" data-end="2592"><strong data-start="2499" data-end="2521">Học qua thực h&agrave;nh:</strong> Nhiều b&agrave;i tập, dự &aacute;n thực tế gi&uacute;p bạn &aacute;p dụng ngay kiến thức đ&atilde; học.</li>
+<li data-start="2496" data-end="2592"><strong data-start="2597" data-end="2634">Hỗ trợ từ giảng vi&ecirc;n &amp; cộng đồng:</strong> Kết nối với những người học c&ugrave;ng ch&iacute; hướng v&agrave; nhận phản hồi từ chuy&ecirc;n gia.</li>
+<li data-start="2496" data-end="2592"><strong data-start="2716" data-end="2738">Nội dung cập nhật:</strong> Kiến thức li&ecirc;n tục được l&agrave;m mới để ph&ugrave; hợp với xu hướng ph&aacute;t triển web hiện đại.</li>
+</ul>
+<p>Bắt đầu ngay h&ocirc;m nay v&agrave; l&agrave;m chủ kỹ năng thiết kế web với HTML &amp; CSS! <em><strong>Đăng k&yacute; ngay!</strong></em></p>', 720000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/html-css-cho-nguoi-moi-bat-dau_3867537473444f328a4de0fa0231a6ea.jpg', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Thuật toán nâng cao', '<h3>Kh&oacute;a học Thuật to&aacute;n N&acirc;ng cao &ndash; L&agrave;m chủ tư duy thuật to&aacute;n hiện đại</h3>
 <p>Trong thời đại số, <strong>việc hiểu s&acirc;u v&agrave; vận dụng th&agrave;nh thạo c&aacute;c thuật to&aacute;n phức tạp</strong> ch&iacute;nh l&agrave; ch&igrave;a kh&oacute;a để giải quyết vấn đề kỹ thuật một c&aacute;ch hiệu quả, tối ưu h&oacute;a t&agrave;i nguy&ecirc;n v&agrave; ph&aacute;t triển c&aacute;c sản phẩm phần mềm chất lượng cao.<br />Kh&oacute;a học <strong>&ldquo;Thuật to&aacute;n N&acirc;ng cao&rdquo;</strong> được thiết kế nhằm trang bị cho bạn <strong>nền tảng vững chắc v&agrave; kỹ năng thực tiễn</strong>, gi&uacute;p bạn tự tin đối mặt với c&aacute;c th&aacute;ch thức trong học thuật, nghi&ecirc;n cứu v&agrave; ph&aacute;t triển sản phẩm c&ocirc;ng nghệ.</p>
 <h3>🌟 Tại sao bạn n&ecirc;n tham gia kh&oacute;a học n&agrave;y?</h3>
@@ -2556,7 +3135,7 @@ INSERT INTO public."Courses" VALUES ('e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Th
 <p>Người học đang chuẩn bị cho <strong>c&aacute;c kỳ thi tin học hoặc tuyển dụng tại c&aacute;c c&ocirc;ng ty c&ocirc;ng nghệ</strong>.</p>
 </li>
 </ul>
-<p>Kh&oacute;a học <strong>&ldquo;Thuật to&aacute;n N&acirc;ng cao&rdquo;</strong> l&agrave; cầu nối giữa l&yacute; thuyết v&agrave; thực h&agrave;nh, giữa kiến thức học thuật v&agrave; ứng dụng thực tiễn. D&ugrave; bạn đang theo đuổi sự nghiệp nghi&ecirc;n cứu, giảng dạy hay ph&aacute;t triển phần mềm, đ&acirc;y sẽ l&agrave; một bước tiến lớn trong h&agrave;nh tr&igrave;nh học tập của bạn.</p>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/thuat-toan-nang-cao_700636e291f4403289475e376f128649.png', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+<p>Kh&oacute;a học <strong>&ldquo;Thuật to&aacute;n N&acirc;ng cao&rdquo;</strong> l&agrave; cầu nối giữa l&yacute; thuyết v&agrave; thực h&agrave;nh, giữa kiến thức học thuật v&agrave; ứng dụng thực tiễn. D&ugrave; bạn đang theo đuổi sự nghiệp nghi&ecirc;n cứu, giảng dạy hay ph&aacute;t triển phần mềm, đ&acirc;y sẽ l&agrave; một bước tiến lớn trong h&agrave;nh tr&igrave;nh học tập của bạn.</p>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/thuat-toan-nang-cao_700636e291f4403289475e376f128649.png', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Game "ăn liền" cùng Scratch', '<h2 class="" data-start="173" data-end="234">🚀 "Game "ăn liền" c&ugrave;ng Scratch" &ndash; Lập Tr&igrave;nh Game Dễ Như Chơi!</h2>
 <h3 class="" data-start="236" data-end="327">Khơi dậy đam m&ecirc; c&ocirc;ng nghệ &ndash; Khởi đầu h&agrave;nh tr&igrave;nh lập tr&igrave;nh từ những tr&ograve; chơi đầu ti&ecirc;n!</h3>
 <p class="" data-start="329" data-end="609">Bạn đang t&igrave;m kiếm một kh&oacute;a học th&uacute; vị gi&uacute;p trẻ vừa học vừa chơi m&agrave; vẫn ph&aacute;t triển tư duy logic v&agrave; s&aacute;ng tạo?<br data-start="436" data-end="439" /><strong data-start="439" data-end="459">&ldquo;Game "ăn liền" c&ugrave;ng Scratch&rdquo;</strong> ch&iacute;nh l&agrave; điểm khởi đầu l&yacute; tưởng để trẻ tiếp cận với thế giới lập tr&igrave;nh th&ocirc;ng qua việc <strong data-start="546" data-end="608">tự tay tạo ra những tr&ograve; chơi đơn giản nhưng cực kỳ hấp dẫn</strong>!</p>
@@ -2611,7 +3190,7 @@ INSERT INTO public."Courses" VALUES ('e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Ga
 </ul>
 <hr class="" data-start="1683" data-end="1686" />
 <h3 class="" data-start="1688" data-end="1770">👉 Đăng k&yacute; ngay</h3>
-<p class="" data-start="1772" data-end="1877">Đừng bỏ lỡ cơ hội gi&uacute;p con bạn khởi đầu sớm với c&ocirc;ng nghệ &ndash; nơi mọi &yacute; tưởng đều c&oacute; thể biến th&agrave;nh tr&ograve; chơi tuyệt vời do ch&iacute;nh b&eacute; tạo n&ecirc;n!</p>', 360000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/khoa-hoc-scratch_1_992c8f23d86d4c3bb704ee9ab77efcc4.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+<p class="" data-start="1772" data-end="1877">Đừng bỏ lỡ cơ hội gi&uacute;p con bạn khởi đầu sớm với c&ocirc;ng nghệ &ndash; nơi mọi &yacute; tưởng đều c&oacute; thể biến th&agrave;nh tr&ograve; chơi tuyệt vời do ch&iacute;nh b&eacute; tạo n&ecirc;n!</p>', 360000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/khoa-hoc-scratch_1_992c8f23d86d4c3bb704ee9ab77efcc4.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Ứng dụng AI trong công việc', '<h3>Giới thiệu chung</h3>
 <p>Kh&oacute;a học<strong> <em>Ứng dụng AI trong c&ocirc;ng việc</em> </strong>cung cấp cho người học những kiến thức v&agrave; kỹ năng cơ bản về tr&iacute; tuệ nh&acirc;n tạo (AI), từ đ&oacute; khai th&aacute;c AI để n&acirc;ng cao hiệu quả v&agrave; tối ưu h&oacute;a quy tr&igrave;nh l&agrave;m việc. AI đang thay đổi c&aacute;ch ch&uacute;ng ta l&agrave;m việc, gi&uacute;p tự động h&oacute;a c&aacute;c nhiệm vụ thường ng&agrave;y, hỗ trợ ra quyết định dựa tr&ecirc;n dữ liệu v&agrave; mang lại c&aacute;c c&ocirc;ng cụ mạnh mẽ để cải thiện năng suất v&agrave; chất lượng c&ocirc;ng việc.</p>
 <p>Kh&oacute;a học sẽ gi&uacute;p bạn hiểu được tiềm năng ứng dụng của AI trong nhiều lĩnh vực, từ quản l&yacute; c&ocirc;ng việc h&agrave;ng ng&agrave;y, ph&acirc;n t&iacute;ch dữ liệu, đến s&aacute;ng tạo nội dung v&agrave; ra quyết định chiến lược.</p>
@@ -2631,7 +3210,7 @@ INSERT INTO public."Courses" VALUES ('e79d99e5-6325-4f50-833d-ee7de5bc43c1', '�
 <h3>Chứng chỉ v&agrave; cơ hội ph&aacute;t triển</h3>
 <p>Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học, bạn sẽ nhận được <strong>chứng chỉ ho&agrave;n th&agrave;nh kh&oacute;a học</strong>. Chứng chỉ n&agrave;y kh&ocirc;ng chỉ l&agrave; minh chứng cho việc bạn đ&atilde; trang bị kiến thức v&agrave; kỹ năng về AI, m&agrave; c&ograve;n mở ra cơ hội ph&aacute;t triển sự nghiệp. Kh&oacute;a học gi&uacute;p bạn trở th&agrave;nh một nh&acirc;n vi&ecirc;n ti&ecirc;n tiến, biết c&aacute;ch &aacute;p dụng c&ocirc;ng nghệ hiện đại để cải thiện hiệu quả c&ocirc;ng việc.</p>
 <h3>Đăng k&yacute; ngay</h3>
-<p>Kh&oacute;a học <strong><em>Ứng dụng AI trong c&ocirc;ng việc</em></strong> sẽ trang bị cho bạn c&ocirc;ng cụ v&agrave; kiến thức cần thiết để đ&oacute;n đầu xu hướng c&ocirc;ng nghệ. Đăng k&yacute; ngay h&ocirc;m nay để tối ưu h&oacute;a c&ocirc;ng việc, n&acirc;ng cao năng suất v&agrave; sẵn s&agrave;ng chinh phục những cơ hội mới trong thời đại c&ocirc;ng nghệ số!</p>', 720000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/AI-applications_bd4d24f5e00f4aabbd8c8636c815b438.jpg', true, 'b0522acc-c5e1-49b2-a340-440724cdeca8', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+<p>Kh&oacute;a học <strong><em>Ứng dụng AI trong c&ocirc;ng việc</em></strong> sẽ trang bị cho bạn c&ocirc;ng cụ v&agrave; kiến thức cần thiết để đ&oacute;n đầu xu hướng c&ocirc;ng nghệ. Đăng k&yacute; ngay h&ocirc;m nay để tối ưu h&oacute;a c&ocirc;ng việc, n&acirc;ng cao năng suất v&agrave; sẵn s&agrave;ng chinh phục những cơ hội mới trong thời đại c&ocirc;ng nghệ số!</p>', 720000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/AI-applications_bd4d24f5e00f4aabbd8c8636c815b438.jpg', true, 'b0522acc-c5e1-49b2-a340-440724cdeca8', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('eef4fafb-022a-430f-aad0-9416d37d656c', 'JavaScript cho người mới bắt đầu', '<h2><strong>Kh&oacute;a học JavaScript: H&agrave;nh tr&igrave;nh kh&aacute;m ph&aacute; thế giới lập tr&igrave;nh</strong></h2>
 <p>Ch&agrave;o mừng bạn đến với <strong>kh&oacute;a học JavaScript</strong> - nơi m&agrave; những d&ograve;ng code trở th&agrave;nh c&ocirc;ng cụ quyền năng để bạn chinh phục thế giới số. JavaScript kh&ocirc;ng chỉ l&agrave; ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất tr&ecirc;n h&agrave;nh tinh m&agrave; c&ograve;n l&agrave; "tr&aacute;i tim" của mọi trang web hiện đại. Từ việc tạo ra những hiệu ứng bắt mắt, những trang web tương t&aacute;c, đến việc x&acirc;y dựng c&aacute;c ứng dụng phức tạp - tất cả đều được hiện thực h&oacute;a qua JavaScript. Nhưng điều g&igrave; thực sự l&agrave;m n&ecirc;n sức hấp dẫn của ng&ocirc;n ngữ n&agrave;y?</p>
 <h3>Tại sao JavaScript l&agrave; ng&ocirc;n ngữ lập tr&igrave;nh đ&aacute;ng học nhất?</h3>
@@ -2664,7 +3243,7 @@ INSERT INTO public."Courses" VALUES ('eef4fafb-022a-430f-aad0-9416d37d656c', 'Ja
 </ul>
 <h3>H&atilde;y bắt đầu h&agrave;nh tr&igrave;nh của bạn!</h3>
 <p>JavaScript kh&ocirc;ng chỉ l&agrave; một ng&ocirc;n ngữ lập tr&igrave;nh, n&oacute; l&agrave; một h&agrave;nh tr&igrave;nh đầy th&uacute; vị v&agrave; th&aacute;ch thức. D&ugrave; bạn bắt đầu từ con số kh&ocirc;ng hay đ&atilde; c&oacute; nền tảng, kh&oacute;a học n&agrave;y sẽ trang bị cho bạn mọi thứ cần thiết để tiến xa hơn trong sự nghiệp lập tr&igrave;nh của m&igrave;nh. H&atilde;y bắt đầu h&agrave;nh tr&igrave;nh kh&aacute;m ph&aacute; v&agrave; l&agrave;m chủ JavaScript ngay h&ocirc;m nay!</p>
-<p><strong>Đăng k&yacute; ngay</strong> v&agrave; c&ugrave;ng ch&uacute;ng t&ocirc;i biến những &yacute; tưởng s&aacute;ng tạo của bạn th&agrave;nh hiện thực!</p>', 720000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/Javascript-co-ban__1__31400a8c572644149df6cb88a7c40005.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+<p><strong>Đăng k&yacute; ngay</strong> v&agrave; c&ugrave;ng ch&uacute;ng t&ocirc;i biến những &yacute; tưởng s&aacute;ng tạo của bạn th&agrave;nh hiện thực!</p>', 720000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Javascript-co-ban__1__31400a8c572644149df6cb88a7c40005.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Python cơ bản', '<h2>Tổng quan về Python:</h2>
 <h3>Giới thiệu Python:</h3>
 <p>Python được s&aacute;ng tạo bởi&nbsp;<strong>Guido van Rossum</strong>&nbsp;v&agrave;o những năm cuối thập ni&ecirc;n 80, đầu thập ni&ecirc;n 90 tại Viện nghi&ecirc;n cứu Quốc gia về To&aacute;n học v&agrave; Khoa học m&aacute;y t&iacute;nh ở H&agrave; Lan.</p>
@@ -2711,45 +3290,11 @@ INSERT INTO public."Courses" VALUES ('efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Py
 <li>Hiểu c&aacute;ch viết c&aacute;c v&ograve;ng lặp v&agrave; c&aacute;c c&acirc;u lệnh quyết định trong Python.</li>
 <li>Hiểu c&aacute;ch viết h&agrave;m v&agrave; truyền đối số trong Python.</li>
 <li>Hiểu c&aacute;ch x&acirc;y dựng v&agrave; đ&oacute;ng g&oacute;i c&aacute;c m&ocirc;-đun Python để sử dụng lại.</li>
-</ul>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/python-co-ban_b80bca9b238b4615b94541de28af00ae.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+</ul>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/python-co-ban_b80bca9b238b4615b94541de28af00ae.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('f9713740-694e-444f-98f3-d506f13c7914', 'SQL nâng cao', '<p>Ch&agrave;o mừng bạn đến với kh&oacute;a học <strong>SQL n&acirc;ng cao</strong>! Đ&acirc;y l&agrave; kh&oacute;a học đặc biệt được thiết kế d&agrave;nh cho c&aacute;c học sinh lớp 6, những người đ&atilde; ho&agrave;n th&agrave;nh kh&oacute;a học cơ bản "Nhập M&ocirc;n SQL: Thế Giới Dữ Liệu" v&agrave; mong muốn n&acirc;ng cao kỹ năng của m&igrave;nh trong việc quản l&yacute; v&agrave; xử l&yacute; dữ liệu.</p>
 <p>Kh&oacute;a học n&agrave;y sẽ gi&uacute;p bạn mở rộng kiến thức về SQL, kh&aacute;m ph&aacute; c&aacute;c kỹ thuật truy vấn phức tạp. Bạn sẽ học c&aacute;c h&agrave;m xử l&yacute; với c&aacute;c kiểu dữ liệu kh&aacute;c nhau để ứng dụng SQL v&agrave;o c&aacute;c b&agrave;i to&aacute;n thực tế. Đồng thời gi&uacute;p c&aacute;c bạn ph&aacute;t triển tư duy logic v&agrave; kỹ năng ph&acirc;n t&iacute;ch. Chuẩn bị tốt cho tương lai trong c&aacute;c lĩnh vực li&ecirc;n quan đến dữ liệu.</p>
 <p><strong>Phương ph&aacute;p học:</strong> Kh&oacute;a học kết hợp l&yacute; thuyết v&agrave; thực h&agrave;nh, gi&uacute;p bạn hiểu s&acirc;u v&agrave; &aacute;p dụng ngay những kiến thức đ&atilde; học. B&agrave;i tập thực h&agrave;nh từ cơ bản đến n&acirc;ng cao sẽ gi&uacute;p củng cố v&agrave; mở rộng kiến thức của bạn. Dự &aacute;n cuối kh&oacute;a l&agrave; cơ hội để bạn &aacute;p dụng to&agrave;n bộ kỹ năng v&agrave;o một b&agrave;i to&aacute;n thực tế, n&acirc;ng cao khả năng giải quyết vấn đề.</p>
-<p>Kh&oacute;a học <strong>SQL n&acirc;ng cao</strong>&nbsp;sẽ mở ra c&aacute;nh cửa cho bạn kh&aacute;m ph&aacute; s&acirc;u hơn v&agrave;o thế giới dữ liệu, gi&uacute;p bạn trở th&agrave;nh những chuy&ecirc;n gia trong lĩnh vực cơ sở dữ liệu v&agrave; l&agrave;m chủ kỹ năng xử l&yacute; dữ liệu phức tạp. H&atilde;y c&ugrave;ng ch&uacute;ng t&ocirc;i bước v&agrave;o h&agrave;nh tr&igrave;nh th&uacute; vị n&agrave;y v&agrave; l&agrave;m chủ thế giới dữ liệu!</p>', 900000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/image-course-05_ff526fa90b0b46dbaac4b98c2da521c0.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('f996fe4f-4ab1-4979-9193-3881a8a806c9', 'C++ nâng cao', '<h3 data-start="170" data-end="266">C++ N&acirc;ng Cao -&gt; Kh&oacute;a học chuy&ecirc;n s&acirc;u về con trỏ v&agrave; quản l&yacute; bộ nhớ</h3>
-<p class="" data-start="268" data-end="580">Trong lập tr&igrave;nh hệ thống, hiểu r&otilde; <strong data-start="302" data-end="313">con trỏ</strong>, <strong data-start="315" data-end="325">bộ nhớ</strong>, v&agrave; c&aacute;c cấu tr&uacute;c dữ liệu cơ bản l&agrave; nền tảng kh&ocirc;ng thể thiếu để ph&aacute;t triển phần mềm hiệu quả v&agrave; tối ưu. Kh&oacute;a học n&agrave;y sẽ gi&uacute;p bạn <strong data-start="454" data-end="493">nắm vững từ l&yacute; thuyết đến thực h&agrave;nh</strong> c&aacute;c kh&aacute;i niệm cốt l&otilde;i trong lập tr&igrave;nh C/C++, từ đ&oacute; x&acirc;y dựng tư duy hệ thống vững chắc.</p>
-<h3 data-start="587" data-end="615">Qua kh&oacute;a học n&agrave;y, bạn sẽ:</h3>
-<p class="" data-start="619" data-end="766">✅ <strong data-start="621" data-end="666">Hiểu r&otilde; về con trỏ từ cơ bản đến n&acirc;ng cao</strong>: nắm được c&aacute;ch khai b&aacute;o, sử dụng con trỏ, con trỏ h&agrave;m, con trỏ trỏ tới con trỏ v&agrave; ứng dụng thực tế.</p>
-<p class="" data-start="772" data-end="889">✅ <strong data-start="774" data-end="830">Hiểu s&acirc;u về mảng v&agrave; mối li&ecirc;n hệ giữa mảng v&agrave; con trỏ</strong>: bao gồm mảng một chiều, hai chiều, mảng k&yacute; tự, mảng động.</p>
-<p class="" data-start="893" data-end="1023">✅ <strong data-start="895" data-end="950">Ph&acirc;n biệt được truyền tham trị v&agrave; truyền tham chiếu</strong>: l&yacute; giải r&otilde; bản chất hoạt động của từng phương thức v&agrave; ứng dụng ph&ugrave; hợp.</p>
-<p class="" data-start="1027" data-end="1088">✅ <strong data-start="1029" data-end="1087">Hiểu v&agrave; sử dụng th&agrave;nh thạo 3 h&igrave;nh thức cấp ph&aacute;t bộ nhớ</strong>:</p>
-<ul data-start="1091" data-end="1231">
-<li class="" data-start="1091" data-end="1125">
-<p class="" data-start="1093" data-end="1125">Cấp ph&aacute;t bộ nhớ tự động (stack),</p>
-</li>
-<li class="" data-start="1128" data-end="1167">Cấp ph&aacute;t bộ nhớ tĩnh (static memory),</li>
-<li class="" data-start="1170" data-end="1231">
-<p class="" data-start="1172" data-end="1231">Cấp ph&aacute;t bộ nhớ động (heap) với <code data-start="1204" data-end="1212">malloc</code>, <code data-start="1214" data-end="1222">calloc</code>, <code data-start="1224" data-end="1230">free</code>.</p>
-</li>
-</ul>
-<p class="" data-start="1172" data-end="1231">✅ <strong data-start="1237" data-end="1269">L&agrave;m chủ c&aacute;c to&aacute;n tử tr&ecirc;n bit</strong>: thao t&aacute;c bitwise để xử l&yacute; dữ liệu ở mức thấp, tối ưu bộ nhớ v&agrave; tốc độ.</p>
-<p class="" data-start="1345" data-end="1457">✅ <strong data-start="1347" data-end="1391">Hiểu v&agrave; sử dụng kiểu dữ liệu c&oacute; cấu tr&uacute;c</strong>: như <code data-start="1397" data-end="1405">struct</code>, <code data-start="1407" data-end="1414">union</code>, v&agrave; c&aacute;c kỹ thuật tổ chức dữ liệu n&acirc;ng cao.</p>
-<p class="" data-start="1461" data-end="1598">✅ <strong data-start="1463" data-end="1491">Hiểu về struct alignment</strong> v&agrave; <strong data-start="1495" data-end="1540">t&iacute;nh to&aacute;n ch&iacute;nh x&aacute;c k&iacute;ch thước của struct</strong> trong bộ nhớ, từ đ&oacute; tối ưu hiệu quả lưu trữ v&agrave; truy xuất.</p>
-<h3 data-start="1605" data-end="1629">Kh&oacute;a học d&agrave;nh cho ai?</h3>
-<ul data-start="1631" data-end="1950">
-<li class="" data-start="1631" data-end="1707">
-<p class="" data-start="1633" data-end="1707">Sinh vi&ecirc;n c&ocirc;ng nghệ th&ocirc;ng tin, kỹ thuật phần mềm đang học lập tr&igrave;nh C/C++.</p>
-</li>
-<li class="" data-start="1708" data-end="1790">
-<p class="" data-start="1710" data-end="1790">Người học lập tr&igrave;nh hệ thống, muốn hiểu r&otilde; c&aacute;ch hoạt động của bộ nhớ v&agrave; con trỏ.</p>
-</li>
-<li class="" data-start="1791" data-end="1867">
-<p class="" data-start="1793" data-end="1867">Người chuẩn bị học lập tr&igrave;nh nh&uacute;ng hoặc ph&aacute;t triển phần mềm hiệu năng cao.</p>
-</li>
-<li class="" data-start="1868" data-end="1950">
-<p class="" data-start="1870" data-end="1950">Bất kỳ ai muốn <strong data-start="1885" data-end="1949">đ&agrave;o s&acirc;u tư duy lập tr&igrave;nh v&agrave; kỹ năng thao t&aacute;c bộ nhớ hiệu quả</strong>.</p>
-</li>
-</ul>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/C___Advance_1c572a2e59e5405cb057e864d3590d34.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+<p>Kh&oacute;a học <strong>SQL n&acirc;ng cao</strong>&nbsp;sẽ mở ra c&aacute;nh cửa cho bạn kh&aacute;m ph&aacute; s&acirc;u hơn v&agrave;o thế giới dữ liệu, gi&uacute;p bạn trở th&agrave;nh những chuy&ecirc;n gia trong lĩnh vực cơ sở dữ liệu v&agrave; l&agrave;m chủ kỹ năng xử l&yacute; dữ liệu phức tạp. H&atilde;y c&ugrave;ng ch&uacute;ng t&ocirc;i bước v&agrave;o h&agrave;nh tr&igrave;nh th&uacute; vị n&agrave;y v&agrave; l&agrave;m chủ thế giới dữ liệu!</p>', 900000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/image-course-05_ff526fa90b0b46dbaac4b98c2da521c0.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('fa7b1920-a356-48af-b27e-46550a64a8dc', 'C# cho người mới bắt đầu', '<p>Bạn đ&atilde; sẵn s&agrave;ng để n&acirc;ng cấp kỹ năng lập tr&igrave;nh của m&igrave;nh l&ecirc;n một tầm cao mới? Kh&oacute;a học n&agrave;y kh&ocirc;ng chỉ l&agrave; cơ hội để bạn l&agrave;m chủ ng&ocirc;n ngữ lập tr&igrave;nh C# m&agrave; c&ograve;n l&agrave; ch&igrave;a kh&oacute;a mở ra c&aacute;nh cửa dẫn đến những cơ hội v&ocirc; hạn trong thế giới c&ocirc;ng nghệ hiện đại.</p>
 <h2>L&yacute; do n&ecirc;n học C# .NET Core</h2>
 <h3>1. <strong>Nhu Cầu Tuyển Dụng Cao:</strong></h3>
@@ -2765,7 +3310,7 @@ INSERT INTO public."Courses" VALUES ('fa7b1920-a356-48af-b27e-46550a64a8dc', 'C#
 <h3>6. <strong>Tương Lai Rộng Mở với .NET 5 v&agrave; Sau N&agrave;y:</strong></h3>
 <p>Với sự ra đời của .NET 5 v&agrave; c&aacute;c phi&ecirc;n bản tiếp theo, Microsoft đ&atilde; hợp nhất .NET Core v&agrave; .NET Framework th&agrave;nh một nền tảng duy nhất. Điều n&agrave;y đảm bảo rằng C# .NET Core sẽ tiếp tục l&agrave; c&ocirc;ng nghệ cốt l&otilde;i trong tương lai, v&agrave; việc học n&oacute; ngay b&acirc;y giờ sẽ gi&uacute;p bạn đ&oacute;n đầu xu hướng c&ocirc;ng nghệ trong nhiều năm tới.</p>
 <h3>7. <strong>Tạo Ra C&aacute;c Ứng Dụng Đa Dạng:</strong></h3>
-<p>Với C# .NET Core, bạn c&oacute; thể tạo ra c&aacute;c ứng dụng web, dịch vụ đ&aacute;m m&acirc;y, ứng dụng m&aacute;y t&iacute;nh để b&agrave;n, ứng dụng di động, v&agrave; thậm ch&iacute; l&agrave; c&aacute;c giải ph&aacute;p IoT. Sự đa dạng n&agrave;y gi&uacute;p bạn c&oacute; thể đ&aacute;p ứng được nhiều y&ecirc;u cầu c&ocirc;ng việc kh&aacute;c nhau v&agrave; mở ra nhiều hướng ph&aacute;t triển sự nghiệp.</p>', 720000.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/csharp--cho-nguoi-moi-bat-dau_79d3d35fac7842fd950d8b8b05466797.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+<p>Với C# .NET Core, bạn c&oacute; thể tạo ra c&aacute;c ứng dụng web, dịch vụ đ&aacute;m m&acirc;y, ứng dụng m&aacute;y t&iacute;nh để b&agrave;n, ứng dụng di động, v&agrave; thậm ch&iacute; l&agrave; c&aacute;c giải ph&aacute;p IoT. Sự đa dạng n&agrave;y gi&uacute;p bạn c&oacute; thể đ&aacute;p ứng được nhiều y&ecirc;u cầu c&ocirc;ng việc kh&aacute;c nhau v&agrave; mở ra nhiều hướng ph&aacute;t triển sự nghiệp.</p>', 720000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/csharp--cho-nguoi-moi-bat-dau_79d3d35fac7842fd950d8b8b05466797.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 INSERT INTO public."Courses" VALUES ('fbd63a54-b48e-417a-afd7-351c843d39f8', 'Thuật toán căn bản', '<h3 data-start="164" data-end="204">Giới thiệu về Giải thuật (Thuật to&aacute;n)</h3>
 <p class="" data-start="210" data-end="613"><strong data-start="210" data-end="224">Giải thuật</strong> (hay <strong data-start="230" data-end="244">thuật to&aacute;n</strong>, tiếng Anh: <em data-start="257" data-end="269">Algorithms</em>) l&agrave; nền tảng cốt l&otilde;i trong lập tr&igrave;nh v&agrave; khoa học m&aacute;y t&iacute;nh. Đ&acirc;y l&agrave; <strong data-start="336" data-end="386">tập hợp c&aacute;c bước cụ thể, hữu hạn v&agrave; c&oacute; trật tự</strong> nhằm giải quyết một b&agrave;i to&aacute;n cụ thể.<br data-start="423" data-end="426" />D&ugrave; được triển khai bằng bất kỳ ng&ocirc;n ngữ lập tr&igrave;nh n&agrave;o (C++, Java, Python...), giải thuật vẫn lu&ocirc;n giữ nguy&ecirc;n bản chất &ndash; một chuỗi c&aacute;c hướng dẫn r&otilde; r&agrave;ng v&agrave; logic dẫn đến kết quả mong muốn.</p>
 <h3 data-start="620" data-end="657">🔍 Tại sao bạn n&ecirc;n học Giải thuật?</h3>
@@ -2813,11 +3358,25 @@ INSERT INTO public."Courses" VALUES ('fbd63a54-b48e-417a-afd7-351c843d39f8', 'Th
 <li class="" data-start="2533" data-end="2597">
 <p class="" data-start="2535" data-end="2597">Biết c&aacute;ch khai b&aacute;o biến, h&agrave;m, cấu tr&uacute;c điều kiện, v&ograve;ng lặp,...</p>
 </li>
-</ul>', 0.0, 'https://s3-hfx03.fptcloud.com//codelearnstorage/files/thumbnails/thuat-toan-can-ban_c1459ce4671f4b3a985faf88420a8103.png', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', NULL, false);
+</ul>', 0.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/thuat-toan-can-ban_c1459ce4671f4b3a985faf88420a8103.png', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019d75a6-f2d8-76a5-80fe-a536b342ab60', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
+INSERT INTO public."Courses" VALUES ('fc632885-682d-40c5-8b20-23c4c1627995', 'Lộ trình Python A-Z', '<p><span style="font-size: 18pt;"><strong>COMBO KH&Oacute;A HỌC PYTHON TO&Agrave;N DIỆN - TỪ CƠ BẢN ĐẾN N&Acirc;NG CAO</strong></span></p>
+<p><span data-teams="true">Bạn muốn học lập tr&igrave;nh bằng Python nhưng kh&ocirc;ng biết bắt đầu từ đ&acirc;u? Bạn đang t&igrave;m kiếm 1 lộ tr&igrave;nh học Python thống nhất từ cơ bản tới n&acirc;ng cao? Combo kh&oacute;a học Python to&agrave;n diện của ch&uacute;ng t&ocirc;i sẽ đồng h&agrave;nh c&ugrave;ng bạn trong h&agrave;nh tr&igrave;nh chinh phục ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất hiện nay.</span></p>
+<p><strong>🔰 Kh&oacute;a 1: Python cho người mới bắt đầu</strong></p>
+<ul>
+<li>L&agrave;m quen với lập tr&igrave;nh v&agrave; Python từ con số 0</li>
+<li>Nắm vững c&uacute; ph&aacute;p cơ bản: biến, điều kiện, v&ograve;ng lặp, h&agrave;m</li>
+<li>Thực h&agrave;nh với c&aacute;c b&agrave;i tập từ đơn giản đến phức tạp</li>
+</ul>
+<p><strong>🚀 Kh&oacute;a 2: Python n&acirc;ng cao</strong></p>
+<ul>
+<li>Lập tr&igrave;nh hướng đối tượng (OOP) trong Python</li>
+<li>Xử l&yacute; tệp tin, thư mục</li>
+<li>L&agrave;m việc với c&aacute;c Module v&agrave; Packages</li>
+</ul>', 1620000.0, 'https:/s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Python-A-Z_a410095bb212468fbd948d1224ec5801.jpg', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019d75a6-f345-73ab-ade0-25c75e2b379a', NULL, '2026-04-10 04:29:29.366764+00', '2026-04-10 06:35:22.037955+00', false);
 
 
 --
--- TOC entry 4057 (class 0 OID 17030)
+-- TOC entry 4133 (class 0 OID 17030)
 -- Dependencies: 239
 -- Data for Name: Enrollments; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -2825,7 +3384,7 @@ INSERT INTO public."Courses" VALUES ('fbd63a54-b48e-417a-afd7-351c843d39f8', 'Th
 
 
 --
--- TOC entry 4053 (class 0 OID 16979)
+-- TOC entry 4129 (class 0 OID 16979)
 -- Dependencies: 235
 -- Data for Name: FileChunks; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -2833,7 +3392,7 @@ INSERT INTO public."Courses" VALUES ('fbd63a54-b48e-417a-afd7-351c843d39f8', 'Th
 
 
 --
--- TOC entry 4040 (class 0 OID 16849)
+-- TOC entry 4116 (class 0 OID 16849)
 -- Dependencies: 222
 -- Data for Name: FileEntries; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -2841,7 +3400,7 @@ INSERT INTO public."Courses" VALUES ('fbd63a54-b48e-417a-afd7-351c843d39f8', 'Th
 
 
 --
--- TOC entry 4060 (class 0 OID 17079)
+-- TOC entry 4136 (class 0 OID 17079)
 -- Dependencies: 242
 -- Data for Name: FileEntryEmbeddings; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -2849,7 +3408,7 @@ INSERT INTO public."Courses" VALUES ('fbd63a54-b48e-417a-afd7-351c843d39f8', 'Th
 
 
 --
--- TOC entry 4062 (class 0 OID 17113)
+-- TOC entry 4138 (class 0 OID 17113)
 -- Dependencies: 244
 -- Data for Name: LessonCodings; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -2857,7 +3416,7 @@ INSERT INTO public."Courses" VALUES ('fbd63a54-b48e-417a-afd7-351c843d39f8', 'Th
 
 
 --
--- TOC entry 4063 (class 0 OID 17125)
+-- TOC entry 4139 (class 0 OID 17125)
 -- Dependencies: 245
 -- Data for Name: LessonMaterials; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -2865,7 +3424,7 @@ INSERT INTO public."Courses" VALUES ('fbd63a54-b48e-417a-afd7-351c843d39f8', 'Th
 
 
 --
--- TOC entry 4064 (class 0 OID 17147)
+-- TOC entry 4140 (class 0 OID 17147)
 -- Dependencies: 246
 -- Data for Name: LessonQuizzes; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -2873,7 +3432,7 @@ INSERT INTO public."Courses" VALUES ('fbd63a54-b48e-417a-afd7-351c843d39f8', 'Th
 
 
 --
--- TOC entry 4065 (class 0 OID 17159)
+-- TOC entry 4141 (class 0 OID 17159)
 -- Dependencies: 247
 -- Data for Name: LessonReadings; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -2881,7 +3440,7 @@ INSERT INTO public."Courses" VALUES ('fbd63a54-b48e-417a-afd7-351c843d39f8', 'Th
 
 
 --
--- TOC entry 4066 (class 0 OID 17171)
+-- TOC entry 4142 (class 0 OID 17171)
 -- Dependencies: 248
 -- Data for Name: LessonVideos; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -2889,7 +3448,7 @@ INSERT INTO public."Courses" VALUES ('fbd63a54-b48e-417a-afd7-351c843d39f8', 'Th
 
 
 --
--- TOC entry 4061 (class 0 OID 17096)
+-- TOC entry 4137 (class 0 OID 17096)
 -- Dependencies: 243
 -- Data for Name: Lessons; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -3359,7 +3918,7 @@ INSERT INTO public."Lessons" VALUES ('fda13868-16ed-4f54-8a89-b7facab5be53', '1e
 
 
 --
--- TOC entry 4050 (class 0 OID 16938)
+-- TOC entry 4126 (class 0 OID 16938)
 -- Dependencies: 232
 -- Data for Name: Notifications; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -3367,7 +3926,7 @@ INSERT INTO public."Lessons" VALUES ('fda13868-16ed-4f54-8a89-b7facab5be53', '1e
 
 
 --
--- TOC entry 4058 (class 0 OID 17045)
+-- TOC entry 4134 (class 0 OID 17045)
 -- Dependencies: 240
 -- Data for Name: OrderItems; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -3375,7 +3934,7 @@ INSERT INTO public."Lessons" VALUES ('fda13868-16ed-4f54-8a89-b7facab5be53', '1e
 
 
 --
--- TOC entry 4051 (class 0 OID 16950)
+-- TOC entry 4127 (class 0 OID 16950)
 -- Dependencies: 233
 -- Data for Name: Orders; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -3383,7 +3942,7 @@ INSERT INTO public."Lessons" VALUES ('fda13868-16ed-4f54-8a89-b7facab5be53', '1e
 
 
 --
--- TOC entry 4041 (class 0 OID 16856)
+-- TOC entry 4117 (class 0 OID 16856)
 -- Dependencies: 223
 -- Data for Name: OutboxMessages; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -3391,7 +3950,7 @@ INSERT INTO public."Lessons" VALUES ('fda13868-16ed-4f54-8a89-b7facab5be53', '1e
 
 
 --
--- TOC entry 4054 (class 0 OID 16991)
+-- TOC entry 4130 (class 0 OID 16991)
 -- Dependencies: 236
 -- Data for Name: Payments; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -3399,7 +3958,7 @@ INSERT INTO public."Lessons" VALUES ('fda13868-16ed-4f54-8a89-b7facab5be53', '1e
 
 
 --
--- TOC entry 4059 (class 0 OID 17062)
+-- TOC entry 4135 (class 0 OID 17062)
 -- Dependencies: 241
 -- Data for Name: Reviews; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -3407,7 +3966,7 @@ INSERT INTO public."Lessons" VALUES ('fda13868-16ed-4f54-8a89-b7facab5be53', '1e
 
 
 --
--- TOC entry 4067 (class 0 OID 17183)
+-- TOC entry 4143 (class 0 OID 17183)
 -- Dependencies: 249
 -- Data for Name: UserLessonProgresses; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -3415,7 +3974,7 @@ INSERT INTO public."Lessons" VALUES ('fda13868-16ed-4f54-8a89-b7facab5be53', '1e
 
 
 --
--- TOC entry 4036 (class 0 OID 16390)
+-- TOC entry 4112 (class 0 OID 16390)
 -- Dependencies: 218
 -- Data for Name: __EFMigrationsHistory; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -3424,7 +3983,88 @@ INSERT INTO public."__EFMigrationsHistory" VALUES ('20260410042744_Initial', '10
 
 
 --
--- TOC entry 4074 (class 0 OID 0)
+-- TOC entry 4181 (class 0 OID 0)
+-- Dependencies: 269
+-- Name: aggregatedcounter_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
+--
+
+SELECT pg_catalog.setval('hangfire.aggregatedcounter_id_seq', 1, false);
+
+
+--
+-- TOC entry 4182 (class 0 OID 0)
+-- Dependencies: 251
+-- Name: counter_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
+--
+
+SELECT pg_catalog.setval('hangfire.counter_id_seq', 1, false);
+
+
+--
+-- TOC entry 4183 (class 0 OID 0)
+-- Dependencies: 253
+-- Name: hash_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
+--
+
+SELECT pg_catalog.setval('hangfire.hash_id_seq', 1, false);
+
+
+--
+-- TOC entry 4184 (class 0 OID 0)
+-- Dependencies: 255
+-- Name: job_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
+--
+
+SELECT pg_catalog.setval('hangfire.job_id_seq', 1, false);
+
+
+--
+-- TOC entry 4185 (class 0 OID 0)
+-- Dependencies: 266
+-- Name: jobparameter_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
+--
+
+SELECT pg_catalog.setval('hangfire.jobparameter_id_seq', 1, false);
+
+
+--
+-- TOC entry 4186 (class 0 OID 0)
+-- Dependencies: 259
+-- Name: jobqueue_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
+--
+
+SELECT pg_catalog.setval('hangfire.jobqueue_id_seq', 1, false);
+
+
+--
+-- TOC entry 4187 (class 0 OID 0)
+-- Dependencies: 261
+-- Name: list_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
+--
+
+SELECT pg_catalog.setval('hangfire.list_id_seq', 1, false);
+
+
+--
+-- TOC entry 4188 (class 0 OID 0)
+-- Dependencies: 264
+-- Name: set_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
+--
+
+SELECT pg_catalog.setval('hangfire.set_id_seq', 1, false);
+
+
+--
+-- TOC entry 4189 (class 0 OID 0)
+-- Dependencies: 257
+-- Name: state_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
+--
+
+SELECT pg_catalog.setval('hangfire.state_id_seq', 1, false);
+
+
+--
+-- TOC entry 4190 (class 0 OID 0)
 -- Dependencies: 224
 -- Name: AspNetRoleClaims_Id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -3433,7 +4073,7 @@ SELECT pg_catalog.setval('public."AspNetRoleClaims_Id_seq"', 1, false);
 
 
 --
--- TOC entry 4075 (class 0 OID 0)
+-- TOC entry 4191 (class 0 OID 0)
 -- Dependencies: 226
 -- Name: AspNetUserClaims_Id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -3442,7 +4082,144 @@ SELECT pg_catalog.setval('public."AspNetUserClaims_Id_seq"', 1, false);
 
 
 --
--- TOC entry 3779 (class 2606 OID 16870)
+-- TOC entry 3929 (class 2606 OID 17561)
+-- Name: aggregatedcounter aggregatedcounter_key_key; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.aggregatedcounter
+    ADD CONSTRAINT aggregatedcounter_key_key UNIQUE (key);
+
+
+--
+-- TOC entry 3931 (class 2606 OID 17559)
+-- Name: aggregatedcounter aggregatedcounter_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.aggregatedcounter
+    ADD CONSTRAINT aggregatedcounter_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3891 (class 2606 OID 17395)
+-- Name: counter counter_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.counter
+    ADD CONSTRAINT counter_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3895 (class 2606 OID 17530)
+-- Name: hash hash_key_field_key; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.hash
+    ADD CONSTRAINT hash_key_field_key UNIQUE (key, field);
+
+
+--
+-- TOC entry 3897 (class 2606 OID 17404)
+-- Name: hash hash_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.hash
+    ADD CONSTRAINT hash_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3903 (class 2606 OID 17414)
+-- Name: job job_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.job
+    ADD CONSTRAINT job_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3925 (class 2606 OID 17464)
+-- Name: jobparameter jobparameter_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.jobparameter
+    ADD CONSTRAINT jobparameter_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3911 (class 2606 OID 17487)
+-- Name: jobqueue jobqueue_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.jobqueue
+    ADD CONSTRAINT jobqueue_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3914 (class 2606 OID 17507)
+-- Name: list list_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.list
+    ADD CONSTRAINT list_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3927 (class 2606 OID 17386)
+-- Name: lock lock_resource_key; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.lock
+    ADD CONSTRAINT lock_resource_key UNIQUE (resource);
+
+ALTER TABLE ONLY hangfire.lock REPLICA IDENTITY USING INDEX lock_resource_key;
+
+
+--
+-- TOC entry 3889 (class 2606 OID 17265)
+-- Name: schema schema_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.schema
+    ADD CONSTRAINT schema_pkey PRIMARY KEY (version);
+
+
+--
+-- TOC entry 3916 (class 2606 OID 17533)
+-- Name: server server_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.server
+    ADD CONSTRAINT server_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3920 (class 2606 OID 17535)
+-- Name: set set_key_value_key; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.set
+    ADD CONSTRAINT set_key_value_key UNIQUE (key, value);
+
+
+--
+-- TOC entry 3922 (class 2606 OID 17516)
+-- Name: set set_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.set
+    ADD CONSTRAINT set_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3906 (class 2606 OID 17441)
+-- Name: state state_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.state
+    ADD CONSTRAINT state_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3809 (class 2606 OID 16870)
 -- Name: AspNetRoleClaims PK_AspNetRoleClaims; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3451,7 +4228,7 @@ ALTER TABLE ONLY public."AspNetRoleClaims"
 
 
 --
--- TOC entry 3765 (class 2606 OID 16834)
+-- TOC entry 3795 (class 2606 OID 16834)
 -- Name: AspNetRoles PK_AspNetRoles; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3460,7 +4237,7 @@ ALTER TABLE ONLY public."AspNetRoles"
 
 
 --
--- TOC entry 3782 (class 2606 OID 16883)
+-- TOC entry 3812 (class 2606 OID 16883)
 -- Name: AspNetUserClaims PK_AspNetUserClaims; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3469,7 +4246,7 @@ ALTER TABLE ONLY public."AspNetUserClaims"
 
 
 --
--- TOC entry 3785 (class 2606 OID 16895)
+-- TOC entry 3815 (class 2606 OID 16895)
 -- Name: AspNetUserLogins PK_AspNetUserLogins; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3478,7 +4255,7 @@ ALTER TABLE ONLY public."AspNetUserLogins"
 
 
 --
--- TOC entry 3788 (class 2606 OID 16905)
+-- TOC entry 3818 (class 2606 OID 16905)
 -- Name: AspNetUserRoles PK_AspNetUserRoles; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3487,7 +4264,7 @@ ALTER TABLE ONLY public."AspNetUserRoles"
 
 
 --
--- TOC entry 3790 (class 2606 OID 16922)
+-- TOC entry 3820 (class 2606 OID 16922)
 -- Name: AspNetUserTokens PK_AspNetUserTokens; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3496,7 +4273,7 @@ ALTER TABLE ONLY public."AspNetUserTokens"
 
 
 --
--- TOC entry 3769 (class 2606 OID 16841)
+-- TOC entry 3799 (class 2606 OID 16841)
 -- Name: AspNetUsers PK_AspNetUsers; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3505,7 +4282,7 @@ ALTER TABLE ONLY public."AspNetUsers"
 
 
 --
--- TOC entry 3813 (class 2606 OID 17007)
+-- TOC entry 3843 (class 2606 OID 17007)
 -- Name: CartItems PK_CartItems; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3514,7 +4291,7 @@ ALTER TABLE ONLY public."CartItems"
 
 
 --
--- TOC entry 3793 (class 2606 OID 16932)
+-- TOC entry 3823 (class 2606 OID 16932)
 -- Name: Carts PK_Carts; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3523,7 +4300,7 @@ ALTER TABLE ONLY public."Carts"
 
 
 --
--- TOC entry 3772 (class 2606 OID 16848)
+-- TOC entry 3802 (class 2606 OID 16848)
 -- Name: Categories PK_Categories; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3532,7 +4309,7 @@ ALTER TABLE ONLY public."Categories"
 
 
 --
--- TOC entry 3816 (class 2606 OID 17024)
+-- TOC entry 3846 (class 2606 OID 17024)
 -- Name: Chapters PK_Chapters; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3541,7 +4318,7 @@ ALTER TABLE ONLY public."Chapters"
 
 
 --
--- TOC entry 3803 (class 2606 OID 16968)
+-- TOC entry 3833 (class 2606 OID 16968)
 -- Name: Courses PK_Courses; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3550,7 +4327,7 @@ ALTER TABLE ONLY public."Courses"
 
 
 --
--- TOC entry 3820 (class 2606 OID 17034)
+-- TOC entry 3850 (class 2606 OID 17034)
 -- Name: Enrollments PK_Enrollments; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3559,7 +4336,7 @@ ALTER TABLE ONLY public."Enrollments"
 
 
 --
--- TOC entry 3806 (class 2606 OID 16985)
+-- TOC entry 3836 (class 2606 OID 16985)
 -- Name: FileChunks PK_FileChunks; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3568,7 +4345,7 @@ ALTER TABLE ONLY public."FileChunks"
 
 
 --
--- TOC entry 3774 (class 2606 OID 16855)
+-- TOC entry 3804 (class 2606 OID 16855)
 -- Name: FileEntries PK_FileEntries; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3577,7 +4354,7 @@ ALTER TABLE ONLY public."FileEntries"
 
 
 --
--- TOC entry 3832 (class 2606 OID 17085)
+-- TOC entry 3862 (class 2606 OID 17085)
 -- Name: FileEntryEmbeddings PK_FileEntryEmbeddings; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3586,7 +4363,7 @@ ALTER TABLE ONLY public."FileEntryEmbeddings"
 
 
 --
--- TOC entry 3839 (class 2606 OID 17119)
+-- TOC entry 3869 (class 2606 OID 17119)
 -- Name: LessonCodings PK_LessonCodings; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3595,7 +4372,7 @@ ALTER TABLE ONLY public."LessonCodings"
 
 
 --
--- TOC entry 3844 (class 2606 OID 17131)
+-- TOC entry 3874 (class 2606 OID 17131)
 -- Name: LessonMaterials PK_LessonMaterials; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3604,7 +4381,7 @@ ALTER TABLE ONLY public."LessonMaterials"
 
 
 --
--- TOC entry 3847 (class 2606 OID 17153)
+-- TOC entry 3877 (class 2606 OID 17153)
 -- Name: LessonQuizzes PK_LessonQuizzes; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3613,7 +4390,7 @@ ALTER TABLE ONLY public."LessonQuizzes"
 
 
 --
--- TOC entry 3850 (class 2606 OID 17165)
+-- TOC entry 3880 (class 2606 OID 17165)
 -- Name: LessonReadings PK_LessonReadings; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3622,7 +4399,7 @@ ALTER TABLE ONLY public."LessonReadings"
 
 
 --
--- TOC entry 3853 (class 2606 OID 17177)
+-- TOC entry 3883 (class 2606 OID 17177)
 -- Name: LessonVideos PK_LessonVideos; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3631,7 +4408,7 @@ ALTER TABLE ONLY public."LessonVideos"
 
 
 --
--- TOC entry 3836 (class 2606 OID 17102)
+-- TOC entry 3866 (class 2606 OID 17102)
 -- Name: Lessons PK_Lessons; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3640,7 +4417,7 @@ ALTER TABLE ONLY public."Lessons"
 
 
 --
--- TOC entry 3796 (class 2606 OID 16944)
+-- TOC entry 3826 (class 2606 OID 16944)
 -- Name: Notifications PK_Notifications; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3649,7 +4426,7 @@ ALTER TABLE ONLY public."Notifications"
 
 
 --
--- TOC entry 3824 (class 2606 OID 17051)
+-- TOC entry 3854 (class 2606 OID 17051)
 -- Name: OrderItems PK_OrderItems; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3658,7 +4435,7 @@ ALTER TABLE ONLY public."OrderItems"
 
 
 --
--- TOC entry 3799 (class 2606 OID 16956)
+-- TOC entry 3829 (class 2606 OID 16956)
 -- Name: Orders PK_Orders; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3667,7 +4444,7 @@ ALTER TABLE ONLY public."Orders"
 
 
 --
--- TOC entry 3776 (class 2606 OID 16862)
+-- TOC entry 3806 (class 2606 OID 16862)
 -- Name: OutboxMessages PK_OutboxMessages; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3676,7 +4453,7 @@ ALTER TABLE ONLY public."OutboxMessages"
 
 
 --
--- TOC entry 3809 (class 2606 OID 16997)
+-- TOC entry 3839 (class 2606 OID 16997)
 -- Name: Payments PK_Payments; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3685,7 +4462,7 @@ ALTER TABLE ONLY public."Payments"
 
 
 --
--- TOC entry 3828 (class 2606 OID 17068)
+-- TOC entry 3858 (class 2606 OID 17068)
 -- Name: Reviews PK_Reviews; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3694,7 +4471,7 @@ ALTER TABLE ONLY public."Reviews"
 
 
 --
--- TOC entry 3857 (class 2606 OID 17187)
+-- TOC entry 3887 (class 2606 OID 17187)
 -- Name: UserLessonProgresses PK_UserLessonProgresses; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3703,7 +4480,7 @@ ALTER TABLE ONLY public."UserLessonProgresses"
 
 
 --
--- TOC entry 3763 (class 2606 OID 16394)
+-- TOC entry 3793 (class 2606 OID 16394)
 -- Name: __EFMigrationsHistory PK___EFMigrationsHistory; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3712,7 +4489,119 @@ ALTER TABLE ONLY public."__EFMigrationsHistory"
 
 
 --
--- TOC entry 3767 (class 1259 OID 17203)
+-- TOC entry 3892 (class 1259 OID 17562)
+-- Name: ix_hangfire_counter_expireat; Type: INDEX; Schema: hangfire; Owner: -
+--
+
+CREATE INDEX ix_hangfire_counter_expireat ON hangfire.counter USING btree (expireat);
+
+
+--
+-- TOC entry 3893 (class 1259 OID 17524)
+-- Name: ix_hangfire_counter_key; Type: INDEX; Schema: hangfire; Owner: -
+--
+
+CREATE INDEX ix_hangfire_counter_key ON hangfire.counter USING btree (key);
+
+
+--
+-- TOC entry 3898 (class 1259 OID 17563)
+-- Name: ix_hangfire_hash_expireat; Type: INDEX; Schema: hangfire; Owner: -
+--
+
+CREATE INDEX ix_hangfire_hash_expireat ON hangfire.hash USING btree (expireat);
+
+
+--
+-- TOC entry 3899 (class 1259 OID 17564)
+-- Name: ix_hangfire_job_expireat; Type: INDEX; Schema: hangfire; Owner: -
+--
+
+CREATE INDEX ix_hangfire_job_expireat ON hangfire.job USING btree (expireat);
+
+
+--
+-- TOC entry 3900 (class 1259 OID 17531)
+-- Name: ix_hangfire_job_statename; Type: INDEX; Schema: hangfire; Owner: -
+--
+
+CREATE INDEX ix_hangfire_job_statename ON hangfire.job USING btree (statename);
+
+
+--
+-- TOC entry 3901 (class 1259 OID 17599)
+-- Name: ix_hangfire_job_statename_is_not_null; Type: INDEX; Schema: hangfire; Owner: -
+--
+
+CREATE INDEX ix_hangfire_job_statename_is_not_null ON hangfire.job USING btree (statename) INCLUDE (id) WHERE (statename IS NOT NULL);
+
+
+--
+-- TOC entry 3923 (class 1259 OID 17536)
+-- Name: ix_hangfire_jobparameter_jobidandname; Type: INDEX; Schema: hangfire; Owner: -
+--
+
+CREATE INDEX ix_hangfire_jobparameter_jobidandname ON hangfire.jobparameter USING btree (jobid, name);
+
+
+--
+-- TOC entry 3907 (class 1259 OID 17598)
+-- Name: ix_hangfire_jobqueue_fetchedat_queue_jobid; Type: INDEX; Schema: hangfire; Owner: -
+--
+
+CREATE INDEX ix_hangfire_jobqueue_fetchedat_queue_jobid ON hangfire.jobqueue USING btree (fetchedat NULLS FIRST, queue, jobid);
+
+
+--
+-- TOC entry 3908 (class 1259 OID 17496)
+-- Name: ix_hangfire_jobqueue_jobidandqueue; Type: INDEX; Schema: hangfire; Owner: -
+--
+
+CREATE INDEX ix_hangfire_jobqueue_jobidandqueue ON hangfire.jobqueue USING btree (jobid, queue);
+
+
+--
+-- TOC entry 3909 (class 1259 OID 17565)
+-- Name: ix_hangfire_jobqueue_queueandfetchedat; Type: INDEX; Schema: hangfire; Owner: -
+--
+
+CREATE INDEX ix_hangfire_jobqueue_queueandfetchedat ON hangfire.jobqueue USING btree (queue, fetchedat);
+
+
+--
+-- TOC entry 3912 (class 1259 OID 17567)
+-- Name: ix_hangfire_list_expireat; Type: INDEX; Schema: hangfire; Owner: -
+--
+
+CREATE INDEX ix_hangfire_list_expireat ON hangfire.list USING btree (expireat);
+
+
+--
+-- TOC entry 3917 (class 1259 OID 17568)
+-- Name: ix_hangfire_set_expireat; Type: INDEX; Schema: hangfire; Owner: -
+--
+
+CREATE INDEX ix_hangfire_set_expireat ON hangfire.set USING btree (expireat);
+
+
+--
+-- TOC entry 3918 (class 1259 OID 17550)
+-- Name: ix_hangfire_set_key_score; Type: INDEX; Schema: hangfire; Owner: -
+--
+
+CREATE INDEX ix_hangfire_set_key_score ON hangfire.set USING btree (key, score);
+
+
+--
+-- TOC entry 3904 (class 1259 OID 17449)
+-- Name: ix_hangfire_state_jobid; Type: INDEX; Schema: hangfire; Owner: -
+--
+
+CREATE INDEX ix_hangfire_state_jobid ON hangfire.state USING btree (jobid);
+
+
+--
+-- TOC entry 3797 (class 1259 OID 17203)
 -- Name: EmailIndex; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3720,7 +4609,7 @@ CREATE INDEX "EmailIndex" ON public."AspNetUsers" USING btree ("NormalizedEmail"
 
 
 --
--- TOC entry 3777 (class 1259 OID 17198)
+-- TOC entry 3807 (class 1259 OID 17198)
 -- Name: IX_AspNetRoleClaims_RoleId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3728,7 +4617,7 @@ CREATE INDEX "IX_AspNetRoleClaims_RoleId" ON public."AspNetRoleClaims" USING btr
 
 
 --
--- TOC entry 3780 (class 1259 OID 17200)
+-- TOC entry 3810 (class 1259 OID 17200)
 -- Name: IX_AspNetUserClaims_UserId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3736,7 +4625,7 @@ CREATE INDEX "IX_AspNetUserClaims_UserId" ON public."AspNetUserClaims" USING btr
 
 
 --
--- TOC entry 3783 (class 1259 OID 17201)
+-- TOC entry 3813 (class 1259 OID 17201)
 -- Name: IX_AspNetUserLogins_UserId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3744,7 +4633,7 @@ CREATE INDEX "IX_AspNetUserLogins_UserId" ON public."AspNetUserLogins" USING btr
 
 
 --
--- TOC entry 3786 (class 1259 OID 17202)
+-- TOC entry 3816 (class 1259 OID 17202)
 -- Name: IX_AspNetUserRoles_RoleId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3752,7 +4641,7 @@ CREATE INDEX "IX_AspNetUserRoles_RoleId" ON public."AspNetUserRoles" USING btree
 
 
 --
--- TOC entry 3810 (class 1259 OID 17205)
+-- TOC entry 3840 (class 1259 OID 17205)
 -- Name: IX_CartItems_CartId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3760,7 +4649,7 @@ CREATE INDEX "IX_CartItems_CartId" ON public."CartItems" USING btree ("CartId");
 
 
 --
--- TOC entry 3811 (class 1259 OID 17206)
+-- TOC entry 3841 (class 1259 OID 17206)
 -- Name: IX_CartItems_CourseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3768,7 +4657,7 @@ CREATE INDEX "IX_CartItems_CourseId" ON public."CartItems" USING btree ("CourseI
 
 
 --
--- TOC entry 3791 (class 1259 OID 17207)
+-- TOC entry 3821 (class 1259 OID 17207)
 -- Name: IX_Carts_StudentId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3776,7 +4665,7 @@ CREATE INDEX "IX_Carts_StudentId" ON public."Carts" USING btree ("StudentId");
 
 
 --
--- TOC entry 3814 (class 1259 OID 17208)
+-- TOC entry 3844 (class 1259 OID 17208)
 -- Name: IX_Chapters_CourseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3784,7 +4673,7 @@ CREATE INDEX "IX_Chapters_CourseId" ON public."Chapters" USING btree ("CourseId"
 
 
 --
--- TOC entry 3800 (class 1259 OID 17209)
+-- TOC entry 3830 (class 1259 OID 17209)
 -- Name: IX_Courses_CategoryId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3792,7 +4681,7 @@ CREATE INDEX "IX_Courses_CategoryId" ON public."Courses" USING btree ("CategoryI
 
 
 --
--- TOC entry 3801 (class 1259 OID 17210)
+-- TOC entry 3831 (class 1259 OID 17210)
 -- Name: IX_Courses_InstructorId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3800,7 +4689,7 @@ CREATE INDEX "IX_Courses_InstructorId" ON public."Courses" USING btree ("Instruc
 
 
 --
--- TOC entry 3817 (class 1259 OID 17211)
+-- TOC entry 3847 (class 1259 OID 17211)
 -- Name: IX_Enrollments_CourseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3808,7 +4697,7 @@ CREATE INDEX "IX_Enrollments_CourseId" ON public."Enrollments" USING btree ("Cou
 
 
 --
--- TOC entry 3818 (class 1259 OID 17212)
+-- TOC entry 3848 (class 1259 OID 17212)
 -- Name: IX_Enrollments_UserId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3816,7 +4705,7 @@ CREATE INDEX "IX_Enrollments_UserId" ON public."Enrollments" USING btree ("UserI
 
 
 --
--- TOC entry 3804 (class 1259 OID 17213)
+-- TOC entry 3834 (class 1259 OID 17213)
 -- Name: IX_FileChunks_FileEntryId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3824,7 +4713,7 @@ CREATE INDEX "IX_FileChunks_FileEntryId" ON public."FileChunks" USING btree ("Fi
 
 
 --
--- TOC entry 3829 (class 1259 OID 17214)
+-- TOC entry 3859 (class 1259 OID 17214)
 -- Name: IX_FileEntryEmbeddings_FileChunkId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3832,7 +4721,7 @@ CREATE UNIQUE INDEX "IX_FileEntryEmbeddings_FileChunkId" ON public."FileEntryEmb
 
 
 --
--- TOC entry 3830 (class 1259 OID 17215)
+-- TOC entry 3860 (class 1259 OID 17215)
 -- Name: IX_FileEntryEmbeddings_FileEntryId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3840,7 +4729,7 @@ CREATE INDEX "IX_FileEntryEmbeddings_FileEntryId" ON public."FileEntryEmbeddings
 
 
 --
--- TOC entry 3837 (class 1259 OID 17216)
+-- TOC entry 3867 (class 1259 OID 17216)
 -- Name: IX_LessonCodings_LessonId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3848,7 +4737,7 @@ CREATE UNIQUE INDEX "IX_LessonCodings_LessonId" ON public."LessonCodings" USING 
 
 
 --
--- TOC entry 3840 (class 1259 OID 17217)
+-- TOC entry 3870 (class 1259 OID 17217)
 -- Name: IX_LessonMaterials_DocumentFileId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3856,7 +4745,7 @@ CREATE UNIQUE INDEX "IX_LessonMaterials_DocumentFileId" ON public."LessonMateria
 
 
 --
--- TOC entry 3841 (class 1259 OID 17218)
+-- TOC entry 3871 (class 1259 OID 17218)
 -- Name: IX_LessonMaterials_LessonId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3864,7 +4753,7 @@ CREATE INDEX "IX_LessonMaterials_LessonId" ON public."LessonMaterials" USING btr
 
 
 --
--- TOC entry 3842 (class 1259 OID 17219)
+-- TOC entry 3872 (class 1259 OID 17219)
 -- Name: IX_LessonMaterials_SlideFileId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3872,7 +4761,7 @@ CREATE UNIQUE INDEX "IX_LessonMaterials_SlideFileId" ON public."LessonMaterials"
 
 
 --
--- TOC entry 3845 (class 1259 OID 17220)
+-- TOC entry 3875 (class 1259 OID 17220)
 -- Name: IX_LessonQuizzes_LessonId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3880,7 +4769,7 @@ CREATE UNIQUE INDEX "IX_LessonQuizzes_LessonId" ON public."LessonQuizzes" USING 
 
 
 --
--- TOC entry 3848 (class 1259 OID 17221)
+-- TOC entry 3878 (class 1259 OID 17221)
 -- Name: IX_LessonReadings_LessonId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3888,7 +4777,7 @@ CREATE UNIQUE INDEX "IX_LessonReadings_LessonId" ON public."LessonReadings" USIN
 
 
 --
--- TOC entry 3851 (class 1259 OID 17224)
+-- TOC entry 3881 (class 1259 OID 17224)
 -- Name: IX_LessonVideos_LessonId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3896,7 +4785,7 @@ CREATE UNIQUE INDEX "IX_LessonVideos_LessonId" ON public."LessonVideos" USING bt
 
 
 --
--- TOC entry 3833 (class 1259 OID 17222)
+-- TOC entry 3863 (class 1259 OID 17222)
 -- Name: IX_Lessons_ChapterId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3904,7 +4793,7 @@ CREATE INDEX "IX_Lessons_ChapterId" ON public."Lessons" USING btree ("ChapterId"
 
 
 --
--- TOC entry 3834 (class 1259 OID 17223)
+-- TOC entry 3864 (class 1259 OID 17223)
 -- Name: IX_Lessons_CourseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3912,7 +4801,7 @@ CREATE INDEX "IX_Lessons_CourseId" ON public."Lessons" USING btree ("CourseId");
 
 
 --
--- TOC entry 3794 (class 1259 OID 17225)
+-- TOC entry 3824 (class 1259 OID 17225)
 -- Name: IX_Notifications_UserId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3920,7 +4809,7 @@ CREATE INDEX "IX_Notifications_UserId" ON public."Notifications" USING btree ("U
 
 
 --
--- TOC entry 3821 (class 1259 OID 17226)
+-- TOC entry 3851 (class 1259 OID 17226)
 -- Name: IX_OrderItems_CourseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3928,7 +4817,7 @@ CREATE INDEX "IX_OrderItems_CourseId" ON public."OrderItems" USING btree ("Cours
 
 
 --
--- TOC entry 3822 (class 1259 OID 17227)
+-- TOC entry 3852 (class 1259 OID 17227)
 -- Name: IX_OrderItems_OrderId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3936,7 +4825,7 @@ CREATE INDEX "IX_OrderItems_OrderId" ON public."OrderItems" USING btree ("OrderI
 
 
 --
--- TOC entry 3797 (class 1259 OID 17228)
+-- TOC entry 3827 (class 1259 OID 17228)
 -- Name: IX_Orders_StudentId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3944,7 +4833,7 @@ CREATE INDEX "IX_Orders_StudentId" ON public."Orders" USING btree ("StudentId");
 
 
 --
--- TOC entry 3807 (class 1259 OID 17229)
+-- TOC entry 3837 (class 1259 OID 17229)
 -- Name: IX_Payments_OrderId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3952,7 +4841,7 @@ CREATE UNIQUE INDEX "IX_Payments_OrderId" ON public."Payments" USING btree ("Ord
 
 
 --
--- TOC entry 3825 (class 1259 OID 17230)
+-- TOC entry 3855 (class 1259 OID 17230)
 -- Name: IX_Reviews_CourseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3960,7 +4849,7 @@ CREATE INDEX "IX_Reviews_CourseId" ON public."Reviews" USING btree ("CourseId");
 
 
 --
--- TOC entry 3826 (class 1259 OID 17231)
+-- TOC entry 3856 (class 1259 OID 17231)
 -- Name: IX_Reviews_StudentId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3968,7 +4857,7 @@ CREATE INDEX "IX_Reviews_StudentId" ON public."Reviews" USING btree ("StudentId"
 
 
 --
--- TOC entry 3854 (class 1259 OID 17232)
+-- TOC entry 3884 (class 1259 OID 17232)
 -- Name: IX_UserLessonProgresses_LessonId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3976,7 +4865,7 @@ CREATE INDEX "IX_UserLessonProgresses_LessonId" ON public."UserLessonProgresses"
 
 
 --
--- TOC entry 3855 (class 1259 OID 17233)
+-- TOC entry 3885 (class 1259 OID 17233)
 -- Name: IX_UserLessonProgresses_StudentId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3984,7 +4873,7 @@ CREATE INDEX "IX_UserLessonProgresses_StudentId" ON public."UserLessonProgresses
 
 
 --
--- TOC entry 3766 (class 1259 OID 17199)
+-- TOC entry 3796 (class 1259 OID 17199)
 -- Name: RoleNameIndex; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3992,7 +4881,7 @@ CREATE UNIQUE INDEX "RoleNameIndex" ON public."AspNetRoles" USING btree ("Normal
 
 
 --
--- TOC entry 3770 (class 1259 OID 17204)
+-- TOC entry 3800 (class 1259 OID 17204)
 -- Name: UserNameIndex; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4000,7 +4889,25 @@ CREATE UNIQUE INDEX "UserNameIndex" ON public."AspNetUsers" USING btree ("Normal
 
 
 --
--- TOC entry 3858 (class 2606 OID 16871)
+-- TOC entry 3968 (class 2606 OID 17473)
+-- Name: jobparameter jobparameter_jobid_fkey; Type: FK CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.jobparameter
+    ADD CONSTRAINT jobparameter_jobid_fkey FOREIGN KEY (jobid) REFERENCES hangfire.job(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3967 (class 2606 OID 17450)
+-- Name: state state_jobid_fkey; Type: FK CONSTRAINT; Schema: hangfire; Owner: -
+--
+
+ALTER TABLE ONLY hangfire.state
+    ADD CONSTRAINT state_jobid_fkey FOREIGN KEY (jobid) REFERENCES hangfire.job(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3932 (class 2606 OID 16871)
 -- Name: AspNetRoleClaims FK_AspNetRoleClaims_AspNetRoles_RoleId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4009,7 +4916,7 @@ ALTER TABLE ONLY public."AspNetRoleClaims"
 
 
 --
--- TOC entry 3859 (class 2606 OID 16884)
+-- TOC entry 3933 (class 2606 OID 16884)
 -- Name: AspNetUserClaims FK_AspNetUserClaims_AspNetUsers_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4018,7 +4925,7 @@ ALTER TABLE ONLY public."AspNetUserClaims"
 
 
 --
--- TOC entry 3860 (class 2606 OID 16896)
+-- TOC entry 3934 (class 2606 OID 16896)
 -- Name: AspNetUserLogins FK_AspNetUserLogins_AspNetUsers_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4027,7 +4934,7 @@ ALTER TABLE ONLY public."AspNetUserLogins"
 
 
 --
--- TOC entry 3861 (class 2606 OID 16906)
+-- TOC entry 3935 (class 2606 OID 16906)
 -- Name: AspNetUserRoles FK_AspNetUserRoles_AspNetRoles_RoleId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4036,7 +4943,7 @@ ALTER TABLE ONLY public."AspNetUserRoles"
 
 
 --
--- TOC entry 3862 (class 2606 OID 16911)
+-- TOC entry 3936 (class 2606 OID 16911)
 -- Name: AspNetUserRoles FK_AspNetUserRoles_AspNetUsers_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4045,7 +4952,7 @@ ALTER TABLE ONLY public."AspNetUserRoles"
 
 
 --
--- TOC entry 3863 (class 2606 OID 16923)
+-- TOC entry 3937 (class 2606 OID 16923)
 -- Name: AspNetUserTokens FK_AspNetUserTokens_AspNetUsers_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4054,7 +4961,7 @@ ALTER TABLE ONLY public."AspNetUserTokens"
 
 
 --
--- TOC entry 3871 (class 2606 OID 17008)
+-- TOC entry 3945 (class 2606 OID 17008)
 -- Name: CartItems FK_CartItems_Carts_CartId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4063,7 +4970,7 @@ ALTER TABLE ONLY public."CartItems"
 
 
 --
--- TOC entry 3872 (class 2606 OID 17013)
+-- TOC entry 3946 (class 2606 OID 17013)
 -- Name: CartItems FK_CartItems_Courses_CourseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4072,7 +4979,7 @@ ALTER TABLE ONLY public."CartItems"
 
 
 --
--- TOC entry 3864 (class 2606 OID 16933)
+-- TOC entry 3938 (class 2606 OID 16933)
 -- Name: Carts FK_Carts_AspNetUsers_StudentId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4081,7 +4988,7 @@ ALTER TABLE ONLY public."Carts"
 
 
 --
--- TOC entry 3873 (class 2606 OID 17025)
+-- TOC entry 3947 (class 2606 OID 17025)
 -- Name: Chapters FK_Chapters_Courses_CourseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4090,7 +4997,7 @@ ALTER TABLE ONLY public."Chapters"
 
 
 --
--- TOC entry 3867 (class 2606 OID 16969)
+-- TOC entry 3941 (class 2606 OID 16969)
 -- Name: Courses FK_Courses_AspNetUsers_InstructorId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4099,7 +5006,7 @@ ALTER TABLE ONLY public."Courses"
 
 
 --
--- TOC entry 3868 (class 2606 OID 16974)
+-- TOC entry 3942 (class 2606 OID 16974)
 -- Name: Courses FK_Courses_Categories_CategoryId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4108,7 +5015,7 @@ ALTER TABLE ONLY public."Courses"
 
 
 --
--- TOC entry 3874 (class 2606 OID 17035)
+-- TOC entry 3948 (class 2606 OID 17035)
 -- Name: Enrollments FK_Enrollments_AspNetUsers_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4117,7 +5024,7 @@ ALTER TABLE ONLY public."Enrollments"
 
 
 --
--- TOC entry 3875 (class 2606 OID 17040)
+-- TOC entry 3949 (class 2606 OID 17040)
 -- Name: Enrollments FK_Enrollments_Courses_CourseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4126,7 +5033,7 @@ ALTER TABLE ONLY public."Enrollments"
 
 
 --
--- TOC entry 3869 (class 2606 OID 16986)
+-- TOC entry 3943 (class 2606 OID 16986)
 -- Name: FileChunks FK_FileChunks_FileEntries_FileEntryId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4135,7 +5042,7 @@ ALTER TABLE ONLY public."FileChunks"
 
 
 --
--- TOC entry 3880 (class 2606 OID 17086)
+-- TOC entry 3954 (class 2606 OID 17086)
 -- Name: FileEntryEmbeddings FK_FileEntryEmbeddings_FileChunks_FileChunkId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4144,7 +5051,7 @@ ALTER TABLE ONLY public."FileEntryEmbeddings"
 
 
 --
--- TOC entry 3881 (class 2606 OID 17091)
+-- TOC entry 3955 (class 2606 OID 17091)
 -- Name: FileEntryEmbeddings FK_FileEntryEmbeddings_FileEntries_FileEntryId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4153,7 +5060,7 @@ ALTER TABLE ONLY public."FileEntryEmbeddings"
 
 
 --
--- TOC entry 3884 (class 2606 OID 17120)
+-- TOC entry 3958 (class 2606 OID 17120)
 -- Name: LessonCodings FK_LessonCodings_Lessons_LessonId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4162,7 +5069,7 @@ ALTER TABLE ONLY public."LessonCodings"
 
 
 --
--- TOC entry 3885 (class 2606 OID 17132)
+-- TOC entry 3959 (class 2606 OID 17132)
 -- Name: LessonMaterials FK_LessonMaterials_FileEntries_DocumentFileId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4171,7 +5078,7 @@ ALTER TABLE ONLY public."LessonMaterials"
 
 
 --
--- TOC entry 3886 (class 2606 OID 17137)
+-- TOC entry 3960 (class 2606 OID 17137)
 -- Name: LessonMaterials FK_LessonMaterials_FileEntries_SlideFileId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4180,7 +5087,7 @@ ALTER TABLE ONLY public."LessonMaterials"
 
 
 --
--- TOC entry 3887 (class 2606 OID 17142)
+-- TOC entry 3961 (class 2606 OID 17142)
 -- Name: LessonMaterials FK_LessonMaterials_Lessons_LessonId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4189,7 +5096,7 @@ ALTER TABLE ONLY public."LessonMaterials"
 
 
 --
--- TOC entry 3888 (class 2606 OID 17154)
+-- TOC entry 3962 (class 2606 OID 17154)
 -- Name: LessonQuizzes FK_LessonQuizzes_Lessons_LessonId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4198,7 +5105,7 @@ ALTER TABLE ONLY public."LessonQuizzes"
 
 
 --
--- TOC entry 3889 (class 2606 OID 17166)
+-- TOC entry 3963 (class 2606 OID 17166)
 -- Name: LessonReadings FK_LessonReadings_Lessons_LessonId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4207,7 +5114,7 @@ ALTER TABLE ONLY public."LessonReadings"
 
 
 --
--- TOC entry 3890 (class 2606 OID 17178)
+-- TOC entry 3964 (class 2606 OID 17178)
 -- Name: LessonVideos FK_LessonVideos_Lessons_LessonId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4216,7 +5123,7 @@ ALTER TABLE ONLY public."LessonVideos"
 
 
 --
--- TOC entry 3882 (class 2606 OID 17103)
+-- TOC entry 3956 (class 2606 OID 17103)
 -- Name: Lessons FK_Lessons_Chapters_ChapterId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4225,7 +5132,7 @@ ALTER TABLE ONLY public."Lessons"
 
 
 --
--- TOC entry 3883 (class 2606 OID 17108)
+-- TOC entry 3957 (class 2606 OID 17108)
 -- Name: Lessons FK_Lessons_Courses_CourseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4234,7 +5141,7 @@ ALTER TABLE ONLY public."Lessons"
 
 
 --
--- TOC entry 3865 (class 2606 OID 16945)
+-- TOC entry 3939 (class 2606 OID 16945)
 -- Name: Notifications FK_Notifications_AspNetUsers_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4243,7 +5150,7 @@ ALTER TABLE ONLY public."Notifications"
 
 
 --
--- TOC entry 3876 (class 2606 OID 17052)
+-- TOC entry 3950 (class 2606 OID 17052)
 -- Name: OrderItems FK_OrderItems_Courses_CourseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4252,7 +5159,7 @@ ALTER TABLE ONLY public."OrderItems"
 
 
 --
--- TOC entry 3877 (class 2606 OID 17057)
+-- TOC entry 3951 (class 2606 OID 17057)
 -- Name: OrderItems FK_OrderItems_Orders_OrderId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4261,7 +5168,7 @@ ALTER TABLE ONLY public."OrderItems"
 
 
 --
--- TOC entry 3866 (class 2606 OID 16957)
+-- TOC entry 3940 (class 2606 OID 16957)
 -- Name: Orders FK_Orders_AspNetUsers_StudentId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4270,7 +5177,7 @@ ALTER TABLE ONLY public."Orders"
 
 
 --
--- TOC entry 3870 (class 2606 OID 16998)
+-- TOC entry 3944 (class 2606 OID 16998)
 -- Name: Payments FK_Payments_Orders_OrderId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4279,7 +5186,7 @@ ALTER TABLE ONLY public."Payments"
 
 
 --
--- TOC entry 3878 (class 2606 OID 17069)
+-- TOC entry 3952 (class 2606 OID 17069)
 -- Name: Reviews FK_Reviews_AspNetUsers_StudentId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4288,7 +5195,7 @@ ALTER TABLE ONLY public."Reviews"
 
 
 --
--- TOC entry 3879 (class 2606 OID 17074)
+-- TOC entry 3953 (class 2606 OID 17074)
 -- Name: Reviews FK_Reviews_Courses_CourseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4297,7 +5204,7 @@ ALTER TABLE ONLY public."Reviews"
 
 
 --
--- TOC entry 3891 (class 2606 OID 17188)
+-- TOC entry 3965 (class 2606 OID 17188)
 -- Name: UserLessonProgresses FK_UserLessonProgresses_AspNetUsers_StudentId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4306,7 +5213,7 @@ ALTER TABLE ONLY public."UserLessonProgresses"
 
 
 --
--- TOC entry 3892 (class 2606 OID 17193)
+-- TOC entry 3966 (class 2606 OID 17193)
 -- Name: UserLessonProgresses FK_UserLessonProgresses_Lessons_LessonId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4314,7 +5221,7 @@ ALTER TABLE ONLY public."UserLessonProgresses"
     ADD CONSTRAINT "FK_UserLessonProgresses_Lessons_LessonId" FOREIGN KEY ("LessonId") REFERENCES public."Lessons"("Id") ON DELETE CASCADE;
 
 
--- Completed on 2026-04-10 11:31:11
+-- Completed on 2026-04-10 13:36:32
 
 --
 -- PostgreSQL database dump complete
