@@ -1,6 +1,4 @@
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using CourseMate.API.Middlewares;
 using CourseMate.Application;
 using CourseMate.Contracts.Options;
@@ -25,6 +23,8 @@ try
 
     builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
     builder.Services.Configure<GoogleAiOptions>(configuration.GetSection("GoogleAi"));
+    builder.Services.Configure<OllamaOptions>(configuration.GetSection("Ollama"));
+    builder.Services.Configure<RapidOptions>(configuration.GetSection("Rapid"));
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<HttpLoggingMiddleware>();
     builder.Services.AddAuthorization();
@@ -59,11 +59,11 @@ try
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate")!);
     builder.Services.AddHangfireServer();
-    builder.Services.AddControllers().AddJsonOptions(options =>
+    builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
-        options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
-        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
+        options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+        options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
     });
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>

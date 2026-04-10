@@ -23,7 +23,7 @@ services:
         ports:
             - "11434:11434"
         volumes:
-            - docker-volumes/ollama-data:/root/.ollama
+            - ./docker-volumes/ollama-data:/root/.ollama
 
     api:
         container_name: api
