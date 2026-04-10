@@ -1,10 +1,6 @@
-using System.Threading;
-using System.Threading.Tasks;
 using CourseMate.Application.Services.AI;
 using CourseMate.Contracts.DTOs.AIGeneration;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using System.IO;
 
 namespace CourseMate.API.Controllers;
 
@@ -32,7 +28,7 @@ public class AIGeneratorController : ControllerBase
 
         if (request.File != null)
         {
-            using var stream = request.File.OpenReadStream();
+            using Stream stream = request.File.OpenReadStream();
             result = await _aiGenerationService.GenerateLessonFromFileAsync(stream, request.File.FileName, request.RawContent, cancellationToken);
         }
         else

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace CourseMate.Contracts.DTOs.AIGeneration;
 
 public class GenerateLessonRequest

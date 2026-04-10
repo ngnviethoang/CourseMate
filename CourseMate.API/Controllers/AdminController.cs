@@ -1,7 +1,6 @@
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.DTOs.Commons;
-using CourseMate.Contracts.DTOs.Instructors; // TODO Admin Command
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

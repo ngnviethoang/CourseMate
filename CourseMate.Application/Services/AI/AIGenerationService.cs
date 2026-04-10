@@ -1,16 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using CourseMate.Application.Services.AI;
 using CourseMate.Contracts.DTOs.AIGeneration;
+using DocumentFormat.OpenXml.Packaging;
 using Microsoft.Extensions.Logging;
 using UglyToad.PdfPig;
-using DocumentFormat.OpenXml.Packaging;
-using System.IO;
+using UglyToad.PdfPig.Content;
 
 namespace CourseMate.Application.Services.AI;
 
@@ -29,9 +23,9 @@ public class AIGenerationService : IAIGenerationService
     public async Task<GeneratedLessonDto> GenerateLessonFromTextAsync(string rawContent, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Generating lesson from raw text.");
-        
+
         // Use Prompt Engineering to force JSON output
-        var systemPrompt = @"Bạn là một Chuyên gia soạn thảo bài giảng điện tử. 
+        string systemPrompt = @"Bạn là một Chuyên gia soạn thảo bài giảng điện tử. 
 Nhiệm vụ của bạn là chuyển đổi tài liệu thô thành một bài học hoàn chỉnh.
 RÀNG BUỘC:
 1. Chỉ tạo nội dung cho 01 bài học duy nhất.
@@ -56,7 +50,7 @@ Cấu trúc yêu cầu:
     }
   ]
 }";
-        var userPrompt = $"Đây là tài liệu thô:\n{rawContent}";
+        string userPrompt = $"Đây là tài liệu thô:\n{rawContent}";
 
         var payload = new
         {
@@ -70,31 +64,35 @@ Cấu trúc yêu cầu:
             options = new { temperature = 0.5 } // Lower temp for more deterministic JSON
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+        StringContent content = new(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
 
         try
         {
             // Call Ollama local /api/chat endpoint
-            var response = await _httpClient.PostAsync("/api/chat", content, cancellationToken);
+            HttpResponseMessage response = await _httpClient.PostAsync("/api/chat", content, cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
-            using var doc = JsonDocument.Parse(responseBody);
-            var aiMessage = doc.RootElement.GetProperty("message").GetProperty("content").GetString();
-            
+            string responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+            using JsonDocument doc = JsonDocument.Parse(responseBody);
+            string? aiMessage = doc.RootElement.GetProperty("message").GetProperty("content").GetString();
+
             // Clean markdown block if LLM added ```json ... ```
-            var cleanJson = aiMessage?.Trim();
+            string? cleanJson = aiMessage?.Trim();
             if (cleanJson != null && cleanJson.StartsWith("```json"))
             {
                 cleanJson = cleanJson.Substring(7);
                 if (cleanJson.EndsWith("```"))
+                {
                     cleanJson = cleanJson.Substring(0, cleanJson.Length - 3);
+                }
             }
+
             cleanJson = cleanJson?.Trim();
 
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var result = JsonSerializer.Deserialize<GeneratedLessonDto>(cleanJson ?? "{}", options);
-            
+            JsonSerializerOptions options = new()
+                { PropertyNameCaseInsensitive = true };
+            GeneratedLessonDto? result = JsonSerializer.Deserialize<GeneratedLessonDto>(cleanJson ?? "{}", options);
+
             return result ?? new GeneratedLessonDto();
         }
         catch (Exception ex)
@@ -107,28 +105,28 @@ Cấu trúc yêu cầu:
     public async Task<GeneratedLessonDto> GenerateLessonFromFileAsync(Stream fileStream, string fileName, string? additionalRawContent, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Extracting text from uploaded file: {FileName}", fileName);
-        var extractedText = new StringBuilder();
+        StringBuilder extractedText = new();
 
         try
         {
-            var extension = Path.GetExtension(fileName).ToLowerInvariant();
+            string extension = Path.GetExtension(fileName).ToLowerInvariant();
 
             if (extension == ".pdf")
             {
-                using var document = PdfDocument.Open(fileStream);
-                foreach (var page in document.GetPages())
+                using PdfDocument document = PdfDocument.Open(fileStream);
+                foreach (Page page in document.GetPages())
                 {
                     extractedText.AppendLine(page.Text);
                 }
             }
             else if (extension == ".docx")
             {
-                using var doc = WordprocessingDocument.Open(fileStream, false);
+                using WordprocessingDocument doc = WordprocessingDocument.Open(fileStream, false);
                 extractedText.AppendLine(doc.MainDocumentPart?.Document.Body?.InnerText ?? string.Empty);
             }
             else if (extension == ".txt" || extension == ".md")
             {
-                using var reader = new StreamReader(fileStream);
+                using StreamReader reader = new(fileStream);
                 extractedText.AppendLine(await reader.ReadToEndAsync(cancellationToken));
             }
             else
@@ -142,7 +140,7 @@ Cấu trúc yêu cầu:
             throw new Exception("Failed to read the file content: " + ex.Message);
         }
 
-        var fullContent = extractedText.ToString();
+        string fullContent = extractedText.ToString();
         if (!string.IsNullOrWhiteSpace(additionalRawContent))
         {
             fullContent = $"[GHI CHÚ BỔ SUNG]:\n{additionalRawContent}\n\n[NỘI DUNG TÀI LIỆU]:\n{fullContent}";

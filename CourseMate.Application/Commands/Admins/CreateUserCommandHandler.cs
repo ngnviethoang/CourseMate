@@ -1,8 +1,8 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Exceptions;
-using CourseMate.Contracts.Constants;
 using CourseMate.Persistent;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -11,8 +11,8 @@ namespace CourseMate.Application.Commands.Admins;
 
 internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUserCommand, ResultIdDto>
 {
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
     private readonly RoleManager<IdentityUser<Guid>> _roleManager;
+    private readonly UserManager<IdentityUser<Guid>> _userManager;
 
     public CreateUserCommandHandler(
         CourseMateDbContext dbContext,

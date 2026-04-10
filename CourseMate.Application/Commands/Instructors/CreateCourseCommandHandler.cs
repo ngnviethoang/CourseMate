@@ -1,5 +1,5 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Contracts.DTOs.Instructors;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
@@ -7,8 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace CourseMate.Application.Commands.Instructors;
 
-internal sealed class CreateCourseCommandHandler
-    : AbstractCommandHandler<CreateCourseCommand, ResultIdDto>
+internal sealed class CreateCourseCommandHandler : AbstractCommandHandler<CreateCourseCommand, ResultIdDto>
 {
     public CreateCourseCommandHandler(
         CourseMateDbContext dbContext,
