@@ -16,7 +16,7 @@ export default function CourseDetailPage() {
   const router = useRouter()
   const [course, setCourse] = useState<StudentCourseDetailDto | null>(null)
   const [loading, setLoading] = useState(true)
-  const [addingToCart, setAddingToCart] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const [showFullDesc, setShowFullDesc] = useState(false)
 
   useEffect(() => {
@@ -34,23 +34,46 @@ export default function CourseDetailPage() {
       })
   }, [id])
 
-  const handleAddToCart = async () => {
-    if (!course) return
-
+  const ensureAuthenticated = () => {
     const hasToken = document.cookie.includes('accessToken=')
     if (!hasToken) {
       router.push('/login')
-      return
+      return false
     }
 
-    setAddingToCart(true)
+    return true
+  }
+
+  const handleAddToCart = async () => {
+    if (!course) return
+
+    if (!ensureAuthenticated()) return
+
+    setSubmitting(true)
     try {
       await studentService.addToCart(course.id)
       toast.success('Added to cart successfully!')
     } catch {
       // Error handled by api-client automatically
     } finally {
-      setAddingToCart(false)
+      setSubmitting(false)
+    }
+  }
+
+  const handleEnrollFree = async () => {
+    if (!course) return
+
+    if (!ensureAuthenticated()) return
+
+    setSubmitting(true)
+    try {
+      await studentService.enrollFree(course.id)
+      toast.success('Enrolled successfully!')
+      router.push(`/learning/${course.id}`)
+    } catch {
+      // Error handled by api-client automatically
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -103,25 +126,27 @@ export default function CourseDetailPage() {
             ) : (
               <>
                 <div className="text-3xl font-bold text-primary">{formatCurrency(course.price)}</div>
-                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                  <Button
-                    size="lg"
-                    className="h-12 px-8 gap-2 flex-1 sm:flex-initial"
-                    onClick={handleAddToCart}
-                    disabled={addingToCart}
-                  >
-                    <ShoppingCart className="h-5 w-5" />
-                    {addingToCart ? 'Adding...' : 'Add to Cart'}
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="h-12 px-8 gap-2 flex-1 sm:flex-initial border-primary text-primary hover:bg-primary/5"
-                    onClick={() => router.push(`/learning/${course.id}`)}
-                  >
-                    <BookOpen className="h-5 w-5" />
-                    Học thử
-                  </Button>
+                <div className="flex w-full md:w-auto">
+                  {course.price === 0 ? (
+                    <Button
+                      size="lg"
+                      className="h-12 px-8 gap-2 flex-1 sm:flex-initial"
+                      onClick={handleEnrollFree}
+                      disabled={submitting}
+                    >
+                      {submitting ? 'Enrolling...' : 'Enroll'}
+                    </Button>
+                  ) : (
+                    <Button
+                      size="lg"
+                      className="h-12 px-8 gap-2 flex-1 sm:flex-initial"
+                      onClick={handleAddToCart}
+                      disabled={submitting}
+                    >
+                      <ShoppingCart className="h-5 w-5" />
+                      {submitting ? 'Adding...' : 'Add to Cart'}
+                    </Button>
+                  )}
                 </div>
               </>
             )}

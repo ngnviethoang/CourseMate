@@ -72,21 +72,32 @@ function CourseCard({ course, index }: CourseCardProps) {
   const [adding, setAdding] = useState(false)
   const gradient = GRADIENT_FALLBACKS[index % GRADIENT_FALLBACKS.length]
 
-  const handleAddToCart = async (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    // Redirect logic: if there is no accessToken, jump to login.
+  const ensureAuthenticated = () => {
     const hasToken = document.cookie.includes('accessToken=')
     if (!hasToken) {
       router.push('/login')
-      return
+      return false
     }
+
+    return true
+  }
+
+  const handleAction = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (!ensureAuthenticated()) return
 
     try {
       setAdding(true)
-      await studentService.addToCart(course.id)
-      toast.success(`"${course.title}" đã được thêm vào giỏ hàng!`)
+      if (course.price === 0) {
+        await studentService.enrollFree(course.id)
+        toast.success(`Bạn đã tham gia khóa học "${course.title}" thành công!`)
+        router.push(`/learning/${course.id}`)
+      } else {
+        await studentService.addToCart(course.id)
+        toast.success(`"${course.title}" đã được thêm vào giỏ hàng!`)
+      }
     } catch {
       // error toast handled by apiClient
     } finally {
@@ -168,12 +179,16 @@ function CourseCard({ course, index }: CourseCardProps) {
         <div className="mt-3 flex items-center justify-between border-t pt-3">
           <span className="text-base font-bold text-primary">{formatCurrency(course.price)}</span>
           <button
-            onClick={handleAddToCart}
+            onClick={handleAction}
             disabled={adding}
             className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3.5 py-1.5 text-xs font-semibold text-primary transition-all hover:bg-primary hover:text-white disabled:opacity-60"
           >
-            {adding ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}
-            {adding ? '...' : 'Enroll'}
+            {adding ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : course.price > 0 ? (
+              <ShoppingCart className="h-3.5 w-3.5" />
+            ) : null}
+            {adding ? '...' : course.price === 0 ? 'Enroll' : 'Add cart'}
           </button>
         </div>
       </div>

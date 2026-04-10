@@ -64,6 +64,10 @@ export const studentService = {
     return api.post<ResultIdDto>('/api/student/carts', { courseId })
   },
 
+  enrollFree: async (courseId: string): Promise<ResultIdDto> => {
+    return api.post<ResultIdDto>('/api/student/enrollments/free', { courseId })
+  },
+
   removeFromCart: async (cartItemId: string): Promise<void> => {
     return api.delete<void>(`/api/student/carts/${cartItemId}`)
   },

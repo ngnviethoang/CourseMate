@@ -8,7 +8,6 @@
 
     <ItemGroup>
         <Folder Include="Commands\Anonymous\"/>
-        <Folder Include="Commands\Students\"/>
         <Folder Include="Queries\Anonymous\"/>
         <Folder Include="Queries\Instructors\"/>
     </ItemGroup>

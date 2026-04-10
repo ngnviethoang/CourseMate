@@ -52,7 +52,7 @@ public class StudentController : ControllerBase
     }
 
     [HttpPost("carts")]
-    public async Task<ActionResult> CreateCartAsync([FromBody] CreateCartCommand request)
+    public async Task<ActionResult> CreateCartAsync(CreateCartCommand request)
     {
         ResultIdDto result = await _mediator.Send(request);
         return Ok(result);
@@ -146,6 +146,17 @@ public class StudentController : ControllerBase
     {
         await _mediator.Send(new DeleteOrderCommand { Id = id });
         return NoContent();
+    }
+
+    #endregion
+
+    #region API Enrollment
+
+    [HttpPost("enrollments/free")]
+    public async Task<ActionResult> CreateEnrollmentFreeAsync(CreateEnrollmentFreeCommand request)
+    {
+        ResultIdDto result = await _mediator.Send(request);
+        return Ok(result);
     }
 
     #endregion
