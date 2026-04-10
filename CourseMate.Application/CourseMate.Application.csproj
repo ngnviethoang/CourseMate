@@ -7,27 +7,27 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Commands\Anonymous\" />
-        <Folder Include="Commands\Students\" />
-        <Folder Include="Queries\Anonymous\" />
-        <Folder Include="Queries\Instructors\" />
+        <Folder Include="Commands\Anonymous\"/>
+        <Folder Include="Commands\Students\"/>
+        <Folder Include="Queries\Anonymous\"/>
+        <Folder Include="Queries\Instructors\"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.GenAI" Version="1.6.0" />
-        <PackageReference Include="MediatR" Version="14.1.0" />
-        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.5" />
-        <PackageReference Include="Microsoft.SemanticKernel" Version="1.74.0" />
-        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Chroma" Version="1.74.0-alpha" />
-        <PackageReference Include="PdfPig" Version="0.1.14" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />
-        <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
+        <PackageReference Include="Google.GenAI" Version="1.6.0"/>
+        <PackageReference Include="MediatR" Version="14.1.0"/>
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.5"/>
+        <PackageReference Include="Microsoft.SemanticKernel" Version="1.74.0"/>
+        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Chroma" Version="1.74.0-alpha"/>
+        <PackageReference Include="PdfPig" Version="0.1.14"/>
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.9"/>
+        <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CourseMate.Contracts\CourseMate.Contracts.csproj" />
-        <ProjectReference Include="..\CourseMate.Persistent\CourseMate.Persistent.csproj" />
+        <ProjectReference Include="..\CourseMate.Contracts\CourseMate.Contracts.csproj"/>
+        <ProjectReference Include="..\CourseMate.Persistent\CourseMate.Persistent.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -15,7 +15,7 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
 
     public override async Task<CourseDetailDto?> Handle(GetCourseByIdQuery request, CancellationToken cancellationToken)
     {
-        Guid? studentId = TryGetCurrentUserId();
+        Guid studentId = GetCurrentUserId();
 
         IQueryable<CourseDetailDto> courseQuery = from course in DbContext.Courses
             join category in DbContext.Categories on course.CategoryId equals category.Id
@@ -41,8 +41,8 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
         }
 
         // Check enrollment
-        result.IsEnrolled = studentId.HasValue && await DbContext.Enrollments
-            .AnyAsync(e => e.CourseId == request.Id && e.StudentId == studentId.Value, cancellationToken);
+        result.IsEnrolled = await DbContext.Enrollments
+            .AnyAsync(e => e.CourseId == request.Id && e.StudentId == studentId, cancellationToken);
 
         // Fetch Chapters and Lessons
         var chapters = await DbContext.Chapters
@@ -73,10 +73,10 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
 
         // Fetch completed lesson IDs for this boolean mapping
         List<Guid> completedLessonIds = [];
-        if (studentId.HasValue && lessonIds.Count > 0)
+        if (studentId != Guid.Empty && lessonIds.Count > 0)
         {
             completedLessonIds = await DbContext.UserLessonProgresses
-                .Where(p => p.StudentId == studentId.Value && lessonIds.Contains(p.LessonId) && p.IsCompleted)
+                .Where(p => p.StudentId == studentId && lessonIds.Contains(p.LessonId) && p.IsCompleted)
                 .Select(p => p.LessonId)
                 .ToListAsync(cancellationToken);
         }

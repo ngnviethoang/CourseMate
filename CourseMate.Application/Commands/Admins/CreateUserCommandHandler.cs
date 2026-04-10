@@ -12,17 +12,27 @@ namespace CourseMate.Application.Commands.Admins;
 internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUserCommand, ResultIdDto>
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
+    private readonly RoleManager<IdentityUser<Guid>> _roleManager;
 
     public CreateUserCommandHandler(
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor,
-        UserManager<IdentityUser<Guid>> userManager) : base(dbContext, httpContextAccessor)
+        UserManager<IdentityUser<Guid>> userManager,
+        RoleManager<IdentityUser<Guid>> roleManager
+    ) : base(dbContext, httpContextAccessor)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
     }
 
     public override async Task<ResultIdDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
+        request.Role = request.Role.Trim().ToLowerInvariant();
+        if (await _roleManager.RoleExistsAsync(request.Role))
+        {
+            throw new BusinessException(string.Format(ErrorMessages.RoleNotExists, request.Role));
+        }
+
         IdentityUser<Guid> user = new()
         {
             UserName = request.UserName,
@@ -34,8 +44,7 @@ internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUs
 
         if (result.Succeeded)
         {
-            string roleToAssign = string.IsNullOrWhiteSpace(request.Role) ? Roles.Student : request.Role;
-            await _userManager.AddToRoleAsync(user, roleToAssign);
+            await _userManager.AddToRoleAsync(user, request.Role);
             return new ResultIdDto { Id = user.Id };
         }
 
