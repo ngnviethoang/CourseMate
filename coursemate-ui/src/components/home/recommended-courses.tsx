@@ -75,7 +75,7 @@ function CourseCard({ course, index }: CourseCardProps) {
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    
+
     // Redirect logic: if there is no accessToken, jump to login.
     const hasToken = document.cookie.includes('accessToken=')
     if (!hasToken) {
@@ -172,11 +172,7 @@ function CourseCard({ course, index }: CourseCardProps) {
             disabled={adding}
             className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3.5 py-1.5 text-xs font-semibold text-primary transition-all hover:bg-primary hover:text-white disabled:opacity-60"
           >
-            {adding ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <ShoppingCart className="h-3.5 w-3.5" />
-            )}
+            {adding ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}
             {adding ? '...' : 'Enroll'}
           </button>
         </div>
@@ -197,7 +193,7 @@ export function RecommendedCourses({ searchQuery }: RecommendedCoursesProps) {
   const fetchCourses = useCallback(async (filter?: string) => {
     setLoading(true)
     try {
-      const res = filter 
+      const res = filter
         ? await studentService.getCourses(1, PAGE_SIZE, filter)
         : await studentService.getRecommendedCourses(1, PAGE_SIZE)
       setCourses(res.items)

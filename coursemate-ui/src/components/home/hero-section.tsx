@@ -56,7 +56,6 @@ export function HeroSection({ searchQuery = '', onSearch }: HeroSectionProps) {
 
       <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-
           {/* Badge */}
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm ring-1 ring-white/20">
             <Star className="h-3 w-3 fill-amber-300 text-amber-300" />

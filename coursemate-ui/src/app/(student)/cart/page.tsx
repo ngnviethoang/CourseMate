@@ -167,9 +167,7 @@ export default function CartPage() {
                     </div>
 
                     <div className="mt-4 flex items-center justify-between">
-                      <span className="text-xl font-bold text-primary">
-                        {formatCurrency(item.price)}
-                      </span>
+                      <span className="text-xl font-bold text-primary">{formatCurrency(item.price)}</span>
                       <Button
                         variant="ghost"
                         size="sm"

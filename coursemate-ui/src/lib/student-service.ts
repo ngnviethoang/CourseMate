@@ -1,5 +1,15 @@
 import { api } from './api-client'
-import { PagedDto, CategoryDto, CourseDto, StudentCourseDetailDto, CartDto, OrderDto, ResultIdDto, StudentMyCourseDto, StudentLessonDetailDto } from './types'
+import {
+  PagedDto,
+  CategoryDto,
+  CourseDto,
+  StudentCourseDetailDto,
+  CartDto,
+  OrderDto,
+  ResultIdDto,
+  StudentMyCourseDto,
+  StudentLessonDetailDto
+} from './types'
 
 export const studentService = {
   // ─── Categories ────────────────────────────────────────────────────────────
@@ -8,7 +18,7 @@ export const studentService = {
     return api.get<PagedDto<CategoryDto>>(`/api/student/categories?pageSize=${pageSize}&pageIndex=1`)
   },
 
-  // profile 
+  // profile
   getMyCourse: async (pageIndex = 1, pageSize = 12, filter?: string): Promise<PagedDto<StudentMyCourseDto>> => {
     const params = new URLSearchParams({
       pageIndex: String(pageIndex),

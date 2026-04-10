@@ -17,14 +17,12 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = {
-  'Draft': { label: 'Draft', color: 'bg-gray-100 text-gray-800', icon: Package },
-  'Pending': { label: 'Pending', color: 'bg-yellow-100 text-yellow-800', icon: Loader2 },
-  'Paid': { label: 'Paid', color: 'bg-green-100 text-green-800', icon: CheckCircle },
-  'Failed': { label: 'Failed', color: 'bg-red-100 text-red-800', icon: XCircle },
-  'Refunded': { label: 'Refunded', color: 'bg-orange-100 text-orange-800', icon: Package }
+  Draft: { label: 'Draft', color: 'bg-gray-100 text-gray-800', icon: Package },
+  Pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800', icon: Loader2 },
+  Paid: { label: 'Paid', color: 'bg-green-100 text-green-800', icon: CheckCircle },
+  Failed: { label: 'Failed', color: 'bg-red-100 text-red-800', icon: XCircle },
+  Refunded: { label: 'Refunded', color: 'bg-orange-100 text-orange-800', icon: Package }
 }
-
-
 
 export default function OrderDetailPage() {
   const router = useRouter()
@@ -101,7 +99,9 @@ export default function OrderDetailPage() {
           </p>
         </div>
         <div className="ml-auto flex items-center gap-3">
-          <Badge className={`${statusInfo.color} px-3 py-1 flex items-center gap-1.5 shadow-sm text-sm border-transparent`}>
+          <Badge
+            className={`${statusInfo.color} px-3 py-1 flex items-center gap-1.5 shadow-sm text-sm border-transparent`}
+          >
             <StatusIcon className="h-4 w-4" />
             {statusInfo.label}
           </Badge>
@@ -120,19 +120,22 @@ export default function OrderDetailPage() {
               {order.items && order.items.length > 0 ? (
                 <div className="space-y-4">
                   {order.items.map((item, index) => (
-                    <div key={item.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg bg-muted/30 border border-border/50">
+                    <div
+                      key={item.id}
+                      className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg bg-muted/30 border border-border/50"
+                    >
                       <div className="flex items-center gap-3 mb-2 sm:mb-0">
                         <div className="bg-primary/10 p-2 rounded-md">
                           <Package className="h-5 w-5 text-primary" />
                         </div>
                         <div>
                           <p className="font-medium text-sm text-foreground">{item.courseTitle}</p>
-                          <p className="text-xs text-muted-foreground font-mono mt-0.5">Course ID: {item.courseId.substring(0, 8)}...</p>
+                          <p className="text-xs text-muted-foreground font-mono mt-0.5">
+                            Course ID: {item.courseId.substring(0, 8)}...
+                          </p>
                         </div>
                       </div>
-                      <div className="font-semibold text-foreground">
-                        {formatCurrency(item.price)}
-                      </div>
+                      <div className="font-semibold text-foreground">{formatCurrency(item.price)}</div>
                     </div>
                   ))}
                   <Separator className="my-4" />
@@ -142,9 +145,7 @@ export default function OrderDetailPage() {
                   </div>
                 </div>
               ) : (
-                <div className="py-8 text-center text-muted-foreground">
-                  No items found in this order.
-                </div>
+                <div className="py-8 text-center text-muted-foreground">No items found in this order.</div>
               )}
             </CardContent>
           </Card>
@@ -194,13 +195,16 @@ export default function OrderDetailPage() {
                 <Package className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="text-xs text-muted-foreground uppercase font-semibold">Items Count</p>
-                  <p className="text-sm">{order.itemsCount} {order.itemsCount === 1 ? 'item' : 'items'}</p>
+                  <p className="text-sm">
+                    {order.itemsCount} {order.itemsCount === 1 ? 'item' : 'items'}
+                  </p>
                 </div>
               </div>
               <div className="mt-4 pt-4 border-t border-border/50">
                 <p className="text-xs text-muted-foreground mb-2">Order Status History Note</p>
                 <p className="text-xs text-muted-foreground">
-                  Changing status to <strong>Paid</strong> will automatically enroll the student into all courses associated with this order.
+                  Changing status to <strong>Paid</strong> will automatically enroll the student into all courses
+                  associated with this order.
                 </p>
               </div>
             </CardContent>

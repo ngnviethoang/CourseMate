@@ -52,8 +52,7 @@ export interface UpdateCategoryRequest {
   isActive: boolean
 }
 
-
-// order 
+// order
 export interface AdminOrderItemDto {
   id: string
   orderId: string
@@ -295,21 +294,21 @@ export interface OrderDto {
   items: OrderItemDto[]
 }
 
-// upload 
+// upload
 export interface UploadVideoInitRequest {
-  fileName: string,
-  fileSize: number,
+  fileName: string
+  fileSize: number
 }
 
 export interface UploadVideoChunkRequest {
-  fileId: string,
-  chunkIndex: number,
-  file: File,
+  fileId: string
+  chunkIndex: number
+  file: File
 }
 
 export interface UploadVideoCompleteRequest {
-  fileId: string,
-  totalChunks: number,
+  fileId: string
+  totalChunks: number
 }
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 export interface MonthlyRevenueDto {

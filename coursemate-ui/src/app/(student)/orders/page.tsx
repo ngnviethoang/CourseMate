@@ -11,11 +11,11 @@ import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 
 const STATUS_MAP: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-  'Pending': { label: 'Pending', variant: 'secondary' },
-  'Paid': { label: 'Completed', variant: 'default' },
-  'Failed': { label: 'Failed', variant: 'destructive' },
-  'Refunded': { label: 'Refunded', variant: 'destructive' },
-  'Draft': { label: 'Draft', variant: 'outline' }
+  Pending: { label: 'Pending', variant: 'secondary' },
+  Paid: { label: 'Completed', variant: 'default' },
+  Failed: { label: 'Failed', variant: 'destructive' },
+  Refunded: { label: 'Refunded', variant: 'destructive' },
+  Draft: { label: 'Draft', variant: 'outline' }
 }
 
 export default function OrdersPage() {

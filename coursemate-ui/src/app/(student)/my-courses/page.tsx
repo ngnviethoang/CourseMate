@@ -67,7 +67,7 @@ export default function MyCoursesPage() {
                 placeholder="Tìm khóa học của bạn..."
                 className="pl-10 h-11 rounded-2xl bg-background shadow-sm border-muted-foreground/20 focus-visible:ring-primary/20"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={e => setSearch(e.target.value)}
               />
             </form>
           </div>
@@ -75,15 +75,21 @@ export default function MyCoursesPage() {
           {/* Stats */}
           <div className="mt-8 grid grid-cols-3 gap-4 max-w-md">
             <div className="group rounded-2xl border bg-card p-4 transition-all hover:border-primary/30 hover:shadow-sm">
-              <p className="text-3xl font-black text-primary group-hover:scale-110 transition-transform origin-left">{inProgress.length}</p>
+              <p className="text-3xl font-black text-primary group-hover:scale-110 transition-transform origin-left">
+                {inProgress.length}
+              </p>
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-1">Đang học</p>
             </div>
             <div className="group rounded-2xl border bg-card p-4 transition-all hover:border-emerald-500/30 hover:shadow-sm">
-              <p className="text-3xl font-black text-emerald-600 group-hover:scale-110 transition-transform origin-left">{completed.length}</p>
+              <p className="text-3xl font-black text-emerald-600 group-hover:scale-110 transition-transform origin-left">
+                {completed.length}
+              </p>
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-1">Hoàn thành</p>
             </div>
             <div className="group rounded-2xl border bg-card p-4 transition-all hover:border-muted-foreground/30 hover:shadow-sm">
-              <p className="text-3xl font-black text-muted-foreground group-hover:scale-110 transition-transform origin-left">{notStarted.length}</p>
+              <p className="text-3xl font-black text-muted-foreground group-hover:scale-110 transition-transform origin-left">
+                {notStarted.length}
+              </p>
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-1">Chưa học</p>
             </div>
           </div>
@@ -104,7 +110,9 @@ export default function MyCoursesPage() {
             <div className="space-y-2">
               <h3 className="text-xl font-bold">Chưa có khóa học nào</h3>
               <p className="text-muted-foreground max-w-xs">
-                {search ? `Không tìm thấy khóa học nào khớp với "${search}"` : 'Bắt đầu hành trình chinh phục kiến thức ngay hôm nay!'}
+                {search
+                  ? `Không tìm thấy khóa học nào khớp với "${search}"`
+                  : 'Bắt đầu hành trình chinh phục kiến thức ngay hôm nay!'}
               </p>
             </div>
             <Link href="/courses" className={buttonVariants({ className: 'rounded-2xl h-12 px-8' })}>
@@ -193,7 +201,9 @@ function CourseCard({ course }: { course: StudentMyCourseDto }) {
 
       <div className="p-6 flex flex-col flex-1">
         <div className="flex-1 space-y-2">
-          <h3 className="font-bold text-lg line-clamp-2 leading-tight group-hover:text-primary transition-colors">{course.title}</h3>
+          <h3 className="font-bold text-lg line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+            {course.title}
+          </h3>
           <p className="text-xs font-medium text-muted-foreground flex items-center gap-2">
             <span className="h-1.5 w-1.5 bg-primary/40 rounded-full" />
             {course.instructorName || 'Giảng viên CourseMate'}
@@ -205,7 +215,9 @@ function CourseCard({ course }: { course: StudentMyCourseDto }) {
           <div className="flex justify-between items-end">
             <span className={`text-sm font-black ${done ? 'text-emerald-600' : 'text-foreground'}`}>
               {Math.round(course.progressPercentage)}%
-              <span className="text-[10px] font-bold text-muted-foreground uppercase ml-1 tracking-tighter">hoàn thành</span>
+              <span className="text-[10px] font-bold text-muted-foreground uppercase ml-1 tracking-tighter">
+                hoàn thành
+              </span>
             </span>
             <span className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
               <Clock className="h-3 w-3" />
@@ -222,7 +234,11 @@ function CourseCard({ course }: { course: StudentMyCourseDto }) {
 
         {/* Last lesson */}
         <p className="mt-4 text-xs font-medium text-muted-foreground line-clamp-1 italic">
-          {done ? '🎉 Bạn đã hoàn thành khoá học!' : course.lastLessonTitle ? `Đang học: ${course.lastLessonTitle}` : 'Bắt đầu bài học đầu tiên'}
+          {done
+            ? '🎉 Bạn đã hoàn thành khoá học!'
+            : course.lastLessonTitle
+              ? `Đang học: ${course.lastLessonTitle}`
+              : 'Bắt đầu bài học đầu tiên'}
         </p>
 
         <Link
@@ -232,19 +248,19 @@ function CourseCard({ course }: { course: StudentMyCourseDto }) {
             className: `mt-6 w-full rounded-2xl h-11 text-xs font-bold transition-all ${!done ? 'shadow-lg shadow-primary/25 hover:shadow-primary/40' : 'hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200'}`
           })}
         >
-            {done ? (
-              <>
-                <BarChart2 className="h-4 w-4 mr-2" /> Xem lại bài học
-              </>
-            ) : course.progressPercentage === 0 ? (
-              <>
-                <Play className="h-4 w-4 mr-2 fill-current" /> Bắt đầu học ngay
-              </>
-            ) : (
-              <>
-                <Play className="h-4 w-4 mr-2 fill-current" /> Tiếp tục học tập
-              </>
-            )}
+          {done ? (
+            <>
+              <BarChart2 className="h-4 w-4 mr-2" /> Xem lại bài học
+            </>
+          ) : course.progressPercentage === 0 ? (
+            <>
+              <Play className="h-4 w-4 mr-2 fill-current" /> Bắt đầu học ngay
+            </>
+          ) : (
+            <>
+              <Play className="h-4 w-4 mr-2 fill-current" /> Tiếp tục học tập
+            </>
+          )}
         </Link>
       </div>
     </div>

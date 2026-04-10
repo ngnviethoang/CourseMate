@@ -31,7 +31,7 @@ export const getDecodedToken = () => {
     .split('; ')
     .find(row => row.startsWith('accessToken='))
     ?.split('=')[1]
-  
+
   if (!token) return null
 
   try {
@@ -45,7 +45,7 @@ export const getDecodedToken = () => {
 export const getRole = () => {
   const payload = getDecodedToken()
   if (!payload) return []
-  
+
   const roleKey = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
   const roles = payload[roleKey]
   return Array.isArray(roles) ? roles : roles ? [roles] : []
@@ -90,7 +90,7 @@ export const categoryService = {
   delete: (id: string) => api.delete<void>(`${getBASE()}/categories/${id}`)
 }
 
-// ---- order 
+// ---- order
 export const orderService = {
   list: async (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string }) => {
     const qs = new URLSearchParams()
@@ -128,7 +128,13 @@ export const courseService = {
 // ─── Chapter ─────────────────────────────────────────────────────────────────
 
 export const chapterService = {
-  list: async (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string; courseId?: string }) => {
+  list: async (params?: {
+    filter?: string
+    pageIndex?: number
+    pageSize?: number
+    sorting?: string
+    courseId?: string
+  }) => {
     const qs = new URLSearchParams()
     if (params?.filter) qs.set('filter', params.filter)
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
@@ -151,7 +157,13 @@ const LESSON_TYPE_TO_NUMBER: Record<string, number> = { Video: 1, Reading: 2, Co
 const NUMBER_TO_LESSON_TYPE: Record<number, string> = { 1: 'Video', 2: 'Reading', 3: 'Coding', 4: 'Quiz', 5: 'Slide' }
 
 export const lessonService = {
-  list: async (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string; chapterId?: string }) => {
+  list: async (params?: {
+    filter?: string
+    pageIndex?: number
+    pageSize?: number
+    sorting?: string
+    chapterId?: string
+  }) => {
     const qs = new URLSearchParams()
     if (params?.filter) qs.set('filter', params.filter)
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
@@ -206,7 +218,12 @@ export const userService = {
   update: (id: string, body: UpdateUserRequest) => api.put<void>(`${getBASE()}/users/${id}`, body),
   delete: (id: string) => api.delete<void>(`${getBASE()}/users/${id}`),
 
-  listPendingInstructors: async (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string }) => {
+  listPendingInstructors: async (params?: {
+    filter?: string
+    pageIndex?: number
+    pageSize?: number
+    sorting?: string
+  }) => {
     const qs = new URLSearchParams()
     if (params?.filter) qs.set('filter', params.filter)
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
@@ -238,4 +255,3 @@ export const aiService = {
     return api.post<any>('/api/ai/generate-lesson', formData)
   }
 }
-

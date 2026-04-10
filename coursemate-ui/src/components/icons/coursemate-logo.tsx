@@ -1,11 +1,6 @@
 export function CourseMateLogoIcon({ className }: { className?: string }) {
   return (
-    <svg
-      className={className}
-      viewBox="0 0 40 40"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg className={className} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="cm-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#3B82F6" />
@@ -27,17 +22,8 @@ export function CourseMateLogoIcon({ className }: { className?: string }) {
       />
       <path d="M17.5 16L22.5 16" stroke="white" strokeOpacity="0.5" strokeWidth="1" strokeLinecap="round" />
       {/* Graduation cap */}
-      <path
-        d="M20 9L28 13L20 17L12 13L20 9Z"
-        fill="white"
-        fillOpacity="1"
-      />
-      <path
-        d="M26 14.5V20"
-        stroke="white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
+      <path d="M20 9L28 13L20 17L12 13L20 9Z" fill="white" fillOpacity="1" />
+      <path d="M26 14.5V20" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
       <circle cx="26" cy="20.5" r="1.2" fill="white" />
       {/* Center spine */}
       <line x1="20" y1="16" x2="20" y2="28" stroke="white" strokeOpacity="0.6" strokeWidth="1" />

@@ -75,13 +75,23 @@ export default function PendingInstructorsPage() {
     {
       key: 'id',
       header: 'Actions',
-      render: (row) => (
+      render: row => (
         <div className="flex items-center gap-2">
-          <Button size="sm" variant="outline" className="text-green-600 hover:text-green-700 hover:bg-green-50" onClick={() => setApproveId(row.id)}>
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-green-600 hover:text-green-700 hover:bg-green-50"
+            onClick={() => setApproveId(row.id)}
+          >
             <CheckCircle className="w-4 h-4 mr-1" />
             Approve
           </Button>
-          <Button size="sm" variant="outline" className="text-destructive hover:bg-destructive/10" onClick={() => setRejectId(row.id)}>
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-destructive hover:bg-destructive/10"
+            onClick={() => setRejectId(row.id)}
+          >
             <XCircle className="w-4 h-4 mr-1" />
             Reject
           </Button>
@@ -101,26 +111,30 @@ export default function PendingInstructorsPage() {
 
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input className="pl-9" placeholder="Search pending instructors…" value={filter} onChange={e => setFilter(e.target.value)} />
+        <Input
+          className="pl-9"
+          placeholder="Search pending instructors…"
+          value={filter}
+          onChange={e => setFilter(e.target.value)}
+        />
       </div>
 
-      <DataTable
-        columns={columns}
-        data={items}
-        loading={loading}
-        sorting={sorting}
-        onSort={setSorting}
-      />
+      <DataTable columns={columns} data={items} loading={loading} sorting={sorting} onSort={setSorting} />
 
       <AlertDialog open={!!approveId} onOpenChange={open => !open && setApproveId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Approve Instructor?</AlertDialogTitle>
-            <AlertDialogDescription>This user will be granted the Instructor role and allowed to create courses.</AlertDialogDescription>
+            <AlertDialogDescription>
+              This user will be granted the Instructor role and allowed to create courses.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={handleApprove}>
+            <AlertDialogAction
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              onClick={handleApprove}
+            >
               Approve
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -131,11 +145,16 @@ export default function PendingInstructorsPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Reject Instructor Application?</AlertDialogTitle>
-            <AlertDialogDescription>This user will remain a standard Student and will not be granted Instructor privileges.</AlertDialogDescription>
+            <AlertDialogDescription>
+              This user will remain a standard Student and will not be granted Instructor privileges.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={handleReject}>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={handleReject}
+            >
               Reject
             </AlertDialogAction>
           </AlertDialogFooter>

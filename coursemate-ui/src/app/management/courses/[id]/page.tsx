@@ -61,9 +61,7 @@ function ChapterRow({
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
         <span className="text-sm font-medium">{chapter.position}</span>
       </div>
-      <span className="flex-1 font-medium text-sm">
-        {chapter.title}
-      </span>
+      <span className="flex-1 font-medium text-sm">{chapter.title}</span>
       <div className="flex gap-1.5" onClick={e => e.stopPropagation()}>
         <button
           onClick={() => onEditChapter(chapter)}
@@ -110,7 +108,13 @@ export default function CourseDetailPage() {
   const [courseDialog, setCourseDialog] = useState(false)
   const [savingCourse, setSavingCourse] = useState(false)
   const [courseForm, setCourseForm] = useState<UpdateCourseRequest>({
-    title: '', description: '', price: 0, imageUrl: '', isPublished: false, categoryId: '', instructorId: ''
+    title: '',
+    description: '',
+    price: 0,
+    imageUrl: '',
+    isPublished: false,
+    categoryId: '',
+    instructorId: ''
   })
   const [mounted, setMounted] = useState(false)
 
@@ -364,8 +368,6 @@ export default function CourseDetailPage() {
         </DialogContent>
       </Dialog>
 
-
-
       {/* ── Delete Chapter Confirm ── */}
       <AlertDialog open={!!deleteChapterId} onOpenChange={open => !open && setDeleteChapterId(null)}>
         <AlertDialogContent>
@@ -448,7 +450,9 @@ export default function CourseDetailPage() {
                 </div>
 
                 <div className="space-y-1.5 pt-2">
-                  <Label>Description <span className="text-muted-foreground font-normal">(Rich Text)</span></Label>
+                  <Label>
+                    Description <span className="text-muted-foreground font-normal">(Rich Text)</span>
+                  </Label>
                   <div className="h-72 mb-10 overflow-hidden rounded-md border">
                     <ReactQuill
                       theme="snow"
@@ -471,8 +475,6 @@ export default function CourseDetailPage() {
           )}
         </DialogContent>
       </Dialog>
-
-
     </div>
   )
 }

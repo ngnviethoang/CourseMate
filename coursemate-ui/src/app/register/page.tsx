@@ -43,7 +43,7 @@ export default function RegisterPage() {
       } else {
         toast.success('Registration successful! You can now sign in.')
       }
-      
+
       // For now, redirect to the admin login page or home page until generic login is implemented
       router.push('/management/login')
     } catch (err: unknown) {
@@ -117,7 +117,8 @@ export default function RegisterPage() {
         <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/30 p-3 rounded-md mt-4">
           <Info className="w-4 h-4 shrink-0 text-primary" />
           <p>
-            Instructor accounts require admin approval before you can start creating courses. You will be notified once approved.
+            Instructor accounts require admin approval before you can start creating courses. You will be notified once
+            approved.
           </p>
         </div>
       )}

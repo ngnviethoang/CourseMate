@@ -35,7 +35,15 @@ function getUserFromToken() {
   }
 }
 
-function UserDropdown({ user, mounted, onLogout }: { user: { name: string; role: string } | null, mounted: boolean, onLogout: () => void }) {
+function UserDropdown({
+  user,
+  mounted,
+  onLogout
+}: {
+  user: { name: string; role: string } | null
+  mounted: boolean
+  onLogout: () => void
+}) {
   // Use a stable initials value for the first render to match SSR
   const initials = mounted && user?.name ? user.name.slice(0, 2).toUpperCase() : 'U'
   const displayName = mounted && user?.name ? user.name : 'User'
@@ -43,21 +51,24 @@ function UserDropdown({ user, mounted, onLogout }: { user: { name: string; role:
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger 
+      <DropdownMenuTrigger
         className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-muted transition-colors outline-none"
         style={{ opacity: mounted ? 1 : 0.7 }}
       >
         <Avatar className="h-7 w-7">
-          <AvatarFallback 
-            className="bg-primary text-primary-foreground text-xs font-semibold"
-            suppressHydrationWarning
-          >
+          <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold" suppressHydrationWarning>
             {initials}
           </AvatarFallback>
         </Avatar>
         <div className="hidden sm:flex flex-col items-start leading-none">
-          <span className="font-medium text-foreground" suppressHydrationWarning>{displayName}</span>
-          {displayRole && <span className="text-[11px] text-muted-foreground capitalize" suppressHydrationWarning>{displayRole}</span>}
+          <span className="font-medium text-foreground" suppressHydrationWarning>
+            {displayName}
+          </span>
+          {displayRole && (
+            <span className="text-[11px] text-muted-foreground capitalize" suppressHydrationWarning>
+              {displayRole}
+            </span>
+          )}
         </div>
         <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
       </DropdownMenuTrigger>
@@ -65,18 +76,24 @@ function UserDropdown({ user, mounted, onLogout }: { user: { name: string; role:
         <DropdownMenuGroup>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col gap-0.5">
-              <span className="font-medium" suppressHydrationWarning>{displayName}</span>
-              {displayRole && <span className="text-xs text-muted-foreground capitalize" suppressHydrationWarning>{displayRole}</span>}
+              <span className="font-medium" suppressHydrationWarning>
+                {displayName}
+              </span>
+              {displayRole && (
+                <span className="text-xs text-muted-foreground capitalize" suppressHydrationWarning>
+                  {displayRole}
+                </span>
+              )}
             </div>
           </DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => window.location.href = '/management/profile'}>
+          <DropdownMenuItem onClick={() => (window.location.href = '/management/profile')}>
             <User className="mr-2 h-4 w-4" />
             Profile
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => window.location.href = '/management/settings'}>
+          <DropdownMenuItem onClick={() => (window.location.href = '/management/settings')}>
             <Settings className="mr-2 h-4 w-4" />
             Settings
           </DropdownMenuItem>
@@ -120,7 +137,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <header className="flex h-20 items-center gap-4 border-b bg-background/95 backdrop-blur px-8 shadow-sm transition-all">
           <SidebarTrigger className="h-10 w-10 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all" />
           <div className="h-6 w-px bg-border" />
-          <span className="text-lg font-bold tracking-tight text-foreground">{user?.role === 'Instructor' ? 'Hệ thống Giảng viên' : 'Hệ thống Quản trị'}</span>
+          <span className="text-lg font-bold tracking-tight text-foreground">
+            {user?.role === 'Instructor' ? 'Hệ thống Giảng viên' : 'Hệ thống Quản trị'}
+          </span>
           <div className="ml-auto">
             <UserDropdown user={user} mounted={mounted} onLogout={handleLogout} />
           </div>

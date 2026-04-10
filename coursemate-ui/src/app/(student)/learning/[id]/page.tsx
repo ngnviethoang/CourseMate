@@ -11,11 +11,16 @@ export default function LearningRedirectPage() {
 
   useEffect(() => {
     if (!id) return
-    studentService.getCourseById(id).then(course => {
-      if (course && course.chapters.length > 0 && course.chapters[0].lessons.length > 0) {
-        router.replace(`/learning/${id}/${course.chapters[0].lessons[0].id}`)
-      }
-    }).catch(() => { /* handled by layout or service */ })
+    studentService
+      .getCourseById(id)
+      .then(course => {
+        if (course && course.chapters.length > 0 && course.chapters[0].lessons.length > 0) {
+          router.replace(`/learning/${id}/${course.chapters[0].lessons[0].id}`)
+        }
+      })
+      .catch(() => {
+        /* handled by layout or service */
+      })
   }, [id, router])
 
   return (

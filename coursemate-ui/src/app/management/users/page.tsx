@@ -175,7 +175,7 @@ export default function UsersPage() {
                   <Label>Role</Label>
                   <Select
                     value={createForm.role ?? 'Student'}
-                    onValueChange={(val) => setCreateForm({ ...createForm, role: val })}
+                    onValueChange={val => setCreateForm({ ...createForm, role: val })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select a role" />

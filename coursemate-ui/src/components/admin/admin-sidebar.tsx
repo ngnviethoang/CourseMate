@@ -42,7 +42,9 @@ export function AdminSidebar() {
     }
   }, [])
 
-  const filteredItems = navItems.filter(item => !item.roles || item.roles.includes(role) || (Array.isArray(role) && role.some(r => item.roles.includes(r))))
+  const filteredItems = navItems.filter(
+    item => !item.roles || item.roles.includes(role) || (Array.isArray(role) && role.some(r => item.roles.includes(r)))
+  )
 
   return (
     <Sidebar className="border-r border-border/50">
@@ -54,7 +56,9 @@ export function AdminSidebar() {
           </div>
           <div>
             <p className="text-sm font-bold text-white leading-none">CourseMate</p>
-            <p className="text-[11px] text-white/70 mt-0.5">{role === 'Instructor' ? 'Instructor Panel' : 'Admin Panel'}</p>
+            <p className="text-[11px] text-white/70 mt-0.5">
+              {role === 'Instructor' ? 'Instructor Panel' : 'Admin Panel'}
+            </p>
           </div>
         </div>
       </SidebarHeader>
@@ -73,9 +77,10 @@ export function AdminSidebar() {
                     <button
                       onClick={() => router.push(href)}
                       className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-150
-                        ${active
-                          ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/30 font-medium'
-                          : 'text-foreground/70 hover:bg-primary/10 hover:text-primary'
+                        ${
+                          active
+                            ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/30 font-medium'
+                            : 'text-foreground/70 hover:bg-primary/10 hover:text-primary'
                         }`}
                     >
                       <Icon className="size-4 shrink-0" />

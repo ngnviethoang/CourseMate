@@ -16,17 +16,19 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 const STATUS_MAP: Record<string, { label: string; color: string }> = {
-  'Draft': { label: 'Draft', color: 'bg-gray-100 text-gray-800 hover:bg-gray-200' },
-  'Pending': { label: 'Pending', color: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' },
-  'Paid': { label: 'Paid', color: 'bg-green-100 text-green-800 hover:bg-green-200' },
-  'Failed': { label: 'Failed', color: 'bg-red-100 text-red-800 hover:bg-red-200' },
-  'Refunded': { label: 'Refunded', color: 'bg-orange-100 text-orange-800 hover:bg-orange-200' }
+  Draft: { label: 'Draft', color: 'bg-gray-100 text-gray-800 hover:bg-gray-200' },
+  Pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' },
+  Paid: { label: 'Paid', color: 'bg-green-100 text-green-800 hover:bg-green-200' },
+  Failed: { label: 'Failed', color: 'bg-red-100 text-red-800 hover:bg-red-200' },
+  Refunded: { label: 'Refunded', color: 'bg-orange-100 text-orange-800 hover:bg-orange-200' }
 }
 
-
-
 const columns: Column<AdminOrderDto>[] = [
-  { key: 'id', header: 'Order ID', render: row => <span className="text-xs font-mono">{row.id.substring(0, 8)}...</span> },
+  {
+    key: 'id',
+    header: 'Order ID',
+    render: row => <span className="text-xs font-mono">{row.id.substring(0, 8)}...</span>
+  },
   { key: 'studentName', header: 'Student' },
   { key: 'studentEmail', header: 'Email' },
   {
@@ -114,7 +116,11 @@ export default function OrdersPage() {
     <div className="space-y-10 max-w-[1600px] mx-auto pb-10">
       <div className="flex flex-col gap-2">
         <h1 className="text-4xl font-bold tracking-tight">{isAdmin ? 'All Orders' : 'My Course Sales'}</h1>
-        <p className="text-lg text-muted-foreground">{isAdmin ? 'Manage student course purchases and enrollments' : 'Monitor sales and student enrollments for your courses'}</p>
+        <p className="text-lg text-muted-foreground">
+          {isAdmin
+            ? 'Manage student course purchases and enrollments'
+            : 'Monitor sales and student enrollments for your courses'}
+        </p>
       </div>
 
       <div className="flex items-center gap-4">
@@ -162,23 +168,28 @@ export default function OrdersPage() {
             </div>
             <div className="space-y-2">
               <Label>Current Status</Label>
-              <Select value={statusVal} onValueChange={(val) => val && setStatusVal(val)}>
+              <Select value={statusVal} onValueChange={val => val && setStatusVal(val)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(STATUS_MAP).map(([val, { label }]) => (
-                    <SelectItem key={val} value={val}>{label}</SelectItem>
+                    <SelectItem key={val} value={val}>
+                      {label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <p className="text-xs text-muted-foreground">
-              Note: Updating order status to <strong>Paid</strong> will automatically enroll the student into the purchased courses.
+              Note: Updating order status to <strong>Paid</strong> will automatically enroll the student into the
+              purchased courses.
             </p>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleSaveStatus} disabled={saving}>
               {saving ? 'Updating...' : 'Update Status'}
             </Button>

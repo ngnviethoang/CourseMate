@@ -90,7 +90,10 @@ export function ContinueLearning() {
           <h2 className="text-xl font-semibold">Continue Learning</h2>
           <p className="text-sm text-muted-foreground">Pick up where you left off</p>
         </div>
-        <Link href="/orders" className={buttonVariants({ variant: 'ghost', size: 'sm', className: 'gap-1 text-primary' })}>
+        <Link
+          href="/orders"
+          className={buttonVariants({ variant: 'ghost', size: 'sm', className: 'gap-1 text-primary' })}
+        >
           See all <ChevronRight className="h-4 w-4" />
         </Link>
       </div>
@@ -148,7 +151,10 @@ export function ContinueLearning() {
               </CardContent>
 
               <CardFooter>
-                <Link href={`/courses/${item.courseId}`} className={buttonVariants({ size: 'sm', className: 'w-full rounded-full' })}>
+                <Link
+                  href={`/courses/${item.courseId}`}
+                  className={buttonVariants({ size: 'sm', className: 'w-full rounded-full' })}
+                >
                   <Play className="mr-1.5 h-3.5 w-3.5" /> Resume
                 </Link>
               </CardFooter>
