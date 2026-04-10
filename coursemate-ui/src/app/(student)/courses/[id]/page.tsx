@@ -34,20 +34,8 @@ export default function CourseDetailPage() {
       })
   }, [id])
 
-  const ensureAuthenticated = () => {
-    const hasToken = document.cookie.includes('accessToken=')
-    if (!hasToken) {
-      router.push('/login')
-      return false
-    }
-
-    return true
-  }
-
   const handleAddToCart = async () => {
     if (!course) return
-
-    if (!ensureAuthenticated()) return
 
     setSubmitting(true)
     try {
@@ -62,8 +50,6 @@ export default function CourseDetailPage() {
 
   const handleEnrollFree = async () => {
     if (!course) return
-
-    if (!ensureAuthenticated()) return
 
     setSubmitting(true)
     try {

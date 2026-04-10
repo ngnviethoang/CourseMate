@@ -3,12 +3,9 @@ import type { NextRequest } from 'next/server'
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
+  const token = request.cookies.get('accessToken')?.value
 
-  // Protect all routes under /management
   if (pathname.startsWith('/management')) {
-    const token = request.cookies.get('accessToken')?.value
-
-    // If trying to access the login page while already authenticated
     if (pathname === '/management/login') {
       if (token) {
         return NextResponse.redirect(new URL('/management', request.url))
@@ -16,21 +13,28 @@ export function proxy(request: NextRequest) {
       return NextResponse.next()
     }
 
-    // If trying to access protected dashboard pages without a token
     if (!token) {
       return NextResponse.redirect(new URL('/management/login', request.url))
     }
+
+    return NextResponse.next()
+  }
+
+  const publicPaths = ['/', '/login', '/register']
+  if (publicPaths.includes(pathname)) {
+    if (token && (pathname === '/login' || pathname === '/register')) {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+    return NextResponse.next()
+  }
+
+  if (!token) {
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths under management, ensuring fast execution.
-     * We don't need to match static files or api routes here.
-     */
-    '/management/:path*'
-  ]
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)']
 }

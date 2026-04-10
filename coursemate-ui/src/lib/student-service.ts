@@ -33,12 +33,18 @@ export const studentService = {
 
   // ─── Courses ───────────────────────────────────────────────────────────────
 
-  getCourses: async (pageIndex = 1, pageSize = 12, filter?: string): Promise<PagedDto<CourseDto>> => {
+  getCourses: async (
+    pageIndex = 1,
+    pageSize = 12,
+    filter?: string,
+    categoryId?: string
+  ): Promise<PagedDto<CourseDto>> => {
     const params = new URLSearchParams({
       pageIndex: String(pageIndex),
       pageSize: String(pageSize)
     })
     if (filter) params.set('filter', filter)
+    if (categoryId) params.set('categoryId', categoryId)
     return api.get<PagedDto<CourseDto>>(`/api/student/courses?${params}`)
   },
 

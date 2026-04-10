@@ -1,13 +1,4 @@
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { BookOpen, Clock, Search, Star, TrendingUp, Users, Award } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-
-interface HeroSectionProps {
-  searchQuery?: string
-  onSearch?: (query: string) => void
-}
+import { BookOpen, Star, TrendingUp, Users, Award } from 'lucide-react'
 
 const STATS = [
   { icon: BookOpen, value: '10,000+', label: 'Khoá học' },
@@ -16,25 +7,7 @@ const STATS = [
   { icon: TrendingUp, value: '95%', label: 'Tỉ lệ hài lòng' }
 ]
 
-export function HeroSection({ searchQuery = '', onSearch }: HeroSectionProps) {
-  const [localSearch, setLocalSearch] = useState(searchQuery)
-
-  // Sync with prop if changed from outside
-  useEffect(() => {
-    setLocalSearch(searchQuery)
-  }, [searchQuery])
-
-  // Debounced search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (localSearch !== searchQuery) {
-        onSearch?.(localSearch)
-      }
-    }, 500) // 500ms debounce
-
-    return () => clearTimeout(timer)
-  }, [localSearch, onSearch, searchQuery])
-
+export function HeroSection() {
   return (
     <section className="relative overflow-hidden">
       {/* Gradient background */}
@@ -81,40 +54,6 @@ export function HeroSection({ searchQuery = '', onSearch }: HeroSectionProps) {
           <p className="mt-4 text-base leading-relaxed text-blue-100 sm:text-lg">
             Học tập từ các chuyên gia hàng đầu. Học mọi lúc, mọi nơi theo tốc độ của bạn.
           </p>
-
-          {/* Search bar */}
-          <div className="mt-8 flex gap-2 rounded-2xl bg-white/10 p-1.5 backdrop-blur-md ring-1 ring-white/20 sm:gap-0">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/60" />
-              <Input
-                placeholder="Tìm khoá học, chủ đề, giảng viên…"
-                className="h-12 border-0 bg-transparent pl-11 text-white placeholder:text-white/60 focus-visible:ring-0 focus-visible:ring-offset-0"
-                value={localSearch}
-                onChange={e => setLocalSearch(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && onSearch?.(localSearch)}
-              />
-            </div>
-            <Button
-              className="h-12 rounded-xl bg-amber-400 px-6 text-sm font-semibold text-amber-900 shadow-lg hover:bg-amber-300 transition-colors"
-              onClick={() => onSearch?.(localSearch)}
-            >
-              Tìm kiếm
-            </Button>
-          </div>
-
-          {/* Popular tags */}
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-            <span className="text-xs text-blue-200">Phổ biến:</span>
-            {['Python', 'Web Dev', 'React', 'UI/UX', 'Data Science'].map(tag => (
-              <button
-                key={tag}
-                onClick={() => onSearch?.(tag)}
-                className="rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-white/20"
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Stats row */}

@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
-import { BookOpen, ChevronRight, Loader2, ShoppingCart, Star, Users, Zap } from 'lucide-react'
+import { BookOpen, ChevronLeft, ChevronRight, Loader2, ShoppingCart, Star, Users, Zap } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { buttonVariants } from '@/components/ui/button'
+
 import { studentService } from '@/lib/student-service'
 import { CourseDto } from '@/lib/types'
 import { toast } from 'sonner'
@@ -72,21 +72,9 @@ function CourseCard({ course, index }: CourseCardProps) {
   const [adding, setAdding] = useState(false)
   const gradient = GRADIENT_FALLBACKS[index % GRADIENT_FALLBACKS.length]
 
-  const ensureAuthenticated = () => {
-    const hasToken = document.cookie.includes('accessToken=')
-    if (!hasToken) {
-      router.push('/login')
-      return false
-    }
-
-    return true
-  }
-
   const handleAction = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-
-    if (!ensureAuthenticated()) return
 
     try {
       setAdding(true)
@@ -198,20 +186,32 @@ function CourseCard({ course, index }: CourseCardProps) {
 
 interface RecommendedCoursesProps {
   searchQuery?: string
+  isLoggedIn?: boolean
+  selectedCategoryId?: string
 }
 
-export function RecommendedCourses({ searchQuery }: RecommendedCoursesProps) {
+export function RecommendedCourses({ searchQuery, isLoggedIn, selectedCategoryId }: RecommendedCoursesProps) {
   const [courses, setCourses] = useState<CourseDto[]>([])
   const [loading, setLoading] = useState(true)
+  const [pageIndex, setPageIndex] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
   const PAGE_SIZE = 12
 
-  const fetchCourses = useCallback(async (filter?: string) => {
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+
+  const fetchCourses = useCallback(async (page: number, filter?: string, categoryId?: string, loggedIn?: boolean) => {
     setLoading(true)
     try {
-      const res = filter
-        ? await studentService.getCourses(1, PAGE_SIZE, filter)
-        : await studentService.getRecommendedCourses(1, PAGE_SIZE)
+      let res
+      if (filter || categoryId) {
+        res = await studentService.getCourses(page, PAGE_SIZE, filter, categoryId)
+      } else if (loggedIn) {
+        res = await studentService.getRecommendedCourses(page, PAGE_SIZE)
+      } else {
+        res = await studentService.getCourses(page, PAGE_SIZE)
+      }
       setCourses(res.items)
+      setTotalCount(res.totalCount)
     } catch {
       // error handled by apiClient
     } finally {
@@ -219,19 +219,46 @@ export function RecommendedCourses({ searchQuery }: RecommendedCoursesProps) {
     }
   }, [])
 
+  // Reset to page 1 when filters change
   useEffect(() => {
-    fetchCourses(searchQuery)
-  }, [searchQuery, fetchCourses])
+    setPageIndex(1)
+  }, [searchQuery, selectedCategoryId, isLoggedIn])
 
-  const title = searchQuery ? `Kết quả cho "${searchQuery}"` : 'Gợi ý cho bạn'
-  const subtitle = searchQuery ? `${courses.length} khoá học được tìm thấy` : 'Dựa trên các khoá học mới nhất'
+  useEffect(() => {
+    fetchCourses(pageIndex, searchQuery, selectedCategoryId, isLoggedIn)
+  }, [pageIndex, searchQuery, selectedCategoryId, isLoggedIn, fetchCourses])
+
+  const isRecommended = !searchQuery && !selectedCategoryId && isLoggedIn
+  const title = searchQuery ? `Kết quả cho "${searchQuery}"` : isRecommended ? 'Gợi ý cho bạn' : 'Khám phá khoá học'
+  const subtitle = searchQuery
+    ? `${totalCount} khoá học được tìm thấy`
+    : isRecommended
+      ? 'Dựa trên sở thích của bạn'
+      : `${totalCount} khoá học`
+
+  // Build visible page numbers
+  const getPageNumbers = () => {
+    const pages: (number | 'ellipsis')[] = []
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i)
+    } else {
+      pages.push(1)
+      if (pageIndex > 3) pages.push('ellipsis')
+      const start = Math.max(2, pageIndex - 1)
+      const end = Math.min(totalPages - 1, pageIndex + 1)
+      for (let i = start; i <= end; i++) pages.push(i)
+      if (pageIndex < totalPages - 2) pages.push('ellipsis')
+      pages.push(totalPages)
+    }
+    return pages
+  }
 
   return (
     <section>
       {/* Header */}
       <div className="mb-6 flex items-end justify-between">
         <div>
-          {!searchQuery && (
+          {isRecommended && (
             <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-primary">
               <Zap className="mr-1 inline h-3 w-3" />
               Dành riêng cho bạn
@@ -240,15 +267,6 @@ export function RecommendedCourses({ searchQuery }: RecommendedCoursesProps) {
           <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
           <p className="mt-0.5 text-sm text-muted-foreground">{subtitle}</p>
         </div>
-        {!searchQuery && (
-          <Link
-            href="/courses"
-            className={buttonVariants({ variant: 'ghost', size: 'sm', className: 'group gap-1 text-primary' })}
-          >
-            Xem tất cả
-            <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
-        )}
       </div>
 
       {loading && courses.length === 0 ? (
@@ -263,11 +281,62 @@ export function RecommendedCourses({ searchQuery }: RecommendedCoursesProps) {
           <p className="text-sm">Không tìm thấy khoá học{searchQuery ? ` cho "${searchQuery}"` : ''}.</p>
         </div>
       ) : (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {courses.map((course, idx) => (
-            <CourseCard key={course.id} course={course} index={idx} />
-          ))}
-        </div>
+        <>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {courses.map((course, idx) => (
+              <CourseCard key={course.id} course={course} index={(pageIndex - 1) * PAGE_SIZE + idx} />
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-10 flex items-center justify-center gap-1.5">
+              {/* Previous */}
+              <button
+                onClick={() => setPageIndex(p => Math.max(1, p - 1))}
+                disabled={pageIndex === 1}
+                className="flex h-9 items-center gap-1 rounded-lg border border-border bg-card px-3 text-sm font-medium shadow-sm transition-all hover:bg-accent disabled:pointer-events-none disabled:opacity-40"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">Trước</span>
+              </button>
+
+              {/* Page numbers */}
+              {getPageNumbers().map((page, i) =>
+                page === 'ellipsis' ? (
+                  <span
+                    key={`e-${i}`}
+                    className="flex h-9 w-9 items-center justify-center text-sm text-muted-foreground"
+                  >
+                    …
+                  </span>
+                ) : (
+                  <button
+                    key={page}
+                    onClick={() => setPageIndex(page)}
+                    className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${
+                      page === pageIndex
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'border border-border bg-card shadow-sm hover:bg-accent'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
+
+              {/* Next */}
+              <button
+                onClick={() => setPageIndex(p => Math.min(totalPages, p + 1))}
+                disabled={pageIndex === totalPages}
+                className="flex h-9 items-center gap-1 rounded-lg border border-border bg-card px-3 text-sm font-medium shadow-sm transition-all hover:bg-accent disabled:pointer-events-none disabled:opacity-40"
+              >
+                <span className="hidden sm:inline">Sau</span>
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+        </>
       )}
     </section>
   )
