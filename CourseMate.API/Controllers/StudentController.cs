@@ -22,6 +22,7 @@ public class StudentController : ControllerBase
     #region API Category
 
     [HttpGet("categories")]
+    [AllowAnonymous]
     public async Task<ActionResult> GetListCategoriesAsync()
     {
         PagedDto<CategoryDto> result = await _mediator.Send(new GetListCategoriesQuery());
@@ -73,6 +74,7 @@ public class StudentController : ControllerBase
     #region API Course
 
     [HttpGet("courses")]
+    [AllowAnonymous]
     public async Task<ActionResult> GetListCourseAsync([FromQuery] GetListCoursesQuery request)
     {
         PagedDto<CourseDto> result = await _mediator.Send(request);
@@ -80,6 +82,7 @@ public class StudentController : ControllerBase
     }
 
     [HttpGet("courses/recommended")]
+    [AllowAnonymous]
     public async Task<ActionResult> GetRecommendedCoursesAsync([FromQuery] GetRecommendedCoursesQuery request)
     {
         PagedDto<CourseDto> result = await _mediator.Send(request);
@@ -87,6 +90,7 @@ public class StudentController : ControllerBase
     }
 
     [HttpGet("courses/{id:guid}")]
+    [AllowAnonymous]
     public async Task<ActionResult> GetCourseByIdAsync(Guid id)
     {
         CourseDetailDto? result = await _mediator.Send(new GetCourseByIdQuery { Id = id });

@@ -142,7 +142,7 @@ export interface UpdateChapterRequest {
 
 // ─── Lesson ───────────────────────────────────────────────────────────────────
 
-export type LessonType = 'Video' | 'Reading' | 'Quiz' | 'Coding'
+export type LessonType = 'Video' | 'Reading' | 'Quiz' | 'Coding' | 'Slide'
 
 export interface LessonDto {
   id: string
@@ -187,6 +187,7 @@ export interface CreateUserRequest {
   email: string
   phoneNumber: string
   password: string
+  role?: string
 }
 
 export interface UpdateUserRequest {

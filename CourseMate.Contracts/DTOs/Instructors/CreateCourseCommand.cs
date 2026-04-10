@@ -1,7 +1,7 @@
 using CourseMate.Contracts.DTOs.Commons;
 using MediatR;
 
-namespace CourseMate.Contracts.DTOs.Admins;
+namespace CourseMate.Contracts.DTOs.Instructors;
 
 public class CreateCourseCommand : IRequest<ResultIdDto>
 {

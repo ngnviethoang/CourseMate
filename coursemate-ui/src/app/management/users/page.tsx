@@ -9,6 +9,7 @@ import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,7 +28,7 @@ const columns: Column<UserDto>[] = [
   { key: 'phoneNumber', header: 'Phone' }
 ]
 
-const emptyCreate: CreateUserRequest = { userName: '', email: '', phoneNumber: '', password: '' }
+const emptyCreate: CreateUserRequest = { userName: '', email: '', phoneNumber: '', password: '', role: 'Student' }
 const emptyUpdate: UpdateUserRequest = { userName: '', email: '', phoneNumber: '' }
 
 export default function UsersPage() {
@@ -161,14 +162,32 @@ export default function UsersPage() {
               />
             </div>
             {!editing && (
-              <div className="space-y-1">
-                <Label>Password</Label>
-                <Input
-                  type="password"
-                  value={createForm.password}
-                  onChange={e => setCreateForm({ ...createForm, password: e.target.value })}
-                />
-              </div>
+              <>
+                <div className="space-y-1">
+                  <Label>Password</Label>
+                  <Input
+                    type="password"
+                    value={createForm.password}
+                    onChange={e => setCreateForm({ ...createForm, password: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label>Role</Label>
+                  <Select
+                    value={createForm.role ?? 'Student'}
+                    onValueChange={(val) => setCreateForm({ ...createForm, role: val })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Student">Student</SelectItem>
+                      <SelectItem value="Instructor">Instructor</SelectItem>
+                      <SelectItem value="Admin">Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
             )}
           </div>
           <DialogFooter>

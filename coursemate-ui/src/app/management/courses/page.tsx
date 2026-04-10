@@ -111,11 +111,11 @@ export default function CoursesPage() {
     setLoadingDropdowns(true)
     try {
       const promises: Promise<unknown>[] = [
-        categoryService.list({ filter: '', pageSize: 100, sorting: 'name' }).then(res => setCategories(res.items))
+        categoryService.list({ filter: '', pageSize: 25, sorting: 'name' }).then(res => setCategories(res.items))
       ]
 
       if (isAdmin) {
-        promises.push(userService.list({ filter: '', pageSize: 100, sorting: 'userName' }).then(res => setUsers(res.items)))
+        promises.push(userService.list({ filter: '', pageSize: 25, sorting: 'userName' }).then(res => setUsers(res.items)))
       }
 
       await Promise.all(promises)
@@ -251,7 +251,7 @@ export default function CoursesPage() {
                     <div className="space-y-3">
                       <Label className="text-lg font-bold">Course Title</Label>
                       <Input
-                        className="h-14 text-lg rounded-xl border-muted-foreground/20 bg-muted/5 focus:bg-background transition-all"
+                        className="h-12 text-base rounded-xl border-muted-foreground/20 bg-muted/5 focus:bg-background transition-all"
                         placeholder="e.g. The Complete Web Development Bootcamp 2026"
                         value={form.title}
                         onChange={e => f('title', e.target.value)}
@@ -261,7 +261,7 @@ export default function CoursesPage() {
                     <div className="space-y-3">
                       <Label className="text-lg font-bold">Comprehensive Description</Label>
                       <textarea
-                        className="w-full rounded-xl border border-muted-foreground/20 bg-muted/5 px-5 py-4 text-lg shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus:bg-background focus-visible:ring-2 focus-visible:ring-primary/20 min-h-[220px] transition-all leading-relaxed"
+                        className="w-full rounded-xl border border-muted-foreground/20 bg-muted/5 px-4 py-3 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus:bg-background focus-visible:ring-2 focus-visible:ring-primary/20 min-h-[160px] transition-all leading-relaxed custom-scrollbar"
                         placeholder="Provide a detailed roadmap of what students will learn..."
                         value={form.description}
                         onChange={e => f('description', e.target.value)}
@@ -279,13 +279,13 @@ export default function CoursesPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
                       <Label className="text-lg font-bold">Course Category</Label>
-                      <Select value={form.categoryId} onValueChange={v => f('categoryId', v)} disabled={loadingDropdowns}>
-                        <SelectTrigger className="h-14 text-lg rounded-xl border-muted-foreground/20 bg-muted/5 focus:bg-background transition-all">
+                      <Select value={form.categoryId?.toLowerCase() || undefined} onValueChange={v => f('categoryId', v)} disabled={loadingDropdowns}>
+                        <SelectTrigger className="h-12 text-base rounded-xl border-muted-foreground/20 bg-muted/5 focus:bg-background transition-all">
                           <SelectValue placeholder={loadingDropdowns ? 'Loading categories…' : 'Select a category'} />
                         </SelectTrigger>
                         <SelectContent className="rounded-2xl shadow-2xl border-muted-foreground/10">
                           {categories.map(c => (
-                            <SelectItem key={c.id} value={c.id} className="text-base py-4 hover:bg-primary/5 transition-colors">
+                            <SelectItem key={c.id} value={c.id.toLowerCase()} className="text-base py-3 hover:bg-primary/5 transition-colors">
                               {c.name}
                             </SelectItem>
                           ))}
@@ -297,16 +297,16 @@ export default function CoursesPage() {
                       <div className="space-y-3">
                         <Label className="text-lg font-bold">Lead Instructor</Label>
                         <Select
-                          value={form.instructorId}
+                          value={form.instructorId?.toLowerCase() || undefined}
                           onValueChange={v => f('instructorId', v)}
                           disabled={loadingDropdowns}
                         >
-                          <SelectTrigger className="h-14 text-lg rounded-xl border-muted-foreground/20 bg-muted/5 focus:bg-background transition-all">
+                          <SelectTrigger className="h-12 text-base rounded-xl border-muted-foreground/20 bg-muted/5 focus:bg-background transition-all">
                             <SelectValue placeholder={loadingDropdowns ? 'Loading instructors…' : 'Assign to instructor'} />
                           </SelectTrigger>
                           <SelectContent className="rounded-2xl shadow-2xl border-muted-foreground/10">
                             {users.map(u => (
-                              <SelectItem key={u.id} value={u.id} className="text-base py-4 hover:bg-primary/5 transition-colors">
+                              <SelectItem key={u.id} value={u.id.toLowerCase()} className="text-base py-3 hover:bg-primary/5 transition-colors">
                                 {u.userName ?? u.email}
                               </SelectItem>
                             ))}
@@ -330,7 +330,7 @@ export default function CoursesPage() {
                     <Label className="text-lg font-bold">Course Price</Label>
                     <div className="relative group">
                       <Input
-                        className="h-16 pl-6 pr-20 text-3xl font-black rounded-2xl border-primary/20 bg-primary/5 text-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                        className="h-14 pl-6 pr-16 text-2xl font-black rounded-2xl border-primary/20 bg-primary/5 text-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                         type="number"
                         min={0}
                         step={1000}
@@ -338,7 +338,7 @@ export default function CoursesPage() {
                         value={form.price}
                         onChange={e => f('price', Number(e.target.value))}
                       />
-                      <div className="absolute right-6 top-1/2 -translate-y-1/2 text-primary/60 font-black text-xl">VNĐ</div>
+                      <div className="absolute right-5 top-1/2 -translate-y-1/2 text-primary/60 font-black text-lg">VNĐ</div>
                     </div>
                     <p className="text-sm text-center text-muted-foreground font-medium pt-1">Enter 0 for a free course</p>
                   </div>

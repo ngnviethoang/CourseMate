@@ -19,6 +19,7 @@ public static class ApplicationExtensions
             });
 
             services.AddTransient<IAiService, GoogleAiService>();
+            services.AddHttpClient<IAIGenerationService, AIGenerationService>();
 
             return services;
         }

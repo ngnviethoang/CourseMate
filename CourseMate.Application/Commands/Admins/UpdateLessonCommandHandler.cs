@@ -1,13 +1,13 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs.Instructors;
+using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseMate.Application.Commands.Instructors;
+namespace CourseMate.Application.Commands.Admins;
 
 internal sealed class UpdateLessonAbstractCommandHandler : AbstractCommandHandler<UpdateLessonCommand, int>
 {
@@ -19,16 +19,8 @@ internal sealed class UpdateLessonAbstractCommandHandler : AbstractCommandHandle
 
     public override async Task<int> Handle(UpdateLessonCommand request, CancellationToken cancellationToken)
     {
-        Guid instructorId = GetCurrentUserId();
-        bool isOwnerCourse = await DbContext.Courses.AnyAsync(course => course.Id == request.CourseId && course.InstructorId == instructorId, cancellationToken: cancellationToken);
-        if (!isOwnerCourse)
-        {
-            throw new UnauthorizedAccessException();
-        }
+        Lesson? lesson = await DbContext.Lessons.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
-        Lesson? lesson = await DbContext.Lessons.FirstOrDefaultAsync(x => x.Id == request.Id &&
-                                                                          x.ChapterId == request.ChapterId &&
-                                                                          x.CourseId == request.CourseId, cancellationToken);
         if (lesson == null)
         {
             throw new EntityNotFoundException(nameof(Lesson), request.Id);

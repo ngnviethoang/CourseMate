@@ -1,13 +1,11 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Commons;
-using CourseMate.Contracts.DTOs.Instructors;
-using CourseMate.Contracts.Exceptions;
+using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
-namespace CourseMate.Application.Commands.Instructors;
+namespace CourseMate.Application.Commands.Admins;
 
 internal sealed class CreateLessonCommandHandler : AbstractCommandHandler<CreateLessonCommand, ResultIdDto>
 {
@@ -19,19 +17,6 @@ internal sealed class CreateLessonCommandHandler : AbstractCommandHandler<Create
 
     public override async Task<ResultIdDto> Handle(CreateLessonCommand request, CancellationToken cancellationToken)
     {
-        Guid instructorId = GetCurrentUserId();
-        bool isOwnerCourse = await DbContext.Courses.AnyAsync(course => course.Id == request.CourseId && course.InstructorId == instructorId, cancellationToken: cancellationToken);
-        if (!isOwnerCourse)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
-        bool isExistChapter = await DbContext.Chapters.AnyAsync(x => x.Id == request.ChapterId && x.CourseId == request.CourseId, cancellationToken);
-        if (!isExistChapter)
-        {
-            throw new EntityNotFoundException(nameof(Chapter), request.ChapterId);
-        }
-
         Lesson lesson = new(
             Guid.NewGuid(),
             request.ChapterId,

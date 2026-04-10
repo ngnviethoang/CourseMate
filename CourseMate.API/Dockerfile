@@ -1,9 +1,9 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS sdk
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS sdk
 WORKDIR /src
 COPY ["CourseMate.API", "CourseMate.API"]
 COPY ["CourseMate.Application", "CourseMate.Application"]
 COPY ["CourseMate.Contracts", "CourseMate.Contracts"]
-COPY ["CourseMate.Infrastructure", "CourseMate.Infrastructure"]
+COPY ["CourseMate.Persistent", "CourseMate.Persistent"]
 RUN dotnet restore "CourseMate.API/CourseMate.API.csproj"
 
 FROM sdk AS publish

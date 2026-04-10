@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { StudentHeader } from '@/components/home/student-header'
 import { HeroSection } from '@/components/home/hero-section'
 import { ContinueLearning } from '@/components/home/continue-learning'
@@ -9,6 +9,11 @@ import { RecommendedCourses } from '@/components/home/recommended-courses'
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    setIsLoggedIn(document.cookie.includes('accessToken='))
+  }, [])
 
   return (
     <div className="min-h-screen bg-background">
@@ -16,7 +21,7 @@ export default function Home() {
       <HeroSection onSearch={setSearchQuery} searchQuery={searchQuery} />
 
       <main className="mx-auto max-w-7xl space-y-12 px-4 py-12 sm:px-6 lg:px-8">
-        {!searchQuery && <ContinueLearning />}
+        {!searchQuery && isLoggedIn && <ContinueLearning />}
         {!searchQuery && <Categories />}
         <RecommendedCourses searchQuery={searchQuery} />
       </main>

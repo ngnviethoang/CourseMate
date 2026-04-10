@@ -5,6 +5,10 @@ using CourseMate.Contracts.DTOs.Instructors;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CreateCourseCommand = CourseMate.Contracts.DTOs.Instructors.CreateCourseCommand;
+using CreateLessonCommand = CourseMate.Contracts.DTOs.Instructors.CreateLessonCommand;
+using UpdateCourseCommand = CourseMate.Contracts.DTOs.Instructors.UpdateCourseCommand;
+using UpdateLessonCommand = CourseMate.Contracts.DTOs.Instructors.UpdateLessonCommand;
 
 namespace CourseMate.API.Controllers;
 

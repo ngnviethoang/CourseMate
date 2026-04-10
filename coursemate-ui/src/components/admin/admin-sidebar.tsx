@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutGrid, BookOpen, Users, Tag, GraduationCap, LogOut, ShoppingCart } from 'lucide-react'
+import { LayoutGrid, BookOpen, Users, Tag, GraduationCap, LogOut, ShoppingCart, UserCheck } from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -20,6 +20,7 @@ const navItems = [
   { href: '/management/categories', label: 'Categories', icon: Tag, roles: ['Admin'] },
   { href: '/management/courses', label: 'Courses', icon: BookOpen, roles: ['Admin', 'Instructor'] },
   { href: '/management/users', label: 'Users', icon: Users, roles: ['Admin'] },
+  { href: '/management/pending-instructors', label: 'Instructor Approvals', icon: UserCheck, roles: ['Admin'] },
   { href: '/management/orders', label: 'Orders', icon: ShoppingCart, roles: ['Admin', 'Instructor'] }
 ]
 

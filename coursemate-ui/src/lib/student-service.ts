@@ -71,6 +71,4 @@ export const studentService = {
   createOrder: async (): Promise<ResultIdDto> => {
     return api.post<ResultIdDto>('/api/student/orders')
   }
-
-
 }
