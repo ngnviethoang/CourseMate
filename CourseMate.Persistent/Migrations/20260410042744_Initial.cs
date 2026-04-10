@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Pgvector;
 
 #nullable disable
 
@@ -13,7 +14,8 @@ namespace CourseMate.Persistent.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:PostgresExtension:citext", ",,");
+                .Annotation("Npgsql:PostgresExtension:citext", ",,")
+                .Annotation("Npgsql:PostgresExtension:vector", ",,");
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
@@ -79,7 +81,6 @@ namespace CourseMate.Persistent.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FileName = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    ContentType = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
                     FileSize = table.Column<double>(type: "double precision", nullable: false),
                     FilePath = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
                     TempFilePath = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
@@ -538,6 +539,40 @@ namespace CourseMate.Persistent.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FileEntryEmbeddings",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    FileEntryId = table.Column<Guid>(type: "uuid", nullable: false),
+                    FileChunkId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StartIndex = table.Column<int>(type: "integer", nullable: false),
+                    EndIndex = table.Column<int>(type: "integer", nullable: false),
+                    ShortText = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
+                    Embedding = table.Column<Vector>(type: "vector(1536)", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    LastModificationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FileEntryEmbeddings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FileEntryEmbeddings_FileChunks_FileChunkId",
+                        column: x => x.FileChunkId,
+                        principalTable: "FileChunks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FileEntryEmbeddings_FileEntries_FileEntryId",
+                        column: x => x.FileEntryId,
+                        principalTable: "FileEntries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Lessons",
                 columns: table => new
                 {
@@ -590,6 +625,45 @@ namespace CourseMate.Persistent.Migrations
                     table.PrimaryKey("PK_LessonCodings", x => x.Id);
                     table.ForeignKey(
                         name: "FK_LessonCodings_Lessons_LessonId",
+                        column: x => x.LessonId,
+                        principalTable: "Lessons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LessonMaterials",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    LessonId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Outline = table.Column<string>(type: "character varying(32768)", maxLength: 32768, nullable: false),
+                    SlideFileId = table.Column<Guid>(type: "uuid", nullable: true),
+                    DocumentFileId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    LastModificationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LessonMaterials", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LessonMaterials_FileEntries_DocumentFileId",
+                        column: x => x.DocumentFileId,
+                        principalTable: "FileEntries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LessonMaterials_FileEntries_SlideFileId",
+                        column: x => x.SlideFileId,
+                        principalTable: "FileEntries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LessonMaterials_Lessons_LessonId",
                         column: x => x.LessonId,
                         principalTable: "Lessons",
                         principalColumn: "Id",
@@ -783,9 +857,37 @@ namespace CourseMate.Persistent.Migrations
                 column: "FileEntryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FileEntryEmbeddings_FileChunkId",
+                table: "FileEntryEmbeddings",
+                column: "FileChunkId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FileEntryEmbeddings_FileEntryId",
+                table: "FileEntryEmbeddings",
+                column: "FileEntryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LessonCodings_LessonId",
                 table: "LessonCodings",
                 column: "LessonId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LessonMaterials_DocumentFileId",
+                table: "LessonMaterials",
+                column: "DocumentFileId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LessonMaterials_LessonId",
+                table: "LessonMaterials",
+                column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LessonMaterials_SlideFileId",
+                table: "LessonMaterials",
+                column: "SlideFileId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -888,10 +990,13 @@ namespace CourseMate.Persistent.Migrations
                 name: "Enrollments");
 
             migrationBuilder.DropTable(
-                name: "FileChunks");
+                name: "FileEntryEmbeddings");
 
             migrationBuilder.DropTable(
                 name: "LessonCodings");
+
+            migrationBuilder.DropTable(
+                name: "LessonMaterials");
 
             migrationBuilder.DropTable(
                 name: "LessonQuizzes");
@@ -927,13 +1032,16 @@ namespace CourseMate.Persistent.Migrations
                 name: "Carts");
 
             migrationBuilder.DropTable(
-                name: "FileEntries");
+                name: "FileChunks");
 
             migrationBuilder.DropTable(
                 name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Lessons");
+
+            migrationBuilder.DropTable(
+                name: "FileEntries");
 
             migrationBuilder.DropTable(
                 name: "Chapters");

@@ -13,8 +13,8 @@ using Pgvector;
 namespace CourseMate.Persistent.Migrations
 {
     [DbContext(typeof(CourseMateDbContext))]
-    [Migration("20260329103334_AddFileEmbedding")]
-    partial class AddFileEmbedding
+    [Migration("20260410042744_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
