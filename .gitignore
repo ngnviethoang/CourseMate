@@ -257,4 +257,5 @@ paket-files/
 # CourseMate files
 /etc/uploads/
 /etc/logs/
+/docker-volumes/*
 
