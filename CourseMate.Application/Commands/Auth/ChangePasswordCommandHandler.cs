@@ -1,12 +1,19 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs.Auth;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Auth;
+
+public class ChangePasswordCommand : IRequest<int>
+{
+    public string NewPassword { get; set; } = string.Empty;
+
+    public string OldPassword { get; set; } = string.Empty;
+}
 
 internal sealed class ChangePasswordCommandHandler : AbstractCommandHandler<ChangePasswordCommand, int>
 {

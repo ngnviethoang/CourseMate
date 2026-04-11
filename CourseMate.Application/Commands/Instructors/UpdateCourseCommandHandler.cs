@@ -1,17 +1,41 @@
+using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.Shared;
+using CourseMate.Contracts;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs.Instructors;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Instructors;
 
-internal sealed class UpdateCourseAbstractCommandHandler : AbstractCommandHandler<UpdateCourseCommand, int>
+public class UpdateCourseCommand : IRequest<int>
 {
-    public UpdateCourseAbstractCommandHandler(
+    public Guid Id { get; set; }
+
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    public string Title { get; set; } = string.Empty;
+
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    public string Description { get; set; } = string.Empty;
+
+    public decimal Price { get; set; }
+
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    public string ImageUrl { get; set; } = string.Empty;
+
+    public bool IsPublished { get; set; }
+
+    public Guid CategoryId { get; set; }
+
+    public Guid InstructorId { get; set; }
+}
+
+internal sealed class UpdateCourseCommandHandler : AbstractCommandHandler<UpdateCourseCommand, int>
+{
+    public UpdateCourseCommandHandler(
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {

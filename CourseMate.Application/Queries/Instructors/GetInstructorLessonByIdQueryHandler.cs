@@ -1,11 +1,16 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.DTOs.Admins;
-using CourseMate.Contracts.DTOs.Instructors;
+using CourseMate.Contracts.DTOs;
 using CourseMate.Persistent;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Instructors;
+
+public class GetInstructorLessonByIdQuery : IRequest<LessonDto?>
+{
+    public Guid Id { get; set; }
+}
 
 internal sealed class GetInstructorLessonByIdQueryHandler
     : AbstractQueryHandler<GetInstructorLessonByIdQuery, LessonDto?>

@@ -1,11 +1,26 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.DTOs.Instructors;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace CourseMate.Application.Commands.Instructors;
+
+public class CreateCourseCommand : IRequest<ResultIdDto>
+{
+    public string Title { get; set; } = string.Empty;
+
+    public string Description { get; set; } = string.Empty;
+
+    public decimal Price { get; set; }
+
+    public string ImageUrl { get; set; } = string.Empty;
+
+    public bool IsPublished { get; set; }
+
+    public Guid CategoryId { get; set; }
+}
 
 internal sealed class CreateCourseCommandHandler : AbstractCommandHandler<CreateCourseCommand, ResultIdDto>
 {

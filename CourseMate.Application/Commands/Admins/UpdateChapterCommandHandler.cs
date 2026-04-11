@@ -1,13 +1,24 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Admins;
+
+public class UpdateChapterCommand : IRequest<int>
+{
+    public Guid Id { get; set; }
+
+    public Guid CourseId { get; set; }
+
+    public string Title { get; set; } = string.Empty;
+
+    public int Position { get; set; }
+}
 
 internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandler<UpdateChapterCommand, int>
 {

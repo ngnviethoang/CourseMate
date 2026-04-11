@@ -1,6 +1,6 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
-using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using Microsoft.AspNetCore.Http;
@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Students;
 
-internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetListCategoriesQuery, PagedDto<CategoryDto>>
+public class GetListCategoriesQuery : GetListQuery<CategoryDto>;
+
+internal sealed class GetListCategoriesQueryHandler : AbstractQueryHandler<GetListCategoriesQuery, PagedDto<CategoryDto>>
 {
-    public GetListCategoryQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+    public GetListCategoriesQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
     {
     }

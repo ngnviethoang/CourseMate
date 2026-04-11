@@ -1,8 +1,9 @@
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs.Auth;
+using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CourseMate.Application.Commands.Auth;
+
+public class LoginCommand : IRequest<LoginResponse>
+{
+    [Required]
+    [MaxLength(128)]
+    public string UserName { get; set; } = string.Empty;
+
+    [Required]
+    [MaxLength(128)]
+    public string Password { get; set; } = string.Empty;
+}
 
 internal sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponse>
 {

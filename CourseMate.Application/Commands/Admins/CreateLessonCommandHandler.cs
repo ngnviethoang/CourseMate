@@ -1,11 +1,28 @@
+using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.Shared;
+using CourseMate.Contracts;
 using CourseMate.Contracts.DTOs.Commons;
-using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace CourseMate.Application.Commands.Admins;
+
+public class CreateLessonCommand : IRequest<ResultIdDto>
+{
+    public Guid ChapterId { get; set; }
+
+    public Guid CourseId { get; set; }
+
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    public string Title { get; set; } = string.Empty;
+
+    public LessonType LessonType { get; set; }
+
+    public int Position { get; set; }
+}
 
 internal sealed class CreateLessonCommandHandler : AbstractCommandHandler<CreateLessonCommand, ResultIdDto>
 {

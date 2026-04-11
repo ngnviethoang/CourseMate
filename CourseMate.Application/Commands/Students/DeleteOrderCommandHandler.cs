@@ -1,12 +1,17 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Persistent;
 using CourseMate.Persistent.ExtensionMethods;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Students;
+
+public class DeleteOrderCommand : IRequest<int>
+{
+    public Guid Id { get; init; }
+}
 
 internal sealed class DeleteOrderCommandHandler : AbstractCommandHandler<DeleteOrderCommand, int>
 {

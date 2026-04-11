@@ -1,5 +1,5 @@
 using CourseMate.Application.Services.AI;
-using CourseMate.Contracts.DTOs.AIGeneration;
+using CourseMate.Contracts.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseMate.API.Controllers;

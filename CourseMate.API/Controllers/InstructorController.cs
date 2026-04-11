@@ -1,14 +1,17 @@
+using CourseMate.Application.Commands.Admins;
+using CourseMate.Application.Commands.Instructors;
+using CourseMate.Application.Queries.Admins;
+using CourseMate.Application.Queries.Instructors;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
-using CourseMate.Contracts.DTOs.Instructors;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CreateCourseCommand = CourseMate.Contracts.DTOs.Instructors.CreateCourseCommand;
-using CreateLessonCommand = CourseMate.Contracts.DTOs.Instructors.CreateLessonCommand;
-using UpdateCourseCommand = CourseMate.Contracts.DTOs.Instructors.UpdateCourseCommand;
-using UpdateLessonCommand = CourseMate.Contracts.DTOs.Instructors.UpdateLessonCommand;
+using CreateCourseCommand = CourseMate.Application.Commands.Instructors.CreateCourseCommand;
+using CreateLessonCommand = CourseMate.Application.Commands.Instructors.CreateLessonCommand;
+using UpdateCourseCommand = CourseMate.Application.Commands.Instructors.UpdateCourseCommand;
+using UpdateLessonCommand = CourseMate.Application.Commands.Instructors.UpdateLessonCommand;
 
 namespace CourseMate.API.Controllers;
 

@@ -1,4 +1,4 @@
-using CourseMate.Contracts.DTOs.AIGeneration;
+using CourseMate.Contracts.DTOs;
 
 namespace CourseMate.Application.Services.AI;
 

@@ -1,14 +1,18 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Commons;
-using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Students;
+
+public class CreateOrderCommand : IRequest<ResultIdDto>
+{
+}
 
 internal sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateOrderCommand, ResultIdDto>
 {

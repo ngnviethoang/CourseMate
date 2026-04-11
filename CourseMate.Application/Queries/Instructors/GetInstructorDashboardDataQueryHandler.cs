@@ -1,12 +1,14 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.DTOs.Commons;
-using CourseMate.Contracts.DTOs.Instructors;
+using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Instructors;
+
+public class GetInstructorDashboardDataQuery : IRequest<DashboardDto>;
 
 internal sealed class GetInstructorDashboardDataQueryHandler : AbstractQueryHandler<GetInstructorDashboardDataQuery, DashboardDto>
 {

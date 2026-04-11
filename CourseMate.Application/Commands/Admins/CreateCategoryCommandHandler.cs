@@ -1,11 +1,20 @@
-﻿using CourseMate.Application.Shared;
-using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace CourseMate.Application.Commands.Admins;
+
+public class CreateCategoryCommand : IRequest<ResultIdDto>
+{
+    public string Name { get; set; } = string.Empty;
+
+    public string Description { get; set; } = string.Empty;
+
+    public bool IsActive { get; set; }
+}
 
 internal sealed class CreateCategoryCommandHandler : AbstractCommandHandler<CreateCategoryCommand, ResultIdDto>
 {

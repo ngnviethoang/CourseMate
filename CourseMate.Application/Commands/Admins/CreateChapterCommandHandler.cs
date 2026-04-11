@@ -1,11 +1,20 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace CourseMate.Application.Commands.Admins;
+
+public class CreateChapterCommand : IRequest<ResultIdDto>
+{
+    public Guid CourseId { get; set; }
+
+    public string Title { get; set; } = string.Empty;
+
+    public int Position { get; set; }
+}
 
 internal sealed class CreateChapterCommandHandler : AbstractCommandHandler<CreateChapterCommand, ResultIdDto>
 {

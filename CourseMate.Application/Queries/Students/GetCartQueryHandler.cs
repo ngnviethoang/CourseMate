@@ -1,11 +1,16 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.DTOs.Students;
+using CourseMate.Contracts.DTOs;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Students;
+
+public class GetCartQuery : IRequest<CartDto?>
+{
+}
 
 internal sealed class GetCartQueryHandler : AbstractQueryHandler<GetCartQuery, CartDto?>
 {

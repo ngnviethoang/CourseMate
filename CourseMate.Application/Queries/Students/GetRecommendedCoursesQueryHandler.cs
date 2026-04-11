@@ -1,13 +1,21 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
-using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
 using CourseMate.Persistent.ExtensionMethods;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Students;
+
+public class GetRecommendedCoursesQuery : IRequest<PagedDto<CourseDto>>
+{
+    public int PageIndex { get; set; } = 1;
+
+    public int PageSize { get; set; } = 10;
+}
 
 internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<GetRecommendedCoursesQuery, PagedDto<CourseDto>>
 {

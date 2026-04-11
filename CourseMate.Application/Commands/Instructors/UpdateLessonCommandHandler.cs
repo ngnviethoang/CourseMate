@@ -1,17 +1,36 @@
+using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.Shared;
+using CourseMate.Contracts;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs.Instructors;
+using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Instructors;
 
-internal sealed class UpdateLessonAbstractCommandHandler : AbstractCommandHandler<UpdateLessonCommand, int>
+public class UpdateLessonCommand : IRequest<int>
 {
-    public UpdateLessonAbstractCommandHandler(
+    public Guid Id { get; set; }
+
+    public Guid ChapterId { get; set; }
+
+    public Guid CourseId { get; set; }
+
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    public string Title { get; set; } = string.Empty;
+
+    public LessonType LessonType { get; set; }
+
+    public int Position { get; set; }
+}
+
+internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<UpdateLessonCommand, int>
+{
+    public UpdateLessonCommandHandler(
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {
@@ -20,7 +39,7 @@ internal sealed class UpdateLessonAbstractCommandHandler : AbstractCommandHandle
     public override async Task<int> Handle(UpdateLessonCommand request, CancellationToken cancellationToken)
     {
         Guid instructorId = GetCurrentUserId();
-        bool isOwnerCourse = await DbContext.Courses.AnyAsync(course => course.Id == request.CourseId && course.InstructorId == instructorId, cancellationToken: cancellationToken);
+        bool isOwnerCourse = await DbContext.Courses.AnyAsync(course => course.Id == request.CourseId && course.InstructorId == instructorId, cancellationToken);
         if (!isOwnerCourse)
         {
             throw new UnauthorizedAccessException();

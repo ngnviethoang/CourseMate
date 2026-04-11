@@ -1,12 +1,23 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs.Admins;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Admins;
+
+public class UpdateUserCommand : IRequest<int>
+{
+    public Guid Id { get; set; }
+
+    public string UserName { get; set; } = string.Empty;
+
+    public string Email { get; set; } = string.Empty;
+
+    public string PhoneNumber { get; set; } = string.Empty;
+}
 
 internal sealed class UpdateUserAbstractCommandHandler : AbstractCommandHandler<UpdateUserCommand, int>
 {

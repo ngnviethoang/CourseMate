@@ -19,7 +19,7 @@
         <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.5"/>
         <PackageReference Include="Microsoft.SemanticKernel" Version="1.74.0"/>
         <PackageReference Include="Microsoft.SemanticKernel.Connectors.Chroma" Version="1.74.0-alpha"/>
-        <PackageReference Include="OllamaSharp" Version="5.4.25" />
+        <PackageReference Include="OllamaSharp" Version="5.4.25"/>
         <PackageReference Include="PdfPig" Version="0.1.14"/>
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1"/>
         <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.9"/>

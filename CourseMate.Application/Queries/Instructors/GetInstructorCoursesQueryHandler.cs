@@ -1,13 +1,14 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
-using CourseMate.Contracts.DTOs.Instructors;
 using CourseMate.Persistent;
 using CourseMate.Persistent.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Instructors;
+
+public class GetInstructorCoursesQuery : GetListQuery<CourseDto>;
 
 internal sealed class GetInstructorCoursesQueryHandler
     : AbstractQueryHandler<GetInstructorCoursesQuery, PagedDto<CourseDto>>

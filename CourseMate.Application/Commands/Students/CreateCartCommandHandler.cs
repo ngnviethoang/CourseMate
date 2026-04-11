@@ -1,12 +1,17 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Commons;
-using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Students;
+
+public class CreateCartCommand : IRequest<ResultIdDto>
+{
+    public Guid CourseId { get; init; }
+}
 
 internal sealed class CreateCartCommandHandler : AbstractCommandHandler<CreateCartCommand, ResultIdDto>
 {

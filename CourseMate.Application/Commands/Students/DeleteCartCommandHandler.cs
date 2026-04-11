@@ -1,13 +1,18 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using CourseMate.Persistent.ExtensionMethods;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Students;
+
+public class DeleteCartCommand : IRequest<int>
+{
+    public Guid CartItemId { get; init; }
+}
 
 internal sealed class DeleteCartCommandHandler : AbstractCommandHandler<DeleteCartCommand, int>
 {

@@ -1,13 +1,18 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs.Files;
 using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Files;
+
+public class DeleteImageCommand : IRequest<int>
+{
+    public Guid FileId { get; set; }
+}
 
 internal sealed class DeleteImageCommandHandler : AbstractCommandHandler<DeleteImageCommand, int>
 {

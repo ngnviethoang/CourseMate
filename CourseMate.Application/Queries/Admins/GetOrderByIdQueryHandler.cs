@@ -1,10 +1,16 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.DTOs.Admins;
+using CourseMate.Contracts.DTOs;
 using CourseMate.Persistent;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Admins;
+
+public class GetOrderByIdQuery : IRequest<AdminOrderDto?>
+{
+    public Guid Id { get; set; }
+}
 
 internal sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderByIdQuery, AdminOrderDto?>
 {

@@ -1,6 +1,6 @@
 using System.Text;
 using System.Text.Json;
-using CourseMate.Contracts.DTOs.AIGeneration;
+using CourseMate.Contracts.DTOs;
 using DocumentFormat.OpenXml.Packaging;
 using Microsoft.Extensions.Logging;
 using UglyToad.PdfPig;

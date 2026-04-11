@@ -1,4 +1,6 @@
-﻿using CourseMate.Contracts.DTOs.Auth;
+using CourseMate.Application.Commands.Auth;
+using CourseMate.Application.Queries.Auth;
+using CourseMate.Contracts.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
