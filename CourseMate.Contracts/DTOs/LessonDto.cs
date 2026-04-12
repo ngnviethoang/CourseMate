@@ -14,6 +14,8 @@ public class LessonDto
 
     public string CourseName { get; set; } = string.Empty;
 
+    public Guid InstructorId { get; set; }
+
     public string Title { get; set; } = string.Empty;
 
     public LessonType LessonType { get; set; }

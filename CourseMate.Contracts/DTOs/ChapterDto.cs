@@ -6,6 +6,8 @@ public class ChapterDto
 
     public Guid CourseId { get; set; }
 
+    public Guid InstructorId { get; set; }
+
     public string CourseName { get; set; } = string.Empty;
 
     public string Title { get; set; } = string.Empty;

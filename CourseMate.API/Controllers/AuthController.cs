@@ -32,24 +32,24 @@ public class AuthController : ControllerBase
         return NoContent();
     }
 
-    [Authorize]
     [HttpPost("change-password")]
+    [Authorize]
     public async Task<ActionResult> ChangePasswordAsync(ChangePasswordCommand request)
     {
         await _mediator.Send(request);
         return NoContent();
     }
 
-    [Authorize]
     [HttpGet("profile")]
+    [Authorize]
     public async Task<ActionResult> GetProfileAsync()
     {
         ProfileDto result = await _mediator.Send(new GetProfileQuery());
         return Ok(result);
     }
 
-    [Authorize]
     [HttpPost("profile")]
+    [Authorize]
     public async Task<ActionResult> UpdateProfileAsync(UpdateProfileCommand request)
     {
         await _mediator.Send(request);

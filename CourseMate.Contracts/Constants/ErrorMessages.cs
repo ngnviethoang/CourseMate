@@ -10,4 +10,6 @@ public static class ErrorMessages
     public const string UploadIncomplete = "Upload incomplete. {0}/{1} chunks uploaded.";
     public const string FileTooLarge = "File too large";
     public const string RoleNotExists = "{0} role does not exist";
+    public const string PositionOutOfRange = "Position must be 0 or equal to next position '{0}'";
+    public const string DuplicatePosition = "Duplicate position";
 }
