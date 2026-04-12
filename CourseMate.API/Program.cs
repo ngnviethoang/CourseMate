@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using Serilog;
 using AssemblyReference = CourseMate.API.AssemblyReference;
 
@@ -61,9 +64,9 @@ try
     builder.Services.AddHangfireServer();
     builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
-        options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
-        options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-        options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+        options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+        options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+        options.SerializerSettings.Converters.Add(new StringEnumConverter());
     });
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>

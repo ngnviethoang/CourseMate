@@ -1,4 +1,5 @@
-﻿using CourseMate.Contracts.Options;
+﻿using System.Text;
+using CourseMate.Contracts.Options;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -19,7 +20,7 @@ public class RapidService : ICodeRunnerService
         using HttpClient client = new();
 
         PayloadDto payload = new(code, language);
-        StringContent requestContent = new(JsonConvert.SerializeObject(payload), System.Text.Encoding.UTF8, "application/json");
+        StringContent requestContent = new(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
 
         client.DefaultRequestHeaders.Add("x-rapidapi-key", _rapidOptions.ApiKey);
         client.DefaultRequestHeaders.Add("x-rapidapi-host", url);
