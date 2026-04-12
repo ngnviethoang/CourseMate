@@ -24,7 +24,7 @@ internal sealed class DeleteCartCommandHandler : AbstractCommandHandler<DeleteCa
 
     public override async Task<int> Handle(DeleteCartCommand request, CancellationToken cancellationToken)
     {
-        Guid studentId = GetCurrentUserId();
+        Guid studentId = CurrentUserId;
 
         Cart? cart = await DbContext.Carts.FirstOrDefaultAsync(c => c.StudentId == studentId, cancellationToken);
         if (cart == null)

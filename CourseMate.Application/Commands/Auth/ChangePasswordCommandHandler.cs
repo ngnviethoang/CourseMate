@@ -30,11 +30,10 @@ internal sealed class ChangePasswordCommandHandler : AbstractCommandHandler<Chan
 
     public override async Task<int> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
-        Guid userId = GetCurrentUserId();
-        IdentityUser<Guid>? user = await _userManager.FindByIdAsync(userId.ToString());
+        IdentityUser<Guid>? user = await _userManager.FindByIdAsync(CurrentUserId.ToString());
         if (user == null)
         {
-            throw new EntityNotFoundException(nameof(IdentityUser), userId);
+            throw new EntityNotFoundException(nameof(IdentityUser), CurrentUserId);
         }
 
         IdentityResult changePasswordResult = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);

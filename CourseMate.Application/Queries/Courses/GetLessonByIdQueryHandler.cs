@@ -23,7 +23,7 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
 
     public override async Task<LessonDto?> Handle(GetLessonByIdQuery request, CancellationToken cancellationToken)
     {
-        Guid userId = GetCurrentUserId();
+        Guid userId = CurrentUserId;
         IQueryable<LessonDto> query = from lesson in DbContext.Lessons
             join chapter in DbContext.Chapters on lesson.ChapterId equals chapter.Id
             join course in DbContext.Courses on lesson.CourseId equals course.Id

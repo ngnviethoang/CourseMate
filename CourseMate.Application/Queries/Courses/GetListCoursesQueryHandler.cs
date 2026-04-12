@@ -23,8 +23,6 @@ internal sealed class GetListCoursesQueryHandler
 
     public override async Task<PagedDto<CourseDto>> Handle(GetListCoursesQuery request, CancellationToken cancellationToken)
     {
-        Guid userId = GetCurrentUserId();
-
         IQueryable<CourseDto> query =
             from course in DbContext.Courses
             join category in DbContext.Categories on course.CategoryId equals category.Id
@@ -46,7 +44,7 @@ internal sealed class GetListCoursesQueryHandler
             };
 
         query = query
-            .WhereIf(IsInRole(Roles.Instructor), x => x.InstructorId == userId)
+            .WhereIf(IsInRole(Roles.Instructor), x => x.InstructorId == CurrentUserId)
             .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
 
         query = request.Sorting switch

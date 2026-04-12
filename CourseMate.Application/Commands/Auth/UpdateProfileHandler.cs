@@ -34,12 +34,11 @@ internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfil
 
     public override async Task<int> Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
     {
-        Guid userId = GetCurrentUserId();
-        IdentityUser<Guid>? user = await _userManager.FindByIdAsync(userId.ToString());
+        IdentityUser<Guid>? user = await _userManager.FindByIdAsync(CurrentUserId.ToString());
 
         if (user == null)
         {
-            throw new EntityNotFoundException(nameof(IdentityUser), userId);
+            throw new EntityNotFoundException(nameof(IdentityUser), CurrentUserId);
         }
 
         if (!string.IsNullOrWhiteSpace(request.UserName) && user.UserName != request.UserName)

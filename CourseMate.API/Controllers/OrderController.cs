@@ -21,6 +21,18 @@ public class OrderController : ControllerBase
         _mediator = mediator;
     }
 
+    #region API Enrollment
+
+    [HttpPost("enrollments/free")]
+    [Authorize(Roles = Roles.Student)]
+    public async Task<ActionResult> EnrollFreeAsync(CreateEnrollmentFreeCommand request)
+    {
+        ResultIdDto result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
+    #endregion
+
     #region API Cart
 
     [HttpGet("carts")]

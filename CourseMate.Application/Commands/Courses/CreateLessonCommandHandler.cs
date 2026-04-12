@@ -39,7 +39,7 @@ internal sealed class CreateLessonCommandHandler : AbstractCommandHandler<Create
 
     public override async Task<ResultIdDto> Handle(CreateLessonCommand request, CancellationToken cancellationToken)
     {
-        Guid userId = GetCurrentUserId();
+        Guid userId = CurrentUserId;
         bool isOwnerCourse = await DbContext.Courses
             .WhereIf(IsInRole(Roles.Instructor), x => x.InstructorId == userId)
             .AnyAsync(course => course.Id == request.CourseId, cancellationToken);

@@ -35,7 +35,7 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
 
     public override async Task<CompleteVideoUploadResponse> Handle(CompletedVideoUploadCommand request, CancellationToken cancellationToken)
     {
-        Guid userId = GetCurrentUserId();
+        Guid userId = CurrentUserId;
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.UserId == userId)
             .Where(f => f.Status == FileStatus.Uploading)

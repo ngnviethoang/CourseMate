@@ -23,7 +23,7 @@ internal sealed class DeleteOrderCommandHandler : AbstractCommandHandler<DeleteO
 
     public override async Task<int> Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
     {
-        Guid studentId = GetCurrentUserId();
+        Guid studentId = CurrentUserId;
 
         if (!await DbContext.Orders.AnyAsync(o => o.Id == request.Id && o.StudentId == studentId, cancellationToken))
         {

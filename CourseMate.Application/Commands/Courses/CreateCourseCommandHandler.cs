@@ -41,7 +41,7 @@ internal sealed class CreateCourseCommandHandler : AbstractCommandHandler<Create
     public override async Task<ResultIdDto> Handle(CreateCourseCommand request, CancellationToken cancellationToken)
     {
         await DbContext.Categories.EnsureExistsAsync(request.CategoryId, cancellationToken);
-        Guid userId = GetCurrentUserId();
+        Guid userId = CurrentUserId;
 
         Course course = new(
             Guid.NewGuid(),

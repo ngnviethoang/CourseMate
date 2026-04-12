@@ -40,7 +40,7 @@ internal sealed class UploadImageCommandHandler : AbstractCommandHandler<UploadI
             throw new BusinessException(ErrorMessages.InvalidFileType);
         }
 
-        Guid userId = GetCurrentUserId();
+        Guid userId = CurrentUserId;
         string userDir = Path.Combine(_storageOptions.ImagesPath, userId.ToString());
         if (!Directory.Exists(userDir))
         {

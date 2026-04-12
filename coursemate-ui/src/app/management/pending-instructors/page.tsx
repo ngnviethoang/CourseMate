@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { CheckCircle, XCircle, Search } from 'lucide-react'
 import { toast } from 'sonner'
-import { userService } from '@/lib/admin-service'
+// userService calls for pending instructors are stubbed -- see TODO comments below
 import type { UserDto } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
@@ -30,8 +30,10 @@ export default function PendingInstructorsPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await userService.listPendingInstructors({ filter, pageSize: 10, sorting })
-      setItems(res.items)
+      // TODO: pending-instructors endpoints have been removed in the resource-based
+      // API refactor. Re-add GET/PUT /api/users/pending-instructors endpoints to
+      // UserController and add Application handlers before re-enabling this.
+      setItems([])
     } finally {
       setLoading(false)
     }
@@ -45,9 +47,8 @@ export default function PendingInstructorsPage() {
   async function handleApprove() {
     if (!approveId) return
     try {
-      await userService.approveInstructor(approveId)
-      toast.success('Instructor approved.')
-      load()
+      // TODO: re-enable when POST /api/users/pending-instructors/{id}/approve is added
+      toast.error('Endpoint not yet available in the new API.')
     } catch {
       toast.error('Failed to approve instructor.')
     } finally {
@@ -58,9 +59,8 @@ export default function PendingInstructorsPage() {
   async function handleReject() {
     if (!rejectId) return
     try {
-      await userService.rejectInstructor(rejectId)
-      toast.success('Instructor application rejected.')
-      load()
+      // TODO: re-enable when POST /api/users/pending-instructors/{id}/reject is added
+      toast.error('Endpoint not yet available in the new API.')
     } catch {
       toast.error('Failed to reject instructor application.')
     } finally {

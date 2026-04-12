@@ -23,7 +23,7 @@ internal sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderBy
 
     public override async Task<OrderDto?> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
     {
-        Guid studentId = GetCurrentUserId();
+        Guid studentId = CurrentUserId;
 
         Order? order = await DbContext.Orders
             .FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == studentId, cancellationToken);

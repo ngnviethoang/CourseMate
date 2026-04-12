@@ -24,7 +24,7 @@ internal sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateO
 
     public override async Task<ResultIdDto> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        Guid studentId = GetCurrentUserId();
+        Guid studentId = CurrentUserId;
 
         Cart? cart = await DbContext.Carts.FirstOrDefaultAsync(c => c.StudentId == studentId, cancellationToken);
         if (cart == null)

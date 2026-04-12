@@ -23,7 +23,7 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
 
     public override async Task<LessonDetailDto?> Handle(GetLessonByIdQuery request, CancellationToken cancellationToken)
     {
-        Guid studentId = GetCurrentUserId();
+        Guid studentId = CurrentUserId;
 
         LessonDetailDto? lesson = await DbContext.Lessons
             .Where(l => l.Id == request.Id)

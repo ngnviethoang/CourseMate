@@ -19,7 +19,7 @@ internal sealed class GetProfileQueryHandler : AbstractQueryHandler<GetProfileQu
 
     public override async Task<ProfileDto?> Handle(GetProfileQuery request, CancellationToken cancellationToken)
     {
-        Guid userId = GetCurrentUserId();
+        Guid userId = CurrentUserId;
         IdentityUser<Guid>? user = await DbContext.Users.FirstOrDefaultAsync(i => i.Id == userId, cancellationToken);
 
         if (user == null)

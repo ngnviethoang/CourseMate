@@ -39,7 +39,7 @@ internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandle
             throw new BusinessException(ErrorMessages.InvalidFileType);
         }
 
-        Guid userId = GetCurrentUserId();
+        Guid userId = CurrentUserId;
         string documentsDir = Path.Combine(_storageOptions.DocumentsPath, userId.ToString());
         if (!Directory.Exists(documentsDir))
         {

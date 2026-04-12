@@ -1,13 +1,18 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Commons;
-using CourseMate.Contracts.DTOs.Students;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseMate.Application.Commands.Students;
+namespace CourseMate.Application.Commands.Orders;
+
+public class CreateEnrollmentFreeCommand : IRequest<ResultIdDto>
+{
+    public Guid CourseId { get; set; }
+}
 
 internal sealed class CreateEnrollmentFreeCommandHandler : AbstractCommandHandler<CreateEnrollmentFreeCommand, ResultIdDto>
 {
@@ -19,7 +24,7 @@ internal sealed class CreateEnrollmentFreeCommandHandler : AbstractCommandHandle
 
     public override async Task<ResultIdDto> Handle(CreateEnrollmentFreeCommand request, CancellationToken cancellationToken)
     {
-        Guid studentId = GetCurrentUserId();
+        Guid studentId = CurrentUserId;
         if (!await DbContext.Courses.AnyAsync(course => course.Id == request.CourseId && course.IsPublished && course.Price == 0, cancellationToken))
         {
             throw new EntityNotFoundException(nameof(Course), request.CourseId);

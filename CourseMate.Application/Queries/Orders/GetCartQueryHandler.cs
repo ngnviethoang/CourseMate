@@ -23,7 +23,7 @@ internal sealed class GetCartQueryHandler : AbstractQueryHandler<GetCartQuery, C
 
     public override async Task<CartDto?> Handle(GetCartQuery request, CancellationToken cancellationToken)
     {
-        Guid studentId = IsInRole(Roles.Admin) ? request.StudentId : GetCurrentUserId();
+        Guid studentId = IsInRole(Roles.Admin) ? request.StudentId : CurrentUserId;
 
         Cart? cart = await DbContext.Carts.FirstOrDefaultAsync(c => c.StudentId == studentId, cancellationToken);
         if (cart == null)

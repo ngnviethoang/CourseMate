@@ -21,7 +21,7 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
 
     public override async Task<CourseDetailDto?> Handle(GetCourseByIdQuery request, CancellationToken cancellationToken)
     {
-        Guid studentId = GetCurrentUserId();
+        Guid studentId = CurrentUserId;
 
         IQueryable<CourseDetailDto> courseQuery = from course in DbContext.Courses
             join category in DbContext.Categories on course.CategoryId equals category.Id

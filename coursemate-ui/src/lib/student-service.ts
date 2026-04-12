@@ -15,20 +15,22 @@ export const studentService = {
   // ─── Categories ────────────────────────────────────────────────────────────
 
   getCategories: async (pageSize = 25): Promise<PagedDto<CategoryDto>> => {
-    return api.get<PagedDto<CategoryDto>>(`/api/student/categories?pageSize=${pageSize}&pageIndex=1`)
+    return api.get<PagedDto<CategoryDto>>(`/api/categories?pageSize=${pageSize}&pageIndex=1`)
   },
 
-  // profile
+  // ─── My Courses (enrolled) ─────────────────────────────────────────────────
+
   getMyCourse: async (pageIndex = 1, pageSize = 12, filter?: string): Promise<PagedDto<StudentMyCourseDto>> => {
     const params = new URLSearchParams({
       pageIndex: String(pageIndex),
       pageSize: String(pageSize)
     })
     if (filter) params.set('filter', filter)
-    return api.get<PagedDto<StudentMyCourseDto>>(`/api/student/courses/my?${params}`)
+    return api.get<PagedDto<StudentMyCourseDto>>(`/api/courses/my?${params}`)
   },
+
   getLessonById: async (id: string): Promise<StudentLessonDetailDto> => {
-    return api.get<StudentLessonDetailDto>(`/api/student/lessons/${id}`)
+    return api.get<StudentLessonDetailDto>(`/api/lessons/${id}`)
   },
 
   // ─── Courses ───────────────────────────────────────────────────────────────
@@ -45,11 +47,11 @@ export const studentService = {
     })
     if (filter) params.set('filter', filter)
     if (categoryId) params.set('categoryId', categoryId)
-    return api.get<PagedDto<CourseDto>>(`/api/student/courses?${params}`)
+    return api.get<PagedDto<CourseDto>>(`/api/courses?${params}`)
   },
 
   getCourseById: async (id: string): Promise<StudentCourseDetailDto> => {
-    return api.get<StudentCourseDetailDto>(`/api/student/courses/${id}`)
+    return api.get<StudentCourseDetailDto>(`/api/courses/${id}`)
   },
 
   getRecommendedCourses: async (pageIndex = 1, pageSize = 12): Promise<PagedDto<CourseDto>> => {
@@ -57,38 +59,40 @@ export const studentService = {
       pageIndex: String(pageIndex),
       pageSize: String(pageSize)
     })
-    return api.get<PagedDto<CourseDto>>(`/api/student/courses/recommended?${params}`)
+    return api.get<PagedDto<CourseDto>>(`/api/courses/recommended?${params}`)
   },
 
   // ─── Cart ──────────────────────────────────────────────────────────────────
 
   getCart: async (): Promise<CartDto> => {
-    return api.get<CartDto>('/api/student/carts')
+    return api.get<CartDto>('/api/carts')
   },
 
   addToCart: async (courseId: string): Promise<ResultIdDto> => {
-    return api.post<ResultIdDto>('/api/student/carts', { courseId })
-  },
-
-  enrollFree: async (courseId: string): Promise<ResultIdDto> => {
-    return api.post<ResultIdDto>('/api/student/enrollments/free', { courseId })
+    return api.post<ResultIdDto>('/api/carts', { courseId })
   },
 
   removeFromCart: async (cartItemId: string): Promise<void> => {
-    return api.delete<void>(`/api/student/carts/${cartItemId}`)
+    return api.delete<void>(`/api/carts/${cartItemId}`)
+  },
+
+  // ─── Enrollment ────────────────────────────────────────────────────────────
+
+  enrollFree: async (courseId: string): Promise<ResultIdDto> => {
+    return api.post<ResultIdDto>('/api/enrollments/free', { courseId })
   },
 
   // ─── Orders ────────────────────────────────────────────────────────────────
 
   getOrders: async (pageIndex = 1, pageSize = 10): Promise<PagedDto<OrderDto>> => {
-    return api.get<PagedDto<OrderDto>>(`/api/student/orders?pageIndex=${pageIndex}&pageSize=${pageSize}`)
+    return api.get<PagedDto<OrderDto>>(`/api/orders?pageIndex=${pageIndex}&pageSize=${pageSize}`)
   },
 
   getOrderById: async (id: string): Promise<OrderDto> => {
-    return api.get<OrderDto>(`/api/student/orders/${id}`)
+    return api.get<OrderDto>(`/api/orders/${id}`)
   },
 
   createOrder: async (): Promise<ResultIdDto> => {
-    return api.post<ResultIdDto>('/api/student/orders')
+    return api.post<ResultIdDto>('/api/orders')
   }
 }

@@ -25,7 +25,7 @@ internal sealed class GetVideoUploadStatusQueryHandler : AbstractQueryHandler<Ge
 
     public override async Task<VideoUploadStatusDto?> Handle(GetVideoUploadStatusQuery request, CancellationToken cancellationToken)
     {
-        Guid userId = GetCurrentUserId();
+        Guid userId = CurrentUserId;
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.UserId == userId)
             .FirstOrDefaultAsync(f => f.Id == request.FileId, cancellationToken);

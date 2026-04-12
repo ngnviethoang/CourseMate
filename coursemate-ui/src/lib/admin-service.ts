@@ -57,18 +57,10 @@ export const getUserId = () => {
   return payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] ?? null
 }
 
-const getBASE = () => {
-  const roleList = getRole()
-  if (roleList.includes('Admin')) return '/api/admin'
-  if (roleList.includes('Instructor')) return '/api/instructor'
-  return '/api/admin'
-}
-
 // ─── Dashboard ───────────────────────────────────────────────────────────────
 
 export const dashboardService = {
-  getAdminStats: () => api.get<DashboardDto>(`${getBASE()}/dashboard`),
-  getInstructorStats: () => api.get<DashboardDto>('/api/instructor/dashboard')
+  getStats: () => api.get<DashboardDto>('/api/dashboard')
 }
 
 // ─── Category ────────────────────────────────────────────────────────────────
@@ -80,17 +72,18 @@ export const categoryService = {
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
     if (params?.sorting) qs.set('sorting', params.sorting)
-    const res = await api.get<PagedDto<CategoryDto>>(`${getBASE()}/categories?${qs}`)
+    const res = await api.get<PagedDto<CategoryDto>>(`/api/categories?${qs}`)
     if (res) res.pageIndex -= 1
     return res
   },
-  getById: (id: string) => api.get<CategoryDto | null>(`${getBASE()}/categories/${id}`),
-  create: (body: CreateCategoryRequest) => api.post<ResultIdDto>(`${getBASE()}/categories`, body),
-  update: (id: string, body: UpdateCategoryRequest) => api.put<void>(`${getBASE()}/categories/${id}`, body),
-  delete: (id: string) => api.delete<void>(`${getBASE()}/categories/${id}`)
+  getById: (id: string) => api.get<CategoryDto | null>(`/api/categories/${id}`),
+  create: (body: CreateCategoryRequest) => api.post<ResultIdDto>('/api/categories', body),
+  update: (id: string, body: UpdateCategoryRequest) => api.put<void>(`/api/categories/${id}`, body),
+  delete: (id: string) => api.delete<void>(`/api/categories/${id}`)
 }
 
-// ---- order
+// ─── Order ───────────────────────────────────────────────────────────────────
+
 export const orderService = {
   list: async (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string }) => {
     const qs = new URLSearchParams()
@@ -98,12 +91,12 @@ export const orderService = {
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
     if (params?.sorting) qs.set('sorting', params.sorting)
-    const res = await api.get<PagedDto<AdminOrderDto>>(`${getBASE()}/orders?${qs}`)
+    const res = await api.get<PagedDto<AdminOrderDto>>(`/api/orders?${qs}`)
     if (res) res.pageIndex -= 1
     return res
   },
-  getById: (id: string) => api.get<AdminOrderDto | null>(`${getBASE()}/orders/${id}`),
-  update: (id: string, body: UpdateOrderRequest) => api.put<void>(`${getBASE()}/orders/${id}`, body)
+  getById: (id: string) => api.get<AdminOrderDto | null>(`/api/orders/${id}`),
+  update: (id: string, body: UpdateOrderRequest) => api.put<void>(`/api/orders/${id}`, body)
 }
 
 // ─── Course ──────────────────────────────────────────────────────────────────
@@ -115,14 +108,14 @@ export const courseService = {
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
     if (params?.sorting) qs.set('sorting', params.sorting)
-    const res = await api.get<PagedDto<CourseDto>>(`${getBASE()}/courses?${qs}`)
+    const res = await api.get<PagedDto<CourseDto>>(`/api/courses?${qs}`)
     if (res) res.pageIndex -= 1
     return res
   },
-  getById: (id: string) => api.get<CourseDto | null>(`${getBASE()}/courses/${id}`),
-  create: (body: CreateCourseRequest) => api.post<ResultIdDto>(`${getBASE()}/courses`, body),
-  update: (id: string, body: UpdateCourseRequest) => api.put<void>(`${getBASE()}/courses/${id}`, body),
-  delete: (id: string) => api.delete<void>(`${getBASE()}/courses/${id}`)
+  getById: (id: string) => api.get<CourseDto | null>(`/api/courses/${id}`),
+  create: (body: CreateCourseRequest) => api.post<ResultIdDto>('/api/courses', body),
+  update: (id: string, body: UpdateCourseRequest) => api.put<void>(`/api/courses/${id}`, body),
+  delete: (id: string) => api.delete<void>(`/api/courses/${id}`)
 }
 
 // ─── Chapter ─────────────────────────────────────────────────────────────────
@@ -141,14 +134,14 @@ export const chapterService = {
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
     if (params?.sorting) qs.set('sorting', params.sorting)
     if (params?.courseId) qs.set('courseId', params.courseId)
-    const res = await api.get<PagedDto<ChapterDto>>(`${getBASE()}/chapters?${qs}`)
+    const res = await api.get<PagedDto<ChapterDto>>(`/api/chapters?${qs}`)
     if (res) res.pageIndex -= 1
     return res
   },
-  getById: (id: string) => api.get<ChapterDto | null>(`${getBASE()}/chapters/${id}`),
-  create: (body: CreateChapterRequest) => api.post<ResultIdDto>(`${getBASE()}/chapters`, body),
-  update: (id: string, body: UpdateChapterRequest) => api.put<void>(`${getBASE()}/chapters/${id}`, body),
-  delete: (id: string) => api.delete<void>(`${getBASE()}/chapters/${id}`)
+  getById: (id: string) => api.get<ChapterDto | null>(`/api/chapters/${id}`),
+  create: (body: CreateChapterRequest) => api.post<ResultIdDto>('/api/chapters', body),
+  update: (id: string, body: UpdateChapterRequest) => api.put<void>(`/api/chapters/${id}`, body),
+  delete: (id: string) => api.delete<void>(`/api/chapters/${id}`)
 }
 
 // ─── Lesson ──────────────────────────────────────────────────────────────────
@@ -172,7 +165,7 @@ export const lessonService = {
     if (params?.chapterId) qs.set('chapterId', params.chapterId)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const res = await api.get<PagedDto<any>>(`${getBASE()}/lessons?${qs}`)
+    const res = await api.get<PagedDto<any>>(`/api/lessons?${qs}`)
     if (res) {
       res.pageIndex -= 1
       if (res.items) {
@@ -183,7 +176,7 @@ export const lessonService = {
   },
   getById: async (id: string) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const res = await api.get<any | null>(`${getBASE()}/lessons/${id}`)
+    const res = await api.get<any | null>(`/api/lessons/${id}`)
     if (res && res.lessonType !== undefined) {
       res.lessonType = NUMBER_TO_LESSON_TYPE[res.lessonType as number] || 'Video'
     }
@@ -191,13 +184,13 @@ export const lessonService = {
   },
   create: (body: CreateLessonRequest) => {
     const payload = { ...body, lessonType: LESSON_TYPE_TO_NUMBER[body.lessonType] || 1 }
-    return api.post<ResultIdDto>(`${getBASE()}/lessons`, payload)
+    return api.post<ResultIdDto>('/api/lessons', payload)
   },
   update: (id: string, body: UpdateLessonRequest) => {
     const payload = { ...body, lessonType: LESSON_TYPE_TO_NUMBER[body.lessonType] || 1 }
-    return api.put<void>(`${getBASE()}/lessons/${id}`, payload)
+    return api.put<void>(`/api/lessons/${id}`, payload)
   },
-  delete: (id: string) => api.delete<void>(`${getBASE()}/lessons/${id}`)
+  delete: (id: string) => api.delete<void>(`/api/lessons/${id}`)
 }
 
 // ─── User ────────────────────────────────────────────────────────────────────
@@ -209,39 +202,21 @@ export const userService = {
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
     if (params?.sorting) qs.set('sorting', params.sorting)
-    const res = await api.get<PagedDto<UserDto>>(`${getBASE()}/users?${qs}`)
+    const res = await api.get<PagedDto<UserDto>>(`/api/users?${qs}`)
     if (res) res.pageIndex -= 1
     return res
   },
-  getById: (id: string) => api.get<UserDto | null>(`${getBASE()}/users/${id}`),
-  create: (body: CreateUserRequest) => api.post<ResultIdDto>(`${getBASE()}/users`, body),
-  update: (id: string, body: UpdateUserRequest) => api.put<void>(`${getBASE()}/users/${id}`, body),
-  delete: (id: string) => api.delete<void>(`${getBASE()}/users/${id}`),
-
-  listPendingInstructors: async (params?: {
-    filter?: string
-    pageIndex?: number
-    pageSize?: number
-    sorting?: string
-  }) => {
-    const qs = new URLSearchParams()
-    if (params?.filter) qs.set('filter', params.filter)
-    if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
-    if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
-    if (params?.sorting) qs.set('sorting', params.sorting)
-    const res = await api.get<PagedDto<UserDto>>(`${getBASE()}/pending-instructors?${qs}`)
-    if (res) res.pageIndex -= 1
-    return res
-  },
-  approveInstructor: (id: string) => api.put<void>(`${getBASE()}/pending-instructors/${id}/approve`),
-  rejectInstructor: (id: string) => api.put<void>(`${getBASE()}/pending-instructors/${id}/reject`)
+  getById: (id: string) => api.get<UserDto | null>(`/api/users/${id}`),
+  create: (body: CreateUserRequest) => api.post<ResultIdDto>('/api/users', body),
+  update: (id: string, body: UpdateUserRequest) => api.put<void>(`/api/users/${id}`, body),
+  delete: (id: string) => api.delete<void>(`/api/users/${id}`)
 }
 
 // ─── Profile (current user) ───────────────────────────────────────────────────
 
 export const profileService = {
-  getMe: () => api.get<ProfileDto>('/api/auth/me'),
-  updateProfile: (body: UpdateProfileRequest) => api.put<void>('/api/auth/profile', body),
+  getMe: () => api.get<ProfileDto>('/api/auth/profile'),
+  updateProfile: (body: UpdateProfileRequest) => api.post<void>('/api/auth/profile', body),
   changePassword: (body: ChangePasswordRequest) => api.post<void>('/api/auth/change-password', body)
 }
 

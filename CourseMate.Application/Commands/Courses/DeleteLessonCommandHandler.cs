@@ -23,7 +23,7 @@ internal sealed class DeleteLessonCommandHandler : AbstractCommandHandler<Delete
 
     public override async Task<int> Handle(DeleteChapterCommand request, CancellationToken cancellationToken)
     {
-        Guid userId = GetCurrentUserId();
+        Guid userId = CurrentUserId;
         bool canDelete = await (
                 from lesson in DbContext.Lessons
                 join course in DbContext.Courses

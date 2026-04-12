@@ -25,7 +25,7 @@ internal sealed class DeleteImageCommandHandler : AbstractCommandHandler<DeleteI
 
     public override async Task<int> Handle(DeleteImageCommand request, CancellationToken cancellationToken)
     {
-        Guid userId = GetCurrentUserId();
+        Guid userId = CurrentUserId;
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.UserId == userId)
             .Where(f => f.FileType == FileType.Image)

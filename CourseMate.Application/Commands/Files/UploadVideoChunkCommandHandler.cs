@@ -49,7 +49,7 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
             throw new BusinessException(ErrorMessages.FileTooLarge);
         }
 
-        Guid userId = GetCurrentUserId();
+        Guid userId = CurrentUserId;
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.UserId == userId)
             .Where(f => f.Status == FileStatus.Uploading)

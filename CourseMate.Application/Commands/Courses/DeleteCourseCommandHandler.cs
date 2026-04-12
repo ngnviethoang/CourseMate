@@ -22,7 +22,7 @@ internal sealed class DeleteCourseAbstractCommandHandler : AbstractCommandHandle
 
     public override async Task<int> Handle(DeleteCourseCommand request, CancellationToken cancellationToken)
     {
-        Guid userId = GetCurrentUserId();
+        Guid userId = CurrentUserId;
         bool isExisted = DbContext.Courses
             .WhereIf(IsInRole(Roles.Instructor), c => c.InstructorId == userId)
             .Any(i => i.Id == request.Id);

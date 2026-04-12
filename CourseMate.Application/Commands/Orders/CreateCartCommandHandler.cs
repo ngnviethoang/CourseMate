@@ -28,7 +28,7 @@ internal sealed class CreateCartCommandHandler : AbstractCommandHandler<CreateCa
 
     public override async Task<ResultIdDto> Handle(CreateCartCommand request, CancellationToken cancellationToken)
     {
-        Guid studentId = IsInRole(Roles.Admin) ? request.StudentId : GetCurrentUserId();
+        Guid studentId = IsInRole(Roles.Admin) ? request.StudentId : CurrentUserId;
 
         if (!await DbContext.Users.AnyAsync(u => u.Id == studentId, cancellationToken))
         {

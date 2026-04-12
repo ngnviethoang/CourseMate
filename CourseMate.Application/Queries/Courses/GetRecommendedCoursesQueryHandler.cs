@@ -26,7 +26,7 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
 
     public override async Task<PagedDto<CourseDto>> Handle(GetRecommendedCoursesQuery request, CancellationToken cancellationToken)
     {
-        Guid studentId = GetCurrentUserId();
+        Guid studentId = CurrentUserId;
 
         // 1. Get categories of courses the student has already purchased (Paid orders)
         List<Guid> purchasedCourseIds = await (

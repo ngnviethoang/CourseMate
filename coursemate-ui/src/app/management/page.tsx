@@ -25,8 +25,7 @@ export default function ManagementPage() {
         const userProfile = await authService.getProfile()
         setProfile(userProfile)
 
-        const isAdmin = userProfile.roles.includes('Admin')
-        const res = isAdmin ? await dashboardService.getAdminStats() : await dashboardService.getInstructorStats()
+        const res = await dashboardService.getStats()
 
         setData(res)
       } catch (error) {

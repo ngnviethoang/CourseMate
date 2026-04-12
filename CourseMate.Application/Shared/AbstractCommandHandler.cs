@@ -22,8 +22,7 @@ public abstract class AbstractCommandHandler<TRequest, TResponse> : AbstractRequ
 
     protected async Task EnsureEnrollmentAsync(Guid courseId)
     {
-        Guid userId = GetCurrentUserId();
-        if (IsInRole(Roles.Student) && !await DbContext.Enrollments.AnyAsync(x => x.CourseId == courseId && x.StudentId == userId))
+        if (IsInRole(Roles.Student) && !await DbContext.Enrollments.AnyAsync(x => x.CourseId == courseId && x.StudentId == CurrentUserId))
         {
             throw new UnauthorizedAccessException();
         }

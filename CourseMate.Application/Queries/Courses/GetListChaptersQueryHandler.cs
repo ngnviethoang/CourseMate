@@ -23,7 +23,7 @@ internal sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetList
 
     public override async Task<PagedDto<ChapterDto>> Handle(GetListChaptersQuery request, CancellationToken cancellationToken)
     {
-        Guid userId = GetCurrentUserId();
+        Guid userId = CurrentUserId;
         await EnsureEnrollmentAsync(request.CourseId);
 
         IQueryable<ChapterDto> query =

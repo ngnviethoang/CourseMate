@@ -23,7 +23,7 @@ internal sealed class GetMyCoursesQueryHandler : AbstractQueryHandler<GetMyCours
 
     public override async Task<PagedDto<StudentMyCourseDto>> Handle(GetMyCoursesQuery request, CancellationToken cancellationToken)
     {
-        Guid studentId = IsInRole(Roles.Admin) ? request.StudentId : GetCurrentUserId();
+        Guid studentId = IsInRole(Roles.Admin) ? request.StudentId : CurrentUserId;
 
         IQueryable<StudentMyCourseDto> query =
             from enrollment in DbContext.Enrollments

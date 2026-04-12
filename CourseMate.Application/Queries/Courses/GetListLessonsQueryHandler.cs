@@ -25,7 +25,7 @@ internal sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListL
 
     public override async Task<PagedDto<LessonDto>> Handle(GetListLessonsQuery request, CancellationToken cancellationToken)
     {
-        Guid userId = GetCurrentUserId();
+        Guid userId = CurrentUserId;
         await EnsureEnrollmentAsync(request.CourseId);
 
         IQueryable<LessonDto> query = from lesson in DbContext.Lessons

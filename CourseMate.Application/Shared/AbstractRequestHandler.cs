@@ -12,10 +12,19 @@ public abstract class AbstractRequestHandler
         HttpContextAccessor = httpContextAccessor;
     }
 
-    protected Guid GetCurrentUserId()
+    protected Guid CurrentUserId
     {
-        string? userIdString = HttpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        return Guid.TryParse(userIdString, out Guid userId) ? userId : throw new UnauthorizedAccessException();
+        get
+        {
+            string? userIdString = HttpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Guid.TryParse(userIdString, out Guid userId);
+            return userId;
+        }
+    }
+
+    protected bool IsAuthenticated()
+    {
+        return HttpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated ?? false;
     }
 
     protected bool IsInRole(string role)

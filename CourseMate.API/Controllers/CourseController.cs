@@ -1,4 +1,4 @@
-﻿using CourseMate.Application.Commands.Courses;
+using CourseMate.Application.Commands.Courses;
 using CourseMate.Application.Queries.Courses;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
@@ -72,6 +72,14 @@ public class CourseController : ControllerBase
     public async Task<ActionResult> GetMyCoursesAsync([FromQuery] GetMyCoursesQuery request)
     {
         PagedDto<StudentMyCourseDto> result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
+    [HttpGet("courses/recommended")]
+    [Authorize(Roles = Roles.Student)]
+    public async Task<ActionResult> GetRecommendedCoursesAsync([FromQuery] GetRecommendedCoursesQuery request)
+    {
+        PagedDto<CourseDto> result = await _mediator.Send(request);
         return Ok(result);
     }
 

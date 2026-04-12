@@ -20,7 +20,7 @@ internal sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOr
 
     public override async Task<PagedDto<OrderDto>> Handle(GetListOrdersQuery request, CancellationToken cancellationToken)
     {
-        Guid studentId = GetCurrentUserId();
+        Guid studentId = CurrentUserId;
 
         IQueryable<OrderDto> query = DbContext.Orders
             .Where(o => o.StudentId == studentId)
