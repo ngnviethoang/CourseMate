@@ -1,16 +1,27 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs.Files;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace CourseMate.Application.Commands.Files;
+
+public class UploadVideoChunkCommand : IRequest<int>
+{
+    public Guid FileId { get; set; }
+
+    public string FileName { get; set; } = string.Empty;
+
+    public int ChunkIndex { get; set; }
+
+    public byte[] Content { get; set; } = [];
+}
 
 internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<UploadVideoChunkCommand, int>
 {

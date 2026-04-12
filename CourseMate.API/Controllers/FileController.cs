@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using CourseMate.Contracts.DTOs.Files;
+using CourseMate.Application.Commands.Files;
+using CourseMate.Application.Queries.Files;
+using CourseMate.Contracts.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

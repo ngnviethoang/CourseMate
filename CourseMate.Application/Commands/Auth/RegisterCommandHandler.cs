@@ -1,10 +1,28 @@
+using System.ComponentModel.DataAnnotations;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs.Auth;
 using CourseMate.Contracts.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Auth;
+
+public class RegisterCommand : IRequest<int>
+{
+    [EmailAddress]
+    public string Email { get; set; } = string.Empty;
+
+    [Required]
+    [MaxLength(128)]
+    public string Password { get; set; } = string.Empty;
+
+    [Required]
+    [MaxLength(128)]
+    public string UserName { get; set; } = string.Empty;
+
+    [Required]
+    [MaxLength(128)]
+    public string Role { get; set; } = string.Empty;
+}
 
 internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, int>
 {

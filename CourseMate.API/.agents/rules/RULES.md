@@ -47,6 +47,15 @@ trigger: always_on
 - Follows **CQRS pattern**
   - Command → write operations
   - Query → read operations
+- In class handler contains Command or Query DTO. Other response DTO will be created in Contracts project
+- Command, Query class must be
+  + Input validation
+  + Simple POCO classes (no inheritance, no business logic, no constructors)
+  + Each use case should have its own Command, Query, 
+  + Follow naming convention per use case:
+    * Query DTO: GetList[Entities]Query, GetById[Entity]Query
+    * Command DTO: Create[Entity]Command, Update[Entity]Command, Delete[Entity]Command
+
 - Do not mix Command & Query responsibilities
 - Command uses `CourseMateDbContext`
 - Query uses `CourseMateReadOnlyDbContext`
@@ -69,16 +78,10 @@ trigger: always_on
 ---
 
 ### Contracts
-- Shared DTOs (Request/Response)
+- Shared DTOs (Response), reuse across handlers
 - DTO must be POCO classes (no inheritance, no logic)
 - Enums & constants across projects
-- Input validation
 - No business logic
-- Command, Query must be simple POCO classes (no inheritance, no business logic, no constructors)
-- Each use case should have its own Command, Query, and DTO (avoid reuse across handlers)
-- DTOs must follow naming convention per use case:
-  - Query DTO: GetList[Entities]Query, GetById[Entity]Query
-  - Command DTO: Create[Entity]Command, Update[Entity]Command, Delete[Entity]Command
 ---
 
 ### Persistent

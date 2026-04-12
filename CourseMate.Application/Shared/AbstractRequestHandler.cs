@@ -14,7 +14,12 @@ public abstract class AbstractRequestHandler
 
     protected Guid GetCurrentUserId()
     {
-        string? userIdString = HttpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+        string? userIdString = HttpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
         return Guid.TryParse(userIdString, out Guid userId) ? userId : throw new UnauthorizedAccessException();
+    }
+
+    protected bool IsInRole(string role)
+    {
+        return HttpContextAccessor.HttpContext?.User.IsInRole(role) ?? false;
     }
 }

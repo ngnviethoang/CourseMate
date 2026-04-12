@@ -1,12 +1,17 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs.Files;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Files;
+
+public class DeleteVideoByIdCommand : IRequest<int>
+{
+    public Guid FileId { get; set; }
+}
 
 internal sealed class DeleteVideoUploadCommandHandler : AbstractCommandHandler<DeleteVideoByIdCommand, int>
 {

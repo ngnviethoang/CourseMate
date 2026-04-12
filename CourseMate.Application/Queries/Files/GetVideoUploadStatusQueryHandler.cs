@@ -1,12 +1,18 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.DTOs.Files;
+using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Files;
+
+public class GetVideoUploadStatusQuery : IRequest<VideoUploadStatusDto?>
+{
+    public Guid FileId { get; set; }
+}
 
 internal sealed class GetVideoUploadStatusQueryHandler : AbstractQueryHandler<GetVideoUploadStatusQuery, VideoUploadStatusDto?>
 {

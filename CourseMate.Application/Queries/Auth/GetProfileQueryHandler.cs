@@ -1,11 +1,14 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.DTOs.Auth;
+using CourseMate.Contracts.DTOs;
 using CourseMate.Persistent;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Auth;
+
+public class GetProfileQuery : IRequest<ProfileDto>;
 
 internal sealed class GetProfileQueryHandler : AbstractQueryHandler<GetProfileQuery, ProfileDto?>
 {
