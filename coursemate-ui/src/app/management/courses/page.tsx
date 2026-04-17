@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Search, BookOpen } from 'lucide-react'
+import { Plus, Search, Upload, Link2, ChevronsUpDown, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatCurrency, cn } from '@/lib/utils'
 import { courseService, categoryService, userService, getRole, getUserId } from '@/lib/admin-service'
+import { api } from '@/lib/api-client'
 import type { CategoryDto, CourseDto, CreateCourseRequest, UserDto } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
@@ -24,7 +25,8 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { formatDate } from '@/lib/format-date'
 
 const columns: Column<CourseDto>[] = [
@@ -82,6 +84,14 @@ export default function CoursesPage() {
   const [loadingDropdowns, setLoadingDropdowns] = useState(false)
   const [userRole, setUserRole] = useState<string[]>([])
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [categoryOpen, setCategoryOpen] = useState(false)
+  const [instructorOpen, setInstructorOpen] = useState(false)
+  const [selectedCategoryName, setSelectedCategoryName] = useState('')
+  const [selectedInstructorName, setSelectedInstructorName] = useState('')
+  const [categorySearch, setCategorySearch] = useState('')
+  const [instructorSearch, setInstructorSearch] = useState('')
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setUserRole(getRole())
@@ -107,6 +117,26 @@ export default function CoursesPage() {
     return () => clearTimeout(t)
   }, [load])
 
+  // Debounced server-side category search
+  useEffect(() => {
+    if (!categoryOpen) return
+    const t = setTimeout(async () => {
+      const res = await categoryService.list({ filter: categorySearch, pageSize: 25, sorting: 'name' })
+      setCategories(res.items)
+    }, 300)
+    return () => clearTimeout(t)
+  }, [categorySearch, categoryOpen])
+
+  // Debounced server-side instructor search
+  useEffect(() => {
+    if (!instructorOpen || !isAdmin) return
+    const t = setTimeout(async () => {
+      const res = await userService.list({ filter: instructorSearch, pageSize: 25, sorting: 'userName' })
+      setUsers(res.items)
+    }, 300)
+    return () => clearTimeout(t)
+  }, [instructorSearch, instructorOpen, isAdmin])
+
   async function loadDropdowns() {
     setLoadingDropdowns(true)
     try {
@@ -128,10 +158,11 @@ export default function CoursesPage() {
 
   async function openCreate() {
     setEditing(null)
-    setForm({
-      ...emptyForm,
-      instructorId: isInstructor ? (currentUserId ?? '') : ''
-    })
+    setForm({ ...emptyForm, instructorId: isInstructor ? (currentUserId ?? '') : '' })
+    setSelectedCategoryName('')
+    setSelectedInstructorName('')
+    setCategorySearch('')
+    setInstructorSearch('')
     await loadDropdowns()
     setDialogOpen(true)
   }
@@ -147,8 +178,27 @@ export default function CoursesPage() {
       categoryId: row.categoryId,
       instructorId: row.instructorId
     })
+    setSelectedCategoryName(row.categoryName ?? '')
+    setSelectedInstructorName(row.instructorName ?? '')
+    setCategorySearch('')
+    setInstructorSearch('')
     await loadDropdowns()
     setDialogOpen(true)
+  }
+
+  async function handleImageFile(file: File) {
+    setUploadingImage(true)
+    try {
+      const formData = new FormData()
+      formData.append('request', file)
+      const result = await api.post<{ fileId: string; fileUrl: string }>('/api/files/images', formData)
+      f('imageUrl', result.fileUrl)
+      toast.success('Image uploaded!')
+    } catch {
+      toast.error('Failed to upload image. Please try again.')
+    } finally {
+      setUploadingImage(false)
+    }
   }
 
   async function handleSave() {
@@ -227,272 +277,261 @@ export default function CoursesPage() {
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-[90vw] lg:max-w-6xl p-0 gap-0 overflow-hidden rounded-[2rem] border-none shadow-2xl">
-          <DialogHeader className="px-10 py-8 bg-primary text-primary-foreground">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-md">
-                <Plus className="h-8 w-8" />
-              </div>
-              <div>
-                <DialogTitle className="text-3xl font-black">
-                  {editing ? 'Edit Course' : 'Create New Course'}
-                </DialogTitle>
-                <p className="text-primary-foreground/80 font-medium mt-1">
-                  Fill in the details below to {editing ? 'update' : 'publish'} your course
-                </p>
-              </div>
-            </div>
+        <DialogContent className="sm:max-w-4xl p-0 gap-0 overflow-hidden rounded-2xl shadow-2xl">
+
+          {/* Header */}
+          <DialogHeader className="px-6 py-5 border-b">
+            <DialogTitle className="text-xl font-bold">
+              {editing ? 'Edit Course' : 'New Course'}
+            </DialogTitle>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              {editing ? 'Update course details below' : 'Fill in the details to publish a new course'}
+            </p>
           </DialogHeader>
 
-          <div className="px-10 py-10 space-y-12 max-h-[60vh] overflow-y-auto custom-scrollbar bg-background">
-            {/* Main Content Area - Grid Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-              {/* Left Column - General Info & Assignment (2/3 width) */}
-              <div className="lg:col-span-2 space-y-12">
-                <section className="space-y-6">
-                  <div className="flex items-center gap-3 border-b border-primary/10 pb-3">
-                    <div className="h-3 w-3 rounded-full bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
-                    <h3 className="text-base font-black uppercase tracking-[0.2em] text-foreground/80">
-                      General Information
-                    </h3>
-                  </div>
+          {/* Body */}
+          <div className="grid grid-cols-1 md:grid-cols-5 max-h-[72vh] overflow-y-auto custom-scrollbar">
 
-                  <div className="grid gap-8">
-                    <div className="space-y-3">
-                      <Label className="text-lg font-bold">Course Title</Label>
-                      <Input
-                        className="h-12 text-base rounded-xl border-muted-foreground/20 bg-muted/5 focus:bg-background transition-all"
-                        placeholder="e.g. The Complete Web Development Bootcamp 2026"
-                        value={form.title}
-                        onChange={e => f('title', e.target.value)}
-                      />
-                    </div>
+            {/* Left — Thumbnail & Status */}
+            <div className="md:col-span-2 p-6 bg-muted/20 border-r flex flex-col gap-5">
 
-                    <div className="space-y-3">
-                      <Label className="text-lg font-bold">Comprehensive Description</Label>
-                      <textarea
-                        className="w-full rounded-xl border border-muted-foreground/20 bg-muted/5 px-4 py-3 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus:bg-background focus-visible:ring-2 focus-visible:ring-primary/20 min-h-[160px] transition-all leading-relaxed custom-scrollbar"
-                        placeholder="Provide a detailed roadmap of what students will learn..."
-                        value={form.description}
-                        onChange={e => f('description', e.target.value)}
-                      />
-                    </div>
-                  </div>
-                </section>
+              {/* Click-to-upload image area */}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => !uploadingImage && fileInputRef.current?.click()}
+                onKeyDown={e => e.key === 'Enter' && !uploadingImage && fileInputRef.current?.click()}
+                className={cn(
+                  'relative aspect-video rounded-xl overflow-hidden bg-muted border-2 transition-all',
+                  uploadingImage
+                    ? 'border-primary/40 cursor-wait'
+                    : 'border-dashed border-muted-foreground/20 hover:border-primary/40 hover:bg-muted/60 cursor-pointer'
+                )}
+              >
+                {/* Image or placeholder */}
+                {form.imageUrl && (
+                  <img
+                    src={form.imageUrl}
+                    alt="Thumbnail preview"
+                    className="w-full h-full object-cover"
+                    onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
+                  />
+                )}
 
-                <section className="space-y-6">
-                  <div className="flex items-center gap-3 border-b border-primary/10 pb-3">
-                    <div className="h-3 w-3 rounded-full bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
-                    <h3 className="text-base font-black uppercase tracking-[0.2em] text-foreground/80">
-                      Classification & Assignment
-                    </h3>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                      <Label className="text-lg font-bold">Course Category</Label>
-                      <Select
-                        value={form.categoryId?.toLowerCase() || undefined}
-                        onValueChange={v => f('categoryId', v)}
-                        disabled={loadingDropdowns}
-                      >
-                        <SelectTrigger className="h-12 text-base rounded-xl border-muted-foreground/20 bg-muted/5 focus:bg-background transition-all">
-                          <SelectValue placeholder={loadingDropdowns ? 'Loading categories…' : 'Select a category'} />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-2xl shadow-2xl border-muted-foreground/10">
-                          {categories.map(c => (
-                            <SelectItem
-                              key={c.id}
-                              value={c.id.toLowerCase()}
-                              className="text-base py-3 hover:bg-primary/5 transition-colors"
-                            >
-                              {c.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {isAdmin && (
-                      <div className="space-y-3">
-                        <Label className="text-lg font-bold">Lead Instructor</Label>
-                        <Select
-                          value={form.instructorId?.toLowerCase() || undefined}
-                          onValueChange={v => f('instructorId', v)}
-                          disabled={loadingDropdowns}
-                        >
-                          <SelectTrigger className="h-12 text-base rounded-xl border-muted-foreground/20 bg-muted/5 focus:bg-background transition-all">
-                            <SelectValue
-                              placeholder={loadingDropdowns ? 'Loading instructors…' : 'Assign to instructor'}
-                            />
-                          </SelectTrigger>
-                          <SelectContent className="rounded-2xl shadow-2xl border-muted-foreground/10">
-                            {users.map(u => (
-                              <SelectItem
-                                key={u.id}
-                                value={u.id.toLowerCase()}
-                                className="text-base py-3 hover:bg-primary/5 transition-colors"
-                              >
-                                {u.userName ?? u.email}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
-                  </div>
-                </section>
+                {/* Overlay */}
+                <div className={cn(
+                  'absolute inset-0 flex flex-col items-center justify-center gap-1.5 transition-all',
+                  uploadingImage
+                    ? 'bg-background/70'
+                    : form.imageUrl
+                      ? 'opacity-0 hover:opacity-100 bg-black/50 text-white'
+                      : 'text-muted-foreground'
+                )}>
+                  {uploadingImage ? (
+                    <>
+                      <div className="h-7 w-7 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                      <p className="text-xs font-medium text-foreground">Uploading…</p>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-7 w-7 opacity-70" />
+                      <p className="text-xs font-semibold">
+                        {form.imageUrl ? 'Click to change' : 'Click to upload'}
+                      </p>
+                      {!form.imageUrl && <p className="text-xs opacity-50">JPG, PNG, WebP, GIF</p>}
+                    </>
+                  )}
+                </div>
               </div>
 
-              {/* Right Column - Media, Pricing & Status (1/3 width) */}
-              <div className="space-y-12">
-                <section className="space-y-6">
-                  <div className="flex items-center gap-3 border-b border-primary/10 pb-3">
-                    <div className="h-3 w-3 rounded-full bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
-                    <h3 className="text-base font-black uppercase tracking-[0.2em] text-foreground/80">Pricing</h3>
-                  </div>
+              {/* Hidden file picker */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={e => {
+                  const file = e.target.files?.[0]
+                  if (file) handleImageFile(file)
+                  e.target.value = ''
+                }}
+              />
 
-                  <div className="space-y-3">
-                    <Label className="text-lg font-bold">Course Price</Label>
-                    <div className="relative group">
-                      <Input
-                        className="h-14 pl-6 pr-16 text-2xl font-black rounded-2xl border-primary/20 bg-primary/5 text-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
-                        type="number"
-                        min={0}
-                        step={1000}
-                        placeholder="0"
-                        value={form.price}
-                        onChange={e => f('price', Number(e.target.value))}
-                      />
-                      <div className="absolute right-5 top-1/2 -translate-y-1/2 text-primary/60 font-black text-lg">
-                        VNĐ
-                      </div>
-                    </div>
-                    <p className="text-sm text-center text-muted-foreground font-medium pt-1">
-                      Enter 0 for a free course
+              {/* URL input — secondary option */}
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <Link2 className="h-3 w-3" />
+                  Or paste image URL
+                </Label>
+                <Input
+                  className="text-sm h-9"
+                  placeholder="https://images.unsplash.com/…"
+                  value={form.imageUrl}
+                  onChange={e => f('imageUrl', e.target.value)}
+                />
+              </div>
+
+              {/* Publish toggle */}
+              <div
+                className={cn(
+                  'rounded-xl border-2 p-4 transition-all duration-300 cursor-pointer select-none',
+                  form.isPublished
+                    ? 'border-primary/30 bg-primary/5'
+                    : 'border-border bg-muted/20'
+                )}
+                onClick={() => f('isPublished', !form.isPublished)}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className={cn('font-semibold text-sm', form.isPublished ? 'text-primary' : '')}>
+                      {form.isPublished ? 'Published' : 'Draft'}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {form.isPublished ? 'Visible to students' : 'Hidden from students'}
                     </p>
                   </div>
-                </section>
-
-                <section className="space-y-6">
-                  <div className="flex items-center gap-3 border-b border-primary/10 pb-3">
-                    <div className="h-3 w-3 rounded-full bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
-                    <h3 className="text-base font-black uppercase tracking-[0.2em] text-foreground/80">Thumbnail</h3>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-bold uppercase tracking-wider text-muted-foreground/70">
-                        Image URL
-                      </Label>
-                      <Input
-                        className="h-12 text-base rounded-xl border-muted-foreground/20 bg-muted/5"
-                        placeholder="https://images.unsplash.com/..."
-                        value={form.imageUrl}
-                        onChange={e => f('imageUrl', e.target.value)}
-                      />
-                    </div>
-
-                    <div className="relative aspect-video rounded-3xl overflow-hidden border-4 border-muted shadow-2xl bg-muted group transition-all hover:border-primary/30">
-                      {form.imageUrl ? (
-                        <>
-                          <img
-                            src={form.imageUrl}
-                            alt="Preview"
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4 text-white font-bold tracking-widest text-xs uppercase">
-                            Live Preview
-                          </div>
-                        </>
-                      ) : (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground gap-3">
-                          <div className="p-4 rounded-full bg-background/50">
-                            <BookOpen className="h-8 w-8" />
-                          </div>
-                          <p className="text-sm font-bold opacity-50">No Image Selected</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </section>
-
-                {/* Status Switcher - Pushed to right column */}
-                <div className="pt-4">
-                  <div
-                    className={cn(
-                      'flex flex-col gap-6 rounded-[2.5rem] border-4 p-8 transition-all duration-300',
-                      form.isPublished
-                        ? 'border-primary/20 bg-primary/5 shadow-xl shadow-primary/5 ring-4 ring-primary/5'
-                        : 'border-muted bg-muted/30'
-                    )}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="p-4 rounded-3xl bg-background shadow-lg">
-                        <BookOpen
-                          className={cn(
-                            'h-8 w-8 transition-colors',
-                            form.isPublished ? 'text-primary' : 'text-muted-foreground'
-                          )}
-                        />
-                      </div>
-                      <Switch
-                        className="scale-[2] data-[state=checked]:bg-primary transition-all duration-500"
-                        checked={form.isPublished}
-                        onCheckedChange={v => f('isPublished', v)}
-                      />
-                    </div>
-                    <div>
-                      <p
-                        className={cn(
-                          'text-xl font-black tracking-tight transition-colors',
-                          form.isPublished ? 'text-primary' : 'text-foreground'
-                        )}
-                      >
-                        {form.isPublished ? 'Course is LIVE' : 'Still in Draft'}
-                      </p>
-                      <p className="text-sm text-muted-foreground mt-1 font-medium leading-relaxed">
-                        {form.isPublished
-                          ? 'Students can now find and purchase this course globally.'
-                          : 'Course is hidden. Finalize your content before publishing.'}
-                      </p>
-                    </div>
-                  </div>
+                  <Switch
+                    checked={form.isPublished}
+                    onCheckedChange={v => f('isPublished', v)}
+                    onClick={e => e.stopPropagation()}
+                  />
                 </div>
               </div>
             </div>
+
+            {/* Right — Form Fields */}
+            <div className="md:col-span-3 p-6 space-y-5">
+
+              {/* Title */}
+              <div className="space-y-1.5">
+                <Label className="font-semibold">
+                  Title <span className="text-destructive text-xs">*</span>
+                </Label>
+                <Input
+                  placeholder="e.g. The Complete Web Development Bootcamp 2026"
+                  value={form.title}
+                  onChange={e => f('title', e.target.value)}
+                />
+              </div>
+
+              {/* Description */}
+              <div className="space-y-1.5">
+                <Label className="font-semibold">Description</Label>
+                <textarea
+                  className="w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring min-h-[110px] resize-none custom-scrollbar"
+                  placeholder="What will students learn in this course?"
+                  value={form.description}
+                  onChange={e => f('description', e.target.value)}
+                />
+              </div>
+
+              {/* Category + Instructor */}
+              <div className={cn('grid gap-4', isAdmin ? 'grid-cols-2' : 'grid-cols-1')}>
+                <div className="space-y-1.5">
+                  <Label className="font-semibold">Category</Label>
+                  <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
+                    <PopoverTrigger
+                      role="combobox"
+                      disabled={loadingDropdowns}
+                      className="h-9 w-full flex items-center justify-between gap-2 rounded-lg border border-input bg-transparent px-3 text-sm hover:bg-muted/40 transition-all disabled:opacity-50"
+                    >
+                      {selectedCategoryName
+                        ? <span>{selectedCategoryName}</span>
+                        : <span className="text-muted-foreground">{loadingDropdowns ? 'Loading…' : 'Select category'}</span>}
+                      <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 opacity-50" />
+                    </PopoverTrigger>
+                    <PopoverContent style={{ width: 'var(--anchor-width)' }} className="p-0">
+                      <Command shouldFilter={false}>
+                        <CommandInput placeholder="Search categories…" value={categorySearch} onValueChange={setCategorySearch} />
+                        <CommandList>
+                          <CommandEmpty>No categories found.</CommandEmpty>
+                          <CommandGroup>
+                            {categories.map(c => (
+                              <CommandItem key={c.id} value={c.id} onSelect={() => { f('categoryId', c.id); setSelectedCategoryName(c.name); setCategoryOpen(false) }}>
+                                <Check className={cn('mr-2 h-4 w-4', form.categoryId === c.id ? 'opacity-100' : 'opacity-0')} />
+                                {c.name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {isAdmin && (
+                  <div className="space-y-1.5">
+                    <Label className="font-semibold">Instructor</Label>
+                    <Popover open={instructorOpen} onOpenChange={setInstructorOpen}>
+                      <PopoverTrigger
+                        role="combobox"
+                        disabled={loadingDropdowns}
+                        className="h-9 w-full flex items-center justify-between gap-2 rounded-lg border border-input bg-transparent px-3 text-sm hover:bg-muted/40 transition-all disabled:opacity-50"
+                      >
+                        {selectedInstructorName
+                          ? <span>{selectedInstructorName}</span>
+                          : <span className="text-muted-foreground">{loadingDropdowns ? 'Loading…' : 'Assign instructor'}</span>}
+                        <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 opacity-50" />
+                      </PopoverTrigger>
+                      <PopoverContent style={{ width: 'var(--anchor-width)' }} className="p-0">
+                        <Command shouldFilter={false}>
+                          <CommandInput placeholder="Search instructors…" value={instructorSearch} onValueChange={setInstructorSearch} />
+                          <CommandList>
+                            <CommandEmpty>No instructors found.</CommandEmpty>
+                            <CommandGroup>
+                              {users.map(u => (
+                                <CommandItem key={u.id} value={u.id} onSelect={() => { f('instructorId', u.id); setSelectedInstructorName(u.userName ?? u.email ?? ''); setInstructorOpen(false) }}>
+                                  <Check className={cn('mr-2 h-4 w-4', form.instructorId === u.id ? 'opacity-100' : 'opacity-0')} />
+                                  {u.userName ?? u.email}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                )}
+              </div>
+
+              {/* Price */}
+              <div className="space-y-1.5">
+                <Label className="font-semibold">Price</Label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    min={0}
+                    step={1000}
+                    placeholder="0"
+                    value={form.price}
+                    onChange={e => f('price', Number(e.target.value))}
+                    className="pr-14"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">VNĐ</span>
+                </div>
+                {form.price === 0 && (
+                  <p className="text-xs text-muted-foreground">This course will be free</p>
+                )}
+              </div>
+
+            </div>
           </div>
 
-          <DialogFooter className="px-10 py-10 bg-muted/10 border-t flex flex-row items-center justify-between gap-6 rounded-b-[2rem]">
-            <p className="text-sm text-muted-foreground font-medium hidden md:block italic">
-              * Ensure all mandatory fields are completed before saving.
-            </p>
-            <div className="flex items-center gap-4 flex-1 md:flex-none">
-              <Button
-                variant="ghost"
-                className="h-16 px-10 text-lg font-bold rounded-2xl hover:bg-background/80 transition-all flex-1 md:flex-none"
-                onClick={() => setDialogOpen(false)}
-              >
-                Discard Changes
-              </Button>
-              <Button
-                className="h-16 px-14 text-xl font-black rounded-2xl shadow-2xl shadow-primary/30 active:scale-95 transition-all flex-1 md:flex-none"
-                onClick={handleSave}
-                disabled={saving}
-              >
-                {saving ? (
-                  <div className="flex items-center gap-3">
-                    <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Saving...</span>
-                  </div>
-                ) : editing ? (
-                  'Update Course'
-                ) : (
-                  'Launch Course'
-                )}
-              </Button>
-            </div>
+          {/* Footer */}
+          <DialogFooter className="px-6 py-4 border-t bg-muted/10 flex flex-row justify-end gap-3">
+            <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={saving}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={saving}>
+              {saving ? (
+                <span className="flex items-center gap-2">
+                  <span className="h-4 w-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+                  Saving…
+                </span>
+              ) : editing ? 'Update Course' : 'Create Course'}
+            </Button>
           </DialogFooter>
+
         </DialogContent>
       </Dialog>
 
