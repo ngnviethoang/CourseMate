@@ -6,6 +6,7 @@ using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using CourseMate.Persistent.ExtensionMethods;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -39,8 +40,10 @@ internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<Update
 
     public override async Task<int> Handle(UpdateLessonCommand request, CancellationToken cancellationToken)
     {
-        bool isOwnerCourse = await DbContext.Courses.AnyAsync(course => course.Id == request.CourseId && course.InstructorId == CurrentUserId, cancellationToken);
-        if (!isOwnerCourse)
+        bool isExistedCourse = await DbContext.Courses
+            .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == CurrentUserId)
+            .AnyAsync(i => i.Id == request.CourseId, cancellationToken);
+        if (!isExistedCourse)
         {
             throw new UnauthorizedAccessException();
         }
