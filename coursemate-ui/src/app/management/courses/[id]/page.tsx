@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic'
 import { ArrowLeft, Plus, Pencil, Trash2, Loader2, Settings } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
-import { courseService, chapterService } from '@/lib/admin-service'
+import { courseService, chapterService } from '@/lib/course-service'
 import { Pagination } from '@/components/admin/pagination'
 import 'react-quill-new/dist/quill.snow.css'
 import type {

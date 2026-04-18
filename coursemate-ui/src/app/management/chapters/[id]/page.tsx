@@ -4,7 +4,8 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Plus, Trash2, Loader2, BookOpen, Sparkles, ChevronDown, ChevronUp } from 'lucide-react'
 import { toast } from 'sonner'
-import { chapterService, lessonService, courseService, aiService } from '@/lib/admin-service'
+import { chapterService, lessonService, courseService } from '@/lib/course-service'
+import { aiService } from '@/lib/ai-service'
 import { Pagination } from '@/components/admin/pagination'
 import type { ChapterDto, LessonDto, CreateLessonRequest, LessonType, CourseDto } from '@/lib/types'
 import { Button } from '@/components/ui/button'
@@ -197,7 +198,7 @@ const emptyLessonForm = (courseId: string, chapterId: string): CreateLessonReque
   courseId,
   chapterId,
   title: '',
-  lessonType: 'Video',
+  lessonType: LessonType.Video,
   position: 1
 })
 
@@ -305,7 +306,7 @@ export default function ChapterDetailPage() {
     try {
       let aiContent
 
-      if (lessonForm.lessonType === 'Slide') {
+      if (lessonForm.lessonType === LessonType.Slide) {
         const response = await aiService.generateLesson(aiRawContent || lessonForm.title, aiFile || undefined)
         aiContent = response
       } else {
@@ -586,11 +587,11 @@ export default function ChapterDetailPage() {
 
                 {/* <div className="rounded-lg bg-card border p-3 text-xs space-y-1 text-muted-foreground">
                   <p className="font-medium text-foreground mb-1.5">📦 Nội dung sẽ được tạo và lưu:</p>
-                  {lessonForm.lessonType === 'Video' && (<><p>• Script 3 phân đoạn + 5 Timestamps</p></>)}
-                  {lessonForm.lessonType === 'Reading' && (<><p>• Bài đọc Markdown đầy đủ (H1, H2, Code Block)</p></>)}
-                  {lessonForm.lessonType === 'Coding' && (<><p>• Đề bài + Boilerplate + Solution + 5 Test Cases</p></>)}
-                  {lessonForm.lessonType === 'Quiz' && (<><p>• 5 câu hỏi trắc nghiệm + Đáp án + Giải thích</p></>)}
-                  {lessonForm.lessonType === 'Slide' && (<><p>• Outline bài học + Danh sách Slides chi tiết</p></>)}
+                  {lessonForm.lessonType === LessonType.Video && (<><p>• Script 3 phân đoạn + 5 Timestamps</p></>)}
+                  {lessonForm.lessonType === LessonType.Reading && (<><p>• Bài đọc Markdown đầy đủ (H1, H2, Code Block)</p></>)}
+                  {lessonForm.lessonType === LessonType.Coding && (<><p>• Đề bài + Boilerplate + Solution + 5 Test Cases</p></>)}
+                  {lessonForm.lessonType === LessonType.Quiz && (<><p>• 5 câu hỏi trắc nghiệm + Đáp án + Giải thích</p></>)}
+                  {lessonForm.lessonType === LessonType.Slide && (<><p>• Outline bài học + Danh sách Slides chi tiết</p></>)}
                 </div> */}
 
                 {/* <div className="rounded-lg border bg-muted/30">

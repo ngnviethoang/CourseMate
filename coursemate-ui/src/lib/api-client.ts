@@ -1,3 +1,4 @@
+import axios, { AxiosError, AxiosRequestConfig } from 'axios'
 import { toast } from 'sonner'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
@@ -10,21 +11,19 @@ interface ProblemDetails {
   instance?: string
 }
 
-type FetchOptions = Omit<RequestInit, 'body'> & {
-  body?: unknown
-}
+const axiosInstance = axios.create({
+  baseURL: BASE_URL
+})
 
-async function apiClient<T>(url: string, options: FetchOptions = {}): Promise<T> {
-  const { body, headers, ...rest } = options
-
+axiosInstance.interceptors.request.use(async config => {
   let token = ''
   if (typeof window === 'undefined') {
     try {
       const { cookies } = await import('next/headers')
       const cookieStore = await cookies()
       token = cookieStore.get('accessToken')?.value ?? ''
-    } catch {
-      // ignore
+    } catch (error) {
+      console.warn('Cannot access cookies on server:', error)
     }
   } else {
     token =
@@ -34,73 +33,56 @@ async function apiClient<T>(url: string, options: FetchOptions = {}): Promise<T>
         ?.split('=')[1] ?? ''
   }
 
-  const isFormData = typeof FormData !== 'undefined' && body instanceof FormData
-
-  const reqHeaders: Record<string, string> = {
-    ...(headers as Record<string, string>)
-  }
-
-  if (!isFormData && !reqHeaders['Content-Type']) {
-    reqHeaders['Content-Type'] = 'application/json'
-  }
-
   if (token) {
-    reqHeaders['Authorization'] = `Bearer ${token}`
+    config.headers['Authorization'] = `Bearer ${token}`
   }
 
   if (BASE_URL?.includes('ngrok-free.dev')) {
-    reqHeaders['ngrok-skip-browser-warning'] = 'true'
+    config.headers['ngrok-skip-browser-warning'] = 'true'
   }
 
-  const res = await fetch(`${BASE_URL}${url}`, {
-    ...rest,
-    headers: reqHeaders,
-    body: isFormData ? (body as FormData) : body !== undefined ? JSON.stringify(body) : undefined
-  })
+  return config
+})
 
-  if (!res.ok) {
-    let problem: ProblemDetails = {}
-
-    try {
-      problem = await res.json()
-    } catch {
-      // response body is not JSON, ignore
+axiosInstance.interceptors.response.use(
+  response => {
+    if (response.status === 204) {
+      return null
     }
+    return response.data
+  },
+  (error: AxiosError<ProblemDetails>) => {
+    let problem: ProblemDetails = error.response?.data || {}
 
-    if (res.status === 403) {
+    const status = error.response?.status
+
+    if (status === 403) {
       toast.error(problem.detail ?? 'Access denied.')
-    } else if (res.status === 422 || res.status === 400) {
+    } else if (status === 422 || status === 400) {
       toast.error(problem.detail ?? problem.title ?? 'Validation error.')
-    } else if (res.status === 404) {
+    } else if (status === 404) {
       toast.error(problem.detail ?? 'Resource not found.')
-    } else if (res.status >= 500) {
+    } else if (status && status >= 500) {
       toast.error(problem.detail ?? 'A server error occurred. Please try again.')
     }
 
-    throw problem
+    return Promise.reject(problem)
   }
+)
 
-  // 204 No Content
-  if (res.status === 204) {
-    return null as T
-  }
-
-  return res.json() as Promise<T>
-}
+type ApiOptions = Omit<AxiosRequestConfig, 'method' | 'url' | 'data'>
 
 export const api = {
-  get: <T>(url: string, options?: Omit<FetchOptions, 'method' | 'body'>) =>
-    apiClient<T>(url, { ...options, method: 'GET' }),
+  get: <T>(url: string, options?: ApiOptions): Promise<T> => axiosInstance.get<any, T>(url, options),
 
-  post: <T>(url: string, body?: unknown, options?: Omit<FetchOptions, 'method' | 'body'>) =>
-    apiClient<T>(url, { ...options, method: 'POST', body }),
+  post: <T>(url: string, body?: unknown, options?: ApiOptions): Promise<T> =>
+    axiosInstance.post<any, T>(url, body, options),
 
-  put: <T>(url: string, body?: unknown, options?: Omit<FetchOptions, 'method' | 'body'>) =>
-    apiClient<T>(url, { ...options, method: 'PUT', body }),
+  put: <T>(url: string, body?: unknown, options?: ApiOptions): Promise<T> =>
+    axiosInstance.put<any, T>(url, body, options),
 
-  patch: <T>(url: string, body?: unknown, options?: Omit<FetchOptions, 'method' | 'body'>) =>
-    apiClient<T>(url, { ...options, method: 'PATCH', body }),
+  patch: <T>(url: string, body?: unknown, options?: ApiOptions): Promise<T> =>
+    axiosInstance.patch<any, T>(url, body, options),
 
-  delete: <T>(url: string, options?: Omit<FetchOptions, 'method' | 'body'>) =>
-    apiClient<T>(url, { ...options, method: 'DELETE' })
+  delete: <T>(url: string, options?: ApiOptions): Promise<T> => axiosInstance.delete<any, T>(url, options)
 }

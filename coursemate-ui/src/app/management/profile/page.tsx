@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { User, Mail, Phone, Shield, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { profileService } from '@/lib/admin-service'
+import { profileService } from '@/lib/auth-service'
 import type { ProfileDto, UpdateProfileRequest } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
-import { chapterService } from '@/lib/admin-service'
+import { chapterService } from '@/lib/course-service'
 import type { ChapterDto, CreateChapterRequest } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
@@ -21,7 +21,7 @@ import {
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 import { Label } from '@/components/ui/label'
-import { formatDate } from '@/lib/format-date'
+import { formatDate } from '@/lib/utils'
 
 const columns: Column<ChapterDto>[] = [
   { key: 'title', header: 'Title', sortKey: 'title' },

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Loader2, Save, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
-import { lessonService, chapterService, courseService } from '@/lib/admin-service'
+import { lessonService, chapterService, courseService } from '@/lib/course-service'
 import type { LessonDto, ChapterDto, CourseDto, UpdateLessonRequest, LessonType } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -340,7 +340,7 @@ export default function LessonDetailPage() {
     chapterId: '',
     courseId: '',
     title: '',
-    lessonType: 'Video',
+    lessonType: LessonType.Video,
     position: 1
   })
 
@@ -497,16 +497,16 @@ export default function LessonDetailPage() {
       {/* AI Content Section — rendered by lesson type */}
       {aiContent ? (
         <>
-          {form.lessonType === 'Video' && 'segments' in aiContent && (
+          {form.lessonType === LessonType.Video && 'segments' in aiContent && (
             <VideoContentDisplay content={aiContent as VideoContent} />
           )}
-          {form.lessonType === 'Reading' && 'markdown_content' in aiContent && (
+          {form.lessonType === LessonType.Reading && 'markdown_content' in aiContent && (
             <ReadingContentDisplay content={aiContent as ReadingContent} />
           )}
-          {form.lessonType === 'Coding' && 'test_cases' in aiContent && (
+          {form.lessonType === LessonType.Coding && 'test_cases' in aiContent && (
             <CodingContentDisplay content={aiContent as CodingContent} />
           )}
-          {form.lessonType === 'Quiz' && 'questions' in aiContent && (
+          {form.lessonType === LessonType.Quiz && 'questions' in aiContent && (
             <QuizContentDisplay content={aiContent as QuizContent} />
           )}
         </>
@@ -520,7 +520,7 @@ export default function LessonDetailPage() {
       )}
 
       {/* Video upload always available for Video-type lessons */}
-      {form.lessonType === 'Video' && <VideoUploadSection lessonId={id} />}
+      {form.lessonType === LessonType.Video && <VideoUploadSection lessonId={id} />}
     </div>
   )
 }

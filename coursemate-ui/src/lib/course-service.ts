@@ -1,0 +1,100 @@
+import { api } from './api-client'
+import {
+  PagedDto,
+  CourseDto,
+  CreateCourseRequest,
+  UpdateCourseRequest,
+  ResultIdDto,
+  ChapterDto,
+  CreateChapterRequest,
+  UpdateChapterRequest,
+  LessonDto,
+  CreateLessonRequest,
+  UpdateLessonRequest,
+  StudentMyCourseDto,
+  StudentLessonDetailDto,
+  StudentCourseDetailDto
+} from './types'
+
+export const courseService = {
+  // ─── Course ──────────────────────────────────────────────────────────────────
+  list: async (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string }) => {
+    const qs = new URLSearchParams()
+    if (params?.filter) qs.set('filter', params.filter)
+    if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
+    if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
+    if (params?.sorting) qs.set('sorting', params.sorting)
+    const res = await api.get<PagedDto<CourseDto>>(`/api/courses?${qs}`)
+    if (res) res.pageIndex -= 1
+    return res
+  },
+  getById: (id: string) => api.get<CourseDto | null>(`/api/courses/${id}`),
+  create: (body: CreateCourseRequest) => api.post<ResultIdDto>('/api/courses', body),
+  update: (id: string, body: UpdateCourseRequest) => api.put<void>(`/api/courses/${id}`, body),
+  delete: (id: string) => api.delete<void>(`/api/courses/${id}`),
+
+  getMyCourses: async (pageIndex = 1, pageSize = 12, filter?: string): Promise<PagedDto<StudentMyCourseDto>> => {
+    const params = new URLSearchParams({ pageIndex: String(pageIndex), pageSize: String(pageSize) })
+    if (filter) params.set('filter', filter)
+    return api.get<PagedDto<StudentMyCourseDto>>(`/api/courses/my?${params}`)
+  },
+  getRecommendedCourses: async (pageIndex = 1, pageSize = 12): Promise<PagedDto<CourseDto>> => {
+    const params = new URLSearchParams({ pageIndex: String(pageIndex), pageSize: String(pageSize) })
+    return api.get<PagedDto<CourseDto>>(`/api/courses/recommended?${params}`)
+  },
+
+  // ─── Chapter ─────────────────────────────────────────────────────────────────
+  listChapters: async (params?: {
+    filter?: string
+    pageIndex?: number
+    pageSize?: number
+    sorting?: string
+    courseId?: string
+  }) => {
+    const qs = new URLSearchParams()
+    if (params?.filter) qs.set('filter', params.filter)
+    if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
+    if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
+    if (params?.sorting) qs.set('sorting', params.sorting)
+    if (params?.courseId) qs.set('courseId', params.courseId)
+    const res = await api.get<PagedDto<ChapterDto>>(`/api/chapters?${qs}`)
+    if (res) res.pageIndex -= 1
+    return res
+  },
+  getChapterById: (id: string) => api.get<ChapterDto | null>(`/api/chapters/${id}`),
+  createChapter: (body: CreateChapterRequest) => api.post<ResultIdDto>('/api/chapters', body),
+  updateChapter: (id: string, body: UpdateChapterRequest) => api.put<void>(`/api/chapters/${id}`, body),
+  deleteChapter: (id: string) => api.delete<void>(`/api/chapters/${id}`),
+
+  // ─── Lesson ──────────────────────────────────────────────────────────────────
+  listLessons: async (params?: {
+    filter?: string
+    pageIndex?: number
+    pageSize?: number
+    sorting?: string
+    chapterId?: string
+  }) => {
+    const qs = new URLSearchParams()
+    if (params?.filter) qs.set('filter', params.filter)
+    if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
+    if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
+    if (params?.sorting) qs.set('sorting', params.sorting)
+    if (params?.chapterId) qs.set('chapterId', params.chapterId)
+
+    const res = await api.get<PagedDto<LessonDto>>(`/api/lessons?${qs}`)
+    if (res) {
+      res.pageIndex -= 1
+    }
+    return res
+  },
+  getLessonById: async (id: string) => {
+    return api.get<LessonDto | null>(`/api/lessons/${id}`)
+  },
+  createLesson: (body: CreateLessonRequest) => {
+    return api.post<ResultIdDto>('/api/lessons', body)
+  },
+  updateLesson: (id: string, body: UpdateLessonRequest) => {
+    return api.put<void>(`/api/lessons/${id}`, body)
+  },
+  deleteLesson: (id: string) => api.delete<void>(`/api/lessons/${id}`)
+}

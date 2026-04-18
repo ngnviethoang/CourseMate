@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
-import { studentService } from '@/lib/student-service'
+import { categoryService } from '@/lib/category-service'
+import { courseService } from '@/lib/course-service'
 import { CourseDto, CategoryDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
@@ -21,14 +22,14 @@ export default function CatalogPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('')
 
   useEffect(() => {
-    studentService.getCategories().then(res => setCategories(res.items || []))
+    categoryService.list({ pageSize: 50 }).then(res => setCategories(res.items || []))
   }, [])
 
   useEffect(() => {
     let cancelled = false
     const load = async () => {
       try {
-        const res = await studentService.getCourses(1, 50, search)
+        const res = await courseService.list({ pageIndex: 0, pageSize: 50, filter: search })
         if (!cancelled) setCourses(res.items || [])
       } catch {
         if (!cancelled) toast.error('Failed to load courses')

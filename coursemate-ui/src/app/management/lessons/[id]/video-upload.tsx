@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { UploadCloud, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { uploadService } from '@/lib/upload-service'
+import { fileService } from '@/lib/file-service'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 
@@ -31,7 +31,7 @@ export function VideoUploadSection({ lessonId }: { lessonId: string }) {
 
     try {
       // Step 1: Init
-      const { fileId, maxTotalTrunks } = await uploadService.initVideoUpload(file.name, file.size)
+      const { fileId, maxTotalTrunks } = await fileService.initVideoUpload(file.name, file.size)
 
       const chunkSize = Math.ceil(file.size / maxTotalTrunks)
 
@@ -41,13 +41,13 @@ export function VideoUploadSection({ lessonId }: { lessonId: string }) {
         const end = Math.min(i * chunkSize, file.size)
         const chunk = file.slice(start, end)
 
-        await uploadService.uploadVideoChunk(fileId, i, chunk)
+        await fileService.uploadVideoChunk(fileId, i, chunk)
 
         setProgress(Math.round((i / maxTotalTrunks) * 100))
       }
 
       // Step 3: Complete
-      const { fileUrl } = await uploadService.completeVideoUpload(fileId, maxTotalTrunks)
+      const { fileUrl } = await fileService.completeVideoUpload(fileId, maxTotalTrunks)
 
       setVideoUrl(fileUrl)
       setStatus('success')

@@ -1,4 +1,5 @@
-'use client'
+import { categoryService } from '@/lib/category-service'
+;('use client')
 
 import { useEffect, useState } from 'react'
 import {
@@ -13,7 +14,6 @@ import {
   TrendingUp,
   BookOpen
 } from 'lucide-react'
-import { studentService } from '@/lib/student-service'
 import { CategoryDto } from '@/lib/types'
 
 // Icon + gradient mapping by keyword
@@ -120,8 +120,8 @@ export function Categories() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    studentService
-      .getCategories(25)
+    categoryService
+      .list(25)
       .then(res => setCategories(res.items.filter(c => c.isActive)))
       .catch(() => setCategories([]))
       .finally(() => setLoading(false))

@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { studentService } from '@/lib/student-service'
-import { profileService } from '@/lib/admin-service'
+import { profileService } from '@/lib/auth-service'
 import { ProfileDto } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

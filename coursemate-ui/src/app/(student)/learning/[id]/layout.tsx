@@ -1,8 +1,8 @@
-'use client'
+import { courseService } from '@/lib/course-service'
+;('use client')
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter, usePathname } from 'next/navigation'
-import { studentService } from '@/lib/student-service'
 import { StudentCourseDetailDto } from '@/lib/types'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { PlayCircle, FileText, CheckCircle2, ChevronLeft, Loader2, BookOpen } from 'lucide-react'
@@ -19,8 +19,8 @@ export default function LearningLayout({ children }: { children: React.ReactNode
 
   useEffect(() => {
     if (!id) return
-    studentService
-      .getCourseById(id)
+    courseService
+      .getById(id)
       .then(res => setCourse(res || null))
       .finally(() => setLoading(false))
   }, [id])
@@ -87,9 +87,9 @@ export default function LearningLayout({ children }: { children: React.ReactNode
                             : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                         }`}
                       >
-                        {lesson.lessonType === 'Video' ? (
+                        {lesson.lessonType === LessonType.Video ? (
                           <PlayCircle className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-blue-500'}`} />
-                        ) : lesson.lessonType === 'Reading' ? (
+                        ) : lesson.lessonType === LessonType.Reading ? (
                           <FileText className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-amber-500'}`} />
                         ) : (
                           <CheckCircle2 className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-emerald-500'}`} />

@@ -5,7 +5,10 @@ import { useRouter } from 'next/navigation'
 import { Plus, Search, BookOpen } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatCurrency, cn } from '@/lib/utils'
-import { courseService, categoryService, userService, getRole, getUserId } from '@/lib/admin-service'
+import { courseService } from '@/lib/course-service'
+import { categoryService } from '@/lib/category-service'
+import { userService } from '@/lib/user-service'
+import { getRole, getUserId } from '@/lib/auth-service'
 import type { CategoryDto, CourseDto, CreateCourseRequest, UserDto } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
@@ -25,7 +28,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { formatDate } from '@/lib/format-date'
+import { formatDate } from '@/lib/utils'
 
 const columns: Column<CourseDto>[] = [
   { key: 'title', header: 'Title', sortKey: 'title' },

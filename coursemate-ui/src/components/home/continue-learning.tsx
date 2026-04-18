@@ -1,5 +1,6 @@
 'use client'
 
+import { orderService } from '@/lib/order-service'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ChevronRight, Play, BookOpen } from 'lucide-react'
@@ -7,7 +8,6 @@ import { Badge } from '@/components/ui/badge'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { studentService } from '@/lib/student-service'
 import { OrderDto } from '@/lib/types'
 import { formatCurrency } from '@/lib/utils'
 
@@ -48,8 +48,8 @@ export function ContinueLearning() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    studentService
-      .getOrders(1, 6)
+    orderService
+      .list(1, 6)
       .then(res => setOrders(res.items))
       .catch(() => setOrders([]))
       .finally(() => setLoading(false))

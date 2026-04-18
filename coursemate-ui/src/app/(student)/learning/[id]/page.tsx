@@ -1,8 +1,8 @@
-'use client'
+import { courseService } from '@/lib/course-service'
+;('use client')
 
 import { useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { studentService } from '@/lib/student-service'
 import { Loader2 } from 'lucide-react'
 
 export default function LearningRedirectPage() {
@@ -11,8 +11,8 @@ export default function LearningRedirectPage() {
 
   useEffect(() => {
     if (!id) return
-    studentService
-      .getCourseById(id)
+    courseService
+      .getById(id)
       .then(course => {
         if (course && course.chapters.length > 0 && course.chapters[0].lessons.length > 0) {
           router.replace(`/learning/${id}/${course.chapters[0].lessons[0].id}`)

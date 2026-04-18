@@ -1,4 +1,5 @@
-'use client'
+import { orderService } from '@/lib/order-service'
+;('use client')
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -8,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { ShoppingCart, Trash2, ArrowRight, BookOpen, Sparkles, Loader2, Tag } from 'lucide-react'
-import { studentService } from '@/lib/student-service'
+import { orderService } from '@/lib/order-service'
 import { CartDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
@@ -80,7 +81,7 @@ export default function CartPage() {
 
   const fetchCart = () => {
     setLoading(true)
-    studentService
+    orderService
       .getCart()
       .then(res => setCart(res))
       .catch(() => {})
@@ -94,7 +95,7 @@ export default function CartPage() {
   const handleRemove = async (cartItemId: string) => {
     setRemovingId(cartItemId)
     try {
-      await studentService.removeFromCart(cartItemId)
+      await orderService.removeFromCart(cartItemId)
       toast.success('Đã xoá khoá học khỏi giỏ hàng.')
       fetchCart()
     } catch {

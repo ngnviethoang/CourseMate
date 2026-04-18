@@ -1,4 +1,5 @@
-'use client'
+import { orderService } from '@/lib/order-service'
+;('use client')
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -17,7 +18,7 @@ import {
   Building2,
   Wallet
 } from 'lucide-react'
-import { studentService } from '@/lib/student-service'
+import { orderService } from '@/lib/order-service'
 import { CartDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
@@ -87,7 +88,7 @@ export default function CheckoutPage() {
   const [placing, setPlacing] = useState(false)
 
   useEffect(() => {
-    studentService
+    orderService
       .getCart()
       .then(res => {
         if (!res || res.items.length === 0) {
@@ -103,7 +104,7 @@ export default function CheckoutPage() {
   const handlePlaceOrder = async () => {
     setPlacing(true)
     try {
-      await studentService.createOrder()
+      await orderService.create()
       toast.success('🎉 Đặt hàng thành công! Chúc bạn học vui.')
       router.push('/orders')
     } catch {

@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { BookOpen, ChevronLeft, ChevronRight, Loader2, ShoppingCart, Star, Users, Zap } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 
-import { studentService } from '@/lib/student-service'
+import { orderService } from '@/lib/order-service'
+import { courseService } from '@/lib/course-service'
 import { CourseDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
@@ -79,11 +80,11 @@ function CourseCard({ course, index }: CourseCardProps) {
     try {
       setAdding(true)
       if (course.price === 0) {
-        await studentService.enrollFree(course.id)
+        await orderService.enrollFree(course.id)
         toast.success(`Bạn đã tham gia khóa học "${course.title}" thành công!`)
         router.push(`/learning/${course.id}`)
       } else {
-        await studentService.addToCart(course.id)
+        await orderService.addToCart(course.id)
         toast.success(`"${course.title}" đã được thêm vào giỏ hàng!`)
       }
     } catch {
@@ -204,11 +205,11 @@ export function RecommendedCourses({ searchQuery, isLoggedIn, selectedCategoryId
     try {
       let res
       if (filter || categoryId) {
-        res = await studentService.getCourses(page, PAGE_SIZE, filter, categoryId)
+        res = await courseService.getStudentCourses(page, PAGE_SIZE, filter, categoryId)
       } else if (loggedIn) {
-        res = await studentService.getRecommendedCourses(page, PAGE_SIZE)
+        res = await courseService.getRecommendedCourses(page, PAGE_SIZE)
       } else {
-        res = await studentService.getCourses(page, PAGE_SIZE)
+        res = await courseService.getStudentCourses(page, PAGE_SIZE)
       }
       setCourses(res.items)
       setTotalCount(res.totalCount)

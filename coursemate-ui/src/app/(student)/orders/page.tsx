@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ClipboardList, ChevronRight } from 'lucide-react'
-import { studentService } from '@/lib/student-service'
+import { orderService } from '@/lib/order-service'
 import { OrderDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
@@ -25,10 +25,10 @@ export default function OrdersPage() {
   const [loadingDetail, setLoadingDetail] = useState(false)
 
   useEffect(() => {
-    studentService
-      .getOrders()
+    orderService
+      .list()
       .then(res => {
-        setOrders(res.items || [])
+        setOrders((res.items as any[]) || [])
         setLoading(false)
       })
       .catch(() => {
@@ -40,8 +40,8 @@ export default function OrdersPage() {
   const openDetail = async (orderId: string) => {
     setLoadingDetail(true)
     try {
-      const detail = await studentService.getOrderById(orderId)
-      setSelected(detail)
+      const detail = await orderService.getById(orderId)
+      setSelected(detail as any)
     } catch {
       // handled by api-client
     } finally {

@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
-import { userService } from '@/lib/admin-service'
+import { userService } from '@/lib/user-service'
 import type { UserDto, CreateUserRequest, UpdateUserRequest } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'

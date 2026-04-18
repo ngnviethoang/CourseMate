@@ -6,7 +6,7 @@ import { ArrowLeft, Loader2, Package, User, Calendar, CreditCard, CheckCircle, X
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 import { format } from 'date-fns'
-import { orderService } from '@/lib/admin-service'
+import { orderService } from '@/lib/order-service'
 import type { AdminOrderDto } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'

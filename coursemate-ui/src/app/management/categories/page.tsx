@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
-import { categoryService } from '@/lib/admin-service'
+import { categoryService } from '@/lib/category-service'
 import type { CategoryDto, CreateCategoryRequest } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import { formatDate } from '@/lib/format-date'
+import { formatDate } from '@/lib/utils'
 
 const columns: Column<CategoryDto>[] = [
   { key: 'name', header: 'Name', sortKey: 'name' },
