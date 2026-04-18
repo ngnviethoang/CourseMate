@@ -68,5 +68,5 @@ export const getUserId = (): string | null => {
 }
 
 export const isAuthenticated = (): boolean => {
-  return getAccessToken() == null
+  return getAccessToken() !== null
 }

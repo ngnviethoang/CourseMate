@@ -9,7 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Courses;
 
-public class GetListCoursesQuery : GetListQuery<CourseDto>;
+public class GetListCoursesQuery : GetListQuery<CourseDto>
+{
+    public Guid? CategoryId { get; set; }
+}
 
 internal sealed class GetListCoursesQueryHandler
     : AbstractQueryHandler<GetListCoursesQuery, PagedDto<CourseDto>>
@@ -45,7 +48,8 @@ internal sealed class GetListCoursesQueryHandler
 
         query = query
             .WhereIf(IsInRole(Roles.Instructor), x => x.InstructorId == CurrentUserId)
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
+            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
+            .WhereIf(request.CategoryId.HasValue, x => x.CategoryId == request.CategoryId);
 
         query = request.Sorting switch
         {
