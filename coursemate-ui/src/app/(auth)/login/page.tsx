@@ -7,13 +7,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { GraduationCap, ArrowRight, Loader2, Lock, User } from 'lucide-react'
+import { GraduationCap, ArrowRight, Loader2, Lock, User, Eye, EyeOff } from 'lucide-react'
 import { authService } from '@/lib/auth-service'
 import { toast } from 'sonner'
+import { Roles } from '@/lib/consts'
 
 export default function StudentLoginPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -34,13 +36,12 @@ export default function StudentLoginPage() {
       if (res?.accessToken) {
         document.cookie = `accessToken=${res.accessToken}; path=/; max-age=86400; samesite=strict`
         const payload = JSON.parse(atob(res.accessToken.split('.')[1]))
-        const role: string =
-          payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? payload['role'] ?? ''
-        if (role.toLowerCase() === 'student') {
-          toast.success('Welcome back!')
+        const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? payload['role'] ?? ''
+
+        toast.success('Welcome back!')
+        if (role === Roles.Student) {
           router.push('/')
         } else {
-          toast.success('Welcome back!')
           router.push('/management')
         }
       } else {
@@ -102,13 +103,21 @@ export default function StudentLoginPage() {
                   <Input
                     id="password"
                     name="password"
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     autoComplete="current-password"
-                    className="pl-9 bg-background/50 focus-visible:ring-primary/30 transition-shadow"
+                    className="pl-9 pr-10 bg-background/50 focus-visible:ring-primary/30 transition-shadow"
                     required
                     disabled={isLoading}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-muted-foreground hover:text-foreground focus:outline-none"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
 

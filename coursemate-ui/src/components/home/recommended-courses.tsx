@@ -44,7 +44,7 @@ const GRADIENT_FALLBACKS = [
 
 function CourseCardSkeleton() {
   return (
-    <div className="rounded-2xl border bg-card overflow-hidden animate-pulse">
+    <div className="rounded-2xl bg-card overflow-hidden animate-pulse">
       <div className="h-44 bg-muted" />
       <div className="p-4 space-y-3">
         <div className="h-4 bg-muted rounded-full w-3/4" />
@@ -97,7 +97,7 @@ function CourseCard({ course, index }: CourseCardProps) {
   return (
     <Link
       href={`/courses/${course.id}`}
-      className="group flex flex-col rounded-2xl border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl overflow-hidden"
+      className="group flex flex-col rounded-2xl bg-card shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl overflow-hidden"
     >
       {/* Thumbnail */}
       <div className="relative overflow-hidden">
