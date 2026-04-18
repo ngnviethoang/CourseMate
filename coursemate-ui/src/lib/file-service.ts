@@ -17,7 +17,7 @@ export const fileService = {
   },
 
   async getVideoUploadStatus(fileId: string) {
-    return api.get<any>(`/api/files/videos/${fileId}`)
+    return api.get<unknown>(`/api/files/videos/${fileId}`)
   },
 
   async deleteVideo(fileId: string) {
@@ -27,7 +27,7 @@ export const fileService = {
   async uploadImage(file: File) {
     const formData = new FormData()
     formData.append('request', file)
-    return api.post<any>('/api/files/images', formData)
+    return api.post<unknown>('/api/files/images', formData)
   },
 
   async deleteImage(fileId: string) {

@@ -25,7 +25,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { formatDate } from '@/lib/utils'
 
-const LESSON_TYPES: LessonType[] = ['Video', 'Reading', 'Quiz', 'Coding']
+const LESSON_TYPES: LessonType[] = Object.values(LessonType)
 
 const columns: Column<LessonDto>[] = [
   { key: 'title', header: 'Title', sortKey: 'title' },

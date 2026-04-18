@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AdminSidebar } from '@/components/admin/admin-sidebar'
@@ -117,6 +117,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setUser(getUserFromToken())
     setMounted(true)
   }, [])

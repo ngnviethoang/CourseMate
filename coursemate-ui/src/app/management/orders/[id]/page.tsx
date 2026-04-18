@@ -12,11 +12,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
-const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = {
+const STATUS_MAP: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   Draft: { label: 'Draft', color: 'bg-gray-100 text-gray-800', icon: Package },
   Pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800', icon: Loader2 },
   Paid: { label: 'Paid', color: 'bg-green-100 text-green-800', icon: CheckCircle },
@@ -30,9 +27,6 @@ export default function OrderDetailPage() {
   const orderId = params.id as string
   const [order, setOrder] = useState<AdminOrderDto | null>(null)
   const [loading, setLoading] = useState(true)
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [statusVal, setStatusVal] = useState<string>('Draft')
-  const [saving, setSaving] = useState(false)
 
   const loadData = useCallback(async () => {
     if (!orderId) return
@@ -40,7 +34,7 @@ export default function OrderDetailPage() {
     try {
       const data = await orderService.getById(orderId)
       setOrder(data)
-    } catch (err: any) {
+    } catch {
       toast.error('Failed to load order details')
       router.push('/management/orders')
     } finally {
@@ -51,26 +45,6 @@ export default function OrderDetailPage() {
   useEffect(() => {
     loadData()
   }, [loadData])
-
-  function handleOpenUpdate() {
-    if (order) {
-      setStatusVal(String(order.status))
-      setDialogOpen(true)
-    }
-  }
-
-  async function handleSaveStatus() {
-    if (!order) return
-    setSaving(true)
-    try {
-      await orderService.update(order.id, { id: order.id, status: statusVal })
-      toast.success('Order status updated.')
-      setDialogOpen(false)
-      loadData()
-    } finally {
-      setSaving(false)
-    }
-  }
 
   if (loading) {
     return (
@@ -119,7 +93,7 @@ export default function OrderDetailPage() {
             <CardContent>
               {order.items && order.items.length > 0 ? (
                 <div className="space-y-4">
-                  {order.items.map((item, index) => (
+                  {order.items.map(item => (
                     <div
                       key={item.id}
                       className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg bg-muted/30 border border-border/50"

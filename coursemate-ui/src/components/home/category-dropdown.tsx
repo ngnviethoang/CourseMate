@@ -16,11 +16,17 @@ export function CategoryDropdown({ value, onChange }: CategoryDropdownProps) {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    categoryService
-      .list(25)
-      .then(res => setCategories(res.items.filter(c => c.isActive)))
-      .catch(() => setCategories([]))
-      .finally(() => setLoading(false))
+    const fetchCategories = async () => {
+      try {
+        const res = await categoryService.list(25)
+        setCategories(res.items.filter(c => c.isActive))
+      } catch {
+        setCategories([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCategories()
   }, [])
 
   // Close on click outside

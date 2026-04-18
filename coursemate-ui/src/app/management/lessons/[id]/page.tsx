@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Loader2, Save, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { lessonService, chapterService, courseService } from '@/lib/course-service'
-import type { LessonDto, ChapterDto, CourseDto, UpdateLessonRequest, LessonType } from '@/lib/types'
+import { LessonDto, ChapterDto, CourseDto, UpdateLessonRequest, LessonType } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,8 +13,6 @@ import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import Link from 'next/link'
 import { VideoUploadSection } from './video-upload'
-
-const LESSON_TYPES: LessonType[] = ['Video', 'Reading', 'Quiz', 'Coding']
 
 // ─── AI Content interfaces ────────────────────────────────────────────────────
 
@@ -189,7 +187,7 @@ function CodingContentDisplay({ content }: { content: CodingContent }) {
             </pre>
           ) : (
             <div className="flex items-center justify-center h-20 rounded-md bg-muted/20 border border-dashed text-sm text-muted-foreground">
-              Click "Show" to reveal the solution
+              Click &quot;Show&quot; to reveal the solution
             </div>
           )}
         </div>
@@ -345,16 +343,16 @@ export default function LessonDetailPage() {
   })
 
   useEffect(() => {
-    setLoading(true)
-    lessonService
-      .getById(id)
-      .then(async l => {
+    const fetchLesson = async () => {
+      setLoading(true)
+      try {
+        const l = await lessonService.getById(id)
         setLesson(l)
         setForm({
           chapterId: l?.chapterId || '',
           courseId: l?.courseId || '',
           title: l?.title || '',
-          lessonType: l?.lessonType || 'Video',
+          lessonType: l?.lessonType || LessonType.Video,
           position: l?.position || 1
         })
         if (l?.chapterId) {
@@ -378,9 +376,13 @@ export default function LessonDetailPage() {
             /* ignore */
           }
         }
-      })
-      .catch(() => toast.error('Lesson not found.'))
-      .finally(() => setLoading(false))
+      } catch {
+        toast.error('Lesson not found.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchLesson()
   }, [id])
 
   async function handleSave() {
@@ -467,7 +469,7 @@ export default function LessonDetailPage() {
                   <SelectValue>{form.lessonType}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {LESSON_TYPES.map(t => (
+                  {Object.values(LessonType).map(t => (
                     <SelectItem key={t} value={t}>
                       {t}
                     </SelectItem>

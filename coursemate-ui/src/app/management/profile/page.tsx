@@ -17,14 +17,18 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    profileService
-      .getMe()
-      .then(p => {
+    const fetchProfile = async () => {
+      try {
+        const p = await profileService.getMe()
         setProfile(p)
         setForm({ userName: p.userName, email: p.email ?? '', phoneNumber: p.phoneNumber ?? '' })
-      })
-      .catch(() => toast.error('Failed to load profile.'))
-      .finally(() => setLoading(false))
+      } catch {
+        toast.error('Failed to load profile.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProfile()
   }, [])
 
   async function handleSave() {

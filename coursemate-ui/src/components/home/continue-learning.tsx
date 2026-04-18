@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ChevronRight, Play, BookOpen } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { OrderDto } from '@/lib/types'
@@ -48,11 +48,17 @@ export function ContinueLearning() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    orderService
-      .list(1, 6)
-      .then(res => setOrders(res.items))
-      .catch(() => setOrders([]))
-      .finally(() => setLoading(false))
+    const fetchOrders = async () => {
+      try {
+        const res = await orderService.list(1, 6)
+        setOrders(res.items)
+      } catch {
+        setOrders([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchOrders()
   }, [])
 
   // Flatten all items from completed/paid orders

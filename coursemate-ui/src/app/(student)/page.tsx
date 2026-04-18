@@ -22,7 +22,13 @@ export default function CatalogPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('')
 
   useEffect(() => {
-    categoryService.list({ pageSize: 50 }).then(res => setCategories(res.items || []))
+    const fetchCategories = async () => {
+      try {
+        const res = await categoryService.list({ pageSize: 50 })
+        setCategories(res.items || [])
+      } catch {}
+    }
+    fetchCategories()
   }, [])
 
   useEffect(() => {

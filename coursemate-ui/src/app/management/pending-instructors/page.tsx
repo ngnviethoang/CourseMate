@@ -37,7 +37,7 @@ export default function PendingInstructorsPage() {
     } finally {
       setLoading(false)
     }
-  }, [filter, sorting])
+  }, [])
 
   useEffect(() => {
     const t = setTimeout(load, 300)

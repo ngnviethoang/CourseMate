@@ -1,5 +1,4 @@
-import { orderService } from '@/lib/order-service'
-;('use client')
+'use client'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -88,17 +87,21 @@ export default function CheckoutPage() {
   const [placing, setPlacing] = useState(false)
 
   useEffect(() => {
-    orderService
-      .getCart()
-      .then(res => {
+    const fetchCart = async () => {
+      try {
+        const res = await orderService.getCart()
         if (!res || res.items.length === 0) {
           router.replace('/cart')
           return
         }
         setCart(res)
-      })
-      .catch(() => router.replace('/cart'))
-      .finally(() => setLoading(false))
+      } catch {
+        router.replace('/cart')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCart()
   }, [router])
 
   const handlePlaceOrder = async () => {

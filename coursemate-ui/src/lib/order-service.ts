@@ -1,5 +1,5 @@
 import { api } from './api-client'
-import { PagedDto, AdminOrderDto, UpdateOrderRequest, CartDto, ResultIdDto, OrderDto } from './types'
+import { PagedDto, UpdateOrderRequest, CartDto, ResultIdDto, OrderDto } from './types'
 
 export const orderService = {
   list: async (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string }) => {
@@ -8,11 +8,11 @@ export const orderService = {
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
     if (params?.sorting) qs.set('sorting', params.sorting)
-    const res = await api.get<PagedDto<AdminOrderDto>>(`/api/orders?${qs}`)
+    const res = await api.get<PagedDto<OrderDto>>(`/api/orders?${qs}`)
     if (res) res.pageIndex -= 1
     return res
   },
-  getById: (id: string) => api.get<AdminOrderDto | null>(`/api/orders/${id}`),
+  getById: (id: string) => api.get<OrderDto | null>(`/api/orders/${id}`),
   update: (id: string, body: UpdateOrderRequest) => api.put<void>(`/api/orders/${id}`, body),
   create: async (): Promise<ResultIdDto> => {
     return api.post<ResultIdDto>('/api/orders')

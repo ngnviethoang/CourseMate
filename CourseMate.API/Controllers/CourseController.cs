@@ -34,7 +34,7 @@ public class CourseController : ControllerBase
     [HttpGet("courses/{id:guid}")]
     public async Task<ActionResult> GetCourseByIdAsync(Guid id)
     {
-        CourseDto? result = await _mediator.Send(new GetCourseByIdQuery { Id = id });
+        CourseDetailDto? result = await _mediator.Send(new GetCourseByIdQuery { Id = id });
         return Ok(result);
     }
 

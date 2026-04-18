@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseMate.Application.Queries.Orders;
+namespace CourseMate.Application.Queries.Courses;
 
 public class GetCourseByIdQuery : IRequest<CourseDetailDto?>
 {

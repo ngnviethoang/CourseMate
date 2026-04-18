@@ -33,11 +33,17 @@ export default function StudentProfilePage() {
   })
 
   useEffect(() => {
-    profileService
-      .getMe()
-      .then(res => setUser(res))
-      .catch(() => toast.error('Failed to load profile.'))
-      .finally(() => setLoading(false))
+    const fetchProfile = async () => {
+      try {
+        const res = await profileService.getMe()
+        setUser(res)
+      } catch {
+        toast.error('Failed to load profile.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProfile()
   }, [])
 
   const handleChangePassword = async (e: React.FormEvent) => {
@@ -141,7 +147,7 @@ export default function StudentProfilePage() {
                 <span className="text-xs font-mono text-slate-500">••••••••••••</span>
               </div>
               <p className="text-xs text-slate-500 leading-relaxed">
-                It's a good idea to use a strong password that you're not using elsewhere.
+                It&apos;s a good idea to use a strong password that you&apos;re not using elsewhere.
               </p>
             </div>
           </CardContent>

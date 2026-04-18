@@ -12,23 +12,29 @@ import {
   CreateLessonRequest,
   UpdateLessonRequest,
   StudentMyCourseDto,
-  StudentLessonDetailDto,
-  StudentCourseDetailDto
+  CourseDetailDto
 } from './types'
 
 export const courseService = {
   // ─── Course ──────────────────────────────────────────────────────────────────
-  list: async (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string }) => {
+  list: async (params?: {
+    filter?: string
+    pageIndex?: number
+    pageSize?: number
+    sorting?: string
+    categoryId?: string
+  }) => {
     const qs = new URLSearchParams()
     if (params?.filter) qs.set('filter', params.filter)
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
     if (params?.sorting) qs.set('sorting', params.sorting)
+    if (params?.categoryId) qs.set('categoryId', params.categoryId)
     const res = await api.get<PagedDto<CourseDto>>(`/api/courses?${qs}`)
     if (res) res.pageIndex -= 1
     return res
   },
-  getById: (id: string) => api.get<CourseDto | null>(`/api/courses/${id}`),
+  getById: (id: string) => api.get<CourseDetailDto | null>(`/api/courses/${id}`),
   create: (body: CreateCourseRequest) => api.post<ResultIdDto>('/api/courses', body),
   update: (id: string, body: UpdateCourseRequest) => api.put<void>(`/api/courses/${id}`, body),
   delete: (id: string) => api.delete<void>(`/api/courses/${id}`),
@@ -97,4 +103,20 @@ export const courseService = {
     return api.put<void>(`/api/lessons/${id}`, body)
   },
   deleteLesson: (id: string) => api.delete<void>(`/api/lessons/${id}`)
+}
+
+export const chapterService = {
+  list: courseService.listChapters,
+  getById: courseService.getChapterById,
+  create: courseService.createChapter,
+  update: courseService.updateChapter,
+  delete: courseService.deleteChapter
+}
+
+export const lessonService = {
+  list: courseService.listLessons,
+  getById: courseService.getLessonById,
+  create: courseService.createLesson,
+  update: courseService.updateLesson,
+  delete: courseService.deleteLesson
 }

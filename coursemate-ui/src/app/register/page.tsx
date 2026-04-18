@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { GraduationCap, ArrowRight, Loader2, Lock, User, Mail, BookOpen, Briefcase, Info } from 'lucide-react'
 import { authService } from '@/lib/auth-service'
 import { toast } from 'sonner'

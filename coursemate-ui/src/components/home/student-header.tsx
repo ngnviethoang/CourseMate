@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { ShoppingCart, LogOut, User, ChevronDown, BookMarked, Trophy, Code2, Home } from 'lucide-react'
 import { CourseMateLogoIcon } from '@/components/icons/coursemate-logo'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -51,6 +51,7 @@ export function StudentHeader() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setUser(getUserFromToken())
     setMounted(true)
   }, [])

@@ -8,7 +8,7 @@ import { formatCurrency, cn } from '@/lib/utils'
 import { courseService } from '@/lib/course-service'
 import { categoryService } from '@/lib/category-service'
 import { userService } from '@/lib/user-service'
-import { getRole, getUserId } from '@/lib/auth-service'
+import { getRoles, getUserId } from '@/lib/auth-token.util'
 import type { CategoryDto, CourseDto, CreateCourseRequest, UserDto } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
@@ -29,6 +29,7 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { formatDate } from '@/lib/utils'
+import { Roles } from '@/lib/consts'
 
 const columns: Column<CourseDto>[] = [
   { key: 'title', header: 'Title', sortKey: 'title' },
@@ -87,12 +88,12 @@ export default function CoursesPage() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   useEffect(() => {
-    setUserRole(getRole())
+    setUserRole(getRoles())
     setCurrentUserId(getUserId())
   }, [])
 
-  const isAdmin = userRole.includes('Admin')
-  const isInstructor = userRole.includes('Instructor') && !isAdmin
+  const isAdmin = userRole.includes(Roles.Admin)
+  const isInstructor = userRole.includes(Roles.Instructor) && !isAdmin
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -113,17 +114,14 @@ export default function CoursesPage() {
   async function loadDropdowns() {
     setLoadingDropdowns(true)
     try {
-      const promises: Promise<unknown>[] = [
-        categoryService.list({ filter: '', pageSize: 25, sorting: 'name' }).then(res => setCategories(res.items))
-      ]
+      const catTask = categoryService.list({ filter: '', pageSize: 25, sorting: 'name' })
+      const userTask = isAdmin
+        ? userService.list({ filter: '', pageSize: 25, sorting: 'userName' })
+        : Promise.resolve(null)
 
-      if (isAdmin) {
-        promises.push(
-          userService.list({ filter: '', pageSize: 25, sorting: 'userName' }).then(res => setUsers(res.items))
-        )
-      }
-
-      await Promise.all(promises)
+      const [catRes, userRes] = await Promise.all([catTask, userTask])
+      setCategories(catRes.items)
+      if (userRes) setUsers(userRes.items)
     } finally {
       setLoadingDropdowns(false)
     }
@@ -399,6 +397,7 @@ export default function CoursesPage() {
                     <div className="relative aspect-video rounded-3xl overflow-hidden border-4 border-muted shadow-2xl bg-muted group transition-all hover:border-primary/30">
                       {form.imageUrl ? (
                         <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={form.imageUrl}
                             alt="Preview"

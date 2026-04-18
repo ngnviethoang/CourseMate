@@ -1,5 +1,6 @@
+'use client'
+
 import { categoryService } from '@/lib/category-service'
-;('use client')
 
 import { useEffect, useState } from 'react'
 import {
@@ -120,11 +121,17 @@ export function Categories() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    categoryService
-      .list(25)
-      .then(res => setCategories(res.items.filter(c => c.isActive)))
-      .catch(() => setCategories([]))
-      .finally(() => setLoading(false))
+    const fetchCategories = async () => {
+      try {
+        const res = await categoryService.list(25)
+        setCategories(res.items.filter(c => c.isActive))
+      } catch {
+        setCategories([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCategories()
   }, [])
 
   return (

@@ -7,6 +7,7 @@ import { fileService } from '@/lib/file-service'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function VideoUploadSection({ lessonId }: { lessonId: string }) {
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)

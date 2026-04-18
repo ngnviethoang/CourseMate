@@ -2,16 +2,15 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Plus, Trash2, Loader2, BookOpen, Sparkles, ChevronDown, ChevronUp } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Loader2, BookOpen, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { chapterService, lessonService, courseService } from '@/lib/course-service'
 import { aiService } from '@/lib/ai-service'
 import { Pagination } from '@/components/admin/pagination'
-import type { ChapterDto, LessonDto, CreateLessonRequest, LessonType, CourseDto } from '@/lib/types'
+import { ChapterDto, LessonDto, CreateLessonRequest, LessonType, CourseDto } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import {
   AlertDialog,
@@ -29,37 +28,26 @@ import Link from 'next/link'
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
-const LESSON_TYPES: LessonType[] = ['Video', 'Reading', 'Quiz', 'Coding', 'Slide']
-
 const LESSON_TYPE_COLOR: Record<LessonType, string> = {
-  Video: 'bg-blue-500/10 text-blue-600 border-blue-200',
-  Reading: 'bg-green-500/10 text-green-600 border-green-200',
-  Quiz: 'bg-orange-500/10 text-orange-600 border-orange-200',
-  Coding: 'bg-purple-500/10 text-purple-600 border-purple-200',
-  Slide: 'bg-teal-500/10 text-teal-600 border-teal-200'
+  [LessonType.Video]: 'bg-blue-500/10 text-blue-600 border-blue-200',
+  [LessonType.Reading]: 'bg-green-500/10 text-green-600 border-green-200',
+  [LessonType.Quiz]: 'bg-orange-500/10 text-orange-600 border-orange-200',
+  [LessonType.Coding]: 'bg-purple-500/10 text-purple-600 border-purple-200',
+  [LessonType.Slide]: 'bg-teal-500/10 text-teal-600 border-teal-200'
 }
 
 const LESSON_TYPE_ICON: Record<LessonType, string> = {
-  Video: '🎬',
-  Reading: '📖',
-  Quiz: '📝',
-  Coding: '💻',
-  Slide: '📽️'
+  [LessonType.Video]: '🎬',
+  [LessonType.Reading]: '📖',
+  [LessonType.Quiz]: '📝',
+  [LessonType.Coding]: '💻',
+  [LessonType.Slide]: '📽️'
 }
-
-const SYSTEM_PROMPT = `Role: Bạn là một chuyên gia thiết kế chương trình đào tạo và lập trình viên Full-stack.
-Task: Tạo dữ liệu cấu trúc hoàn chỉnh cho bài học dựa trên Tên bài, Loại bài và Nội dung thô.
-Output (JSON):
-- Video: { title, segments: [{time, script}], timestamps: [{time, label}] }
-- Reading: { title, markdown_content }
-- Coding: { title, problem_statement, initial_code, solution, test_cases }
-- Quiz: { title, questions: [{q, options, ans, explanation}] }
-Constraint: Nội dung chuyên sâu, sư phạm cao, phù hợp sinh viên IT.`
 
 // ─── Mock AI Data Generators ───────────────────────────────────────────────────
 
 const MOCK_AI_DATA: Record<LessonType, (name: string, raw: string) => object> = {
-  Video: (name, raw) => ({
+  [LessonType.Video]: (name, raw) => ({
     title: name || 'Giới thiệu về Lập trình Hướng đối tượng',
     segments: [
       {
@@ -80,7 +68,7 @@ const MOCK_AI_DATA: Record<LessonType, (name: string, raw: string) => object> = 
       { time: '11:30', label: 'Tổng kết' }
     ]
   }),
-  Reading: (name, raw) => ({
+  [LessonType.Reading]: (name, raw) => ({
     title: name || 'Bài đọc hiểu',
     markdown_content: `# ${name || 'Tiêu đề bài đọc'}
 
@@ -114,7 +102,7 @@ print(f"Kết quả: {result}")  # Output: 10
 
 > 💡 **Ghi nhớ**: Thực hành đều đặn là chìa khóa để thành thạo lập trình.`
   }),
-  Coding: (name, raw) => ({
+  [LessonType.Coding]: (name, raw) => ({
     title: name || 'Bài tập Lập trình',
     problem_statement: `## ${name || 'Bài tập thực hành'}\n\n${raw || 'Giải quyết bài toán lập trình sau đây.'}\n\n### Yêu cầu:\n- Thiết kế thuật toán hiệu quả\n- Code clean, có comment\n- Xử lý đầy đủ edge cases`,
     initial_code: `def solve(n: int) -> list:\n    """\n    TODO: Implement your solution here\n    """\n    result = []\n    # Viết code ở đây\n    return result\n\nif __name__ == "__main__":\n    print(solve(10))`,
@@ -127,7 +115,7 @@ print(f"Kết quả: {result}")  # Output: 10
       { input: 'n = 0', output: '[]', hidden: true }
     ]
   }),
-  Quiz: name => ({
+  [LessonType.Quiz]: name => ({
     title: name || 'Bài kiểm tra',
     questions: [
       {
@@ -169,7 +157,7 @@ print(f"Kết quả: {result}")  # Output: 10
       }
     ]
   }),
-  Slide: (name, raw) => ({
+  [LessonType.Slide]: name => ({
     lesson_info: {
       title: name || 'Bài giảng Slide',
       summary: 'Tóm tắt bài giảng',
@@ -228,26 +216,30 @@ export default function ChapterDetailPage() {
   const [aiRawContent, setAiRawContent] = useState('')
   const [aiFile, setAiFile] = useState<File | null>(null)
   const [aiGenerating, setAiGenerating] = useState(false)
-  const [showPrompt, setShowPrompt] = useState(false)
+  const [, setShowPrompt] = useState(false)
   const [aiMode, setAiMode] = useState(false)
 
   // Load chapter and course
   useEffect(() => {
-    setChapterLoading(true)
-    chapterService
-      .getById(id)
-      .then(ch => {
+    const loadChapter = async () => {
+      setChapterLoading(true)
+      try {
+        const ch = await chapterService.getById(id)
         setChapter(ch)
         setLessonForm(emptyLessonForm(ch?.courseId || '', id))
         if (ch?.courseId) {
-          courseService
-            .getById(ch.courseId)
-            .then(c => setCourse(c))
-            .catch(() => {})
+          try {
+            const c = await courseService.getById(ch.courseId)
+            setCourse(c)
+          } catch {}
         }
-      })
-      .catch(() => toast.error('Chapter not found.'))
-      .finally(() => setChapterLoading(false))
+      } catch {
+        toast.error('Chapter not found.')
+      } finally {
+        setChapterLoading(false)
+      }
+    }
+    loadChapter()
   }, [id])
 
   const loadLessons = useCallback(async () => {
@@ -307,7 +299,7 @@ export default function ChapterDetailPage() {
       let aiContent
 
       if (lessonForm.lessonType === LessonType.Slide) {
-        const response = await aiService.generateLesson(aiRawContent || lessonForm.title, aiFile || undefined)
+        const response = await aiService.getSlide(aiRawContent)
         aiContent = response
       } else {
         // Simulate AI processing for Mock Data
@@ -518,10 +510,10 @@ export default function ChapterDetailPage() {
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    {LESSON_TYPES.map(t => (
+                    {Object.values(LessonType).map(t => (
                       <SelectItem key={t} value={t}>
                         <span className="flex items-center gap-2">
-                          {LESSON_TYPE_ICON[t]} {t}
+                          {LESSON_TYPE_ICON[t as LessonType]} {t}
                         </span>
                       </SelectItem>
                     ))}

@@ -2,12 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Code2, CheckCircle2, ChevronRight, Filter, Zap } from 'lucide-react'
-import {
-  ExerciseEditorModal,
-  type ExerciseData,
-  type Difficulty,
-  DIFF_STYLE
-} from '@/components/exercises/exercise-editor-modal'
+import { ExerciseEditorModal, type ExerciseData, type Difficulty } from '@/components/exercises/exercise-editor-modal'
 
 // ─── Mock data ────────────────────────────────────────────────────────────────
 

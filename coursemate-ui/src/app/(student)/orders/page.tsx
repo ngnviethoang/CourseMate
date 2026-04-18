@@ -25,23 +25,24 @@ export default function OrdersPage() {
   const [loadingDetail, setLoadingDetail] = useState(false)
 
   useEffect(() => {
-    orderService
-      .list()
-      .then(res => {
-        setOrders((res.items as any[]) || [])
-        setLoading(false)
-      })
-      .catch(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await orderService.list()
+        setOrders(res.items || [])
+      } catch {
         toast.error('Failed to load orders')
+      } finally {
         setLoading(false)
-      })
+      }
+    }
+    fetchOrders()
   }, [])
 
   const openDetail = async (orderId: string) => {
     setLoadingDetail(true)
     try {
       const detail = await orderService.getById(orderId)
-      setSelected(detail as any)
+      setSelected(detail)
     } catch {
       // handled by api-client
     } finally {

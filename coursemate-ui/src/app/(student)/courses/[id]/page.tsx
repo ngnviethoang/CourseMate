@@ -1,15 +1,14 @@
+'use client'
+
 import { orderService } from '@/lib/order-service'
 import { courseService } from '@/lib/course-service'
-;('use client')
-
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { PlayCircle, FileText, CheckCircle2, Users, BookOpen, ShoppingCart } from 'lucide-react'
-import { orderService } from '@/lib/order-service'
-import { StudentCourseDetailDto } from '@/lib/types'
+import { LessonType, StudentCourseDetailDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 
@@ -23,17 +22,20 @@ export default function CourseDetailPage() {
 
   useEffect(() => {
     if (!id) return
-    setLoading(true)
-    courseService
-      .getById(id)
-      .then(res => {
-        setCourse(res || null)
-        setLoading(false)
-      })
-      .catch(() => {
+
+    const fetchCourse = async () => {
+      setLoading(true)
+      try {
+        const res = await courseService.getById(id)
+        setCourse(res as unknown as StudentCourseDetailDto)
+      } catch {
         toast.error('Failed to load course details.')
+      } finally {
         setLoading(false)
-      })
+      }
+    }
+
+    fetchCourse()
   }, [id])
 
   const handleAddToCart = async () => {

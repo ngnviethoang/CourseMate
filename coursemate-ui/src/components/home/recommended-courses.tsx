@@ -205,11 +205,11 @@ export function RecommendedCourses({ searchQuery, isLoggedIn, selectedCategoryId
     try {
       let res
       if (filter || categoryId) {
-        res = await courseService.getStudentCourses(page, PAGE_SIZE, filter, categoryId)
+        res = await courseService.list({ pageIndex: page - 1, pageSize: PAGE_SIZE, filter, categoryId })
       } else if (loggedIn) {
         res = await courseService.getRecommendedCourses(page, PAGE_SIZE)
       } else {
-        res = await courseService.getStudentCourses(page, PAGE_SIZE)
+        res = await courseService.list({ pageIndex: page - 1, pageSize: PAGE_SIZE })
       }
       setCourses(res.items)
       setTotalCount(res.totalCount)

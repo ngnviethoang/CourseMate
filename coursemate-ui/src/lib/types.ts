@@ -95,6 +95,10 @@ export interface CourseDto {
   lastModificationTime?: string
 }
 
+export interface CourseDetailDto extends CourseDto {
+  chapters: (ChapterDto & { lessons: LessonDto[] })[]
+}
+
 export interface CreateCourseRequest {
   title: string
   description: string

@@ -52,7 +52,7 @@ axiosInstance.interceptors.response.use(
     return response.data
   },
   (error: AxiosError<ProblemDetails>) => {
-    let problem: ProblemDetails = error.response?.data || {}
+    const problem: ProblemDetails = error.response?.data || {}
 
     const status = error.response?.status
 
@@ -73,16 +73,16 @@ axiosInstance.interceptors.response.use(
 type ApiOptions = Omit<AxiosRequestConfig, 'method' | 'url' | 'data'>
 
 export const api = {
-  get: <T>(url: string, options?: ApiOptions): Promise<T> => axiosInstance.get<any, T>(url, options),
+  get: <T>(url: string, options?: ApiOptions): Promise<T> => axiosInstance.get<unknown, T>(url, options),
 
   post: <T>(url: string, body?: unknown, options?: ApiOptions): Promise<T> =>
-    axiosInstance.post<any, T>(url, body, options),
+    axiosInstance.post<unknown, T>(url, body, options),
 
   put: <T>(url: string, body?: unknown, options?: ApiOptions): Promise<T> =>
-    axiosInstance.put<any, T>(url, body, options),
+    axiosInstance.put<unknown, T>(url, body, options),
 
   patch: <T>(url: string, body?: unknown, options?: ApiOptions): Promise<T> =>
-    axiosInstance.patch<any, T>(url, body, options),
+    axiosInstance.patch<unknown, T>(url, body, options),
 
-  delete: <T>(url: string, options?: ApiOptions): Promise<T> => axiosInstance.delete<any, T>(url, options)
+  delete: <T>(url: string, options?: ApiOptions): Promise<T> => axiosInstance.delete<unknown, T>(url, options)
 }

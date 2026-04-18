@@ -16,6 +16,7 @@ export default function Home() {
   const [selectedCategoryId, setSelectedCategoryId] = useState('')
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoggedIn(document.cookie.includes('accessToken='))
   }, [])
 

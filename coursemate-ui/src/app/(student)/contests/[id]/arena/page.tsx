@@ -11,15 +11,12 @@ import {
   XCircle,
   Clock,
   Trophy,
-  ChevronRight,
   Code2,
   Terminal,
   Loader2,
   GripVertical,
   Menu,
-  X,
   Flame,
-  Users,
   Send,
   AlertCircle
 } from 'lucide-react'

@@ -44,6 +44,7 @@ rules:
   - Use fetch on the server side
   - Use React Query or SWR for client-side data fetching
   - Never expose secrets on the client
+  - Use `async/await` instead of `.then()`.
 
 - name: styling
   description: Styling conventions.

@@ -35,6 +35,7 @@ export function AdminSidebar() {
       try {
         const payload = JSON.parse(atob(match[1].split('.')[1]))
         const r = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? payload['role'] ?? ''
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setRole(r)
       } catch (e) {
         console.error('Failed to parse token', e)
