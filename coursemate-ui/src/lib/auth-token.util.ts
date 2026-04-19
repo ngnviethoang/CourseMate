@@ -8,24 +8,17 @@ const USER_ID_CLAIM = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nam
 
 const getAccessToken = (): string | null => {
   if (typeof window === 'undefined') return null
-
-  return (
-    document.cookie
-      .split('; ')
-      .find(row => row.startsWith('accessToken='))
-      ?.split('=')[1] ?? null
-  )
+  return localStorage.getItem('accessToken')
 }
 
-const decodeJwt = (token: string): JwtPayload | null => {
+export const decodeJwt = (token: string): JwtPayload => {
   try {
     const payload = token.split('.')[1]
-    if (!payload) return null
-
     const base64 = payload.replace(/-/g, '+').replace(/_/g, '/')
     return JSON.parse(atob(base64))
-  } catch {
-    return null
+  } catch (error) {
+    console.error(error)
+    return {}
   }
 }
 

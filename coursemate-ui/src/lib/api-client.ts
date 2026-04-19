@@ -1,6 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios'
 import { toast } from 'sonner'
-import { cookies } from 'next/headers'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
 
@@ -16,9 +15,8 @@ const axiosInstance = axios.create({
   baseURL: BASE_URL
 })
 
-axiosInstance.interceptors.request.use(async config => {
-  const cookieStore = await cookies()
-  const token = cookieStore.get('accessToken')?.value
+axiosInstance.interceptors.request.use(config => {
+  const token = localStorage.getItem('accessToken')
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`
   }

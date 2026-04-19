@@ -11,6 +11,7 @@ import { GraduationCap, ArrowRight, Loader2, Lock, User, Eye, EyeOff } from 'luc
 import { authService } from '@/lib/auth-service'
 import { toast } from 'sonner'
 import { Roles } from '@/lib/consts'
+import { decodeJwt } from '@/lib/auth-token.util'
 
 export default function StudentLoginPage() {
   const router = useRouter()
@@ -34,14 +35,12 @@ export default function StudentLoginPage() {
     try {
       const res = await authService.login({ userName, password })
       if (res?.accessToken) {
-        document.cookie = `accessToken=${res.accessToken}; path=/; max-age=86400; samesite=strict`
-        const payload = JSON.parse(atob(res.accessToken.split('.')[1]))
-        const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? payload['role'] ?? ''
-
+        localStorage.setItem('accessToken', res.accessToken)
+        const payload = decodeJwt(res.accessToken)
         toast.success('Welcome back!')
-        if (role === Roles.Student) {
+        if (payload.role === Roles.Student) {
           router.push('/')
-        } else {
+        } else if (payload.role === Roles.Admin || payload.role === Roles.Instructor) {
           router.push('/management')
         }
       } else {
