@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios'
 import { toast } from 'sonner'
+import { cookies } from 'next/headers'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
 
@@ -16,23 +17,8 @@ const axiosInstance = axios.create({
 })
 
 axiosInstance.interceptors.request.use(async config => {
-  let token = ''
-  if (typeof window === 'undefined') {
-    try {
-      const { cookies } = await import('next/headers')
-      const cookieStore = await cookies()
-      token = cookieStore.get('accessToken')?.value ?? ''
-    } catch (error) {
-      console.warn('Cannot access cookies on server:', error)
-    }
-  } else {
-    token =
-      document.cookie
-        .split('; ')
-        .find(row => row.startsWith('accessToken='))
-        ?.split('=')[1] ?? ''
-  }
-
+  const cookieStore = await cookies()
+  const token = cookieStore.get('accessToken')?.value
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`
   }
@@ -45,17 +31,10 @@ axiosInstance.interceptors.request.use(async config => {
 })
 
 axiosInstance.interceptors.response.use(
-  response => {
-    if (response.status === 204) {
-      return null
-    }
-    return response.data
-  },
+  response => response.data,
   (error: AxiosError<ProblemDetails>) => {
     const problem: ProblemDetails = error.response?.data || {}
-
     const status = error.response?.status
-
     if (status === 403) {
       toast.error(problem.detail ?? 'Access denied.')
     } else if (status === 422 || status === 400) {
