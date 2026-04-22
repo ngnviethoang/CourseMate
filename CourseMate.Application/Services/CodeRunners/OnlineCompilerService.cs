@@ -3,6 +3,7 @@ using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Contracts.Options;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -12,11 +13,13 @@ public class OnlineCompilerService : ICodeRunnerService
 {
     private readonly HttpClient _httpClient;
     private readonly OnlineCompilerOptions _onlineCompilerOptions;
+    private readonly ILogger<OnlineCompilerService> _logger;
 
-    public OnlineCompilerService(IOptions<OnlineCompilerOptions> options, HttpClient httpClient)
+    public OnlineCompilerService(IOptions<OnlineCompilerOptions> options, HttpClient httpClient, ILogger<OnlineCompilerService> logger)
     {
         _onlineCompilerOptions = options.Value;
         _httpClient = httpClient;
+        _logger = logger;
     }
 
     public async Task<RunCodeResponse> RunAsync(string code, string compiler, string input, CancellationToken cancellationToken)
@@ -28,13 +31,16 @@ public class OnlineCompilerService : ICodeRunnerService
             Code = code,
             Compiler = compiler
         };
+        string payload = JsonConvert.SerializeObject(requestBody);
         using HttpRequestMessage request = new(HttpMethod.Post, uri);
         request.Headers.Add("Authorization", _onlineCompilerOptions.ApiKey);
-        request.Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
+        request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
         try
         {
+            _logger.LogInformation("HTTP {Method} {Url} | Payload: {Payload}", request.Method, uri, payload);
             using HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken);
             string content = await response.Content.ReadAsStringAsync(cancellationToken);
+            _logger.LogInformation("HTTP {Method} {Url} | Status: {StatusCode} | Response: {Response}", request.Method, uri, (int)response.StatusCode, content);
             response.EnsureSuccessStatusCode();
             RunCodeResponse result = JsonConvert.DeserializeObject<RunCodeResponse>(content) ?? new RunCodeResponse();
             return result;
@@ -54,9 +60,11 @@ public class OnlineCompilerService : ICodeRunnerService
         Uri uri = new($"{_onlineCompilerOptions.Url.TrimEnd('/')}/api/compilers/");
         try
         {
+            _logger.LogInformation("HTTP {Method} {Url}", HttpMethod.Get, uri);
             using HttpResponseMessage response = await _httpClient.GetAsync(uri, cancellationToken);
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync(cancellationToken);
+            _logger.LogInformation("HTTP {Method} {Url} | Status: {StatusCode} | Response: {Response}", HttpMethod.Get, uri, (int)response.StatusCode, content);
             OnlineCompilerResponse onlineCompilerResponse = JsonConvert.DeserializeObject<OnlineCompilerResponse>(content) ?? new OnlineCompilerResponse();
             return onlineCompilerResponse.Compilers;
         }
