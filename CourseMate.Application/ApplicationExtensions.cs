@@ -1,5 +1,6 @@
 using CourseMate.Application.Behaviors;
 using CourseMate.Application.Services.AI;
+using CourseMate.Application.Services.CodeRunners;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CourseMate.Application;
@@ -19,7 +20,7 @@ public static class ApplicationExtensions
             });
 
             services.AddTransient<IAiService, GoogleAiService>();
-
+            services.AddTransient<ICodeRunnerService, OnlineCompilerService>();
             return services;
         }
     }

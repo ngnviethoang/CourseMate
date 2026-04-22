@@ -1,6 +1,6 @@
 ﻿namespace CourseMate.Contracts.Options;
 
-public class RapidOptions
+public class OnlineCompilerOptions
 {
     public string Url { get; set; } = string.Empty;
 
