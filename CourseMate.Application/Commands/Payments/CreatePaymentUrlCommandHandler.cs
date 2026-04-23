@@ -41,6 +41,15 @@ internal sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<Cr
 
     public override async Task<CreatePaymentUrlResponse> Handle(CreatePaymentUrlCommand request, CancellationToken cancellationToken)
     {
+        Order? order = await DbContext.Orders
+            .Where(i => i.Id == request.OrderId && i.StudentId == CurrentUserId && i.Status == OrderStatus.Submitted)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (order is null)
+        {
+            _logger.LogWarning("Invalid order with ID: {OrderId}", request.OrderId);
+            throw new EntityNotFoundException(nameof(Order), request.OrderId);
+        }
+
         string clientIp = Utils.GetIpAddress(HttpContextAccessor.HttpContext!);
         if (!IPAddress.TryParse(clientIp, out IPAddress? _))
         {
@@ -48,24 +57,8 @@ internal sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<Cr
             throw new BusinessException(ErrorMessages.InvalidIp);
         }
 
-        Order? order = await DbContext.Orders.Where(i => i.Id == request.OrderId && i.Status == OrderStatus.Submitted).FirstOrDefaultAsync(cancellationToken);
-        if (order is null)
-        {
-            _logger.LogWarning("Invalid order with ID: {OrderId}", request.OrderId);
-            throw new EntityNotFoundException(nameof(Order), request.OrderId);
-        }
-
-        PayOSClient client = new(new PayOSOptions
-        {
-            ClientId = _payOsOptions.ClientId,
-            ApiKey = _payOsOptions.SecretKey,
-            ChecksumKey = _payOsOptions.ChecksumKey,
-            PartnerCode = _payOsOptions.PartnerCode
-        });
-
         long externalOrderId = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         long totalAmount = (long)Math.Ceiling(order.TotalAmount);
-
         CreatePaymentLinkRequest paymentRequest = new()
         {
             OrderCode = externalOrderId,
@@ -75,6 +68,13 @@ internal sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<Cr
             CancelUrl = _payOsOptions.CancelUrl
         };
 
+        PayOSClient client = new(new PayOSOptions
+        {
+            ClientId = _payOsOptions.ClientId,
+            ApiKey = _payOsOptions.SecretKey,
+            ChecksumKey = _payOsOptions.ChecksumKey,
+            PartnerCode = _payOsOptions.PartnerCode
+        });
         CreatePaymentLinkResponse paymentLink = await client.PaymentRequests.CreateAsync(paymentRequest);
         _logger.LogInformation("Payment URL created for Order ID: {OrderId}, URL: {PaymentUrl}", request.OrderId, paymentLink.CheckoutUrl);
         PaymentTransaction paymentTransaction = new(

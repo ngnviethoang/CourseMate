@@ -32,4 +32,12 @@ public class PaymentController : ControllerBase
         int result = await _mediator.Send(request);
         return Ok(result);
     }
+
+    [AllowAnonymous]
+    [HttpPost("fake-payos-ipn")]
+    public async Task<IActionResult> PayOsIpnUrlCallback(FakeIpnUrlCallbackCommand request)
+    {
+        int result = await _mediator.Send(request);
+        return Ok(result);
+    }
 }
