@@ -55,7 +55,7 @@ public class GeminiService : IAiService
                 ThinkingConfig = new ThinkingConfig
                 {
                     IncludeThoughts = false,
-                    ThinkingLevel = ThinkingLevel.Medium
+                    // ThinkingLevel = ThinkingLevel.Medium
                 },
                 Tools = [new Tool { GoogleSearch = new GoogleSearch() }]
             };
@@ -83,7 +83,7 @@ public class GeminiService : IAiService
                 ThinkingConfig = new ThinkingConfig
                 {
                     IncludeThoughts = false,
-                    ThinkingLevel = ThinkingLevel.Medium
+                    // ThinkingLevel = ThinkingLevel.Medium
                 }
             };
 

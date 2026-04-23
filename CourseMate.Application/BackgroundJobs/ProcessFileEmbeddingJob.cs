@@ -110,8 +110,12 @@ public class ProcessFileEmbeddingJob
 
         foreach (Text text in body.Descendants<Text>())
         {
-            sb.Append(text.Text.Trim());
-            sb.Append(" ");
+            string value = text.Text.Trim();
+            if (!string.IsNullOrEmpty(value))
+            {
+                sb.Append(value);
+                sb.Append(' ');
+            }
         }
 
         return sb.ToString();
