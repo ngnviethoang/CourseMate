@@ -5,31 +5,25 @@ public static class PromptBuilder
     public static string BuildResearchPrompt(string userInput)
     {
         return $"""
-                You are a research assistant helping create teaching materials.
-
-                Goal:
-                - Analyze the topic in the input.
-                - Expand it with essential, high-confidence knowledge.
-                - Clarify key terms, mechanisms, and related ideas.
-                - Add simple examples.
-                - Do not invent facts. If something is uncertain, say "I don't know".
+                You are a research assistant helping create teaching materials. 
+                Goal: 
+                - Analyze the topic in the input. 
+                - Expand it with essential, high-confidence knowledge. 
+                - Clarify key terms, mechanisms, and related ideas. 
+                - Add simple examples. Do not invent facts. 
+                - If something is uncertain, say "I don't know".
 
                 Output format:
                 1. Topic Summary
                 - brief description of the topic
-
                 2. Key Concepts
                 - concept: short explanation
-
                 3. Important Details
                 - core mechanisms, steps, causes, effects, or comparisons
-
                 4. Examples
                 - simple, easy-to-understand examples
-
                 5. Common Misunderstandings
                 - frequent mistakes or confusing points
-
                 6. Unknowns
                 - missing, uncertain, or unverified points
 
@@ -48,49 +42,50 @@ public static class PromptBuilder
 
     public static string BuildLectureOutlinePrompt(string researchInput)
     {
-        return $"""
-                You are an experienced teacher preparing lecture slides.
+        return $$$"""
+                  You are an experienced teacher preparing lecture slides. Use the input as source material and create a slide outline for teaching.
+                        
+                  Output format: Return ONLY valid JSON. Do not wrap in markdown.Do not include explanation. Ensure the JSON is complete and parseable.
+                        JSON schema:
+                           {{
+                             "lessonTitle": "string",
+                             "relatedLinks": ["string"],
+                             "slides": [
+                               {{
+                                 "slideNumber": 1,
+                                 "title": "string",
+                                 "bullets": ["string"],
+                                 "relatedLinks": ["string"]
+                               }}
+                             ]
+                           }}
+                                   
+                  Requirements:
+                      - lessonTitle: title of the lesson
+                      - relatedLinks: general references related to the whole lesson
+                      - slides: generate a reasonable number of slides (minimum 6, maximum 12) based on the input content
+                      - each slide must include: slideNumber, title, bullets, relatedLinks
+                      - bullets only
+                      - 2 to 4 bullets per slide
+                      - each bullet should be short and slide-friendly
+                      - no long paragraphs
+                      - avoid repetition
+                      - if a point is uncertain, write "[Need verification]"
+                      - include relevant links when possible
+                      - if no related link is available, return []
+                      - keep the entire response concise to fit within token limits
 
-                Use the input as source material and create a slide outline for teaching.
+                  Suggested slide flow:
+                      - Title and Learning Objective
+                      - Overview
+                      - Key Concepts (expand into multiple slides if needed)
+                      - Detailed Explanation
+                      - Examples
+                      - Common Misunderstandings
+                      - Summary
 
-                Output format:
-                Slide 1: Title and Learning Objective
-                - lecture title
-                - what students should learn
-
-                Slide 2: Overview
-                - brief introduction
-                - why the topic matters
-
-                Slide 3: Key Concept 1
-                - concise teaching points
-
-                Slide 4: Key Concept 2
-                - concise teaching points
-
-                Slide 5: Detailed Explanation
-                - process, logic, or important breakdown
-
-                Slide 6: Examples
-                - simple examples or use cases
-
-                Slide 7: Common Misunderstandings
-                - confusing points to avoid
-
-                Slide 8: Summary
-                - key takeaways
-
-                Rules:
-                - bullet points only
-                - 2 to 4 bullets per slide
-                - each bullet should be short and slide-friendly
-                - no long paragraphs
-                - avoid repetition
-                - if a point is uncertain, write "[Need verification]"
-                - keep the outline concise but complete
-
-                Input:
-                {researchInput}
-                """;
+                  Input:
+                  {{{researchInput}}}
+                  """;
     }
 }

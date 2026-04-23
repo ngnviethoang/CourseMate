@@ -3,7 +3,6 @@ namespace CourseMate.Contracts.DTOs;
 public class OutlineDto
 {
     public Guid LessonId { get; set; }
-    public Guid MaterialId { get; set; }
-    public string LessonTitle { get; set; } = string.Empty;
-    public List<OutlineSectionDto> Sections { get; set; } = [];
+    public Guid LessonMaterialId { get; set; }
+    public LectureOutline LectureOutline { get; set; } = new();
 }

@@ -1,9 +1,12 @@
 using CourseMate.Application.Services.AIServices;
+using CourseMate.Contracts.DTOs;
+using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Pgvector;
 using Pgvector.EntityFrameworkCore;
 
@@ -65,12 +68,26 @@ public class GenerateOutlineJob
 
         // 6. Generate outline
         string outline = await _aiService.GenerateContentAsync(externalContext, cancellationToken);
+        outline = outline.Replace("```json", "").Replace("```", "").Trim();
+        try
+        {
+            LectureOutline? parsedOutline = JsonConvert.DeserializeObject<LectureOutline>(outline);
+            bool isValid = parsedOutline != null && !string.IsNullOrWhiteSpace(parsedOutline.LessonTitle) && parsedOutline?.Slides != null && parsedOutline.Slides.Any();
+            if (!isValid)
+            {
+                _logger.LogWarning("Invalid AI outline structure for lesson {LessonId}. Raw output: {Outline}", lessonMaterial.LessonId, outline);
+            }
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogWarning(ex, "Failed to parse AI outline for lesson {LessonId}. Raw output: {Outline}", lessonMaterial.LessonId, outline);
+            throw new BusinessException($"Invalid AI outline for lesson {lessonMaterial.LessonId}", ex);
+        }
 
-        // 7. Save
+
         lessonMaterial.Outline = outline;
         _dbContext.LessonMaterials.Update(lessonMaterial);
         await _dbContext.SaveChangesAsync(cancellationToken);
-
         _logger.LogInformation("Finished generate outline for lesson {LessonId}", lessonMaterial.LessonId);
     }
 }

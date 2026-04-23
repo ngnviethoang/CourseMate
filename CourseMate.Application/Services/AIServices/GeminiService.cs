@@ -79,7 +79,7 @@ public class GeminiService : IAiService
                 Temperature = 0.2,
                 TopP = 0.9,
                 TopK = 20,
-                MaxOutputTokens = 1024,
+                MaxOutputTokens = 4096,
                 ThinkingConfig = new ThinkingConfig
                 {
                     IncludeThoughts = false

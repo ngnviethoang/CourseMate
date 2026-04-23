@@ -99,7 +99,6 @@ public class ProcessFileEmbeddingJob
 
     private static string ReadWordText(string filePath)
     {
-        StringBuilder sb = new();
         using WordprocessingDocument doc = WordprocessingDocument.Open(filePath, false);
         Body? body = doc.MainDocumentPart?.Document?.Body;
 
@@ -108,17 +107,20 @@ public class ProcessFileEmbeddingJob
             return string.Empty;
         }
 
-        foreach (Text text in body.Descendants<Text>())
+        return NormalizeText(body.InnerText);
+    }
+
+    private static string NormalizeText(string input)
+    {
+        if (string.IsNullOrEmpty(input))
         {
-            string value = text.Text.Trim();
-            if (!string.IsNullOrEmpty(value))
-            {
-                sb.Append(value);
-                sb.Append(' ');
-            }
+            return string.Empty;
         }
 
-        return sb.ToString();
+        input = input.Normalize(NormalizationForm.FormKC);
+        input = Regex.Replace(input, @"[ \t]+", " ");
+        input = Regex.Replace(input, @"\r\n|\r|\n", "\n");
+        return input.Trim();
     }
 
     private static IEnumerable<Chunk> ChunkSentences(string text, int maxTokens = 800)
