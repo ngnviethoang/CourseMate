@@ -56,64 +56,21 @@ public class GenerateOutlineJob
         string docContext = string.Join("\n\n---\n\n", chunks);
 
         // 4. External research (LLM simulate search)
-        string externalContext = await ExternalSearchAsync(docContext, cancellationToken);
+        string externalContext = await _aiService.SearchAsync(docContext, cancellationToken);
 
         // 6. Generate outline
-        string outlineJson = await GenerateOutlineAsync(docContext, externalContext, cancellationToken);
+        string outline = await _aiService.GenerateContentAsync(externalContext, cancellationToken);
 
         // 7. Save
         LessonMaterial material = new(Guid.NewGuid(),
             lessonId,
             documentFileId,
             LessonMaterialState.GeneratingEmbedding,
-            outlineJson,
+            outline,
             null);
         await _dbContext.LessonMaterials.AddAsync(material, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         _logger.LogInformation("Finished GenerateOutline {FileEntryId}", documentFileId);
-    }
-
-    private async Task<string> ExternalSearchAsync(string context, CancellationToken ct)
-    {
-        string prompt = $$"""
-                          You are a research assistant.
-                          Search and summarize knowledge about:
-                          {{context}}
-
-                          Include:
-                          - Key concepts
-                          - Best practices
-                          - Real-world examples
-
-                          Keep concise.
-                          """;
-
-        return await _aiService.DeepResearchAsync(prompt, ct);
-    }
-
-    private async Task<string> GenerateOutlineAsync(string docContext, string externalContext, CancellationToken ct)
-    {
-        string prompt = $$"""
-                          You are an expert educator.
-                          Create a lesson outline from:
-
-                          DOCUMENT: {{docContext}}
-
-                          EXTERNAL: {{externalContext}}
-
-                          Return JSON array:
-                          [
-                            {
-                              "order": 1,
-                              "title": "...",
-                              "bullets": ["..."],
-                              "speakerNotes": "...",
-                              "imageSuggestion": "..."
-                            }
-                          ]
-                          """;
-
-        return await _aiService.GenerateContentAsync(prompt, ct);
     }
 }

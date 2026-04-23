@@ -19,7 +19,7 @@ public static class ApplicationExtensions
                 cfg.AddOpenBehavior(typeof(TransactionPipelineBehavior<,>));
             });
 
-            services.AddTransient<IAiService, GoogleAiService>();
+            services.AddTransient<IAiService, GeminiService>();
             services.AddTransient<ICodeRunnerService, OnlineCompilerService>();
             return services;
         }

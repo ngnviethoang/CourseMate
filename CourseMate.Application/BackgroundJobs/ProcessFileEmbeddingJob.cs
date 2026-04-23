@@ -200,7 +200,7 @@ public class ProcessFileEmbeddingJob
         return string.IsNullOrEmpty(value) ? value : value[..Math.Min(value.Length, length)];
     }
 
-    private class Chunk
+    private sealed class Chunk
     {
         public required string Content { get; init; }
         public required int StartIndex { get; init; }

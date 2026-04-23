@@ -25,7 +25,7 @@ public class OllamaAiService : IAiService
         return new ReadOnlyMemory<float>(response.Embeddings.FirstOrDefault());
     }
 
-    public async Task<string> DeepResearchAsync(string input, CancellationToken cancellationToken)
+    public async Task<string> SearchAsync(string input, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

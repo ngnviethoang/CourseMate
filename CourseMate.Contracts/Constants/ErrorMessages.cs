@@ -13,4 +13,7 @@ public static class ErrorMessages
     public const string PositionOutOfRange = "Position must be 0 or equal to next position '{0}'";
     public const string DuplicatePosition = "Duplicate position";
     public const string InvalidIp = "IP address is invalid";
+    public const string EmbeddingFailed = "AI embedding failed";
+    public const string ResearchGenerationFailed = "AI research generation failed";
+    public const string LectureOutlineGenerationFailed = "AI lecture outline generation failed";
 }
