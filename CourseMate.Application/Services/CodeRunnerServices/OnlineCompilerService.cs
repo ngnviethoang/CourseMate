@@ -7,13 +7,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace CourseMate.Application.Services.CodeRunners;
+namespace CourseMate.Application.Services.CodeRunnerServices;
 
 public class OnlineCompilerService : ICodeRunnerService
 {
     private readonly HttpClient _httpClient;
-    private readonly OnlineCompilerOptions _onlineCompilerOptions;
     private readonly ILogger<OnlineCompilerService> _logger;
+    private readonly OnlineCompilerOptions _onlineCompilerOptions;
 
     public OnlineCompilerService(IOptions<OnlineCompilerOptions> options, HttpClient httpClient, ILogger<OnlineCompilerService> logger)
     {

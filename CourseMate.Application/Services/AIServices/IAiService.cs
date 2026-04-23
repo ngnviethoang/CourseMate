@@ -1,4 +1,4 @@
-﻿namespace CourseMate.Application.Services.AI;
+﻿namespace CourseMate.Application.Services.AIServices;
 
 public interface IAiService
 {

@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CourseMate.Persistent.DbConfigurations;
 
-public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
+public class PaymentConfiguration : IEntityTypeConfiguration<PaymentTransaction>
 {
-    public void Configure(EntityTypeBuilder<Payment> builder)
+    public void Configure(EntityTypeBuilder<PaymentTransaction> builder)
     {
-        builder.ToTable("Payments");
+        builder.ToTable("PaymentTransactions");
         builder.Property(i => i.Provider).HasColumnType("citext").IsRequired();
         builder.Property(i => i.TransactionId).HasColumnType("citext").IsRequired();
-        builder.HasOne<Order>().WithOne().HasForeignKey<Payment>(i => i.OrderId);
+        builder.HasOne<Order>().WithOne().HasForeignKey<PaymentTransaction>(i => i.OrderId);
     }
 }

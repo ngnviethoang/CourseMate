@@ -12,4 +12,5 @@ public static class ErrorMessages
     public const string RoleNotExists = "{0} role does not exist";
     public const string PositionOutOfRange = "Position must be 0 or equal to next position '{0}'";
     public const string DuplicatePosition = "Duplicate position";
+    public const string InvalidIp = "IP address is invalid";
 }

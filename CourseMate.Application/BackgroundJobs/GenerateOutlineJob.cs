@@ -1,4 +1,4 @@
-using CourseMate.Application.Services.AI;
+using CourseMate.Application.Services.AIServices;
 using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;

@@ -32,7 +32,7 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
         List<Guid> purchasedCourseIds = await (
             from order in DbContext.Orders
             join orderItem in DbContext.OrderItems on order.Id equals orderItem.OrderId
-            where order.StudentId == studentId && order.Status == OrderStatus.Paid
+            where order.StudentId == studentId && order.Status == OrderStatus.Completed
             select orderItem.CourseId
         ).ToListAsync(cancellationToken);
 
@@ -72,7 +72,7 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
         IQueryable<CourseDto> finalQuery = query
             .OrderByDescending(c => DbContext.OrderItems
                 .Count(oi => oi.CourseId == c.Id && DbContext.Orders
-                    .Any(o => o.Id == oi.OrderId && o.Status == OrderStatus.Paid)))
+                    .Any(o => o.Id == oi.OrderId && o.Status == OrderStatus.Completed)))
             .ThenByDescending(c => c.CreationTime);
 
         // 5. Paginate and return

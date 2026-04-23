@@ -55,6 +55,7 @@ public class FileController : ControllerBase
     }
 
     [HttpGet("videos/{fileId:guid}")]
+    [AllowAnonymous]
     public async Task<ActionResult> GetVideoUploadStatusAsync(Guid fileId)
     {
         VideoUploadStatusDto? result = await _mediator.Send(new GetVideoUploadStatusQuery

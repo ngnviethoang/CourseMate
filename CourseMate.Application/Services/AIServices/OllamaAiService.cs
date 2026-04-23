@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using OllamaSharp;
 using OllamaSharp.Models;
 
-namespace CourseMate.Application.Services.AI;
+namespace CourseMate.Application.Services.AIServices;
 
 public class OllamaAiService : IAiService
 {

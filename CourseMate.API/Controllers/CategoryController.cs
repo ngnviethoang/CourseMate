@@ -11,6 +11,7 @@ namespace CourseMate.API.Controllers;
 
 [ApiController]
 [Route("api/categories")]
+[Authorize]
 public class CategoryController : ControllerBase
 {
     private readonly IMediator _mediator;

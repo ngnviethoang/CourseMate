@@ -27,7 +27,7 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<IdentityUser
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
-    public DbSet<Payment> Payments { get; set; }
+    public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
     public DbSet<Enrollment> Enrollments { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Cart> Carts { get; set; }

@@ -1,6 +1,6 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using CourseMate.Application.Services.AI;
+using CourseMate.Application.Services.AIServices;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using DocumentFormat.OpenXml.Packaging;

@@ -4,7 +4,7 @@ using Google.GenAI.Types;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Options;
 
-namespace CourseMate.Application.Services.AI;
+namespace CourseMate.Application.Services.AIServices;
 
 public class GoogleAiService : IAiService
 {

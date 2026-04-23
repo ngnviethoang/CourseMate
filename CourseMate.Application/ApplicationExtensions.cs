@@ -1,6 +1,6 @@
 using CourseMate.Application.Behaviors;
-using CourseMate.Application.Services.AI;
-using CourseMate.Application.Services.CodeRunners;
+using CourseMate.Application.Services.AIServices;
+using CourseMate.Application.Services.CodeRunnerServices;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CourseMate.Application;

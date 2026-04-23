@@ -30,6 +30,7 @@ public class CodeRunner : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult> GetListCompilersAsync()
     {
         IEnumerable<CompilerInfo> result = await _mediator.Send(new GetListCompilersQuery());

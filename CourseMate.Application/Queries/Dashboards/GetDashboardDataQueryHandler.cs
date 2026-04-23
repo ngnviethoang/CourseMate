@@ -21,7 +21,7 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
     {
         // 1. Basic Stats
         decimal totalRevenue = await DbContext.Orders
-            .Where(o => o.Status == OrderStatus.Paid)
+            .Where(o => o.Status == OrderStatus.Completed)
             .SumAsync(o => o.TotalAmount, cancellationToken);
 
         int totalStudents = await DbContext.Users.CountAsync(cancellationToken);
@@ -33,7 +33,7 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
         twelveMonthsAgo = new DateTimeOffset(twelveMonthsAgo.Year, twelveMonthsAgo.Month, 1, 0, 0, 0, twelveMonthsAgo.Offset);
 
         List<MonthlyOrderDto> monthlyOrders = await DbContext.Orders
-            .Where(o => o.Status == OrderStatus.Paid && o.CreationTime >= twelveMonthsAgo)
+            .Where(o => o.Status == OrderStatus.Completed && o.CreationTime >= twelveMonthsAgo)
             .Select(o => new MonthlyOrderDto(o.TotalAmount, o.CreationTime))
             .ToListAsync(cancellationToken);
 
@@ -53,7 +53,7 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
             from orderItem in DbContext.OrderItems
             join order in DbContext.Orders on orderItem.OrderId equals order.Id
             join course in DbContext.Courses on orderItem.CourseId equals course.Id
-            where order.Status == OrderStatus.Paid
+            where order.Status == OrderStatus.Completed
             group new { orderItem, course } by new { course.Id, course.Title }
             into g
             orderby g.Sum(x => x.orderItem.Price) descending
@@ -72,7 +72,7 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
             join order in DbContext.Orders on orderItem.OrderId equals order.Id
             join course in DbContext.Courses on orderItem.CourseId equals course.Id
             join instructor in DbContext.Users on course.InstructorId equals instructor.Id
-            where order.Status == OrderStatus.Paid
+            where order.Status == OrderStatus.Completed
             group new { orderItem, instructor } by new { instructor.Id, instructor.UserName }
             into g
             orderby g.Sum(x => x.orderItem.Price) descending

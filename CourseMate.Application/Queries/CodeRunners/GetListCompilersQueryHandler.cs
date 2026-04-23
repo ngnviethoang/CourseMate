@@ -1,4 +1,4 @@
-﻿using CourseMate.Application.Services.CodeRunners;
+﻿using CourseMate.Application.Services.CodeRunnerServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Persistent;
@@ -12,11 +12,6 @@ public class GetListCompilersQuery : IRequest<IEnumerable<CompilerInfo>>;
 internal sealed class GetListCompilersQueryHandler : AbstractQueryHandler<GetListCompilersQuery, IEnumerable<CompilerInfo>>
 {
     private readonly ICodeRunnerService _codeRunnerService;
-
-    public GetListCompilersQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
-        : base(dbContext, httpContextAccessor)
-    {
-    }
 
     public GetListCompilersQueryHandler(
         CourseMateReadOnlyDbContext dbContext,
