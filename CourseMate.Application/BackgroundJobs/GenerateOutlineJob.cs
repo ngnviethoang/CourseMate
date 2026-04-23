@@ -1,5 +1,4 @@
 using CourseMate.Application.Services.AIServices;
-using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using Hangfire;
@@ -27,9 +26,15 @@ public class GenerateOutlineJob
     }
 
     [AutomaticRetry(Attempts = 2)]
-    public async Task ExecuteAsync(Guid lessonId, Guid documentFileId, CancellationToken cancellationToken)
+    public async Task ExecuteAsync(Guid lessonMaterialId, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Start GenerateOutline {FileEntryId}", documentFileId);
+        LessonMaterial? lessonMaterial = await _dbContext.LessonMaterials.FirstOrDefaultAsync(lm => lm.Id == lessonMaterialId, cancellationToken);
+        if (lessonMaterial == null)
+        {
+            return;
+        }
+
+        _logger.LogInformation("Start generate outline for lesson {lessonMaterialId}", lessonMaterial.LessonId);
 
         // 1. Create query embedding
         ReadOnlyMemory<float> embedding = await _aiService.GenerateVectorAsync("main topics, key concepts, lesson structure", cancellationToken);
@@ -37,7 +42,7 @@ public class GenerateOutlineJob
 
         // 2. Search relevant chunks
         List<Guid> fileChunkIds = await _dbContext.FileEntryEmbeddings
-            .Where(x => x.FileEntryId == documentFileId)
+            .Where(x => x.FileEntryId == lessonMaterial.DocumentFileId)
             .OrderBy(x => x.Embedding.CosineDistance(queryVector))
             .Take(10)
             .Select(x => x.FileChunkId)
@@ -62,15 +67,10 @@ public class GenerateOutlineJob
         string outline = await _aiService.GenerateContentAsync(externalContext, cancellationToken);
 
         // 7. Save
-        LessonMaterial material = new(Guid.NewGuid(),
-            lessonId,
-            documentFileId,
-            LessonMaterialState.GeneratingEmbedding,
-            outline,
-            null);
-        await _dbContext.LessonMaterials.AddAsync(material, cancellationToken);
+        lessonMaterial.Outline = outline;
+        _dbContext.LessonMaterials.Update(lessonMaterial);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Finished GenerateOutline {FileEntryId}", documentFileId);
+        _logger.LogInformation("Finished generate outline for lesson {LessonId}", lessonMaterial.LessonId);
     }
 }

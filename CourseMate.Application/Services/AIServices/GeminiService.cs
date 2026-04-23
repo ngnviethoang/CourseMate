@@ -54,7 +54,7 @@ public class GeminiService : IAiService
                 MaxOutputTokens = 1024,
                 ThinkingConfig = new ThinkingConfig
                 {
-                    IncludeThoughts = false,
+                    IncludeThoughts = false
                     // ThinkingLevel = ThinkingLevel.Medium
                 },
                 Tools = [new Tool { GoogleSearch = new GoogleSearch() }]
@@ -82,7 +82,7 @@ public class GeminiService : IAiService
                 MaxOutputTokens = 1024,
                 ThinkingConfig = new ThinkingConfig
                 {
-                    IncludeThoughts = false,
+                    IncludeThoughts = false
                     // ThinkingLevel = ThinkingLevel.Medium
                 }
             };

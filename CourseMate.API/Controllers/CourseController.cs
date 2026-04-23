@@ -176,4 +176,57 @@ public class CourseController : ControllerBase
     }
 
     #endregion
+
+    #region API AI Process Document
+
+    /// <summary>
+    ///     Upload a Word/PDF file for the lesson and trigger AI processing (parse + outline generation)
+    /// </summary>
+    [HttpPost("lessons/{lessonId:guid}/materials")]
+    [Authorize(Roles = Roles.Admin)]
+    [Authorize(Roles = Roles.Instructor)]
+    public async Task<ActionResult> CreateLessonMaterialAsync(Guid lessonId, IFormFile request)
+    {
+        if (request.Length == 0)
+        {
+            return BadRequest();
+        }
+
+        using MemoryStream stream = new();
+        await request.CopyToAsync(stream);
+        ProcessingStatusDto result = await _mediator.Send(new CreateLessonMaterialCommand
+        {
+            FileName = request.FileName,
+            Content = stream.ToArray()
+        });
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    ///     Retrieve the AI-generated outline for the lesson
+    /// </summary>
+    [HttpGet("lessons/{lessonId:guid}/outline")]
+    [Authorize(Roles = Roles.Admin)]
+    [Authorize(Roles = Roles.Instructor)]
+    public async Task<ActionResult> GetOutlineAsync(Guid lessonId)
+    {
+        OutlineDto? result = await _mediator.Send(new GetOutlineQuery { LessonId = lessonId });
+        return Ok(result);
+    }
+
+    /// <summary>
+    ///     Update the lesson outline after user modifications
+    /// </summary>
+    [HttpPut("lessons/{lessonId:guid}/outline")]
+    [Authorize(Roles = Roles.Admin)]
+    [Authorize(Roles = Roles.Instructor)]
+    public async Task<ActionResult> UpdateOutlineAsync(Guid lessonId, [FromBody] UpdateOutlineCommand command)
+    {
+        command.LessonId = lessonId;
+        OutlineDto result = await _mediator.Send(command);
+        return Ok(result);
+    }
+
+    #endregion
 }

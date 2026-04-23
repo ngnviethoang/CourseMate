@@ -23,7 +23,6 @@ internal sealed class DeleteLessonCommandHandler : AbstractCommandHandler<Delete
 
     public override async Task<int> Handle(DeleteChapterCommand request, CancellationToken cancellationToken)
     {
-        Guid userId = CurrentUserId;
         bool canDelete = await (
                 from lesson in DbContext.Lessons
                 join course in DbContext.Courses
@@ -31,7 +30,7 @@ internal sealed class DeleteLessonCommandHandler : AbstractCommandHandler<Delete
                 where lesson.Id == request.Id
                 select new { lesson, course }
             )
-            .WhereIf(IsInRole(Roles.Instructor), x => x.course.InstructorId == userId)
+            .WhereIf(IsInRole(Roles.Instructor), x => x.course.InstructorId == CurrentUserId)
             .AnyAsync(cancellationToken);
 
         if (!canDelete)

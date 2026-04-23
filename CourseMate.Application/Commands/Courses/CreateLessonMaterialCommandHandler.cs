@@ -7,9 +7,11 @@ using CourseMate.Contracts.Exceptions;
 using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using CourseMate.Persistent.ExtensionMethods;
 using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace CourseMate.Application.Commands.Courses;
@@ -33,6 +35,21 @@ internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandle
 
     public override async Task<ProcessingStatusDto> Handle(CreateLessonMaterialCommand request, CancellationToken cancellationToken)
     {
+        bool isAuthor = await (
+                from lesson in DbContext.Lessons
+                join course in DbContext.Courses
+                    on lesson.CourseId equals course.Id
+                where lesson.Id == request.LessonId
+                select course.InstructorId
+            )
+            .WhereIf(IsInRole(Roles.Instructor), x => x == CurrentUserId)
+            .AnyAsync(cancellationToken);
+
+        if (!isAuthor)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
         string fileExtension = Path.GetExtension(request.FileName);
         if (!_allowedImageExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
         {
@@ -65,14 +82,16 @@ internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandle
 
         DbContext.FileEntries.Add(fileEntry);
 
+        LessonMaterial material = new(Guid.NewGuid(), request.LessonId, fileEntry.Id, LessonMaterialState.GeneratingEmbedding, string.Empty);
+        DbContext.LessonMaterials.Add(material);
+
         string embeddingJobId = BackgroundJob.Enqueue<ProcessFileEmbeddingJob>(job => job.ExecuteAsync(fileEntryId, cancellationToken));
-        BackgroundJob.ContinueJobWith<GenerateOutlineJob>(embeddingJobId, job => job.ExecuteAsync(request.LessonId, fileEntryId, cancellationToken));
+        BackgroundJob.ContinueJobWith<GenerateOutlineJob>(embeddingJobId, job => job.ExecuteAsync(material.Id, cancellationToken));
 
         return new ProcessingStatusDto
         {
             LessonMaterialId = fileEntryId,
-            LessonId = request.LessonId,
-            Status = ProcessingStatus.Processing
+            LessonId = request.LessonId
         };
     }
 }

@@ -11,6 +11,5 @@ public class LessonMaterialConfiguration : IEntityTypeConfiguration<LessonMateri
         builder.ToTable("LessonMaterials");
         builder.HasOne<Lesson>().WithMany().HasForeignKey(x => x.LessonId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne<FileEntry>().WithOne().HasForeignKey<LessonMaterial>(x => x.DocumentFileId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne<FileEntry>().WithOne().HasForeignKey<LessonMaterial>(x => x.SlideFileId).OnDelete(DeleteBehavior.Cascade);
     }
 }
