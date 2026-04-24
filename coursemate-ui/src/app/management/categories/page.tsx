@@ -50,6 +50,9 @@ export default function CategoriesPage() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')
   const [sorting, setSorting] = useState('creationTime')
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageSize] = useState(10)
+  const [totalCount, setTotalCount] = useState(0)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [editing, setEditing] = useState<CategoryDto | null>(null)
@@ -59,11 +62,17 @@ export default function CategoriesPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await categoryService.list({ filter, pageSize: 10, sorting })
+      const res = await categoryService.list({ filter, pageIndex, pageSize, sorting })
       setItems(res.items)
+      setTotalCount(res.totalCount)
     } finally {
       setLoading(false)
     }
+  }, [filter, pageIndex, pageSize, sorting])
+
+  // Reset về trang đầu khi filter hoặc sorting thay đổi
+  useEffect(() => {
+    setPageIndex(0)
   }, [filter, sorting])
 
   useEffect(() => {
@@ -138,6 +147,12 @@ export default function CategoriesPage() {
         onSort={setSorting}
         onEdit={openEdit}
         onDelete={setDeleteId}
+        pagination={{
+          pageIndex,
+          pageSize,
+          totalCount,
+          onPageChange: setPageIndex
+        }}
       />
 
       {/* Edit / Create Dialog */}
