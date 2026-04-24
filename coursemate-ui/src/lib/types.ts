@@ -95,6 +95,10 @@ export interface CourseDto {
   lastModificationTime?: string
 }
 
+export interface CourseDetailDto extends CourseDto {
+  chapters: (ChapterDto & { lessons: LessonDto[] })[]
+}
+
 export interface CreateCourseRequest {
   title: string
   description: string
@@ -141,7 +145,13 @@ export interface UpdateChapterRequest {
 
 // ─── Lesson ───────────────────────────────────────────────────────────────────
 
-export type LessonType = 'Video' | 'Reading' | 'Quiz' | 'Coding' | 'Slide'
+export enum LessonType {
+  Video = 1,
+  Reading = 2,
+  Coding = 3,
+  Quiz = 4,
+  Slide = 5
+}
 
 export interface LessonDto {
   id: string

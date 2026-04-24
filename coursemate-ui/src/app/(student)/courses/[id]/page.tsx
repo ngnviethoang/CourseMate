@@ -1,13 +1,14 @@
 'use client'
 
+import { orderService } from '@/lib/order-service'
+import { courseService } from '@/lib/course-service'
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { PlayCircle, FileText, CheckCircle2, Users, BookOpen, ShoppingCart } from 'lucide-react'
-import { studentService } from '@/lib/student-service'
-import { StudentCourseDetailDto } from '@/lib/types'
+import { LessonType, StudentCourseDetailDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 
@@ -21,17 +22,20 @@ export default function CourseDetailPage() {
 
   useEffect(() => {
     if (!id) return
-    setLoading(true)
-    studentService
-      .getCourseById(id)
-      .then(res => {
-        setCourse(res || null)
-        setLoading(false)
-      })
-      .catch(() => {
+
+    const fetchCourse = async () => {
+      setLoading(true)
+      try {
+        const res = await courseService.getById(id)
+        setCourse(res as unknown as StudentCourseDetailDto)
+      } catch {
         toast.error('Failed to load course details.')
+      } finally {
         setLoading(false)
-      })
+      }
+    }
+
+    fetchCourse()
   }, [id])
 
   const handleAddToCart = async () => {
@@ -39,7 +43,7 @@ export default function CourseDetailPage() {
 
     setSubmitting(true)
     try {
-      await studentService.addToCart(course.id)
+      await orderService.addToCart(course.id)
       toast.success('Added to cart successfully!')
     } catch {
       // Error handled by api-client automatically
@@ -53,7 +57,7 @@ export default function CourseDetailPage() {
 
     setSubmitting(true)
     try {
-      await studentService.enrollFree(course.id)
+      await orderService.enrollFree(course.id)
       toast.success('Enrolled successfully!')
       router.push(`/learning/${course.id}`)
     } catch {
@@ -203,9 +207,9 @@ export default function CourseDetailPage() {
                           className="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-muted/50 rounded-md transition-colors gap-2"
                         >
                           <div className="flex items-center gap-3">
-                            {lesson.lessonType === 'Video' ? (
+                            {lesson.lessonType === LessonType.Video ? (
                               <PlayCircle className="h-5 w-5 text-blue-500" />
-                            ) : lesson.lessonType === 'Reading' ? (
+                            ) : lesson.lessonType === LessonType.Reading ? (
                               <FileText className="h-5 w-5 text-amber-500" />
                             ) : (
                               <CheckCircle2 className="h-5 w-5 text-emerald-500" />

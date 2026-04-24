@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
-import { dashboardService } from '@/lib/admin-service'
+import { dashboardService } from '@/lib/dashboard-service'
 import { authService } from '@/lib/auth-service'
 import { DashboardDto, ProfileDto } from '@/lib/types'
 import { formatCurrency, cn } from '@/lib/utils'

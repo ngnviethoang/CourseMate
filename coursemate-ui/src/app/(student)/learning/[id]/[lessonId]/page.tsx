@@ -1,37 +1,15 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { studentService } from '@/lib/student-service'
-import { lessonService, chapterService } from '@/lib/admin-service' // Reuse some admin services if needed or just use student's
-import { LessonDto, ChapterDto, LessonType, StudentLessonDetailDto } from '@/lib/types'
+import { courseService } from '@/lib/course-service'
+import { LessonType, StudentLessonDetailDto, CourseDto } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
-import {
-  Loader2,
-  ChevronLeft,
-  ChevronRight,
-  PlayCircle,
-  FileText,
-  Code2,
-  CheckCircle,
-  HelpCircle,
-  Sparkles
-} from 'lucide-react'
+import { Loader2, ChevronLeft, ChevronRight, PlayCircle, FileText, HelpCircle, Sparkles } from 'lucide-react'
 
 // ─── AI Content interfaces ────────────────────────────────────────────────────
-
-const LESSON_TYPE_MAP: Record<string | number, string> = {
-  1: 'Video',
-  2: 'Reading',
-  3: 'Coding',
-  4: 'Quiz',
-  Video: 'Video',
-  Reading: 'Reading',
-  Coding: 'Coding',
-  Quiz: 'Quiz'
-}
 
 interface VideoContent {
   title: string
@@ -390,12 +368,12 @@ export default function StudentLearningPage() {
   const [nextLessonId, setNextLessonId] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!lessonId) return
-    setLoading(true)
-
-    Promise.all([studentService.getLessonById(lessonId), studentService.getCourseById(id)])
-      .then(([l, course]) => {
-        setLesson(l)
+    const loadContent = async () => {
+      if (!lessonId) return
+      setLoading(true)
+      try {
+        const [l, course] = await Promise.all([courseService.getLessonById(lessonId), courseService.getById(id)])
+        setLesson(l as unknown as StudentLessonDetailDto)
 
         // Load AI content from storage
         const stored = localStorage.getItem(`ai_lesson_content_${lessonId}`)
@@ -409,17 +387,20 @@ export default function StudentLearningPage() {
 
         // Calculate navigation
         if (course) {
-          const allLessons = course.chapters.flatMap(c => c.lessons)
+          const courseDto = course as unknown as CourseDto
+          const allLessons = courseDto.chapters?.flatMap(c => c.lessons) || []
           const idx = allLessons.findIndex(x => x.id === lessonId)
           setPrevLessonId(idx > 0 ? allLessons[idx - 1].id : null)
           setNextLessonId(idx < allLessons.length - 1 ? allLessons[idx + 1].id : null)
         }
-      })
-      .catch(err => {
+      } catch (err) {
         console.error(err)
         toast.error('Failed to load lesson content.')
-      })
-      .finally(() => setLoading(false))
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadContent()
   }, [id, lessonId])
 
   if (loading) {
@@ -460,7 +441,7 @@ export default function StudentLearningPage() {
               <Sparkles className="h-3 w-3" /> Học thử
             </Badge>
             <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-widest px-2 opacity-70">
-              {LESSON_TYPE_MAP[lesson.lessonType as any] || 'LESSON'}
+              {lesson.lessonType || 'LESSON'}
             </Badge>
           </div>
           <h1 className="text-3xl font-black tracking-tight">{lesson.title}</h1>
@@ -488,7 +469,7 @@ export default function StudentLearningPage() {
       <div className="flex-1 overflow-y-auto pb-20">
         {aiContent || lesson.videoUrl || lesson.readingContent || lesson.starterCode ? (
           <div className="animate-in fade-in duration-700">
-            {LESSON_TYPE_MAP[lesson.lessonType as any] === 'Video' &&
+            {lesson.lessonType === LessonType.Video &&
               (aiContent
                 ? 'segments' in aiContent && <VideoPlayer content={aiContent as VideoContent} />
                 : lesson.videoUrl && (
@@ -502,13 +483,13 @@ export default function StudentLearningPage() {
                       />
                     </div>
                   ))}
-            {LESSON_TYPE_MAP[lesson.lessonType as any] === 'Reading' &&
+            {lesson.lessonType === LessonType.Reading &&
               (aiContent
                 ? 'markdown_content' in aiContent && <ReadingView content={aiContent as ReadingContent} />
                 : lesson.readingContent && (
                     <ReadingView content={{ title: lesson.title, markdown_content: lesson.readingContent }} />
                   ))}
-            {LESSON_TYPE_MAP[lesson.lessonType as any] === 'Coding' &&
+            {lesson.lessonType === LessonType.Coding &&
               (aiContent
                 ? 'test_cases' in aiContent && <CodingExercise content={aiContent as CodingContent} />
                 : lesson.starterCode && (
@@ -524,7 +505,7 @@ export default function StudentLearningPage() {
                       }}
                     />
                   ))}
-            {LESSON_TYPE_MAP[lesson.lessonType as any] === 'Quiz' &&
+            {lesson.lessonType === LessonType.Quiz &&
               (aiContent
                 ? 'questions' in aiContent && <QuizInteraction content={aiContent as QuizContent} />
                 : lesson.quizDescription && (
@@ -540,7 +521,7 @@ export default function StudentLearningPage() {
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center space-y-6 bg-muted/20 border border-dashed rounded-3xl animate-in fade-in zoom-in duration-500">
             <div className="h-20 w-20 bg-background rounded-3xl shadow-sm border flex items-center justify-center text-muted-foreground rotate-3">
-              {LESSON_TYPE_MAP[lesson.lessonType as any] === 'Video' ? (
+              {lesson.lessonType === LessonType.Video ? (
                 <PlayCircle className="h-10 w-10" />
               ) : (
                 <FileText className="h-10 w-10" />
@@ -549,8 +530,8 @@ export default function StudentLearningPage() {
             <div className="space-y-2">
               <h3 className="text-xl font-bold">Content Coming Soon</h3>
               <p className="text-muted-foreground max-w-sm">
-                We're currently preparing the {(LESSON_TYPE_MAP[lesson.lessonType as any] || '').toLowerCase()} material
-                for this lesson. Please check back later!
+                We&apos;re currently preparing the {lesson.lessonType?.toString().toLowerCase()} material for this
+                lesson. Please check back later!
               </p>
             </div>
             <Button variant="secondary" onClick={() => router.push(`/courses/${id}`)}>

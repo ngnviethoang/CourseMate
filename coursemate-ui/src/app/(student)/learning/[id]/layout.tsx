@@ -1,28 +1,33 @@
 'use client'
 
+import { courseService } from '@/lib/course-service'
+
 import { useEffect, useState } from 'react'
-import { useParams, useRouter, usePathname } from 'next/navigation'
-import { studentService } from '@/lib/student-service'
-import { StudentCourseDetailDto } from '@/lib/types'
+import { useParams, useRouter } from 'next/navigation'
+import { LessonType } from '@/lib/types'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { PlayCircle, FileText, CheckCircle2, ChevronLeft, Loader2, BookOpen } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { PlayCircle, FileText, CheckCircle2, ChevronLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
 export default function LearningLayout({ children }: { children: React.ReactNode }) {
   const { id, lessonId } = useParams<{ id: string; lessonId?: string }>()
   const router = useRouter()
-  const pathname = usePathname()
+
   const [course, setCourse] = useState<StudentCourseDetailDto | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!id) return
-    studentService
-      .getCourseById(id)
-      .then(res => setCourse(res || null))
-      .finally(() => setLoading(false))
+    const fetchCourse = async () => {
+      if (!id) return
+      try {
+        const res = await courseService.getById(id)
+        setCourse((res as unknown as StudentCourseDetailDto) || null)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCourse()
   }, [id])
 
   if (loading) {
@@ -87,9 +92,9 @@ export default function LearningLayout({ children }: { children: React.ReactNode
                             : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                         }`}
                       >
-                        {lesson.lessonType === 'Video' ? (
+                        {lesson.lessonType === LessonType.Video ? (
                           <PlayCircle className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-blue-500'}`} />
-                        ) : lesson.lessonType === 'Reading' ? (
+                        ) : lesson.lessonType === LessonType.Reading ? (
                           <FileText className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-amber-500'}`} />
                         ) : (
                           <CheckCircle2 className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-emerald-500'}`} />

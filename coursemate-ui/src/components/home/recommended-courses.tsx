@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { BookOpen, ChevronLeft, ChevronRight, Loader2, ShoppingCart, Star, Users, Zap } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 
-import { studentService } from '@/lib/student-service'
+import { orderService } from '@/lib/order-service'
+import { courseService } from '@/lib/course-service'
 import { CourseDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
@@ -43,7 +44,7 @@ const GRADIENT_FALLBACKS = [
 
 function CourseCardSkeleton() {
   return (
-    <div className="rounded-2xl border bg-card overflow-hidden animate-pulse">
+    <div className="rounded-2xl bg-card overflow-hidden animate-pulse">
       <div className="h-44 bg-muted" />
       <div className="p-4 space-y-3">
         <div className="h-4 bg-muted rounded-full w-3/4" />
@@ -79,11 +80,11 @@ function CourseCard({ course, index }: CourseCardProps) {
     try {
       setAdding(true)
       if (course.price === 0) {
-        await studentService.enrollFree(course.id)
+        await orderService.enrollFree(course.id)
         toast.success(`Bạn đã tham gia khóa học "${course.title}" thành công!`)
         router.push(`/learning/${course.id}`)
       } else {
-        await studentService.addToCart(course.id)
+        await orderService.addToCart(course.id)
         toast.success(`"${course.title}" đã được thêm vào giỏ hàng!`)
       }
     } catch {
@@ -96,7 +97,7 @@ function CourseCard({ course, index }: CourseCardProps) {
   return (
     <Link
       href={`/courses/${course.id}`}
-      className="group flex flex-col rounded-2xl border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl overflow-hidden"
+      className="group flex flex-col rounded-2xl bg-card shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl overflow-hidden"
     >
       {/* Thumbnail */}
       <div className="relative overflow-hidden">
@@ -204,11 +205,11 @@ export function RecommendedCourses({ searchQuery, isLoggedIn, selectedCategoryId
     try {
       let res
       if (filter || categoryId) {
-        res = await studentService.getCourses(page, PAGE_SIZE, filter, categoryId)
+        res = await courseService.list({ pageIndex: page - 1, pageSize: PAGE_SIZE, filter, categoryId })
       } else if (loggedIn) {
-        res = await studentService.getRecommendedCourses(page, PAGE_SIZE)
+        res = await courseService.getRecommendedCourses(page, PAGE_SIZE)
       } else {
-        res = await studentService.getCourses(page, PAGE_SIZE)
+        res = await courseService.list({ pageIndex: page - 1, pageSize: PAGE_SIZE })
       }
       setCourses(res.items)
       setTotalCount(res.totalCount)

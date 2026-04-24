@@ -1,5 +1,6 @@
 using CourseMate.Application.Behaviors;
-using CourseMate.Application.Services.AI;
+using CourseMate.Application.Services.AIServices;
+using CourseMate.Application.Services.CodeRunnerServices;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CourseMate.Application;
@@ -18,8 +19,9 @@ public static class ApplicationExtensions
                 cfg.AddOpenBehavior(typeof(TransactionPipelineBehavior<,>));
             });
 
-            services.AddTransient<IAiService, GoogleAiService>();
-
+            /*services.AddTransient<IAiService, GeminiService>();*/
+            services.AddTransient<IAiService, OllamaService>();
+            services.AddTransient<ICodeRunnerService, OnlineCompilerService>();
             return services;
         }
     }

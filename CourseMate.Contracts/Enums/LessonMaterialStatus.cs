@@ -3,6 +3,5 @@
 public enum LessonMaterialState
 {
     GeneratingEmbedding,
-    GeneratingOutline,
-    GeneratingSlide
+    GeneratingOutline
 }

@@ -36,7 +36,7 @@ internal sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateO
         OrderStatus oldStatus = order.Status;
         order.Status = request.Status;
 
-        if (oldStatus != OrderStatus.Paid && request.Status == OrderStatus.Paid)
+        if (oldStatus != OrderStatus.Completed && request.Status == OrderStatus.Completed)
         {
             List<Guid> courseIds = await DbContext.OrderItems
                 .Where(x => x.OrderId == order.Id)

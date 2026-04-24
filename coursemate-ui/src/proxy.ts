@@ -1,38 +1,27 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getRoles, isAuthenticated } from '@/lib/auth-token.util'
+import { Roles } from './lib/consts'
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
-  const token = request.cookies.get('accessToken')?.value
+  const roles = getRoles()
+  const isAuth = isAuthenticated()
+  const publicPaths = ['/', '/login', '/register', '/about', '/contact']
 
-  if (pathname.startsWith('/management')) {
-    if (pathname === '/management/login') {
-      if (token) {
-        return NextResponse.redirect(new URL('/management', request.url))
-      }
-      return NextResponse.next()
-    }
-
-    if (!token) {
-      return NextResponse.redirect(new URL('/management/login', request.url))
-    }
-
+  if (publicPaths.includes(pathname)) {
     return NextResponse.next()
   }
 
-  const publicPaths = ['/', '/login', '/register']
-  if (publicPaths.includes(pathname)) {
-    if (token && (pathname === '/login' || pathname === '/register')) {
+  if (isAuth) {
+    if (pathname.startsWith('/management') && (roles.includes(Roles.Admin) || roles.includes(Roles.Instructor))) {
+      return NextResponse.next()
+    } else {
       return NextResponse.redirect(new URL('/', request.url))
     }
-    return NextResponse.next()
   }
 
-  if (!token) {
-    return NextResponse.redirect(new URL('/login', request.url))
-  }
-
-  return NextResponse.next()
+  return NextResponse.redirect(new URL('/login', request.url))
 }
 
 export const config = {

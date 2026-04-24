@@ -47,7 +47,7 @@ internal sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateO
         Guid orderId = Guid.NewGuid();
         decimal totalAmount = courses.Sum(c => c.Price);
 
-        Order order = new(orderId, studentId, totalAmount, OrderStatus.Pending);
+        Order order = new(orderId, studentId, totalAmount, OrderStatus.Draft, string.Empty);
         await DbContext.Orders.AddAsync(order, cancellationToken);
 
         foreach (Course course in courses)

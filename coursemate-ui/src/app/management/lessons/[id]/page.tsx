@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Loader2, Save, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
-import { lessonService, chapterService, courseService } from '@/lib/admin-service'
-import type { LessonDto, ChapterDto, CourseDto, UpdateLessonRequest, LessonType } from '@/lib/types'
+import { lessonService, chapterService, courseService } from '@/lib/course-service'
+import { LessonDto, ChapterDto, CourseDto, UpdateLessonRequest, LessonType } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,8 +13,6 @@ import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import Link from 'next/link'
 import { VideoUploadSection } from './video-upload'
-
-const LESSON_TYPES: LessonType[] = ['Video', 'Reading', 'Quiz', 'Coding']
 
 // ─── AI Content interfaces ────────────────────────────────────────────────────
 
@@ -189,7 +187,7 @@ function CodingContentDisplay({ content }: { content: CodingContent }) {
             </pre>
           ) : (
             <div className="flex items-center justify-center h-20 rounded-md bg-muted/20 border border-dashed text-sm text-muted-foreground">
-              Click "Show" to reveal the solution
+              Click &quot;Show&quot; to reveal the solution
             </div>
           )}
         </div>
@@ -340,21 +338,21 @@ export default function LessonDetailPage() {
     chapterId: '',
     courseId: '',
     title: '',
-    lessonType: 'Video',
+    lessonType: LessonType.Video,
     position: 1
   })
 
   useEffect(() => {
-    setLoading(true)
-    lessonService
-      .getById(id)
-      .then(async l => {
+    const fetchLesson = async () => {
+      setLoading(true)
+      try {
+        const l = await lessonService.getById(id)
         setLesson(l)
         setForm({
           chapterId: l?.chapterId || '',
           courseId: l?.courseId || '',
           title: l?.title || '',
-          lessonType: l?.lessonType || 'Video',
+          lessonType: l?.lessonType || LessonType.Video,
           position: l?.position || 1
         })
         if (l?.chapterId) {
@@ -378,9 +376,13 @@ export default function LessonDetailPage() {
             /* ignore */
           }
         }
-      })
-      .catch(() => toast.error('Lesson not found.'))
-      .finally(() => setLoading(false))
+      } catch {
+        toast.error('Lesson not found.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchLesson()
   }, [id])
 
   async function handleSave() {
@@ -467,7 +469,7 @@ export default function LessonDetailPage() {
                   <SelectValue>{form.lessonType}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {LESSON_TYPES.map(t => (
+                  {Object.values(LessonType).map(t => (
                     <SelectItem key={t} value={t}>
                       {t}
                     </SelectItem>
@@ -497,16 +499,16 @@ export default function LessonDetailPage() {
       {/* AI Content Section — rendered by lesson type */}
       {aiContent ? (
         <>
-          {form.lessonType === 'Video' && 'segments' in aiContent && (
+          {form.lessonType === LessonType.Video && 'segments' in aiContent && (
             <VideoContentDisplay content={aiContent as VideoContent} />
           )}
-          {form.lessonType === 'Reading' && 'markdown_content' in aiContent && (
+          {form.lessonType === LessonType.Reading && 'markdown_content' in aiContent && (
             <ReadingContentDisplay content={aiContent as ReadingContent} />
           )}
-          {form.lessonType === 'Coding' && 'test_cases' in aiContent && (
+          {form.lessonType === LessonType.Coding && 'test_cases' in aiContent && (
             <CodingContentDisplay content={aiContent as CodingContent} />
           )}
-          {form.lessonType === 'Quiz' && 'questions' in aiContent && (
+          {form.lessonType === LessonType.Quiz && 'questions' in aiContent && (
             <QuizContentDisplay content={aiContent as QuizContent} />
           )}
         </>
@@ -520,7 +522,7 @@ export default function LessonDetailPage() {
       )}
 
       {/* Video upload always available for Video-type lessons */}
-      {form.lessonType === 'Video' && <VideoUploadSection lessonId={id} />}
+      {form.lessonType === LessonType.Video && <VideoUploadSection lessonId={id} />}
     </div>
   )
 }

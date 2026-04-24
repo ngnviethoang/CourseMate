@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Trophy, Clock, Users, ChevronRight, Calendar, Star, Flame } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
 // ─── Mock data ────────────────────────────────────────────────────────────────

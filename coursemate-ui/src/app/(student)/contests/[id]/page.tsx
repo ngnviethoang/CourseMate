@@ -16,9 +16,7 @@ import {
   CheckCircle2,
   Code2
 } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
 
 // ─── Shared mock data (same as contests list) ─────────────────────────────────
 

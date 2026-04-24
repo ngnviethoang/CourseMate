@@ -1,14 +1,14 @@
 'use client'
 
+import { orderService } from '@/lib/order-service'
+
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { ShoppingCart, Trash2, ArrowRight, BookOpen, Sparkles, Loader2, Tag } from 'lucide-react'
-import { studentService } from '@/lib/student-service'
 import { CartDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
@@ -78,13 +78,15 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true)
   const [removingId, setRemovingId] = useState<string | null>(null)
 
-  const fetchCart = () => {
+  const fetchCart = async () => {
     setLoading(true)
-    studentService
-      .getCart()
-      .then(res => setCart(res))
-      .catch(() => {})
-      .finally(() => setLoading(false))
+    try {
+      const res = await orderService.getCart()
+      setCart(res)
+    } catch {
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -94,7 +96,7 @@ export default function CartPage() {
   const handleRemove = async (cartItemId: string) => {
     setRemovingId(cartItemId)
     try {
-      await studentService.removeFromCart(cartItemId)
+      await orderService.removeFromCart(cartItemId)
       toast.success('Đã xoá khoá học khỏi giỏ hàng.')
       fetchCart()
     } catch {

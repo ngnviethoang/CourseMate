@@ -7,3 +7,11 @@ dotnet run --launch-profile https --project CourseMate.API/CourseMate.API.csproj
 docker build -f CourseMate.API/Dockerfile -t coursemate-api:0.0.1 . --progress=plain
 
 docker compose up -d
+
+docker exec -it ollama bash
+
+ollama list
+
+ollama pull nomic-embed-text
+
+ollama pull llama3

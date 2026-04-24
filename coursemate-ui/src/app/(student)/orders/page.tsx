@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ClipboardList, ChevronRight } from 'lucide-react'
-import { studentService } from '@/lib/student-service'
+import { orderService } from '@/lib/order-service'
 import { OrderDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
@@ -25,22 +25,23 @@ export default function OrdersPage() {
   const [loadingDetail, setLoadingDetail] = useState(false)
 
   useEffect(() => {
-    studentService
-      .getOrders()
-      .then(res => {
+    const fetchOrders = async () => {
+      try {
+        const res = await orderService.list()
         setOrders(res.items || [])
-        setLoading(false)
-      })
-      .catch(() => {
+      } catch {
         toast.error('Failed to load orders')
+      } finally {
         setLoading(false)
-      })
+      }
+    }
+    fetchOrders()
   }, [])
 
   const openDetail = async (orderId: string) => {
     setLoadingDetail(true)
     try {
-      const detail = await studentService.getOrderById(orderId)
+      const detail = await orderService.getById(orderId)
       setSelected(detail)
     } catch {
       // handled by api-client

@@ -1,6 +1,6 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using CourseMate.Application.Services.AI;
+using CourseMate.Application.Services.AIServices;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using DocumentFormat.OpenXml.Packaging;
@@ -28,7 +28,7 @@ public class ProcessFileEmbeddingJob
         _aIService = aIService;
     }
 
-    [AutomaticRetry(Attempts = 2)]
+    [AutomaticRetry(Attempts = 0)]
     public async Task ExecuteAsync(Guid fileId, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting ProcessFileEmbeddingJob for file ID: {FileId}", fileId);
@@ -99,7 +99,6 @@ public class ProcessFileEmbeddingJob
 
     private static string ReadWordText(string filePath)
     {
-        StringBuilder sb = new();
         using WordprocessingDocument doc = WordprocessingDocument.Open(filePath, false);
         Body? body = doc.MainDocumentPart?.Document?.Body;
 
@@ -108,13 +107,20 @@ public class ProcessFileEmbeddingJob
             return string.Empty;
         }
 
-        foreach (Text text in body.Descendants<Text>())
+        return NormalizeText(body.InnerText);
+    }
+
+    private static string NormalizeText(string input)
+    {
+        if (string.IsNullOrEmpty(input))
         {
-            sb.Append(text.Text.Trim());
-            sb.Append(" ");
+            return string.Empty;
         }
 
-        return sb.ToString();
+        input = input.Normalize(NormalizationForm.FormKC);
+        input = Regex.Replace(input, @"[ \t]+", " ");
+        input = Regex.Replace(input, @"\r\n|\r|\n", "\n");
+        return input.Trim();
     }
 
     private static IEnumerable<Chunk> ChunkSentences(string text, int maxTokens = 800)
@@ -200,7 +206,7 @@ public class ProcessFileEmbeddingJob
         return string.IsNullOrEmpty(value) ? value : value[..Math.Min(value.Length, length)];
     }
 
-    private class Chunk
+    private sealed class Chunk
     {
         public required string Content { get; init; }
         public required int StartIndex { get; init; }

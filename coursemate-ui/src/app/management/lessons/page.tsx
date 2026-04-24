@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
-import { lessonService } from '@/lib/admin-service'
+import { lessonService } from '@/lib/course-service'
 import type { LessonDto, CreateLessonRequest, LessonType } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
@@ -23,9 +23,9 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { formatDate } from '@/lib/format-date'
+import { formatDate } from '@/lib/utils'
 
-const LESSON_TYPES: LessonType[] = ['Video', 'Reading', 'Quiz', 'Coding']
+const LESSON_TYPES: LessonType[] = Object.values(LessonType)
 
 const columns: Column<LessonDto>[] = [
   { key: 'title', header: 'Title', sortKey: 'title' },
@@ -50,7 +50,7 @@ const emptyForm: CreateLessonRequest = {
   chapterId: '',
   courseId: '',
   title: '',
-  lessonType: 'Video',
+  lessonType: LessonType.Video,
   position: 1
 }
 

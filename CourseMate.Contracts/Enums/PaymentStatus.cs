@@ -2,7 +2,8 @@ namespace CourseMate.Contracts.Enums;
 
 public enum PaymentStatus
 {
-    Pending = 0,
-    Success = 1,
-    Failed = 2
+    Pending,
+    Paid,
+    Failed,
+    Refunded
 }

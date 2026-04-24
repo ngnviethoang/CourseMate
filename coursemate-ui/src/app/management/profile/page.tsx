@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { User, Mail, Phone, Shield, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { profileService } from '@/lib/admin-service'
+import { profileService } from '@/lib/auth-service'
 import type { ProfileDto, UpdateProfileRequest } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,14 +17,18 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    profileService
-      .getMe()
-      .then(p => {
+    const fetchProfile = async () => {
+      try {
+        const p = await profileService.getMe()
         setProfile(p)
         setForm({ userName: p.userName, email: p.email ?? '', phoneNumber: p.phoneNumber ?? '' })
-      })
-      .catch(() => toast.error('Failed to load profile.'))
-      .finally(() => setLoading(false))
+      } catch {
+        toast.error('Failed to load profile.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProfile()
   }, [])
 
   async function handleSave() {

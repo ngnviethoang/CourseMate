@@ -3,10 +3,9 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { BookOpen, Clock, Play, CheckCircle2, BarChart2, Loader2, Search } from 'lucide-react'
-import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
-import { Button, buttonVariants } from '@/components/ui/button'
-import { studentService } from '@/lib/student-service'
+import { buttonVariants } from '@/components/ui/button'
+import { courseService } from '@/lib/course-service'
 import { StudentMyCourseDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
@@ -25,7 +24,7 @@ export default function MyCoursesPage() {
   const fetchCourses = async (filter?: string) => {
     try {
       setLoading(true)
-      const res = await studentService.getMyCourse(1, 25, filter)
+      const res = await courseService.getMyCourses(1, 25, filter)
       // Check if res is PagedDto and use .items
       setCourses(res.items || [])
     } catch (error) {

@@ -402,7 +402,7 @@ namespace CourseMate.Persistent.Migrations
 
                     b.Property<Vector>("Embedding")
                         .IsRequired()
-                        .HasColumnType("vector(1536)");
+                        .HasColumnType("vector(768)");
 
                     b.Property<int>("EndIndex")
                         .HasColumnType("integer");
@@ -578,9 +578,6 @@ namespace CourseMate.Persistent.Migrations
                         .HasColumnType("xid")
                         .HasColumnName("xmin");
 
-                    b.Property<Guid?>("SlideFileId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -593,9 +590,6 @@ namespace CourseMate.Persistent.Migrations
                         .IsUnique();
 
                     b.HasIndex("LessonId");
-
-                    b.HasIndex("SlideFileId")
-                        .IsUnique();
 
                     b.ToTable("LessonMaterials", (string)null);
                 });
@@ -782,6 +776,11 @@ namespace CourseMate.Persistent.Migrations
                     b.Property<DateTimeOffset>("CreationTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(32768)
+                        .HasColumnType("character varying(32768)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -910,7 +909,7 @@ namespace CourseMate.Persistent.Migrations
                     b.ToTable("OutboxMessages", (string)null);
                 });
 
-            modelBuilder.Entity("CourseMate.Persistent.Entities.Payment", b =>
+            modelBuilder.Entity("CourseMate.Persistent.Entities.PaymentTransaction", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -921,6 +920,16 @@ namespace CourseMate.Persistent.Migrations
 
                     b.Property<DateTimeOffset>("CreationTime")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<string>("FailReason")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -935,6 +944,16 @@ namespace CourseMate.Persistent.Migrations
                         .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("citext");
+
+                    b.Property<string>("RawRequest")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<string>("RawResponse")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<uint>("RowVersion")
                         .IsConcurrencyToken()
@@ -958,7 +977,7 @@ namespace CourseMate.Persistent.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("PaymentTransactions", (string)null);
                 });
 
             modelBuilder.Entity("CourseMate.Persistent.Entities.Review", b =>
@@ -1367,11 +1386,6 @@ namespace CourseMate.Persistent.Migrations
                         .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("CourseMate.Persistent.Entities.FileEntry", null)
-                        .WithOne()
-                        .HasForeignKey("CourseMate.Persistent.Entities.LessonMaterial", "SlideFileId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CourseMate.Persistent.Entities.LessonQuiz", b =>
@@ -1432,11 +1446,11 @@ namespace CourseMate.Persistent.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CourseMate.Persistent.Entities.Payment", b =>
+            modelBuilder.Entity("CourseMate.Persistent.Entities.PaymentTransaction", b =>
                 {
                     b.HasOne("CourseMate.Persistent.Entities.Order", null)
                         .WithOne()
-                        .HasForeignKey("CourseMate.Persistent.Entities.Payment", "OrderId")
+                        .HasForeignKey("CourseMate.Persistent.Entities.PaymentTransaction", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

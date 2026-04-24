@@ -27,7 +27,8 @@ try
     builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
     builder.Services.Configure<GoogleAiOptions>(configuration.GetSection("GoogleAi"));
     builder.Services.Configure<OllamaOptions>(configuration.GetSection("Ollama"));
-    builder.Services.Configure<RapidOptions>(configuration.GetSection("Rapid"));
+    builder.Services.Configure<OnlineCompilerOptions>(configuration.GetSection("OnlineCompiler"));
+    builder.Services.AddHttpClient();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<HttpLoggingMiddleware>();
     builder.Services.AddAuthorization();

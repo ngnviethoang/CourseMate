@@ -43,9 +43,8 @@ internal sealed class UpdateCourseCommandHandler : AbstractCommandHandler<Update
 
     public override async Task<int> Handle(UpdateCourseCommand request, CancellationToken cancellationToken)
     {
-        Guid userId = CurrentUserId;
         Course? course = await DbContext.Courses
-            .WhereIf(IsInRole(Roles.Instructor), course => course.InstructorId == userId)
+            .WhereIf(IsInRole(Roles.Instructor), course => course.InstructorId == CurrentUserId)
             .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (course == null)
         {

@@ -1,5 +1,7 @@
 'use client'
 
+import { categoryService } from '@/lib/category-service'
+
 import { useEffect, useState } from 'react'
 import {
   BarChart3,
@@ -13,7 +15,6 @@ import {
   TrendingUp,
   BookOpen
 } from 'lucide-react'
-import { studentService } from '@/lib/student-service'
 import { CategoryDto } from '@/lib/types'
 
 // Icon + gradient mapping by keyword
@@ -120,11 +121,17 @@ export function Categories() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    studentService
-      .getCategories(25)
-      .then(res => setCategories(res.items.filter(c => c.isActive)))
-      .catch(() => setCategories([]))
-      .finally(() => setLoading(false))
+    const fetchCategories = async () => {
+      try {
+        const res = await categoryService.list(25)
+        setCategories(res.items.filter(c => c.isActive))
+      } catch {
+        setCategories([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCategories()
   }, [])
 
   return (
