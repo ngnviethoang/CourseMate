@@ -28,7 +28,7 @@ public class ProcessFileEmbeddingJob
         _aIService = aIService;
     }
 
-    [AutomaticRetry(Attempts = 2)]
+    [AutomaticRetry(Attempts = 0)]
     public async Task ExecuteAsync(Guid fileId, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting ProcessFileEmbeddingJob for file ID: {FileId}", fileId);

@@ -28,7 +28,7 @@ public class GenerateOutlineJob
         _aiService = aiService;
     }
 
-    [AutomaticRetry(Attempts = 2)]
+    [AutomaticRetry(Attempts = 0)]
     public async Task ExecuteAsync(Guid lessonMaterialId, CancellationToken cancellationToken)
     {
         LessonMaterial? lessonMaterial = await _dbContext.LessonMaterials.FirstOrDefaultAsync(lm => lm.Id == lessonMaterialId, cancellationToken);
