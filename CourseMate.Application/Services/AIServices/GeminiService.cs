@@ -28,7 +28,7 @@ public class GeminiService : IAiService
             EmbeddingGenerationOptions options = new()
             {
                 ModelId = GeminiModels.Embedding001,
-                Dimensions = 1536
+                Dimensions = 768
             };
 
             return await _client.Models.AsIEmbeddingGenerator().GenerateVectorAsync(input, options, cancellationToken);
@@ -59,7 +59,7 @@ public class GeminiService : IAiService
                 },
                 Tools = [new Tool { GoogleSearch = new GoogleSearch() }]
             };
-            GenerateContentResponse result = await _client.Models.GenerateContentAsync(GeminiModels.V25FlashLite, prompt, config, cancellationToken);
+            GenerateContentResponse result = await _client.Models.GenerateContentAsync(GeminiModels.V3FlashPreview, prompt, config, cancellationToken);
             return result.Text ?? string.Empty;
         }
         catch (GoogleApiException ex)
@@ -87,7 +87,7 @@ public class GeminiService : IAiService
                 }
             };
 
-            GenerateContentResponse result = await _client.Models.GenerateContentAsync(GeminiModels.V25FlashLite, prompt, config, cancellationToken);
+            GenerateContentResponse result = await _client.Models.GenerateContentAsync(GeminiModels.V3FlashPreview, prompt, config, cancellationToken);
             return result.Text ?? string.Empty;
         }
         catch (GoogleApiException ex)

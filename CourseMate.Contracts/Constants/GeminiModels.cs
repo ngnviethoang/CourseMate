@@ -8,4 +8,5 @@ public static class GeminiModels
     public const string V25FlashLite = "gemini-2.5-flash-lite";
     public const string V3FlashPreview = "gemini-3-flash-preview";
     public const string V31ProPreview = "gemini-3.1-pro-preview";
+    public const string V31FlashLite = "gemini-3.1-flash-lite";
 }
