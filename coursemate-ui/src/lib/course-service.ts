@@ -1,4 +1,5 @@
 import { api } from './api-client'
+import { getUserId } from './auth-token.util'
 import {
   PagedDto,
   CourseDto,
@@ -40,7 +41,8 @@ export const courseService = {
   delete: (id: string) => api.delete<void>(`/api/courses/${id}`),
 
   getMyCourses: async (pageIndex = 1, pageSize = 12, filter?: string): Promise<PagedDto<StudentMyCourseDto>> => {
-    const params = new URLSearchParams({ pageIndex: String(pageIndex), pageSize: String(pageSize) })
+    const studentId = getUserId()
+    const params = new URLSearchParams({ pageIndex: String(pageIndex), pageSize: String(pageSize), studentId: studentId ?? '' })
     if (filter) params.set('filter', filter)
     return api.get<PagedDto<StudentMyCourseDto>>(`/api/courses/my?${params}`)
   },

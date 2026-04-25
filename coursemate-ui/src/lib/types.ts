@@ -146,11 +146,11 @@ export interface UpdateChapterRequest {
 // ─── Lesson ───────────────────────────────────────────────────────────────────
 
 export enum LessonType {
-  Video = 1,
-  Reading = 2,
-  Coding = 3,
-  Quiz = 4,
-  Slide = 5
+  Video = 'Video',
+  Reading = 'Reading',
+  Coding = 'Coding',
+  Quiz = 'Quiz',
+  Slide = 'Slide'
 }
 
 export interface LessonDto {
@@ -348,4 +348,34 @@ export interface DashboardDto {
   revenueByMonth: MonthlyRevenueDto[]
   topCourses: TopCourseDto[]
   topInstructors: TopInstructorDto[]
+}
+// ─── AI Outline ───────────────────────────────────────────────────────────────
+
+export interface LectureSlide {
+  slideNumber: number
+  title: string
+  bullets: string[]
+  relatedLinks: string[]
+}
+
+export interface LectureOutline {
+  lessonTitle: string
+  relatedLinks: string[]
+  slides: LectureSlide[]
+}
+
+export interface OutlineDto {
+  lessonId: string
+  lessonMaterialId: string
+  lectureOutline: LectureOutline
+}
+
+export interface ProcessingStatusDto {
+  lessonMaterialId: string
+  lessonId: string
+}
+
+export interface UpdateOutlineRequest {
+  lessonMaterialId: string
+  lectureOutline: LectureOutline
 }

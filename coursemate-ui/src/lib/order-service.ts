@@ -1,5 +1,6 @@
 import { api } from './api-client'
 import { PagedDto, UpdateOrderRequest, CartDto, ResultIdDto, OrderDto } from './types'
+import { getUserId } from './auth-token.util'
 
 export const orderService = {
   list: async (params?: { filter?: string; pageIndex?: number; pageSize?: number; sorting?: string }) => {
@@ -20,10 +21,12 @@ export const orderService = {
 
   // Cart
   getCart: async (): Promise<CartDto> => {
-    return api.get<CartDto>('/api/carts')
+    const studentId = getUserId()
+    return api.get<CartDto>(`/api/carts?studentId=${studentId}`)
   },
   addToCart: async (courseId: string): Promise<ResultIdDto> => {
-    return api.post<ResultIdDto>('/api/carts', { courseId })
+    const studentId = getUserId()
+    return api.post<ResultIdDto>('/api/carts', { courseId, studentId })
   },
   removeFromCart: async (cartItemId: string): Promise<void> => {
     return api.delete<void>(`/api/carts/${cartItemId}`)

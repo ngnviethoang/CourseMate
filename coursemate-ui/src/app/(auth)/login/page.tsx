@@ -11,7 +11,7 @@ import { GraduationCap, ArrowRight, Loader2, Lock, User, Eye, EyeOff } from 'luc
 import { authService } from '@/lib/auth-service'
 import { toast } from 'sonner'
 import { Roles } from '@/lib/consts'
-import { decodeJwt } from '@/lib/auth-token.util'
+import { decodeJwt, saveToken } from '@/lib/auth-token.util'
 
 export default function StudentLoginPage() {
   const router = useRouter()
@@ -35,9 +35,8 @@ export default function StudentLoginPage() {
     try {
       const res = await authService.login({ userName, password })
       if (res?.accessToken) {
-        // 1. Save token to both localStorage and cookies
-        localStorage.setItem('accessToken', res.accessToken)
-        document.cookie = `accessToken=${res.accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+        // 1. Save token using helper (handles both localStorage and cookies)
+        saveToken(res.accessToken)
 
         // 2. Decode and normalize payload
         const payload = decodeJwt(res.accessToken)

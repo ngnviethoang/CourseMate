@@ -8,12 +8,25 @@ const USER_ID_CLAIM = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nam
 
 export const getAccessToken = (): string | null => {
   if (typeof window === 'undefined') return null
-  const token = localStorage.getItem('accessToken')
-  if (token) return token
 
-  // Fallback to cookie if localStorage is empty
+  // Try cookie first (more reliable for SSR sync)
   const match = document.cookie.match(/(?:^|;\s*)accessToken=([^;]+)/)
-  return match ? match[1] : null
+  if (match) return match[1]
+
+  // Fallback to localStorage
+  return localStorage.getItem('accessToken')
+}
+
+export const saveToken = (token: string) => {
+  if (typeof window === 'undefined') return
+  localStorage.setItem('accessToken', token)
+  document.cookie = `accessToken=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+}
+
+export const removeToken = () => {
+  if (typeof window === 'undefined') return
+  localStorage.removeItem('accessToken')
+  document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
 }
 
 export const decodeJwt = (token: string): JwtPayload => {

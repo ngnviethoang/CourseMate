@@ -4,8 +4,11 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Search, Upload, Link2, ChevronsUpDown, Check } from 'lucide-react'
 import { toast } from 'sonner'
-import { formatCurrency, cn } from '@/lib/utils'
-import { courseService, categoryService, userService, getRole, getUserId } from '@/lib/admin-service'
+import { formatCurrency, cn, formatDate } from '@/lib/utils'
+import { courseService } from '@/lib/course-service'
+import { categoryService } from '@/lib/category-service'
+import { userService } from '@/lib/user-service'
+import { getRole, getUserId } from '@/lib/auth-token.util'
 import { api } from '@/lib/api-client'
 import type { CategoryDto, CourseDto, CreateCourseRequest, UserDto } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
@@ -27,8 +30,6 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { formatDate } from '@/lib/format-date'
-
 const columns: Column<CourseDto>[] = [
   { key: 'title', header: 'Title', sortKey: 'title' },
   { key: 'categoryName', header: 'Category' },
