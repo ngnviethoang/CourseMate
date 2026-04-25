@@ -5,8 +5,9 @@ import { Roles } from './lib/consts'
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
-  const roles = getRoles()
-  const isAuth = isAuthenticated()
+  const token = request.cookies.get('accessToken')?.value
+  const roles = getRoles(token)
+  const isAuth = isAuthenticated(token)
   const publicPaths = ['/', '/login', '/register', '/about', '/contact']
 
   if (publicPaths.includes(pathname)) {
@@ -14,11 +15,15 @@ export function proxy(request: NextRequest) {
   }
 
   if (isAuth) {
-    if (pathname.startsWith('/management') && (roles.includes(Roles.Admin) || roles.includes(Roles.Instructor))) {
-      return NextResponse.next()
-    } else {
+    if (pathname.startsWith('/management')) {
+      if (roles.includes(Roles.Admin) || roles.includes(Roles.Instructor)) {
+        return NextResponse.next()
+      }
+      // Redirect students away from management pages
       return NextResponse.redirect(new URL('/', request.url))
     }
+    // Allow access to all other pages (student pages) for authenticated users
+    return NextResponse.next()
   }
 
   return NextResponse.redirect(new URL('/login', request.url))

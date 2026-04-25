@@ -11,12 +11,14 @@ interface ProblemDetails {
   instance?: string
 }
 
+import { getAccessToken } from '@/lib/auth-token.util'
+
 const axiosInstance = axios.create({
   baseURL: BASE_URL
 })
 
 axiosInstance.interceptors.request.use(config => {
-  const token = localStorage.getItem('accessToken')
+  const token = getAccessToken()
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`
   }
