@@ -8,6 +8,6 @@ public class ExerciseTestCaseConfiguration : IEntityTypeConfiguration<ExerciseTe
 {
     public void Configure(EntityTypeBuilder<ExerciseTestCase> builder)
     {
-        builder.HasKey(x => x.Id);
+        builder.ToTable("ExerciseTestCases");
     }
 }

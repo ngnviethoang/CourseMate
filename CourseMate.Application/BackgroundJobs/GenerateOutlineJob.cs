@@ -57,7 +57,7 @@ public class GenerateOutlineJob
                 .Select(x => x.FileChunkId)
                 .ToListAsync(cancellationToken);
         }
-        
+
         // 3. Build context
         List<FileChunk> fileChunks = await _dbContext.FileChunks
             .Where(i => fileChunkIds.Contains(i.Id))

@@ -1,6 +1,5 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using CourseMate.Persistent.ExtensionMethods;
@@ -18,18 +17,22 @@ public class DeleteExerciseCommand : IRequest<int>
 internal sealed class DeleteExerciseCommandHandler : AbstractCommandHandler<DeleteExerciseCommand, int>
 {
     public DeleteExerciseCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
-        : base(dbContext, httpContextAccessor) { }
+        : base(dbContext, httpContextAccessor)
+    {
+    }
 
     public override async Task<int> Handle(DeleteExerciseCommand request, CancellationToken cancellationToken)
     {
         Exercise? exercise = await DbContext.Exercises
-            .WhereIf(IsInRole(Roles.Instructor), x => x.CreatedById == CurrentUserId)
+            .WhereIf(IsInRole(Roles.Instructor), x => x.CreatorId == CurrentUserId)
             .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (exercise is null)
-            throw new EntityNotFoundException(nameof(Exercise), request.Id);
+        {
+            throw new UnauthorizedAccessException();
+        }
 
-        DbContext.Exercises.Remove(exercise); // soft-delete via ISoftDelete
-        return await DbContext.SaveChangesAsync(cancellationToken);
+        DbContext.Exercises.Remove(exercise);
+        return Codes.Success;
     }
 }

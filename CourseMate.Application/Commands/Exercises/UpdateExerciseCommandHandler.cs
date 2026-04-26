@@ -1,5 +1,6 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
@@ -27,24 +28,28 @@ public class UpdateExerciseCommand : IRequest<int>
 internal sealed class UpdateExerciseCommandHandler : AbstractCommandHandler<UpdateExerciseCommand, int>
 {
     public UpdateExerciseCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
-        : base(dbContext, httpContextAccessor) { }
+        : base(dbContext, httpContextAccessor)
+    {
+    }
 
     public override async Task<int> Handle(UpdateExerciseCommand request, CancellationToken cancellationToken)
     {
         Exercise? exercise = await DbContext.Exercises
             .Include(x => x.TestCases)
             .Include(x => x.DefaultCodes)
-            .WhereIf(IsInRole(Roles.Instructor), x => x.CreatedById == CurrentUserId)
+            .WhereIf(IsInRole(Roles.Instructor), x => x.CreatorId == CurrentUserId)
             .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (exercise is null)
+        {
             throw new EntityNotFoundException(nameof(Exercise), request.Id);
+        }
 
-        ExerciseDifficulty difficulty = Enum.TryParse<ExerciseDifficulty>(request.Difficulty, true, out ExerciseDifficulty d) ? d : ExerciseDifficulty.Easy;
+        ExerciseDifficultyType difficultyType = Enum.TryParse(request.Difficulty, true, out ExerciseDifficultyType d) ? d : ExerciseDifficultyType.Easy;
 
         exercise.Title = request.Title;
         exercise.Description = request.Description;
-        exercise.Difficulty = difficulty;
+        exercise.Difficulty = difficultyType;
         exercise.Category = request.Category;
 
         // ─ Update JSB fields ─
@@ -81,10 +86,14 @@ internal sealed class UpdateExerciseCommandHandler : AbstractCommandHandler<Upda
                 exercise.TestCases.Add(newTc);
                 keepTcIds.Add(newTc.Id);
             }
+
             order++;
         }
+
         foreach (ExerciseTestCase removed in exercise.TestCases.Where(t => !keepTcIds.Contains(t.Id)).ToList())
+        {
             DbContext.ExerciseTestCases.Remove(removed);
+        }
 
         // ─ Default codes: upsert + remove deleted ─
         HashSet<Guid> keepDcIds = [];
@@ -107,10 +116,13 @@ internal sealed class UpdateExerciseCommandHandler : AbstractCommandHandler<Upda
                 keepDcIds.Add(newDc.Id);
             }
         }
+
         foreach (ExerciseDefaultCode removed in exercise.DefaultCodes.Where(c => !keepDcIds.Contains(c.Id)).ToList())
+        {
             DbContext.ExerciseDefaultCodes.Remove(removed);
+        }
 
         DbContext.Exercises.Update(exercise);
-        return await DbContext.SaveChangesAsync(cancellationToken);
+        return Codes.Success;
     }
 }

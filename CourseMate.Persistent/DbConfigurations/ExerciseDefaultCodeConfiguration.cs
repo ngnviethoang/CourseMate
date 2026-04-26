@@ -8,6 +8,6 @@ public class ExerciseDefaultCodeConfiguration : IEntityTypeConfiguration<Exercis
 {
     public void Configure(EntityTypeBuilder<ExerciseDefaultCode> builder)
     {
-        builder.HasKey(x => x.Id);
+        builder.ToTable("ExerciseDefaultCodes");
     }
 }

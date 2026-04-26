@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts;
 using CourseMate.Contracts.DTOs.Commons;
+using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
@@ -58,17 +59,19 @@ public class CreateExerciseCommand : IRequest<ResultIdDto>
 internal sealed class CreateExerciseCommandHandler : AbstractCommandHandler<CreateExerciseCommand, ResultIdDto>
 {
     public CreateExerciseCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
-        : base(dbContext, httpContextAccessor) { }
+        : base(dbContext, httpContextAccessor)
+    {
+    }
 
     public override async Task<ResultIdDto> Handle(CreateExerciseCommand request, CancellationToken cancellationToken)
     {
-        ExerciseDifficulty difficulty = Enum.TryParse<ExerciseDifficulty>(request.Difficulty, true, out ExerciseDifficulty d) ? d : ExerciseDifficulty.Easy;
+        ExerciseDifficultyType difficultyType = Enum.TryParse(request.Difficulty, true, out ExerciseDifficultyType d) ? d : ExerciseDifficultyType.Easy;
 
         Exercise exercise = new(
             Guid.NewGuid(),
             request.Title,
             request.Description,
-            difficulty,
+            difficultyType,
             request.Category,
             CurrentUserId
         );

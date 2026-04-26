@@ -12,26 +12,24 @@ namespace CourseMate.API.Controllers;
 [ApiController]
 [Route("api/exercises")]
 [Authorize]
-public class ExercisesController : ControllerBase
+public class ExerciseController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public ExercisesController(IMediator mediator)
+    public ExerciseController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     [HttpGet]
-    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor},{Roles.Student}")]
-    public async Task<ActionResult> GetListAsync([FromQuery] GetListExercisesQuery request, CancellationToken ct)
+    public async Task<ActionResult> GetListExercisesAsync([FromQuery] GetListExercisesQuery request, CancellationToken ct)
     {
         PagedDto<ExerciseDto> result = await _mediator.Send(request, ct);
         return Ok(result);
     }
 
     [HttpGet("{id:guid}")]
-    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor},{Roles.Student}")]
-    public async Task<ActionResult> GetDetailAsync(Guid id, CancellationToken ct)
+    public async Task<ActionResult> GetExerciseByIdAsync(Guid id, CancellationToken ct)
     {
         ExerciseDetailDto result = await _mediator.Send(new GetExerciseDetailQuery { Id = id }, ct);
         return Ok(result);
@@ -39,7 +37,7 @@ public class ExercisesController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> CreateAsync(CreateExerciseCommand request, CancellationToken ct)
+    public async Task<ActionResult> CreateExerciseAsync(CreateExerciseCommand request, CancellationToken ct)
     {
         ResultIdDto result = await _mediator.Send(request, ct);
         return Ok(result);
@@ -47,7 +45,7 @@ public class ExercisesController : ControllerBase
 
     [HttpPut("{id:guid}")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> UpdateAsync(Guid id, UpdateExerciseCommand request, CancellationToken ct)
+    public async Task<ActionResult> UpdateExerciseAsync(Guid id, UpdateExerciseCommand request, CancellationToken ct)
     {
         request.Id = id;
         await _mediator.Send(request, ct);
@@ -56,17 +54,30 @@ public class ExercisesController : ControllerBase
 
     [HttpDelete("{id:guid}")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> DeleteAsync(Guid id, CancellationToken ct)
+    public async Task<ActionResult> DeleteExerciseAsync(Guid id, CancellationToken ct)
     {
         await _mediator.Send(new DeleteExerciseCommand { Id = id }, ct);
         return NoContent();
     }
 
-    // ─── Test Cases ─────────────────────────────────────────────────────────────
+    #region API Default Code
+
+    [HttpPost("{id:guid}/default-codes")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> CreateOrUpdateDefaultCodeAsync(Guid id, CreateOrUpdateDefaultCodeCommand request, CancellationToken ct)
+    {
+        request.ExerciseId = id;
+        await _mediator.Send(request, ct);
+        return NoContent();
+    }
+
+    #endregion
+
+    #region API Test Case
 
     [HttpPost("{id:guid}/test-cases")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> AddTestCaseAsync(Guid id, AddTestCaseCommand request, CancellationToken ct)
+    public async Task<ActionResult> CreateTestCaseAsync(Guid id, CreateTestCaseCommand request, CancellationToken ct)
     {
         request.ExerciseId = id;
         ResultIdDto result = await _mediator.Send(request, ct);
@@ -90,14 +101,5 @@ public class ExercisesController : ControllerBase
         return NoContent();
     }
 
-    // ─── Default Codes ──────────────────────────────────────────────────────────
-
-    [HttpPost("{id:guid}/default-codes")]
-    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> UpsertDefaultCodeAsync(Guid id, UpsertDefaultCodeCommand request, CancellationToken ct)
-    {
-        request.ExerciseId = id;
-        await _mediator.Send(request, ct);
-        return NoContent();
-    }
+    #endregion
 }

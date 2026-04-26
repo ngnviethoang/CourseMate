@@ -1,9 +1,10 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
-using CourseMate.Contracts.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,31 +19,35 @@ internal sealed class GetExerciseDetailQueryHandler
     : AbstractQueryHandler<GetExerciseDetailQuery, ExerciseDetailDto>
 {
     public GetExerciseDetailQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
-        : base(dbContext, httpContextAccessor) { }
+        : base(dbContext, httpContextAccessor)
+    {
+    }
 
     public override async Task<ExerciseDetailDto> Handle(GetExerciseDetailQuery request, CancellationToken cancellationToken)
     {
-        var exercise = await DbContext.Exercises
+        Exercise? exercise = await DbContext.Exercises
             .Include(x => x.TestCases)
             .Include(x => x.DefaultCodes)
             .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (exercise is null)
+        {
             throw new EntityNotFoundException("Exercise", request.Id);
+        }
 
-        var creator = await DbContext.Users
-            .Where(u => u.Id == exercise.CreatedById)
+        string? creator = await DbContext.Users
+            .Where(u => u.Id == exercise.CreatorId)
             .Select(u => u.UserName)
             .FirstOrDefaultAsync(cancellationToken);
 
-        var result = new ExerciseDetailDto
+        ExerciseDetailDto result = new()
         {
             Id = exercise.Id,
             Title = exercise.Title,
             Description = exercise.Description,
             Difficulty = exercise.Difficulty.ToString(),
             Category = exercise.Category,
-            CreatedById = exercise.CreatedById,
+            CreatedById = exercise.CreatorId,
             CreatedByName = creator,
             CreationTime = exercise.CreationTime,
             LastModificationTime = exercise.LastModificationTime,
@@ -76,7 +81,7 @@ internal sealed class GetExerciseDetailQueryHandler
                     StarterCode = dc.StarterCode
                 }).ToList()
         };
-        
+
         if (IsInRole(Roles.Student))
         {
             // Chỉ trả về các test case công khai cho học sinh

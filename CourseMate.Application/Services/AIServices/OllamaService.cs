@@ -12,8 +12,8 @@ namespace CourseMate.Application.Services.AIServices;
 
 public class OllamaService : IAiService
 {
-    private readonly OllamaApiClient _ollamaApiClient;
     private readonly ILogger<OllamaService> _logger;
+    private readonly OllamaApiClient _ollamaApiClient;
 
     public OllamaService(
         IOptions<OllamaOptions> options,

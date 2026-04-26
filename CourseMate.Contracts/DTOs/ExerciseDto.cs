@@ -40,9 +40,9 @@ public class ExerciseDefaultCodeDto
 
 public class ExerciseDetailDto : ExerciseDto
 {
-    public List<ExerciseExampleDto> Examples { get; set; } = [];
-    public List<string> Constraints { get; set; } = [];
-    public List<string> Hints { get; set; } = [];
-    public List<ExerciseTestCaseDto> TestCases { get; set; } = [];
-    public List<ExerciseDefaultCodeDto> DefaultCodes { get; set; } = [];
+    public IEnumerable<ExerciseExampleDto> Examples { get; set; } = [];
+    public IEnumerable<string> Constraints { get; set; } = [];
+    public IEnumerable<string> Hints { get; set; } = [];
+    public IEnumerable<ExerciseTestCaseDto> TestCases { get; set; } = [];
+    public IEnumerable<ExerciseDefaultCodeDto> DefaultCodes { get; set; } = [];
 }
