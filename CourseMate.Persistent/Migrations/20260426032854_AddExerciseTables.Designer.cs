@@ -3,6 +3,7 @@ using System;
 using CourseMate.Persistent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pgvector;
@@ -12,9 +13,11 @@ using Pgvector;
 namespace CourseMate.Persistent.Migrations
 {
     [DbContext(typeof(CourseMateDbContext))]
-    partial class CourseMateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260426032854_AddExerciseTables")]
+    partial class AddExerciseTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -292,12 +295,6 @@ namespace CourseMate.Persistent.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
 
-                    b.PrimitiveCollection<string>("Constraints")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("jsonb")
-                        .HasDefaultValueSql("'[]'::jsonb");
-
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid");
 
@@ -306,23 +303,11 @@ namespace CourseMate.Persistent.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasMaxLength(32768)
+                        .HasColumnType("character varying(32768)");
 
                     b.Property<int>("Difficulty")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Examples")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("jsonb")
-                        .HasDefaultValueSql("'[]'::jsonb");
-
-                    b.PrimitiveCollection<string>("Hints")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("jsonb")
-                        .HasDefaultValueSql("'[]'::jsonb");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -338,8 +323,8 @@ namespace CourseMate.Persistent.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");

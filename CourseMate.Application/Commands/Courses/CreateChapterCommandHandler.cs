@@ -34,7 +34,7 @@ internal sealed class CreateChapterCommandHandler : AbstractCommandHandler<Creat
     public override async Task<ResultIdDto> Handle(CreateChapterCommand request, CancellationToken cancellationToken)
     {
         Guid userId = CurrentUserId;
-        bool isExistedCourse = await DbContext.Courses
+        bool isExistedCourse = IsInRole(Roles.Admin) || await DbContext.Courses
             .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == userId)
             .AnyAsync(i => i.Id == request.CourseId, cancellationToken);
         if (!isExistedCourse)
@@ -55,6 +55,7 @@ internal sealed class CreateChapterCommandHandler : AbstractCommandHandler<Creat
         int nextPosition = await DbContext.Chapters
             .Where(x => x.CourseId == request.CourseId)
             .Select(x => x.Position)
+            .DefaultIfEmpty(0)
             .MaxAsync(cancellationToken);
         nextPosition++;
         if (request.Position > nextPosition)

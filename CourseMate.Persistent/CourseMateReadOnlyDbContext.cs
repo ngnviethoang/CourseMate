@@ -37,10 +37,15 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<IdentityUser
     public DbSet<FileChunk> FileChunks { get; set; }
     public DbSet<FileEntryEmbedding> FileEntryEmbeddings { get; set; }
     public DbSet<LessonMaterial> LessonMaterials { get; set; }
+    public DbSet<Exercise> Exercises { get; set; }
+    public DbSet<ExerciseTestCase> ExerciseTestCases { get; set; }
+    public DbSet<ExerciseDefaultCode> ExerciseDefaultCodes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssemblyReference).Assembly);
+        modelBuilder.Ignore<ExerciseExample>();
         foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
         {
             if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))

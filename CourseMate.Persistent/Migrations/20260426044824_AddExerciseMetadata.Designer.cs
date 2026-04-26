@@ -3,6 +3,7 @@ using System;
 using CourseMate.Persistent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pgvector;
@@ -12,9 +13,11 @@ using Pgvector;
 namespace CourseMate.Persistent.Migrations
 {
     [DbContext(typeof(CourseMateDbContext))]
-    partial class CourseMateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260426044824_AddExerciseMetadata")]
+    partial class AddExerciseMetadata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -294,9 +297,7 @@ namespace CourseMate.Persistent.Migrations
 
                     b.PrimitiveCollection<string>("Constraints")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("jsonb")
-                        .HasDefaultValueSql("'[]'::jsonb");
+                        .HasColumnType("jsonb");
 
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid");
@@ -312,17 +313,9 @@ namespace CourseMate.Persistent.Migrations
                     b.Property<int>("Difficulty")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Examples")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("jsonb")
-                        .HasDefaultValueSql("'[]'::jsonb");
-
                     b.PrimitiveCollection<string>("Hints")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("jsonb")
-                        .HasDefaultValueSql("'[]'::jsonb");
+                        .HasColumnType("jsonb");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -1490,6 +1483,38 @@ namespace CourseMate.Persistent.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("CourseMate.Persistent.Entities.Exercise", b =>
+                {
+                    b.OwnsMany("CourseMate.Persistent.Entities.ExerciseExample", "Examples", b1 =>
+                        {
+                            b1.Property<Guid>("ExerciseId");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAdd();
+
+                            b1.Property<string>("Explanation");
+
+                            b1.Property<string>("Input")
+                                .IsRequired();
+
+                            b1.Property<string>("Output")
+                                .IsRequired();
+
+                            b1.HasKey("ExerciseId", "__synthesizedOrdinal");
+
+                            b1.ToTable("Exercises");
+
+                            b1
+                                .ToJson("Examples")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ExerciseId");
+                        });
+
+                    b.Navigation("Examples");
                 });
 
             modelBuilder.Entity("CourseMate.Persistent.Entities.ExerciseDefaultCode", b =>

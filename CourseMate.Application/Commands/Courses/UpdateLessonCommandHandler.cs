@@ -40,7 +40,7 @@ internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<Update
 
     public override async Task<int> Handle(UpdateLessonCommand request, CancellationToken cancellationToken)
     {
-        bool isExistedCourse = await DbContext.Courses
+        bool isExistedCourse = IsInRole(Roles.Admin) || await DbContext.Courses
             .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == CurrentUserId)
             .AnyAsync(i => i.Id == request.CourseId, cancellationToken);
         if (!isExistedCourse)
@@ -68,6 +68,7 @@ internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<Update
         int nextPosition = await DbContext.Lessons
             .Where(x => x.ChapterId == request.ChapterId)
             .Select(x => x.Position)
+            .DefaultIfEmpty(0)
             .MaxAsync(cancellationToken);
         nextPosition++;
         if (request.Position > nextPosition)

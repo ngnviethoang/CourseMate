@@ -43,6 +43,9 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
     public DbSet<FileChunk> FileChunks { get; set; }
     public DbSet<FileEntryEmbedding> FileEntryEmbeddings { get; set; }
     public DbSet<LessonMaterial> LessonMaterials { get; set; }
+    public DbSet<Exercise> Exercises { get; set; }
+    public DbSet<ExerciseTestCase> ExerciseTestCases { get; set; }
+    public DbSet<ExerciseDefaultCode> ExerciseDefaultCodes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -50,6 +53,9 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
         modelBuilder.HasPostgresExtension("citext");
         modelBuilder.HasPostgresExtension("vector");
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
+
+        modelBuilder.Ignore<ExerciseExample>();
+
         foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
         {
             if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
