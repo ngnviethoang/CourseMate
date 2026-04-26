@@ -16,13 +16,9 @@ public class ExerciseDefaultCode : Entity
 
     public Guid ExerciseId { get; set; }
 
-    /// <summary>Tên ngôn ngữ: "javascript", "python", "java", "cpp", "csharp"</summary>
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
     public string Language { get; set; }
 
     [MaxLength(CourseMateConsts.ContentMaxLength)]
     public string StarterCode { get; set; }
-
-    // Navigation
-    public Exercise Exercise { get; set; } = null!;
 }

@@ -10,30 +10,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace CourseMate.Application.Commands.Exercises;
 
-public class UpsertExampleDto
-{
-    public string Input { get; set; } = string.Empty;
-    public string Output { get; set; } = string.Empty;
-    public string? Explanation { get; set; }
-}
-
-public class UpsertTestCaseDto
-{
-    public Guid? Id { get; set; }
-    public string Input { get; set; } = string.Empty;
-    public string ExpectedOutput { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public bool IsHidden { get; set; }
-    public int Order { get; set; }
-}
-
-public class UpsertDefaultCodeDto
-{
-    public Guid? Id { get; set; }
-    public string Language { get; set; } = string.Empty;
-    public string StarterCode { get; set; } = string.Empty;
-}
-
 public class CreateExerciseCommand : IRequest<ResultIdDto>
 {
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
@@ -48,12 +24,53 @@ public class CreateExerciseCommand : IRequest<ResultIdDto>
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
     public string Category { get; set; } = string.Empty;
 
-    public List<UpsertExampleDto> Examples { get; set; } = [];
-    public List<string> Constraints { get; set; } = [];
-    public List<string> Hints { get; set; } = [];
+    public IEnumerable<string> Constraints { get; set; } = [];
 
-    public List<UpsertTestCaseDto> TestCases { get; set; } = [];
-    public List<UpsertDefaultCodeDto> DefaultCodes { get; set; } = [];
+    public IEnumerable<string> Hints { get; set; } = [];
+
+    public IEnumerable<CreateExerciseExampleRequest> Examples { get; set; } = [];
+
+    public IEnumerable<CreateExerciseTestCaseRequest> TestCases { get; set; } = [];
+
+    public IEnumerable<CreateExerciseDefaultCodeRequest> DefaultCodes { get; set; } = [];
+
+    public class CreateExerciseTestCaseRequest
+    {
+        [MaxLength(CourseMateConsts.DefaultMaxLength)]
+        public string Input { get; set; } = string.Empty;
+
+        [MaxLength(CourseMateConsts.DefaultMaxLength)]
+        public string ExpectedOutput { get; set; } = string.Empty;
+
+        [MaxLength(CourseMateConsts.DefaultMaxLength)]
+        public string Description { get; set; } = string.Empty;
+
+        public bool IsHidden { get; set; }
+
+        [Range(0, int.MaxValue)]
+        public int Order { get; set; }
+    }
+
+    public class CreateExerciseExampleRequest
+    {
+        [MaxLength(CourseMateConsts.DefaultMaxLength)]
+        public string Input { get; set; } = string.Empty;
+
+        [MaxLength(CourseMateConsts.DefaultMaxLength)]
+        public string Output { get; set; } = string.Empty;
+
+        [MaxLength(CourseMateConsts.ContentMaxLength)]
+        public string Explanation { get; set; } = string.Empty;
+    }
+
+    public class CreateExerciseDefaultCodeRequest
+    {
+        [MaxLength(CourseMateConsts.DefaultMaxLength)]
+        public string Language { get; set; } = string.Empty;
+
+        [MaxLength(CourseMateConsts.ContentMaxLength)]
+        public string StarterCode { get; set; } = string.Empty;
+    }
 }
 
 internal sealed class CreateExerciseCommandHandler : AbstractCommandHandler<CreateExerciseCommand, ResultIdDto>
@@ -73,45 +90,40 @@ internal sealed class CreateExerciseCommandHandler : AbstractCommandHandler<Crea
             request.Description,
             difficultyType,
             request.Category,
-            CurrentUserId
+            CurrentUserId,
+            request.Constraints.ToList(),
+            request.Hints.ToList()
         );
+        await DbContext.Exercises.AddAsync(exercise, cancellationToken);
 
-        exercise.Examples = request.Examples.Select(e => new ExerciseExample
-        {
-            Input = e.Input,
-            Output = e.Output,
-            Explanation = e.Explanation
-        }).ToList();
-        exercise.Constraints = request.Constraints;
-        exercise.Hints = request.Hints;
+        IEnumerable<ExerciseExample> exerciseExamples = request.Examples
+            .Select(e => new ExerciseExample(
+                Guid.NewGuid(),
+                exercise.Id,
+                e.Input,
+                e.Output,
+                e.Explanation));
+        await DbContext.ExerciseExamples.AddRangeAsync(exerciseExamples, cancellationToken);
 
-        // Test cases
-        int order = 0;
-        foreach (UpsertTestCaseDto tc in request.TestCases)
-        {
-            exercise.TestCases.Add(new ExerciseTestCase(
+        IEnumerable<ExerciseTestCase> testCases = request.TestCases
+            .Select(tc => new ExerciseTestCase(
                 Guid.NewGuid(),
                 exercise.Id,
                 tc.Input,
                 tc.ExpectedOutput,
                 tc.Description,
                 tc.IsHidden,
-                tc.Order > 0 ? tc.Order : order++
-            ));
-        }
+                tc.Order));
+        await DbContext.ExerciseTestCases.AddRangeAsync(testCases, cancellationToken);
 
-        // Default codes
-        foreach (UpsertDefaultCodeDto dc in request.DefaultCodes)
-        {
-            exercise.DefaultCodes.Add(new ExerciseDefaultCode(
+        IEnumerable<ExerciseDefaultCode> exerciseDefaultCodes = request.DefaultCodes
+            .Select(x => new ExerciseDefaultCode(
                 Guid.NewGuid(),
                 exercise.Id,
-                dc.Language,
-                dc.StarterCode
-            ));
-        }
+                x.Language,
+                x.StarterCode));
+        await DbContext.ExerciseDefaultCodes.AddRangeAsync(exerciseDefaultCodes, cancellationToken);
 
-        await DbContext.Exercises.AddAsync(exercise, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);
         return new ResultIdDto { Id = exercise.Id };
     }

@@ -5,16 +5,9 @@ using CourseMate.Persistent.Entities.Abstracts;
 
 namespace CourseMate.Persistent.Entities;
 
-public class ExerciseExample
-{
-    public string Input { get; set; } = string.Empty;
-    public string Output { get; set; } = string.Empty;
-    public string? Explanation { get; set; }
-}
-
 public class Exercise : Entity
 {
-    public Exercise(Guid id, string title, string description, ExerciseDifficultyType difficulty, string category, Guid creatorId)
+    public Exercise(Guid id, string title, string description, ExerciseDifficultyType difficulty, string category, Guid creatorId, ICollection<string> constraints, ICollection<string> hints)
         : base(id)
     {
         Title = title;
@@ -22,6 +15,8 @@ public class Exercise : Entity
         Difficulty = difficulty;
         Category = category;
         CreatorId = creatorId;
+        Constraints = constraints;
+        Hints = hints;
     }
 
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
@@ -40,9 +35,4 @@ public class Exercise : Entity
     public ICollection<string> Constraints { get; set; }
 
     public ICollection<string> Hints { get; set; }
-
-    // Navigation
-    public ICollection<ExerciseExample> Examples { get; set; }
-    public ICollection<ExerciseTestCase> TestCases { get; set; }
-    public ICollection<ExerciseDefaultCode> DefaultCodes { get; set; }
 }

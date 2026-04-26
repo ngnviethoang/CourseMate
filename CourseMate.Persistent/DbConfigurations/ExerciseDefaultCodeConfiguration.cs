@@ -9,5 +9,6 @@ public class ExerciseDefaultCodeConfiguration : IEntityTypeConfiguration<Exercis
     public void Configure(EntityTypeBuilder<ExerciseDefaultCode> builder)
     {
         builder.ToTable("ExerciseDefaultCodes");
+        builder.HasOne<Exercise>().WithMany().HasForeignKey(i => i.ExerciseId);
     }
 }

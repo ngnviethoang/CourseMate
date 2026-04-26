@@ -13,8 +13,8 @@ using Pgvector;
 namespace CourseMate.Persistent.Migrations
 {
     [DbContext(typeof(CourseMateDbContext))]
-    [Migration("20260426052848_UseValueConverterForExamples")]
-    partial class UseValueConverterForExamples
+    [Migration("20260426113645_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -301,25 +301,19 @@ namespace CourseMate.Persistent.Migrations
                         .HasColumnType("jsonb")
                         .HasDefaultValueSql("'[]'::jsonb");
 
-                    b.Property<Guid>("CreatedById")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTimeOffset>("CreationTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasMaxLength(32768)
+                        .HasColumnType("citext");
 
                     b.Property<int>("Difficulty")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Examples")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("jsonb")
-                        .HasDefaultValueSql("'[]'::jsonb");
 
                     b.PrimitiveCollection<string>("Hints")
                         .IsRequired()
@@ -341,15 +335,15 @@ namespace CourseMate.Persistent.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("citext");
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Exercises");
+                    b.ToTable("Exercises", (string)null);
                 });
 
             modelBuilder.Entity("CourseMate.Persistent.Entities.ExerciseDefaultCode", b =>
@@ -393,7 +387,56 @@ namespace CourseMate.Persistent.Migrations
 
                     b.HasIndex("ExerciseId");
 
-                    b.ToTable("ExerciseDefaultCodes");
+                    b.ToTable("ExerciseDefaultCodes", (string)null);
+                });
+
+            modelBuilder.Entity("CourseMate.Persistent.Entities.ExerciseExample", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreationTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ExerciseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Explanation")
+                        .IsRequired()
+                        .HasMaxLength(32768)
+                        .HasColumnType("character varying(32768)");
+
+                    b.Property<string>("Input")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LastModificationTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Output")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.ToTable("ExerciseExamples", (string)null);
                 });
 
             modelBuilder.Entity("CourseMate.Persistent.Entities.ExerciseTestCase", b =>
@@ -415,13 +458,13 @@ namespace CourseMate.Persistent.Migrations
 
                     b.Property<string>("ExpectedOutput")
                         .IsRequired()
-                        .HasMaxLength(32768)
-                        .HasColumnType("character varying(32768)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("Input")
                         .IsRequired()
-                        .HasMaxLength(32768)
-                        .HasColumnType("character varying(32768)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -448,7 +491,7 @@ namespace CourseMate.Persistent.Migrations
 
                     b.HasIndex("ExerciseId");
 
-                    b.ToTable("ExerciseTestCases");
+                    b.ToTable("ExerciseTestCases", (string)null);
                 });
 
             modelBuilder.Entity("CourseMate.Persistent.Entities.FileChunk", b =>
@@ -1497,24 +1540,29 @@ namespace CourseMate.Persistent.Migrations
 
             modelBuilder.Entity("CourseMate.Persistent.Entities.ExerciseDefaultCode", b =>
                 {
-                    b.HasOne("CourseMate.Persistent.Entities.Exercise", "Exercise")
-                        .WithMany("DefaultCodes")
+                    b.HasOne("CourseMate.Persistent.Entities.Exercise", null)
+                        .WithMany()
                         .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.Navigation("Exercise");
+            modelBuilder.Entity("CourseMate.Persistent.Entities.ExerciseExample", b =>
+                {
+                    b.HasOne("CourseMate.Persistent.Entities.Exercise", null)
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CourseMate.Persistent.Entities.ExerciseTestCase", b =>
                 {
-                    b.HasOne("CourseMate.Persistent.Entities.Exercise", "Exercise")
-                        .WithMany("TestCases")
+                    b.HasOne("CourseMate.Persistent.Entities.Exercise", null)
+                        .WithMany()
                         .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Exercise");
                 });
 
             modelBuilder.Entity("CourseMate.Persistent.Entities.FileChunk", b =>
@@ -1726,13 +1774,6 @@ namespace CourseMate.Persistent.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("CourseMate.Persistent.Entities.Exercise", b =>
-                {
-                    b.Navigation("DefaultCodes");
-
-                    b.Navigation("TestCases");
                 });
 #pragma warning restore 612, 618
         }

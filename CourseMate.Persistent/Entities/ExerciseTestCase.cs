@@ -19,20 +19,16 @@ public class ExerciseTestCase : Entity
 
     public Guid ExerciseId { get; set; }
 
-    [MaxLength(CourseMateConsts.ContentMaxLength)]
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
     public string Input { get; set; }
 
-    [MaxLength(CourseMateConsts.ContentMaxLength)]
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
     public string ExpectedOutput { get; set; }
 
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
     public string Description { get; set; }
 
-    /// <summary>Nếu true, học sinh không thấy input/output của test case này.</summary>
     public bool IsHidden { get; set; }
 
     public int Order { get; set; }
-
-    // Navigation
-    public Exercise Exercise { get; set; } = null!;
 }

@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CourseMate.Persistent.DbConfigurations;
 
-public class ExerciseTestCaseConfiguration : IEntityTypeConfiguration<ExerciseTestCase>
+public class ExerciseExampleConfiguration : IEntityTypeConfiguration<ExerciseExample>
 {
-    public void Configure(EntityTypeBuilder<ExerciseTestCase> builder)
+    public void Configure(EntityTypeBuilder<ExerciseExample> builder)
     {
-        builder.ToTable("ExerciseTestCases");
+        builder.ToTable("ExerciseExamples");
         builder.HasOne<Exercise>().WithMany().HasForeignKey(i => i.ExerciseId);
     }
 }

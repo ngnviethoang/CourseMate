@@ -31,7 +31,7 @@ public class ExerciseController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<ActionResult> GetExerciseByIdAsync(Guid id, CancellationToken ct)
     {
-        ExerciseDetailDto result = await _mediator.Send(new GetExerciseDetailQuery { Id = id }, ct);
+        GetExerciseByIdResponse? result = await _mediator.Send(new GetExerciseByIdQuery { Id = id }, ct);
         return Ok(result);
     }
 

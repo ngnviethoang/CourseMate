@@ -15,8 +15,7 @@ public class GetListExercisesQuery : GetListQuery<ExerciseDto>
     public string? Category { get; set; }
 }
 
-internal sealed class GetListExercisesQueryHandler
-    : AbstractQueryHandler<GetListExercisesQuery, PagedDto<ExerciseDto>>
+internal sealed class GetListExercisesQueryHandler : AbstractQueryHandler<GetListExercisesQuery, PagedDto<ExerciseDto>>
 {
     public GetListExercisesQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -26,21 +25,22 @@ internal sealed class GetListExercisesQueryHandler
     public override async Task<PagedDto<ExerciseDto>> Handle(GetListExercisesQuery request, CancellationToken cancellationToken)
     {
         IQueryable<ExerciseDto> query =
-            from ex in DbContext.Exercises
-            join creator in DbContext.Users on ex.CreatorId equals creator.Id into creatorGroup
-            from creator in creatorGroup.DefaultIfEmpty()
+            from exercise in DbContext.Exercises
+            join user in DbContext.Users on exercise.CreatorId equals user.Id
+            join exerciseTestCase in DbContext.ExerciseTestCases
+                on exercise.Id equals exerciseTestCase.ExerciseId into testCaseGroup
             select new ExerciseDto
             {
-                Id = ex.Id,
-                Title = ex.Title,
-                Description = ex.Description,
-                Difficulty = ex.Difficulty.ToString(),
-                Category = ex.Category,
-                CreatedById = ex.CreatorId,
-                CreatedByName = creator.UserName,
-                TestCaseCount = ex.TestCases.Count(tc => !tc.IsDeleted),
-                CreationTime = ex.CreationTime,
-                LastModificationTime = ex.LastModificationTime
+                Id = exercise.Id,
+                Title = exercise.Title,
+                Description = exercise.Description,
+                Difficulty = exercise.Difficulty.ToString(),
+                Category = exercise.Category,
+                CreatedById = exercise.CreatorId,
+                CreatedByName = user.UserName,
+                TestCaseCount = testCaseGroup.Count(),
+                CreationTime = exercise.CreationTime,
+                LastModificationTime = exercise.LastModificationTime
             };
 
         query = query
