@@ -39,11 +39,11 @@ internal sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<Cr
         _payOsOptions = options.Value;
     }
 
-    public override async Task<CreatePaymentUrlResponse> Handle(CreatePaymentUrlCommand request, CancellationToken cancellationToken)
+    public override async Task<CreatePaymentUrlResponse> Handle(CreatePaymentUrlCommand request, CancellationToken ct)
     {
         Order? order = await DbContext.Orders
             .Where(i => i.Id == request.OrderId && i.StudentId == CurrentUserId && i.Status == OrderStatus.Submitted)
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(ct);
         if (order is null)
         {
             _logger.LogWarning("Invalid order with ID: {OrderId}", request.OrderId);
@@ -89,7 +89,7 @@ internal sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<Cr
             string.Empty,
             string.Empty
         );
-        await DbContext.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
+        await DbContext.PaymentTransactions.AddAsync(paymentTransaction, ct);
         return new CreatePaymentUrlResponse
         {
             CheckoutUrl = paymentLink.CheckoutUrl

@@ -26,30 +26,30 @@ internal sealed class CreateCartCommandHandler : AbstractCommandHandler<CreateCa
     {
     }
 
-    public override async Task<ResultIdDto> Handle(CreateCartCommand request, CancellationToken cancellationToken)
+    public override async Task<ResultIdDto> Handle(CreateCartCommand request, CancellationToken ct)
     {
         Guid studentId = IsInRole(Roles.Admin) ? request.StudentId : CurrentUserId;
 
-        if (!await DbContext.Users.AnyAsync(u => u.Id == studentId, cancellationToken))
+        if (!await DbContext.Users.AnyAsync(u => u.Id == studentId, ct))
         {
             throw new EntityNotFoundException(nameof(IdentityUser), studentId);
         }
 
-        Cart? cart = await DbContext.Carts.FirstOrDefaultAsync(c => c.StudentId == studentId, cancellationToken);
+        Cart? cart = await DbContext.Carts.FirstOrDefaultAsync(c => c.StudentId == studentId, ct);
         if (cart == null)
         {
             cart = new Cart(Guid.NewGuid(), studentId);
-            await DbContext.Carts.AddAsync(cart, cancellationToken);
+            await DbContext.Carts.AddAsync(cart, ct);
         }
 
-        CartItem? existingItem = await DbContext.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cart.Id && ci.CourseId == request.CourseId, cancellationToken);
+        CartItem? existingItem = await DbContext.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cart.Id && ci.CourseId == request.CourseId, ct);
         if (existingItem != null)
         {
             return new ResultIdDto { Id = existingItem.Id };
         }
 
         CartItem cartItem = new(Guid.NewGuid(), cart.Id, request.CourseId);
-        await DbContext.CartItems.AddAsync(cartItem, cancellationToken);
+        await DbContext.CartItems.AddAsync(cartItem, ct);
 
         return new ResultIdDto { Id = cartItem.Id };
     }

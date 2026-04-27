@@ -24,9 +24,9 @@ internal sealed class GetImageFileQueryHandler : AbstractQueryHandler<GetImageFi
     {
     }
 
-    public override async Task<ImageFileResponse?> Handle(GetImageFileQuery request, CancellationToken cancellationToken)
+    public override async Task<ImageFileResponse?> Handle(GetImageFileQuery request, CancellationToken ct)
     {
-        FileEntry? fileEntry = await DbContext.FileEntries.FirstOrDefaultAsync(f => f.Id == request.FileId && f.FileType == FileType.Image, cancellationToken);
+        FileEntry? fileEntry = await DbContext.FileEntries.FirstOrDefaultAsync(f => f.Id == request.FileId && f.FileType == FileType.Image, ct);
 
         if (fileEntry == null)
         {
@@ -38,7 +38,7 @@ internal sealed class GetImageFileQueryHandler : AbstractQueryHandler<GetImageFi
             return null;
         }
 
-        byte[] fileData = await File.ReadAllBytesAsync(fileEntry.FilePath, cancellationToken);
+        byte[] fileData = await File.ReadAllBytesAsync(fileEntry.FilePath, ct);
 
         FileExtensionContentTypeProvider provider = new();
         if (!provider.TryGetContentType(fileEntry.FileName, out string? contentType))

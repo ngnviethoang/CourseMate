@@ -39,7 +39,7 @@ internal sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginR
         _userManager = userManager;
     }
 
-    public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken ct)
     {
         IdentityUser<Guid>? user = await _userManager.FindByNameAsync(request.UserName);
         if (user == null)

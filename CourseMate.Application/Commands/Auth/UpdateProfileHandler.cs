@@ -32,7 +32,7 @@ internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfil
         _userManager = userManager;
     }
 
-    public override async Task<int> Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(UpdateProfileCommand request, CancellationToken ct)
     {
         IdentityUser<Guid>? user = await _userManager.FindByIdAsync(CurrentUserId.ToString());
 

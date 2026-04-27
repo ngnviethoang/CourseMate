@@ -22,23 +22,23 @@ internal sealed class DeleteCartCommandHandler : AbstractCommandHandler<DeleteCa
     {
     }
 
-    public override async Task<int> Handle(DeleteCartCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(DeleteCartCommand request, CancellationToken ct)
     {
         Guid studentId = CurrentUserId;
 
-        Cart? cart = await DbContext.Carts.FirstOrDefaultAsync(c => c.StudentId == studentId, cancellationToken);
+        Cart? cart = await DbContext.Carts.FirstOrDefaultAsync(c => c.StudentId == studentId, ct);
         if (cart == null)
         {
             return Codes.Success;
         }
 
-        CartItem? cartItem = await DbContext.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cart.Id && ci.Id == request.CartItemId, cancellationToken);
+        CartItem? cartItem = await DbContext.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cart.Id && ci.Id == request.CartItemId, ct);
         if (cartItem == null)
         {
             return Codes.Success;
         }
 
-        await DbContext.CartItems.RemoveByIdAsync(request.CartItemId, cancellationToken);
+        await DbContext.CartItems.RemoveByIdAsync(request.CartItemId, ct);
         return Codes.Success;
     }
 }

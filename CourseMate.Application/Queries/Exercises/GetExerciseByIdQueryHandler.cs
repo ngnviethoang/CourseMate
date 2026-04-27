@@ -20,7 +20,7 @@ internal sealed class GetExerciseByIdQueryHandler : AbstractQueryHandler<GetExer
     {
     }
 
-    public override async Task<GetExerciseByIdResponse?> Handle(GetExerciseByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<GetExerciseByIdResponse?> Handle(GetExerciseByIdQuery request, CancellationToken ct)
     {
         GetExerciseByIdResponse? result = await (
             from exercise in DbContext.Exercises
@@ -40,7 +40,7 @@ internal sealed class GetExerciseByIdQueryHandler : AbstractQueryHandler<GetExer
                 LastModificationTime = exercise.LastModificationTime,
                 Constraints = exercise.Constraints,
                 Hints = exercise.Hints
-            }).FirstOrDefaultAsync(cancellationToken);
+            }).FirstOrDefaultAsync(ct);
 
         if (result is null)
         {
@@ -54,7 +54,7 @@ internal sealed class GetExerciseByIdQueryHandler : AbstractQueryHandler<GetExer
                 Output = i.Output,
                 Explanation = i.Explanation
             })
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         result.TestCases = await DbContext.ExerciseTestCases
             .WhereIf(IsInRole(Roles.Student), x => !x.IsHidden)
@@ -68,11 +68,11 @@ internal sealed class GetExerciseByIdQueryHandler : AbstractQueryHandler<GetExer
                 IsHidden = i.IsHidden,
                 Order = i.Order
             })
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         result.TestCaseCount = await DbContext.ExerciseTestCases
             .Where(x => x.ExerciseId == result.Id)
-            .CountAsync(cancellationToken);
+            .CountAsync(ct);
 
         result.DefaultCodes = await DbContext.ExerciseDefaultCodes
             .Where(x => x.ExerciseId == result.Id)
@@ -82,7 +82,7 @@ internal sealed class GetExerciseByIdQueryHandler : AbstractQueryHandler<GetExer
                 Language = i.Language,
                 StarterCode = i.StarterCode
             })
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         return result;
     }

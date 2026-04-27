@@ -22,7 +22,7 @@ internal sealed class GetListExercisesQueryHandler : AbstractQueryHandler<GetLis
     {
     }
 
-    public override async Task<PagedDto<ExerciseDto>> Handle(GetListExercisesQuery request, CancellationToken cancellationToken)
+    public override async Task<PagedDto<ExerciseDto>> Handle(GetListExercisesQuery request, CancellationToken ct)
     {
         IQueryable<ExerciseDto> query =
             from exercise in DbContext.Exercises
@@ -58,8 +58,8 @@ internal sealed class GetListExercisesQueryHandler : AbstractQueryHandler<GetLis
             _ => query.OrderByDescending(x => x.CreationTime)
         };
 
-        int total = await query.CountAsync(cancellationToken);
-        List<ExerciseDto> items = await query.Paged(request.PageIndex, request.PageSize).ToListAsync(cancellationToken);
+        int total = await query.CountAsync(ct);
+        List<ExerciseDto> items = await query.Paged(request.PageIndex, request.PageSize).ToListAsync(ct);
 
         return new PagedDto<ExerciseDto>
         {

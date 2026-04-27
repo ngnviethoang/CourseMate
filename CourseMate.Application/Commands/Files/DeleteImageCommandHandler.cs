@@ -23,13 +23,13 @@ internal sealed class DeleteImageCommandHandler : AbstractCommandHandler<DeleteI
     {
     }
 
-    public override async Task<int> Handle(DeleteImageCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(DeleteImageCommand request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.UserId == userId)
             .Where(f => f.FileType == FileType.Image)
-            .FirstOrDefaultAsync(f => f.Id == request.FileId, cancellationToken);
+            .FirstOrDefaultAsync(f => f.Id == request.FileId, ct);
 
         if (fileEntry == null)
         {

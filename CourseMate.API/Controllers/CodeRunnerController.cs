@@ -23,9 +23,9 @@ public class CodeRunner : ControllerBase
     #region API Code Runner
 
     [HttpPost]
-    public async Task<ActionResult> RunAsync(RunCodeCommand request, CancellationToken cancellationToken)
+    public async Task<ActionResult> RunAsync(RunCodeCommand request, CancellationToken ct)
     {
-        RunCodeResponse result = await _mediator.Send(request, cancellationToken);
+        RunCodeResponse result = await _mediator.Send(request, ct);
         return Ok(result);
     }
 

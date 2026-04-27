@@ -25,9 +25,9 @@ internal sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateO
     {
     }
 
-    public override async Task<int> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(UpdateOrderCommand request, CancellationToken ct)
     {
-        Order? order = await DbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == CurrentUserId, cancellationToken);
+        Order? order = await DbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == CurrentUserId, ct);
         if (order == null)
         {
             throw new EntityNotFoundException(nameof(Order), request.Id);

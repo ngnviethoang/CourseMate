@@ -25,7 +25,7 @@ internal sealed class DeleteUserAbstractCommandHandler : AbstractCommandHandler<
         _userManager = userManager;
     }
 
-    public override async Task<int> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(DeleteUserCommand request, CancellationToken ct)
     {
         IdentityUser<Guid>? user = await _userManager.FindByIdAsync(request.Id.ToString());
         if (user == null)

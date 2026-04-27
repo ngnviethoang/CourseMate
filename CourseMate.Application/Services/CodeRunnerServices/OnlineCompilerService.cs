@@ -22,7 +22,7 @@ public class OnlineCompilerService : ICodeRunnerService
         _logger = logger;
     }
 
-    public async Task<RunCodeResponse> RunAsync(string code, string compiler, string input, CancellationToken cancellationToken)
+    public async Task<RunCodeResponse> RunAsync(string code, string compiler, string input, CancellationToken ct)
     {
         Uri uri = new($"{_onlineCompilerOptions.Url.TrimEnd('/')}/api/run-code-sync/");
         OnlineCompilerRunRequest requestBody = new()
@@ -38,8 +38,8 @@ public class OnlineCompilerService : ICodeRunnerService
         try
         {
             _logger.LogInformation("HTTP {Method} {Url} | Payload: {Payload}", request.Method, uri, payload);
-            using HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken);
-            string content = await response.Content.ReadAsStringAsync(cancellationToken);
+            using HttpResponseMessage response = await _httpClient.SendAsync(request, ct);
+            string content = await response.Content.ReadAsStringAsync(ct);
             _logger.LogInformation("HTTP {Method} {Url} | Status: {StatusCode} | Response: {Response}", request.Method, uri, (int)response.StatusCode, content);
             response.EnsureSuccessStatusCode();
             RunCodeResponse result = JsonConvert.DeserializeObject<RunCodeResponse>(content) ?? new RunCodeResponse();
@@ -55,15 +55,15 @@ public class OnlineCompilerService : ICodeRunnerService
         }
     }
 
-    public async Task<IEnumerable<CompilerInfo>> GetCompilersAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<CompilerInfo>> GetCompilersAsync(CancellationToken ct)
     {
         Uri uri = new($"{_onlineCompilerOptions.Url.TrimEnd('/')}/api/compilers/");
         try
         {
             _logger.LogInformation("HTTP {Method} {Url}", HttpMethod.Get, uri);
-            using HttpResponseMessage response = await _httpClient.GetAsync(uri, cancellationToken);
+            using HttpResponseMessage response = await _httpClient.GetAsync(uri, ct);
             response.EnsureSuccessStatusCode();
-            string content = await response.Content.ReadAsStringAsync(cancellationToken);
+            string content = await response.Content.ReadAsStringAsync(ct);
             _logger.LogInformation("HTTP {Method} {Url} | Status: {StatusCode} | Response: {Response}", HttpMethod.Get, uri, (int)response.StatusCode, content);
             OnlineCompilerResponse onlineCompilerResponse = JsonConvert.DeserializeObject<OnlineCompilerResponse>(content) ?? new OnlineCompilerResponse();
             return onlineCompilerResponse.Compilers;

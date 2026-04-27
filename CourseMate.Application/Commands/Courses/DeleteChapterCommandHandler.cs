@@ -21,7 +21,7 @@ internal sealed class DeleteChapterAbstractCommandHandler : AbstractCommandHandl
     {
     }
 
-    public override async Task<int> Handle(DeleteChapterCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(DeleteChapterCommand request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
         bool canDelete = await (
@@ -32,14 +32,14 @@ internal sealed class DeleteChapterAbstractCommandHandler : AbstractCommandHandl
                 select new { chapter, course }
             )
             .WhereIf(IsInRole(Roles.Instructor), x => x.course.InstructorId == userId)
-            .AnyAsync(cancellationToken);
+            .AnyAsync(ct);
 
         if (!canDelete)
         {
             throw new UnauthorizedAccessException();
         }
 
-        await DbContext.Chapters.RemoveByIdAsync(request.Id, cancellationToken);
+        await DbContext.Chapters.RemoveByIdAsync(request.Id, ct);
         return Codes.Success;
     }
 }

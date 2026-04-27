@@ -18,7 +18,7 @@ internal sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOr
     {
     }
 
-    public override async Task<PagedDto<OrderDto>> Handle(GetListOrdersQuery request, CancellationToken cancellationToken)
+    public override async Task<PagedDto<OrderDto>> Handle(GetListOrdersQuery request, CancellationToken ct)
     {
         Guid studentId = CurrentUserId;
 
@@ -32,13 +32,13 @@ internal sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOr
                 Status = o.Status
             });
 
-        int totalCount = await query.CountAsync(cancellationToken);
+        int totalCount = await query.CountAsync(ct);
 
         List<OrderDto> orders = await query
             .OrderBy(o => o.Id)
             .Skip((request.PageIndex - 1) * request.PageSize)
             .Take(request.PageSize)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         return new PagedDto<OrderDto>
         {

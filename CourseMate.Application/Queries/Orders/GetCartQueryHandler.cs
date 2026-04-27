@@ -21,11 +21,11 @@ internal sealed class GetCartQueryHandler : AbstractQueryHandler<GetCartQuery, C
     {
     }
 
-    public override async Task<CartDto?> Handle(GetCartQuery request, CancellationToken cancellationToken)
+    public override async Task<CartDto?> Handle(GetCartQuery request, CancellationToken ct)
     {
         Guid studentId = IsInRole(Roles.Admin) ? request.StudentId : CurrentUserId;
 
-        Cart? cart = await DbContext.Carts.FirstOrDefaultAsync(c => c.StudentId == studentId, cancellationToken);
+        Cart? cart = await DbContext.Carts.FirstOrDefaultAsync(c => c.StudentId == studentId, ct);
         if (cart == null)
         {
             return new CartDto { StudentId = studentId };
@@ -44,7 +44,7 @@ internal sealed class GetCartQueryHandler : AbstractQueryHandler<GetCartQuery, C
                 CourseImageUrl = course.ImageUrl,
                 InstructorName = instructor.UserName ?? string.Empty,
                 Price = course.Price
-            }).ToListAsync(cancellationToken);
+            }).ToListAsync(ct);
 
         return new CartDto
         {

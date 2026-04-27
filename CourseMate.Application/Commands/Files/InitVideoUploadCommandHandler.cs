@@ -30,7 +30,7 @@ internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<Ini
         _storageOptions = storageOptions.Value;
     }
 
-    public override async Task<InitVideoUploadResponse> Handle(InitVideoUploadCommand request, CancellationToken cancellationToken)
+    public override async Task<InitVideoUploadResponse> Handle(InitVideoUploadCommand request, CancellationToken ct)
     {
         if (!_allowedImageExtensions.Contains(Path.GetExtension(request.FileName), StringComparer.OrdinalIgnoreCase))
         {
@@ -63,7 +63,7 @@ internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<Ini
             null,
             FileType.Video);
 
-        await DbContext.FileEntries.AddAsync(fileEntry, cancellationToken);
+        await DbContext.FileEntries.AddAsync(fileEntry, ct);
 
         return new InitVideoUploadResponse
         {

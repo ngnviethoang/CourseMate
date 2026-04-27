@@ -85,11 +85,11 @@ internal sealed class UpdateExerciseCommandHandler : AbstractCommandHandler<Upda
     {
     }
 
-    public override async Task<int> Handle(UpdateExerciseCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(UpdateExerciseCommand request, CancellationToken ct)
     {
         Exercise? exercise = await DbContext.Exercises
             .WhereIf(IsInRole(Roles.Instructor), x => x.CreatorId == CurrentUserId)
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == request.Id, ct);
 
         if (exercise is null)
         {
@@ -106,7 +106,7 @@ internal sealed class UpdateExerciseCommandHandler : AbstractCommandHandler<Upda
         exercise.Hints = request.Hints.ToList();
         DbContext.Exercises.Update(exercise);
 
-        List<ExerciseExample> oldExerciseExamples = await DbContext.ExerciseExamples.Where(x => x.ExerciseId == exercise.Id).ToListAsync(cancellationToken);
+        List<ExerciseExample> oldExerciseExamples = await DbContext.ExerciseExamples.Where(x => x.ExerciseId == exercise.Id).ToListAsync(ct);
         DbContext.ExerciseExamples.RemoveRange(oldExerciseExamples);
         IEnumerable<ExerciseExample> exerciseExamples = request.Examples
             .Select(e => new ExerciseExample(
@@ -115,9 +115,9 @@ internal sealed class UpdateExerciseCommandHandler : AbstractCommandHandler<Upda
                 e.Input,
                 e.Output,
                 e.Explanation));
-        await DbContext.ExerciseExamples.AddRangeAsync(exerciseExamples, cancellationToken);
+        await DbContext.ExerciseExamples.AddRangeAsync(exerciseExamples, ct);
 
-        List<ExerciseTestCase> oldExerciseTestCases = await DbContext.ExerciseTestCases.Where(x => x.ExerciseId == exercise.Id).ToListAsync(cancellationToken);
+        List<ExerciseTestCase> oldExerciseTestCases = await DbContext.ExerciseTestCases.Where(x => x.ExerciseId == exercise.Id).ToListAsync(ct);
         DbContext.ExerciseTestCases.RemoveRange(oldExerciseTestCases);
         IEnumerable<ExerciseTestCase> testCases = request.TestCases
             .Select(tc => new ExerciseTestCase(
@@ -128,10 +128,10 @@ internal sealed class UpdateExerciseCommandHandler : AbstractCommandHandler<Upda
                 tc.Description,
                 tc.IsHidden,
                 tc.Order));
-        await DbContext.ExerciseTestCases.AddRangeAsync(testCases, cancellationToken);
+        await DbContext.ExerciseTestCases.AddRangeAsync(testCases, ct);
 
 
-        List<ExerciseDefaultCode> oldExerciseDefaultCodes = await DbContext.ExerciseDefaultCodes.Where(x => x.ExerciseId == exercise.Id).ToListAsync(cancellationToken);
+        List<ExerciseDefaultCode> oldExerciseDefaultCodes = await DbContext.ExerciseDefaultCodes.Where(x => x.ExerciseId == exercise.Id).ToListAsync(ct);
         DbContext.ExerciseDefaultCodes.RemoveRange(oldExerciseDefaultCodes);
         IEnumerable<ExerciseDefaultCode> exerciseDefaultCodes = request.DefaultCodes
             .Select(x => new ExerciseDefaultCode(
@@ -139,7 +139,7 @@ internal sealed class UpdateExerciseCommandHandler : AbstractCommandHandler<Upda
                 exercise.Id,
                 x.Language,
                 x.StarterCode));
-        await DbContext.ExerciseDefaultCodes.AddRangeAsync(exerciseDefaultCodes, cancellationToken);
+        await DbContext.ExerciseDefaultCodes.AddRangeAsync(exerciseDefaultCodes, ct);
 
         return Codes.Success;
     }

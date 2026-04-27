@@ -21,7 +21,7 @@ internal sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetList
     {
     }
 
-    public override async Task<PagedDto<ChapterDto>> Handle(GetListChaptersQuery request, CancellationToken cancellationToken)
+    public override async Task<PagedDto<ChapterDto>> Handle(GetListChaptersQuery request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
         await EnsureEnrollmentAsync(request.CourseId);
@@ -57,11 +57,11 @@ internal sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetList
             _ => query.OrderBy(x => x.CreationTime)
         };
 
-        int total = await query.CountAsync(cancellationToken);
+        int total = await query.CountAsync(ct);
 
         List<ChapterDto> chapters = await query
             .Paged(request.PageIndex, request.PageSize)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         return new PagedDto<ChapterDto>
         {

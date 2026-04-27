@@ -21,7 +21,7 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
     {
     }
 
-    public override async Task<CourseDetailDto?> Handle(GetCourseByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<CourseDetailDto?> Handle(GetCourseByIdQuery request, CancellationToken ct)
     {
         Guid studentId = CurrentUserId;
 
@@ -44,7 +44,7 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
 
         CourseDetailDto? result = await courseQuery
             .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == CurrentUserId)
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(ct);
         if (result == null)
         {
             return null;
@@ -52,7 +52,7 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
 
         // Check enrollment
         result.IsEnrolled = await DbContext.Enrollments
-            .AnyAsync(e => e.CourseId == request.Id && e.StudentId == studentId, cancellationToken);
+            .AnyAsync(e => e.CourseId == request.Id && e.StudentId == studentId, ct);
 
         // Fetch Chapters and Lessons
         var chapters = await DbContext.Chapters
@@ -64,7 +64,7 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
                 c.Title,
                 c.Position
             })
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         var lessons = await DbContext.Lessons
             .Where(l => l.CourseId == request.Id)
@@ -77,7 +77,7 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
                 l.LessonType,
                 l.Position
             })
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         List<Guid> lessonIds = lessons.Select(l => l.Id).ToList();
 
@@ -88,7 +88,7 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
             completedLessonIds = await DbContext.UserLessonProgresses
                 .Where(p => p.StudentId == studentId && lessonIds.Contains(p.LessonId) && p.IsCompleted)
                 .Select(p => p.LessonId)
-                .ToListAsync(cancellationToken);
+                .ToListAsync(ct);
         }
 
         // Map Lessons into Chapters

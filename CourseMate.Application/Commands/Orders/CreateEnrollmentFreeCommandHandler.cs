@@ -22,22 +22,22 @@ internal sealed class CreateEnrollmentFreeCommandHandler : AbstractCommandHandle
     {
     }
 
-    public override async Task<ResultIdDto> Handle(CreateEnrollmentFreeCommand request, CancellationToken cancellationToken)
+    public override async Task<ResultIdDto> Handle(CreateEnrollmentFreeCommand request, CancellationToken ct)
     {
         Guid studentId = CurrentUserId;
-        if (!await DbContext.Courses.AnyAsync(course => course.Id == request.CourseId && course.IsPublished && course.Price == 0, cancellationToken))
+        if (!await DbContext.Courses.AnyAsync(course => course.Id == request.CourseId && course.IsPublished && course.Price == 0, ct))
         {
             throw new EntityNotFoundException(nameof(Course), request.CourseId);
         }
 
-        Enrollment? enrollment = await DbContext.Enrollments.FirstOrDefaultAsync(enrollment => enrollment.StudentId == studentId && enrollment.CourseId == request.CourseId, cancellationToken);
+        Enrollment? enrollment = await DbContext.Enrollments.FirstOrDefaultAsync(enrollment => enrollment.StudentId == studentId && enrollment.CourseId == request.CourseId, ct);
         if (enrollment != null)
         {
             return new ResultIdDto { Id = enrollment.Id };
         }
 
         enrollment = new Enrollment(Guid.NewGuid(), studentId, request.CourseId);
-        await DbContext.Enrollments.AddAsync(enrollment, cancellationToken);
+        await DbContext.Enrollments.AddAsync(enrollment, ct);
         return new ResultIdDto { Id = enrollment.Id };
     }
 }

@@ -80,7 +80,7 @@ internal sealed class CreateExerciseCommandHandler : AbstractCommandHandler<Crea
     {
     }
 
-    public override async Task<ResultIdDto> Handle(CreateExerciseCommand request, CancellationToken cancellationToken)
+    public override async Task<ResultIdDto> Handle(CreateExerciseCommand request, CancellationToken ct)
     {
         ExerciseDifficultyType difficultyType = Enum.TryParse(request.Difficulty, true, out ExerciseDifficultyType d) ? d : ExerciseDifficultyType.Easy;
 
@@ -94,7 +94,7 @@ internal sealed class CreateExerciseCommandHandler : AbstractCommandHandler<Crea
             request.Constraints.ToList(),
             request.Hints.ToList()
         );
-        await DbContext.Exercises.AddAsync(exercise, cancellationToken);
+        await DbContext.Exercises.AddAsync(exercise, ct);
 
         IEnumerable<ExerciseExample> exerciseExamples = request.Examples
             .Select(e => new ExerciseExample(
@@ -103,7 +103,7 @@ internal sealed class CreateExerciseCommandHandler : AbstractCommandHandler<Crea
                 e.Input,
                 e.Output,
                 e.Explanation));
-        await DbContext.ExerciseExamples.AddRangeAsync(exerciseExamples, cancellationToken);
+        await DbContext.ExerciseExamples.AddRangeAsync(exerciseExamples, ct);
 
         IEnumerable<ExerciseTestCase> testCases = request.TestCases
             .Select(tc => new ExerciseTestCase(
@@ -114,7 +114,7 @@ internal sealed class CreateExerciseCommandHandler : AbstractCommandHandler<Crea
                 tc.Description,
                 tc.IsHidden,
                 tc.Order));
-        await DbContext.ExerciseTestCases.AddRangeAsync(testCases, cancellationToken);
+        await DbContext.ExerciseTestCases.AddRangeAsync(testCases, ct);
 
         IEnumerable<ExerciseDefaultCode> exerciseDefaultCodes = request.DefaultCodes
             .Select(x => new ExerciseDefaultCode(
@@ -122,9 +122,9 @@ internal sealed class CreateExerciseCommandHandler : AbstractCommandHandler<Crea
                 exercise.Id,
                 x.Language,
                 x.StarterCode));
-        await DbContext.ExerciseDefaultCodes.AddRangeAsync(exerciseDefaultCodes, cancellationToken);
+        await DbContext.ExerciseDefaultCodes.AddRangeAsync(exerciseDefaultCodes, ct);
 
-        await DbContext.SaveChangesAsync(cancellationToken);
+        await DbContext.SaveChangesAsync(ct);
         return new ResultIdDto { Id = exercise.Id };
     }
 }

@@ -38,11 +38,11 @@ internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<Update
     {
     }
 
-    public override async Task<int> Handle(UpdateLessonCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(UpdateLessonCommand request, CancellationToken ct)
     {
         bool isExistedCourse = IsInRole(Roles.Admin) || await DbContext.Courses
             .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == CurrentUserId)
-            .AnyAsync(i => i.Id == request.CourseId, cancellationToken);
+            .AnyAsync(i => i.Id == request.CourseId, ct);
         if (!isExistedCourse)
         {
             throw new UnauthorizedAccessException();
@@ -50,7 +50,7 @@ internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<Update
 
         Lesson? lesson = await DbContext.Lessons.FirstOrDefaultAsync(x => x.Id == request.Id &&
                                                                           x.ChapterId == request.ChapterId &&
-                                                                          x.CourseId == request.CourseId, cancellationToken);
+                                                                          x.CourseId == request.CourseId, ct);
         if (lesson == null)
         {
             throw new EntityNotFoundException(nameof(Lesson), request.Id);
@@ -58,7 +58,7 @@ internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<Update
 
         if (request.Position != 0)
         {
-            bool isDuplicate = await DbContext.Lessons.AnyAsync(x => x.ChapterId == request.ChapterId && x.Position == request.Position, cancellationToken);
+            bool isDuplicate = await DbContext.Lessons.AnyAsync(x => x.ChapterId == request.ChapterId && x.Position == request.Position, ct);
             if (isDuplicate)
             {
                 throw new BusinessException(ErrorMessages.DuplicatePosition);
@@ -69,7 +69,7 @@ internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<Update
             .Where(x => x.ChapterId == request.ChapterId)
             .Select(x => x.Position)
             .DefaultIfEmpty(0)
-            .MaxAsync(cancellationToken);
+            .MaxAsync(ct);
         nextPosition++;
         if (request.Position > nextPosition)
         {

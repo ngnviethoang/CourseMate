@@ -21,7 +21,7 @@ internal sealed class GetMyCoursesQueryHandler : AbstractQueryHandler<GetMyCours
     {
     }
 
-    public override async Task<PagedDto<StudentMyCourseDto>> Handle(GetMyCoursesQuery request, CancellationToken cancellationToken)
+    public override async Task<PagedDto<StudentMyCourseDto>> Handle(GetMyCoursesQuery request, CancellationToken ct)
     {
         Guid studentId = IsInRole(Roles.Admin) ? request.StudentId : CurrentUserId;
 
@@ -54,8 +54,8 @@ internal sealed class GetMyCoursesQueryHandler : AbstractQueryHandler<GetMyCours
             "title_desc" => query.OrderByDescending(x => x.Title),
             _ => query.OrderByDescending(x => x.CreationTime)
         };
-        List<StudentMyCourseDto> courses = await query.Paged(request.PageIndex, request.PageSize).ToListAsync(cancellationToken);
-        int total = await query.CountAsync(cancellationToken);
+        List<StudentMyCourseDto> courses = await query.Paged(request.PageIndex, request.PageSize).ToListAsync(ct);
+        int total = await query.CountAsync(ct);
 
         List<Guid> courseIds = courses.Select(c => c.Id).ToList();
         if (courseIds.Any())
@@ -66,7 +66,7 @@ internal sealed class GetMyCoursesQueryHandler : AbstractQueryHandler<GetMyCours
                 group lesson by lesson.CourseId
                 into grouping
                 select new CourseLessonCountDto(grouping.Key, grouping.Count())
-            ).ToDictionaryAsync(x => x.CourseId, x => x.Count, cancellationToken);
+            ).ToDictionaryAsync(x => x.CourseId, x => x.Count, ct);
 
             Dictionary<Guid, int> completedLessonsDict = await (
                 from userLessonProgress in DbContext.UserLessonProgresses
@@ -76,7 +76,7 @@ internal sealed class GetMyCoursesQueryHandler : AbstractQueryHandler<GetMyCours
                 group lesson by lesson.CourseId
                 into grouping
                 select new CourseLessonCountDto(grouping.Key, grouping.Count())
-            ).ToDictionaryAsync(x => x.CourseId, x => x.Count, cancellationToken);
+            ).ToDictionaryAsync(x => x.CourseId, x => x.Count, ct);
 
             List<LessonProgressItemDto> lessonProgresses = await (
                 from userLessonProgress in DbContext.UserLessonProgresses
@@ -84,7 +84,7 @@ internal sealed class GetMyCoursesQueryHandler : AbstractQueryHandler<GetMyCours
                 join lesson in DbContext.Lessons on userLessonProgress.LessonId equals lesson.Id
                 where courseIds.Contains(lesson.CourseId)
                 select new LessonProgressItemDto(lesson.CourseId, lesson.Title, userLessonProgress.LastModificationTime)
-            ).ToListAsync(cancellationToken);
+            ).ToListAsync(ct);
 
             Dictionary<Guid, string?> lastLessonDict = (
                 from lessonProgressItemDto in lessonProgresses

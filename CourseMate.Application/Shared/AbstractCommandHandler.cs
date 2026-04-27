@@ -18,7 +18,7 @@ public abstract class AbstractCommandHandler<TRequest, TResponse> : AbstractRequ
         DbContext = dbContext;
     }
 
-    public abstract Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
+    public abstract Task<TResponse> Handle(TRequest request, CancellationToken ct);
 
     protected async Task EnsureEnrollmentAsync(Guid courseId)
     {

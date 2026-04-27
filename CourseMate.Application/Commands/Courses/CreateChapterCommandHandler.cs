@@ -31,12 +31,12 @@ internal sealed class CreateChapterCommandHandler : AbstractCommandHandler<Creat
     {
     }
 
-    public override async Task<ResultIdDto> Handle(CreateChapterCommand request, CancellationToken cancellationToken)
+    public override async Task<ResultIdDto> Handle(CreateChapterCommand request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
         bool isExistedCourse = IsInRole(Roles.Admin) || await DbContext.Courses
             .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == userId)
-            .AnyAsync(i => i.Id == request.CourseId, cancellationToken);
+            .AnyAsync(i => i.Id == request.CourseId, ct);
         if (!isExistedCourse)
         {
             throw new UnauthorizedAccessException();
@@ -45,7 +45,7 @@ internal sealed class CreateChapterCommandHandler : AbstractCommandHandler<Creat
 
         if (request.Position != 0)
         {
-            bool isDuplicate = await DbContext.Chapters.AnyAsync(x => x.CourseId == request.CourseId && x.Position == request.Position, cancellationToken);
+            bool isDuplicate = await DbContext.Chapters.AnyAsync(x => x.CourseId == request.CourseId && x.Position == request.Position, ct);
             if (isDuplicate)
             {
                 throw new BusinessException(ErrorMessages.DuplicatePosition);
@@ -56,7 +56,7 @@ internal sealed class CreateChapterCommandHandler : AbstractCommandHandler<Creat
             .Where(x => x.CourseId == request.CourseId)
             .Select(x => x.Position)
             .DefaultIfEmpty(0)
-            .MaxAsync(cancellationToken);
+            .MaxAsync(ct);
         nextPosition++;
         if (request.Position > nextPosition)
         {
@@ -70,7 +70,7 @@ internal sealed class CreateChapterCommandHandler : AbstractCommandHandler<Creat
             request.Position
         );
 
-        await DbContext.AddAsync(chapter, cancellationToken);
+        await DbContext.AddAsync(chapter, ct);
         return new ResultIdDto { Id = chapter.Id };
     }
 }

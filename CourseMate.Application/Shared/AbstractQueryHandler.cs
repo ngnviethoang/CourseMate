@@ -18,7 +18,7 @@ public abstract class AbstractQueryHandler<TRequest, TResponse> : AbstractReques
         DbContext = dbContext;
     }
 
-    public abstract Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
+    public abstract Task<TResponse> Handle(TRequest request, CancellationToken ct);
 
     /// <summary>
     ///     Validates that a student user is enrolled in the specified course.

@@ -33,7 +33,7 @@ internal sealed class UploadImageCommandHandler : AbstractCommandHandler<UploadI
         _storageOptions = storageOptions.Value;
     }
 
-    public override async Task<UploadImageResponse> Handle(UploadImageCommand request, CancellationToken cancellationToken)
+    public override async Task<UploadImageResponse> Handle(UploadImageCommand request, CancellationToken ct)
     {
         if (!_allowedImageExtensions.Contains(Path.GetExtension(request.FileName), StringComparer.OrdinalIgnoreCase))
         {
@@ -50,7 +50,7 @@ internal sealed class UploadImageCommandHandler : AbstractCommandHandler<UploadI
         Guid fileId = Guid.NewGuid();
         string fileName = $"{fileId}{Path.GetExtension(request.FileName)}";
         string filePath = Path.Combine(userDir, fileName);
-        await File.WriteAllBytesAsync(filePath, request.Content, cancellationToken);
+        await File.WriteAllBytesAsync(filePath, request.Content, ct);
 
         FileEntry fileEntry = new(
             fileId,
@@ -64,7 +64,7 @@ internal sealed class UploadImageCommandHandler : AbstractCommandHandler<UploadI
             DateTimeOffset.UtcNow,
             FileType.Image);
 
-        await DbContext.FileEntries.AddAsync(fileEntry, cancellationToken);
+        await DbContext.FileEntries.AddAsync(fileEntry, ct);
 
         HttpRequest? httpRequest = HttpContextAccessor.HttpContext!.Request;
         string fileUrl = $"{httpRequest.Scheme}://{httpRequest.Host}/api/files/images/{fileId}";

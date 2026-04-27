@@ -19,7 +19,7 @@ internal sealed class GetUserByIdQueryHandler : AbstractQueryHandler<GetUserById
     {
     }
 
-    public override async Task<UserDto?> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<UserDto?> Handle(GetUserByIdQuery request, CancellationToken ct)
     {
         UserDto? user = await DbContext.Users
             .Where(x => x.Id == request.Id)
@@ -30,7 +30,7 @@ internal sealed class GetUserByIdQueryHandler : AbstractQueryHandler<GetUserById
                 Email = x.Email,
                 PhoneNumber = x.PhoneNumber
             })
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(ct);
 
         return user;
     }

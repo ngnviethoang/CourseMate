@@ -23,7 +23,7 @@ public class OllamaService : IAiService
         _ollamaApiClient = new OllamaApiClient(options.Value.Url);
     }
 
-    public async Task<ReadOnlyMemory<float>> GenerateVectorAsync(string input, CancellationToken cancellationToken)
+    public async Task<ReadOnlyMemory<float>> GenerateVectorAsync(string input, CancellationToken ct)
     {
         try
         {
@@ -32,7 +32,7 @@ public class OllamaService : IAiService
                 Model = OllamaModels.NomicEmbedText,
                 Input = [input],
                 Dimensions = 768
-            }, cancellationToken);
+            }, ct);
 
             float[]? vector = response.Embeddings.FirstOrDefault();
             return new ReadOnlyMemory<float>(vector);
@@ -44,7 +44,7 @@ public class OllamaService : IAiService
         }
     }
 
-    public async Task<string> SearchAsync(string input, CancellationToken cancellationToken)
+    public async Task<string> SearchAsync(string input, CancellationToken ct)
     {
         string prompt = PromptBuilder.BuildResearchPrompt(input);
         try
@@ -56,7 +56,7 @@ public class OllamaService : IAiService
                 ModelId = OllamaModels.Llama3,
                 Temperature = 0.0f,
                 MaxOutputTokens = 1024
-            }, cancellationToken);
+            }, ct);
             return response.Text;
         }
         catch (OllamaException ex)
@@ -68,7 +68,7 @@ public class OllamaService : IAiService
 
     public async Task<string> GenerateContentAsync(
         string input,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         string prompt = PromptBuilder.BuildLectureOutlinePrompt(input);
 
@@ -81,7 +81,7 @@ public class OllamaService : IAiService
                 ModelId = OllamaModels.Llama3,
                 Temperature = 0.2f,
                 MaxOutputTokens = 4096
-            }, cancellationToken);
+            }, ct);
 
             return response.Text;
         }

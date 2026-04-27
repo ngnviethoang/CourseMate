@@ -22,9 +22,9 @@ internal sealed class DeleteVideoUploadCommandHandler : AbstractCommandHandler<D
     {
     }
 
-    public override async Task<int> Handle(DeleteVideoByIdCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(DeleteVideoByIdCommand request, CancellationToken ct)
     {
-        FileEntry? fileEntry = await DbContext.FileEntries.FirstOrDefaultAsync(f => f.Id == request.FileId, cancellationToken);
+        FileEntry? fileEntry = await DbContext.FileEntries.FirstOrDefaultAsync(f => f.Id == request.FileId, ct);
         if (fileEntry == null)
         {
             return Codes.Success;

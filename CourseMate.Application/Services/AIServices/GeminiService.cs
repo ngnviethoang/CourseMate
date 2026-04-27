@@ -21,7 +21,7 @@ public class GeminiService : IAiService
         _client = new Client(apiKey: options.Value.ApiKey);
     }
 
-    public async Task<ReadOnlyMemory<float>> GenerateVectorAsync(string input, CancellationToken cancellationToken)
+    public async Task<ReadOnlyMemory<float>> GenerateVectorAsync(string input, CancellationToken ct)
     {
         try
         {
@@ -31,7 +31,7 @@ public class GeminiService : IAiService
                 Dimensions = 768
             };
 
-            return await _client.Models.AsIEmbeddingGenerator().GenerateVectorAsync(input, options, cancellationToken);
+            return await _client.Models.AsIEmbeddingGenerator().GenerateVectorAsync(input, options, ct);
         }
         catch (GoogleApiException ex)
         {
@@ -40,7 +40,7 @@ public class GeminiService : IAiService
         }
     }
 
-    public async Task<string> SearchAsync(string input, CancellationToken cancellationToken)
+    public async Task<string> SearchAsync(string input, CancellationToken ct)
     {
         string prompt = PromptBuilder.BuildResearchPrompt(input);
         try
@@ -59,7 +59,7 @@ public class GeminiService : IAiService
                 },
                 Tools = [new Tool { GoogleSearch = new GoogleSearch() }]
             };
-            GenerateContentResponse result = await _client.Models.GenerateContentAsync(GeminiModels.V3FlashPreview, prompt, config, cancellationToken);
+            GenerateContentResponse result = await _client.Models.GenerateContentAsync(GeminiModels.V3FlashPreview, prompt, config, ct);
             return result.Text ?? string.Empty;
         }
         catch (GoogleApiException ex)
@@ -69,7 +69,7 @@ public class GeminiService : IAiService
         }
     }
 
-    public async Task<string> GenerateContentAsync(string input, CancellationToken cancellationToken)
+    public async Task<string> GenerateContentAsync(string input, CancellationToken ct)
     {
         string prompt = PromptBuilder.BuildLectureOutlinePrompt(input);
         try
@@ -87,7 +87,7 @@ public class GeminiService : IAiService
                 }
             };
 
-            GenerateContentResponse result = await _client.Models.GenerateContentAsync(GeminiModels.V3FlashPreview, prompt, config, cancellationToken);
+            GenerateContentResponse result = await _client.Models.GenerateContentAsync(GeminiModels.V3FlashPreview, prompt, config, ct);
             return result.Text ?? string.Empty;
         }
         catch (GoogleApiException ex)

@@ -33,7 +33,7 @@ internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandle
         _storageOptions = storageOptions.Value;
     }
 
-    public override async Task<ProcessingStatusDto> Handle(CreateLessonMaterialCommand request, CancellationToken cancellationToken)
+    public override async Task<ProcessingStatusDto> Handle(CreateLessonMaterialCommand request, CancellationToken ct)
     {
         bool isAuthor = await (
                 from lesson in DbContext.Lessons
@@ -43,7 +43,7 @@ internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandle
                 select course.InstructorId
             )
             .WhereIf(IsInRole(Roles.Instructor), x => x == CurrentUserId)
-            .AnyAsync(cancellationToken);
+            .AnyAsync(ct);
 
         if (!isAuthor)
         {
@@ -68,7 +68,7 @@ internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandle
         string filePath = Path.Combine(documentsDir, fileName);
 
         await using FileStream stream = new(filePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-        await stream.WriteAsync(request.Content, cancellationToken);
+        await stream.WriteAsync(request.Content, ct);
 
         FileEntry fileEntry = new(fileEntryId,
             fileName,
@@ -85,8 +85,8 @@ internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandle
         LessonMaterial material = new(Guid.NewGuid(), request.LessonId, fileEntry.Id, LessonMaterialState.GeneratingEmbedding, string.Empty);
         DbContext.LessonMaterials.Add(material);
 
-        string embeddingJobId = BackgroundJob.Enqueue<ProcessFileEmbeddingJob>(job => job.ExecuteAsync(fileEntryId, cancellationToken));
-        BackgroundJob.ContinueJobWith<GenerateOutlineJob>(embeddingJobId, job => job.ExecuteAsync(material.Id, cancellationToken));
+        string embeddingJobId = BackgroundJob.Enqueue<ProcessFileEmbeddingJob>(job => job.ExecuteAsync(fileEntryId, ct));
+        BackgroundJob.ContinueJobWith<GenerateOutlineJob>(embeddingJobId, job => job.ExecuteAsync(material.Id, ct));
 
         return new ProcessingStatusDto
         {

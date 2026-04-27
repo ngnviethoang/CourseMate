@@ -21,11 +21,11 @@ internal sealed class DeleteExerciseCommandHandler : AbstractCommandHandler<Dele
     {
     }
 
-    public override async Task<int> Handle(DeleteExerciseCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(DeleteExerciseCommand request, CancellationToken ct)
     {
         Exercise? exercise = await DbContext.Exercises
             .WhereIf(IsInRole(Roles.Instructor), x => x.CreatorId == CurrentUserId)
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == request.Id, ct);
 
         if (exercise is null)
         {

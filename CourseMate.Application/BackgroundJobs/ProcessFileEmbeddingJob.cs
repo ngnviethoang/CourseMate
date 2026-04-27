@@ -29,10 +29,10 @@ public class ProcessFileEmbeddingJob
     }
 
     [AutomaticRetry(Attempts = 0)]
-    public async Task ExecuteAsync(Guid fileId, CancellationToken cancellationToken)
+    public async Task ExecuteAsync(Guid fileId, CancellationToken ct)
     {
         _logger.LogInformation("Starting ProcessFileEmbeddingJob for file ID: {FileId}", fileId);
-        FileEntry? fileEntry = await _dbContext.FileEntries.FirstOrDefaultAsync(i => i.Id == fileId, cancellationToken);
+        FileEntry? fileEntry = await _dbContext.FileEntries.FirstOrDefaultAsync(i => i.Id == fileId, ct);
         if (fileEntry == null)
         {
             _logger.LogWarning("File entry not found for ID: {FileId}", fileId);
@@ -71,11 +71,11 @@ public class ProcessFileEmbeddingJob
                 string chunkFileName = $"{fileId}_chunk{chunkCount}.txt";
                 string chunkFilePath = Path.Combine(parentPath, chunkFileName);
                 await using FileStream stream = new(chunkFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-                await stream.WriteAsync(Encoding.UTF8.GetBytes(chunk.Content), cancellationToken);
+                await stream.WriteAsync(Encoding.UTF8.GetBytes(chunk.Content), ct);
                 FileChunk fileChunk = new(Guid.NewGuid(), fileEntry.Id, chunkCount, chunkFilePath, chunk.Content.Length, true);
-                await _dbContext.FileChunks.AddAsync(fileChunk, cancellationToken);
+                await _dbContext.FileChunks.AddAsync(fileChunk, ct);
 
-                ReadOnlyMemory<float> embedding = await _aIService.GenerateVectorAsync(chunk.Content, cancellationToken);
+                ReadOnlyMemory<float> embedding = await _aIService.GenerateVectorAsync(chunk.Content, ct);
                 FileEntryEmbedding fileEntryEmbedding = new(
                     Guid.NewGuid(),
                     fileEntry.Id,
@@ -85,14 +85,14 @@ public class ProcessFileEmbeddingJob
                     Left(chunk.Content, 100),
                     new Vector(embedding)
                 );
-                await _dbContext.FileEntryEmbeddings.AddAsync(fileEntryEmbedding, cancellationToken);
+                await _dbContext.FileEntryEmbeddings.AddAsync(fileEntryEmbedding, ct);
                 chunkCount++;
             }
 
             fileEntry.TotalChunks = chunkCount;
             fileEntry.UploadedChunks = chunkCount;
             _dbContext.FileEntries.Update(fileEntry);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(ct);
             _logger.LogInformation("Successfully processed file {FileId} with {ChunkCount} embeddings.", fileId, chunkCount);
         }
     }

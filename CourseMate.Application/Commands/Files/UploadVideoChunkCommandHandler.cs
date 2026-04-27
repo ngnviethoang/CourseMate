@@ -37,7 +37,7 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
         _storageOptions = storageOptions.Value;
     }
 
-    public override async Task<int> Handle(UploadVideoChunkCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(UploadVideoChunkCommand request, CancellationToken ct)
     {
         if (!_allowedImageExtensions.Contains(Path.GetExtension(request.FileName), StringComparer.OrdinalIgnoreCase))
         {
@@ -53,7 +53,7 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.UserId == userId)
             .Where(f => f.Status == FileStatus.Uploading)
-            .FirstOrDefaultAsync(f => f.Id == request.FileId, cancellationToken);
+            .FirstOrDefaultAsync(f => f.Id == request.FileId, ct);
 
         if (fileEntry == null)
         {
@@ -68,10 +68,10 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
         }
 
         await using FileStream stream = new(chunkFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-        await stream.WriteAsync(request.Content, cancellationToken);
+        await stream.WriteAsync(request.Content, ct);
 
         FileChunk fileChunk = new(Guid.NewGuid(), fileEntry.Id, request.ChunkIndex, chunkFilePath, request.Content.LongLength, true);
-        await DbContext.FileChunks.AddAsync(fileChunk, cancellationToken);
+        await DbContext.FileChunks.AddAsync(fileChunk, ct);
 
         fileEntry.UploadedChunks += 1;
         DbContext.FileEntries.Update(fileEntry);

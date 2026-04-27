@@ -70,12 +70,12 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<IdentityUser
         throw new InvalidOperationException("This DbContext is read-only.");
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override Task<int> SaveChangesAsync(CancellationToken ct = default)
     {
         throw new InvalidOperationException("This DbContext is read-only.");
     }
 
-    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken ct = default)
     {
         throw new InvalidOperationException("This DbContext is read-only.");
     }
