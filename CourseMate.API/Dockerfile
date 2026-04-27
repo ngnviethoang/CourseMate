@@ -20,7 +20,8 @@ ENV ASPNETCORE_Kestrel__Certificates__Default__Password="$CERT_PASSWORD"
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path="/app/aspnetapp.pfx"
 COPY --from=publish /app/publish /app
 WORKDIR /app
-RUN id -u app >/dev/null || useradd -ms /bin/bash app && \
+RUN apk add --upgrade krb5-libs && \
+    id -u app >/dev/null || useradd -ms /bin/bash app && \
     chown -R app:app /app && chmod -R 755 /app
 USER app
 ENTRYPOINT ["dotnet", "CourseMate.API.dll"]
