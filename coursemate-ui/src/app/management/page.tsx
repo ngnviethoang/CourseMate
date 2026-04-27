@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { dashboardService } from '@/lib/dashboard-service'
-import { authService } from '@/lib/auth-service'
+import { profileService } from '@/lib/auth-service'
 import { DashboardDto, ProfileDto } from '@/lib/types'
 import { formatCurrency, cn } from '@/lib/utils'
 
@@ -22,7 +22,7 @@ export default function ManagementPage() {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const userProfile = await authService.getProfile()
+        const userProfile = await profileService.getMe()
         setProfile(userProfile)
 
         const res = await dashboardService.getStats()

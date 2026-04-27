@@ -22,12 +22,12 @@ internal sealed class GetVideoFilePathQueryHandler : AbstractQueryHandler<GetVid
     {
     }
 
-    public override async Task<VideoFilePathDto?> Handle(GetVideoFilePathQuery request, CancellationToken cancellationToken)
+    public override async Task<VideoFilePathDto?> Handle(GetVideoFilePathQuery request, CancellationToken ct)
     {
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.Status == FileStatus.Completed)
             .Where(f => f.FileType == FileType.Video)
-            .FirstOrDefaultAsync(f => f.Id == request.FileId, cancellationToken);
+            .FirstOrDefaultAsync(f => f.Id == request.FileId, ct);
 
         if (fileEntry == null)
         {

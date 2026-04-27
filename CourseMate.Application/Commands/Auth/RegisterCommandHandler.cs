@@ -42,7 +42,7 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
         _emailStore = (IUserEmailStore<IdentityUser<Guid>>)userStore;
     }
 
-    public async Task<int> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(RegisterCommand request, CancellationToken ct)
     {
         request.Role = request.Role.Trim().ToLowerInvariant();
         if (await _roleManager.RoleExistsAsync(request.Role))

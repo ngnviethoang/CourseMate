@@ -33,13 +33,13 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
         _storageOptions = storageOptions.Value;
     }
 
-    public override async Task<CompleteVideoUploadResponse> Handle(CompletedVideoUploadCommand request, CancellationToken cancellationToken)
+    public override async Task<CompleteVideoUploadResponse> Handle(CompletedVideoUploadCommand request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
         FileEntry? fileEntry = await DbContext.FileEntries
             .Where(f => f.UserId == userId)
             .Where(f => f.Status == FileStatus.Uploading)
-            .FirstOrDefaultAsync(f => f.Id == request.FileId, cancellationToken);
+            .FirstOrDefaultAsync(f => f.Id == request.FileId, ct);
 
         if (fileEntry == null)
         {
@@ -63,7 +63,7 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
         List<FileChunk> fileTrunks = await DbContext.FileChunks
             .Where(f => f.FileEntryId == fileEntry.Id)
             .OrderBy(f => f.ChunkIndex)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         foreach (FileChunk fileTrunk in fileTrunks)
         {
@@ -79,8 +79,8 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
             {
                 foreach (FileChunk fileTrunk in fileTrunks)
                 {
-                    byte[] chunkData = await File.ReadAllBytesAsync(fileTrunk.ChunkPath, cancellationToken);
-                    await outputStream.WriteAsync(chunkData, cancellationToken);
+                    byte[] chunkData = await File.ReadAllBytesAsync(fileTrunk.ChunkPath, ct);
+                    await outputStream.WriteAsync(chunkData, ct);
                 }
             }
 

@@ -5,7 +5,7 @@ namespace CourseMate.Application.Services.CodeRunnerServices;
 
 public interface ICodeRunnerService
 {
-    Task<RunCodeResponse> RunAsync(string code, string compiler, string input, CancellationToken cancellationToken);
+    Task<RunCodeResponse> RunAsync(string code, string compiler, string input, CancellationToken ct);
 
-    Task<IEnumerable<CompilerInfo>> GetCompilersAsync(CancellationToken cancellationToken);
+    Task<IEnumerable<CompilerInfo>> GetCompilersAsync(CancellationToken ct);
 }

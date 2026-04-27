@@ -41,11 +41,11 @@ internal sealed class UpdateCourseCommandHandler : AbstractCommandHandler<Update
     {
     }
 
-    public override async Task<int> Handle(UpdateCourseCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(UpdateCourseCommand request, CancellationToken ct)
     {
         Course? course = await DbContext.Courses
             .WhereIf(IsInRole(Roles.Instructor), course => course.InstructorId == CurrentUserId)
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == request.Id, ct);
         if (course == null)
         {
             throw new EntityNotFoundException(nameof(Course), request.Id);

@@ -36,8 +36,7 @@ public class OrderController : ControllerBase
     #region API Cart
 
     [HttpGet("carts")]
-    [Authorize(Roles = Roles.Admin)]
-    [Authorize(Roles = Roles.Student)]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Student}")]
     public async Task<ActionResult> GetCartAsync([FromQuery] GetCartQuery request)
     {
         CartDto? result = await _mediator.Send(request);
@@ -45,8 +44,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost("carts")]
-    [Authorize(Roles = Roles.Admin)]
-    [Authorize(Roles = Roles.Student)]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Student}")]
     public async Task<ActionResult> CreateCartAsync(CreateCartCommand request)
     {
         ResultIdDto result = await _mediator.Send(request);
@@ -54,8 +52,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpDelete("carts/{id:guid}")]
-    [Authorize(Roles = Roles.Admin)]
-    [Authorize(Roles = Roles.Student)]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Student}")]
     public async Task<ActionResult> DeleteCartAsync(Guid id)
     {
         await _mediator.Send(new DeleteCartCommand

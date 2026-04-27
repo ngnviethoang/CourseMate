@@ -35,7 +35,7 @@ internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnU
         _payOsOptions = options.Value;
     }
 
-    public override async Task<int> Handle(IpnUrlCallbackCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(IpnUrlCallbackCommand request, CancellationToken ct)
     {
         PayOSClient client = new(new PayOSOptions
         {
@@ -62,7 +62,7 @@ internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnU
             string orderCode = webhookData.OrderCode.ToString();
             PaymentTransaction? paymentTransaction = await DbContext.PaymentTransactions
                 .Where(i => i.Status == PaymentStatus.Pending && string.Equals(i.TransactionId, orderCode))
-                .FirstOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(ct);
 
             if (paymentTransaction is null)
             {
@@ -71,7 +71,7 @@ internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnU
             }
 
             paymentTransaction.RawResponse = JsonConvert.SerializeObject(request);
-            Order? order = await DbContext.Orders.FirstOrDefaultAsync(i => i.Id == paymentTransaction.OrderId, cancellationToken);
+            Order? order = await DbContext.Orders.FirstOrDefaultAsync(i => i.Id == paymentTransaction.OrderId, ct);
             if (order is null)
             {
                 _logger.LogWarning("No order found for PaymentTransactionId={TransactionId}", paymentTransaction.Id);
@@ -89,7 +89,7 @@ internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnU
                 DbContext.PaymentTransactions.Update(paymentTransaction);
                 if (isSuccess)
                 {
-                    await HandleEnrollmentAsync(order.Id, order.StudentId, cancellationToken);
+                    await HandleEnrollmentAsync(order.Id, order.StudentId, ct);
                 }
 
                 _logger.LogInformation("Webhook processed successfully for orderCode={OrderCode}", orderCode);
@@ -103,18 +103,18 @@ internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnU
         }
     }
 
-    private async Task HandleEnrollmentAsync(Guid orderId, Guid studentId, CancellationToken cancellationToken)
+    private async Task HandleEnrollmentAsync(Guid orderId, Guid studentId, CancellationToken ct)
     {
         List<Guid> courseIds = await DbContext.OrderItems
             .Where(x => x.OrderId == orderId)
             .Select(x => x.CourseId)
             .Distinct()
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         List<Guid> existingCourseIds = await DbContext.Enrollments
             .Where(x => x.StudentId == studentId && courseIds.Contains(x.CourseId))
             .Select(x => x.CourseId)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         List<Enrollment> newEnrollments = courseIds
             .Except(existingCourseIds)
@@ -123,7 +123,7 @@ internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnU
 
         if (newEnrollments.Count > 0)
         {
-            await DbContext.Enrollments.AddRangeAsync(newEnrollments, cancellationToken);
+            await DbContext.Enrollments.AddRangeAsync(newEnrollments, ct);
         }
 
         List<CartItem> cartItems = await (
@@ -132,7 +132,7 @@ internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnU
             where cart.StudentId == studentId
                   && courseIds.Contains(cartItem.CourseId)
             select cartItem
-        ).ToListAsync(cancellationToken);
+        ).ToListAsync(ct);
 
         DbContext.CartItems.RemoveRange(cartItems);
     }

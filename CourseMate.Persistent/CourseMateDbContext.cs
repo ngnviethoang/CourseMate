@@ -43,6 +43,10 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
     public DbSet<FileChunk> FileChunks { get; set; }
     public DbSet<FileEntryEmbedding> FileEntryEmbeddings { get; set; }
     public DbSet<LessonMaterial> LessonMaterials { get; set; }
+    public DbSet<Exercise> Exercises { get; set; }
+    public DbSet<ExerciseExample> ExerciseExamples { get; set; }
+    public DbSet<ExerciseTestCase> ExerciseTestCases { get; set; }
+    public DbSet<ExerciseDefaultCode> ExerciseDefaultCodes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -50,6 +54,7 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
         modelBuilder.HasPostgresExtension("citext");
         modelBuilder.HasPostgresExtension("vector");
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
+
         foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
         {
             if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
@@ -69,16 +74,16 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override Task<int> SaveChangesAsync(CancellationToken ct = default)
     {
         ApplyAuditAndSoftDelete();
-        return base.SaveChangesAsync(cancellationToken);
+        return base.SaveChangesAsync(ct);
     }
 
-    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken ct = default)
     {
         ApplyAuditAndSoftDelete();
-        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, ct);
     }
 
     private void ApplyAuditAndSoftDelete()

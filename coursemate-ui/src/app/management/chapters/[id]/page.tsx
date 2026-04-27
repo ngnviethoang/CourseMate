@@ -2,10 +2,10 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Plus, Trash2, Loader2, BookOpen, Sparkles } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Loader2, BookOpen, Sparkles, FileText } from 'lucide-react'
 import { toast } from 'sonner'
 import { chapterService, lessonService, courseService } from '@/lib/course-service'
-import { aiService } from '@/lib/ai-service'
+import { lessonMaterialService } from '@/lib/lesson-material-service'
 import { Pagination } from '@/components/admin/pagination'
 import { ChapterDto, LessonDto, CreateLessonRequest, LessonType, CourseDto } from '@/lib/types'
 import { Button } from '@/components/ui/button'
@@ -296,35 +296,24 @@ export default function ChapterDetailPage() {
     }
     setAiGenerating(true)
     try {
-      let aiContent
-
-      if (lessonForm.lessonType === LessonType.Slide) {
-        const response = await aiService.getSlide(aiRawContent)
-        aiContent = response
-      } else {
-        // Simulate AI processing for Mock Data
-        await new Promise(r => setTimeout(r, 2200))
-        const generator = MOCK_AI_DATA[lessonForm.lessonType]
-        aiContent = generator(lessonForm.title, aiRawContent)
-      }
-
-      // Use the generated title if available
-      const generatedTitle =
-        aiContent?.lesson_info?.title || (aiContent as Record<string, string>)?.title || lessonForm.title
-
-      // Create the real lesson via API
-      const createdLesson = await lessonService.create({ ...lessonForm, title: generatedTitle })
+      // Step 1: Create the lesson
+      const createdLesson = await lessonService.create(lessonForm)
       const newLessonId = createdLesson.id
 
-      // Save AI content to localStorage keyed by lesson ID
-      localStorage.setItem(AI_CONTENT_KEY(newLessonId), JSON.stringify(aiContent))
+      // Step 2: Upload the file to trigger AI processing (if file provided)
+      if (aiFile) {
+        await lessonMaterialService.uploadMaterial(newLessonId, aiFile)
+        toast.success('Lesson created & AI is analyzing your file... 🚀', { duration: 4000 })
+      } else {
+        toast.success('Lesson created! You can upload a file on the lesson page.', { duration: 3000 })
+      }
 
-      toast.success('Bài học đã được tạo với nội dung AI! 🎉', { duration: 4000 })
       setLessonDialog(false)
       loadLessons()
+      // Redirect to lesson detail where AiMaterialSection will show & poll
       router.push(`/management/lessons/${newLessonId}`)
     } catch {
-      toast.error('Failed during AI lesson creation.')
+      toast.error('Failed to create lesson.')
     } finally {
       setAiGenerating(false)
     }
@@ -534,75 +523,51 @@ export default function ChapterDetailPage() {
             {/* AI Panel */}
             {aiMode && (
               <div className="rounded-xl border border-purple-200 bg-purple-50/50 dark:bg-purple-950/10 dark:border-purple-800 p-4 space-y-4 animate-in fade-in duration-200">
+                <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-purple-500/15">
                     <Sparkles className="h-4 w-4 text-purple-600" />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-purple-700 dark:text-purple-400">
-                      Trợ lý Phân tích và Phân rã tài liệu
+                      Trợ lý Phân tích tài liệu → Tự động tạo Outline
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      Hệ thống sẽ tự động bóc tách tài liệu thành phân đoạn bài học{' '}
+                      Upload file Word/PDF — AI sẽ phân tích và tạo outline bài giảng{' '}
                       <Badge
                         variant="outline"
                         className="text-xs inline-flex h-4 px-1 text-purple-600 border-purple-300"
                       >
                         {lessonForm.lessonType}
                       </Badge>{' '}
-                      đầy đủ và chuẩn xác.
+                      tự động.
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-sm font-medium">
-                      Nội dung tài liệu thô <span className="text-destructive">*</span>
-                    </Label>
-                    <span className="text-xs text-muted-foreground">PDF / Word / TXT</span>
-                  </div>
+                  <Label className="text-sm font-medium">
+                    File tài liệu <span className="text-muted-foreground font-normal">(tuỳ chọn)</span>
+                  </Label>
                   <Input
                     type="file"
-                    accept=".pdf,.docx,.txt,.md"
+                    accept=".doc,.docx,.pdf"
                     onChange={e => setAiFile(e.target.files?.[0] || null)}
                     className="text-xs file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
                   />
-                  {/* <Textarea
-                    placeholder="Hoặc dán toàn bộ nội dung tài liệu, outline báo cáo, bài viết thô vào đây để trợ lý tự động chuyển đổi..."
-                    value={aiRawContent}
-                    onChange={e => setAiRawContent(e.target.value)}
-                    rows={6}
-                    className="resize-none text-sm font-mono bg-background mt-2"
-                  /> */}
+                  <p className="text-xs text-muted-foreground">
+                    Hỗ trợ .doc, .docx, .pdf — Bạn cũng có thể upload sau trong trang lesson
+                  </p>
                 </div>
 
-                {/* <div className="rounded-lg bg-card border p-3 text-xs space-y-1 text-muted-foreground">
-                  <p className="font-medium text-foreground mb-1.5">📦 Nội dung sẽ được tạo và lưu:</p>
-                  {lessonForm.lessonType === LessonType.Video && (<><p>• Script 3 phân đoạn + 5 Timestamps</p></>)}
-                  {lessonForm.lessonType === LessonType.Reading && (<><p>• Bài đọc Markdown đầy đủ (H1, H2, Code Block)</p></>)}
-                  {lessonForm.lessonType === LessonType.Coding && (<><p>• Đề bài + Boilerplate + Solution + 5 Test Cases</p></>)}
-                  {lessonForm.lessonType === LessonType.Quiz && (<><p>• 5 câu hỏi trắc nghiệm + Đáp án + Giải thích</p></>)}
-                  {lessonForm.lessonType === LessonType.Slide && (<><p>• Outline bài học + Danh sách Slides chi tiết</p></>)}
-                </div> */}
-
-                {/* <div className="rounded-lg border bg-muted/30">
-                  <button
-                    type="button"
-                    onClick={() => setShowPrompt(p => !p)}
-                    className="flex w-full items-center justify-between px-3 py-2.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <span>🤖 System Prompt (cho báo cáo tiểu luận)</span>
-                    {showPrompt ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-                  </button>
-                  {showPrompt && (
-                    <div className="border-t px-3 pb-3 pt-2">
-                      <pre className="text-xs font-mono text-muted-foreground whitespace-pre-wrap break-words bg-card rounded-md p-2.5 border">
-                        {SYSTEM_PROMPT}
-                      </pre>
-                    </div>
-                  )}
-                </div> */}
+                {aiFile && (
+                  <div className="flex items-center gap-2 rounded-lg border border-purple-200 bg-purple-50/50 dark:bg-purple-950/20 px-3 py-2">
+                    <FileText className="h-4 w-4 text-purple-500 shrink-0" />
+                    <span className="text-xs font-medium text-purple-700 truncate">{aiFile.name}</span>
+                    <Badge className="ml-auto bg-purple-100 text-purple-600 border-0 text-[10px]">Ready</Badge>
+                  </div>
+                )}
+              </div>
               </div>
             )}
           </div>
@@ -614,16 +579,16 @@ export default function ChapterDetailPage() {
             {aiMode ? (
               <Button
                 onClick={generateAndCreateLesson}
-                disabled={aiGenerating || !lessonForm.title.trim() || (!aiRawContent.trim() && !aiFile)}
+                disabled={aiGenerating || !lessonForm.title.trim()}
                 className="gap-2 bg-purple-600 hover:bg-purple-700 text-white min-w-[200px]"
               >
                 {aiGenerating ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" /> Đang bóc tách & xử lý...
+                    <Loader2 className="h-4 w-4 animate-spin" /> Đang tạo bài học...
                   </>
                 ) : (
                   <>
-                    <Sparkles className="h-4 w-4" /> Bắt đầu tạo tự động
+                    <Sparkles className="h-4 w-4" /> {aiFile ? 'Tạo & Phân tích AI' : 'Tạo bài học'}
                   </>
                 )}
               </Button>

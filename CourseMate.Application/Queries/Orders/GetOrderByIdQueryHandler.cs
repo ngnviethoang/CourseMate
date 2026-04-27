@@ -21,12 +21,12 @@ internal sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderBy
     {
     }
 
-    public override async Task<OrderDto?> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<OrderDto?> Handle(GetOrderByIdQuery request, CancellationToken ct)
     {
         Guid studentId = CurrentUserId;
 
         Order? order = await DbContext.Orders
-            .FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == studentId, cancellationToken);
+            .FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == studentId, ct);
 
         if (order == null)
         {
@@ -43,7 +43,7 @@ internal sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderBy
                 CourseTitle = course.Title,
                 CourseImageUrl = course.ImageUrl,
                 Price = item.Price
-            }).ToListAsync(cancellationToken);
+            }).ToListAsync(ct);
 
         return new OrderDto
         {

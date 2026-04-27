@@ -55,6 +55,7 @@ trigger: always_on
   + Follow naming convention per use case:
     * Query DTO: GetList[Entities]Query, GetById[Entity]Query
     * Command DTO: Create[Entity]Command, Update[Entity]Command, Delete[Entity]Command
+  + Each class handler should handle only one Command or Query. It must not contain public DTOs or other handlers.
 
 - Do not mix Command & Query responsibilities
 - Command uses `CourseMateDbContext`
@@ -98,3 +99,5 @@ trigger: always_on
 - Do not modify DB tuning/configuration
 - Write Db configuration in a single line
 - Use plural names for table mapping
+- Do not use navigation properties or store JSON directly in the database.
+- Refer to CourseConfiguration.cs when configuring new entities

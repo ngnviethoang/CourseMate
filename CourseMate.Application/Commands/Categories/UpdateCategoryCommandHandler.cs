@@ -28,9 +28,9 @@ internal sealed class UpdateCategoryAbstractCommandHandler : AbstractCommandHand
     {
     }
 
-    public override async Task<int> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(UpdateCategoryCommand request, CancellationToken ct)
     {
-        Category? category = await DbContext.Categories.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        Category? category = await DbContext.Categories.FirstOrDefaultAsync(x => x.Id == request.Id, ct);
 
         if (category == null)
         {

@@ -21,8 +21,8 @@ internal sealed class GetListCompilersQueryHandler : AbstractQueryHandler<GetLis
         _codeRunnerService = codeRunnerService;
     }
 
-    public override async Task<IEnumerable<CompilerInfo>> Handle(GetListCompilersQuery request, CancellationToken cancellationToken)
+    public override async Task<IEnumerable<CompilerInfo>> Handle(GetListCompilersQuery request, CancellationToken ct)
     {
-        return await _codeRunnerService.GetCompilersAsync(cancellationToken);
+        return await _codeRunnerService.GetCompilersAsync(ct);
     }
 }

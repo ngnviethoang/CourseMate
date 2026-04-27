@@ -14,11 +14,11 @@ public sealed class TransactionPipelineBehavior<TRequest, TResponse> : IPipeline
         _dbContext = dbContext;
     }
 
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
     {
         if (!IsCommand())
         {
-            return await next(cancellationToken);
+            return await next(ct);
         }
 
         // Use of an EF Core resiliency strategy when using multiple DbContexts within an explicit BeginTransaction():
@@ -26,17 +26,17 @@ public sealed class TransactionPipelineBehavior<TRequest, TResponse> : IPipeline
         IExecutionStrategy strategy = _dbContext.Database.CreateExecutionStrategy();
         return await strategy.ExecuteAsync(async () =>
         {
-            await using IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+            await using IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync(ct);
             try
             {
-                TResponse response = await next(cancellationToken);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync(cancellationToken);
+                TResponse response = await next(ct);
+                await _dbContext.SaveChangesAsync(ct);
+                await transaction.CommitAsync(ct);
                 return response;
             }
             catch
             {
-                await transaction.RollbackAsync(cancellationToken);
+                await transaction.RollbackAsync(ct);
                 throw;
             }
         });

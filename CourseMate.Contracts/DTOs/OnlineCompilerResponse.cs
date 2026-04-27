@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace CourseMate.Contracts.DTOs.Commons;
+namespace CourseMate.Contracts.DTOs;
 
 public class OnlineCompilerResponse
 {

@@ -17,10 +17,10 @@ internal sealed class GetProfileQueryHandler : AbstractQueryHandler<GetProfileQu
     {
     }
 
-    public override async Task<ProfileDto?> Handle(GetProfileQuery request, CancellationToken cancellationToken)
+    public override async Task<ProfileDto?> Handle(GetProfileQuery request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
-        IdentityUser<Guid>? user = await DbContext.Users.FirstOrDefaultAsync(i => i.Id == userId, cancellationToken);
+        IdentityUser<Guid>? user = await DbContext.Users.FirstOrDefaultAsync(i => i.Id == userId, ct);
 
         if (user == null)
         {
@@ -30,7 +30,7 @@ internal sealed class GetProfileQueryHandler : AbstractQueryHandler<GetProfileQu
         List<string> roles = await DbContext.UserRoles
             .Where(r => r.UserId == userId)
             .Join(DbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name!)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         return new ProfileDto
         {

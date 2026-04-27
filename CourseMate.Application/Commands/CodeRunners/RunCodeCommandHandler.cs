@@ -33,8 +33,8 @@ internal sealed class RunCodeCommandHandler : AbstractCommandHandler<RunCodeComm
         _codeRunnerService = codeRunnerService;
     }
 
-    public override async Task<RunCodeResponse> Handle(RunCodeCommand request, CancellationToken cancellationToken)
+    public override async Task<RunCodeResponse> Handle(RunCodeCommand request, CancellationToken ct)
     {
-        return await _codeRunnerService.RunAsync(request.Code, request.Compiler, request.Input, cancellationToken);
+        return await _codeRunnerService.RunAsync(request.Code, request.Compiler, request.Input, ct);
     }
 }

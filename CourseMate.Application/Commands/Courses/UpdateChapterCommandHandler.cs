@@ -33,17 +33,17 @@ internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandl
     {
     }
 
-    public override async Task<int> Handle(UpdateChapterCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(UpdateChapterCommand request, CancellationToken ct)
     {
         bool isExistedCourse = await DbContext.Courses
             .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == CurrentUserId)
-            .AnyAsync(i => i.Id == request.CourseId, cancellationToken);
+            .AnyAsync(i => i.Id == request.CourseId, ct);
         if (!isExistedCourse)
         {
             throw new UnauthorizedAccessException();
         }
 
-        Chapter? chapter = await DbContext.Chapters.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        Chapter? chapter = await DbContext.Chapters.FirstOrDefaultAsync(x => x.Id == request.Id, ct);
         if (chapter == null)
         {
             throw new EntityNotFoundException(nameof(Chapter), request.Id);
@@ -51,7 +51,7 @@ internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandl
 
         if (request.Position != 0)
         {
-            bool isDuplicate = await DbContext.Chapters.AnyAsync(x => x.CourseId == request.CourseId && x.Position == request.Position, cancellationToken);
+            bool isDuplicate = await DbContext.Chapters.AnyAsync(x => x.CourseId == request.CourseId && x.Position == request.Position, ct);
             if (isDuplicate)
             {
                 throw new BusinessException(ErrorMessages.DuplicatePosition);
@@ -61,7 +61,7 @@ internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandl
         int nextPosition = await DbContext.Chapters
             .Where(x => x.CourseId == request.CourseId)
             .Select(x => x.Position)
-            .MaxAsync(cancellationToken);
+            .MaxAsync(ct);
         nextPosition++;
         if (request.Position > nextPosition)
         {

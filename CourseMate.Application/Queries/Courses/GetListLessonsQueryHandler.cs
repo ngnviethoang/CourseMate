@@ -23,7 +23,7 @@ internal sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListL
     {
     }
 
-    public override async Task<PagedDto<LessonDto>> Handle(GetListLessonsQuery request, CancellationToken cancellationToken)
+    public override async Task<PagedDto<LessonDto>> Handle(GetListLessonsQuery request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
         await EnsureEnrollmentAsync(request.CourseId);
@@ -63,11 +63,11 @@ internal sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListL
             _ => query.OrderBy(x => x.CreationTime)
         };
 
-        int total = await query.CountAsync(cancellationToken);
+        int total = await query.CountAsync(ct);
 
         List<LessonDto> lessons = await query
             .Paged(request.PageIndex, request.PageSize)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         return new PagedDto<LessonDto>
         {

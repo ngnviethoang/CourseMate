@@ -21,7 +21,7 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
     {
     }
 
-    public override async Task<LessonDto?> Handle(GetLessonByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<LessonDto?> Handle(GetLessonByIdQuery request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
         IQueryable<LessonDto> query = from lesson in DbContext.Lessons
@@ -43,7 +43,7 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
 
         LessonDto? result = await query
             .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == userId)
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(ct);
 
         if (result != null)
         {

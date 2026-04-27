@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import Link from 'next/link'
 import { VideoUploadSection } from './video-upload'
+import { AiMaterialSection } from './ai-material-section'
 
 // ─── AI Content interfaces ────────────────────────────────────────────────────
 
@@ -496,30 +497,8 @@ export default function LessonDetailPage() {
         </div>
       </div>
 
-      {/* AI Content Section — rendered by lesson type */}
-      {aiContent ? (
-        <>
-          {form.lessonType === LessonType.Video && 'segments' in aiContent && (
-            <VideoContentDisplay content={aiContent as VideoContent} />
-          )}
-          {form.lessonType === LessonType.Reading && 'markdown_content' in aiContent && (
-            <ReadingContentDisplay content={aiContent as ReadingContent} />
-          )}
-          {form.lessonType === LessonType.Coding && 'test_cases' in aiContent && (
-            <CodingContentDisplay content={aiContent as CodingContent} />
-          )}
-          {form.lessonType === LessonType.Quiz && 'questions' in aiContent && (
-            <QuizContentDisplay content={aiContent as QuizContent} />
-          )}
-        </>
-      ) : (
-        <div className="rounded-xl border border-dashed p-10 flex flex-col items-center justify-center text-center space-y-2 bg-muted/20">
-          <h3 className="font-semibold">{form.lessonType} Content</h3>
-          <p className="text-sm text-muted-foreground max-w-md">
-            No content yet. Use the <strong>AI Generator</strong> when creating a lesson to auto-populate content.
-          </p>
-        </div>
-      )}
+      {/* AI Outline Generator */}
+      <AiMaterialSection lessonId={id} />
 
       {/* Video upload always available for Video-type lessons */}
       {form.lessonType === LessonType.Video && <VideoUploadSection lessonId={id} />}

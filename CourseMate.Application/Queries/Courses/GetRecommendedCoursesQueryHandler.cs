@@ -24,7 +24,7 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
     {
     }
 
-    public override async Task<PagedDto<CourseDto>> Handle(GetRecommendedCoursesQuery request, CancellationToken cancellationToken)
+    public override async Task<PagedDto<CourseDto>> Handle(GetRecommendedCoursesQuery request, CancellationToken ct)
     {
         Guid studentId = CurrentUserId;
 
@@ -34,13 +34,13 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
             join orderItem in DbContext.OrderItems on order.Id equals orderItem.OrderId
             where order.StudentId == studentId && order.Status == OrderStatus.Completed
             select orderItem.CourseId
-        ).ToListAsync(cancellationToken);
+        ).ToListAsync(ct);
 
         List<Guid> purchasedCategoryIds = await (
             from course in DbContext.Courses
             where purchasedCourseIds.Contains(course.Id)
             select course.CategoryId
-        ).Distinct().ToListAsync(cancellationToken);
+        ).Distinct().ToListAsync(ct);
 
         // 2. Query published courses
         IQueryable<CourseDto> query =
@@ -79,9 +79,9 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
         List<CourseDto> courses = await finalQuery
             .Skip((request.PageIndex - 1) * request.PageSize)
             .Take(request.PageSize)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
-        int totalCount = await query.CountAsync(cancellationToken);
+        int totalCount = await query.CountAsync(ct);
 
         return new PagedDto<CourseDto>
         {

@@ -24,7 +24,7 @@ internal sealed class GetListCoursesQueryHandler
     {
     }
 
-    public override async Task<PagedDto<CourseDto>> Handle(GetListCoursesQuery request, CancellationToken cancellationToken)
+    public override async Task<PagedDto<CourseDto>> Handle(GetListCoursesQuery request, CancellationToken ct)
     {
         IQueryable<CourseDto> query =
             from course in DbContext.Courses
@@ -62,11 +62,11 @@ internal sealed class GetListCoursesQueryHandler
             _ => query.OrderBy(x => x.CreationTime)
         };
 
-        int total = await query.CountAsync(cancellationToken);
+        int total = await query.CountAsync(ct);
 
         List<CourseDto> courses = await query
             .Paged(request.PageIndex, request.PageSize)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         return new PagedDto<CourseDto>
         {

@@ -37,18 +37,18 @@ internal sealed class CreateLessonCommandHandler : AbstractCommandHandler<Create
     {
     }
 
-    public override async Task<ResultIdDto> Handle(CreateLessonCommand request, CancellationToken cancellationToken)
+    public override async Task<ResultIdDto> Handle(CreateLessonCommand request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
         bool isOwnerCourse = await DbContext.Courses
             .WhereIf(IsInRole(Roles.Instructor), x => x.InstructorId == userId)
-            .AnyAsync(course => course.Id == request.CourseId, cancellationToken);
+            .AnyAsync(course => course.Id == request.CourseId, ct);
         if (!isOwnerCourse)
         {
             throw new UnauthorizedAccessException();
         }
 
-        bool isExistChapter = await DbContext.Chapters.AnyAsync(x => x.Id == request.ChapterId && x.CourseId == request.CourseId, cancellationToken);
+        bool isExistChapter = await DbContext.Chapters.AnyAsync(x => x.Id == request.ChapterId && x.CourseId == request.CourseId, ct);
         if (!isExistChapter)
         {
             throw new EntityNotFoundException(nameof(Chapter), request.ChapterId);
@@ -56,7 +56,7 @@ internal sealed class CreateLessonCommandHandler : AbstractCommandHandler<Create
 
         if (request.Position != 0)
         {
-            bool isDuplicate = await DbContext.Lessons.AnyAsync(x => x.ChapterId == request.ChapterId && x.Position == request.Position, cancellationToken);
+            bool isDuplicate = await DbContext.Lessons.AnyAsync(x => x.ChapterId == request.ChapterId && x.Position == request.Position, ct);
             if (isDuplicate)
             {
                 throw new BusinessException(ErrorMessages.DuplicatePosition);
@@ -66,7 +66,7 @@ internal sealed class CreateLessonCommandHandler : AbstractCommandHandler<Create
         int nextPosition = await DbContext.Lessons
             .Where(x => x.ChapterId == request.ChapterId)
             .Select(x => x.Position)
-            .MaxAsync(cancellationToken);
+            .MaxAsync(ct);
         nextPosition++;
         if (request.Position > nextPosition)
         {
@@ -82,7 +82,7 @@ internal sealed class CreateLessonCommandHandler : AbstractCommandHandler<Create
             request.Position
         );
 
-        await DbContext.AddAsync(lesson, cancellationToken);
+        await DbContext.AddAsync(lesson, ct);
         return new ResultIdDto { Id = lesson.Id };
     }
 }

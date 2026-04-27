@@ -18,7 +18,7 @@ internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetList
     {
     }
 
-    public override async Task<PagedDto<CategoryDto>> Handle(GetListCategoriesQuery request, CancellationToken cancellationToken)
+    public override async Task<PagedDto<CategoryDto>> Handle(GetListCategoriesQuery request, CancellationToken ct)
     {
         IQueryable<Category> query = DbContext.Categories
             .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Name, $"%{request.Filter}%"));
@@ -33,7 +33,7 @@ internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetList
             _ => query.OrderBy(x => x.CreationTime)
         };
 
-        int total = await query.CountAsync(cancellationToken);
+        int total = await query.CountAsync(ct);
 
         List<CategoryDto> categories = await query
             .Paged(request.PageIndex, request.PageSize)
@@ -46,7 +46,7 @@ internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetList
                 CreationTime = i.CreationTime,
                 LastModificationTime = i.LastModificationTime
             })
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         return new PagedDto<CategoryDto>
         {

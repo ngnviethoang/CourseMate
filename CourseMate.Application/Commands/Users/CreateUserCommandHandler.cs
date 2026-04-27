@@ -43,7 +43,7 @@ internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUs
         _roleManager = roleManager;
     }
 
-    public override async Task<ResultIdDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public override async Task<ResultIdDto> Handle(CreateUserCommand request, CancellationToken ct)
     {
         request.Role = request.Role.Trim().ToLowerInvariant();
         if (await _roleManager.RoleExistsAsync(request.Role))

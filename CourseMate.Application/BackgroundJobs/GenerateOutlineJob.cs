@@ -29,9 +29,9 @@ public class GenerateOutlineJob
     }
 
     [AutomaticRetry(Attempts = 0)]
-    public async Task ExecuteAsync(Guid lessonMaterialId, CancellationToken cancellationToken)
+    public async Task ExecuteAsync(Guid lessonMaterialId, CancellationToken ct)
     {
-        LessonMaterial? lessonMaterial = await _dbContext.LessonMaterials.FirstOrDefaultAsync(lm => lm.Id == lessonMaterialId, cancellationToken);
+        LessonMaterial? lessonMaterial = await _dbContext.LessonMaterials.FirstOrDefaultAsync(lm => lm.Id == lessonMaterialId, ct);
         if (lessonMaterial == null)
         {
             return;
@@ -40,7 +40,7 @@ public class GenerateOutlineJob
         _logger.LogInformation("Start generate outline for lesson {lessonMaterialId}", lessonMaterial.LessonId);
 
         // 1. Create query embedding
-        ReadOnlyMemory<float> embedding = await _aiService.GenerateVectorAsync("main topics, key concepts, lesson structure", cancellationToken);
+        ReadOnlyMemory<float> embedding = await _aiService.GenerateVectorAsync("main topics, key concepts, lesson structure", ct);
         Vector queryVector = new(embedding);
 
         // 2. Search relevant chunks
@@ -49,32 +49,32 @@ public class GenerateOutlineJob
             .OrderBy(x => x.Embedding.CosineDistance(queryVector))
             .Take(10)
             .Select(x => x.FileChunkId)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
         if (fileChunkIds.Count == 0)
         {
             fileChunkIds = await _dbContext.FileEntryEmbeddings
                 .Where(x => x.FileEntryId == lessonMaterial.DocumentFileId)
                 .Select(x => x.FileChunkId)
-                .ToListAsync(cancellationToken);
+                .ToListAsync(ct);
         }
-        
+
         // 3. Build context
         List<FileChunk> fileChunks = await _dbContext.FileChunks
             .Where(i => fileChunkIds.Contains(i.Id))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
         List<string> chunks = [];
         foreach (FileChunk fileChunk in fileChunks)
         {
-            chunks.Add(await File.ReadAllTextAsync(fileChunk.ChunkPath, cancellationToken));
+            chunks.Add(await File.ReadAllTextAsync(fileChunk.ChunkPath, ct));
         }
 
         string docContext = string.Join("\n\n---\n\n", chunks);
 
         // 4. External research (LLM simulate search)
-        string externalContext = await _aiService.SearchAsync(docContext, cancellationToken);
+        string externalContext = await _aiService.SearchAsync(docContext, ct);
 
         // 6. Generate outline
-        string outline = await _aiService.GenerateContentAsync(externalContext, cancellationToken);
+        string outline = await _aiService.GenerateContentAsync(externalContext, ct);
         outline = outline.Replace("```json", "").Replace("```", "").Trim();
         try
         {
@@ -94,7 +94,7 @@ public class GenerateOutlineJob
 
         lessonMaterial.Outline = outline;
         _dbContext.LessonMaterials.Update(lessonMaterial);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.SaveChangesAsync(ct);
         _logger.LogInformation("Finished generate outline for lesson {LessonId}", lessonMaterial.LessonId);
     }
 }

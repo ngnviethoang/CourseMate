@@ -24,9 +24,9 @@ internal sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateO
     {
     }
 
-    public override async Task<int> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(UpdateOrderCommand request, CancellationToken ct)
     {
-        Order? order = await DbContext.Orders.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        Order? order = await DbContext.Orders.FirstOrDefaultAsync(x => x.Id == request.Id, ct);
 
         if (order == null)
         {
@@ -41,9 +41,9 @@ internal sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateO
             List<Guid> courseIds = await DbContext.OrderItems
                 .Where(x => x.OrderId == order.Id)
                 .Select(x => x.CourseId)
-                .ToListAsync(cancellationToken);
+                .ToListAsync(ct);
             IEnumerable<Enrollment> enrollments = courseIds.Select(courseId => new Enrollment(Guid.NewGuid(), order.StudentId, courseId));
-            await DbContext.Enrollments.AddRangeAsync(enrollments, cancellationToken);
+            await DbContext.Enrollments.AddRangeAsync(enrollments, ct);
         }
 
         return Codes.Success;

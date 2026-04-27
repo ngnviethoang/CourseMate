@@ -21,7 +21,7 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
     {
     }
 
-    public override async Task<LessonDetailDto?> Handle(GetLessonByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<LessonDetailDto?> Handle(GetLessonByIdQuery request, CancellationToken ct)
     {
         Guid studentId = CurrentUserId;
 
@@ -34,27 +34,27 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
                 LessonType = l.LessonType,
                 Position = l.Position
             })
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(ct);
 
         if (lesson == null)
         {
             return null;
         }
 
-        lesson.IsCompleted = await DbContext.UserLessonProgresses.AnyAsync(p => p.StudentId == studentId && p.LessonId == request.Id && p.IsCompleted, cancellationToken);
+        lesson.IsCompleted = await DbContext.UserLessonProgresses.AnyAsync(p => p.StudentId == studentId && p.LessonId == request.Id && p.IsCompleted, ct);
 
         switch (lesson.LessonType)
         {
             case LessonType.Video:
-                LessonVideo? video = await DbContext.LessonVideos.FirstOrDefaultAsync(v => v.LessonId == request.Id, cancellationToken);
+                LessonVideo? video = await DbContext.LessonVideos.FirstOrDefaultAsync(v => v.LessonId == request.Id, ct);
                 lesson.VideoUrl = video?.VideoUrl;
                 break;
             case LessonType.Reading:
-                LessonReading? reading = await DbContext.LessonReadings.FirstOrDefaultAsync(r => r.LessonId == request.Id, cancellationToken);
+                LessonReading? reading = await DbContext.LessonReadings.FirstOrDefaultAsync(r => r.LessonId == request.Id, ct);
                 lesson.ReadingContent = reading?.Content;
                 break;
             case LessonType.Coding:
-                LessonCoding? coding = await DbContext.LessonCodings.FirstOrDefaultAsync(c => c.LessonId == request.Id, cancellationToken);
+                LessonCoding? coding = await DbContext.LessonCodings.FirstOrDefaultAsync(c => c.LessonId == request.Id, ct);
                 if (coding != null)
                 {
                     lesson.ProblemStatement = coding.ProblemStatement;
@@ -64,7 +64,7 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
 
                 break;
             case LessonType.Quiz:
-                LessonQuiz? quiz = await DbContext.LessonQuizzes.FirstOrDefaultAsync(q => q.LessonId == request.Id, cancellationToken);
+                LessonQuiz? quiz = await DbContext.LessonQuizzes.FirstOrDefaultAsync(q => q.LessonId == request.Id, ct);
                 if (quiz != null)
                 {
                     lesson.QuizDescription = quiz.Description;

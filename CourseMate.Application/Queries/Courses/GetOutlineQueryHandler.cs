@@ -28,7 +28,7 @@ internal sealed class GetOutlineQueryHandler : AbstractQueryHandler<GetOutlineQu
         _logger = logger;
     }
 
-    public override async Task<OutlineDto?> Handle(GetOutlineQuery request, CancellationToken cancellationToken)
+    public override async Task<OutlineDto?> Handle(GetOutlineQuery request, CancellationToken ct)
     {
         bool isAuthor = await (
                 from lesson in DbContext.Lessons
@@ -38,14 +38,14 @@ internal sealed class GetOutlineQueryHandler : AbstractQueryHandler<GetOutlineQu
                 select course.InstructorId
             )
             .WhereIf(IsInRole(Roles.Instructor), x => x == CurrentUserId)
-            .AnyAsync(cancellationToken);
+            .AnyAsync(ct);
 
         if (!isAuthor)
         {
             throw new UnauthorizedAccessException();
         }
 
-        LessonMaterial? lessonMaterial = await DbContext.LessonMaterials.FirstOrDefaultAsync(i => i.Id == request.LessonMaterialId, cancellationToken);
+        LessonMaterial? lessonMaterial = await DbContext.LessonMaterials.FirstOrDefaultAsync(i => i.Id == request.LessonMaterialId, ct);
         if (lessonMaterial == null)
         {
             return new OutlineDto();

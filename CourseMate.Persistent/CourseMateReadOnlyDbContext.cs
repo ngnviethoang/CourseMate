@@ -37,10 +37,16 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<IdentityUser
     public DbSet<FileChunk> FileChunks { get; set; }
     public DbSet<FileEntryEmbedding> FileEntryEmbeddings { get; set; }
     public DbSet<LessonMaterial> LessonMaterials { get; set; }
+    public DbSet<Exercise> Exercises { get; set; }
+    public DbSet<ExerciseExample> ExerciseExamples { get; set; }
+    public DbSet<ExerciseTestCase> ExerciseTestCases { get; set; }
+    public DbSet<ExerciseDefaultCode> ExerciseDefaultCodes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssemblyReference).Assembly);
+
         foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
         {
             if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
@@ -64,12 +70,12 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<IdentityUser
         throw new InvalidOperationException("This DbContext is read-only.");
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override Task<int> SaveChangesAsync(CancellationToken ct = default)
     {
         throw new InvalidOperationException("This DbContext is read-only.");
     }
 
-    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken ct = default)
     {
         throw new InvalidOperationException("This DbContext is read-only.");
     }

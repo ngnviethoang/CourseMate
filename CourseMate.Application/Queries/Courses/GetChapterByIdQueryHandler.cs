@@ -21,7 +21,7 @@ internal sealed class GetChapterByIdQueryHandler : AbstractQueryHandler<GetChapt
     {
     }
 
-    public override async Task<ChapterDto?> Handle(GetChapterByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<ChapterDto?> Handle(GetChapterByIdQuery request, CancellationToken ct)
     {
         IQueryable<ChapterDto> query = from chapter in DbContext.Chapters
             join course in DbContext.Courses on chapter.CourseId equals course.Id
@@ -37,7 +37,7 @@ internal sealed class GetChapterByIdQueryHandler : AbstractQueryHandler<GetChapt
 
         ChapterDto? result = await query
             .WhereIf(IsInRole(Roles.Instructor), chapter => chapter.Id == request.Id)
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(ct);
 
         if (result != null)
         {

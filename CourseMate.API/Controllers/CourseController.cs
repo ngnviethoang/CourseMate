@@ -64,8 +64,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpGet("courses/my")]
-    [Authorize(Roles = Roles.Admin)]
-    [Authorize(Roles = Roles.Student)]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Student}")]
     public async Task<ActionResult> GetMyCoursesAsync([FromQuery] GetMyCoursesQuery request)
     {
         PagedDto<StudentMyCourseDto> result = await _mediator.Send(request);
@@ -174,7 +173,7 @@ public class CourseController : ControllerBase
     ///     Upload a Word/PDF file for the lesson and trigger AI processing (parse + outline generation)
     /// </summary>
     [HttpPost("lessons/{lessonId:guid}/materials")]
-    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    // [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
     public async Task<ActionResult> CreateLessonMaterialAsync(Guid lessonId, IFormFile request)
     {
         if (request.Length == 0)

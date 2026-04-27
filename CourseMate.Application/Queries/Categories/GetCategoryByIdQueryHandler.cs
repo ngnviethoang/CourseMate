@@ -19,7 +19,7 @@ internal sealed class GetCategoryByIdQueryHandler : AbstractQueryHandler<GetCate
     {
     }
 
-    public override async Task<CategoryDto?> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<CategoryDto?> Handle(GetCategoryByIdQuery request, CancellationToken ct)
     {
         CategoryDto? category = await DbContext.Categories
             .Where(x => x.Id == request.Id)
@@ -30,7 +30,7 @@ internal sealed class GetCategoryByIdQueryHandler : AbstractQueryHandler<GetCate
                 Description = x.Description,
                 IsActive = x.IsActive
             })
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(ct);
 
         return category;
     }

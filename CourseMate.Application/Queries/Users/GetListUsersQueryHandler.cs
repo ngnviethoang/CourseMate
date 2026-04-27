@@ -18,7 +18,7 @@ internal sealed class GetListUsersQueryHandler : AbstractQueryHandler<GetListUse
     {
     }
 
-    public override async Task<PagedDto<UserDto>> Handle(GetListUsersQuery request, CancellationToken cancellationToken)
+    public override async Task<PagedDto<UserDto>> Handle(GetListUsersQuery request, CancellationToken ct)
     {
         IQueryable<IdentityUser<Guid>> query = DbContext.Users.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x =>
             (x.UserName != null && EF.Functions.ILike(x.UserName, $"%{request.Filter}%")) ||
@@ -33,7 +33,7 @@ internal sealed class GetListUsersQueryHandler : AbstractQueryHandler<GetListUse
                 Email = x.Email,
                 PhoneNumber = x.PhoneNumber
             })
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         return new PagedDto<UserDto>
         {

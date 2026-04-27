@@ -17,16 +17,16 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
     {
     }
 
-    public override async Task<DashboardDto> Handle(GetDashboardDataQuery request, CancellationToken cancellationToken)
+    public override async Task<DashboardDto> Handle(GetDashboardDataQuery request, CancellationToken ct)
     {
         // 1. Basic Stats
         decimal totalRevenue = await DbContext.Orders
             .Where(o => o.Status == OrderStatus.Completed)
-            .SumAsync(o => o.TotalAmount, cancellationToken);
+            .SumAsync(o => o.TotalAmount, ct);
 
-        int totalStudents = await DbContext.Users.CountAsync(cancellationToken);
-        int totalCourses = await DbContext.Courses.CountAsync(cancellationToken);
-        int totalOrders = await DbContext.Orders.CountAsync(cancellationToken);
+        int totalStudents = await DbContext.Users.CountAsync(ct);
+        int totalCourses = await DbContext.Courses.CountAsync(ct);
+        int totalOrders = await DbContext.Orders.CountAsync(ct);
 
         // 2. Revenue By Month (Last 12 Months)
         DateTimeOffset twelveMonthsAgo = DateTimeOffset.UtcNow.AddMonths(-11);
@@ -35,7 +35,7 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
         List<MonthlyOrderDto> monthlyOrders = await DbContext.Orders
             .Where(o => o.Status == OrderStatus.Completed && o.CreationTime >= twelveMonthsAgo)
             .Select(o => new MonthlyOrderDto(o.TotalAmount, o.CreationTime))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         List<MonthlyRevenueDto> revenueByMonth = monthlyOrders
             .GroupBy(o => new { o.CreationTime.Month, o.CreationTime.Year })
@@ -64,7 +64,7 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
                 EnrollmentCount = g.Count(),
                 Revenue = g.Sum(x => x.orderItem.Price)
             }
-        ).Take(5).ToListAsync(cancellationToken);
+        ).Take(5).ToListAsync(ct);
 
         // 4. Top 5 Instructors
         List<TopInstructorDto> topInstructors = await (
@@ -83,7 +83,7 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
                 CourseCount = DbContext.Courses.Count(c => c.InstructorId == g.Key.Id),
                 TotalRevenue = g.Sum(x => x.orderItem.Price)
             }
-        ).Take(5).ToListAsync(cancellationToken);
+        ).Take(5).ToListAsync(ct);
 
         return new DashboardDto
         {

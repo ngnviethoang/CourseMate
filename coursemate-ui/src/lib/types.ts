@@ -146,11 +146,11 @@ export interface UpdateChapterRequest {
 // ─── Lesson ───────────────────────────────────────────────────────────────────
 
 export enum LessonType {
-  Video = 1,
-  Reading = 2,
-  Coding = 3,
-  Quiz = 4,
-  Slide = 5
+  Video = 'Video',
+  Reading = 'Reading',
+  Coding = 'Coding',
+  Quiz = 'Quiz',
+  Slide = 'Slide'
 }
 
 export interface LessonDto {
@@ -348,4 +348,124 @@ export interface DashboardDto {
   revenueByMonth: MonthlyRevenueDto[]
   topCourses: TopCourseDto[]
   topInstructors: TopInstructorDto[]
+}
+// ─── AI Outline ───────────────────────────────────────────────────────────────
+
+export interface LectureSlide {
+  slideNumber: number
+  title: string
+  bullets: string[]
+  relatedLinks: string[]
+}
+
+export interface LectureOutline {
+  lessonTitle: string
+  relatedLinks: string[]
+  slides: LectureSlide[]
+}
+
+export interface OutlineDto {
+  lessonId: string
+  lessonMaterialId: string
+  lectureOutline: LectureOutline
+}
+
+export interface ProcessingStatusDto {
+  lessonMaterialId: string
+  lessonId: string
+}
+
+export interface UpdateOutlineRequest {
+  lessonMaterialId: string
+  lectureOutline: LectureOutline
+}
+// ─── Code Runner ──────────────────────────────────────────────────────────────
+
+export interface LanguageDto {
+  id: string
+  name: string
+}
+
+export interface RunCodeRequest {
+  compiler: string
+  code: string
+  input?: string
+}
+
+export interface RunCodeResponse {
+  output: string
+  error: string
+  status: string
+  exit_code: number
+  time: string
+  total: string
+  memory: string
+}
+
+// ─── Exercise ─────────────────────────────────────────────────────────────────
+
+export interface ExerciseTestCaseDto {
+  id: string
+  input: string
+  expectedOutput: string
+  description: string
+  isHidden: boolean
+}
+
+export interface ExerciseDefaultCodeDto {
+  id: string
+  language: string
+  starterCode: string
+}
+
+export interface ExerciseExampleDto {
+  input: string
+  output: string
+  explanation?: string
+}
+
+export interface ExerciseDto {
+  id: string
+  title: string
+  description: string
+  difficulty: string
+  category: string
+  testCaseCount: number
+  creatorId?: string
+  creatorName?: string
+  creationTime: string
+  lastModificationTime?: string
+}
+
+export interface ExerciseDetailDto extends ExerciseDto {
+  examples: ExerciseExampleDto[]
+  constraints: string[]
+  hints: string[]
+  testCases: ExerciseTestCaseDto[]
+  defaultCodes: ExerciseDefaultCodeDto[]
+}
+
+export interface CreateExerciseRequest {
+  title: string
+  description: string
+  difficulty: string
+  category: string
+  examples: ExerciseExampleDto[]
+  constraints: string[]
+  hints: string[]
+  testCases: Omit<ExerciseTestCaseDto, 'id'>[]
+  defaultCodes: Omit<ExerciseDefaultCodeDto, 'id'>[]
+}
+
+export interface UpdateExerciseRequest {
+  id: string
+  title: string
+  description: string
+  difficulty: string
+  category: string
+  examples: ExerciseExampleDto[]
+  constraints: string[]
+  hints: string[]
+  testCases: (Partial<ExerciseTestCaseDto> & Omit<ExerciseTestCaseDto, 'id'>)[]
+  defaultCodes: (Partial<ExerciseDefaultCodeDto> & Omit<ExerciseDefaultCodeDto, 'id'>)[]
 }

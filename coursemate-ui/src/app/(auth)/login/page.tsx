@@ -11,7 +11,7 @@ import { GraduationCap, ArrowRight, Loader2, Lock, User, Eye, EyeOff } from 'luc
 import { authService } from '@/lib/auth-service'
 import { toast } from 'sonner'
 import { Roles } from '@/lib/consts'
-import { decodeJwt } from '@/lib/auth-token.util'
+import { decodeJwt, saveToken } from '@/lib/auth-token.util'
 
 export default function StudentLoginPage() {
   const router = useRouter()
@@ -35,13 +35,25 @@ export default function StudentLoginPage() {
     try {
       const res = await authService.login({ userName, password })
       if (res?.accessToken) {
-        localStorage.setItem('accessToken', res.accessToken)
+        // 1. Save token using helper (handles both localStorage and cookies)
+        saveToken(res.accessToken)
+
+        // 2. Decode and normalize payload
         const payload = decodeJwt(res.accessToken)
+        console.log('Login successful. Payload:', payload)
+
         toast.success('Welcome back!')
-        if (payload.role === Roles.Student) {
+
+        // 3. Handle redirection based on normalized role
+        const role = payload.role as string
+        if (role === Roles.Student) {
           router.push('/')
-        } else if (payload.role === Roles.Admin || payload.role === Roles.Instructor) {
+        } else if (role === Roles.Admin || role === Roles.Instructor) {
           router.push('/management')
+        } else {
+          // Fallback if role is not recognized but we have a token
+          console.warn('Unrecognized role:', role)
+          router.push('/')
         }
       } else {
         toast.error('Invalid response from server.')

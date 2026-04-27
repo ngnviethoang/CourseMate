@@ -22,25 +22,25 @@ public static class QueryableExtensions
 
     extension<T>(DbSet<T> source) where T : Entity
     {
-        public async Task EnsureExistsAsync(Guid id, CancellationToken cancellationToken)
+        public async Task EnsureExistsAsync(Guid id, CancellationToken ct)
         {
-            if (!await source.AnyAsync(i => i.Id == id, cancellationToken))
+            if (!await source.AnyAsync(i => i.Id == id, ct))
             {
                 throw new EntityNotFoundException(nameof(T), id);
             }
         }
 
-        public async Task EnsureExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)
+        public async Task EnsureExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken ct)
         {
-            if (!await source.AnyAsync(predicate, cancellationToken))
+            if (!await source.AnyAsync(predicate, ct))
             {
                 throw new EntityNotFoundException(nameof(T), Guid.Empty);
             }
         }
 
-        public async Task RemoveByIdAsync(Guid id, CancellationToken cancellationToken)
+        public async Task RemoveByIdAsync(Guid id, CancellationToken ct)
         {
-            T? entity = await source.FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
+            T? entity = await source.FirstOrDefaultAsync(i => i.Id == id, ct);
             if (entity != null)
             {
                 source.Remove(entity);

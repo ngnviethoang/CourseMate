@@ -20,8 +20,4 @@
         <ProjectReference Include="..\CourseMate.Contracts\CourseMate.Contracts.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="Migrations\"/>
-    </ItemGroup>
-
 </Project>

@@ -31,7 +31,7 @@ internal sealed class UpdateUserAbstractCommandHandler : AbstractCommandHandler<
         _userManager = userManager;
     }
 
-    public override async Task<int> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(UpdateUserCommand request, CancellationToken ct)
     {
         IdentityUser<Guid>? user = await _userManager.FindByIdAsync(request.Id.ToString());
 

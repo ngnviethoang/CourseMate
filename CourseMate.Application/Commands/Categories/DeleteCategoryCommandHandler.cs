@@ -20,9 +20,9 @@ internal sealed class DeleteCategoryAbstractCommandHandler : AbstractCommandHand
     {
     }
 
-    public override async Task<int> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(DeleteCategoryCommand request, CancellationToken ct)
     {
-        await DbContext.Categories.RemoveByIdAsync(request.Id, cancellationToken);
+        await DbContext.Categories.RemoveByIdAsync(request.Id, ct);
         return Codes.Success;
     }
 }

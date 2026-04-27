@@ -28,7 +28,7 @@ internal sealed class ChangePasswordCommandHandler : AbstractCommandHandler<Chan
         _userManager = userManager;
     }
 
-    public override async Task<int> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(ChangePasswordCommand request, CancellationToken ct)
     {
         IdentityUser<Guid>? user = await _userManager.FindByIdAsync(CurrentUserId.ToString());
         if (user == null)

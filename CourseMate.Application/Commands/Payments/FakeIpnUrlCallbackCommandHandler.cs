@@ -22,18 +22,18 @@ internal sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<
     {
     }
 
-    public override async Task<int> Handle(FakeIpnUrlCallbackCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(FakeIpnUrlCallbackCommand request, CancellationToken ct)
     {
         List<Guid> courseIds = await DbContext.OrderItems
             .Where(x => x.OrderId == request.OrderId)
             .Select(x => x.CourseId)
             .Distinct()
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         List<Guid> existingCourseIds = await DbContext.Enrollments
             .Where(x => x.StudentId == request.StudentId && courseIds.Contains(x.CourseId))
             .Select(x => x.CourseId)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         List<Enrollment> newEnrollments = courseIds
             .Except(existingCourseIds)
@@ -42,7 +42,7 @@ internal sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<
 
         if (newEnrollments.Count > 0)
         {
-            await DbContext.Enrollments.AddRangeAsync(newEnrollments, cancellationToken);
+            await DbContext.Enrollments.AddRangeAsync(newEnrollments, ct);
         }
 
         List<CartItem> cartItems = await (
@@ -51,7 +51,7 @@ internal sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<
             where cart.StudentId == request.StudentId
                   && courseIds.Contains(cartItem.CourseId)
             select cartItem
-        ).ToListAsync(cancellationToken);
+        ).ToListAsync(ct);
 
         DbContext.CartItems.RemoveRange(cartItems);
         return Codes.Success;
