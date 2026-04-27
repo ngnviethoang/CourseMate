@@ -76,29 +76,6 @@ namespace CourseMate.Persistent.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Exercises",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Title = table.Column<string>(type: "citext", maxLength: 1024, nullable: false),
-                    Description = table.Column<string>(type: "citext", maxLength: 32768, nullable: false),
-                    Difficulty = table.Column<int>(type: "integer", nullable: false),
-                    Category = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Constraints = table.Column<string>(type: "jsonb", nullable: false, defaultValueSql: "'[]'::jsonb"),
-                    Hints = table.Column<string>(type: "jsonb", nullable: false, defaultValueSql: "'[]'::jsonb"),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CreationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    LastModificationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Exercises", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "FileEntries",
                 columns: table => new
                 {
@@ -308,7 +285,6 @@ namespace CourseMate.Persistent.Migrations
                     StudentId = table.Column<Guid>(type: "uuid", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "numeric", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    Description = table.Column<string>(type: "character varying(32768)", maxLength: 32768, nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -362,85 +338,6 @@ namespace CourseMate.Persistent.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ExerciseDefaultCodes",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ExerciseId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Language = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    StarterCode = table.Column<string>(type: "character varying(32768)", maxLength: 32768, nullable: false),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CreationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    LastModificationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExerciseDefaultCodes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ExerciseDefaultCodes_Exercises_ExerciseId",
-                        column: x => x.ExerciseId,
-                        principalTable: "Exercises",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ExerciseExamples",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Input = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    Output = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    Explanation = table.Column<string>(type: "character varying(32768)", maxLength: 32768, nullable: false),
-                    ExerciseId = table.Column<Guid>(type: "uuid", nullable: false),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CreationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    LastModificationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExerciseExamples", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ExerciseExamples_Exercises_ExerciseId",
-                        column: x => x.ExerciseId,
-                        principalTable: "Exercises",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ExerciseTestCases",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ExerciseId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Input = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    ExpectedOutput = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    IsHidden = table.Column<bool>(type: "boolean", nullable: false),
-                    Order = table.Column<int>(type: "integer", nullable: false),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CreationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    LastModificationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExerciseTestCases", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ExerciseTestCases_Exercises_ExerciseId",
-                        column: x => x.ExerciseId,
-                        principalTable: "Exercises",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "FileChunks",
                 columns: table => new
                 {
@@ -468,19 +365,15 @@ namespace CourseMate.Persistent.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PaymentTransactions",
+                name: "Payments",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    Currency = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
+                    OrderId = table.Column<Guid>(type: "uuid", nullable: false),
                     Amount = table.Column<decimal>(type: "numeric", nullable: false),
                     Provider = table.Column<string>(type: "citext", maxLength: 1024, nullable: false),
-                    FailReason = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    OrderId = table.Column<Guid>(type: "uuid", nullable: false),
                     TransactionId = table.Column<string>(type: "citext", maxLength: 1024, nullable: false),
-                    RawRequest = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    RawResponse = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -489,9 +382,9 @@ namespace CourseMate.Persistent.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PaymentTransactions", x => x.Id);
+                    table.PrimaryKey("PK_Payments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PaymentTransactions_Orders_OrderId",
+                        name: "FK_Payments_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
@@ -655,7 +548,7 @@ namespace CourseMate.Persistent.Migrations
                     StartIndex = table.Column<int>(type: "integer", nullable: false),
                     EndIndex = table.Column<int>(type: "integer", nullable: false),
                     ShortText = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    Embedding = table.Column<Vector>(type: "vector(768)", nullable: false),
+                    Embedding = table.Column<Vector>(type: "vector(1536)", nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreationTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -745,6 +638,7 @@ namespace CourseMate.Persistent.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     LessonId = table.Column<Guid>(type: "uuid", nullable: false),
                     Outline = table.Column<string>(type: "character varying(32768)", maxLength: 32768, nullable: false),
+                    SlideFileId = table.Column<Guid>(type: "uuid", nullable: true),
                     DocumentFileId = table.Column<Guid>(type: "uuid", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
@@ -759,6 +653,12 @@ namespace CourseMate.Persistent.Migrations
                     table.ForeignKey(
                         name: "FK_LessonMaterials_FileEntries_DocumentFileId",
                         column: x => x.DocumentFileId,
+                        principalTable: "FileEntries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LessonMaterials_FileEntries_SlideFileId",
+                        column: x => x.SlideFileId,
                         principalTable: "FileEntries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -952,21 +852,6 @@ namespace CourseMate.Persistent.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExerciseDefaultCodes_ExerciseId",
-                table: "ExerciseDefaultCodes",
-                column: "ExerciseId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ExerciseExamples_ExerciseId",
-                table: "ExerciseExamples",
-                column: "ExerciseId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ExerciseTestCases_ExerciseId",
-                table: "ExerciseTestCases",
-                column: "ExerciseId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_FileChunks_FileEntryId",
                 table: "FileChunks",
                 column: "FileEntryId");
@@ -998,6 +883,12 @@ namespace CourseMate.Persistent.Migrations
                 name: "IX_LessonMaterials_LessonId",
                 table: "LessonMaterials",
                 column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LessonMaterials_SlideFileId",
+                table: "LessonMaterials",
+                column: "SlideFileId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_LessonQuizzes_LessonId",
@@ -1048,8 +939,8 @@ namespace CourseMate.Persistent.Migrations
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentTransactions_OrderId",
-                table: "PaymentTransactions",
+                name: "IX_Payments_OrderId",
+                table: "Payments",
                 column: "OrderId",
                 unique: true);
 
@@ -1099,15 +990,6 @@ namespace CourseMate.Persistent.Migrations
                 name: "Enrollments");
 
             migrationBuilder.DropTable(
-                name: "ExerciseDefaultCodes");
-
-            migrationBuilder.DropTable(
-                name: "ExerciseExamples");
-
-            migrationBuilder.DropTable(
-                name: "ExerciseTestCases");
-
-            migrationBuilder.DropTable(
                 name: "FileEntryEmbeddings");
 
             migrationBuilder.DropTable(
@@ -1135,7 +1017,7 @@ namespace CourseMate.Persistent.Migrations
                 name: "OutboxMessages");
 
             migrationBuilder.DropTable(
-                name: "PaymentTransactions");
+                name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "Reviews");
@@ -1148,9 +1030,6 @@ namespace CourseMate.Persistent.Migrations
 
             migrationBuilder.DropTable(
                 name: "Carts");
-
-            migrationBuilder.DropTable(
-                name: "Exercises");
 
             migrationBuilder.DropTable(
                 name: "FileChunks");

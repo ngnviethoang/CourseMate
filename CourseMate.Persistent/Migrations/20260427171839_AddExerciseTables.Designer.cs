@@ -13,8 +13,8 @@ using Pgvector;
 namespace CourseMate.Persistent.Migrations
 {
     [DbContext(typeof(CourseMateDbContext))]
-    [Migration("20260426113645_Initial")]
-    partial class Initial
+    [Migration("20260427171839_AddExerciseTables")]
+    partial class AddExerciseTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
