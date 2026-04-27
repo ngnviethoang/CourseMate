@@ -38,7 +38,7 @@ services:
             - ./etc/uploads:/app/uploads
             - ./etc/logs:/app/logs
             # - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-            - ~/.microsoft/usersecrets/:/home/app/.microsoft/usersecrets:ro
+            - ~/.microsoft/usersecrets/:/home/app/.microsoft/usersecrets/:ro
         depends_on:
             db:
                 condition: service_healthy
