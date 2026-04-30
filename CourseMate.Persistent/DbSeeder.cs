@@ -59,6 +59,7 @@ public static class DbSeeder
         foreach (Course i in courses)
         {
             i.InstructorId = instructorIds.ElementAtOrDefault(random.Next(instructorIds.Count));
+            i.ImageUrl = string.IsNullOrWhiteSpace(i.ImageUrl) ? string.Empty : i.ImageUrl;
         }
 
         await dbContext.Courses.AddRangeAsync(courses);
