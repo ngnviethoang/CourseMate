@@ -5,7 +5,7 @@
 -- Dumped from database version 16.13 (Debian 16.13-1.pgdg13+1)
 -- Dumped by pg_dump version 17.0
 
--- Started on 2026-04-30 15:23:48
+-- Started on 2026-04-30 15:35:12
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -20,45 +20,20 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 8 (class 2615 OID 51417)
--- Name: hangfire; Type: SCHEMA; Schema: -; Owner: -
+-- TOC entry 6 (class 2615 OID 2200)
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
 --
 
-CREATE SCHEMA hangfire;
-
-
---
--- TOC entry 2 (class 3079 OID 51418)
--- Name: citext; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+CREATE SCHEMA public;
 
 
 --
--- TOC entry 4204 (class 0 OID 0)
--- Dependencies: 2
--- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: -
+-- TOC entry 4107 (class 0 OID 0)
+-- Dependencies: 6
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
 --
 
-COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
-
-
---
--- TOC entry 3 (class 3079 OID 51523)
--- Name: vector; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS vector WITH SCHEMA public;
-
-
---
--- TOC entry 4205 (class 0 OID 0)
--- Dependencies: 3
--- Name: EXTENSION vector; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION vector IS 'vector data type and ivfflat and hnsw access methods';
+COMMENT ON SCHEMA public IS 'standard public schema';
 
 
 SET default_tablespace = '';
@@ -66,371 +41,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 218 (class 1259 OID 51851)
--- Name: aggregatedcounter; Type: TABLE; Schema: hangfire; Owner: -
---
-
-CREATE TABLE hangfire.aggregatedcounter (
-    id bigint NOT NULL,
-    key text NOT NULL,
-    value bigint NOT NULL,
-    expireat timestamp with time zone
-);
-
-
---
--- TOC entry 219 (class 1259 OID 51856)
--- Name: aggregatedcounter_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
---
-
-CREATE SEQUENCE hangfire.aggregatedcounter_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- TOC entry 4206 (class 0 OID 0)
--- Dependencies: 219
--- Name: aggregatedcounter_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
---
-
-ALTER SEQUENCE hangfire.aggregatedcounter_id_seq OWNED BY hangfire.aggregatedcounter.id;
-
-
---
--- TOC entry 220 (class 1259 OID 51857)
--- Name: counter; Type: TABLE; Schema: hangfire; Owner: -
---
-
-CREATE TABLE hangfire.counter (
-    id bigint NOT NULL,
-    key text NOT NULL,
-    value bigint NOT NULL,
-    expireat timestamp with time zone
-);
-
-
---
--- TOC entry 221 (class 1259 OID 51862)
--- Name: counter_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
---
-
-CREATE SEQUENCE hangfire.counter_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- TOC entry 4207 (class 0 OID 0)
--- Dependencies: 221
--- Name: counter_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
---
-
-ALTER SEQUENCE hangfire.counter_id_seq OWNED BY hangfire.counter.id;
-
-
---
--- TOC entry 222 (class 1259 OID 51863)
--- Name: hash; Type: TABLE; Schema: hangfire; Owner: -
---
-
-CREATE TABLE hangfire.hash (
-    id bigint NOT NULL,
-    key text NOT NULL,
-    field text NOT NULL,
-    value text,
-    expireat timestamp with time zone,
-    updatecount integer DEFAULT 0 NOT NULL
-);
-
-
---
--- TOC entry 223 (class 1259 OID 51869)
--- Name: hash_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
---
-
-CREATE SEQUENCE hangfire.hash_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- TOC entry 4208 (class 0 OID 0)
--- Dependencies: 223
--- Name: hash_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
---
-
-ALTER SEQUENCE hangfire.hash_id_seq OWNED BY hangfire.hash.id;
-
-
---
--- TOC entry 224 (class 1259 OID 51870)
--- Name: job; Type: TABLE; Schema: hangfire; Owner: -
---
-
-CREATE TABLE hangfire.job (
-    id bigint NOT NULL,
-    stateid bigint,
-    statename text,
-    invocationdata jsonb NOT NULL,
-    arguments jsonb NOT NULL,
-    createdat timestamp with time zone NOT NULL,
-    expireat timestamp with time zone,
-    updatecount integer DEFAULT 0 NOT NULL
-);
-
-
---
--- TOC entry 225 (class 1259 OID 51876)
--- Name: job_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
---
-
-CREATE SEQUENCE hangfire.job_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- TOC entry 4209 (class 0 OID 0)
--- Dependencies: 225
--- Name: job_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
---
-
-ALTER SEQUENCE hangfire.job_id_seq OWNED BY hangfire.job.id;
-
-
---
--- TOC entry 226 (class 1259 OID 51877)
--- Name: jobparameter; Type: TABLE; Schema: hangfire; Owner: -
---
-
-CREATE TABLE hangfire.jobparameter (
-    id bigint NOT NULL,
-    jobid bigint NOT NULL,
-    name text NOT NULL,
-    value text,
-    updatecount integer DEFAULT 0 NOT NULL
-);
-
-
---
--- TOC entry 227 (class 1259 OID 51883)
--- Name: jobparameter_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
---
-
-CREATE SEQUENCE hangfire.jobparameter_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- TOC entry 4210 (class 0 OID 0)
--- Dependencies: 227
--- Name: jobparameter_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
---
-
-ALTER SEQUENCE hangfire.jobparameter_id_seq OWNED BY hangfire.jobparameter.id;
-
-
---
--- TOC entry 228 (class 1259 OID 51884)
--- Name: jobqueue; Type: TABLE; Schema: hangfire; Owner: -
---
-
-CREATE TABLE hangfire.jobqueue (
-    id bigint NOT NULL,
-    jobid bigint NOT NULL,
-    queue text NOT NULL,
-    fetchedat timestamp with time zone,
-    updatecount integer DEFAULT 0 NOT NULL
-);
-
-
---
--- TOC entry 229 (class 1259 OID 51890)
--- Name: jobqueue_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
---
-
-CREATE SEQUENCE hangfire.jobqueue_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- TOC entry 4211 (class 0 OID 0)
--- Dependencies: 229
--- Name: jobqueue_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
---
-
-ALTER SEQUENCE hangfire.jobqueue_id_seq OWNED BY hangfire.jobqueue.id;
-
-
---
--- TOC entry 230 (class 1259 OID 51891)
--- Name: list; Type: TABLE; Schema: hangfire; Owner: -
---
-
-CREATE TABLE hangfire.list (
-    id bigint NOT NULL,
-    key text NOT NULL,
-    value text,
-    expireat timestamp with time zone,
-    updatecount integer DEFAULT 0 NOT NULL
-);
-
-
---
--- TOC entry 231 (class 1259 OID 51897)
--- Name: list_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
---
-
-CREATE SEQUENCE hangfire.list_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- TOC entry 4212 (class 0 OID 0)
--- Dependencies: 231
--- Name: list_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
---
-
-ALTER SEQUENCE hangfire.list_id_seq OWNED BY hangfire.list.id;
-
-
---
--- TOC entry 232 (class 1259 OID 51898)
--- Name: lock; Type: TABLE; Schema: hangfire; Owner: -
---
-
-CREATE TABLE hangfire.lock (
-    resource text NOT NULL,
-    updatecount integer DEFAULT 0 NOT NULL,
-    acquired timestamp with time zone
-);
-
-
---
--- TOC entry 233 (class 1259 OID 51904)
--- Name: schema; Type: TABLE; Schema: hangfire; Owner: -
---
-
-CREATE TABLE hangfire.schema (
-    version integer NOT NULL
-);
-
-
---
--- TOC entry 234 (class 1259 OID 51907)
--- Name: server; Type: TABLE; Schema: hangfire; Owner: -
---
-
-CREATE TABLE hangfire.server (
-    id text NOT NULL,
-    data jsonb,
-    lastheartbeat timestamp with time zone NOT NULL,
-    updatecount integer DEFAULT 0 NOT NULL
-);
-
-
---
--- TOC entry 235 (class 1259 OID 51913)
--- Name: set; Type: TABLE; Schema: hangfire; Owner: -
---
-
-CREATE TABLE hangfire.set (
-    id bigint NOT NULL,
-    key text NOT NULL,
-    score double precision NOT NULL,
-    value text NOT NULL,
-    expireat timestamp with time zone,
-    updatecount integer DEFAULT 0 NOT NULL
-);
-
-
---
--- TOC entry 236 (class 1259 OID 51919)
--- Name: set_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
---
-
-CREATE SEQUENCE hangfire.set_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- TOC entry 4213 (class 0 OID 0)
--- Dependencies: 236
--- Name: set_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
---
-
-ALTER SEQUENCE hangfire.set_id_seq OWNED BY hangfire.set.id;
-
-
---
--- TOC entry 237 (class 1259 OID 51920)
--- Name: state; Type: TABLE; Schema: hangfire; Owner: -
---
-
-CREATE TABLE hangfire.state (
-    id bigint NOT NULL,
-    jobid bigint NOT NULL,
-    name text NOT NULL,
-    reason text,
-    createdat timestamp with time zone NOT NULL,
-    data jsonb,
-    updatecount integer DEFAULT 0 NOT NULL
-);
-
-
---
--- TOC entry 238 (class 1259 OID 51926)
--- Name: state_id_seq; Type: SEQUENCE; Schema: hangfire; Owner: -
---
-
-CREATE SEQUENCE hangfire.state_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- TOC entry 4214 (class 0 OID 0)
--- Dependencies: 238
--- Name: state_id_seq; Type: SEQUENCE OWNED BY; Schema: hangfire; Owner: -
---
-
-ALTER SEQUENCE hangfire.state_id_seq OWNED BY hangfire.state.id;
-
-
---
--- TOC entry 239 (class 1259 OID 51927)
+-- TOC entry 226 (class 1259 OID 53954)
 -- Name: AspNetRoleClaims; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -443,7 +54,7 @@ CREATE TABLE public."AspNetRoleClaims" (
 
 
 --
--- TOC entry 240 (class 1259 OID 51932)
+-- TOC entry 225 (class 1259 OID 53953)
 -- Name: AspNetRoleClaims_Id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -458,7 +69,7 @@ ALTER TABLE public."AspNetRoleClaims" ALTER COLUMN "Id" ADD GENERATED BY DEFAULT
 
 
 --
--- TOC entry 241 (class 1259 OID 51933)
+-- TOC entry 219 (class 1259 OID 53909)
 -- Name: AspNetRoles; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -471,7 +82,7 @@ CREATE TABLE public."AspNetRoles" (
 
 
 --
--- TOC entry 242 (class 1259 OID 51938)
+-- TOC entry 228 (class 1259 OID 53967)
 -- Name: AspNetUserClaims; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -484,7 +95,7 @@ CREATE TABLE public."AspNetUserClaims" (
 
 
 --
--- TOC entry 243 (class 1259 OID 51943)
+-- TOC entry 227 (class 1259 OID 53966)
 -- Name: AspNetUserClaims_Id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -499,7 +110,7 @@ ALTER TABLE public."AspNetUserClaims" ALTER COLUMN "Id" ADD GENERATED BY DEFAULT
 
 
 --
--- TOC entry 244 (class 1259 OID 51944)
+-- TOC entry 229 (class 1259 OID 53979)
 -- Name: AspNetUserLogins; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -512,7 +123,7 @@ CREATE TABLE public."AspNetUserLogins" (
 
 
 --
--- TOC entry 245 (class 1259 OID 51949)
+-- TOC entry 230 (class 1259 OID 53991)
 -- Name: AspNetUserRoles; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -523,7 +134,7 @@ CREATE TABLE public."AspNetUserRoles" (
 
 
 --
--- TOC entry 246 (class 1259 OID 51952)
+-- TOC entry 231 (class 1259 OID 54006)
 -- Name: AspNetUserTokens; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -536,7 +147,7 @@ CREATE TABLE public."AspNetUserTokens" (
 
 
 --
--- TOC entry 247 (class 1259 OID 51957)
+-- TOC entry 220 (class 1259 OID 53916)
 -- Name: AspNetUsers; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -560,7 +171,7 @@ CREATE TABLE public."AspNetUsers" (
 
 
 --
--- TOC entry 248 (class 1259 OID 51962)
+-- TOC entry 241 (class 1259 OID 54129)
 -- Name: CartItems; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -576,7 +187,7 @@ CREATE TABLE public."CartItems" (
 
 
 --
--- TOC entry 249 (class 1259 OID 51965)
+-- TOC entry 232 (class 1259 OID 54018)
 -- Name: Carts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -591,7 +202,7 @@ CREATE TABLE public."Carts" (
 
 
 --
--- TOC entry 250 (class 1259 OID 51968)
+-- TOC entry 221 (class 1259 OID 53923)
 -- Name: Categories; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -608,7 +219,7 @@ CREATE TABLE public."Categories" (
 
 
 --
--- TOC entry 251 (class 1259 OID 51973)
+-- TOC entry 242 (class 1259 OID 54144)
 -- Name: Chapters; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -625,7 +236,7 @@ CREATE TABLE public."Chapters" (
 
 
 --
--- TOC entry 252 (class 1259 OID 51978)
+-- TOC entry 235 (class 1259 OID 54052)
 -- Name: Courses; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -646,7 +257,7 @@ CREATE TABLE public."Courses" (
 
 
 --
--- TOC entry 253 (class 1259 OID 51983)
+-- TOC entry 243 (class 1259 OID 54156)
 -- Name: Enrollments; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -662,7 +273,7 @@ CREATE TABLE public."Enrollments" (
 
 
 --
--- TOC entry 254 (class 1259 OID 51986)
+-- TOC entry 236 (class 1259 OID 54069)
 -- Name: ExerciseDefaultCodes; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -679,7 +290,7 @@ CREATE TABLE public."ExerciseDefaultCodes" (
 
 
 --
--- TOC entry 255 (class 1259 OID 51991)
+-- TOC entry 237 (class 1259 OID 54081)
 -- Name: ExerciseExamples; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -697,7 +308,7 @@ CREATE TABLE public."ExerciseExamples" (
 
 
 --
--- TOC entry 256 (class 1259 OID 51996)
+-- TOC entry 238 (class 1259 OID 54093)
 -- Name: ExerciseTestCases; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -717,7 +328,7 @@ CREATE TABLE public."ExerciseTestCases" (
 
 
 --
--- TOC entry 257 (class 1259 OID 52001)
+-- TOC entry 222 (class 1259 OID 53930)
 -- Name: Exercises; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -738,7 +349,7 @@ CREATE TABLE public."Exercises" (
 
 
 --
--- TOC entry 258 (class 1259 OID 52008)
+-- TOC entry 239 (class 1259 OID 54105)
 -- Name: FileChunks; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -757,7 +368,7 @@ CREATE TABLE public."FileChunks" (
 
 
 --
--- TOC entry 259 (class 1259 OID 52013)
+-- TOC entry 223 (class 1259 OID 53939)
 -- Name: FileEntries; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -780,7 +391,7 @@ CREATE TABLE public."FileEntries" (
 
 
 --
--- TOC entry 260 (class 1259 OID 52018)
+-- TOC entry 246 (class 1259 OID 54205)
 -- Name: FileEntryEmbeddings; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -800,7 +411,7 @@ CREATE TABLE public."FileEntryEmbeddings" (
 
 
 --
--- TOC entry 261 (class 1259 OID 52023)
+-- TOC entry 248 (class 1259 OID 54239)
 -- Name: LessonCodings; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -818,7 +429,7 @@ CREATE TABLE public."LessonCodings" (
 
 
 --
--- TOC entry 262 (class 1259 OID 52028)
+-- TOC entry 249 (class 1259 OID 54251)
 -- Name: LessonMaterials; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -836,7 +447,7 @@ CREATE TABLE public."LessonMaterials" (
 
 
 --
--- TOC entry 263 (class 1259 OID 52033)
+-- TOC entry 250 (class 1259 OID 54268)
 -- Name: LessonQuizzes; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -853,7 +464,7 @@ CREATE TABLE public."LessonQuizzes" (
 
 
 --
--- TOC entry 264 (class 1259 OID 52038)
+-- TOC entry 251 (class 1259 OID 54280)
 -- Name: LessonReadings; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -869,7 +480,7 @@ CREATE TABLE public."LessonReadings" (
 
 
 --
--- TOC entry 265 (class 1259 OID 52043)
+-- TOC entry 252 (class 1259 OID 54292)
 -- Name: LessonVideos; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -885,7 +496,7 @@ CREATE TABLE public."LessonVideos" (
 
 
 --
--- TOC entry 266 (class 1259 OID 52048)
+-- TOC entry 247 (class 1259 OID 54222)
 -- Name: Lessons; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -904,7 +515,7 @@ CREATE TABLE public."Lessons" (
 
 
 --
--- TOC entry 267 (class 1259 OID 52053)
+-- TOC entry 233 (class 1259 OID 54028)
 -- Name: Notifications; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -923,7 +534,7 @@ CREATE TABLE public."Notifications" (
 
 
 --
--- TOC entry 268 (class 1259 OID 52058)
+-- TOC entry 244 (class 1259 OID 54171)
 -- Name: OrderItems; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -940,7 +551,7 @@ CREATE TABLE public."OrderItems" (
 
 
 --
--- TOC entry 269 (class 1259 OID 52063)
+-- TOC entry 234 (class 1259 OID 54040)
 -- Name: Orders; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -958,7 +569,7 @@ CREATE TABLE public."Orders" (
 
 
 --
--- TOC entry 270 (class 1259 OID 52068)
+-- TOC entry 224 (class 1259 OID 53946)
 -- Name: OutboxMessages; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -978,7 +589,7 @@ CREATE TABLE public."OutboxMessages" (
 
 
 --
--- TOC entry 271 (class 1259 OID 52073)
+-- TOC entry 240 (class 1259 OID 54117)
 -- Name: PaymentTransactions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1001,7 +612,7 @@ CREATE TABLE public."PaymentTransactions" (
 
 
 --
--- TOC entry 272 (class 1259 OID 52078)
+-- TOC entry 245 (class 1259 OID 54188)
 -- Name: Reviews; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1019,7 +630,7 @@ CREATE TABLE public."Reviews" (
 
 
 --
--- TOC entry 273 (class 1259 OID 52083)
+-- TOC entry 253 (class 1259 OID 54304)
 -- Name: UserLessonProgresses; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1036,7 +647,7 @@ CREATE TABLE public."UserLessonProgresses" (
 
 
 --
--- TOC entry 274 (class 1259 OID 52086)
+-- TOC entry 218 (class 1259 OID 53471)
 -- Name: __EFMigrationsHistory; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1047,404 +658,234 @@ CREATE TABLE public."__EFMigrationsHistory" (
 
 
 --
--- TOC entry 3790 (class 2604 OID 52089)
--- Name: aggregatedcounter id; Type: DEFAULT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.aggregatedcounter ALTER COLUMN id SET DEFAULT nextval('hangfire.aggregatedcounter_id_seq'::regclass);
-
-
---
--- TOC entry 3791 (class 2604 OID 52090)
--- Name: counter id; Type: DEFAULT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.counter ALTER COLUMN id SET DEFAULT nextval('hangfire.counter_id_seq'::regclass);
-
-
---
--- TOC entry 3792 (class 2604 OID 52091)
--- Name: hash id; Type: DEFAULT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.hash ALTER COLUMN id SET DEFAULT nextval('hangfire.hash_id_seq'::regclass);
-
-
---
--- TOC entry 3794 (class 2604 OID 52092)
--- Name: job id; Type: DEFAULT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.job ALTER COLUMN id SET DEFAULT nextval('hangfire.job_id_seq'::regclass);
-
-
---
--- TOC entry 3796 (class 2604 OID 52093)
--- Name: jobparameter id; Type: DEFAULT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.jobparameter ALTER COLUMN id SET DEFAULT nextval('hangfire.jobparameter_id_seq'::regclass);
-
-
---
--- TOC entry 3798 (class 2604 OID 52094)
--- Name: jobqueue id; Type: DEFAULT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.jobqueue ALTER COLUMN id SET DEFAULT nextval('hangfire.jobqueue_id_seq'::regclass);
-
-
---
--- TOC entry 3800 (class 2604 OID 52095)
--- Name: list id; Type: DEFAULT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.list ALTER COLUMN id SET DEFAULT nextval('hangfire.list_id_seq'::regclass);
-
-
---
--- TOC entry 3804 (class 2604 OID 52096)
--- Name: set id; Type: DEFAULT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.set ALTER COLUMN id SET DEFAULT nextval('hangfire.set_id_seq'::regclass);
-
-
---
--- TOC entry 3806 (class 2604 OID 52097)
--- Name: state id; Type: DEFAULT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.state ALTER COLUMN id SET DEFAULT nextval('hangfire.state_id_seq'::regclass);
-
-
---
--- TOC entry 4142 (class 0 OID 51851)
--- Dependencies: 218
--- Data for Name: aggregatedcounter; Type: TABLE DATA; Schema: hangfire; Owner: -
---
-
-
-
---
--- TOC entry 4144 (class 0 OID 51857)
--- Dependencies: 220
--- Data for Name: counter; Type: TABLE DATA; Schema: hangfire; Owner: -
---
-
-
-
---
--- TOC entry 4146 (class 0 OID 51863)
--- Dependencies: 222
--- Data for Name: hash; Type: TABLE DATA; Schema: hangfire; Owner: -
---
-
-
-
---
--- TOC entry 4148 (class 0 OID 51870)
--- Dependencies: 224
--- Data for Name: job; Type: TABLE DATA; Schema: hangfire; Owner: -
---
-
-
-
---
--- TOC entry 4150 (class 0 OID 51877)
+-- TOC entry 4074 (class 0 OID 53954)
 -- Dependencies: 226
--- Data for Name: jobparameter; Type: TABLE DATA; Schema: hangfire; Owner: -
---
-
-
-
---
--- TOC entry 4152 (class 0 OID 51884)
--- Dependencies: 228
--- Data for Name: jobqueue; Type: TABLE DATA; Schema: hangfire; Owner: -
---
-
-
-
---
--- TOC entry 4154 (class 0 OID 51891)
--- Dependencies: 230
--- Data for Name: list; Type: TABLE DATA; Schema: hangfire; Owner: -
---
-
-
-
---
--- TOC entry 4156 (class 0 OID 51898)
--- Dependencies: 232
--- Data for Name: lock; Type: TABLE DATA; Schema: hangfire; Owner: -
---
-
-
-
---
--- TOC entry 4157 (class 0 OID 51904)
--- Dependencies: 233
--- Data for Name: schema; Type: TABLE DATA; Schema: hangfire; Owner: -
---
-
-INSERT INTO hangfire.schema VALUES (23);
-
-
---
--- TOC entry 4158 (class 0 OID 51907)
--- Dependencies: 234
--- Data for Name: server; Type: TABLE DATA; Schema: hangfire; Owner: -
---
-
-INSERT INTO hangfire.server VALUES ('laptop-km4uhqhf:3656:c4e07d95-724f-4ab2-b414-38db18a6f52a', '{"Queues": ["default"], "StartedAt": "2026-04-30T08:23:12.761166Z", "WorkerCount": 20}', '2026-04-30 08:23:12.964341+00', 0);
-
-
---
--- TOC entry 4159 (class 0 OID 51913)
--- Dependencies: 235
--- Data for Name: set; Type: TABLE DATA; Schema: hangfire; Owner: -
---
-
-
-
---
--- TOC entry 4161 (class 0 OID 51920)
--- Dependencies: 237
--- Data for Name: state; Type: TABLE DATA; Schema: hangfire; Owner: -
---
-
-
-
---
--- TOC entry 4163 (class 0 OID 51927)
--- Dependencies: 239
 -- Data for Name: AspNetRoleClaims; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4165 (class 0 OID 51933)
--- Dependencies: 241
+-- TOC entry 4067 (class 0 OID 53909)
+-- Dependencies: 219
 -- Data for Name: AspNetRoles; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public."AspNetRoles" VALUES ('019ddd7c-1496-75bb-8107-8e13f8996417', 'Admin', 'ADMIN', 'f9b7da0c-8e4c-498d-827e-31b3a9e66050');
-INSERT INTO public."AspNetRoles" VALUES ('019ddd7c-1521-7a67-85c4-33b52a2f1e4c', 'Instructor', 'INSTRUCTOR', '131cc909-3d14-44aa-9a0a-2d2df99f9cc4');
-INSERT INTO public."AspNetRoles" VALUES ('019ddd7c-152f-7097-87b1-f8d1edd6f6d7', 'Student', 'STUDENT', 'fdaec44d-77c7-44f3-9fd8-74d2b91e35d3');
+INSERT INTO public."AspNetRoles" VALUES ('019ddd86-9485-77d2-8aca-9f5143557939', 'Admin', 'ADMIN', '35f472bf-df34-4aad-bbc8-475ae2b285f2');
+INSERT INTO public."AspNetRoles" VALUES ('019ddd86-9502-78e7-bc31-c167309a5ca5', 'Instructor', 'INSTRUCTOR', 'f933dda4-95a6-4eb9-8d51-b489d81a354c');
+INSERT INTO public."AspNetRoles" VALUES ('019ddd86-950c-792c-ae0b-7c1bf2d7378a', 'Student', 'STUDENT', '0adce047-d89b-4bbe-ac20-41a703b97fc4');
 
 
 --
--- TOC entry 4166 (class 0 OID 51938)
--- Dependencies: 242
+-- TOC entry 4076 (class 0 OID 53967)
+-- Dependencies: 228
 -- Data for Name: AspNetUserClaims; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4168 (class 0 OID 51944)
--- Dependencies: 244
+-- TOC entry 4077 (class 0 OID 53979)
+-- Dependencies: 229
 -- Data for Name: AspNetUserLogins; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4169 (class 0 OID 51949)
--- Dependencies: 245
+-- TOC entry 4078 (class 0 OID 53991)
+-- Dependencies: 230
 -- Data for Name: AspNetUserRoles; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public."AspNetUserRoles" VALUES ('019ddd7c-1596-760b-b505-af169dde1eb4', '019ddd7c-1496-75bb-8107-8e13f8996417');
-INSERT INTO public."AspNetUserRoles" VALUES ('019ddd7c-168e-7f16-8ae8-9f7fe1a8fed6', '019ddd7c-1496-75bb-8107-8e13f8996417');
-INSERT INTO public."AspNetUserRoles" VALUES ('019ddd7c-16fc-7e39-a63b-c66e3f578f87', '019ddd7c-1521-7a67-85c4-33b52a2f1e4c');
-INSERT INTO public."AspNetUserRoles" VALUES ('019ddd7c-1767-7ee0-a32b-ab03f843c88f', '019ddd7c-1521-7a67-85c4-33b52a2f1e4c');
-INSERT INTO public."AspNetUserRoles" VALUES ('019ddd7c-17ed-748b-9a0b-4871476e9354', '019ddd7c-1521-7a67-85c4-33b52a2f1e4c');
-INSERT INTO public."AspNetUserRoles" VALUES ('019ddd7c-1873-7244-b4e3-9e0d2547a17e', '019ddd7c-152f-7097-87b1-f8d1edd6f6d7');
-INSERT INTO public."AspNetUserRoles" VALUES ('019ddd7c-18f4-780b-9bcf-9db2cd37826b', '019ddd7c-152f-7097-87b1-f8d1edd6f6d7');
-INSERT INTO public."AspNetUserRoles" VALUES ('019ddd7c-197d-736a-bb13-63d9aa1f4c04', '019ddd7c-152f-7097-87b1-f8d1edd6f6d7');
+INSERT INTO public."AspNetUserRoles" VALUES ('019ddd86-956b-7dda-95c9-52aa241f9d75', '019ddd86-9485-77d2-8aca-9f5143557939');
+INSERT INTO public."AspNetUserRoles" VALUES ('019ddd86-963f-7a14-bcb2-657d4a8edb36', '019ddd86-9485-77d2-8aca-9f5143557939');
+INSERT INTO public."AspNetUserRoles" VALUES ('019ddd86-96b0-7fd3-861a-4f3409c10536', '019ddd86-9502-78e7-bc31-c167309a5ca5');
+INSERT INTO public."AspNetUserRoles" VALUES ('019ddd86-9740-74ed-b041-1371ef1a831e', '019ddd86-9502-78e7-bc31-c167309a5ca5');
+INSERT INTO public."AspNetUserRoles" VALUES ('019ddd86-97c3-74f2-8bb1-48a9845adeec', '019ddd86-9502-78e7-bc31-c167309a5ca5');
+INSERT INTO public."AspNetUserRoles" VALUES ('019ddd86-9841-73cd-963c-3227980743fc', '019ddd86-950c-792c-ae0b-7c1bf2d7378a');
+INSERT INTO public."AspNetUserRoles" VALUES ('019ddd86-98c7-786d-8677-dcee6e61583b', '019ddd86-950c-792c-ae0b-7c1bf2d7378a');
+INSERT INTO public."AspNetUserRoles" VALUES ('019ddd86-9949-79a1-a114-52f8e0dc61d0', '019ddd86-950c-792c-ae0b-7c1bf2d7378a');
 
 
 --
--- TOC entry 4170 (class 0 OID 51952)
--- Dependencies: 246
+-- TOC entry 4079 (class 0 OID 54006)
+-- Dependencies: 231
 -- Data for Name: AspNetUserTokens; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4171 (class 0 OID 51957)
--- Dependencies: 247
+-- TOC entry 4068 (class 0 OID 53916)
+-- Dependencies: 220
 -- Data for Name: AspNetUsers; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public."AspNetUsers" VALUES ('019ddd7c-1596-760b-b505-af169dde1eb4', 'admin', 'ADMIN', 'admin@example.com', 'ADMIN@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAEE/xvIj8YCbOVQ5+efWNhDLuWum2QG/i7oVJw7USKvhKeVt7H7Q03YIrWbI6ocWBYQ==', 'FUDMEAJQX6P534TRTSW3DNAL7JQN7PRJ', 'a65b5b82-da58-46d9-82d4-196409e178db', NULL, false, false, NULL, true, 0);
-INSERT INTO public."AspNetUsers" VALUES ('019ddd7c-168e-7f16-8ae8-9f7fe1a8fed6', 'manager', 'MANAGER', 'manager@example.com', 'MANAGER@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAEORbOH2fyDiYJxwKtDz3+w783URxQNoGqcABicwSCzuGqF7n59hlaaJC39ZGsne6hQ==', 'N3Y5YN6E2XT6GBVKRVKKAN6BQTKH2GXB', '015e2203-b342-4481-89ba-a96636aa82ef', NULL, false, false, NULL, true, 0);
-INSERT INTO public."AspNetUsers" VALUES ('019ddd7c-16fc-7e39-a63b-c66e3f578f87', 'instructor1', 'INSTRUCTOR1', 'instructor1@example.com', 'INSTRUCTOR1@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAEKQITVehEW+WZe7j219wfdCyPdoCrKX3bd1VTvjhPdnuckRNB0GV/ZE6Qye1k0V8XQ==', '3UPNZGELEO6MTKZI35AESGZKN5A2TQ5G', 'f038536c-b08f-47cd-9706-55fe776204cb', NULL, false, false, NULL, true, 0);
-INSERT INTO public."AspNetUsers" VALUES ('019ddd7c-1767-7ee0-a32b-ab03f843c88f', 'instructor2', 'INSTRUCTOR2', 'instructor2@example.com', 'INSTRUCTOR2@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAEFsqgJts1UdPKgg91pBpuNvRBaMMHZ8SMMtHlhgjqTeutStvC2CziDAeiV49cp1qQQ==', 'ZLAFQCHKOT57QRJMDWGHGH6ZPDWRSHMV', '098fd8f9-0df4-4b38-a7ab-437300308f44', NULL, false, false, NULL, true, 0);
-INSERT INTO public."AspNetUsers" VALUES ('019ddd7c-17ed-748b-9a0b-4871476e9354', 'instructor3', 'INSTRUCTOR3', 'instructor3@example.com', 'INSTRUCTOR3@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAEOka5FZ8q1+zT4bLZqaIb7/GCdOw8nwfuPyKCes+rn9AqRFy8aU2q2Ox4cYuy63M9g==', 'OI45WD6LKAVNPMOBFQHGNSX63SED6KU7', 'a8d7c9cf-2ca3-4ffd-8d32-a4c6f9afceeb', NULL, false, false, NULL, true, 0);
-INSERT INTO public."AspNetUsers" VALUES ('019ddd7c-1873-7244-b4e3-9e0d2547a17e', 'student1', 'STUDENT1', 'student1@example.com', 'STUDENT1@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAEE3+DY+4QxXj4R2QaMYy92MLphS5auA/fDC+Vzpi0wMNEVPzLEOLxvnb4Ik23JWJLQ==', 'KTLEQEKWBVORZTIDINSJVTFCCM6B6ZX4', '5ae220fd-a9e4-4dff-8365-acd7139ea72e', NULL, false, false, NULL, true, 0);
-INSERT INTO public."AspNetUsers" VALUES ('019ddd7c-18f4-780b-9bcf-9db2cd37826b', 'student2', 'STUDENT2', 'student2@example.com', 'STUDENT2@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAEEefVLRn4HSm2C8WTSGyvljGecBvhL+KoX0HJiDbtXYmSjZE11a8nYZ+05YoxeprUw==', 'TPRHTOZF336ALBPM4CEY2FXISY3RY4SL', 'ad1de012-710d-4496-a9b0-dbd6d7eb685c', NULL, false, false, NULL, true, 0);
-INSERT INTO public."AspNetUsers" VALUES ('019ddd7c-197d-736a-bb13-63d9aa1f4c04', 'student3', 'STUDENT3', 'student3@example.com', 'STUDENT3@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAEDR0v389z0WTez+t3yx96jOXdVGhNG467RhTW3xQO/Gf1NpON5elFSLOObZW3aMMSg==', '6TN4BUWFUOS5PWKYZUHZ7CFDQG5SGODP', '88fd71ee-9b3a-4998-8f92-4019e56447b1', NULL, false, false, NULL, true, 0);
+INSERT INTO public."AspNetUsers" VALUES ('019ddd86-956b-7dda-95c9-52aa241f9d75', 'admin', 'ADMIN', 'admin@example.com', 'ADMIN@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAEJ3/gikBSzpdUVHVCmii/2Rzr7qRESnoIab0UiMpnuYWPTh8urBWKd0Qht5sIFbZ4w==', 'NKQIYIEMCHVDHOSWYCS5E7LVWLDFB74T', '5835f87c-2bea-4687-be47-3883bc1d0d7c', NULL, false, false, NULL, true, 0);
+INSERT INTO public."AspNetUsers" VALUES ('019ddd86-963f-7a14-bcb2-657d4a8edb36', 'manager', 'MANAGER', 'manager@example.com', 'MANAGER@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAEJd8YEqdd+cO2rzGqGAEWgc8FeXcqbOCa8KZiPnPaCZ7yxa2B9HQ8jmbn0yveqLYyA==', 'H2AH7O3DRHPIP2FREIE4TJGBHAZ7CY2F', '03f76297-f87b-482d-8fa1-bc989ec9a0aa', NULL, false, false, NULL, true, 0);
+INSERT INTO public."AspNetUsers" VALUES ('019ddd86-96b0-7fd3-861a-4f3409c10536', 'instructor1', 'INSTRUCTOR1', 'instructor1@example.com', 'INSTRUCTOR1@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAEFyCHcFplpMxJqPRRciiPDk9GE9ssXD9pF4dFddhDGzSSudWhrdQv6dX18nO91g8xw==', 'H5UKXLJGYXYKZOKCIOFIDCLYHSKMIOBU', '2d04e58b-255a-45e6-ba10-562c439f36dd', NULL, false, false, NULL, true, 0);
+INSERT INTO public."AspNetUsers" VALUES ('019ddd86-9740-74ed-b041-1371ef1a831e', 'instructor2', 'INSTRUCTOR2', 'instructor2@example.com', 'INSTRUCTOR2@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAEL+rtcgNk2qXY+ckM/KXSznO/1BonLXti4aNQxngXMQcnCK5J2qMT1AQsd5TSuKb+A==', 'ZKR2WROJ6ABRTJG7FAHXNGJA4EKASXVS', '2bfa3de9-735e-4ea8-bcba-175bd4373eed', NULL, false, false, NULL, true, 0);
+INSERT INTO public."AspNetUsers" VALUES ('019ddd86-97c3-74f2-8bb1-48a9845adeec', 'instructor3', 'INSTRUCTOR3', 'instructor3@example.com', 'INSTRUCTOR3@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAELxUxKxc836kaVHKSJloy+EjH6JzZ/S4vOPPk1CsvMup37ymk0wGUe19DJZqOJUs4Q==', 'NFLYSFTH5LQ56INFWBPE7J36Q5NX3LQU', 'c9b55202-dfe9-405c-abcf-656b4b04b99e', NULL, false, false, NULL, true, 0);
+INSERT INTO public."AspNetUsers" VALUES ('019ddd86-9841-73cd-963c-3227980743fc', 'student1', 'STUDENT1', 'student1@example.com', 'STUDENT1@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAEDxpHn51HU1dyhwjC6Q3H0/OXwDjrO0zy1kptLtTjUSY9qTRTaYyxnODxc3bQ9naZA==', 'QK67J773ADHMBKPLM6PD4YLJME27K4H3', '68d12465-f44d-4927-9778-0cc950e66460', NULL, false, false, NULL, true, 0);
+INSERT INTO public."AspNetUsers" VALUES ('019ddd86-98c7-786d-8677-dcee6e61583b', 'student2', 'STUDENT2', 'student2@example.com', 'STUDENT2@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAEHL5aSN7gvAiVKI3wMRcbnkMksu8U0C8ZYV2XaKqKrrwByVNmd1SV32GIeVXwkqQRg==', 'M2PQK5JWX23GXAWQPULRZF6HQZZJBWM3', 'c9f0912d-0cfb-4ca9-be37-b38969c8137f', NULL, false, false, NULL, true, 0);
+INSERT INTO public."AspNetUsers" VALUES ('019ddd86-9949-79a1-a114-52f8e0dc61d0', 'student3', 'STUDENT3', 'student3@example.com', 'STUDENT3@EXAMPLE.COM', true, 'AQAAAAIAAYagAAAAED6AAc+PhcmJjPWbn0RhOrGgBhScS6SIR1D/G10lF2bvIfW9m5t/5tueqQIEnFhaTA==', 'VBWYPMYLQECFBYL32E5R7IUQGHNOB6FS', 'c3a35075-0d5e-4ae8-89bb-3f78e8be553f', NULL, false, false, NULL, true, 0);
 
 
 --
--- TOC entry 4172 (class 0 OID 51962)
--- Dependencies: 248
+-- TOC entry 4089 (class 0 OID 54129)
+-- Dependencies: 241
 -- Data for Name: CartItems; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4173 (class 0 OID 51965)
--- Dependencies: 249
+-- TOC entry 4080 (class 0 OID 54018)
+-- Dependencies: 232
 -- Data for Name: Carts; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4174 (class 0 OID 51968)
--- Dependencies: 250
+-- TOC entry 4069 (class 0 OID 53923)
+-- Dependencies: 221
 -- Data for Name: Categories; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public."Categories" VALUES ('01ebd503-5522-4871-81a4-ec12bd80cdf3', 'Kiến thức cơ sở', 'Description + 68568572-eccd-4042-ba1b-a04ca44d9daf', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('0240ee3a-0061-4483-a9d2-735d91233f00', 'EDN Academy', 'Description + 459cc1d6-5383-4411-b401-54a6d17ef4d7', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('087499f3-3cc2-4d25-8ad5-8c63c6b74c44', 'Giải quyết vấn đề', 'Description + de72109c-cf34-40cb-9369-9462282f7073', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('0da1e150-2e32-4264-845b-305a8840e2a7', 'EDN Team', 'Description + c3497a03-96bd-43a8-bf06-4a27d8cd177b', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('0ea5a97b-320a-4193-bca0-b964a22e3685', 'Lập trình ứng dụng web', 'Description + 8e00fb8a-c7e8-47b3-9da1-d8259b1cf4c2', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('246ae2be-a939-484c-9047-dfdf3bd05e08', 'EDN Testing', 'Description + 91b0d03d-f3ab-4f50-9493-8bd88955694e', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('26149d95-7274-487e-bb63-a8ea37218401', 'Mặc định', 'Description + e8a3a651-6343-4782-9345-c0e930af5f30', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('317641f0-a185-4c35-9637-4e965bf4b06e', 'Chương trình khung', 'Description + c5ac2601-1745-4287-a559-0bfd30ec706e', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('399afdd3-8313-41d8-8d15-cd3453bb6f47', 'Liên kết trường', 'Description + f29f9537-1d22-49fd-8311-c9ab3c5bf601', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('566e8bf1-4129-45ab-8831-abd162e23184', 'Fresher', 'Description + 73f9aad3-b22f-40e2-859b-5da6021a3516', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('5ac3586c-394f-45c2-b000-9332d118b498', 'Thuật toán', 'Description + 7b3d64fd-bbe0-47dc-b9cf-2a3cb335a7fa', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('69a051b3-727b-4b21-a49e-3111c43932e0', 'Fsoft Training with Fee', 'Description + 9645673c-17b0-451b-a24d-b36469001d69', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('80e95633-2022-4c78-ab94-57c9d3d51e2d', 'Lập trình nâng cao', 'Description + b78913ac-8eeb-48b0-bc17-4c7ebeb5409a', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('9483a3b6-2fc1-4536-9792-d998b843da73', 'Kỹ năng nâng cao', 'Description + 7aad55c9-1e16-4f51-87b5-9b49d0bcbbad', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('9ea850dd-96cb-4597-88d0-61e69eba6398', 'Khóa học chung FA', 'Description + 4d1775c9-0d21-467f-afc7-5d53d8deac28', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('b0522acc-c5e1-49b2-a340-440724cdeca8', 'Kiến thức khác', 'Description + a5e553ff-a7e9-44aa-86f2-3fd43c5db0d7', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Categories" VALUES ('fbb5c2ee-0724-4bbc-a075-450004d1f20c', 'Lập trình cơ sở', 'Description + 094182d0-2f50-4d60-93c9-6b11cdd02161', true, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('01ebd503-5522-4871-81a4-ec12bd80cdf3', 'Kiến thức cơ sở', 'Description + 68568572-eccd-4042-ba1b-a04ca44d9daf', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('0240ee3a-0061-4483-a9d2-735d91233f00', 'EDN Academy', 'Description + 459cc1d6-5383-4411-b401-54a6d17ef4d7', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('087499f3-3cc2-4d25-8ad5-8c63c6b74c44', 'Giải quyết vấn đề', 'Description + de72109c-cf34-40cb-9369-9462282f7073', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('0da1e150-2e32-4264-845b-305a8840e2a7', 'EDN Team', 'Description + c3497a03-96bd-43a8-bf06-4a27d8cd177b', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('0ea5a97b-320a-4193-bca0-b964a22e3685', 'Lập trình ứng dụng web', 'Description + 8e00fb8a-c7e8-47b3-9da1-d8259b1cf4c2', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('246ae2be-a939-484c-9047-dfdf3bd05e08', 'EDN Testing', 'Description + 91b0d03d-f3ab-4f50-9493-8bd88955694e', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('26149d95-7274-487e-bb63-a8ea37218401', 'Mặc định', 'Description + e8a3a651-6343-4782-9345-c0e930af5f30', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('317641f0-a185-4c35-9637-4e965bf4b06e', 'Chương trình khung', 'Description + c5ac2601-1745-4287-a559-0bfd30ec706e', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('399afdd3-8313-41d8-8d15-cd3453bb6f47', 'Liên kết trường', 'Description + f29f9537-1d22-49fd-8311-c9ab3c5bf601', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('566e8bf1-4129-45ab-8831-abd162e23184', 'Fresher', 'Description + 73f9aad3-b22f-40e2-859b-5da6021a3516', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('5ac3586c-394f-45c2-b000-9332d118b498', 'Thuật toán', 'Description + 7b3d64fd-bbe0-47dc-b9cf-2a3cb335a7fa', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('69a051b3-727b-4b21-a49e-3111c43932e0', 'Fsoft Training with Fee', 'Description + 9645673c-17b0-451b-a24d-b36469001d69', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('80e95633-2022-4c78-ab94-57c9d3d51e2d', 'Lập trình nâng cao', 'Description + b78913ac-8eeb-48b0-bc17-4c7ebeb5409a', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('9483a3b6-2fc1-4536-9792-d998b843da73', 'Kỹ năng nâng cao', 'Description + 7aad55c9-1e16-4f51-87b5-9b49d0bcbbad', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('9ea850dd-96cb-4597-88d0-61e69eba6398', 'Khóa học chung FA', 'Description + 4d1775c9-0d21-467f-afc7-5d53d8deac28', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('b0522acc-c5e1-49b2-a340-440724cdeca8', 'Kiến thức khác', 'Description + a5e553ff-a7e9-44aa-86f2-3fd43c5db0d7', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Categories" VALUES ('fbb5c2ee-0724-4bbc-a075-450004d1f20c', 'Lập trình cơ sở', 'Description + 094182d0-2f50-4d60-93c9-6b11cdd02161', true, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 
 
 --
--- TOC entry 4175 (class 0 OID 51973)
--- Dependencies: 251
+-- TOC entry 4090 (class 0 OID 54144)
+-- Dependencies: 242
 -- Data for Name: Chapters; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public."Chapters" VALUES ('00056a9e-d5ba-4913-b44e-db626b329749', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'NAMESPACE , TEMPLATE', 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('01f76acf-40d6-4601-92f5-c23bc6625a5f', '3600145f-dbec-412b-94f1-08942f6afa16', 'Lập trình hướng đối tượng', 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('045487cf-89ba-4503-b6e1-20e2e03144b7', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Cấu trúc rẽ nhánh', 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('0673c3cb-8017-4f8e-aba4-b60f0ef797a1', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Các khái niệm cơ bản', 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('07cc1c31-5bff-416c-9a73-ff7d44b0650b', 'd1839060-39f5-4877-a610-7036e35dbcaa', 'Cấu trúc điều khiển', 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('0c187fb6-d795-4387-aa3f-21f1cbf01a7c', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Xây dựng game', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('0e36950e-fe57-40da-b564-9ef4866b2c24', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Vòng lặp', 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('0f705c03-0eed-485b-a440-caf811670cb5', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Mảng', 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('1056efbd-e7bc-4f8a-ad52-e9a317b88640', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Triển khai dự án', 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Thuật toán căn bản', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('16dc7e8b-24cc-4338-bcde-f3532389ad36', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Chức năng quản lý người dùng', 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('19f37cb6-945b-493e-8771-835627a148d0', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Vòng lặp', 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('1a75260f-329e-4b1a-963e-6f0856b59bcd', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Tổng kết', 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'Thư viện chuẩn C++', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('1d71ef9c-b28e-4f0b-8439-544d893fb0be', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Giới thiệu', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Phần cứng máy tính', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'CON TRỎ', 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Tạo các trò chơi theo nhóm khối lệnh', 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('255b3c07-c453-4783-96ef-ae10698fbabd', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Sản phẩm cuối khóa', 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('2737e6c4-1a69-419a-9532-8914175c527d', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Mảng', 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('27aa88e7-a021-49a0-82cb-32c2bfd28f02', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Nhập - xuất dữ liệu từ bàn phím', 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('291d0934-6ac5-48ef-944d-cdc06b84b300', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Hàm trong C#', 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Điện toán đám mây', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('2f8f6d1a-4c46-40a8-a903-1bbadba79247', 'f996fe4f-4ab1-4979-9193-3881a8a806c9', 'C++ nâng cao', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'SQL nâng cao', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('32aa5bd2-27bf-4235-8887-ac9195a06a74', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Xử lý xâu', 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Ứng dụng AI trong công việc', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Python Automation Mastery', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('33b1eabc-e72c-44d1-9fc1-a5a9c6dab3dc', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Tổng kết', 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Python cơ bản', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('36860b84-ee67-4b15-9533-1c53d00c48b8', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'String', 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('4245ba29-529d-4739-bc2b-b774082f6c58', '3600145f-dbec-412b-94f1-08942f6afa16', 'Modules và Packages', 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Nhập môn SQL', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('434104ff-0f72-45b9-853d-dba6e936bea2', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'LỚP TRONG C++', 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645', 'd1839060-39f5-4877-a610-7036e35dbcaa', 'Các khái niệm cơ bản', 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('4ebff68e-c0dd-43c1-a2a4-1aeb0f4ae5d2', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Đối tượng trong Javascript', 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'CÁC THƯ VIỆN CHUẨN TRONG C++', 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('55e1b573-f06f-421d-881f-9ba3575ddcec', '3600145f-dbec-412b-94f1-08942f6afa16', 'Xử lý lỗi và ngoại lệ', 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('579b2a4f-6031-4429-b244-2061c4e519e0', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán sắp xếp', 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'JavaScript cơ bản', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('5e695d8e-500f-40cf-b5ac-2fd1501381d7', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'ĐỌC GHI FILE', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('5f970759-175f-48ea-bcfe-c27c4409bb13', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Vòng lặp', 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('603a9390-65b8-43fd-9678-42382611037b', 'd1839060-39f5-4877-a610-7036e35dbcaa', 'Chuỗi và phương thức chuỗi', 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('60d3e2b3-b6e9-41c7-a44c-8139e7b1662d', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'String', 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Truyền thông và Mạng máy tính', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('63bed55c-0803-48b3-96fb-6cfcbb613ade', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Chức năng quản lý công việc', 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('652b916f-f7aa-4fe9-b699-a3b563d1e3bf', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Mảng', 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('6724d6fa-d2b4-4a7d-9123-0fc06dab0123', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'XỬ LÝ NGOẠI LỆ', 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Lập trình hướng đối tượng trong C++', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('69b1070f-85d6-478e-912a-eb0188b372ec', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Các toán tử', 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('6f250039-b2e7-45ed-a610-01c4f9f2c518', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Bố cục hiện đại với Flexbox và Grid', 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Cấu trúc dữ liệu và giải thuật', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('753659d3-4545-4b7e-a74c-6bdc7335fe3e', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Giới thiệu về HTML và Web', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Thực hành với SQL', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('77199784-d6bf-44b0-ba03-6da9d4198d33', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Làm việc với DOM & BOM', 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('7e5584ec-4af7-405e-aa5b-7bac9149303a', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Giới thiệu chung', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('82938d8a-fa31-4c7d-9122-12be8dce501e', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'C# cơ bản', 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('84c29e11-da4c-472d-8034-527a88725a96', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Thực hành dự án', 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('8a812c9d-4a4d-4c66-8e9b-6d0784ceba7f', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Toán tử trong Java', 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('95b06f40-f331-47fc-be32-89793d374830', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Cấu trúc điều khiển', 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('a06f1f45-b23e-427c-b114-aa4444c4c111', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Cấu trúc dữ liệu', 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('a1f7c649-c30c-4be2-9541-d51de4712954', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Nhập - xuất dữ liệu từ bàn phím', 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('a9a98c85-d92a-4980-a5fe-514d1b8b50a3', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Toán học', 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('a9f074bb-55b6-4325-b93e-58eaefe41551', '3600145f-dbec-412b-94f1-08942f6afa16', 'Xử lý File', 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('ab47bae5-87c4-46ff-8959-2e40badedc8c', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Các câu lệnh điều kiện', 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('b1ba46fe-75f1-4447-8cb0-d4a6c81e1b51', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Cấu trúc điều khiển, hàm', 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'C cho người mới bắt đầu', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('b7ccd7f8-b737-4d9b-9bd3-4faec5567b37', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Thao tác với dữ liệu', 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm máy tính', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('bd6222e5-280f-4779-b6b7-1a845f8d4495', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'CSS nâng cao và responsive', 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('bda31c86-19c9-4da5-9a73-152e6c900589', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Làm quen với CSS', 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('bfc8c9f6-6861-47e7-b8e9-7395048353a4', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Định dạng văn bản và bố cục cơ bản', 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('c3bb7a1a-a6e1-4471-a71b-ff9a4eb042dd', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Hàm', 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('cbabfde1-dc78-4d4b-8615-285b122b9937', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Biến', 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('cbb65694-0ff7-4070-9e58-999596582272', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Cấu trúc rẽ nhánh', 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('d0d53c61-e27e-4450-960c-429ea63d5893', '3600145f-dbec-412b-94f1-08942f6afa16', 'Cấu trúc dữ liệu tích hợp sẵn', 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('d29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Làm quen với SQL', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('d4001112-3495-4491-8523-3a632ebb407b', 'd1839060-39f5-4877-a610-7036e35dbcaa', 'Hàm', 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('d6a96253-4181-4a55-a304-1be89ba51175', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'C# cơ bản', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('d8e5d8e5-7b6c-4c5b-9209-821e9a533c7a', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Tổng quan về lập trình C++', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('dbadb58f-5618-4ab1-be7d-ab0067c665a2', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán quy hoạch động và quay lui', 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Java cơ bản', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('e061903f-9d59-4a06-9953-7800b61be90a', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Giới thiệu', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('e119e517-1a3c-4756-bc71-8124ede492e7', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Toán tử trong c++', 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('e3aa1c57-0005-4713-8b26-9a125169bc56', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Tổng quan về lập trình Java', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('e4a52d5e-e0a5-458e-9eb7-252490f0dcc9', '3600145f-dbec-412b-94f1-08942f6afa16', 'Ôn tập các kiến thức cơ bản', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('eaf42478-1f56-4402-9c5d-272beaa42f7c', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'ĐỆ QUY', 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('eb01ed8f-8fe0-40da-a6cf-db9d34076dd5', 'd1839060-39f5-4877-a610-7036e35dbcaa', 'Số và toán học', 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('eb1f6aea-2cd3-4885-8897-a096ac15981f', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Giới thiệu chung', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('ee5bbb65-4634-4c64-b289-9229a42a313b', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán đồ thị', 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('eea6930e-4a28-42b9-846f-80f642087f1d', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Phương thức, lớp trong C#', 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('ef55e99a-89af-4040-8547-3ce1ed99aeea', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Các khái niệm cơ bản', 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'C++ cho người mới bắt đầu', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('f0fdd269-aacf-41ee-9086-c74c6337b50e', 'd1839060-39f5-4877-a610-7036e35dbcaa', 'Giới thiệu chung về Python', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('f5d36d9c-624b-4648-b875-190a2aa9f400', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Hàm', 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('f7883cb8-eb35-47c0-a110-4fa5b40f4c1f', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Bất đồng bộ trong JavaScript', 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Lập trình hướng đối tượng trong java', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('f867c55e-29ee-420a-8bcc-c45012ea43a9', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Biến và các kiểu dữ liệu', 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('fc11ed6e-e4ae-480e-b12f-67aec809ce17', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán tìm kiếm và chia để trị', 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('fc87a170-547a-4ced-81ae-3274a87caa0d', 'e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Thuật toán nâng cao', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('fe89c338-a561-45e8-be2e-6465e6ef8552', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Giới thiệu Scratch', 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Chapters" VALUES ('ff613291-f29e-4aba-a90f-43566082e70f', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'HÀM TOÁN HỌC', 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('00056a9e-d5ba-4913-b44e-db626b329749', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'NAMESPACE , TEMPLATE', 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('01f76acf-40d6-4601-92f5-c23bc6625a5f', '3600145f-dbec-412b-94f1-08942f6afa16', 'Lập trình hướng đối tượng', 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('045487cf-89ba-4503-b6e1-20e2e03144b7', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Cấu trúc rẽ nhánh', 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('0673c3cb-8017-4f8e-aba4-b60f0ef797a1', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Các khái niệm cơ bản', 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('07cc1c31-5bff-416c-9a73-ff7d44b0650b', 'd1839060-39f5-4877-a610-7036e35dbcaa', 'Cấu trúc điều khiển', 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('0c187fb6-d795-4387-aa3f-21f1cbf01a7c', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Xây dựng game', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('0e36950e-fe57-40da-b564-9ef4866b2c24', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Vòng lặp', 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('0f705c03-0eed-485b-a440-caf811670cb5', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Mảng', 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('1056efbd-e7bc-4f8a-ad52-e9a317b88640', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Triển khai dự án', 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Thuật toán căn bản', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('16dc7e8b-24cc-4338-bcde-f3532389ad36', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Chức năng quản lý người dùng', 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('19f37cb6-945b-493e-8771-835627a148d0', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Vòng lặp', 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('1a75260f-329e-4b1a-963e-6f0856b59bcd', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Tổng kết', 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'Thư viện chuẩn C++', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('1d71ef9c-b28e-4f0b-8439-544d893fb0be', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Giới thiệu', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Phần cứng máy tính', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'CON TRỎ', 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Tạo các trò chơi theo nhóm khối lệnh', 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('255b3c07-c453-4783-96ef-ae10698fbabd', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Sản phẩm cuối khóa', 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('2737e6c4-1a69-419a-9532-8914175c527d', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Mảng', 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('27aa88e7-a021-49a0-82cb-32c2bfd28f02', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Nhập - xuất dữ liệu từ bàn phím', 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('291d0934-6ac5-48ef-944d-cdc06b84b300', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Hàm trong C#', 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Điện toán đám mây', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('2f8f6d1a-4c46-40a8-a903-1bbadba79247', 'f996fe4f-4ab1-4979-9193-3881a8a806c9', 'C++ nâng cao', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'SQL nâng cao', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('32aa5bd2-27bf-4235-8887-ac9195a06a74', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Xử lý xâu', 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Ứng dụng AI trong công việc', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Python Automation Mastery', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('33b1eabc-e72c-44d1-9fc1-a5a9c6dab3dc', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Tổng kết', 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Python cơ bản', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('36860b84-ee67-4b15-9533-1c53d00c48b8', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'String', 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('4245ba29-529d-4739-bc2b-b774082f6c58', '3600145f-dbec-412b-94f1-08942f6afa16', 'Modules và Packages', 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Nhập môn SQL', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('434104ff-0f72-45b9-853d-dba6e936bea2', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'LỚP TRONG C++', 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645', 'd1839060-39f5-4877-a610-7036e35dbcaa', 'Các khái niệm cơ bản', 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('4ebff68e-c0dd-43c1-a2a4-1aeb0f4ae5d2', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Đối tượng trong Javascript', 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'CÁC THƯ VIỆN CHUẨN TRONG C++', 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('55e1b573-f06f-421d-881f-9ba3575ddcec', '3600145f-dbec-412b-94f1-08942f6afa16', 'Xử lý lỗi và ngoại lệ', 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('579b2a4f-6031-4429-b244-2061c4e519e0', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán sắp xếp', 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'JavaScript cơ bản', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('5e695d8e-500f-40cf-b5ac-2fd1501381d7', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'ĐỌC GHI FILE', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('5f970759-175f-48ea-bcfe-c27c4409bb13', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Vòng lặp', 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('603a9390-65b8-43fd-9678-42382611037b', 'd1839060-39f5-4877-a610-7036e35dbcaa', 'Chuỗi và phương thức chuỗi', 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('60d3e2b3-b6e9-41c7-a44c-8139e7b1662d', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'String', 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Truyền thông và Mạng máy tính', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('63bed55c-0803-48b3-96fb-6cfcbb613ade', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Chức năng quản lý công việc', 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('652b916f-f7aa-4fe9-b699-a3b563d1e3bf', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Mảng', 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('6724d6fa-d2b4-4a7d-9123-0fc06dab0123', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'XỬ LÝ NGOẠI LỆ', 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Lập trình hướng đối tượng trong C++', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('69b1070f-85d6-478e-912a-eb0188b372ec', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Các toán tử', 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('6f250039-b2e7-45ed-a610-01c4f9f2c518', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Bố cục hiện đại với Flexbox và Grid', 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Cấu trúc dữ liệu và giải thuật', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('753659d3-4545-4b7e-a74c-6bdc7335fe3e', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Giới thiệu về HTML và Web', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Thực hành với SQL', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('77199784-d6bf-44b0-ba03-6da9d4198d33', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Làm việc với DOM & BOM', 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('7e5584ec-4af7-405e-aa5b-7bac9149303a', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Giới thiệu chung', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('82938d8a-fa31-4c7d-9122-12be8dce501e', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'C# cơ bản', 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('84c29e11-da4c-472d-8034-527a88725a96', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Thực hành dự án', 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('8a812c9d-4a4d-4c66-8e9b-6d0784ceba7f', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Toán tử trong Java', 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('95b06f40-f331-47fc-be32-89793d374830', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Cấu trúc điều khiển', 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('a06f1f45-b23e-427c-b114-aa4444c4c111', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Cấu trúc dữ liệu', 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('a1f7c649-c30c-4be2-9541-d51de4712954', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Nhập - xuất dữ liệu từ bàn phím', 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('a9a98c85-d92a-4980-a5fe-514d1b8b50a3', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Toán học', 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('a9f074bb-55b6-4325-b93e-58eaefe41551', '3600145f-dbec-412b-94f1-08942f6afa16', 'Xử lý File', 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('ab47bae5-87c4-46ff-8959-2e40badedc8c', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Các câu lệnh điều kiện', 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('b1ba46fe-75f1-4447-8cb0-d4a6c81e1b51', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Cấu trúc điều khiển, hàm', 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'C cho người mới bắt đầu', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('b7ccd7f8-b737-4d9b-9bd3-4faec5567b37', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Thao tác với dữ liệu', 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm máy tính', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('bd6222e5-280f-4779-b6b7-1a845f8d4495', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'CSS nâng cao và responsive', 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('bda31c86-19c9-4da5-9a73-152e6c900589', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Làm quen với CSS', 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('bfc8c9f6-6861-47e7-b8e9-7395048353a4', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Định dạng văn bản và bố cục cơ bản', 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('c3bb7a1a-a6e1-4471-a71b-ff9a4eb042dd', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Hàm', 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('cbabfde1-dc78-4d4b-8615-285b122b9937', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Biến', 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('cbb65694-0ff7-4070-9e58-999596582272', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Cấu trúc rẽ nhánh', 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('d0d53c61-e27e-4450-960c-429ea63d5893', '3600145f-dbec-412b-94f1-08942f6afa16', 'Cấu trúc dữ liệu tích hợp sẵn', 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('d29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Làm quen với SQL', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('d4001112-3495-4491-8523-3a632ebb407b', 'd1839060-39f5-4877-a610-7036e35dbcaa', 'Hàm', 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('d6a96253-4181-4a55-a304-1be89ba51175', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'C# cơ bản', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('d8e5d8e5-7b6c-4c5b-9209-821e9a533c7a', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Tổng quan về lập trình C++', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('dbadb58f-5618-4ab1-be7d-ab0067c665a2', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán quy hoạch động và quay lui', 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Java cơ bản', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('e061903f-9d59-4a06-9953-7800b61be90a', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Giới thiệu', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('e119e517-1a3c-4756-bc71-8124ede492e7', '3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Toán tử trong c++', 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('e3aa1c57-0005-4713-8b26-9a125169bc56', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Tổng quan về lập trình Java', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('e4a52d5e-e0a5-458e-9eb7-252490f0dcc9', '3600145f-dbec-412b-94f1-08942f6afa16', 'Ôn tập các kiến thức cơ bản', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('eaf42478-1f56-4402-9c5d-272beaa42f7c', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'ĐỆ QUY', 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('eb01ed8f-8fe0-40da-a6cf-db9d34076dd5', 'd1839060-39f5-4877-a610-7036e35dbcaa', 'Số và toán học', 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('eb1f6aea-2cd3-4885-8897-a096ac15981f', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Giới thiệu chung', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('ee5bbb65-4634-4c64-b289-9229a42a313b', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán đồ thị', 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('eea6930e-4a28-42b9-846f-80f642087f1d', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Phương thức, lớp trong C#', 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('ef55e99a-89af-4040-8547-3ce1ed99aeea', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Các khái niệm cơ bản', 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'C++ cho người mới bắt đầu', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('f0fdd269-aacf-41ee-9086-c74c6337b50e', 'd1839060-39f5-4877-a610-7036e35dbcaa', 'Giới thiệu chung về Python', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('f5d36d9c-624b-4648-b875-190a2aa9f400', '743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Hàm', 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('f7883cb8-eb35-47c0-a110-4fa5b40f4c1f', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Bất đồng bộ trong JavaScript', 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Lập trình hướng đối tượng trong java', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('f867c55e-29ee-420a-8bcc-c45012ea43a9', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Biến và các kiểu dữ liệu', 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('fc11ed6e-e4ae-480e-b12f-67aec809ce17', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán tìm kiếm và chia để trị', 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('fc87a170-547a-4ced-81ae-3274a87caa0d', 'e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Thuật toán nâng cao', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('fe89c338-a561-45e8-be2e-6465e6ef8552', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Giới thiệu Scratch', 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Chapters" VALUES ('ff613291-f29e-4aba-a90f-43566082e70f', '961ac01c-382c-4aa5-bae1-d1429f27f06a', 'HÀM TOÁN HỌC', 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 
 
 --
--- TOC entry 4176 (class 0 OID 51978)
--- Dependencies: 252
+-- TOC entry 4083 (class 0 OID 54052)
+-- Dependencies: 235
 -- Data for Name: Courses; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -1500,40 +941,40 @@ INSERT INTO public."Courses" VALUES ('00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Ho
 <li><strong>Tương t&aacute;c với giảng vi&ecirc;n:</strong> C&aacute;c b&agrave;i tập giữa kh&oacute;a được thiết kế để bạn &aacute;p dụng kiến thức ngay lập tức. B&agrave;i l&agrave;m của bạn sẽ được đội ngũ chuy&ecirc;n gia đ&aacute;nh gi&aacute; v&agrave; nhận x&eacute;t chi tiết, gi&uacute;p bạn nhận ra ưu điểm cũng như cải thiện kỹ năng lập tr&igrave;nh.</li>
 </ul>
 <h4><strong>Kết quả sau kh&oacute;a học:</strong></h4>
-<p>Sau kh&oacute;a học, bạn sẽ c&oacute; khả năng tự x&acirc;y dựng v&agrave; triển khai một ứng dụng web thực tế bằng .NET Core, đồng thời nắm vững c&aacute;c c&ocirc;ng nghệ hiện đại để mở rộng v&agrave; ph&aacute;t triển dự &aacute;n trong tương lai.</p>', 1000000.0, '', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019ddd7c-17ed-748b-9a0b-4871476e9354', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p>Sau kh&oacute;a học, bạn sẽ c&oacute; khả năng tự x&acirc;y dựng v&agrave; triển khai một ứng dụng web thực tế bằng .NET Core, đồng thời nắm vững c&aacute;c c&ocirc;ng nghệ hiện đại để mở rộng v&agrave; ph&aacute;t triển dự &aacute;n trong tương lai.</p>', 1000000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/csharp-fullstack_8_63694c3f5e9d48d2b826de8ccb411b82.png', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('3600145f-dbec-412b-94f1-08942f6afa16', 'Python nâng cao', '<p><span style="font-size: 18pt; color: #304090;"><strong>Kh&aacute;m ph&aacute; sức mạnh thực sự của Python với kh&oacute;a học n&acirc;ng cao!</strong></span></p>
 <p>Bạn đ&atilde; nắm vững c&aacute;c kiến thức cơ bản về Python v&agrave; đang t&igrave;m kiếm một cơ hội để n&acirc;ng cao kỹ năng lập tr&igrave;nh của m&igrave;nh?</p>
 <p>Kh&oacute;a học <strong>Python N&acirc;ng Cao</strong> của ch&uacute;ng t&ocirc;i ch&iacute;nh l&agrave; ch&igrave;a kh&oacute;a để bạn mở ra những tiềm năng mới, từ việc l&agrave;m chủ c&aacute;c kiểu dữ liệu phức hợp cho đến lập tr&igrave;nh hướng đối tượng, xử l&yacute; lỗi chuy&ecirc;n nghiệp, v&agrave; nhiều hơn thế nữa. Đ&acirc;y l&agrave; cơ hội để bạn n&acirc;ng tầm sự nghiệp lập tr&igrave;nh v&agrave; trở th&agrave;nh chuy&ecirc;n gia trong lĩnh vực n&agrave;y.</p>
-<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/files/thumbnails/3411109_cfeeb712309849c98b4ae03393792c50.jpg" width="501" height="501" /></p>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/3411109_cfeeb712309849c98b4ae03393792c50.jpg" width="501" height="501" /></p>
 <p><span style="font-size: 18pt; color: #304090;"><strong>Tại sao bạn n&ecirc;n chọn kh&oacute;a học n&agrave;y?</strong></span></p>
 <p><span style="color: #506cf0; font-size: 13pt;"><strong><span style="color: #000000; font-size: 13pt;">Giảng vi&ecirc;n gi&agrave;u kinh nghiệm:</span> </strong></span>Được giảng dạy bởi đội ngũ giảng vi&ecirc;n đ&atilde; c&oacute; nhiều năm kinh nghiệm trong lĩnh vực lập tr&igrave;nh Python.</p>
 <p><span style="color: #506cf0; font-size: 13pt;"><strong><span style="color: #000000;">T&agrave;i liệu học tập chất lượng cao:</span> </strong></span>Cung cấp c&aacute;c t&agrave;i liệu, v&iacute; dụ thực tế v&agrave; b&agrave;i tập thực h&agrave;nh phong ph&uacute;.</p>
 <p><span style="color: #506cf0; font-size: 13pt;"><strong><span style="color: #000000;">Hỗ trợ tận t&igrave;nh:</span> </strong></span>Đội ngũ hỗ trợ lu&ocirc;n sẵn s&agrave;ng gi&uacute;p đỡ bạn trong suốt qu&aacute; tr&igrave;nh học tập.</p>
-<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/files/thumbnails/2011.i039.022.web_hosting_isometric_9566a93788234e9ba9ee9dd05da526f7.jpg" width="470" height="419" /></p>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/2011.i039.022.web_hosting_isometric_9566a93788234e9ba9ee9dd05da526f7.jpg" width="470" height="419" /></p>
 <p>&nbsp;</p>
 <p><span style="font-size: 18pt; color: #304090;"><strong>Bạn sẽ được g&igrave; sau kh&oacute;a học?</strong></span></p>
 <p><span style="color: #506cf0; font-size: 13pt;"><strong><span style="color: #000000;">N&acirc;ng cao kỹ năng lập tr&igrave;nh:</span> </strong></span>Trở th&agrave;nh một lập tr&igrave;nh vi&ecirc;n th&agrave;nh thạo với khả năng xử l&yacute; c&aacute;c dự &aacute;n phức tạp.</p>
 <p><span style="color: #000000; font-size: 13pt;"><strong>Hiểu s&acirc;u về c&aacute;c c&ocirc;ng cụ mạnh mẽ của Python: </strong></span>L&agrave;m chủ lập tr&igrave;nh hướng đối tượng, xử l&yacute; lỗi hiệu quả, v&agrave; quản l&yacute; c&aacute;c module v&agrave; packages.</p>
 <p><span style="color: #000000; font-size: 13pt;"><strong>Tự tin ứng dụng Python v&agrave;o thực tế: </strong></span>Từ xử l&yacute; dữ liệu, ph&aacute;t triển web đến tự động h&oacute;a c&aacute;c t&aacute;c vụ - tất cả đều nằm trong tầm tay bạn.</p>
 <p><span style="color: #506cf0; font-size: 13pt;"><strong><span style="color: #000000;">Mở ra cơ hội nghề nghiệp mới:</span> </strong></span>Trở th&agrave;nh ứng vi&ecirc;n s&aacute;ng gi&aacute; cho c&aacute;c vị tr&iacute; lập tr&igrave;nh vi&ecirc;n cao cấp, nh&agrave; ph&aacute;t triển phần mềm, v&agrave; nhiều cơ hội kh&aacute;c trong lĩnh vực c&ocirc;ng nghệ.</p>
-<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/files/thumbnails/238_531639a76ea34387a9bca8a1a728eea7.jpg" width="501" height="318" /></p>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/238_531639a76ea34387a9bca8a1a728eea7.jpg" width="501" height="318" /></p>
 <p>&nbsp;</p>
 <p><span style="font-size: 18pt; color: #304090;"><strong>Đừng bỏ lỡ cơ hội để</strong></span></p>
 <p><span style="color: #000000; font-size: 13pt;"><strong>Thể hiện bản th&acirc;n: </strong></span>Chứng minh khả năng của bạn trong c&aacute;c dự &aacute;n thực tế v&agrave; tạo ấn tượng với nh&agrave; tuyển dụng.</p>
 <p><span style="color: #000000; font-size: 13pt;"><strong>Tiến bộ kh&ocirc;ng ngừng: </strong></span>Tiếp cận với những kiến thức mới nhất v&agrave; lu&ocirc;n đi đầu trong xu hướng c&ocirc;ng nghệ.</p>
 <p><span style="color: #000000; font-size: 13pt;"><strong>Tham gia cộng đồng học vi&ecirc;n năng động: </strong></span>Kết nối, học hỏi v&agrave; chia sẻ kinh nghiệm với c&aacute;c lập tr&igrave;nh vi&ecirc;n kh&aacute;c.</p>
-<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/files/thumbnails/4380747_b33b0943c490448cb1e216c06ed02956.jpg" width="501" height="501" /></p>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/4380747_b33b0943c490448cb1e216c06ed02956.jpg" width="501" height="501" /></p>
 <p><span style="font-size: 18pt; color: #304090;"><strong>Đăng k&yacute; ngay</strong></span></p>
 <p>Đừng chần chừ! Mỗi ng&agrave;y tr&ocirc;i qua l&agrave; một cơ hội bị bỏ lỡ. H&atilde;y đăng k&yacute; ngay h&ocirc;m nay để kh&aacute;m ph&aacute; v&agrave; chinh phục những thử th&aacute;ch mới với Python N&acirc;ng Cao. C&ugrave;ng ch&uacute;ng t&ocirc;i bước v&agrave;o thế giới lập tr&igrave;nh hiện đại v&agrave; mở ra những cơ hội nghề nghiệp mới đầy triển vọng!</p>
-<p>Nắm bắt cơ hội, tiến tới th&agrave;nh c&ocirc;ng. Đăng k&yacute; ngay h&ocirc;m nay v&agrave; trở th&agrave;nh một lập tr&igrave;nh vi&ecirc;n Python thực thụ!</p>', 900000.0, '', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd7c-1767-7ee0-a32b-ab03f843c88f', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p>Nắm bắt cơ hội, tiến tới th&agrave;nh c&ocirc;ng. Đăng k&yacute; ngay h&ocirc;m nay v&agrave; trở th&agrave;nh một lập tr&igrave;nh vi&ecirc;n Python thực thụ!</p>', 900000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Python_-_Ad_3561581c4f074d9694a4704ed184b60e.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd86-96b0-7fd3-861a-4f3409c10536', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('3a705a75-7389-4e97-aeb8-58a58616032b', 'Lập trình hướng đối tượng trong C++', '<div style="text-align: justify;"><strong>Khi nhắc tới lập tr&igrave;nh hướng đối tượng chắc bạn sẽ nghĩ ngay tới 4 t&iacute;nh chất l&agrave; t&iacute;nh đ&oacute;ng g&oacute;i, t&iacute;nh kế thừa, t&iacute;nh đa h&igrave;nh v&agrave; t&iacute;nh trừu tượng. Thực chất th&igrave; 4 t&iacute;nh chất n&agrave;y chỉ giống như c&aacute;c nguy&ecirc;n liệu để x&acirc;y dựng chương tr&igrave;nh theo phương ph&aacute;p hướng đối tượng, quan trọng nhất vẫn l&agrave; c&aacute;ch m&agrave; bạn sử dụng c&aacute;c nguy&ecirc;n liệu n&agrave;y để x&acirc;y dựng chương tr&igrave;nh như thế n&agrave;o.</strong></div>
 <h3 style="text-align: justify;">Vậy lập tr&igrave;nh hướng đối tượng l&agrave; g&igrave;?</h3>
 <div style="text-align: justify;">Lập tr&igrave;nh hướng đối tượng được hiểu đơn giản l&agrave; một phương ph&aacute;p để giải quyết b&agrave;i to&aacute;n lập tr&igrave;nh m&agrave; khi &aacute;p dụng th&igrave; code sẽ trở n&ecirc;n dễ ph&aacute;t triển v&agrave; dễ bảo tr&igrave; hơn. Phương ph&aacute;p n&agrave;y sẽ chia nhỏ chương tr&igrave;nh th&agrave;nh c&aacute;c đối tượng v&agrave; c&aacute;c mối quan hệ, mỗi đối tượng sẽ c&oacute; c&aacute;c thuộc t&iacute;nh (dữ liệu) v&agrave; h&agrave;nh vi (phương thức). Để c&oacute; thể lập tr&igrave;nh v&agrave; thiết kế chương tr&igrave;nh theo phương ph&aacute;p n&agrave;y th&igrave; chắc chắn bạn cần hiểu r&otilde; về 4 t&iacute;nh chất l&agrave; l&agrave; t&iacute;nh đ&oacute;ng g&oacute;i, t&iacute;nh kế thừa, t&iacute;nh đa h&igrave;nh v&agrave; t&iacute;nh trừu tượng.</div>
-<div><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/Untitled-4.png" alt="" width="649" height="496" /></div>
+<div><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/Untitled-4.png" alt="" width="649" height="496" /></div>
 <div style="text-align: justify;">&nbsp;</div>
 <h3 style="text-align: justify;">1. T&iacute;nh đ&oacute;ng g&oacute;i (Encapsulation)</h3>
 <div style="text-align: justify;">Đ&acirc;y l&agrave; kỹ thuật gi&uacute;p bạn che giấu đi những th&ocirc;ng tin b&ecirc;n trong đối tượng bằng c&aacute;ch sử dụng phạm vi truy cập private cho c&aacute;c thuộc t&iacute;nh, muốn giao tiếp hay lấy ra c&aacute;c th&ocirc;ng tin của đối tượng th&igrave; phải th&ocirc;ng qua c&aacute;c phương thức public, từ đ&oacute; sẽ hạn chế được c&aacute;c lỗi khi ph&aacute;t triển chương tr&igrave;nh. T&iacute;nh chất n&agrave;y cũng giống với trong thực tế, bạn kh&ocirc;ng thể thấy được c&aacute;c thuộc t&iacute;nh thực của một người (t&iacute;nh c&aacute;ch, sở th&iacute;ch, c&aacute;c th&ocirc;ng tin ri&ecirc;ng tư kh&aacute;c, ...), những thứ m&agrave; bạn biết đều l&agrave; th&ocirc;ng qua c&aacute;c h&agrave;nh động của người đ&oacute;. V&iacute; dụ người đ&oacute; n&oacute;i cho bạn biết về sở th&iacute;ch, tuổi, ... nhưng c&aacute;c th&ocirc;ng tin n&agrave;y chưa chắc đ&atilde; thực sự l&agrave; thuộc t&iacute;nh thật của người đ&oacute; (giống với việc c&aacute;c getter kh&ocirc;ng trả về gi&aacute; trị thực của thuộc t&iacute;nh m&agrave; trả về một gi&aacute; trị kh&aacute;c).</div>
-<div><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/lap-trinh-huong-doi-tuong-phan-5-63729265681.6431.jpg" alt="" width="513" height="321" /> <br />
+<div><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/lap-trinh-huong-doi-tuong-phan-5-63729265681.6431.jpg" alt="" width="513" height="321" /> <br />
 <p>C&aacute;c lợi &iacute;ch ch&iacute;nh m&agrave; t&iacute;nh đ&oacute;ng g&oacute;i đem lại:</p>
 <ul>
 <li>Hạn chế được c&aacute;c truy xuất kh&ocirc;ng hợp lệ tới c&aacute;c thuộc t&iacute;nh của đối tượng.</li>
@@ -1579,11 +1020,11 @@ public:
 <p>Lưu &yacute;:&nbsp;h&atilde;y lu&ocirc;n nhớ rằng mục đ&iacute;ch ch&iacute;nh của t&iacute;nh đ&oacute;ng g&oacute;i l&agrave; để hạn chế c&aacute;c lỗi khi ph&aacute;t triển chương tr&igrave;nh chứ kh&ocirc;ng phải l&agrave; bảo mật hay che giấu th&ocirc;ng tin.</p>
 </div>
 <h3 style="text-align: justify;">2. T&iacute;nh kế thừa (Inheritance)</h3>
-<p style="text-align: justify;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/Shanghaik/Pictures/dad.jpg" alt="" width="418" height="418" /></p>
+<p style="text-align: justify;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/Shanghaik/Pictures/dad.jpg" alt="" width="418" height="418" /></p>
 <div style="text-align: justify;">Khi lập tr&igrave;nh chắc chắn sẽ c&oacute; những trường hợp m&agrave; c&aacute;c đối tượng c&oacute; chung một số thuộc t&iacute;nh v&agrave; phương thức. V&iacute; dụ như khi bạn viết chương tr&igrave;nh lưu th&ocirc;ng tin về c&aacute;c học sinh v&agrave; gi&aacute;o vi&ecirc;n. Với học sinh th&igrave; cần lưu th&ocirc;ng tin về t&ecirc;n, tuổi, địa chỉ, điểm v&agrave; với gi&aacute;o vi&ecirc;n th&igrave; cần lưu th&ocirc;ng tin về t&ecirc;n, tuổi, địa chỉ, tiền lương =&gt; l&uacute;c n&agrave;y code sẽ bị tr&ugrave;ng lặp kh&aacute; nhiều (từ c&aacute;c thuộc t&iacute;nh cho tới c&aacute;c setter, getter, ...) v&agrave; n&oacute; vi phạm một trong những nguy&ecirc;n tắc cơ bản nhất khi lập tr&igrave;nh l&agrave; DRY (Don''t Repeat Yourself - đừng bao giờ lặp lại code). Để thấy r&otilde; hơn th&igrave; bạn h&atilde;y xem sơ đồ lớp sau:</div>
-<div style="text-align: center;"><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/files/thumbnails/1_c1cffb641bc14b69958870dedbd2328b.png" /></div>
+<div style="text-align: center;"><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/1_c1cffb641bc14b69958870dedbd2328b.png" /></div>
 <div style="text-align: justify;">Với kế thừa th&igrave; vấn đề n&agrave;y sẽ được giải quyết, kế thừa trong lập tr&igrave;nh hướng đối tượng ch&iacute;nh l&agrave; thừa hưởng lại những thuộc t&iacute;nh v&agrave; phương thức của một lớp. C&oacute; nghĩa l&agrave; nếu lớp A kế thừa lớp B th&igrave; lớp A sẽ c&oacute; những thuộc t&iacute;nh v&agrave; phương thức của lớp B. Do đ&oacute;, từ sơ đồ tr&ecirc;n bạn c&oacute; thể t&aacute;ch c&aacute;c thuộc t&iacute;nh v&agrave; phương thức tr&ugrave;ng nhau ra một lớp mới t&ecirc;n l&agrave;&nbsp;<code>Person</code>&nbsp;v&agrave; cho lớp&nbsp;<code>Student</code>&nbsp;v&agrave;&nbsp;<code>Teacher</code>&nbsp;kế thừa lớp n&agrave;y giống như sau:</div>
-<div style="text-align: justify;"><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/files/thumbnails/2_952c2cadf9d44245b93bdc389799597d.png" /></div>
+<div style="text-align: justify;"><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/2_952c2cadf9d44245b93bdc389799597d.png" /></div>
 <div style="text-align: justify;">C&oacute; thể thấy với sơ đồ n&agrave;y th&igrave; lớp&nbsp;<code>Student</code>&nbsp;v&agrave;&nbsp;<code>Teacher</code>&nbsp;sẽ được thừa hưởng lại c&aacute;c thuộc t&iacute;nh chung từ lớp&nbsp;<code>Person</code>&nbsp;v&agrave; code sẽ kh&ocirc;ng c&ograve;n bị tr&ugrave;ng lặp. Đ&oacute; ch&iacute;nh l&agrave; lợi &iacute;ch của t&iacute;nh kế thừa.</div>
 <h3 style="text-align: justify;">3. T&iacute;nh đa h&igrave;nh (Polymorphism)</h3>
 <div style="text-align: justify;">Như bạn đ&atilde; biết, lập tr&igrave;nh hướng đối tượng l&agrave; phương ph&aacute;p tư duy v&agrave; giải quyết b&agrave;i to&aacute;n lập tr&igrave;nh theo hướng thực tế. Do đ&oacute;, c&aacute;c t&iacute;nh chất của n&oacute; cũng sẽ gắn liền với thực tế n&ecirc;n trước hết bạn cần hiểu về t&iacute;nh đa h&igrave;nh trong thực tế. Đa h&igrave;nh được hiểu l&agrave; trong từng ho&agrave;n cảnh, từng trường hợp kh&aacute;c nhau th&igrave; c&aacute;c đối tượng sẽ đ&oacute;ng c&aacute;c vai tr&ograve; kh&aacute;c nhau. V&iacute; dụ, c&ugrave;ng l&agrave; một người nhưng khi ở c&ocirc;ng ty th&igrave; c&oacute; vai tr&ograve; l&agrave; nh&acirc;n vi&ecirc;n, khi đi si&ecirc;u thị th&igrave; c&oacute; vai tr&ograve; l&agrave; kh&aacute;ch h&agrave;ng, hay khi ở trường th&igrave; lại c&oacute; vai tr&ograve; l&agrave; học sinh, ... =&gt; c&ugrave;ng l&agrave; một người nhưng c&oacute; nhiều vai tr&ograve; kh&aacute;c nhau n&ecirc;n đ&acirc;y ch&iacute;nh l&agrave; đa h&igrave;nh trong thực tế.</div>
@@ -1680,7 +1121,7 @@ public:
 </code></pre>
 <p>Đều l&agrave; t&iacute;nh lương nhưng với mỗi đối tượng lại c&oacute; một c&aacute;ch t&iacute;nh kh&aacute;c nhau, đ&oacute; ch&iacute;nh l&agrave; t&iacute;nh đa h&igrave;nh.</p>
 <p><strong><em>3.3 Đa h&igrave;nh th&ocirc;ng qua c&aacute;c&nbsp;đối tượng đa h&igrave;nh (polymorphic objects)</em></strong></p>
-<p><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/polymorphism.png" alt="" width="620" height="431" /></p>
+<p><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/polymorphism.png" alt="" width="620" height="431" /></p>
 <p>Biến thuộc lớp cha c&oacute; thể tham chiếu tới đối tượng của c&aacute;c lớp con, vậy biến thuộc lớp cha cũng c&oacute; nhiều h&igrave;nh th&aacute;i n&ecirc;n đ&acirc;y cũng l&agrave; đa h&igrave;nh. V&iacute; dụ:</p>
 <pre class="language-cpp"><code>#include &lt;iostream&gt;
 
@@ -1735,7 +1176,7 @@ meow meow​</code></pre>
 <div style="text-align: justify;">Trừu tượng l&agrave; t&iacute;nh chất m&agrave; đơn giản h&oacute;a đi những th&ocirc;ng tin b&ecirc;n trong đối tượng, n&oacute; cho ph&eacute;p ta giao tiếp với c&aacute;c th&agrave;nh phần của đối tượng m&agrave; kh&ocirc;ng cần phải biết về c&aacute;ch m&agrave; c&aacute;c th&agrave;nh phần n&agrave;y được x&acirc;y dựng (ch&iacute;nh x&aacute;c hơn l&agrave; kh&ocirc;ng cần biết c&aacute;c th&agrave;nh phần n&agrave;y được code như thế n&agrave;o m&agrave; chỉ cần biết c&aacute;c th&agrave;nh phần n&agrave;y được d&ugrave;ng để l&agrave;m g&igrave;). Trước hết, h&atilde;y c&ugrave;ng xem một v&iacute; dụ thực tế về t&iacute;nh trừu tượng:<br />Khi bạn đi r&uacute;t tiền ở c&acirc;y ATM th&igrave; bạn kh&ocirc;ng cần quan t&acirc;m tới c&aacute;ch m&agrave; c&acirc;y ATM hoạt động hay c&aacute;c th&agrave;nh phần c&oacute; trong c&acirc;y ATM, c&aacute;i m&agrave; bạn quan t&acirc;m duy nhất đ&oacute; l&agrave; t&iacute;nh năng r&uacute;t tiền. Trong trường hợp n&agrave;y c&aacute;c th&ocirc;ng tin kh&ocirc;ng cần thiết của c&acirc;y ATM như đếm tiền, trừ tiền trong t&agrave;i khoản, gửi dữ liệu về m&aacute;y chủ đ&atilde; được ẩn đi. C&aacute;i m&agrave; bạn nh&igrave;n thấy về đối tượng c&acirc;y ATM ch&iacute;nh l&agrave; r&uacute;t tiền =&gt; c&acirc;y ATM đ&atilde; ẩn đi những chi tiết kh&ocirc;ng cần thiết v&agrave; đ&oacute; ch&iacute;nh l&agrave; t&iacute;nh trừu tượng.<br />Tương tự trong lập tr&igrave;nh cũng vậy, khi gọi tới c&aacute;c phương thức của một đối tượng th&igrave; bạn chỉ cần quan t&acirc;m tới phương thức đ&oacute; được d&ugrave;ng để l&agrave;m g&igrave; chứ kh&ocirc;ng cần quan t&acirc;m tới phương thức đ&oacute; được code như thế n&agrave;o. T&iacute;nh chất n&agrave;y rất c&oacute; &iacute;ch khi l&agrave;m việc nh&oacute;m, bạn chỉ cần quan t&acirc;m tới chức năng của c&aacute;c phương thức m&agrave; đồng nghiệp code chứ kh&ocirc;ng cần biết n&oacute; được c&agrave;i đặt như thế n&agrave;o. Để thực hiện t&iacute;nh trừu tượng th&igrave; bạn c&oacute; thể sử dụng c&aacute;c abstract class v&agrave; interface v&igrave; n&oacute; chỉ chứa phần khai b&aacute;o chứ kh&ocirc;ng c&oacute; phần c&agrave;i đặt (ở một số ng&ocirc;n ngữ kh&ocirc;ng c&oacute; kh&aacute;i niệm về interface n&ecirc;n nếu bạn chưa biết về interface th&igrave; c&oacute; thể hiểu interface ch&iacute;nh l&agrave; abstract class với c&aacute;c phương thức đều l&agrave; trừu tượng).</div>
 <div style="text-align: justify;">Trong thực tế, khi đi l&agrave;m bạn sẽ sử dụng tới interface rất nhiều, với mỗi lớp bạn thường tạo ra 1 interface ri&ecirc;ng để thể hiện c&aacute;c t&iacute;nh năng của lớp đ&oacute; v&agrave; sử dụng interface n&agrave;y để giao tiếp với đối tượng. V&iacute; dụ lớp Customer sẽ c&oacute; interface ICustomer, c&aacute;c đối tượng kh&aacute;c muốn giao tiếp với lớp Customer th&igrave; đều phải th&ocirc;ng qua interface tr&ecirc;n..</div>
 <h3 style="text-align: justify;">Kết luận</h3>
-<div style="text-align: justify;">Lập tr&igrave;nh hướng đối tượng kh&ocirc;ng chỉ g&oacute;i gọn trong 4 t&iacute;nh chất tr&ecirc;n, để viết được một chương tr&igrave;nh tốt th&igrave; bạn c&ograve;n phải biết th&ecirc;m rất nhiều nguy&ecirc;n liệu kh&aacute;c như OOP design, Software Architecture, ... trong b&agrave;i n&agrave;y m&igrave;nh chỉ t&oacute;m tắt về lập tr&igrave;nh hướng đối tượng v&agrave; 4 t&iacute;nh chất ch&iacute;nh, nếu muốn học chi tiết hơn th&igrave; bạn c&oacute; thể tham khảo th&ecirc;m tại kh&oacute;a học <a href="https://codelearn.io/learning/lap-trinh-huong-doi-tuong-trong-cpp">C++ OOP</a> v&agrave; <a href="https://codelearn.io/learning/java-oop">Java OOP</a> tr&ecirc;n hệ thống. C&ograve;n về c&aacute;c chủ đề kh&aacute;c trong OOP th&igrave; m&igrave;nh sẽ giới thiệu trong c&aacute;c b&agrave;i viết tiếp theo.</div>', 0.0, '', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<div style="text-align: justify;">Lập tr&igrave;nh hướng đối tượng kh&ocirc;ng chỉ g&oacute;i gọn trong 4 t&iacute;nh chất tr&ecirc;n, để viết được một chương tr&igrave;nh tốt th&igrave; bạn c&ograve;n phải biết th&ecirc;m rất nhiều nguy&ecirc;n liệu kh&aacute;c như OOP design, Software Architecture, ... trong b&agrave;i n&agrave;y m&igrave;nh chỉ t&oacute;m tắt về lập tr&igrave;nh hướng đối tượng v&agrave; 4 t&iacute;nh chất ch&iacute;nh, nếu muốn học chi tiết hơn th&igrave; bạn c&oacute; thể tham khảo th&ecirc;m tại kh&oacute;a học <a href="https://codelearn.io/learning/lap-trinh-huong-doi-tuong-trong-cpp">C++ OOP</a> v&agrave; <a href="https://codelearn.io/learning/java-oop">Java OOP</a> tr&ecirc;n hệ thống. C&ograve;n về c&aacute;c chủ đề kh&aacute;c trong OOP th&igrave; m&igrave;nh sẽ giới thiệu trong c&aacute;c b&agrave;i viết tiếp theo.</div>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/lap-trinh-huong-doi-tuong-trong-cpp_653cb309970b492ca7f69162384814f8.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd86-96b0-7fd3-861a-4f3409c10536', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Java cơ bản', '<p>Ng&ocirc;n ngữ Java được lựa chọn để tạo ra c&aacute;c website, ứng dụng di động, phần mềm t&ugrave;y chỉnh, cổng th&ocirc;ng tin điện tử,&hellip; v&agrave; được coi như&nbsp;một trong những ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất tr&ecirc;n thế giới hiện nay. Nhiều nh&agrave; ph&aacute;t triển phần mềm khởi đầu với Java v&agrave; đi theo n&oacute; qua rất nhiều dự &aacute;n cho đến tận b&acirc;y giờ. Java l&agrave; một chương tr&igrave;nh mặc định trong c&aacute;c hệ điều h&agrave;nh v&agrave; vai tr&ograve; của n&oacute; đối với ch&uacute;ng ta l&agrave; v&ocirc; c&ugrave;ng to lớn.</p>
 <h3><strong>Java l&agrave; g&igrave;?</strong></h3>
 <p>Java l&agrave;&nbsp;ng&ocirc;n ngữ lập tr&igrave;nh&nbsp;bậc cao, được ph&aacute;t triển bởi Sun Microsystems, do James Gosling khởi xướng v&agrave; ph&aacute;t h&agrave;nh v&agrave;o năm 1995 như l&agrave; một th&agrave;nh phần cốt l&otilde;i của nền tảng Java của Sun Microsystems (Java 1.0 [J2SE]).&nbsp;Java chạy tr&ecirc;n rất nhiều nền tảng kh&aacute;c nhau, như Windows, Mac v&agrave; c&aacute;c phi&ecirc;n bản kh&aacute;c nhau của UNIX.&nbsp;</p>
@@ -1758,10 +1199,10 @@ INSERT INTO public."Courses" VALUES ('3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Ja
 <h3><strong>Ứng dụng của JAVA</strong></h3>
 <p>C&oacute; 4 loại ứng dụng ch&iacute;nh m&agrave; c&oacute; thể được tạo bởi sử dụng ng&ocirc;n ngữ lập tr&igrave;nh Java:</p>
 <ul>
-<li><strong>Standalone App<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/Java_appp.png" alt="" width="638" height="555" /> <br /></strong>N&oacute; c&ograve;n được biết đến với t&ecirc;n gọi kh&aacute;c l&agrave; Destop App hoặc Windows-based App. Một ứng dụng m&agrave; ch&uacute;ng ta cần c&agrave;i đặt tr&ecirc;n mỗi thiết bị như media player, antivirus, &hellip; AWT v&agrave; Swing được sử dụng trong Java để tạo c&aacute;c Standalone App.</li>
-<li><strong>Web App<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/java_web.gif" alt="" width="662" height="377" /> <img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/java_web2.jpg" alt="" width="934" height="1085" /> </strong><br />Một ứng dụng m&agrave; chạy tr&ecirc;n Server Side v&agrave; tạo Dynamic Page, được gọi l&agrave; Web App. Hiện tại, c&aacute;c c&ocirc;ng nghệ Servlet, JSP, Struts, JSF, &hellip; được sử dụng để tạo Web App trong Java.</li>
+<li><strong>Standalone App<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/Java_appp.png" alt="" width="638" height="555" /> <br /></strong>N&oacute; c&ograve;n được biết đến với t&ecirc;n gọi kh&aacute;c l&agrave; Destop App hoặc Windows-based App. Một ứng dụng m&agrave; ch&uacute;ng ta cần c&agrave;i đặt tr&ecirc;n mỗi thiết bị như media player, antivirus, &hellip; AWT v&agrave; Swing được sử dụng trong Java để tạo c&aacute;c Standalone App.</li>
+<li><strong>Web App<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/java_web.gif" alt="" width="662" height="377" /> <img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/java_web2.jpg" alt="" width="934" height="1085" /> </strong><br />Một ứng dụng m&agrave; chạy tr&ecirc;n Server Side v&agrave; tạo Dynamic Page, được gọi l&agrave; Web App. Hiện tại, c&aacute;c c&ocirc;ng nghệ Servlet, JSP, Struts, JSF, &hellip; được sử dụng để tạo Web App trong Java.</li>
 <li><strong>Enterprise App<br /></strong>Một ứng dụng dạng như Banking App, c&oacute; lợi thế l&agrave; t&iacute;nh bảo mật cao, c&acirc;n bằng tải (load balancing) v&agrave; clustering. Trong java, EJB được sử dụng để tạo c&aacute;c Enterprise App.</li>
-<li><strong>Mobile App<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/Java_mobileApp.jpg" alt="" width="664" height="436" /> </strong><br />Đ&acirc;y l&agrave; loại ứng dụng được tạo cho thiết bị mobile. Hiện tại th&igrave; Android v&agrave; Java ME được sử dụng để tạo loại ứng dụng n&agrave;y.</li>
+<li><strong>Mobile App<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/Java_mobileApp.jpg" alt="" width="664" height="436" /> </strong><br />Đ&acirc;y l&agrave; loại ứng dụng được tạo cho thiết bị mobile. Hiện tại th&igrave; Android v&agrave; Java ME được sử dụng để tạo loại ứng dụng n&agrave;y.</li>
 </ul>
 <hr />
 <h3>Mục ti&ecirc;u của kh&oacute;a học.</h3>
@@ -1780,7 +1221,7 @@ INSERT INTO public."Courses" VALUES ('3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Ja
 </li>
 <li>C&aacute;ch phương thức xử l&yacute; số học trong Java.</li>
 <li>Biết viết v&agrave; sử dụng h&agrave;m trong Java.</li>
-</ul>', 0.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/java-co-ban_18f86065cf1d4640ae1ee476da5acf49.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('3cfe0502-a9d6-4353-b87f-ed417a83124f', 'Lập trình C++ cơ bản', '<p>C++ l&agrave; một trong những ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất, đặc biệt trong lập tr&igrave;nh thi đấu. Hiện nay, đa số c&aacute;c bạn trẻ đều ưu ti&ecirc;n chọn học C++ để x&acirc;y dựng nền tảng v&agrave; tư duy lập tr&igrave;nh khi mới bắt đầu kh&aacute;m ph&aacute; lập tr&igrave;nh. Kh&oacute;a học C++ cơ bản được thiết kế với những kiến thức cơ bản v&agrave; dễ hiểu nhất để gi&uacute;p c&aacute;c bạn tiếp cận dễ d&agrave;ng.</p>
 <h2><strong>Mục ti&ecirc;u của kh&oacute;a học:</strong></h2>
 <ul data-sourcepos="7:1-11:0">
@@ -1798,7 +1239,7 @@ INSERT INTO public."Courses" VALUES ('3cfe0502-a9d6-4353-b87f-ed417a83124f', 'L�
 <li data-sourcepos="31:1-31:88">Kh&oacute;a học được kết hợp&nbsp;giữa <strong>l&yacute; thuyết</strong> v&agrave; <strong>thực h&agrave;nh</strong>.</li>
 <li data-sourcepos="32:1-32:146">Học vi&ecirc;n sẽ được học qua c&aacute;c video b&agrave;i giảng, b&agrave;i đọc l&yacute; thuyết, b&agrave;i tập thực h&agrave;nh v&agrave; b&agrave;i tập trắc nghiệm l&yacute; thuyết<strong>.</strong></li>
 <li data-sourcepos="32:1-32:146">Học vi&ecirc;n sẽ được trao đổi hỏi đ&aacute;p những thắc mắc trực tiếp với c&aacute;c bạn c&ugrave;ng kh&oacute;a v&agrave; với người quản l&yacute; kh&oacute;a học.</li>
-</ul>', 720000.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-1767-7ee0-a32b-ab03f843c88f', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 720000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/lap-trinh-cpp-co-ban_4af6f617fbec4380b4e046a7797624e1.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('3d68c61e-6eec-4416-8214-21930ae35f02', 'Cấu trúc dữ liệu và giải thuật', '<h3 data-start="258" data-end="316">Giới thiệu về kh&oacute;a học "Cấu tr&uacute;c dữ liệu v&agrave; giải thuật"</h3>
 <p class="" data-start="318" data-end="658">Kh&oacute;a học n&agrave;y sẽ gi&uacute;p bạn <strong data-start="343" data-end="425">hiểu r&otilde; c&aacute;ch c&agrave;i đặt v&agrave; vận h&agrave;nh của c&aacute;c h&agrave;m trong c&aacute;c cấu tr&uacute;c dữ liệu cơ bản</strong>, đồng thời <strong data-start="437" data-end="499">nắm vững nguy&ecirc;n l&yacute; v&agrave; ứng dụng của c&aacute;c thuật to&aacute;n phổ biến</strong>. Đ&acirc;y l&agrave; nền tảng quan trọng cho mọi lập tr&igrave;nh vi&ecirc;n, đặc biệt l&agrave; những người muốn ph&aacute;t triển trong lĩnh vực kỹ thuật phần mềm, ph&acirc;n t&iacute;ch dữ liệu hoặc kỹ sư AI.</p>
 <h3 data-start="665" data-end="716">Tại sao phải học cấu tr&uacute;c dữ liệu v&agrave; giải thuật?</h3>
@@ -1883,7 +1324,7 @@ INSERT INTO public."Courses" VALUES ('3d68c61e-6eec-4416-8214-21930ae35f02', 'C�
 <li class="" data-start="2298" data-end="2373">
 <p class="" data-start="2300" data-end="2373">Biết c&aacute;ch sử dụng &iacute;t nhất một ng&ocirc;n ngữ lập tr&igrave;nh như Python, C++, Java...</p>
 </li>
-</ul>', 0.0, '', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/cau-truc-du-lieu-va-giai-thuat_ef33392c074c4cd29a9892f11abbc2bc.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd86-9740-74ed-b041-1371ef1a831e', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Tự động hóa công việc hàng ngày với Python', '<h2><strong>Kh&oacute;a học Tự động h&oacute;a c&ocirc;ng việc h&agrave;ng ng&agrave;y với Python: Biến Python th&agrave;nh c&ocirc;ng cụ tự động h&oacute;a mạnh mẽ!</strong></h2>
 <h3><strong>Lộ tr&igrave;nh học Python ho&agrave;n chỉnh</strong></h3>
 <p>Để đảm bảo h&agrave;nh tr&igrave;nh học tập hiệu quả, ch&uacute;ng t&ocirc;i đề xuất lộ tr&igrave;nh học như sau:</p>
@@ -1924,26 +1365,26 @@ INSERT INTO public."Courses" VALUES ('3dd82fcf-1316-40d6-85bb-a05fc30471db', 'T�
 </li>
 </ul>
 <h3><strong>Sẵn s&agrave;ng trở th&agrave;nh chuy&ecirc;n gia Python Automation?</strong></h3>
-<p>H&atilde;y tham gia kh&oacute;a học <strong>Tự động h&oacute;a c&ocirc;ng việc h&agrave;ng ng&agrave;y với Python</strong>&nbsp;ngay h&ocirc;m nay để n&acirc;ng cao kỹ năng lập tr&igrave;nh v&agrave; tạo ra sự kh&aacute;c biệt trong sự nghiệp của bạn. Với lộ tr&igrave;nh học được thiết kế chuy&ecirc;n nghiệp, ch&uacute;ng t&ocirc;i cam kết gi&uacute;p bạn l&agrave;m chủ kỹ năng tự động h&oacute;a với Python một c&aacute;ch hiệu quả nhất.</p>', 1099000.0, '', true, '087499f3-3cc2-4d25-8ad5-8c63c6b74c44', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p>H&atilde;y tham gia kh&oacute;a học <strong>Tự động h&oacute;a c&ocirc;ng việc h&agrave;ng ng&agrave;y với Python</strong>&nbsp;ngay h&ocirc;m nay để n&acirc;ng cao kỹ năng lập tr&igrave;nh v&agrave; tạo ra sự kh&aacute;c biệt trong sự nghiệp của bạn. Với lộ tr&igrave;nh học được thiết kế chuy&ecirc;n nghiệp, ch&uacute;ng t&ocirc;i cam kết gi&uacute;p bạn l&agrave;m chủ kỹ năng tự động h&oacute;a với Python một c&aacute;ch hiệu quả nhất.</p>', 1099000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Python-automation_db4c892cc03f4cae8bcedd5d81358bc6.jpg', true, '087499f3-3cc2-4d25-8ad5-8c63c6b74c44', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('3ffa0664-7966-4aa4-9557-049c00d033b7', 'Giải thuật cho Python', '<p style="line-height: 1.5;"><span style="font-size: 20pt; color: #304090;"><strong>Kh&aacute;m ph&aacute; sức mạnh của "Giải Thuật" trong Python!</strong></span></p>
 <p style="line-height: 1.5;"><span style="font-size: 14pt;"><strong>Bạn đ&atilde; sẵn s&agrave;ng để chinh phục thế giới của lập tr&igrave;nh với những giải thuật mạnh mẽ?</strong></span></p>
 <p style="line-height: 1.5;">Ch&agrave;o mừng bạn đến với kh&oacute;a học "<strong>Giải thuật cho Python"</strong>&nbsp;- nơi bạn sẽ kh&aacute;m ph&aacute; những b&iacute; mật đằng sau những d&ograve;ng m&atilde; lệnh kỳ diệu v&agrave; trở th&agrave;nh bậc thầy trong việc giải quyết c&aacute;c vấn đề phức tạp.</p>
-<p style="line-height: 1.5;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/files/thumbnails/A1_4c7c5f3532d041ceb43528852442ca5a.png" width="650" height="587" /></p>
+<p style="line-height: 1.5;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/A1_4c7c5f3532d041ceb43528852442ca5a.png" width="650" height="587" /></p>
 <p style="line-height: 1.5;"><span style="font-size: 20pt; color: #304090;"><strong>Tại sao bạn n&ecirc;n tham gia kh&oacute;a học n&agrave;y?</strong></span></p>
 <p style="line-height: 1.5;"><strong>Thực h&agrave;nh qua c&aacute;c b&agrave;i tập thực tế:</strong> Mỗi phần học đều đi k&egrave;m với c&aacute;c b&agrave;i tập thực h&agrave;nh gi&uacute;p bạn &aacute;p dụng ngay kiến thức đ&atilde; học.</p>
 <p style="line-height: 1.5;"><strong>Giảng vi&ecirc;n nhiệt huyết:</strong> Được hướng dẫn bởi những chuy&ecirc;n gia h&agrave;ng đầu với nhiều năm kinh nghiệm trong lĩnh vực.</p>
 <p style="line-height: 1.5;"><strong>Cộng đồng học tập s&ocirc;i nổi:</strong> Kết nối với h&agrave;ng ngh&igrave;n học vi&ecirc;n kh&aacute;c, c&ugrave;ng nhau thảo luận v&agrave; giải quyết c&aacute;c b&agrave;i to&aacute;n kh&oacute;.</p>
 <p style="line-height: 1.5;"><strong>Chứng chỉ uy t&iacute;n:</strong> Ho&agrave;n th&agrave;nh kh&oacute;a học v&agrave; nhận chứng chỉ c&ocirc;ng nhận, gi&uacute;p n&acirc;ng cao gi&aacute; trị bản th&acirc;n tr&ecirc;n thị trường lao động.</p>
 <p style="line-height: 1.5;"><strong>Hỗ trợ 24/7:</strong>&nbsp;Lu&ocirc;n c&oacute; đội ngũ hỗ trợ sẵn s&agrave;ng gi&uacute;p đỡ bạn vượt qua mọi kh&oacute; khăn trong qu&aacute; tr&igrave;nh học tập.</p>
-<p style="line-height: 1.5;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/files/thumbnails/A2_123aa699051d4ad28d66bb9c95a05739.png" width="651" height="423" /></p>
+<p style="line-height: 1.5;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/A2_123aa699051d4ad28d66bb9c95a05739.png" width="651" height="423" /></p>
 <p style="line-height: 1.5;"><span style="font-size: 20pt; color: #304090;"><strong>Đừng bỏ lỡ cơ hội để</strong></span></p>
 <p style="line-height: 1.5;"><strong>Tăng cường kỹ năng lập tr&igrave;nh:</strong>&nbsp;Hiểu s&acirc;u hơn về c&aacute;ch c&aacute;c thuật to&aacute;n hoạt động v&agrave; l&agrave;m thế n&agrave;o để &aacute;p dụng ch&uacute;ng hiệu quả.</p>
 <p style="line-height: 1.5;"><strong>N&acirc;ng cao tư duy giải quyết vấn đề: </strong>Ph&aacute;t triển khả năng ph&acirc;n t&iacute;ch v&agrave; giải quyết c&aacute;c b&agrave;i to&aacute;n phức tạp một c&aacute;ch logic v&agrave; s&aacute;ng tạo.</p>
 <p style="line-height: 1.5;"><strong>Chuẩn bị cho tương lai:</strong>&nbsp;D&ugrave; bạn muốn trở th&agrave;nh nh&agrave; ph&aacute;t triển phần mềm, nh&agrave; khoa học dữ liệu hay chuy&ecirc;n gia AI, kiến thức về giải thuật l&agrave; nền tảng vững chắc cho mọi lĩnh vực.</p>
-<p style="line-height: 1.5;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/files/thumbnails/A3_3ce089ededfc4daab3907c20805cefde.png" width="651" height="522" /></p>
+<p style="line-height: 1.5;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/A3_3ce089ededfc4daab3907c20805cefde.png" width="651" height="522" /></p>
 <p style="line-height: 1.5;">&nbsp;</p>
 <p style="line-height: 1.5;"><span style="font-size: 20pt; color: #304090;"><strong>H&atilde;y bắt đầu h&agrave;nh tr&igrave;nh trở th&agrave;nh chuy&ecirc;n gia giải thuật ngay h&ocirc;m nay!</strong></span></p>
-<p style="line-height: 1.5;">Đăng k&yacute; ngay để kh&ocirc;ng bỏ lỡ cơ hội n&acirc;ng cao kỹ năng lập tr&igrave;nh v&agrave; mở rộng tư duy thuật to&aacute;n của bạn. Ch&uacute;ng t&ocirc;i tin rằng với kiến thức v&agrave; kỹ năng học được từ kh&oacute;a học, bạn sẽ tự tin đối mặt với mọi th&aacute;ch thức trong lập tr&igrave;nh.</p>', 900000.0, '', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019ddd7c-1767-7ee0-a32b-ab03f843c88f', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p style="line-height: 1.5;">Đăng k&yacute; ngay để kh&ocirc;ng bỏ lỡ cơ hội n&acirc;ng cao kỹ năng lập tr&igrave;nh v&agrave; mở rộng tư duy thuật to&aacute;n của bạn. Ch&uacute;ng t&ocirc;i tin rằng với kiến thức v&agrave; kỹ năng học được từ kh&oacute;a học, bạn sẽ tự tin đối mặt với mọi th&aacute;ch thức trong lập tr&igrave;nh.</p>', 900000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Python_-_Algorithms_6865856c821b4bbe88a9b9e88dba2208.png', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019ddd86-9740-74ed-b041-1371ef1a831e', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'C cho người mới bắt đầu', '<h3>Tổng quan về ng&ocirc;n ngữ C:</h3>
 <ul>
 <li>Ng&ocirc;n ngữ C l&agrave; một ng&ocirc;n ngữ đ&atilde; c&oacute; mặt từ rất l&acirc;u,&nbsp;l&agrave; ng&ocirc;n ngữ mệnh lệnh được ra đời từ đầu thập ni&ecirc;n 70.</li>
@@ -1956,7 +1397,7 @@ INSERT INTO public."Courses" VALUES ('4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'C 
 <h3>Ứng dụng của ng&ocirc;n ngữ C:</h3>
 <h4><span id="He_dieu_hanh">Hệ điều h&agrave;nh.</span></h4>
 <p>Ng&ocirc;n ngữ lập tr&igrave;nh C c&oacute; thể được sử dụng để thiết kế phần mềm hệ thống. Như l&agrave; hệ điều h&agrave;nh v&agrave; Tr&igrave;nh bi&ecirc;n dịch.&nbsp;Viết kịch bản hệ điều h&agrave;nh UNIX l&agrave; mục đ&iacute;ch ch&iacute;nh của việc tạo ra C. Ng&ocirc;n ngữ C l&agrave; một phần kh&ocirc;ng thể thiếu trong qu&aacute; tr&igrave;nh ph&aacute;t triển của nhiều hệ điều h&agrave;nh. Unix-Kernel, c&aacute;c tiện &iacute;ch v&agrave; ứng dụng hệ điều h&agrave;nh Microsoft Windows v&agrave; một bộ phận lớn hệ điều h&agrave;nh Android đều đ&atilde; được viết kịch bản trong C.</p>
-<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/C_HeDieuHanh.png" alt="" width="674" height="434" /></p>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/C_HeDieuHanh.png" alt="" width="674" height="434" /></p>
 <h4><span id="Phat_trien_ngon_ngu_moi">Ph&aacute;t triển ng&ocirc;n ngữ mới</span></h4>
 <p>Ứng dụng thứ 2 của ng&ocirc;n ngữ c đ&oacute; l&agrave; n&oacute; l&agrave; cơ sở để ph&aacute;t triển ng&ocirc;n ngữ mới. Bởi n&oacute; c&oacute;&nbsp;ảnh hưởng trực tiếp hoặc gi&aacute;n tiếp đến sự ph&aacute;t triển của nhiều ng&ocirc;n ngữ bao gồm C ++ l&agrave; C với c&aacute;c lớp, C #, D, Java, Limbo, JavaScript, Perl, UNIX&rsquo;s C Shell, PHP v&agrave; Python v&agrave; Verilog.&nbsp;C&aacute;c ng&ocirc;n ngữ n&agrave;y sử dụng C trong khả năng biến đổi: v&iacute; dụ, trong Python. C được sử dụng để x&acirc;y dựng c&aacute;c thư viện chuẩn. Trong khi c&aacute;c ng&ocirc;n ngữ kh&aacute;c như C ++, Perl v&agrave; PHP c&oacute; cấu tr&uacute;c c&uacute; ph&aacute;p v&agrave; điều khiển dựa tr&ecirc;n C. Ch&iacute;nh v&igrave; vậy m&agrave; n&oacute; được mệnh danh l&agrave; &rdquo; &ocirc;ng nội&rdquo; của c&aacute;c ng&ocirc;n ngữ lập tr&igrave;nh.</p>
 <h4><span id="Nen_tang_tinh_toan">Nền tảng t&iacute;nh to&aacute;n</span></h4>
@@ -1996,7 +1437,7 @@ INSERT INTO public."Courses" VALUES ('4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'C 
 </li>
 </ul>
 <hr /><hr />
-<p>Bạn cũng c&oacute; thể t&igrave;m hiểu s&acirc;u v&agrave; ng&ocirc;n ngữ C v&agrave; ứng dụng của n&oacute; <a href="https://vi.wikipedia.org/wiki/C_(ng%C3%B4n_ng%E1%BB%AF_l%E1%BA%ADp_tr%C3%ACnh)" target="_blank" rel="noopener">Tại đ&acirc;y</a>.</p>', 0.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-1767-7ee0-a32b-ab03f843c88f', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p>Bạn cũng c&oacute; thể t&igrave;m hiểu s&acirc;u v&agrave; ng&ocirc;n ngữ C v&agrave; ứng dụng của n&oacute; <a href="https://vi.wikipedia.org/wiki/C_(ng%C3%B4n_ng%E1%BB%AF_l%E1%BA%ADp_tr%C3%ACnh)" target="_blank" rel="noopener">Tại đ&acirc;y</a>.</p>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/c-cho-nguoi-moi-bat-dau_e9ad9934d71443f7b64f446fe7375c9f.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Phần cứng máy tính', '<h3>Tổng quan về Phần cứng m&aacute;y t&iacute;nh</h3>
 <ul>
 <li>Phần cứng m&aacute;y t&iacute;nh n&oacute;i chung c&oacute; thể tạm hiểu l&agrave; tất cả thiết bị cấu th&agrave;nh n&ecirc;n một chiếc m&aacute;y t&iacute;nh, chẳng hạn như m&agrave;n h&igrave;nh, bộ xử l&yacute;, card mạng, ổ cứng, b&agrave;n ph&iacute;m v&agrave; chuột.</li>
@@ -2013,14 +1454,14 @@ INSERT INTO public."Courses" VALUES ('5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Ph
 <p>Phần cứng m&aacute;y t&iacute;nh ch&iacute;nh l&agrave; phần "th&acirc;n x&aacute;c" của m&aacute;y t&iacute;nh, kh&ocirc;ng c&oacute; phần cứng m&aacute;y t&iacute;nh th&igrave; kh&ocirc;ng thể c&oacute; m&aacute;y t&iacute;nh. Phần cứng, kết hợp với phần mềm m&aacute;y t&iacute;nh tạo ra một chiếc m&aacute;y t&iacute;nh ho&agrave;n chỉnh c&oacute; thể chạy được. Số lượng m&aacute;y t&iacute;nh nhiều v&agrave; chất lượng ch&iacute;nh l&agrave; một trong c&aacute;c ti&ecirc;u ch&iacute; đ&aacute;nh gi&aacute; mức độ ph&aacute;t triển của c&aacute;c c&ocirc;ng ty, quốc gia...</p>
 <h4>C&aacute;c c&ocirc;ng ty lớn về c&ocirc;ng nghệ đều sản xuất phần cứng m&aacute;y t&iacute;nh.</h4>
 <p>Để gi&uacute;p c&aacute;c bạn thấy được phần cứng m&aacute;y t&iacute;nh c&oacute; vai tr&ograve; quan trọng như thế n&agrave;o, h&atilde;y xem danh s&aacute;ch c&aacute;c c&ocirc;ng ty c&ocirc;ng nghệ lớn nhất thế giới, tất cả đều sản xuất m&aacute;y t&iacute;nh v&agrave; phần cứng m&aacute;y t&iacute;nh.</p>
-<figure id="attachment_1505" class="wp-caption aligncenter" aria-describedby="caption-attachment-1505"><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/Shanghaik/Pictures/hardware.png" alt="" width="797" height="405" /></figure>
+<figure id="attachment_1505" class="wp-caption aligncenter" aria-describedby="caption-attachment-1505"><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/Shanghaik/Pictures/hardware.png" alt="" width="797" height="405" /></figure>
 <p>Như bạn thấy, phần cứng m&aacute;y t&iacute;nh gắn liền mật thiết với c&aacute;c c&ocirc;ng ty c&ocirc;ng nghệ h&agrave;ng đầu, c&aacute;c thương hiệu m&aacute;y t&iacute;nh ứng với c&aacute;c doanh nghiệp tr&ecirc;n l&agrave; v&ocirc; c&ugrave;ng nổi tiếng, chỉ cần n&oacute;i đến t&ecirc;n c&aacute;c thương hiệu ta sẽ nghĩ ngay đến m&aacute;y t&iacute;nh.</p>
 <h4>Ph&acirc;n loại phần cứng</h4>
 <p>Phần cứng m&aacute;y t&iacute;nh c&oacute; thể được ph&acirc;n loại theo nhiều c&aacute;ch thức kh&aacute;c nhau. Ta c&oacute; thể ph&acirc;n loại theo chức năng, hoặc theo c&aacute;c phần cụ thể, một m&aacute;y t&iacute;nh cơ bản thường c&oacute; c&aacute;c phần như sau</p>
-<p style="padding-left: 30px;"><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/Shanghaik/Pictures/hardware2.png" alt="" width="493" height="466" /></p>
+<p style="padding-left: 30px;"><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/Shanghaik/Pictures/hardware2.png" alt="" width="493" height="466" /></p>
 <h4><strong>Phần cứng mở rộng</strong></h4>
 <p>Kh&ocirc;ng chỉ ở mức sử dụng cơ bản, ng&agrave;y nay phần cứng m&aacute;y t&iacute;nh c&oacute; thể mở rộng theo nhu cầu sử dụng. Ch&uacute;ng ta sẽ được t&igrave;m hiểu về ch&uacute;ng trong c&aacute;c b&agrave;i học.</p>
-<p style="padding-left: 30px;"><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/Shanghaik/Pictures/hardware3.png" alt="" width="406" height="383" /></p>
+<p style="padding-left: 30px;"><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/Shanghaik/Pictures/hardware3.png" alt="" width="406" height="383" /></p>
 <hr />
 <h3>Học vi&ecirc;n sẽ nhận được những g&igrave; trong kh&oacute;a học:</h3>
 <ul>
@@ -2044,17 +1485,17 @@ INSERT INTO public."Courses" VALUES ('5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Ph
 <li>Nhu cầu cho học tập.</li>
 </ul>
 </li>
-</ul>', 0.0, '', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019ddd7c-17ed-748b-9a0b-4871476e9354', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/phan-cung-may-tinh_f02bceb8b60e4a2794b73a5e751b34a7.png', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Scratch Nâng Cao', '<h3>GIỚI THIỆU KH&Oacute;A HỌC LẬP TR&Igrave;NH SCRATCH N&Acirc;NG CAO</h3>
 <p>Kh&oacute;a học lập tr&igrave;nh <strong>Scratch N&acirc;ng Cao</strong>&nbsp;l&agrave; bước tiếp theo để ph&aacute;t triển khả năng tư duy logic v&agrave; s&aacute;ng tạo qua việc lập tr&igrave;nh c&aacute;c dự &aacute;n phức tạp hơn. Th&ocirc;ng qua kh&oacute;a học n&agrave;y, c&aacute;c bạn nhỏ sẽ bước s&acirc;u hơn v&agrave;o thế giới lập tr&igrave;nh, học c&aacute;ch x&acirc;y dựng c&aacute;c tr&ograve; chơi ho&agrave;n chỉnh v&agrave; ứng dụng những kiến thức to&aacute;n học v&agrave;o lập tr&igrave;nh. Đ&acirc;y l&agrave; kh&oacute;a học gi&uacute;p c&aacute;c bạn trẻ kh&ocirc;ng chỉ r&egrave;n luyện kỹ năng lập tr&igrave;nh m&agrave; c&ograve;n k&iacute;ch th&iacute;ch tư duy t&iacute;nh to&aacute;n v&agrave; s&aacute;ng tạo, chuẩn bị cho c&aacute;c bước tiến xa hơn trong thế giới c&ocirc;ng nghệ.</p>
-<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/files/thumbnails/S1_864621c3042844e488dc13147b49941d.jpg" width="700" height="700" /></p>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/S1_864621c3042844e488dc13147b49941d.jpg" width="700" height="700" /></p>
 <h4>TẠI SAO N&Ecirc;N HỌC LẬP TR&Igrave;NH SCRATCH N&Acirc;NG CAO?</h4>
 <ul>
 <li><strong>X&acirc;y dựng game của ri&ecirc;ng bạn</strong>: Kh&oacute;a học n&agrave;y tập trung v&agrave;o việc hướng dẫn c&aacute;c bạn trẻ tự tay thiết kế, ph&aacute;t triển v&agrave; ho&agrave;n thiện tr&ograve; chơi của m&igrave;nh. Bạn sẽ kh&ocirc;ng chỉ lập tr&igrave;nh c&aacute;c khối lệnh đơn giản nữa m&agrave; sẽ kết hợp ch&uacute;ng để tạo ra những sản phẩm phức tạp v&agrave; hấp dẫn hơn.</li>
 <li><strong>Ứng dụng to&aacute;n học v&agrave;o lập tr&igrave;nh</strong>: Scratch n&acirc;ng cao gi&uacute;p bạn hiểu r&otilde; hơn về c&aacute;ch to&aacute;n học được ứng dụng trong lập tr&igrave;nh. Bạn sẽ học c&aacute;ch sử dụng c&aacute;c ph&eacute;p t&iacute;nh, h&agrave;m to&aacute;n học v&agrave; cấu tr&uacute;c điều kiện để x&acirc;y dựng c&aacute;c tr&ograve; chơi mang t&iacute;nh thử th&aacute;ch cao hơn.</li>
 <li><strong>Ph&aacute;t triển tư duy logic</strong>: Khi thực hiện c&aacute;c dự &aacute;n n&acirc;ng cao, bạn sẽ phải đối mặt với những b&agrave;i to&aacute;n lập tr&igrave;nh đ&ograve;i hỏi khả năng tư duy logic, c&aacute;ch ph&acirc;n t&iacute;ch v&agrave; giải quyết vấn đề hiệu quả. Điều n&agrave;y gi&uacute;p bạn trở th&agrave;nh những lập tr&igrave;nh vi&ecirc;n tiềm năng, sẵn s&agrave;ng đối mặt với c&aacute;c thử th&aacute;ch lớn hơn trong tương lai.</li>
 </ul>
-<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/files/thumbnails/S2_db30d1e5fce54c3fb3992d0cd22eb1bc.jpg" width="700" height="700" /></p>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/S2_db30d1e5fce54c3fb3992d0cd22eb1bc.jpg" width="700" height="700" /></p>
 <h4>ƯU ĐIỂM CỦA KH&Oacute;A HỌC SCRATCH N&Acirc;NG CAO</h4>
 <ul>
 <li><strong>Đ&agrave;o s&acirc;u hơn v&agrave;o lập tr&igrave;nh</strong>: Kh&ocirc;ng c&ograve;n l&agrave; những thao t&aacute;c k&eacute;o thả đơn giản, bạn sẽ học c&aacute;ch kết hợp nhiều khối lệnh v&agrave; tư duy s&aacute;ng tạo để tạo ra những tr&ograve; chơi phức tạp.</li>
@@ -2074,7 +1515,7 @@ INSERT INTO public."Courses" VALUES ('6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Sc
 <li><strong>S&aacute;ng tạo kh&ocirc;ng giới hạn</strong>: Tự do s&aacute;ng tạo ra c&aacute;c tr&ograve; chơi của ri&ecirc;ng m&igrave;nh với nội dung v&agrave; c&aacute;ch chơi độc đ&aacute;o.</li>
 <li><strong>Học c&aacute;ch l&agrave;m việc độc lập v&agrave; theo nh&oacute;m</strong>: Bạn sẽ biết c&aacute;ch hợp t&aacute;c với bạn b&egrave; hoặc tự m&igrave;nh ho&agrave;n th&agrave;nh c&aacute;c dự &aacute;n lập tr&igrave;nh.</li>
 </ul>
-<p>Kh&oacute;a học Scratch n&acirc;ng cao sẽ đưa c&aacute;c bạn nhỏ đi xa hơn tr&ecirc;n h&agrave;nh tr&igrave;nh lập tr&igrave;nh, mở ra cơ hội để kh&aacute;m ph&aacute; những tiềm năng v&ocirc; tận trong thế giới số. Tham gia ngay để c&ugrave;ng ch&uacute;ng t&ocirc;i chinh phục c&aacute;c thử th&aacute;ch lập tr&igrave;nh v&agrave; kh&aacute;m ph&aacute; những điều kỳ diệu của c&ocirc;ng nghệ!</p>', 600000.0, '', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd7c-17ed-748b-9a0b-4871476e9354', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p>Kh&oacute;a học Scratch n&acirc;ng cao sẽ đưa c&aacute;c bạn nhỏ đi xa hơn tr&ecirc;n h&agrave;nh tr&igrave;nh lập tr&igrave;nh, mở ra cơ hội để kh&aacute;m ph&aacute; những tiềm năng v&ocirc; tận trong thế giới số. Tham gia ngay để c&ugrave;ng ch&uacute;ng t&ocirc;i chinh phục c&aacute;c thử th&aacute;ch lập tr&igrave;nh v&agrave; kh&aacute;m ph&aacute; những điều kỳ diệu của c&ocirc;ng nghệ!</p>', 600000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/khoa-hoc-scratch-nang-cao__3__9206393c701e4bee961b84bdf6367fa8.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('737b5551-e148-4e64-aa54-2e85f82a30ff', 'C# cơ bản', '<p style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;">C# l&agrave; một ng&ocirc;n ngữ lập tr&igrave;nh đơn giản, hiện đại, mục đ&iacute;ch tổng qu&aacute;t, hướng đối tượng được ph&aacute;t triển bởi Microsoft b&ecirc;n trong phần khởi đầu .NET của họ, được ph&aacute;t triển chủ yếu bởi Anders Hejlsberg, một kiến tr&uacute;c sư phần mềm nổi tiếng với c&aacute;c sản phẩm Turbo Pascal, Delphi, J++, WFC. Kh&oacute;a học n&agrave;y sẽ cung cấp cho bạn kiến thức cơ bản về lập tr&igrave;nh C# qua c&aacute;c kh&aacute;i niệm từ cơ bản v&agrave; c&aacute;c b&agrave;i tập thực tế bằng ng&ocirc;n ngữ lập tr&igrave;nh C#.</p>
 <h3><strong>Đặc trưng cơ bản của ng&ocirc;n ngữ C#:</strong></h3>
 <ul>
@@ -2085,9 +1526,9 @@ INSERT INTO public."Courses" VALUES ('737b5551-e148-4e64-aa54-2e85f82a30ff', 'C#
 </ul>
 <h3 style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;"><strong>Ứng dụng của C#</strong></h3>
 <ul>
-<li style="text-align: start; line-height: 18pt; box-sizing: border-box; font-variant-ligatures: normal; font-variant-caps: normal; orphans: 2; widows: 2; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; word-spacing: 0px;"><strong>Ứng dụng tr&ecirc;n Windows:<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/files/thumbnails/A2_4a0918575fdb4a598759686cec0620ab.png" /><br /></strong>Với sự trợ gi&uacute;p của bộ khung .Net, &ldquo;C#&rdquo; được sử dụng để ph&aacute;t triển c&aacute;c ứng dụng dựa tr&ecirc;n c&aacute;c cửa sổ cho m&aacute;y t&iacute;nh để b&agrave;n. Nhiều ứng dụng Windows phổ biến như c&aacute;c c&ocirc;ng cụ Microsoft Office, Skype, Photoshop v&agrave; Visual Studio được ph&aacute;t triển bằng ng&ocirc;n ngữ n&agrave;y.</li>
+<li style="text-align: start; line-height: 18pt; box-sizing: border-box; font-variant-ligatures: normal; font-variant-caps: normal; orphans: 2; widows: 2; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; word-spacing: 0px;"><strong>Ứng dụng tr&ecirc;n Windows:<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/A2_4a0918575fdb4a598759686cec0620ab.png" /><br /></strong>Với sự trợ gi&uacute;p của bộ khung .Net, &ldquo;C#&rdquo; được sử dụng để ph&aacute;t triển c&aacute;c ứng dụng dựa tr&ecirc;n c&aacute;c cửa sổ cho m&aacute;y t&iacute;nh để b&agrave;n. Nhiều ứng dụng Windows phổ biến như c&aacute;c c&ocirc;ng cụ Microsoft Office, Skype, Photoshop v&agrave; Visual Studio được ph&aacute;t triển bằng ng&ocirc;n ngữ n&agrave;y.</li>
 <li style="text-align: start; line-height: 18pt; box-sizing: border-box; font-variant-ligatures: normal; font-variant-caps: normal; orphans: 2; widows: 2; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; word-spacing: 0px;"><strong>C&aacute;c th&agrave;nh phần v&agrave; điều khiển:<br /></strong>C&aacute;c th&agrave;nh phần v&agrave; điều khiển l&agrave; c&aacute;c thư viện c&oacute; thể được sử dụng để tạo ra một thứ dễ ph&acirc;n phối v&agrave; c&oacute; thể chia sẻ được. Thư viện GPS l&agrave; một v&iacute; dụ tuyệt vời cho một thư viện c&oacute; thể được một lập tr&igrave;nh vi&ecirc;n x&acirc;y dựng v&agrave; dễ d&agrave;ng ph&acirc;n phối cho c&aacute;c lập tr&igrave;nh vi&ecirc;n kh&aacute;c để sử dụng trong c&aacute;c ứng dụng của họ. N&oacute; cũng được sử dụng để x&acirc;y dựng c&aacute;c th&agrave;nh phần m&aacute;y chủ v&agrave; nhiều c&ocirc;ng việc kh&aacute;c nữa.</li>
-<li style="text-align: start; line-height: 18pt; box-sizing: border-box; font-variant-ligatures: normal; font-variant-caps: normal; orphans: 2; widows: 2; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; word-spacing: 0px;"><strong>Ứng dụng Web:<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/files/thumbnails/A1_8a4efcbe8355487ebe053fa1a6313020.png" /><br /></strong>Với sự trợ gi&uacute;p của bộ khung .NET, C# c&oacute; khả năng tạo ra nhiều ứng dụng web bằng c&aacute;ch sử dụng asp.net. Đ&oacute; l&agrave; một ng&ocirc;n ngữ phổ biến kh&aacute;c m&agrave; ai ai c&oacute; thể học ngay lập tức khi muốn l&agrave;m cho ứng dụng web chạy trơn tru tr&ecirc;n một m&aacute;y chủ web. C&aacute;c ứng dụng Windows chạy tr&ecirc;n cả m&aacute;y chủ cũng như trong tr&igrave;nh duyệt của m&aacute;y kh&aacute;ch, t&ugrave;y thuộc v&agrave;o c&aacute;ch viết m&atilde;. Nếu C# được sử dụng dưới h&igrave;nh thức m&atilde; h&oacute;a ở backend, th&igrave; m&atilde; C# chạy tr&ecirc;n m&aacute;y chủ v&agrave; HTML frontend chạy trong tr&igrave;nh duyệt của m&aacute;y kh&aacute;ch.</li>
+<li style="text-align: start; line-height: 18pt; box-sizing: border-box; font-variant-ligatures: normal; font-variant-caps: normal; orphans: 2; widows: 2; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; word-spacing: 0px;"><strong>Ứng dụng Web:<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/A1_8a4efcbe8355487ebe053fa1a6313020.png" /><br /></strong>Với sự trợ gi&uacute;p của bộ khung .NET, C# c&oacute; khả năng tạo ra nhiều ứng dụng web bằng c&aacute;ch sử dụng asp.net. Đ&oacute; l&agrave; một ng&ocirc;n ngữ phổ biến kh&aacute;c m&agrave; ai ai c&oacute; thể học ngay lập tức khi muốn l&agrave;m cho ứng dụng web chạy trơn tru tr&ecirc;n một m&aacute;y chủ web. C&aacute;c ứng dụng Windows chạy tr&ecirc;n cả m&aacute;y chủ cũng như trong tr&igrave;nh duyệt của m&aacute;y kh&aacute;ch, t&ugrave;y thuộc v&agrave;o c&aacute;ch viết m&atilde;. Nếu C# được sử dụng dưới h&igrave;nh thức m&atilde; h&oacute;a ở backend, th&igrave; m&atilde; C# chạy tr&ecirc;n m&aacute;y chủ v&agrave; HTML frontend chạy trong tr&igrave;nh duyệt của m&aacute;y kh&aacute;ch.</li>
 </ul>
 <hr />
 <h3 style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;"><strong>Mục ti&ecirc;u của kh&oacute;a học.</strong></h3>
@@ -2108,7 +1549,7 @@ INSERT INTO public."Courses" VALUES ('737b5551-e148-4e64-aa54-2e85f82a30ff', 'C#
 </ul>
 <hr />
 <h3 style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;"><strong>Lời kết: </strong></h3>
-<p style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;">Hướng tới mục đ&iacute;ch dạy lập tr&igrave;nh cho c&aacute;c đối tượng chưa biết, chưa t&igrave;m hiểu về lập tr&igrave;nh. Trong khu&ocirc;n khổ kh&oacute;a học n&agrave;y, ch&uacute;ng ta sẽ chỉ t&igrave;m hiểu kh&aacute;i niệm cơ bản nhất về lập tr&igrave;nh v&agrave; thực h&agrave;nh tr&ecirc;n ng&ocirc;n ngữ C#.</p>', 0.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-1767-7ee0-a32b-ab03f843c88f', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p style="text-align: justify; line-height: 18.0pt; margin: 0in 2.4pt 12.0pt 2.4pt;">Hướng tới mục đ&iacute;ch dạy lập tr&igrave;nh cho c&aacute;c đối tượng chưa biết, chưa t&igrave;m hiểu về lập tr&igrave;nh. Trong khu&ocirc;n khổ kh&oacute;a học n&agrave;y, ch&uacute;ng ta sẽ chỉ t&igrave;m hiểu kh&aacute;i niệm cơ bản nhất về lập tr&igrave;nh v&agrave; thực h&agrave;nh tr&ecirc;n ng&ocirc;n ngữ C#.</p>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/csharp-co-ban_96ca03bee27f454eb1f1c86e1fc5ef74.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-9740-74ed-b041-1371ef1a831e', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Java cho người mới bắt đầu', '<p class="first-token" data-sourcepos="1:1-1:147">Java l&agrave; một trong những ng&ocirc;n ngữ lập tr&igrave;nh phổ biến v&agrave; được ứng dụng rộng r&atilde;i nhất tr&ecirc;n thế giới, từ c&aacute;c ứng dụng di động đến hệ thống doanh nghiệp lớn. Với t&iacute;nh đa nền tảng v&agrave; cộng đồng hỗ trợ mạnh mẽ, Java l&agrave; lựa chọn l&yacute; tưởng cho những ai muốn x&acirc;y dựng sự nghiệp trong lĩnh vực ph&aacute;t triển phần mềm. Kh&oacute;a học Java cơ bản n&agrave;y được thiết kế đặc biệt để gi&uacute;p bạn l&agrave;m quen với ng&ocirc;n ngữ một c&aacute;ch dễ d&agrave;ng v&agrave; hiệu quả nhất.</p>
 <h2 data-sourcepos="3:1-3:26"><strong>Mục ti&ecirc;u của kh&oacute;a học:</strong></h2>
 <ul data-sourcepos="5:1-5:70">
@@ -2132,7 +1573,7 @@ INSERT INTO public."Courses" VALUES ('743dd717-48b2-45b1-b9c0-8ded60965ecb', 'Ja
 <li data-sourcepos="23:1-23:105">Sử dụng th&agrave;nh thạo c&aacute;c <strong>kiểu dữ liệu</strong>, <strong>biến</strong>, <strong>to&aacute;n tử</strong> v&agrave; <strong>c&acirc;u lệnh điều khiển</strong> trong Java.</li>
 <li data-sourcepos="24:1-24:78">Viết c&aacute;c <strong>chương tr&igrave;nh Java đơn giản</strong> để giải quyết c&aacute;c b&agrave;i to&aacute;n cơ bản.</li>
 <li data-sourcepos="25:1-25:122">C&oacute; <strong>nền tảng vững chắc</strong> để tiếp tục học c&aacute;c kh&oacute;a học Java n&acirc;ng cao v&agrave; ph&aacute;t triển sự nghiệp trong lĩnh vực lập tr&igrave;nh.</li>
-</ul>', 720000.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 720000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/java-cho-nguoi-moi-bat-dau_9a1c4247a23441d9874bb3caca9ea497.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Làm quen với SQL', '<h3 data-start="191" data-end="211">Giới thiệu về SQL</h3>
 <p class="" data-start="213" data-end="430"><strong data-start="213" data-end="248">SQL (Structured Query Language)</strong> &ndash; hay c&ograve;n gọi l&agrave; <em data-start="266" data-end="297">Ng&ocirc;n ngữ truy vấn c&oacute; cấu tr&uacute;c</em> &ndash; l&agrave; ng&ocirc;n ngữ ti&ecirc;u chuẩn d&ugrave;ng để <strong data-start="331" data-end="373">truy xuất, quản l&yacute; v&agrave; thao t&aacute;c dữ liệu</strong> trong c&aacute;c <strong data-start="384" data-end="421">hệ quản trị cơ sở dữ liệu quan hệ</strong> (RDBMS).</p>
 <p class="" data-start="432" data-end="691">Nếu bạn đang t&igrave;m kiếm một c&aacute;ch tiếp cận nhanh ch&oacute;ng v&agrave; hiệu quả để bắt đầu với SQL, kh&oacute;a học n&agrave;y sẽ l&agrave; người bạn đồng h&agrave;nh l&yacute; tưởng. N&oacute; bao gồm những chủ đề quan trọng nhất gi&uacute;p bạn hiểu c&aacute;ch thức hoạt động của SQL v&agrave; ứng dụng thực tế của n&oacute; trong c&ocirc;ng việc.</p>
@@ -2189,7 +1630,7 @@ INSERT INTO public."Courses" VALUES ('7e7c3458-5caa-43c3-84d7-383ac98097f1', 'L�
 <li class="" data-start="2178" data-end="2259">
 <p class="" data-start="2180" data-end="2259"><strong data-start="2180" data-end="2209">Ng&ocirc;n ngữ lập tr&igrave;nh cơ bản</strong> &ndash; kh&ocirc;ng bắt buộc nhưng sẽ gi&uacute;p bạn học nhanh hơn.</p>
 </li>
-</ul>', 0.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-17ed-748b-9a0b-4871476e9354', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/lam-quen-voi-sql_2f374a8d41f34eceab306830d4aea433.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-9740-74ed-b041-1371ef1a831e', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'JavaScript cơ bản', '<p>JavaScript l&agrave; một ng&ocirc;n ngữ gia th&ecirc;m khả năng tương t&aacute;c cho website của bạn&nbsp;(v&iacute; dụ: tr&ograve; chơi, c&aacute;c phản hồi khi c&aacute;c n&uacute;t được nhấn hoặc nhập dữ liệu tr&ecirc;n form, kiểu&nbsp;động, hoạt họa). B&agrave;i viết n&agrave;y sẽ gi&uacute;p bạn khởi động với&nbsp;ng&ocirc;n ngữ th&uacute; vị n&agrave;y v&agrave; cho bạn&nbsp;&yacute; tưởng về những g&igrave; c&oacute; thể xảy ra.</p>
 <h3><strong>JavaScript l&agrave; g&igrave; ?</strong></h3>
 <p>JavaScript&nbsp;(viết tắt l&agrave; "js") l&agrave; một ng&ocirc;n ngữ lập tr&igrave;nh mang đầy đủ t&iacute;nh năng&nbsp;của một&nbsp;ng&ocirc;n ngữ lập tr&igrave;nh động&nbsp;m&agrave; khi n&oacute; được &aacute;p dụng&nbsp;v&agrave;o một t&agrave;i liệu&nbsp;HTML, n&oacute;&nbsp;c&oacute; thể đem lại khả năng tương t&aacute;c động tr&ecirc;n c&aacute;c trang web. Cha đẻ của ng&ocirc;n ngữ n&agrave;y l&agrave;&nbsp;Brendan Eich, đồng s&aacute;ng lập dự &aacute;n&nbsp;Mozilla,&nbsp;quỹ&nbsp;Mozilla, v&agrave; tập đo&agrave;n&nbsp;Mozilla.</p>
@@ -2204,7 +1645,7 @@ INSERT INTO public."Courses" VALUES ('820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Ja
 <p>Ở phần dưới ch&uacute;ng t&ocirc;i sẽ giới thiệu cho bạn một số kh&iacute;a cạnh cơ bản về JavaScript v&agrave; bạn cũng sẽ được l&agrave;m việc với một v&agrave;i API. Ch&uacute;c bạn học tốt!</p>
 <hr />
 <h3>Ứng dụng của JavaScript.</h3>
-<p><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/js_web2.png" alt="" width="696" height="348" /></p>
+<p><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/HaiZuka/js_web2.png" alt="" width="696" height="348" /></p>
 <ul>
 <li><strong>Ứng dụng trong lập tr&igrave;nh website</strong>:<br />Khi nhắc đến lập tr&igrave;nh web người ta kh&ocirc;ng thể kh&ocirc;ng nhắc đến bộ 03 HTML, CSS v&agrave;&nbsp;JavaScript. C&oacute; thể n&oacute;i kh&ocirc;ng phải l&agrave; tất cả, song hầu như c&aacute;c website đang chạy hiện nay đều sử dụng JavaScript v&agrave; c&aacute;c Front-end framework của n&oacute; như:&nbsp;Bootstrap, jQuery &nbsp;Foundation, UIKit,&hellip; &nbsp;Ở đ&oacute;&nbsp;JavaScript gi&uacute;p tạo c&aacute;c hiệu ứng hiển thị tr&ecirc;n website, c&aacute;c tương t&aacute;c với người d&ugrave;ng.</li>
 <li><strong>X&acirc;y dựng c&aacute;c ứng dụng web cho m&aacute;y chủ:</strong><br />Đ&acirc;y l&agrave; một xu hướng c&ocirc;ng nghệ c&oacute; thể n&oacute;i l&agrave; rất h&oacute;t hiện nay (từ 2016 đến giờ). C&aacute;c anh em lập tr&igrave;nh vi&ecirc;n kh&aacute; h&agrave;o hứng với c&aacute;c Frame work từ JavaScript như:&nbsp;Node.js,&nbsp;AngularJS,&hellip; Cụ thể những c&aacute;i n&agrave;y sẽ hỗ trợ tạo ra c&aacute;c ứng dụng web thi&ecirc;n về tương t&aacute;c thời gian thực của người d&ugrave;ng.&nbsp; Nếu c&ugrave;ng cấu h&igrave;nh m&aacute;y chủ tương tự th&igrave; điều đ&oacute; l&agrave; kh&ocirc;ng thể đối với PHP, Java, Python, .Net khi số lượng user tương t&aacute;c c&ugrave;ng l&uacute;c qu&aacute; nhiều. M&aacute;y chủ sẽ kh&ocirc;ng thể n&agrave;o g&aacute;nh nổi, nhưng với c&aacute;c Frame work của JavaScript th&igrave; mọi chuyện sẽ ho&agrave;n to&agrave;n kh&aacute;c.</li>
@@ -2225,7 +1666,7 @@ INSERT INTO public."Courses" VALUES ('820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Ja
 </ul>
 </li>
 <li>Biết c&aacute;c thư viện li&ecirc;n quan đến thuật to&aacute;n.</li>
-</ul>', 0.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Javascript-co-ban__2__be74112f409f47e9874f0da758c1d7cb.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-96b0-7fd3-861a-4f3409c10536', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('961ac01c-382c-4aa5-bae1-d1429f27f06a', 'Lập trình C++ nâng cao', '<p>C++ l&agrave; một trong những ng&ocirc;n ngữ lập tr&igrave;nh mạnh mẽ v&agrave; linh hoạt nhất, được sử dụng rộng r&atilde;i trong c&aacute;c ứng dụng c&ocirc;ng nghiệp v&agrave; ph&aacute;t triển phần mềm cao cấp. Kh&oacute;a học C++ n&acirc;ng cao n&agrave;y được thiết kế để gi&uacute;p c&aacute;c lập tr&igrave;nh vi&ecirc;n đ&atilde; c&oacute; kiến thức cơ bản về C++ tiếp tục ph&aacute;t triển v&agrave; nắm vững c&aacute;c kỹ thuật n&acirc;ng cao. Kh&oacute;a học sẽ đi s&acirc;u v&agrave;o c&aacute;c chủ đề phức tạp hơn, gi&uacute;p bạn viết m&atilde; hiệu quả, tối ưu h&oacute;a v&agrave; &aacute;p dụng trong c&aacute;c dự &aacute;n thực tế.</p>
 <h1>Mục ti&ecirc;u của kh&oacute;a học</h1>
 <ul>
@@ -2250,7 +1691,7 @@ INSERT INTO public."Courses" VALUES ('961ac01c-382c-4aa5-bae1-d1429f27f06a', 'L�
 <li><strong>Sử dụng thư viện ti&ecirc;u chuẩn:</strong> Th&agrave;nh thạo việc sử dụng c&aacute;c thư viện ti&ecirc;u chuẩn v&agrave; mở rộng của C++ để tối ưu h&oacute;a qu&aacute; tr&igrave;nh ph&aacute;t triển phần mềm.</li>
 <li><strong>C&aacute;c kĩ thuật n&acirc;ng cao:&nbsp;</strong>stack,queue,list,set... ứng dụng v&agrave;o giải b&agrave;i tập.</li>
 </ul>
-<p>Kh&oacute;a học C++ n&acirc;ng cao n&agrave;y sẽ gi&uacute;p bạn n&acirc;ng cao kỹ năng lập tr&igrave;nh, sẵn s&agrave;ng đối mặt với những thử th&aacute;ch lớn trong ng&agrave;nh c&ocirc;ng nghệ th&ocirc;ng tin v&agrave; đạt được những th&agrave;nh tựu mới trong sự nghiệp lập tr&igrave;nh của m&igrave;nh. H&atilde;y đăng k&yacute; ngay để bắt đầu h&agrave;nh tr&igrave;nh học tập v&agrave; ph&aacute;t triển kỹ năng của bạn!</p>', 900000.0, '', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd7c-17ed-748b-9a0b-4871476e9354', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p>Kh&oacute;a học C++ n&acirc;ng cao n&agrave;y sẽ gi&uacute;p bạn n&acirc;ng cao kỹ năng lập tr&igrave;nh, sẵn s&agrave;ng đối mặt với những thử th&aacute;ch lớn trong ng&agrave;nh c&ocirc;ng nghệ th&ocirc;ng tin v&agrave; đạt được những th&agrave;nh tựu mới trong sự nghiệp lập tr&igrave;nh của m&igrave;nh. H&atilde;y đăng k&yacute; ngay để bắt đầu h&agrave;nh tr&igrave;nh học tập v&agrave; ph&aacute;t triển kỹ năng của bạn!</p>', 900000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/C___Advance-1_75d4679945874883b8dbf3f942970a89.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd86-9740-74ed-b041-1371ef1a831e', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('97f41add-6aa0-4c20-8ad1-aba7ce768046', 'SQL cho người mới bắt đầu', '<p>Kh&oacute;a học "<strong>SQL cho người mới bắt đầu</strong>" được thiết kế đặc biệt d&agrave;nh cho c&aacute;c em học sinh từ lớp 6 trở l&ecirc;n, nhằm giới thiệu v&agrave; hướng dẫn c&aacute;c em những kiến thức cơ bản về SQL (Structured Query Language) - ng&ocirc;n ngữ truy vấn cấu tr&uacute;c d&ugrave;ng để quản l&yacute; v&agrave; thao t&aacute;c với cơ sở dữ liệu. Th&ocirc;ng qua kh&oacute;a học n&agrave;y, c&aacute;c em sẽ nắm bắt được c&aacute;ch tổ chức, truy vấn v&agrave; xử l&yacute; dữ liệu một c&aacute;ch hiệu quả v&agrave; th&uacute; vị.</p>
 <p>Với phương ph&aacute;p giảng dạy th&acirc;n thiện trực quan:</p>
 <ul>
@@ -2264,7 +1705,7 @@ INSERT INTO public."Courses" VALUES ('97f41add-6aa0-4c20-8ad1-aba7ce768046', 'SQ
 <li><strong>Kỹ năng tin học:</strong> Trang bị cho c&aacute;c em một kỹ năng quan trọng v&agrave; hữu &iacute;ch trong thời đại c&ocirc;ng nghệ hiện nay.</li>
 <li><strong>Chuẩn bị cho tương lai:</strong> SQL l&agrave; một ng&ocirc;n ngữ quan trọng trong lĩnh vực c&ocirc;ng nghệ th&ocirc;ng tin v&agrave; quản trị dữ liệu, gi&uacute;p c&aacute;c em c&oacute; nền tảng vững chắc cho c&aacute;c ng&agrave;nh nghề tương lai</li>
 </ul>
-<p>Ch&uacute;ng t&ocirc;i mong muốn được ch&agrave;o đ&oacute;n c&aacute;c em học sinh trong kh&oacute;a học "<strong>SQL cho người mới bắt đầu</strong>" v&agrave; c&ugrave;ng nhau kh&aacute;m ph&aacute; thế giới th&uacute; vị của cơ sở dữ liệu!</p>', 720000.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p>Ch&uacute;ng t&ocirc;i mong muốn được ch&agrave;o đ&oacute;n c&aacute;c em học sinh trong kh&oacute;a học "<strong>SQL cho người mới bắt đầu</strong>" v&agrave; c&ugrave;ng nhau kh&aacute;m ph&aacute; thế giới th&uacute; vị của cơ sở dữ liệu!</p>', 720000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/image_c2c5d691850c4b728435b10d05005813.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-96b0-7fd3-861a-4f3409c10536', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Điện toán đám mây', '<h3 data-start="221" data-end="314">Kh&oacute;a học <strong data-start="233" data-end="253">Cloud Essentials</strong> &ndash; Nền tảng vững chắc để bước v&agrave;o thế giới điện to&aacute;n đ&aacute;m m&acirc;y!</h3>
 <p class="" data-start="316" data-end="685">Trong thời đại số, <strong data-start="335" data-end="374">điện to&aacute;n đ&aacute;m m&acirc;y (cloud computing)</strong> đ&atilde; trở th&agrave;nh nền tảng kh&ocirc;ng thể thiếu cho mọi tổ chức v&agrave; c&aacute; nh&acirc;n trong việc ph&aacute;t triển ứng dụng, lưu trữ dữ liệu v&agrave; vận h&agrave;nh hệ thống. Kh&oacute;a học <strong data-start="519" data-end="539">Cloud Essentials</strong> sẽ gi&uacute;p bạn <strong data-start="552" data-end="585">hiểu r&otilde; c&aacute;c kh&aacute;i niệm cốt l&otilde;i</strong> về cloud, từ đ&oacute; sẵn s&agrave;ng cho h&agrave;nh tr&igrave;nh ứng dụng v&agrave; ph&aacute;t triển trong m&ocirc;i trường c&ocirc;ng nghệ hiện đại.</p>
 <h3 data-start="692" data-end="730">Bạn sẽ học được g&igrave; từ kh&oacute;a học n&agrave;y?</h3>
@@ -2298,7 +1739,7 @@ INSERT INTO public."Courses" VALUES ('a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Đ
 </li>
 </ul>
 <h3 data-start="2620" data-end="2665">Sẵn s&agrave;ng cho tương lai với nền tảng Cloud!</h3>
-<p>Nếu bạn muốn <strong data-start="2685" data-end="2713">nắm bắt xu thế c&ocirc;ng nghệ</strong> v&agrave; <strong data-start="2717" data-end="2762">ứng dụng cloud v&agrave;o c&ocirc;ng việc hoặc học tập</strong>, kh&oacute;a học n&agrave;y ch&iacute;nh l&agrave; lựa chọn l&yacute; tưởng để bạn bắt đầu.</p>', 0.0, '', true, '9483a3b6-2fc1-4536-9792-d998b843da73', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p>Nếu bạn muốn <strong data-start="2685" data-end="2713">nắm bắt xu thế c&ocirc;ng nghệ</strong> v&agrave; <strong data-start="2717" data-end="2762">ứng dụng cloud v&agrave;o c&ocirc;ng việc hoặc học tập</strong>, kh&oacute;a học n&agrave;y ch&iacute;nh l&agrave; lựa chọn l&yacute; tưởng để bạn bắt đầu.</p>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/phan-mem-may-tinh_e0361af5faa9440491151521f56d1259.png', true, '9483a3b6-2fc1-4536-9792-d998b843da73', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm máy tính', '<h3>Tổng quan về Phần mềm m&aacute;y t&iacute;nh</h3>
 <ul>
 <li>
@@ -2323,7 +1764,7 @@ INSERT INTO public."Courses" VALUES ('a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Ph
 <p>Nếu phần cứng m&aacute;y t&iacute;nh ch&iacute;nh l&agrave; phần "th&acirc;n x&aacute;c" của m&aacute;y t&iacute;nh, th&igrave; phần mềm l&agrave; "khối &oacute;c". Phần cứng, kết hợp với phần mềm m&aacute;y t&iacute;nh tạo ra một chiếc m&aacute;y t&iacute;nh ho&agrave;n chỉnh c&oacute; thể chạy được. Phần mềm gi&uacute;p cho một chiếc m&aacute;y t&iacute;nh từ một khối những thiết bị m&aacute;y m&oacute;c v&ocirc; chi c&oacute; thể thực hiện những thao t&aacute;c, t&iacute;nh to&aacute;n, xử l&yacute; với độ ch&iacute;nh x&aacute;c v&agrave; tốc độ vượt xa con người. Tr&ecirc;n cơ sở tận dụng sức mạnh của phần cứng, phần mềm gi&uacute;p con người thực hiện gần như mọi c&ocirc;ng việc phức tạp m&agrave; trước đ&oacute; kh&ocirc;ng thể thực hiện. Sự ti&ecirc;n tiến về c&ocirc;ng nghệ của một c&ocirc;ng ty hay quốc gia, khu vực c&oacute; thể được đ&aacute;nh gi&aacute; bởi phần mềm họ sử dụng trong c&aacute;c c&ocirc;ng việc. Mọi thiết bị điện tử sẽ trở n&ecirc;n v&ocirc; dụng nếu kh&ocirc;ng c&oacute; phần mềm.</p>
 <h4>C&aacute;c c&ocirc;ng ty lớn về c&ocirc;ng nghệ đều ph&aacute;t triển phần mềm m&aacute;y t&iacute;nh.</h4>
 <p>Để gi&uacute;p c&aacute;c bạn thấy được phần mềm m&aacute;y t&iacute;nh c&oacute; vai tr&ograve; quan trọng như thế n&agrave;o, h&atilde;y xem danh s&aacute;ch c&aacute;c c&ocirc;ng ty c&ocirc;ng nghệ lớn nhất thế giới, tất cả đều ph&aacute;t triển c&aacute;c phần mềm m&aacute;y t&iacute;nh cho ri&ecirc;ng m&igrave;nh.</p>
-<figure id="attachment_1505" class="wp-caption aligncenter" aria-describedby="caption-attachment-1505"><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/Shanghaik/Pictures/hardware.png" alt="" width="797" height="405" /></figure>
+<figure id="attachment_1505" class="wp-caption aligncenter" aria-describedby="caption-attachment-1505"><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/Shanghaik/Pictures/hardware.png" alt="" width="797" height="405" /></figure>
 <p>Như bạn thấy, phần mềm m&aacute;y t&iacute;nh gắn liền mật thiết với c&aacute;c c&ocirc;ng ty c&ocirc;ng nghệ h&agrave;ng đầu, c&aacute;c thương hiệu m&aacute;y t&iacute;nh ứng với c&aacute;c doanh nghiệp tr&ecirc;n l&agrave; v&ocirc; c&ugrave;ng nổi tiếng. Sự li&ecirc;n hệ mật thiết giữa phần cứng v&agrave; phần mềm ch&iacute;nh l&agrave; l&yacute; do họ ph&aacute;t triển song song cả 2 để c&oacute; sự tương t&aacute;c tốt nhất tr&ecirc;n sản phầm của m&igrave;nh.</p>
 <h4>Ph&acirc;n loại phần mềm</h4>
 <p>Phần mềm m&aacute;y t&iacute;nh c&oacute; thể được ph&acirc;n loại theo nhiều c&aacute;ch thức kh&aacute;c nhau. Ta c&oacute; thể ph&acirc;n loại theo chức năng, ứng dụng hay thậm ch&iacute; về t&iacute;nh mở.</p>
@@ -2350,7 +1791,7 @@ INSERT INTO public."Courses" VALUES ('a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Ph
 <li>Nhu cầu cho học tập.</li>
 </ul>
 </li>
-</ul>', 0.0, '', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/phan-mem-may-tinh_73b00ecd5b2c41ac84c0ad0a2261021b.png', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('acdafa98-5779-491b-b172-a6aeb14c5af1', 'Lập trình hướng đối tượng trong java', '<h3 data-start="158" data-end="249">Kh&aacute;m ph&aacute; sức mạnh của "Lập tr&igrave;nh Hướng đối tượng" trong Java!</h3>
 <p class="" data-start="251" data-end="635">Trong kỷ nguy&ecirc;n c&ocirc;ng nghệ hiện nay, việc hiểu v&agrave; th&agrave;nh thạo lập tr&igrave;nh hướng đối tượng (OOP) l&agrave; <strong data-start="346" data-end="396">ch&igrave;a kh&oacute;a mở ra c&aacute;nh cửa s&aacute;ng tạo v&agrave; hiệu suất</strong> cho bất kỳ lập tr&igrave;nh vi&ecirc;n n&agrave;o. Java, với c&uacute; ph&aacute;p r&otilde; r&agrave;ng v&agrave; t&iacute;nh ổn định cao, kh&ocirc;ng chỉ l&agrave; một trong những ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất thế giới m&agrave; c&ograve;n l&agrave; nền tảng mạnh mẽ để ph&aacute;t triển ứng dụng theo m&ocirc; h&igrave;nh lập tr&igrave;nh hướng đối tượng.</p>
 <h3 data-start="642" data-end="676">Bạn sẽ học được g&igrave; từ kh&oacute;a học?</h3>
@@ -2409,7 +1850,7 @@ INSERT INTO public."Courses" VALUES ('acdafa98-5779-491b-b172-a6aeb14c5af1', 'L�
 </li>
 </ul>
 <h3 data-start="3553" data-end="3581">H&atilde;y bắt đầu ngay h&ocirc;m nay!</h3>
-<p class="" data-start="3583" data-end="3733">Nếu bạn đang t&igrave;m kiếm cơ hội để <strong data-start="3615" data-end="3645">n&acirc;ng cao kỹ năng lập tr&igrave;nh</strong> v&agrave; <strong data-start="3649" data-end="3683">x&acirc;y dựng ứng dụng Java mạnh mẽ</strong>, đ&acirc;y ch&iacute;nh l&agrave; nơi khởi đầu l&yacute; tưởng d&agrave;nh cho bạn.</p>', 0.0, '', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd7c-1767-7ee0-a32b-ab03f843c88f', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p class="" data-start="3583" data-end="3733">Nếu bạn đang t&igrave;m kiếm cơ hội để <strong data-start="3615" data-end="3645">n&acirc;ng cao kỹ năng lập tr&igrave;nh</strong> v&agrave; <strong data-start="3649" data-end="3683">x&acirc;y dựng ứng dụng Java mạnh mẽ</strong>, đ&acirc;y ch&iacute;nh l&agrave; nơi khởi đầu l&yacute; tưởng d&agrave;nh cho bạn.</p>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/lap-trinh-huong-doi-tuong-trong-java_da49c404556247e898bbc0e435476936.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('b154a3c3-6727-4332-a637-07eb142657c8', 'Trọn bộ kiến thức Scratch cho học sinh', '<p data-sourcepos="1:1-1:56"><span style="font-size: 18pt;"><strong>COMBO KH&Oacute;A HỌC SCRATCH S&Aacute;NG TẠO - TỪ CƠ BẢN ĐẾN N&Acirc;NG CAO</strong></span></p>
 <p data-sourcepos="3:1-3:295">Bạn muốn khơi dậy niềm đam m&ecirc; lập tr&igrave;nh cho con trẻ một c&aacute;ch th&uacute; vị v&agrave; trực quan? Bạn đang t&igrave;m kiếm một lộ tr&igrave;nh học Scratch b&agrave;i bản từ cơ bản đến n&acirc;ng cao? Combo kh&oacute;a học Scratch s&aacute;ng tạo của ch&uacute;ng t&ocirc;i sẽ l&agrave; người bạn đồng h&agrave;nh tuyệt vời tr&ecirc;n h&agrave;nh tr&igrave;nh kh&aacute;m ph&aacute; thế giới lập tr&igrave;nh đầy m&agrave;u sắc.</p>
 <p data-sourcepos="5:2-5:38"><strong>1. Game "ăn liền" c&ugrave;ng Scratch</strong></p>
@@ -2430,58 +1871,7 @@ INSERT INTO public."Courses" VALUES ('b154a3c3-6727-4332-a637-07eb142657c8', 'Tr
 <li>M&ocirc;i trường học tập tương t&aacute;c, khuyến kh&iacute;ch sự s&aacute;ng tạo.</li>
 <li>Gi&uacute;p trẻ ph&aacute;t triển tư duy logic, khả năng giải quyết vấn đề v&agrave; kỹ năng l&agrave;m việc nh&oacute;m.</li>
 <li>Tạo nền tảng vững chắc cho việc học c&aacute;c ng&ocirc;n ngữ lập tr&igrave;nh kh&aacute;c trong tương lai.</li>
-</ul>', 960000.0, '', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019ddd7c-17ed-748b-9a0b-4871476e9354', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('e166a9f1-6df5-4b31-86b6-66b419634bd9', 'C++ cho người mới bắt đầu', '<h4>Giới thiệu về ng&ocirc;n ngữ lập tr&igrave;nh C++</h4>
-<p>C++ l&agrave; một ng&ocirc;n ngữ lập tr&igrave;nh bậc trung, được ph&aacute;t triển bởi&nbsp;<strong>Bjarne Stroustrup</strong>&nbsp;năm 1979 tại Bell Labs.&nbsp;Từ thập ni&ecirc;n 1990, C++ đ&atilde; trở th&agrave;nh một trong những ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất tr&ecirc;n thế giới.</p>
-<p><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/Cpp_Basic_To_Advance/BjarneStroustrup.jpg" alt="" width="432" height="324" /></p>
-<p><em>T&aacute;c giả của ng&ocirc;n ngữ lập tr&igrave;nh C++.</em></p>
-<p>Một số ưu điểm của ng&ocirc;n ngữ lập tr&igrave;nh C++:</p>
-<ul>
-<li><strong>Đa nền tảng:</strong>&nbsp;chương tr&igrave;nh được viết bằng C++ c&oacute; thể chạy được tr&ecirc;n nhiều nền tảng kh&aacute;c nhau như Windows, Mac OS, Linux, ...</li>
-<li><strong>Cộng đồng lập tr&igrave;nh lớn:</strong>&nbsp;C++ l&agrave; một trong những ng&ocirc;n ngữ phổ biến nhất thế giới n&ecirc;n c&oacute; cộng đồng lập tr&igrave;nh vi&ecirc;n lớn, bạn c&oacute; thể dễ d&agrave;ng t&igrave;m kiếm c&aacute;c t&agrave;i liệu, c&aacute;c lỗi gặp phải khi lập tr&igrave;nh tr&ecirc;n mạng.</li>
-<li><strong>Bộ thư viện hỗ trợ mạnh mẽ:</strong>&nbsp;C++ c&oacute; bộ thư viện chuẩn v&agrave; bộ thư viện của b&ecirc;n thứ 3 với nhiều cấu tr&uacute;c dữ liệu, thuật to&aacute;n, ... để gi&uacute;p bạn dễ d&agrave;ng ph&aacute;t triển chương tr&igrave;nh một c&aacute;ch nhanh ch&oacute;ng (bạn sẽ được học v&agrave; hiểu về thư viện trong c&aacute;c b&agrave;i tiếp theo).</li>
-<li><strong>Đa năng:</strong>&nbsp;C++ c&oacute; thể được d&ugrave;ng để lập tr&igrave;nh nh&uacute;ng, lập tr&igrave;nh hệ thống, lập tr&igrave;nh ứng dụng,&nbsp; lập tr&igrave;nh game, ...</li>
-<li><strong>Hiệu năng cao:</strong>&nbsp;chương tr&igrave;nh được viết bằng C++ sẽ cho tốc độ thực thi nhanh hơn c&aacute;c chương tr&igrave;nh được viết bởi c&aacute;c ng&ocirc;n ngữ lập tr&igrave;nh kh&aacute;c như Java, C#, Python, ... V&igrave; thế với c&aacute;c ứng dụng nặng, cần c&oacute; tốc độ xử l&yacute; nhanh hay c&aacute;c game 3D thường được viết bằng C++.</li>
-<li><strong>Hỗ trợ lập tr&igrave;nh hướng đối tượng:</strong>&nbsp;C++ cho ph&eacute;p bạn lập tr&igrave;nh theo phương ph&aacute;p hướng đối tượng, gi&uacute;p cho chương tr&igrave;nh dễ ph&aacute;t triển v&agrave; bảo tr&igrave; hơn (bạn sẽ được học v&agrave; hiểu về lập tr&igrave;nh hướng đối tượng trong kh&oacute;a học n&agrave;y ở c&aacute;c chương sau).</li>
-</ul>
-<h4>Ứng dụng của ng&ocirc;n ngữ lập tr&igrave;nh C++</h4>
-<ul>
-<li><strong>Hệ điều h&agrave;nh:</strong>&nbsp;C++ được d&ugrave;ng trong việc ph&aacute;t triển c&aacute;c hệ điều h&agrave;nh m&agrave; bạn đang d&ugrave;ng như Windows, Mac OS, ...</li>
-<li><strong>Lập tr&igrave;nh game:</strong>&nbsp;hầu hết c&aacute;c game nổi tiếng hiện nay đều được viết bằng C++ hoặc c&aacute;c Game engine dựa tr&ecirc;n C++. V&iacute; dụ như c&aacute;c game Counter Strike, Warcraft III, Doom III, ... đều sử dụng C++<em><br /><br /></em><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/Cpp_Basic_To_Advance/half-life-1.1.jpg" alt="" height="auto" /><strong><em>Game Counter Strike<br /></em></strong></li>
-<li><strong>Lập tr&igrave;nh ứng dụng:</strong>&nbsp;đ&acirc;y l&agrave; một trong những mảng mạnh nhất của C++. C&oacute; rất nhiều ứng dụng lớn được tạo ra bởi C++ m&agrave; ch&uacute;ng ta đang sử dụng như Word, Excel, Powerpoint, Google Chrome, Firefox, Adobe Photoshop &amp; Illustrator, ...<img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/Cpp_Basic_To_Advance/chrome_firefox_logos.png" alt="" width="400" height="200" /><br /><em>Tr&igrave;nh duyệt Chrome v&agrave; Firefox.</em><em><br /></em><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/Cpp_Basic_To_Advance/500px-Su-dung-microsoft-office-mien-phi.png" alt="" width="500" height="254" /><br /><em>Bộ phần mềm của Microsoft Office.<br /><br /></em></li>
-<li><strong>Lập tr&igrave;nh nh&uacute;ng:</strong>&nbsp;C++ cũng được sử dụng nhiều trong c&aacute;c thiết bị như đồng hồ th&ocirc;ng minh, thiết bị y tế, ...<br /><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/Cpp_Basic_To_Advance/Best-Smartwatch-watches-Android-Apple-Xiaomi-and-Fitbit.jpg" alt="" width="320" height="208" /></li>
-<li>Ngo&agrave;i ra C++ c&ograve;n được d&ugrave;ng để tạo ra c&aacute;c t&igrave;nh bi&ecirc;n dịch, c&aacute;c hệ quản trị cơ sở dữ liệu, ...</li>
-</ul>
-<p>C&oacute; thể thấy C++ được sử dụng rất rộng r&atilde;i trong ng&agrave;nh c&ocirc;ng nghệ th&ocirc;ng tin, ngay cả hệ điều h&agrave;nh m&agrave; bạn đang sử dụng hay c&aacute;c thiết bị th&ocirc;ng minh đều c&oacute; thể đang sử dụng C++. Trong giới hạn của kh&oacute;a học n&agrave;y, bạn sẽ học v&agrave; hiểu được c&aacute;c kh&aacute;i niệm cơ bản trong C++, sau đ&oacute; tiếp tục t&igrave;m hiểu c&aacute;c kh&aacute;i niệm n&acirc;ng cao như con trỏ, lập tr&igrave;nh hướng đối tượng, c&aacute;c thư viện chuẩn, ...</p>
-<hr />
-<h3>Học vi&ecirc;n sẽ nhận được những g&igrave; trong kh&oacute;a học:</h3>
-<ul>
-<li>Hiểu c&aacute;ch sử dụng ng&ocirc;n ngữ C++:
-<ul>
-<li>Biết c&aacute;ch th&ecirc;m c&aacute;c thư viện.</li>
-<li>Biết r&otilde; c&aacute;ch khai b&aacute;o biến.</li>
-<li>Biết c&aacute;ch nhập xuất dữ liệu.</li>
-</ul>
-</li>
-<li>Hiểu được c&aacute;ch hoạt động của v&agrave;o lặp (Trong C++ cũng như c&aacute;c ng&ocirc;n ngữ kh&aacute;c):
-<ul>
-<li>V&ograve;ng lặp for.</li>
-<li>V&ograve;ng lặp while, do-while.</li>
-</ul>
-</li>
-<li>Hiểu r&otilde; c&aacute;ch cấu tr&uacute;c cơ bản của một ng&ocirc;n ngữ lập tr&igrave;nh:
-<ul>
-<li>Cấu tr&uacute;c mảng.</li>
-<li>Cấu tr&uacute;c chuỗi.</li>
-</ul>
-</li>
-<li>L&agrave;m quen với một số giải thuật cơ bản,
-<ul>
-<li>Biết c&aacute;ch viết c&aacute;c h&agrave;m.</li>
-<li>L&agrave;m quen với giải thuật đệ quy.</li>
-</ul>
-</li>
-</ul>', 0.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 960000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Full-Scratch_2a0fb6560651441c9cf5561ddd1620c0.jpg', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019ddd86-9740-74ed-b041-1371ef1a831e', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('b5502f31-c785-439c-bd18-c15b25dab111', 'Hệ thống khóa học SQL (Cơ bản & Nâng cao)', '<p data-sourcepos="14:1-14:59"><span style="font-size: 18pt;"><strong>Combo Kh&oacute;a học SQL Cơ bản v&agrave; N&acirc;ng cao bao gồm những g&igrave;?</strong></span></p>
 <p data-sourcepos="16:1-16:138">Combo n&agrave;y được thiết kế để cung cấp cho bạn một lộ tr&igrave;nh học tập to&agrave;n diện, từ những kh&aacute;i niệm cơ bản đến c&aacute;c kỹ thuật n&acirc;ng cao trong SQL.</p>
 <p data-sourcepos="18:1-18:27"><strong>1. Kh&oacute;a học SQL Cơ bản:</strong></p>
@@ -2501,7 +1891,7 @@ INSERT INTO public."Courses" VALUES ('b5502f31-c785-439c-bd18-c15b25dab111', 'H�
 <li><strong>Tiết kiệm chi ph&iacute;:</strong> So với việc đăng k&yacute; từng kh&oacute;a ri&ecirc;ng lẻ.</li>
 <li><strong>Lộ tr&igrave;nh học tập li&ecirc;n tục:</strong> Được thiết kế logic, gi&uacute;p bạn nắm vững kiến thức từ cơ bản đến n&acirc;ng cao một c&aacute;ch hệ thống.</li>
 <li><strong>Thực h&agrave;nh chuy&ecirc;n s&acirc;u:</strong> C&aacute;c b&agrave;i tập v&agrave; dự &aacute;n thực tế gi&uacute;p bạn &aacute;p dụng kiến thức v&agrave;o thực tiễn.</li>
-</ul>', 1620000.0, '', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019ddd7c-17ed-748b-9a0b-4871476e9354', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 1620000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/SQL-A-Z_fd124876d86343328f62d23318e13d70.jpg', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Truyền thông và Mạng máy tính', '<h3 data-start="279" data-end="309">Giới thiệu về Mạng m&aacute;y t&iacute;nh</h3>
 <p class="" data-start="315" data-end="693"><strong data-start="315" data-end="332">Mạng m&aacute;y t&iacute;nh</strong> l&agrave; nền tảng cốt l&otilde;i cho c&aacute;c hệ thống th&ocirc;ng tin hiện đại, đ&oacute;ng vai tr&ograve; kết nối c&aacute;c thiết bị để chia sẻ t&agrave;i nguy&ecirc;n, dữ liệu v&agrave; dịch vụ. Kh&oacute;a học n&agrave;y cung cấp cho bạn c&aacute;i nh&igrave;n to&agrave;n diện về <strong data-start="519" data-end="569">c&aacute;c kh&aacute;i niệm, th&agrave;nh phần v&agrave; ứng dụng của mạng</strong>, từ cơ bản đến thực tế, gi&uacute;p bạn tự tin hơn khi sử dụng hoặc thiết lập mạng trong m&ocirc;i trường học tập, l&agrave;m việc v&agrave; gia đ&igrave;nh.</p>
 <h3 data-start="700" data-end="739">🔍 Tại sao n&ecirc;n học về Mạng m&aacute;y t&iacute;nh?</h3>
@@ -2556,7 +1946,7 @@ INSERT INTO public."Courses" VALUES ('beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Tr
 <li class="" data-start="2865" data-end="2929">
 <p class="" data-start="2867" data-end="2929">Tư duy logic v&agrave; sẵn s&agrave;ng thực h&agrave;nh qua c&aacute;c t&igrave;nh huống thực tế.</p>
 </li>
-</ul>', 0.0, '', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019ddd7c-17ed-748b-9a0b-4871476e9354', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/truyen-thong-va-mang-may-tinh_eb79a9f8aa854b059e7fc39155fef863.png', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019ddd86-9740-74ed-b041-1371ef1a831e', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('cb8d4b28-4c56-431f-b29a-e1f497c10175', 'Thành thạo C++ từ cơ bản đến nâng cao', '<p data-sourcepos="1:1-2:138"><span style="font-size: 18pt;"><strong>Combo Kh&oacute;a học C++ Cơ bản v&agrave; N&acirc;ng cao bao gồm những g&igrave;? </strong></span></p>
 <p data-sourcepos="1:1-2:138">Combo n&agrave;y được thiết kế để cung cấp cho bạn một lộ tr&igrave;nh học tập to&agrave;n diện, từ những kh&aacute;i niệm cơ bản đến c&aacute;c kỹ thuật n&acirc;ng cao trong C++.</p>
 <p><strong>1. Kh&oacute;a học C++ Cơ bản:</strong></p>
@@ -2576,7 +1966,7 @@ INSERT INTO public."Courses" VALUES ('cb8d4b28-4c56-431f-b29a-e1f497c10175', 'Th
 <li data-sourcepos="15:1-18:35">Tiết kiệm chi ph&iacute;: So với việc đăng k&yacute; từng kh&oacute;a ri&ecirc;ng lẻ.</li>
 <li data-sourcepos="15:1-18:35">Lộ tr&igrave;nh học tập li&ecirc;n tục: Được thiết kế logic,...</li>
 <li data-sourcepos="15:1-18:35">Thực h&agrave;nh chuy&ecirc;n s&acirc;u: C&aacute;c b&agrave;i tập v&agrave; dự &aacute;n thực tế... viết t&oacute;m tắt ngắn gọn trong một c&acirc;u</li>
-</ul>', 1620000.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 1620000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/C__-tu-co-ban-đen-nang-cao_caa4b3036a214a92b4491447e9676944.jpg', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('ce685ee8-dca7-4304-befd-139a5700bc68', 'Thư viện chuẩn C++', '<h3 data-start="206" data-end="305">L&agrave;m chủ Standard Template Library (STL) trong C++ &ndash; Tối ưu ho&aacute; hiệu suất v&agrave; t&aacute;i sử dụng m&atilde; nguồn</h3>
 <p class="" data-start="307" data-end="619">Kh&oacute;a học n&agrave;y cung cấp kiến thức to&agrave;n diện về <strong data-start="352" data-end="387">STL (Standard Template Library)</strong> &ndash; một trong những c&ocirc;ng cụ mạnh mẽ v&agrave; thiết thực nhất trong lập tr&igrave;nh C++. Bạn sẽ được trang bị kỹ năng sử dụng c&aacute;c <strong data-start="503" data-end="530">cấu tr&uacute;c dữ liệu c&oacute; sẵn</strong>, <strong data-start="532" data-end="553">thuật to&aacute;n tối ưu</strong>, v&agrave; c&aacute;ch <strong data-start="563" data-end="587">mở rộng thư viện STL</strong> để ph&ugrave; hợp với y&ecirc;u cầu thực tế.</p>
 <h3 data-start="626" data-end="673">Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học, bạn sẽ c&oacute; thể:</h3>
@@ -2602,11 +1992,11 @@ INSERT INTO public."Courses" VALUES ('ce685ee8-dca7-4304-befd-139a5700bc68', 'Th
 <li class="" data-start="1385" data-end="1461">
 <p class="" data-start="1387" data-end="1461">Sinh vi&ecirc;n CNTT cần củng cố v&agrave; n&acirc;ng cao kỹ năng sử dụng thư viện chuẩn C++.</p>
 </li>
-</ul>', 0.0, '', true, '087499f3-3cc2-4d25-8ad5-8c63c6b74c44', '019ddd7c-1767-7ee0-a32b-ab03f843c88f', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/thu-vien-chuan-cpp_5dd3fda99ce1421e90b211d414c4a40d.png', true, '087499f3-3cc2-4d25-8ad5-8c63c6b74c44', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('d1839060-39f5-4877-a610-7036e35dbcaa', 'Python cho người mới bắt đầu', '<p><span style="font-size: 18pt; color: #304090;"><strong>Ng&ocirc;n ngữ lập tr&igrave;nh "B&Iacute; K&Iacute;P" vươn m&igrave;nh trong thời đại kỷ nguy&ecirc;n số</strong></span></p>
 <p style="text-align: justify;"><span style="color: #111928;">Sự b&ugrave;ng nổ của c&ocirc;ng nghệ Robot, tr&iacute; nh&acirc;n tạo Al dẫn đến sự thay đổi trong c&aacute;c lĩnh vực ng&agrave;nh nghề. CNTT trở th&agrave;nh lựa chọn số 1 gi&uacute;p con người kiểm so&aacute;t v&agrave; ph&aacute;t triển c&aacute;c c&ocirc;ng nghệ đỉnh cao. Để đ&aacute;p ứng được nhu cầu ph&aacute;t triển x&atilde; hội, Codelearn x&acirc;y dựng hệ thống học lập tr&igrave;nh trực tuyến nhằm gi&uacute;p c&aacute;c bạn trẻ &amp; người mới bắt đầu dễ d&agrave;ng tiếp cận với m&ocirc;n học, khơi dậy đam m&ecirc; c&ocirc;ng nghệ.</span></p>
 <p style="text-align: justify;">&nbsp;</p>
-<p><span style="font-size: 24pt; color: #250989;"><strong><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-sgn09.fptcloud.com/codelearnstorage/files/thumbnails/BieuDo_70a10bfe0e77473b85274f3c0e6353ce.png" width="592" height="322" /><br /></strong></span></p>
+<p><span style="font-size: 24pt; color: #250989;"><strong><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/BieuDo_70a10bfe0e77473b85274f3c0e6353ce.png" width="592" height="322" /><br /></strong></span></p>
 <p style="text-align: center;">Độ phổ biến của c&aacute;c ng&ocirc;n ngữ lập tr&igrave;nh</p>
 <p><img style="display: block; margin-left: auto; margin-right: auto;" src="blob:https://codelearn.io/d6ccb77e-80bb-42c0-9747-98309e5bcfa9" alt="" /></p>
 <p style="text-align: justify;"><img style="display: block; margin-left: auto; margin-right: auto;" src="blob:https://codelearn.io/d6ccb77e-80bb-42c0-9747-98309e5bcfa9" alt="" /></p>
@@ -2625,7 +2015,21 @@ INSERT INTO public."Courses" VALUES ('d1839060-39f5-4877-a610-7036e35dbcaa', 'Py
 <p><span style="font-size: 16pt; color: #506cf0;"><strong>Giải ph&aacute;p tốt nhất cho mọi vấn đề</strong></span></p>
 <p><span style="color: #111928;">Python c&oacute; một thư viện ti&ecirc;u chuấn lớn, chứa nhiều d&ograve;ng m&atilde; c&oacute; thể t&aacute;i sử dụng cho hầu hết mọi t&aacute;c vụ. Nhờ đ&oacute;, c&aacute;c nh&agrave; ph&aacute;t triển sẽ kh&ocirc;ng cần phải viết mă từ đầu.</span></p>
 <p><span style="color: #506cf0; font-size: 16pt;"><strong>Cộng đồng mạnh mẽ</strong></span></p>
-<p>Cộng đồng Python nhiệt t&igrave;nh với nhiều c&ocirc;ng cụ hỗ trợ, s&atilde;̃n s&agrave;ng gi&uacute;p c&aacute;c em học sinh &amp; người mới bắt đầu th&aacute;o gỡ thắc mắc trong qu&aacute; tr&igrave;nh tiếp cận, học tập v&agrave; thực h&agrave;nh.</p>', 722000.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p>Cộng đồng Python nhiệt t&igrave;nh với nhiều c&ocirc;ng cụ hỗ trợ, s&atilde;̃n s&agrave;ng gi&uacute;p c&aacute;c em học sinh &amp; người mới bắt đầu th&aacute;o gỡ thắc mắc trong qu&aacute; tr&igrave;nh tiếp cận, học tập v&agrave; thực h&agrave;nh.</p>', 722000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/python-cho-nguoi-moi-bat-dau_f1a0ae13118c411ab7068e248f9f0206.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-9740-74ed-b041-1371ef1a831e', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Courses" VALUES ('fc632885-682d-40c5-8b20-23c4c1627995', 'Lộ trình Python A-Z', '<p><span style="font-size: 18pt;"><strong>COMBO KH&Oacute;A HỌC PYTHON TO&Agrave;N DIỆN - TỪ CƠ BẢN ĐẾN N&Acirc;NG CAO</strong></span></p>
+<p><span data-teams="true">Bạn muốn học lập tr&igrave;nh bằng Python nhưng kh&ocirc;ng biết bắt đầu từ đ&acirc;u? Bạn đang t&igrave;m kiếm 1 lộ tr&igrave;nh học Python thống nhất từ cơ bản tới n&acirc;ng cao? Combo kh&oacute;a học Python to&agrave;n diện của ch&uacute;ng t&ocirc;i sẽ đồng h&agrave;nh c&ugrave;ng bạn trong h&agrave;nh tr&igrave;nh chinh phục ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất hiện nay.</span></p>
+<p><strong>🔰 Kh&oacute;a 1: Python cho người mới bắt đầu</strong></p>
+<ul>
+<li>L&agrave;m quen với lập tr&igrave;nh v&agrave; Python từ con số 0</li>
+<li>Nắm vững c&uacute; ph&aacute;p cơ bản: biến, điều kiện, v&ograve;ng lặp, h&agrave;m</li>
+<li>Thực h&agrave;nh với c&aacute;c b&agrave;i tập từ đơn giản đến phức tạp</li>
+</ul>
+<p><strong>🚀 Kh&oacute;a 2: Python n&acirc;ng cao</strong></p>
+<ul>
+<li>Lập tr&igrave;nh hướng đối tượng (OOP) trong Python</li>
+<li>Xử l&yacute; tệp tin, thư mục</li>
+<li>L&agrave;m việc với c&aacute;c Module v&agrave; Packages</li>
+</ul>', 1620000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Python-A-Z_a410095bb212468fbd948d1224ec5801.jpg', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-9740-74ed-b041-1371ef1a831e', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('d1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'HTML & CSS cho người mới bắt đầu', '<h3>Kh&oacute;a Học HTML &amp; CSS &ndash; Tạo Nền Tảng Vững Chắc Cho Thiết Kế Web</h3>
 <p data-start="165" data-end="348"><span data-teams="true">Kh&oacute;a học n&agrave;y d&agrave;nh cho người mới bắt đầu, gi&uacute;p bạn từng bước đạt đến tr&igrave;nh độ trung cấp, đồng thời trang bị kiến thức nền tảng c&ugrave;ng kỹ năng thực h&agrave;nh cần thiết để x&acirc;y dựng v&agrave; thiết kế c&aacute;c trang web chuy&ecirc;n nghiệp.</span></p>
 <h3 data-start="350" data-end="444"><strong data-start="354" data-end="442">Ch&agrave;o mừng bạn đến với kh&oacute;a học HTML &amp; CSS &ndash; nơi bạn l&agrave;m chủ thiết kế web!</strong></h3>
@@ -2650,7 +2054,7 @@ INSERT INTO public."Courses" VALUES ('d1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'HT
 <li data-start="2496" data-end="2592"><strong data-start="2597" data-end="2634">Hỗ trợ từ giảng vi&ecirc;n &amp; cộng đồng:</strong> Kết nối với những người học c&ugrave;ng ch&iacute; hướng v&agrave; nhận phản hồi từ chuy&ecirc;n gia.</li>
 <li data-start="2496" data-end="2592"><strong data-start="2716" data-end="2738">Nội dung cập nhật:</strong> Kiến thức li&ecirc;n tục được l&agrave;m mới để ph&ugrave; hợp với xu hướng ph&aacute;t triển web hiện đại.</li>
 </ul>
-<p>Bắt đầu ngay h&ocirc;m nay v&agrave; l&agrave;m chủ kỹ năng thiết kế web với HTML &amp; CSS! <em><strong>Đăng k&yacute; ngay!</strong></em></p>', 720000.0, '', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019ddd7c-1767-7ee0-a32b-ab03f843c88f', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p>Bắt đầu ngay h&ocirc;m nay v&agrave; l&agrave;m chủ kỹ năng thiết kế web với HTML &amp; CSS! <em><strong>Đăng k&yacute; ngay!</strong></em></p>', 720000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/html-css-cho-nguoi-moi-bat-dau_3867537473444f328a4de0fa0231a6ea.jpg', true, '01ebd503-5522-4871-81a4-ec12bd80cdf3', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Thực hành với SQL', '<p>Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học n&agrave;y, bạn sẽ c&oacute; c&aacute;c kỹ năng cần thiết để ph&acirc;n t&iacute;ch những b&agrave;i to&aacute;n dữ liệu một c&aacute;ch nhanh ch&oacute;ng v&agrave; dễ d&agrave;ng.</p>
 <p>- Bạn sẽ biết c&aacute;c sử dụng c&aacute;c c&acirc;u lệnh CASE, truy vấn con v&agrave; c&aacute;c h&agrave;m cửa sổ.<br />- Bạn sẽ biết đến một số kh&aacute;i niệm trong kh&oacute;a học n&agrave;y như xử l&yacute; dữ liệu bị thiếu, l&agrave;m việc với ng&agrave;y th&aacute;ng v&agrave; t&iacute;nh to&aacute;n thống k&ecirc; t&oacute;m tắt bằng c&aacute;c truy vấn n&acirc;ng cao.</p>
 <p><span style="text-decoration: underline;"><strong>Y&ecirc;u cầu:</strong></span> Bạn cần ho&agrave;n th&agrave;nh kh&oacute;a <a href="https://codelearn.io/learning/lam-quen-voi-sql"><strong>L&agrave;m quen với SQL</strong></a> để c&oacute; kiến thức cơ bản trước khi tham gia kh&oacute;a học n&agrave;y.</p>
@@ -3081,7 +2485,58 @@ INSERT INTO public."Courses" VALUES ('dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Th
 <td width="50%">Windown function review (2)</td>
 </tr>
 </tbody>
-</table>', 0.0, '', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</table>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/thuc-hanh-voi-sql_563ab47a356c46e89762c2772b1c1edc.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd86-9740-74ed-b041-1371ef1a831e', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Courses" VALUES ('e166a9f1-6df5-4b31-86b6-66b419634bd9', 'C++ cho người mới bắt đầu', '<h4>Giới thiệu về ng&ocirc;n ngữ lập tr&igrave;nh C++</h4>
+<p>C++ l&agrave; một ng&ocirc;n ngữ lập tr&igrave;nh bậc trung, được ph&aacute;t triển bởi&nbsp;<strong>Bjarne Stroustrup</strong>&nbsp;năm 1979 tại Bell Labs.&nbsp;Từ thập ni&ecirc;n 1990, C++ đ&atilde; trở th&agrave;nh một trong những ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất tr&ecirc;n thế giới.</p>
+<p><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/Cpp_Basic_To_Advance/BjarneStroustrup.jpg" alt="" width="432" height="324" /></p>
+<p><em>T&aacute;c giả của ng&ocirc;n ngữ lập tr&igrave;nh C++.</em></p>
+<p>Một số ưu điểm của ng&ocirc;n ngữ lập tr&igrave;nh C++:</p>
+<ul>
+<li><strong>Đa nền tảng:</strong>&nbsp;chương tr&igrave;nh được viết bằng C++ c&oacute; thể chạy được tr&ecirc;n nhiều nền tảng kh&aacute;c nhau như Windows, Mac OS, Linux, ...</li>
+<li><strong>Cộng đồng lập tr&igrave;nh lớn:</strong>&nbsp;C++ l&agrave; một trong những ng&ocirc;n ngữ phổ biến nhất thế giới n&ecirc;n c&oacute; cộng đồng lập tr&igrave;nh vi&ecirc;n lớn, bạn c&oacute; thể dễ d&agrave;ng t&igrave;m kiếm c&aacute;c t&agrave;i liệu, c&aacute;c lỗi gặp phải khi lập tr&igrave;nh tr&ecirc;n mạng.</li>
+<li><strong>Bộ thư viện hỗ trợ mạnh mẽ:</strong>&nbsp;C++ c&oacute; bộ thư viện chuẩn v&agrave; bộ thư viện của b&ecirc;n thứ 3 với nhiều cấu tr&uacute;c dữ liệu, thuật to&aacute;n, ... để gi&uacute;p bạn dễ d&agrave;ng ph&aacute;t triển chương tr&igrave;nh một c&aacute;ch nhanh ch&oacute;ng (bạn sẽ được học v&agrave; hiểu về thư viện trong c&aacute;c b&agrave;i tiếp theo).</li>
+<li><strong>Đa năng:</strong>&nbsp;C++ c&oacute; thể được d&ugrave;ng để lập tr&igrave;nh nh&uacute;ng, lập tr&igrave;nh hệ thống, lập tr&igrave;nh ứng dụng,&nbsp; lập tr&igrave;nh game, ...</li>
+<li><strong>Hiệu năng cao:</strong>&nbsp;chương tr&igrave;nh được viết bằng C++ sẽ cho tốc độ thực thi nhanh hơn c&aacute;c chương tr&igrave;nh được viết bởi c&aacute;c ng&ocirc;n ngữ lập tr&igrave;nh kh&aacute;c như Java, C#, Python, ... V&igrave; thế với c&aacute;c ứng dụng nặng, cần c&oacute; tốc độ xử l&yacute; nhanh hay c&aacute;c game 3D thường được viết bằng C++.</li>
+<li><strong>Hỗ trợ lập tr&igrave;nh hướng đối tượng:</strong>&nbsp;C++ cho ph&eacute;p bạn lập tr&igrave;nh theo phương ph&aacute;p hướng đối tượng, gi&uacute;p cho chương tr&igrave;nh dễ ph&aacute;t triển v&agrave; bảo tr&igrave; hơn (bạn sẽ được học v&agrave; hiểu về lập tr&igrave;nh hướng đối tượng trong kh&oacute;a học n&agrave;y ở c&aacute;c chương sau).</li>
+</ul>
+<h4>Ứng dụng của ng&ocirc;n ngữ lập tr&igrave;nh C++</h4>
+<ul>
+<li><strong>Hệ điều h&agrave;nh:</strong>&nbsp;C++ được d&ugrave;ng trong việc ph&aacute;t triển c&aacute;c hệ điều h&agrave;nh m&agrave; bạn đang d&ugrave;ng như Windows, Mac OS, ...</li>
+<li><strong>Lập tr&igrave;nh game:</strong>&nbsp;hầu hết c&aacute;c game nổi tiếng hiện nay đều được viết bằng C++ hoặc c&aacute;c Game engine dựa tr&ecirc;n C++. V&iacute; dụ như c&aacute;c game Counter Strike, Warcraft III, Doom III, ... đều sử dụng C++<em><br /><br /></em><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/Cpp_Basic_To_Advance/half-life-1.1.jpg" alt="" height="auto" /><strong><em>Game Counter Strike<br /></em></strong></li>
+<li><strong>Lập tr&igrave;nh ứng dụng:</strong>&nbsp;đ&acirc;y l&agrave; một trong những mảng mạnh nhất của C++. C&oacute; rất nhiều ứng dụng lớn được tạo ra bởi C++ m&agrave; ch&uacute;ng ta đang sử dụng như Word, Excel, Powerpoint, Google Chrome, Firefox, Adobe Photoshop &amp; Illustrator, ...<img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/Cpp_Basic_To_Advance/chrome_firefox_logos.png" alt="" width="400" height="200" /><br /><em>Tr&igrave;nh duyệt Chrome v&agrave; Firefox.</em><em><br /></em><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/Cpp_Basic_To_Advance/500px-Su-dung-microsoft-office-mien-phi.png" alt="" width="500" height="254" /><br /><em>Bộ phần mềm của Microsoft Office.<br /><br /></em></li>
+<li><strong>Lập tr&igrave;nh nh&uacute;ng:</strong>&nbsp;C++ cũng được sử dụng nhiều trong c&aacute;c thiết bị như đồng hồ th&ocirc;ng minh, thiết bị y tế, ...<br /><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/Cpp_Basic_To_Advance/Best-Smartwatch-watches-Android-Apple-Xiaomi-and-Fitbit.jpg" alt="" width="320" height="208" /></li>
+<li>Ngo&agrave;i ra C++ c&ograve;n được d&ugrave;ng để tạo ra c&aacute;c t&igrave;nh bi&ecirc;n dịch, c&aacute;c hệ quản trị cơ sở dữ liệu, ...</li>
+</ul>
+<p>C&oacute; thể thấy C++ được sử dụng rất rộng r&atilde;i trong ng&agrave;nh c&ocirc;ng nghệ th&ocirc;ng tin, ngay cả hệ điều h&agrave;nh m&agrave; bạn đang sử dụng hay c&aacute;c thiết bị th&ocirc;ng minh đều c&oacute; thể đang sử dụng C++. Trong giới hạn của kh&oacute;a học n&agrave;y, bạn sẽ học v&agrave; hiểu được c&aacute;c kh&aacute;i niệm cơ bản trong C++, sau đ&oacute; tiếp tục t&igrave;m hiểu c&aacute;c kh&aacute;i niệm n&acirc;ng cao như con trỏ, lập tr&igrave;nh hướng đối tượng, c&aacute;c thư viện chuẩn, ...</p>
+<hr />
+<h3>Học vi&ecirc;n sẽ nhận được những g&igrave; trong kh&oacute;a học:</h3>
+<ul>
+<li>Hiểu c&aacute;ch sử dụng ng&ocirc;n ngữ C++:
+<ul>
+<li>Biết c&aacute;ch th&ecirc;m c&aacute;c thư viện.</li>
+<li>Biết r&otilde; c&aacute;ch khai b&aacute;o biến.</li>
+<li>Biết c&aacute;ch nhập xuất dữ liệu.</li>
+</ul>
+</li>
+<li>Hiểu được c&aacute;ch hoạt động của v&agrave;o lặp (Trong C++ cũng như c&aacute;c ng&ocirc;n ngữ kh&aacute;c):
+<ul>
+<li>V&ograve;ng lặp for.</li>
+<li>V&ograve;ng lặp while, do-while.</li>
+</ul>
+</li>
+<li>Hiểu r&otilde; c&aacute;ch cấu tr&uacute;c cơ bản của một ng&ocirc;n ngữ lập tr&igrave;nh:
+<ul>
+<li>Cấu tr&uacute;c mảng.</li>
+<li>Cấu tr&uacute;c chuỗi.</li>
+</ul>
+</li>
+<li>L&agrave;m quen với một số giải thuật cơ bản,
+<ul>
+<li>Biết c&aacute;ch viết c&aacute;c h&agrave;m.</li>
+<li>L&agrave;m quen với giải thuật đệ quy.</li>
+</ul>
+</li>
+</ul>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/cpp-cho-nguoi-moi-bat-dau_09e94813a177425db74fb7c23e65c859.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-96b0-7fd3-861a-4f3409c10536', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Thuật toán nâng cao', '<h3>Kh&oacute;a học Thuật to&aacute;n N&acirc;ng cao &ndash; L&agrave;m chủ tư duy thuật to&aacute;n hiện đại</h3>
 <p>Trong thời đại số, <strong>việc hiểu s&acirc;u v&agrave; vận dụng th&agrave;nh thạo c&aacute;c thuật to&aacute;n phức tạp</strong> ch&iacute;nh l&agrave; ch&igrave;a kh&oacute;a để giải quyết vấn đề kỹ thuật một c&aacute;ch hiệu quả, tối ưu h&oacute;a t&agrave;i nguy&ecirc;n v&agrave; ph&aacute;t triển c&aacute;c sản phẩm phần mềm chất lượng cao.<br />Kh&oacute;a học <strong>&ldquo;Thuật to&aacute;n N&acirc;ng cao&rdquo;</strong> được thiết kế nhằm trang bị cho bạn <strong>nền tảng vững chắc v&agrave; kỹ năng thực tiễn</strong>, gi&uacute;p bạn tự tin đối mặt với c&aacute;c th&aacute;ch thức trong học thuật, nghi&ecirc;n cứu v&agrave; ph&aacute;t triển sản phẩm c&ocirc;ng nghệ.</p>
 <h3>🌟 Tại sao bạn n&ecirc;n tham gia kh&oacute;a học n&agrave;y?</h3>
@@ -3181,7 +2636,7 @@ INSERT INTO public."Courses" VALUES ('e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Th
 <p>Người học đang chuẩn bị cho <strong>c&aacute;c kỳ thi tin học hoặc tuyển dụng tại c&aacute;c c&ocirc;ng ty c&ocirc;ng nghệ</strong>.</p>
 </li>
 </ul>
-<p>Kh&oacute;a học <strong>&ldquo;Thuật to&aacute;n N&acirc;ng cao&rdquo;</strong> l&agrave; cầu nối giữa l&yacute; thuyết v&agrave; thực h&agrave;nh, giữa kiến thức học thuật v&agrave; ứng dụng thực tiễn. D&ugrave; bạn đang theo đuổi sự nghiệp nghi&ecirc;n cứu, giảng dạy hay ph&aacute;t triển phần mềm, đ&acirc;y sẽ l&agrave; một bước tiến lớn trong h&agrave;nh tr&igrave;nh học tập của bạn.</p>', 0.0, '', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p>Kh&oacute;a học <strong>&ldquo;Thuật to&aacute;n N&acirc;ng cao&rdquo;</strong> l&agrave; cầu nối giữa l&yacute; thuyết v&agrave; thực h&agrave;nh, giữa kiến thức học thuật v&agrave; ứng dụng thực tiễn. D&ugrave; bạn đang theo đuổi sự nghiệp nghi&ecirc;n cứu, giảng dạy hay ph&aacute;t triển phần mềm, đ&acirc;y sẽ l&agrave; một bước tiến lớn trong h&agrave;nh tr&igrave;nh học tập của bạn.</p>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/thuat-toan-nang-cao_700636e291f4403289475e376f128649.png', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019ddd86-97c3-74f2-8bb1-48a9845adeec', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Game "ăn liền" cùng Scratch', '<h2 class="" data-start="173" data-end="234">🚀 "Game "ăn liền" c&ugrave;ng Scratch" &ndash; Lập Tr&igrave;nh Game Dễ Như Chơi!</h2>
 <h3 class="" data-start="236" data-end="327">Khơi dậy đam m&ecirc; c&ocirc;ng nghệ &ndash; Khởi đầu h&agrave;nh tr&igrave;nh lập tr&igrave;nh từ những tr&ograve; chơi đầu ti&ecirc;n!</h3>
 <p class="" data-start="329" data-end="609">Bạn đang t&igrave;m kiếm một kh&oacute;a học th&uacute; vị gi&uacute;p trẻ vừa học vừa chơi m&agrave; vẫn ph&aacute;t triển tư duy logic v&agrave; s&aacute;ng tạo?<br data-start="436" data-end="439" /><strong data-start="439" data-end="459">&ldquo;Game "ăn liền" c&ugrave;ng Scratch&rdquo;</strong> ch&iacute;nh l&agrave; điểm khởi đầu l&yacute; tưởng để trẻ tiếp cận với thế giới lập tr&igrave;nh th&ocirc;ng qua việc <strong data-start="546" data-end="608">tự tay tạo ra những tr&ograve; chơi đơn giản nhưng cực kỳ hấp dẫn</strong>!</p>
@@ -3236,7 +2691,7 @@ INSERT INTO public."Courses" VALUES ('e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Ga
 </ul>
 <hr class="" data-start="1683" data-end="1686" />
 <h3 class="" data-start="1688" data-end="1770">👉 Đăng k&yacute; ngay</h3>
-<p class="" data-start="1772" data-end="1877">Đừng bỏ lỡ cơ hội gi&uacute;p con bạn khởi đầu sớm với c&ocirc;ng nghệ &ndash; nơi mọi &yacute; tưởng đều c&oacute; thể biến th&agrave;nh tr&ograve; chơi tuyệt vời do ch&iacute;nh b&eacute; tạo n&ecirc;n!</p>', 360000.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-1767-7ee0-a32b-ab03f843c88f', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p class="" data-start="1772" data-end="1877">Đừng bỏ lỡ cơ hội gi&uacute;p con bạn khởi đầu sớm với c&ocirc;ng nghệ &ndash; nơi mọi &yacute; tưởng đều c&oacute; thể biến th&agrave;nh tr&ograve; chơi tuyệt vời do ch&iacute;nh b&eacute; tạo n&ecirc;n!</p>', 360000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/khoa-hoc-scratch_1_992c8f23d86d4c3bb704ee9ab77efcc4.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-96b0-7fd3-861a-4f3409c10536', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Ứng dụng AI trong công việc', '<h3>Giới thiệu chung</h3>
 <p>Kh&oacute;a học<strong> <em>Ứng dụng AI trong c&ocirc;ng việc</em> </strong>cung cấp cho người học những kiến thức v&agrave; kỹ năng cơ bản về tr&iacute; tuệ nh&acirc;n tạo (AI), từ đ&oacute; khai th&aacute;c AI để n&acirc;ng cao hiệu quả v&agrave; tối ưu h&oacute;a quy tr&igrave;nh l&agrave;m việc. AI đang thay đổi c&aacute;ch ch&uacute;ng ta l&agrave;m việc, gi&uacute;p tự động h&oacute;a c&aacute;c nhiệm vụ thường ng&agrave;y, hỗ trợ ra quyết định dựa tr&ecirc;n dữ liệu v&agrave; mang lại c&aacute;c c&ocirc;ng cụ mạnh mẽ để cải thiện năng suất v&agrave; chất lượng c&ocirc;ng việc.</p>
 <p>Kh&oacute;a học sẽ gi&uacute;p bạn hiểu được tiềm năng ứng dụng của AI trong nhiều lĩnh vực, từ quản l&yacute; c&ocirc;ng việc h&agrave;ng ng&agrave;y, ph&acirc;n t&iacute;ch dữ liệu, đến s&aacute;ng tạo nội dung v&agrave; ra quyết định chiến lược.</p>
@@ -3256,7 +2711,7 @@ INSERT INTO public."Courses" VALUES ('e79d99e5-6325-4f50-833d-ee7de5bc43c1', '�
 <h3>Chứng chỉ v&agrave; cơ hội ph&aacute;t triển</h3>
 <p>Sau khi ho&agrave;n th&agrave;nh kh&oacute;a học, bạn sẽ nhận được <strong>chứng chỉ ho&agrave;n th&agrave;nh kh&oacute;a học</strong>. Chứng chỉ n&agrave;y kh&ocirc;ng chỉ l&agrave; minh chứng cho việc bạn đ&atilde; trang bị kiến thức v&agrave; kỹ năng về AI, m&agrave; c&ograve;n mở ra cơ hội ph&aacute;t triển sự nghiệp. Kh&oacute;a học gi&uacute;p bạn trở th&agrave;nh một nh&acirc;n vi&ecirc;n ti&ecirc;n tiến, biết c&aacute;ch &aacute;p dụng c&ocirc;ng nghệ hiện đại để cải thiện hiệu quả c&ocirc;ng việc.</p>
 <h3>Đăng k&yacute; ngay</h3>
-<p>Kh&oacute;a học <strong><em>Ứng dụng AI trong c&ocirc;ng việc</em></strong> sẽ trang bị cho bạn c&ocirc;ng cụ v&agrave; kiến thức cần thiết để đ&oacute;n đầu xu hướng c&ocirc;ng nghệ. Đăng k&yacute; ngay h&ocirc;m nay để tối ưu h&oacute;a c&ocirc;ng việc, n&acirc;ng cao năng suất v&agrave; sẵn s&agrave;ng chinh phục những cơ hội mới trong thời đại c&ocirc;ng nghệ số!</p>', 720000.0, '', true, 'b0522acc-c5e1-49b2-a340-440724cdeca8', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p>Kh&oacute;a học <strong><em>Ứng dụng AI trong c&ocirc;ng việc</em></strong> sẽ trang bị cho bạn c&ocirc;ng cụ v&agrave; kiến thức cần thiết để đ&oacute;n đầu xu hướng c&ocirc;ng nghệ. Đăng k&yacute; ngay h&ocirc;m nay để tối ưu h&oacute;a c&ocirc;ng việc, n&acirc;ng cao năng suất v&agrave; sẵn s&agrave;ng chinh phục những cơ hội mới trong thời đại c&ocirc;ng nghệ số!</p>', 720000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/AI-applications_bd4d24f5e00f4aabbd8c8636c815b438.jpg', true, 'b0522acc-c5e1-49b2-a340-440724cdeca8', '019ddd86-96b0-7fd3-861a-4f3409c10536', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('eef4fafb-022a-430f-aad0-9416d37d656c', 'JavaScript cho người mới bắt đầu', '<h2><strong>Kh&oacute;a học JavaScript: H&agrave;nh tr&igrave;nh kh&aacute;m ph&aacute; thế giới lập tr&igrave;nh</strong></h2>
 <p>Ch&agrave;o mừng bạn đến với <strong>kh&oacute;a học JavaScript</strong> - nơi m&agrave; những d&ograve;ng code trở th&agrave;nh c&ocirc;ng cụ quyền năng để bạn chinh phục thế giới số. JavaScript kh&ocirc;ng chỉ l&agrave; ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất tr&ecirc;n h&agrave;nh tinh m&agrave; c&ograve;n l&agrave; "tr&aacute;i tim" của mọi trang web hiện đại. Từ việc tạo ra những hiệu ứng bắt mắt, những trang web tương t&aacute;c, đến việc x&acirc;y dựng c&aacute;c ứng dụng phức tạp - tất cả đều được hiện thực h&oacute;a qua JavaScript. Nhưng điều g&igrave; thực sự l&agrave;m n&ecirc;n sức hấp dẫn của ng&ocirc;n ngữ n&agrave;y?</p>
 <h3>Tại sao JavaScript l&agrave; ng&ocirc;n ngữ lập tr&igrave;nh đ&aacute;ng học nhất?</h3>
@@ -3289,7 +2744,7 @@ INSERT INTO public."Courses" VALUES ('eef4fafb-022a-430f-aad0-9416d37d656c', 'Ja
 </ul>
 <h3>H&atilde;y bắt đầu h&agrave;nh tr&igrave;nh của bạn!</h3>
 <p>JavaScript kh&ocirc;ng chỉ l&agrave; một ng&ocirc;n ngữ lập tr&igrave;nh, n&oacute; l&agrave; một h&agrave;nh tr&igrave;nh đầy th&uacute; vị v&agrave; th&aacute;ch thức. D&ugrave; bạn bắt đầu từ con số kh&ocirc;ng hay đ&atilde; c&oacute; nền tảng, kh&oacute;a học n&agrave;y sẽ trang bị cho bạn mọi thứ cần thiết để tiến xa hơn trong sự nghiệp lập tr&igrave;nh của m&igrave;nh. H&atilde;y bắt đầu h&agrave;nh tr&igrave;nh kh&aacute;m ph&aacute; v&agrave; l&agrave;m chủ JavaScript ngay h&ocirc;m nay!</p>
-<p><strong>Đăng k&yacute; ngay</strong> v&agrave; c&ugrave;ng ch&uacute;ng t&ocirc;i biến những &yacute; tưởng s&aacute;ng tạo của bạn th&agrave;nh hiện thực!</p>', 720000.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-17ed-748b-9a0b-4871476e9354', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p><strong>Đăng k&yacute; ngay</strong> v&agrave; c&ugrave;ng ch&uacute;ng t&ocirc;i biến những &yacute; tưởng s&aacute;ng tạo của bạn th&agrave;nh hiện thực!</p>', 720000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Javascript-co-ban__1__31400a8c572644149df6cb88a7c40005.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-96b0-7fd3-861a-4f3409c10536', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Python cơ bản', '<h2>Tổng quan về Python:</h2>
 <h3>Giới thiệu Python:</h3>
 <p>Python được s&aacute;ng tạo bởi&nbsp;<strong>Guido van Rossum</strong>&nbsp;v&agrave;o những năm cuối thập ni&ecirc;n 80, đầu thập ni&ecirc;n 90 tại Viện nghi&ecirc;n cứu Quốc gia về To&aacute;n học v&agrave; Khoa học m&aacute;y t&iacute;nh ở H&agrave; Lan.</p>
@@ -3301,7 +2756,7 @@ INSERT INTO public."Courses" VALUES ('efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Py
 <p>Nhiều người đ&atilde; ứng dụng Python để viết ra một đoạn script m&agrave; bạn c&oacute; thể đưa v&agrave;o bất cứ một video n&agrave;o v&agrave; chương tr&igrave;nh sẽ cho ra h&agrave;ng loạt c&aacute;c bản ghi (transcript) đ&atilde; được chuyển ngữ ngẫu nhi&ecirc;n. Những bản n&agrave;y cũng kh&ocirc;ng mấy ho&agrave;n hảo nguy&ecirc;n nh&acirc;n l&agrave; do c&aacute;ch d&ugrave;ng từ v&agrave; ngữ điệu của người Ch&acirc;u &Aacute; ch&uacute;ng ta, tuy nhi&ecirc;n &iacute;t nhất th&igrave; n&oacute; cũng được miễn ph&iacute;.</p>
 <h4><strong>C&aacute;c ứng dụng web.</strong></h4>
 <p>Bạn c&oacute; biết rằng một số đơn vị đ&igrave;nh đ&aacute;m đ&atilde; được x&acirc;y dựng nhờ v&agrave;o ng&ocirc;n ngữ lập tr&igrave;nh Python kh&ocirc;ng?</p>
-<p><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/1.jpg" alt="" width="850" height="425" /></p>
+<p><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/1.jpg" alt="" width="850" height="425" /></p>
 <p>Dưới đ&acirc;y l&agrave; một danh s&aacute;ch lướt nhanh những c&ocirc;ng ty n&agrave;y:</p>
 <ul>
 <li>Dropbox.</li>
@@ -3314,17 +2769,17 @@ INSERT INTO public."Courses" VALUES ('efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Py
 <p>Trong lĩnh vực ph&aacute;t triển ứng dụng web, khi n&oacute;i đến ng&ocirc;n ngữ Python, ta c&oacute; thể kể tới c&aacute;c framework như&nbsp;Django&nbsp;v&agrave;&nbsp;Flask. Nếu bạn c&oacute; một sự hiểu biết nhất định về lập tr&igrave;nh v&agrave; c&aacute;c framework cho web, bạn c&oacute; thể x&acirc;y dựng rất nhiều loại ứng dụng Python.</p>
 <h4><strong>Ng&agrave;nh khoa học dữ liệu (data science).</strong></h4>
 <p>Python đang l&agrave; ứng dụng đang đ&oacute;ng vai tr&ograve; một loại ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất trong ng&agrave;nh khoa học dữ liệu v&agrave; n&oacute; đang dần nuốt chửng thị phần của c&aacute;c ng&ocirc;n ngữ kh&aacute;c.</p>
-<p><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/2.jpeg" alt="" width="539" height="457" /></p>
+<p><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/2.jpeg" alt="" width="539" height="457" /></p>
 <p>C&oacute; rất nhiều thư viện Python m&agrave; bạn c&oacute; thể d&ugrave;ng cho c&aacute;c bộ dữ liệu lớn. Một số thư viện đ&aacute;ng ch&uacute; &yacute; như NumPy (cho những thứ thuộc về to&aacute;n học), SciPy (thư viện tin học kỹ thuật cao), Pandas (d&agrave;nh cho ph&acirc;n t&iacute;ch dữ liệu) v&agrave; Matplotlib (d&agrave;nh cho m&ocirc; h&igrave;nh h&oacute;a dữ liệu &ndash; data visualization)</p>
 <h4><strong>Machine Learning v&agrave; Tr&iacute; th&ocirc;ng minh nh&acirc;n tạo (AI).</strong></h4>
-<p><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/3.png" alt="" width="720" height="302" /></p>
+<p><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/3.png" alt="" width="720" height="302" /></p>
 <p>Rất nhiều thư viện Python c&oacute; thể v&agrave; đang được sử dụng cho lĩnh vực Machine Learning, Deep Learning v&agrave; AI. C&oacute; thể kể tới: Tensorflow, Theano v&agrave; PyTorce. C&agrave;ng nhiều lập tr&igrave;nh vi&ecirc;n l&agrave;m việc trong lĩnh vực n&agrave;y th&igrave; số lượng nguồn (resources) v&agrave; thư viện (libraries) lại c&agrave;ng tăng l&ecirc;n.</p>
 <h4><strong>Lĩnh vực IoT &ndash; Internet Vạn Vật.</strong></h4>
 <p>Bạn kh&ocirc;ng cần phải trả một khoản tiền qu&aacute; lớn hay mua từ cửa h&agrave;ng n&agrave;o cho việc ứng dụng Python v&agrave;o Internet Vạn Vật. Ng&agrave;y nay, người ta chỉ cần đầu tư một c&aacute;i m&aacute;y t&iacute;nh Raspberry Pi để khởi động những dự &aacute;n DIY IoT của ri&ecirc;ng m&igrave;nh.</p>
 <h4><strong>Lập tr&igrave;nh game.</strong></h4>
 <p>D&ugrave; Python kh&ocirc;ng mạnh như l&agrave; Unity trong lĩnh vực lập tr&igrave;nh game nhưng n&oacute; cho ph&eacute;p bạn x&acirc;y dựng dăm ba thứ kh&aacute; th&uacute; vị.</p>
 <p>Nhờ v&agrave;o Python ứng dụng v&agrave;o nhiều ng&agrave;nh nghề n&ecirc;n Python được nhiều c&ocirc;ng ty, trường học sử dụng để dạy lập tr&igrave;nh cho trẻ em v&agrave; những người mới lần đầu học lập tr&igrave;nh. B&ecirc;n cạnh những t&iacute;nh năng v&agrave; khả năng tuyệt vời th&igrave; c&uacute; ph&aacute;p đơn giản v&agrave; dễ sử dụng của n&oacute; l&agrave; l&yacute; do ch&iacute;nh cho việc n&agrave;y.</p>
-<p><img src="https://s3-sgn09.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/4.png" alt="" width="706" height="487" /></p>
+<p><img src="https://s3-hfx03.fptcloud.com/codelearnstorage/Media/Default/Users/TuanLQ7/tuanlq7/4.png" alt="" width="706" height="487" /></p>
 <hr />
 <h2>Mục ti&ecirc;u học tập của kh&oacute;a học n&agrave;y l&agrave;:</h2>
 <ul>
@@ -3336,11 +2791,11 @@ INSERT INTO public."Courses" VALUES ('efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Py
 <li>Hiểu c&aacute;ch viết c&aacute;c v&ograve;ng lặp v&agrave; c&aacute;c c&acirc;u lệnh quyết định trong Python.</li>
 <li>Hiểu c&aacute;ch viết h&agrave;m v&agrave; truyền đối số trong Python.</li>
 <li>Hiểu c&aacute;ch x&acirc;y dựng v&agrave; đ&oacute;ng g&oacute;i c&aacute;c m&ocirc;-đun Python để sử dụng lại.</li>
-</ul>', 0.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/python-co-ban_b80bca9b238b4615b94541de28af00ae.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-9740-74ed-b041-1371ef1a831e', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('f9713740-694e-444f-98f3-d506f13c7914', 'SQL nâng cao', '<p>Ch&agrave;o mừng bạn đến với kh&oacute;a học <strong>SQL n&acirc;ng cao</strong>! Đ&acirc;y l&agrave; kh&oacute;a học đặc biệt được thiết kế d&agrave;nh cho c&aacute;c học sinh lớp 6, những người đ&atilde; ho&agrave;n th&agrave;nh kh&oacute;a học cơ bản "Nhập M&ocirc;n SQL: Thế Giới Dữ Liệu" v&agrave; mong muốn n&acirc;ng cao kỹ năng của m&igrave;nh trong việc quản l&yacute; v&agrave; xử l&yacute; dữ liệu.</p>
 <p>Kh&oacute;a học n&agrave;y sẽ gi&uacute;p bạn mở rộng kiến thức về SQL, kh&aacute;m ph&aacute; c&aacute;c kỹ thuật truy vấn phức tạp. Bạn sẽ học c&aacute;c h&agrave;m xử l&yacute; với c&aacute;c kiểu dữ liệu kh&aacute;c nhau để ứng dụng SQL v&agrave;o c&aacute;c b&agrave;i to&aacute;n thực tế. Đồng thời gi&uacute;p c&aacute;c bạn ph&aacute;t triển tư duy logic v&agrave; kỹ năng ph&acirc;n t&iacute;ch. Chuẩn bị tốt cho tương lai trong c&aacute;c lĩnh vực li&ecirc;n quan đến dữ liệu.</p>
 <p><strong>Phương ph&aacute;p học:</strong> Kh&oacute;a học kết hợp l&yacute; thuyết v&agrave; thực h&agrave;nh, gi&uacute;p bạn hiểu s&acirc;u v&agrave; &aacute;p dụng ngay những kiến thức đ&atilde; học. B&agrave;i tập thực h&agrave;nh từ cơ bản đến n&acirc;ng cao sẽ gi&uacute;p củng cố v&agrave; mở rộng kiến thức của bạn. Dự &aacute;n cuối kh&oacute;a l&agrave; cơ hội để bạn &aacute;p dụng to&agrave;n bộ kỹ năng v&agrave;o một b&agrave;i to&aacute;n thực tế, n&acirc;ng cao khả năng giải quyết vấn đề.</p>
-<p>Kh&oacute;a học <strong>SQL n&acirc;ng cao</strong>&nbsp;sẽ mở ra c&aacute;nh cửa cho bạn kh&aacute;m ph&aacute; s&acirc;u hơn v&agrave;o thế giới dữ liệu, gi&uacute;p bạn trở th&agrave;nh những chuy&ecirc;n gia trong lĩnh vực cơ sở dữ liệu v&agrave; l&agrave;m chủ kỹ năng xử l&yacute; dữ liệu phức tạp. H&atilde;y c&ugrave;ng ch&uacute;ng t&ocirc;i bước v&agrave;o h&agrave;nh tr&igrave;nh th&uacute; vị n&agrave;y v&agrave; l&agrave;m chủ thế giới dữ liệu!</p>', 900000.0, '', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p>Kh&oacute;a học <strong>SQL n&acirc;ng cao</strong>&nbsp;sẽ mở ra c&aacute;nh cửa cho bạn kh&aacute;m ph&aacute; s&acirc;u hơn v&agrave;o thế giới dữ liệu, gi&uacute;p bạn trở th&agrave;nh những chuy&ecirc;n gia trong lĩnh vực cơ sở dữ liệu v&agrave; l&agrave;m chủ kỹ năng xử l&yacute; dữ liệu phức tạp. H&atilde;y c&ugrave;ng ch&uacute;ng t&ocirc;i bước v&agrave;o h&agrave;nh tr&igrave;nh th&uacute; vị n&agrave;y v&agrave; l&agrave;m chủ thế giới dữ liệu!</p>', 900000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/image-course-05_ff526fa90b0b46dbaac4b98c2da521c0.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd86-96b0-7fd3-861a-4f3409c10536', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('f996fe4f-4ab1-4979-9193-3881a8a806c9', 'C++ nâng cao', '<h3 data-start="170" data-end="266">C++ N&acirc;ng Cao -&gt; Kh&oacute;a học chuy&ecirc;n s&acirc;u về con trỏ v&agrave; quản l&yacute; bộ nhớ</h3>
 <p class="" data-start="268" data-end="580">Trong lập tr&igrave;nh hệ thống, hiểu r&otilde; <strong data-start="302" data-end="313">con trỏ</strong>, <strong data-start="315" data-end="325">bộ nhớ</strong>, v&agrave; c&aacute;c cấu tr&uacute;c dữ liệu cơ bản l&agrave; nền tảng kh&ocirc;ng thể thiếu để ph&aacute;t triển phần mềm hiệu quả v&agrave; tối ưu. Kh&oacute;a học n&agrave;y sẽ gi&uacute;p bạn <strong data-start="454" data-end="493">nắm vững từ l&yacute; thuyết đến thực h&agrave;nh</strong> c&aacute;c kh&aacute;i niệm cốt l&otilde;i trong lập tr&igrave;nh C/C++, từ đ&oacute; x&acirc;y dựng tư duy hệ thống vững chắc.</p>
 <h3 data-start="587" data-end="615">Qua kh&oacute;a học n&agrave;y, bạn sẽ:</h3>
@@ -3374,7 +2829,7 @@ INSERT INTO public."Courses" VALUES ('f996fe4f-4ab1-4979-9193-3881a8a806c9', 'C+
 <li class="" data-start="1868" data-end="1950">
 <p class="" data-start="1870" data-end="1950">Bất kỳ ai muốn <strong data-start="1885" data-end="1949">đ&agrave;o s&acirc;u tư duy lập tr&igrave;nh v&agrave; kỹ năng thao t&aacute;c bộ nhớ hiệu quả</strong>.</p>
 </li>
-</ul>', 0.0, '', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd7c-17ed-748b-9a0b-4871476e9354', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/C___Advance_1c572a2e59e5405cb057e864d3590d34.png', true, '80e95633-2022-4c78-ab94-57c9d3d51e2d', '019ddd86-96b0-7fd3-861a-4f3409c10536', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('fa7b1920-a356-48af-b27e-46550a64a8dc', 'C# cho người mới bắt đầu', '<p>Bạn đ&atilde; sẵn s&agrave;ng để n&acirc;ng cấp kỹ năng lập tr&igrave;nh của m&igrave;nh l&ecirc;n một tầm cao mới? Kh&oacute;a học n&agrave;y kh&ocirc;ng chỉ l&agrave; cơ hội để bạn l&agrave;m chủ ng&ocirc;n ngữ lập tr&igrave;nh C# m&agrave; c&ograve;n l&agrave; ch&igrave;a kh&oacute;a mở ra c&aacute;nh cửa dẫn đến những cơ hội v&ocirc; hạn trong thế giới c&ocirc;ng nghệ hiện đại.</p>
 <h2>L&yacute; do n&ecirc;n học C# .NET Core</h2>
 <h3>1. <strong>Nhu Cầu Tuyển Dụng Cao:</strong></h3>
@@ -3390,7 +2845,7 @@ INSERT INTO public."Courses" VALUES ('fa7b1920-a356-48af-b27e-46550a64a8dc', 'C#
 <h3>6. <strong>Tương Lai Rộng Mở với .NET 5 v&agrave; Sau N&agrave;y:</strong></h3>
 <p>Với sự ra đời của .NET 5 v&agrave; c&aacute;c phi&ecirc;n bản tiếp theo, Microsoft đ&atilde; hợp nhất .NET Core v&agrave; .NET Framework th&agrave;nh một nền tảng duy nhất. Điều n&agrave;y đảm bảo rằng C# .NET Core sẽ tiếp tục l&agrave; c&ocirc;ng nghệ cốt l&otilde;i trong tương lai, v&agrave; việc học n&oacute; ngay b&acirc;y giờ sẽ gi&uacute;p bạn đ&oacute;n đầu xu hướng c&ocirc;ng nghệ trong nhiều năm tới.</p>
 <h3>7. <strong>Tạo Ra C&aacute;c Ứng Dụng Đa Dạng:</strong></h3>
-<p>Với C# .NET Core, bạn c&oacute; thể tạo ra c&aacute;c ứng dụng web, dịch vụ đ&aacute;m m&acirc;y, ứng dụng m&aacute;y t&iacute;nh để b&agrave;n, ứng dụng di động, v&agrave; thậm ch&iacute; l&agrave; c&aacute;c giải ph&aacute;p IoT. Sự đa dạng n&agrave;y gi&uacute;p bạn c&oacute; thể đ&aacute;p ứng được nhiều y&ecirc;u cầu c&ocirc;ng việc kh&aacute;c nhau v&agrave; mở ra nhiều hướng ph&aacute;t triển sự nghiệp.</p>', 720000.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-16fc-7e39-a63b-c66e3f578f87', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+<p>Với C# .NET Core, bạn c&oacute; thể tạo ra c&aacute;c ứng dụng web, dịch vụ đ&aacute;m m&acirc;y, ứng dụng m&aacute;y t&iacute;nh để b&agrave;n, ứng dụng di động, v&agrave; thậm ch&iacute; l&agrave; c&aacute;c giải ph&aacute;p IoT. Sự đa dạng n&agrave;y gi&uacute;p bạn c&oacute; thể đ&aacute;p ứng được nhiều y&ecirc;u cầu c&ocirc;ng việc kh&aacute;c nhau v&agrave; mở ra nhiều hướng ph&aacute;t triển sự nghiệp.</p>', 720000.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/csharp--cho-nguoi-moi-bat-dau_79d3d35fac7842fd950d8b8b05466797.png', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd86-96b0-7fd3-861a-4f3409c10536', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 INSERT INTO public."Courses" VALUES ('fbd63a54-b48e-417a-afd7-351c843d39f8', 'Thuật toán căn bản', '<h3 data-start="164" data-end="204">Giới thiệu về Giải thuật (Thuật to&aacute;n)</h3>
 <p class="" data-start="210" data-end="613"><strong data-start="210" data-end="224">Giải thuật</strong> (hay <strong data-start="230" data-end="244">thuật to&aacute;n</strong>, tiếng Anh: <em data-start="257" data-end="269">Algorithms</em>) l&agrave; nền tảng cốt l&otilde;i trong lập tr&igrave;nh v&agrave; khoa học m&aacute;y t&iacute;nh. Đ&acirc;y l&agrave; <strong data-start="336" data-end="386">tập hợp c&aacute;c bước cụ thể, hữu hạn v&agrave; c&oacute; trật tự</strong> nhằm giải quyết một b&agrave;i to&aacute;n cụ thể.<br data-start="423" data-end="426" />D&ugrave; được triển khai bằng bất kỳ ng&ocirc;n ngữ lập tr&igrave;nh n&agrave;o (C++, Java, Python...), giải thuật vẫn lu&ocirc;n giữ nguy&ecirc;n bản chất &ndash; một chuỗi c&aacute;c hướng dẫn r&otilde; r&agrave;ng v&agrave; logic dẫn đến kết quả mong muốn.</p>
 <h3 data-start="620" data-end="657">🔍 Tại sao bạn n&ecirc;n học Giải thuật?</h3>
@@ -3438,746 +2893,651 @@ INSERT INTO public."Courses" VALUES ('fbd63a54-b48e-417a-afd7-351c843d39f8', 'Th
 <li class="" data-start="2533" data-end="2597">
 <p class="" data-start="2535" data-end="2597">Biết c&aacute;ch khai b&aacute;o biến, h&agrave;m, cấu tr&uacute;c điều kiện, v&ograve;ng lặp,...</p>
 </li>
-</ul>', 0.0, '', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019ddd7c-1767-7ee0-a32b-ab03f843c88f', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Courses" VALUES ('fc632885-682d-40c5-8b20-23c4c1627995', 'Lộ trình Python A-Z', '<p><span style="font-size: 18pt;"><strong>COMBO KH&Oacute;A HỌC PYTHON TO&Agrave;N DIỆN - TỪ CƠ BẢN ĐẾN N&Acirc;NG CAO</strong></span></p>
-<p><span data-teams="true">Bạn muốn học lập tr&igrave;nh bằng Python nhưng kh&ocirc;ng biết bắt đầu từ đ&acirc;u? Bạn đang t&igrave;m kiếm 1 lộ tr&igrave;nh học Python thống nhất từ cơ bản tới n&acirc;ng cao? Combo kh&oacute;a học Python to&agrave;n diện của ch&uacute;ng t&ocirc;i sẽ đồng h&agrave;nh c&ugrave;ng bạn trong h&agrave;nh tr&igrave;nh chinh phục ng&ocirc;n ngữ lập tr&igrave;nh phổ biến nhất hiện nay.</span></p>
-<p><strong>🔰 Kh&oacute;a 1: Python cho người mới bắt đầu</strong></p>
-<ul>
-<li>L&agrave;m quen với lập tr&igrave;nh v&agrave; Python từ con số 0</li>
-<li>Nắm vững c&uacute; ph&aacute;p cơ bản: biến, điều kiện, v&ograve;ng lặp, h&agrave;m</li>
-<li>Thực h&agrave;nh với c&aacute;c b&agrave;i tập từ đơn giản đến phức tạp</li>
-</ul>
-<p><strong>🚀 Kh&oacute;a 2: Python n&acirc;ng cao</strong></p>
-<ul>
-<li>Lập tr&igrave;nh hướng đối tượng (OOP) trong Python</li>
-<li>Xử l&yacute; tệp tin, thư mục</li>
-<li>L&agrave;m việc với c&aacute;c Module v&agrave; Packages</li>
-</ul>', 1620000.0, '', true, 'fbb5c2ee-0724-4bbc-a075-450004d1f20c', '019ddd7c-1767-7ee0-a32b-ab03f843c88f', NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+</ul>', 0.0, 'https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/thuat-toan-can-ban_c1459ce4671f4b3a985faf88420a8103.png', true, '5ac3586c-394f-45c2-b000-9332d118b498', '019ddd86-96b0-7fd3-861a-4f3409c10536', NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 
 
 --
--- TOC entry 4177 (class 0 OID 51983)
--- Dependencies: 253
+-- TOC entry 4091 (class 0 OID 54156)
+-- Dependencies: 243
 -- Data for Name: Enrollments; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4178 (class 0 OID 51986)
--- Dependencies: 254
+-- TOC entry 4084 (class 0 OID 54069)
+-- Dependencies: 236
 -- Data for Name: ExerciseDefaultCodes; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4179 (class 0 OID 51991)
--- Dependencies: 255
+-- TOC entry 4085 (class 0 OID 54081)
+-- Dependencies: 237
 -- Data for Name: ExerciseExamples; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4180 (class 0 OID 51996)
--- Dependencies: 256
+-- TOC entry 4086 (class 0 OID 54093)
+-- Dependencies: 238
 -- Data for Name: ExerciseTestCases; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4181 (class 0 OID 52001)
--- Dependencies: 257
+-- TOC entry 4070 (class 0 OID 53930)
+-- Dependencies: 222
 -- Data for Name: Exercises; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4182 (class 0 OID 52008)
--- Dependencies: 258
+-- TOC entry 4087 (class 0 OID 54105)
+-- Dependencies: 239
 -- Data for Name: FileChunks; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4183 (class 0 OID 52013)
--- Dependencies: 259
+-- TOC entry 4071 (class 0 OID 53939)
+-- Dependencies: 223
 -- Data for Name: FileEntries; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4184 (class 0 OID 52018)
--- Dependencies: 260
+-- TOC entry 4094 (class 0 OID 54205)
+-- Dependencies: 246
 -- Data for Name: FileEntryEmbeddings; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4185 (class 0 OID 52023)
--- Dependencies: 261
+-- TOC entry 4096 (class 0 OID 54239)
+-- Dependencies: 248
 -- Data for Name: LessonCodings; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4186 (class 0 OID 52028)
--- Dependencies: 262
+-- TOC entry 4097 (class 0 OID 54251)
+-- Dependencies: 249
 -- Data for Name: LessonMaterials; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4187 (class 0 OID 52033)
--- Dependencies: 263
+-- TOC entry 4098 (class 0 OID 54268)
+-- Dependencies: 250
 -- Data for Name: LessonQuizzes; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4188 (class 0 OID 52038)
--- Dependencies: 264
+-- TOC entry 4099 (class 0 OID 54280)
+-- Dependencies: 251
 -- Data for Name: LessonReadings; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4189 (class 0 OID 52043)
--- Dependencies: 265
+-- TOC entry 4100 (class 0 OID 54292)
+-- Dependencies: 252
 -- Data for Name: LessonVideos; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4190 (class 0 OID 52048)
--- Dependencies: 266
+-- TOC entry 4095 (class 0 OID 54222)
+-- Dependencies: 247
 -- Data for Name: Lessons; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public."Lessons" VALUES ('0016e09e-1d85-49ed-975c-4dfc9f6d31ee', '00056a9e-d5ba-4913-b44e-db626b329749', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '6.3 TỔNG KẾT', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('00b21956-0e1c-430a-b3b0-f301ae5c8034', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Security & IAM', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('01828aa7-1afa-4580-9e36-5ca2300e67ee', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Chương trình đầu tiên và chú thích', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('019ff171-4894-43d8-b3c9-048a5b456a69', '33b1eabc-e72c-44d1-9fc1-a5a9c6dab3dc', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Bài tập và kiểm tra cuối khóa', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('01ac974c-5fed-49b4-8186-2a47ec1154f4', 'd8e5d8e5-7b6c-4c5b-9209-821e9a533c7a', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '1.5 Tổng kết', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('01dc635c-0f95-4162-b58b-c13b2de83d28', '255b3c07-c453-4783-96ef-ae10698fbabd', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Giới thiệu game Gà qua đường', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('01de2986-c6a5-4631-97b1-ffedf0752b03', '36860b84-ee67-4b15-9533-1c53d00c48b8', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '8.2 Các thao tác trên chuỗi', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('01e9894c-3f8c-4dc0-8725-74786e1f578a', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Phân nhóm dữ liệu', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('02a56e01-4495-4984-a9c1-5d942bb3e12e', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Đơn vị xử lý trung tâm ', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('02dc8906-f417-4944-8f53-48eeaac0fb93', 'fc11ed6e-e4ae-480e-b12f-67aec809ce17', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán tìm kiếm', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0306e30d-d939-4220-83c7-c0cbc3197e39', '4ebff68e-c0dd-43c1-a2a4-1aeb0f4ae5d2', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Sử dụng đối tượng trong Javascript', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('032bbbc8-9c31-4a9c-bd16-96f28ca52aba', 'cbb65694-0ff7-4070-9e58-999596582272', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '5.1 Cấu trúc if-else', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('03b3a4a8-1fbf-4b61-90ae-20714380ab02', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Một số ứng dụng của network', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('04ce0acb-911e-47cf-9b3e-b7690d00f8b8', '19f37cb6-945b-493e-8771-835627a148d0', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Vòng lặp for', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0531df44-bbdd-4634-b5e9-4683e9685511', '8a812c9d-4a4d-4c66-8e9b-6d0784ceba7f', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '4.2 Sự khác biệt giữa i++ và ++i trong Java', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('07a0400c-a511-423a-b63c-71401bbf60fb', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Đóng gói và Release trên GitHub', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0818e0c7-efa9-4629-b900-3bac6b292c3f', '8a812c9d-4a4d-4c66-8e9b-6d0784ceba7f', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '4.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0851307e-e5e1-421c-94af-feebc0e5ca88', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Lọc dữ liệu', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('08876f1d-ac07-42c1-8a5e-5fbaea8447e6', '233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '3.7 TỔNG KẾT', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('08f9606a-f132-4603-a759-e6d6add0e6cf', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Chuỗi', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0923d818-10f2-4e2a-b673-2cc54cff6c9a', '16dc7e8b-24cc-4338-bcde-f3532389ad36', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Khai báo cấu hình, hằng số', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0aebd6d4-ace8-4d66-b33c-b71009b40b5e', '32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Ứng dụng AI trong tạo slide thuyết trình', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0b1e4421-19ee-4f01-9977-e2e3ef7a2dcf', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Công cụ tự động hóa 4: Thu thập dữ liệu từ web', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0b3cd112-5c29-4f6a-a632-4e1afb08b2c1', 'ff613291-f29e-4aba-a90f-43566082e70f', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '2.2 CÁC HÀM LÀM TRÒN SỐ THỰC', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0bb28ee1-ff17-4ffd-9f49-25818c4ccc9b', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.5 LIST', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0c05ca66-b8c7-471e-b562-bd86f6076a18', '434104ff-0f72-45b9-853d-dba6e936bea2', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '5.2 UNION', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0ce89b43-243a-4612-b427-f8a9e744cfcb', '7e5584ec-4af7-405e-aa5b-7bac9149303a', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Các thuật ngữ cơ bản', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0d8c9c8a-bd6e-44ae-8661-36434ce780b4', 'eb01ed8f-8fe0-40da-a6cf-db9d34076dd5', 'd1839060-39f5-4877-a610-7036e35dbcaa', '3.4 Hàm toán học phổ biến', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0e2de120-0a2d-41f2-b71c-0155ed693e1b', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Các cổng kết nối', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0e6ee047-b636-43ec-9fad-9f8f46b6a4b0', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Hàm', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0e778d35-4327-490d-b59e-8978aa1ca57b', '16dc7e8b-24cc-4338-bcde-f3532389ad36', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Quản lý người dùng', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0ee43e2e-f4f2-47bf-9b49-5358b1dba4f3', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Các hàm toán học', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0f10883f-72fc-4cc6-abc1-150bc6751b01', 'cbb65694-0ff7-4070-9e58-999596582272', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '5.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('0f21feb0-f821-444f-979c-7d139896ef41', 'eaf42478-1f56-4402-9c5d-272beaa42f7c', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '4.3 TỔNG KẾT', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('10276352-0e53-4e6e-b32f-254aa7e8ae44', 'fe89c338-a561-45e8-be2e-6465e6ef8552', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Giới thiệu chung về lập trình Scratch', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('1168e948-58c5-4bd9-a976-84cc1da41434', 'a1f7c649-c30c-4be2-9541-d51de4712954', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '3.3 In số thực trong C++', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('11bacde1-14fa-477f-8b91-f8d4236d97da', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Programmable Infrastructure', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('11e0874d-bfdd-49db-b0c0-6ced141e9285', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.9 TỔNG KẾT', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('12296772-f6a6-4c8b-9ea2-81b718b305e1', 'ee5bbb65-4634-4c64-b289-9229a42a313b', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Graph', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('123ed5a7-f408-4292-b4ba-d7920bdd6b28', '95b06f40-f331-47fc-be32-89793d374830', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Cấu trúc rẽ nhánh', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('126e2196-84ba-4cc1-a178-b636585aae6b', '0f705c03-0eed-485b-a440-caf811670cb5', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '7.3 Hàm sort mảng 1 chiều', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('131fa31e-71e8-4917-a160-8f4c0a315589', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Đồ thị', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('13640e96-4e7f-4a64-ab70-277c49298e79', 'f0fdd269-aacf-41ee-9086-c74c6337b50e', 'd1839060-39f5-4877-a610-7036e35dbcaa', '1.3 Chương trình đầu tiên "Hello World"', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('1403be59-f42f-48e7-9552-2e1719f1b909', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Số học', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('16ee5481-fc68-400d-bfaf-0b6d60f5c40f', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.2 VECTOR', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('17b196e7-a5bf-4938-8bd8-135d52aeab5f', '63bed55c-0803-48b3-96fb-6cfcbb613ade', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Tạo dự án', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('19f89650-e519-44da-a57f-ccb23715a3a4', 'fc87a170-547a-4ced-81ae-3274a87caa0d', 'e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Chia để trị', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('1a33fdeb-aa9c-453e-848d-82780bd2ed82', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Bài tập trắc nghiệm', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('1b9ac7fa-0fd2-49f9-87e6-bee0f818cefd', '07cc1c31-5bff-416c-9a73-ff7d44b0650b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '4.1 Toán tử so sánh', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('1c381d5a-a8e2-414a-976d-7d7e6d812b22', 'eb01ed8f-8fe0-40da-a6cf-db9d34076dd5', 'd1839060-39f5-4877-a610-7036e35dbcaa', '3.6 Tổng kết', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('1c7d85dc-0745-4ea5-af1a-100249b4f3db', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Truy vấn con', 0, 10, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('1ce422b8-0e3c-408f-8989-5dab23576c1d', 'd8e5d8e5-7b6c-4c5b-9209-821e9a533c7a', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '1.1 Giới thiệu về Lập trình và C++', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('1d7c96ea-e773-4153-a4e8-c584a6d69910', '4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645', 'd1839060-39f5-4877-a610-7036e35dbcaa', '2.4 Nhập xuất dữ liệu', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('1d8d616f-55fd-47cd-ad82-f650235fb17d', '82938d8a-fa31-4c7d-9122-12be8dce501e', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Chú thích', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('1e16ec3f-d62a-42e0-b5cf-762f2266d1eb', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Cách tạo các ứng dụng và báo cáo cho các đối tượng', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('1e4e0e2b-6d6d-4160-b91c-22793c8b1668', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Tổng kết', 0, 10, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('1eff1bd4-0e08-48b9-a2ab-e7ddfd6b1731', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Vòng lặp: while và do-while', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('20876edf-7c51-4659-b84a-1a9a01e34355', 'bd6222e5-280f-4779-b6b7-1a845f8d4495', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Pseudo element trong CSS', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('21efead8-e296-4758-bcbe-79c2c3ee2598', 'bfc8c9f6-6861-47e7-b8e9-7395048353a4', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Font chữ trong CSS', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('236d7e90-3505-4941-a1d2-5b3f9a77b064', 'bda31c86-19c9-4da5-9a73-152e6c900589', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Làm quen với CSS', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2485b4de-f4a2-4dbd-b072-d126bf1ed522', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Giới thiệu chi tiết về Amazon Web Services', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2533c33f-b76c-420b-8c9c-8eb43f5bd8db', '07cc1c31-5bff-416c-9a73-ff7d44b0650b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '4.5 Thoát khỏi luồng điều khiển', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('269870c0-ecf6-4032-a227-0a0a49b45a65', 'f0fdd269-aacf-41ee-9086-c74c6337b50e', 'd1839060-39f5-4877-a610-7036e35dbcaa', '1.2 Cài đặt môi trường lập trình', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('26b4e878-1c35-4aa1-a458-8c6adb4905ad', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Bo mạch chính ', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('26dcc773-62bd-438f-850f-e0a0ff5fcf8b', '1d71ef9c-b28e-4f0b-8439-544d893fb0be', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Giới thiệu khóa học và nội dung', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('26fd855f-9d56-4e39-ad17-3158f1b95d79', 'bda31c86-19c9-4da5-9a73-152e6c900589', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Viền, đệm, lề trong CSS', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('274e46fd-8deb-4519-b37a-75efb71e087f', '16dc7e8b-24cc-4338-bcde-f3532389ad36', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Kết nối cơ sở dữ liệu', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('287bcf1f-7622-410f-8052-e64dfa4ed17e', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Thiết bị chuyển mạch, định tuyến và mô hình đấu nối', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2891a422-93ef-466a-ba9b-eb50ddfcc91f', '2f8f6d1a-4c46-40a8-a903-1bbadba79247', 'f996fe4f-4ab1-4979-9193-3881a8a806c9', 'Kiểu cấu trúc', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('28afeeff-ebb8-4585-9319-8731e99b9f1a', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Hình học', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('28de1d51-e45d-4ef4-941e-90ace493ba67', '4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645', 'd1839060-39f5-4877-a610-7036e35dbcaa', '2.1 Chú thích', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2939eab6-5bee-47dc-91db-1a20b330d606', '0c187fb6-d795-4387-aa3f-21f1cbf01a7c', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Game mèo bắt chuột', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('29b23b29-83f2-4654-925a-c7aafce5ab7b', 'e119e517-1a3c-4756-bc71-8124ede492e7', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '4.2 Sự khác biệt giữa i++ và ++i trong C++', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2aaa061e-376f-4ede-be62-7043c4bc035f', '95b06f40-f331-47fc-be32-89793d374830', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Toán tử trong C#', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2b182c80-a6ad-474d-b49a-d6a63f55604f', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Đầu vào', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2b7be4cb-3877-4192-8dd2-f9bbe62dbe55', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Công cụ tự động hóa 6: Tự động hóa lập lịch, thông báo', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2b8c54e1-655d-48d1-a072-9c9a9fb40ecf', '77199784-d6bf-44b0-ba03-6da9d4198d33', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Giới thiệu về DOM', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2be0769b-fbb8-4802-8961-75dbc0f0d423', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Một số khái niệm về giải thuật', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2c132fa4-0b19-46d8-af93-ebafd0353493', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Các toán tử', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2ce9b03d-0b00-44ab-a660-c2880efe0a5c', 'a9f074bb-55b6-4325-b93e-58eaefe41551', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tệp tin và hệ thống tệp tin', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2d6c0b05-8e76-4ea2-884a-8bf11697e4a3', '2737e6c4-1a69-419a-9532-8914175c527d', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '7.2 Các thao tác cơ bản trên mảng', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2d7f1580-6089-4ae8-9abf-8ab6be102587', '2f8f6d1a-4c46-40a8-a903-1bbadba79247', 'f996fe4f-4ab1-4979-9193-3881a8a806c9', 'Các phép toán thao tác bit', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2e8980af-dc52-4019-b5cb-240e20c48c1e', '00056a9e-d5ba-4913-b44e-db626b329749', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '6.2 FUNCTION TEMPLATE', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2e8fbf8d-6ed1-422b-b297-5d8d49db760d', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'AWS Services', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2ed609d4-5cd3-4077-b6e8-20701fbd7acb', '1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'Set', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2fa53fcc-167c-485e-8732-75edf463983b', 'eaf42478-1f56-4402-9c5d-272beaa42f7c', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '4.1 KỸ THUẬT ĐỆ QUY', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('2fe0467e-75b0-440b-b258-65333bf99c25', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Truy vấn con', 0, 10, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3029978c-9f96-47ce-93e6-f21228c7c968', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Các hàm', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('30efca14-6448-4ea3-9d12-7617e4f961e7', '6724d6fa-d2b4-4a7d-9123-0fc06dab0123', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '7.2 TỔNG KẾT', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('31136b30-c029-4ed5-bd81-2bbc5b7bf9f8', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Mảng và liệt kê', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3199beaf-27e5-4a9b-946e-4b16814c5845', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Hàm', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3327f3ad-6d0a-495a-8727-2e7e41495efd', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Phương thức chuỗi', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('33756a76-ebfd-4268-82bf-0a44137c792c', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Câu hỏi cuối khóa', 0, 11, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('358738bc-b22f-4a7a-8a35-b9cf1e69a504', 'c3bb7a1a-a6e1-4471-a71b-ff9a4eb042dd', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '9.2 Đối số và tham số, tham trị và tham chiếu', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('35d53330-433d-4883-8919-9730ab31afa4', 'ef55e99a-89af-4040-8547-3ce1ed99aeea', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '2.6 Tổng kết', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('35f2a3b4-afc1-4bbb-a589-c754871ad962', 'f0fdd269-aacf-41ee-9086-c74c6337b50e', 'd1839060-39f5-4877-a610-7036e35dbcaa', '1.4 Kí tự thoát trong Python', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('369b89e6-a74a-4aa0-9adc-7ffaab56f103', 'b1ba46fe-75f1-4447-8cb0-d4a6c81e1b51', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Hàm trong Javascript', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('36ad1b85-f2b8-4ad0-8f1b-7b9988da0a6f', 'fc11ed6e-e4ae-480e-b12f-67aec809ce17', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán chia để trị', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('36f75757-9db4-4fb8-8bae-f56852a95d6c', 'f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Biến tĩnh, phương thức tĩnh', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('37291ed6-1137-466d-9acf-a3c82edbaede', 'd4001112-3495-4491-8523-3a632ebb407b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '6.2 Tham số và đối số', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('39f56347-1b51-4695-ac49-0de2ef32495d', '82938d8a-fa31-4c7d-9122-12be8dce501e', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Kiểu dữ liệu', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3a3d4cf9-605a-4f86-9221-319201c9e4a3', '1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'Queue', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3acdda56-6bce-4569-b6c4-f36132d9aee7', '5f970759-175f-48ea-bcfe-c27c4409bb13', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '6.4 Tổng kết', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3ae9b60c-2e0a-49a3-ae36-5d55e74e817f', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm hệ thống', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3b49ea5d-d572-44c1-9d57-8ae6b512fa12', 'd4001112-3495-4491-8523-3a632ebb407b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '6.4 Phạm vi của biến', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3b6de845-4bb5-40cf-83bb-d6ced7d94f02', 'f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Lớp và đối tượng', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3b95fbb7-49a7-460f-8f78-c26dfdccebec', 'fc87a170-547a-4ced-81ae-3274a87caa0d', 'e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'DFS & BFS', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3c1226aa-01d5-412d-886a-a26293866431', 'e3aa1c57-0005-4713-8b26-9a125169bc56', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '1.2 Thiết lập môi trường phát triển', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3c398f01-914b-4654-b2ff-2a4d7187be45', '4245ba29-529d-4739-bc2b-b774082f6c58', '3600145f-dbec-412b-94f1-08942f6afa16', 'Làm việc với Module', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3c8ad36f-8ebf-4e28-8497-8100f5a77adf', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Kiến trúc điện toán đám mây và các yêu cầu, kỹ thuật cơ bản', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3d1e8bcd-993e-4b8b-b31e-cd2dca09ab71', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Vòng lặp', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3d755c6a-1f60-4032-a5b1-35b1237fe752', 'cbabfde1-dc78-4d4b-8615-285b122b9937', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Các kiểu dữ liệu', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3dd96ff4-6fbb-4fa2-8333-4148b2ca92d7', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm ứng dụng: Trình duyệt web', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3ddb7e17-770e-4518-9cb2-84eb174d2832', 'a9a98c85-d92a-4980-a5fe-514d1b8b50a3', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Giải toán', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3fc72bcf-99a9-4267-bc41-2437caa31a83', 'e119e517-1a3c-4756-bc71-8124ede492e7', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '4.1 Các loại toán tử trong C++', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3fedd13a-d120-48fe-93a6-18e2ddc9124c', 'd0d53c61-e27e-4450-960c-429ea63d5893', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tập hợp', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('3ffc1f7a-54a2-4244-94be-5a34b2238b96', '753659d3-4545-4b7e-a74c-6bdc7335fe3e', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Khái niệm cơ bản về HTML', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('406f1880-6042-470d-a17e-3f95062b8489', '55e1b573-f06f-421d-881f-9ba3575ddcec', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tổng kết', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4111f3ed-688a-4abd-b4c8-8b50869ebdce', '16dc7e8b-24cc-4338-bcde-f3532389ad36', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Đăng nhập, đăng xuất', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('412fc311-7975-41da-9c17-f6c384fcdbff', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Truy vấn con', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('42303f02-f809-4fdc-adbf-c3f590655747', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Bài tập và kiểm tra', 0, 12, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('43787a47-4fb7-47e4-8926-a7eb4ba63183', '4245ba29-529d-4739-bc2b-b774082f6c58', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tổng kết', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('43cc142f-bdd0-4fb1-852c-9ecbd3550c9f', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.3 STACK', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('44090892-2049-4558-be67-18e033ef9a96', '434104ff-0f72-45b9-853d-dba6e936bea2', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '5.3 PAIR', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('46ab24f2-0725-4855-bd36-78a866ce42ec', 'a1f7c649-c30c-4be2-9541-d51de4712954', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '3.1 Cú pháp nhập - xuất dữ liệu', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4777cd9b-81d1-4be1-be29-ffbb69a4aa37', '0e36950e-fe57-40da-b564-9ef4866b2c24', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '6.3 Câu lệnh break và continue', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('47c574ca-ab35-4845-85e0-285205012ca4', '0673c3cb-8017-4f8e-aba4-b60f0ef797a1', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '2.5 Phạm vi của biến', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('484d80c9-092b-45b9-a398-e78c86acdbbb', '0c187fb6-d795-4387-aa3f-21f1cbf01a7c', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Game bảo vệ tổ quốc', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('493f4543-d6e8-47a0-be3f-2d47e68f435d', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Giới thiệu về phần mềm', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4960a642-cf3b-41c7-9072-21ef1a03e377', '36860b84-ee67-4b15-9533-1c53d00c48b8', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '8.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('49947184-23b9-482d-834b-decf990d37c3', '1056efbd-e7bc-4f8a-ad52-e9a317b88640', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Triển khai ứng dụng', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('49cd67f8-ae9d-4785-a7ca-b156f9c2ed0d', '233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '3.5 CON TRỎ TRỎ TỚI CON TRỎ', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4a415d3e-747d-4450-8d77-f1d772a3b268', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Các thông số trong truyền tải mạng', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4a5d180c-a20d-4024-8d52-1137a9f0486c', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Cấu trúc dữ liệu mảng', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4a8d42a6-7320-4cc1-96ad-6f6cde8be9e0', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Các toán tử', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4a9de1ba-9f24-4c3d-b360-1531cc9219a5', 'f0fdd269-aacf-41ee-9086-c74c6337b50e', 'd1839060-39f5-4877-a610-7036e35dbcaa', '1.5 Tổng kết', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4b73a9df-d4c0-42d3-bd1f-ca46645a7c8f', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm ứng dụng: Phần mềm tiện ích 1', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4b816608-1efb-472e-b494-fbf986570162', '6f250039-b2e7-45ed-a610-01c4f9f2c518', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Flexbox trong CSS', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4c09fe87-2332-4258-b2db-6f4231dfabaf', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Phương thức số', 0, 12, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4c800036-3433-42c7-9b36-0d50684662e3', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Danh sách liên kết', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4c8e0046-52b1-4ebe-891d-fae57e025e68', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Trò chơi Thảm họa thiên thạch', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4caeb887-9fbb-44c2-8047-fa08230837d5', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Các công nghệ phổ biến trong truyền tải mạng', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4cc876b7-0360-4dee-ae29-32f8faef097f', '5f970759-175f-48ea-bcfe-c27c4409bb13', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '6.3 Câu lệnh break và continue', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4cdb0e92-f80f-460f-9688-0a160cb11171', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Ma trận', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4d956559-c16f-48a0-b961-cde525f97b2e', 'cbb65694-0ff7-4070-9e58-999596582272', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '5.2 Switch case', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4d964775-64eb-49a0-9e31-c4e9f4c4ef47', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Các khái niệm và một số điều cần biết về mạng', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4f0bc72e-5a02-4437-b70e-bffc19bcded6', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Hàm đệ quy', 0, 10, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('4fcbd489-a620-4b12-8bcd-3165c6babdd9', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Bài luyện tập II', 0, 11, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('51c899f8-ba85-4835-bade-c3b33b811a71', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Chuỗi', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('534d0cfe-1f45-4b7a-b96f-2d69b2869f8b', '1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'List', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5375df11-bcad-48ff-a25b-48f02a8ce699', 'ff613291-f29e-4aba-a90f-43566082e70f', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '2.3 TỔNG KẾT', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('53f28ffa-8f47-4918-b58a-ee837c2a065a', '753659d3-4545-4b7e-a74c-6bdc7335fe3e', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Hình ảnh trong HTML', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('53fb6537-0c03-4fd6-8267-18c069ab99ae', 'a9f074bb-55b6-4325-b93e-58eaefe41551', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tổng kết', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('55f72234-28cd-426b-a23f-4a0f38e701e4', '32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Dự án cuối khóa', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('56d3ffcc-1cf4-4cad-8f58-e806262e0632', '0673c3cb-8017-4f8e-aba4-b60f0ef797a1', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '2.3 Biến', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('590a7adc-abf3-4228-a178-c0db16949848', '16dc7e8b-24cc-4338-bcde-f3532389ad36', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Tạo dự án', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('593b64bc-d5f5-4056-91d3-a741c1d3d26e', '01f76acf-40d6-4601-92f5-c23bc6625a5f', '3600145f-dbec-412b-94f1-08942f6afa16', 'Kế thừa và đa hình', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('593e8264-f9e6-4d96-a107-677c6195e2a0', 'e3aa1c57-0005-4713-8b26-9a125169bc56', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '1.4 Chương trình đầu tiên', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5994c332-b4f1-44bc-b108-62c09a08fdbe', '16dc7e8b-24cc-4338-bcde-f3532389ad36', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Redis Cache', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5a2b1917-f8ab-4d51-b728-aa1ab1f89181', '60d3e2b3-b6e9-41c7-a44c-8139e7b1662d', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '8.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5a4b3f60-2101-4fc4-a6a5-2837eab3871f', '0c187fb6-d795-4387-aa3f-21f1cbf01a7c', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Game đua xe', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5ab509c9-0bc7-4150-b7a8-8f71c1d83712', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Tính đa hình và trừu tượng', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5af12322-a94a-465c-8d1d-dc4280b480d8', '32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Ứng dụng AI trong việc xử lý âm thanh', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5b101808-929b-4602-a113-86962d06e021', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm ứng dụng: Phần mềm tiện ích 2', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5bc8ace7-621e-4ed0-8ee5-d130a3649220', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Compute Services', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5bd9133f-7d8e-48d1-949a-b70f0bf8ab1b', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Câu lệnh lựa chọn', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5bf8121e-3283-4ee5-b1e2-5c4cfdeb5871', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Kết hợp Bảng', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5c2114bf-d64f-406e-a24e-e5e01e2442dd', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Trò chơi Mèo chạy đua', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5cf23e1a-7b76-4966-b6c5-965fb4e2e3ea', 'b1ba46fe-75f1-4447-8cb0-d4a6c81e1b51', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Vòng lặp trong Javascript', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5d2a72e2-90b2-40ba-b5f3-d32f4790acb9', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Đếm', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5d53ae38-a645-4d6e-9841-353203d0f19c', '579b2a4f-6031-4429-b244-2061c4e519e0', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán sắp xếp nâng cao', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5d8f5108-449f-41f4-9c37-0920ecad1915', '5e695d8e-500f-40cf-b5ac-2fd1501381d7', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '1.2 GHI FILE', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5e3a75c5-02e1-47a7-9dd3-50560ba9f5f3', 'eb1f6aea-2cd3-4885-8897-a096ac15981f', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Cấu trúc dự án', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5e7fc7ef-f0cc-43b7-b118-44a148cd379e', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.6 MAP', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5e8ee138-b7b1-4503-8f82-cd70fa10bf33', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Bài luyện tập I', 0, 10, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5e971f5b-d6d8-42c5-b5b0-24f335d73947', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Giải thuật sắp xếp', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5eb5086d-afd8-48d7-8956-4025686248b6', 'd4001112-3495-4491-8523-3a632ebb407b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '6.5 Tổng kết', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5eccfda7-e2c9-4723-9d00-ef37b6416bd3', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Phân nhóm dữ liệu', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5f43fed8-9acf-4c0c-afeb-dd6abff8d1da', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Xử lý chuỗi', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5f9abd65-4015-4556-80b9-a8158ea8aff3', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Tìm kiếm', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5fc396c7-d6d7-4025-993a-37980e22ef53', 'd8e5d8e5-7b6c-4c5b-9209-821e9a533c7a', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '1.4 Chương trình đầu tiên', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5fe9881e-7563-499f-822c-06c10edde4cb', '60d3e2b3-b6e9-41c7-a44c-8139e7b1662d', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '8.2 Các thao tác trên chuỗi', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('5feecb0f-0c9e-4b0a-ae2b-23281718131b', 'ee5bbb65-4634-4c64-b289-9229a42a313b', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Shortest Path', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('607e86db-4bce-4668-a145-a9c8a7bbf6c3', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Chuỗi', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('60b038b0-4e06-40bf-90e6-b8a5b72e514f', '27aa88e7-a021-49a0-82cb-32c2bfd28f02', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '3.3 In số thực trong Java', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('61161a73-a8b4-41b5-bf43-c41d7790cc50', '63bed55c-0803-48b3-96fb-6cfcbb613ade', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Quản lý công việc', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('61174faf-bd94-4fd1-b0d0-6759882416bc', '0e36950e-fe57-40da-b564-9ef4866b2c24', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '6.2 Vòng lặp lồng nhau', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('616052bb-ec17-42c2-a9bf-71cb972609a6', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Truyền thông dữ liệu và mạng máy tính', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('622a742a-0808-4911-b327-e04f92f35677', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Biểu thức bảng chung', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('62fd7cdd-019e-44a8-8f51-2d87e3f84574', '77199784-d6bf-44b0-ba03-6da9d4198d33', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Giới thiệu về BOM', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('643fe4ee-1d84-4366-bb73-f3f394de0c60', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Sắp xếp', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('64434b35-31e1-44cf-8c1d-03cd034c2892', '233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '3.4 TRUYỀN CON TRỎ TỚI HÀM TRONG C++', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('6450ef26-6a76-447f-928d-0d75eb7b7397', 'bda31c86-19c9-4da5-9a73-152e6c900589', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Background trong CSS', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('66c26548-7216-4afe-80d0-44ef5aac825e', '07cc1c31-5bff-416c-9a73-ff7d44b0650b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '4.4 Vòng lặp', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('66ea63f5-3d34-4c2a-9de6-3618a82b2bb9', 'f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Tính đóng gói', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('6823f141-689b-4a33-b878-265a21e279a3', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.7 SET', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('682df2f4-961e-417d-bab0-6fb1838a8853', '00056a9e-d5ba-4913-b44e-db626b329749', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '6.1 NAMESPACE TRONG C++', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('68468e0b-ee66-4f1e-a6d8-865c835b11bd', '5e695d8e-500f-40cf-b5ac-2fd1501381d7', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '1.3 TỔNG KẾT', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('68d56178-e5f3-4a9e-ab9d-3c6c6a8aee13', '1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'Stack', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('68faf6a2-04a3-402d-9ffa-81bb60f7c9fd', 'f867c55e-29ee-420a-8bcc-c45012ea43a9', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Các kiểu dữ liệu cơ bản của JavaScript', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('691a8cda-9583-42cc-ba0e-ce0d0935c110', '603a9390-65b8-43fd-9678-42382611037b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '5.1 Chuỗi kí tự', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('69299fb1-ec72-49b3-8fd7-3674482e8f3f', '82938d8a-fa31-4c7d-9122-12be8dce501e', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Tổng kết', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('694dafe1-1db8-429c-987c-ce4d31298649', 'c3bb7a1a-a6e1-4471-a71b-ff9a4eb042dd', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '9.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('69743912-48f5-4a4f-adea-aaabe8e2ee49', '5f970759-175f-48ea-bcfe-c27c4409bb13', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '6.1 Giới thiệu vòng lặp', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('69ce12b4-3641-40fb-942d-1d4bff8bf997', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Hàm Python', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('69ce6a56-e322-4f1e-acf9-457c8d9e7ce6', '8a812c9d-4a4d-4c66-8e9b-6d0784ceba7f', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '4.1 Các loại toán tử trong Java', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('69de0e4e-6dec-4ae3-af17-d08b37597abb', 'fc87a170-547a-4ced-81ae-3274a87caa0d', 'e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Tham lam', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('6aae1c69-2d40-4bce-9df6-877768200001', 'b7ccd7f8-b737-4d9b-9bd3-4faec5567b37', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Toán tử trong Javascript', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('6b04f379-3623-4d2e-9ec1-23d352250c1a', '19f37cb6-945b-493e-8771-835627a148d0', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Vòng lặp while, do-while', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('6c085700-9abb-43f0-8032-7a2d1ea9b775', '233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '3.2 CÁCH SỬ DỤNG CON TRỎ', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('6c23b6bd-7819-4668-ae2e-1dcf9b0aa805', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Vẽ lá cờ Việt Nam bằng Bút vẽ', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('6c24411c-fb28-43c7-ba03-e981e82db7cb', 'd0d53c61-e27e-4450-960c-429ea63d5893', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tổng kết', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('6d78f254-4d4c-47b8-a8a2-847323af0303', '07cc1c31-5bff-416c-9a73-ff7d44b0650b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '4.3 Cấu trúc rẽ nhánh', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('6d9a8c1e-778d-4043-af7a-8914554966a2', '434104ff-0f72-45b9-853d-dba6e936bea2', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '5.1 STRUCT', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('6df44e82-d5b7-4908-a8bb-c52751769e47', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Cáp mạng và phân loại', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('706c521d-e24a-4e4a-a811-69fc2f3b4e2c', '84c29e11-da4c-472d-8034-527a88725a96', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Dự án cuối khóa', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('711613ca-2d50-4a72-a90e-7a018baff791', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Biến', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('71575290-6997-4fde-9ab1-73b40039c979', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Mối quan hệ giữa các đối tượng', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('716f7e14-156b-4604-a676-863ce0cdb593', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Kết hợp dữ liệu', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('719d5dfd-9a22-42f5-90c8-6cf3ca64d3a6', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Kiến thức cần chuẩn bị', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('71cf25c2-56b8-4d29-8e71-3265a322a74c', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm ứng dụng: Phần mềm văn phòng', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('7209f59f-9429-484f-a64d-9b3828c9da84', '0673c3cb-8017-4f8e-aba4-b60f0ef797a1', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '2.4 Ép kiểu dữ liệu', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('72169d59-c215-4bc0-93ef-b00cfab2547a', '0673c3cb-8017-4f8e-aba4-b60f0ef797a1', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '2.2 Kiểu dữ liệu', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('72ed15e4-1128-4040-9bca-735390031692', '95b06f40-f331-47fc-be32-89793d374830', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Tổng kết', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('73309000-d3f2-48ee-9297-a26e9b777506', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Biến', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('736ec45e-fa79-4aa5-a901-2d1c31f70b76', '255b3c07-c453-4783-96ef-ae10698fbabd', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Làm game Gà qua đường', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('73707d27-e5df-4527-bac2-d1aa00963356', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Sửa đổi dữ liệu', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('73729b6a-fdb1-4dd9-822c-63212ba6c4f0', '2737e6c4-1a69-419a-9532-8914175c527d', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '7.1 Khái niệm và cách khai báo mảng một chiều', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('73923dbc-5bb9-4ec3-aa69-b81f8f1fa7b5', '82938d8a-fa31-4c7d-9122-12be8dce501e', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Nhập xuất dữ liệu', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('73f011c0-0be6-496b-8706-848fbdfb2b5f', 'dbadb58f-5618-4ab1-be7d-ab0067c665a2', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Dynamic Programing', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('73f9fc2e-df41-4a8a-87eb-921b0f02d0d6', 'e061903f-9d59-4a06-9953-7800b61be90a', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Giới thiệu khóa học và nội dung', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('74253e2f-1df6-40db-9ecd-37a8e62bbcac', '7e5584ec-4af7-405e-aa5b-7bac9149303a', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Giới thiệu khóa học', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('742f4b5a-e249-4864-8d25-6cca40dcb7e5', 'ef55e99a-89af-4040-8547-3ce1ed99aeea', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '2.4 Ép kiểu dữ liệu', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('75137c2c-b141-43dc-8861-1f3ddc768508', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Các câu lệnh điều kiện', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('758a9c69-30fe-4632-a367-0a9510a78c7f', '434104ff-0f72-45b9-853d-dba6e936bea2', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '5.4 TỔNG KẾT', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('76344c2c-f1dd-46c4-8939-17646de8b485', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Chương trình C đầu tiên', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('764587b6-202c-4d20-8298-fc58d9f0a0b5', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Thao tác với văn bản', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('7670b87e-2ebb-42f2-982d-3c7deff7c18c', 'cbabfde1-dc78-4d4b-8615-285b122b9937', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Biến và cách khai báo', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('77391cc6-ae8b-4acd-979f-d6f9cd29304e', '07cc1c31-5bff-416c-9a73-ff7d44b0650b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '4.6 Tổng kết', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('78195f92-a240-49a8-b370-c54834738f7e', '603a9390-65b8-43fd-9678-42382611037b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '5.2 Các phép toán chuỗi cơ bản', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('781ad4a9-03b1-4e91-9c9b-b474c52d47a5', '69b1070f-85d6-478e-912a-eb0188b372ec', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Các toán tử', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('784f6911-2050-43d1-8093-6a24aa5bc059', '0c187fb6-d795-4387-aa3f-21f1cbf01a7c', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Bài kiểm tra số 1', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('78f79366-a79d-442b-bb10-47afbc417569', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Vòng lặp: while và do-while', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('7a724f0c-9f16-4632-a87c-5b92b5a184d0', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Giải thuật tìm kiếm', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('7c3cf90b-fab1-49a4-9ed9-a748888ea469', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Trò chơi mèo bắt cá', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('7c479a2a-fa8a-4df6-a575-8e10b9cb8629', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Chuẩn hóa cơ sở dữ liệu', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('7cc44e4c-295f-4222-9010-3688c1a6f35e', 'd8e5d8e5-7b6c-4c5b-9209-821e9a533c7a', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '1.2 Thiết lập môi trường phát triển', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('7cfef930-ad4b-4df4-bf5a-90d2965694b4', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Nguồn điện', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('7d3e353c-7b6f-4712-90c4-30e0c4d438ad', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Vòng lặp', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('7d7e735c-342f-4cdb-8f10-ebe2e4129d18', 'd0d53c61-e27e-4450-960c-429ea63d5893', '3600145f-dbec-412b-94f1-08942f6afa16', 'Từ điển', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('7e80663f-307d-40cf-8b36-52419e3531f8', '045487cf-89ba-4503-b6e1-20e2e03144b7', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '5.1 Cấu trúc if-else', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('7fcd7339-ef1e-49c5-8076-5493d7bcd2d4', '045487cf-89ba-4503-b6e1-20e2e03144b7', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '5.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('80b3478f-aab3-444a-9c1f-9625fa2ade60', 'e4a52d5e-e0a5-458e-9eb7-252490f0dcc9', '3600145f-dbec-412b-94f1-08942f6afa16', 'Ôn tập kiến thức cơ bản', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('80eb9a93-6eaf-4155-b684-9a7ab092a3ae', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Giới thiệu về máy tính', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('817178a9-b383-4252-b450-fb8ea1384a17', 'fc87a170-547a-4ced-81ae-3274a87caa0d', 'e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Quay lui', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('818314f9-41ac-4076-a3dd-767ff7576491', 'eb01ed8f-8fe0-40da-a6cf-db9d34076dd5', 'd1839060-39f5-4877-a610-7036e35dbcaa', '3.1 Kiểu dữ liệu số', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('81ae773e-088b-4ac2-bfaa-1de1f8457888', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Vòng lặp', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('81c0c8f2-4527-41b7-a15c-997ffa9102b5', 'ab47bae5-87c4-46ff-8959-2e40badedc8c', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Mệnh đề if else phức tạp', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('825f43ff-c154-4d35-b742-5dd30f0fa16b', 'd0d53c61-e27e-4450-960c-429ea63d5893', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tuple', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('827cc3f3-3c78-4387-aa7e-1c89c31ed44b', 'ef55e99a-89af-4040-8547-3ce1ed99aeea', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '2.1 Chú thích trong Java', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('83acc004-e8a1-48d3-a31b-2080790a7b25', '32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Giới thiệu AI và ứng dụng', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('847126be-39aa-4fb8-a293-64ae72d22b14', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Phương thức mảng', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('84c8bcf9-95dd-4dc2-9ab6-f4c2c2978f69', 'a1f7c649-c30c-4be2-9541-d51de4712954', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '3.2 Print newline', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('85435a7b-e93b-40df-ab85-872091554f54', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Giới thiệu khóa học và nội dung', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('864b64e2-9009-41f9-99eb-7eab9611a6c4', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Mảng', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('8677d703-ec78-48fd-ae23-0705460eb04c', 'd4001112-3495-4491-8523-3a632ebb407b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '6.3 Các kiểu hàm', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('86e76471-25d1-47a4-8720-87764be9beb7', '07cc1c31-5bff-416c-9a73-ff7d44b0650b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '4.2 Toán tử logic', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('86eab7b3-9231-438c-b4b9-5485c84d81a4', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Phương thức dữ liệu', 0, 10, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('87b1a3d7-5d0d-47e7-b117-6c85a3dbda43', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Thao tác với văn bản', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('88418e20-c4a5-4c62-92a1-61cb4a2cb38c', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Vòng lặp: while và do-while', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('89ca7e37-d3d8-457d-98f2-b4c20657587a', '27aa88e7-a021-49a0-82cb-32c2bfd28f02', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '3.4 Tổng kết', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('8a38a878-9539-4ec9-b3c9-aef5874297fe', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Phương thức trong Java', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('8ac35edd-07b9-4013-94b4-e224968b78be', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Phương thức object', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('8afd5524-44b8-43f7-b881-9577cd92aa9d', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Ràng buộc trong SQL', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('8b01a2e8-e683-4b0e-9487-284476cf5540', 'ff613291-f29e-4aba-a90f-43566082e70f', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '2.1 GIỚI THIỆU VỀ MỘT SỐ HÀM TOÁN HỌC', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('8bb9cf70-bf63-4cbe-b65c-5ea0a41157f4', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Hàm đệ quy', 0, 10, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('8bc0b407-c1c1-489e-8095-c72289030a6d', 'f5d36d9c-624b-4648-b875-190a2aa9f400', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '9.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('8c2d7584-6469-496a-bdd6-7cc91c5ca423', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Lớp và đối tượng', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('8d4bfeea-9d7b-4a9a-bbca-422501af77a4', '0c187fb6-d795-4387-aa3f-21f1cbf01a7c', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Game Cá lớn nuốt cá bé', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('8de4ac4f-1f47-4b85-a56e-7202017a7b99', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Các hàm windown', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('8e6360e3-c973-44ee-9375-7c4c36f9e061', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Cấu trúc dữ liệu đồ thị', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('8e790b84-f89d-430a-9c72-48e8ea0ea29a', '4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645', 'd1839060-39f5-4877-a610-7036e35dbcaa', '2.2 Biến', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('8eccaa8b-f125-4a7a-a149-ad22abbba613', 'a06f1f45-b23e-427c-b114-aa4444c4c111', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Stack', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('8ef663e4-545e-42d4-885a-a61babd7f7bb', '82938d8a-fa31-4c7d-9122-12be8dce501e', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Biến', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('90561466-4ef2-436f-b3d8-a563509578ed', 'a06f1f45-b23e-427c-b114-aa4444c4c111', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Tree', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('91478ccb-f283-4bca-94ac-bd3700fafb7a', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Mở rộng', 0, 11, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('9231558a-62b5-4a9d-a280-9216fe64b052', 'ee5bbb65-4634-4c64-b289-9229a42a313b', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Graph Traversal', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('941e94a7-7c35-4a81-8502-c64b1c8f2bf1', '2737e6c4-1a69-419a-9532-8914175c527d', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '7.4 Mảng 2 chiều', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('9446d7c4-cdd2-4be5-ac62-cb9960cad1e9', 'eaf42478-1f56-4402-9c5d-272beaa42f7c', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '4.2 MỘT SỐ BÀI TẬP VỀ ĐỆ QUY', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('9505d42b-baab-4dc2-a0d5-72cef8fd3215', '652b916f-f7aa-4fe9-b699-a3b563d1e3bf', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Mảng trong C#', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('953bdbba-2b4d-4896-882b-92af8a0cea85', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.1 KHÁI QUÁT VỀ TIME VÀ SPACE COMPLEXITY', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('96191de0-b04b-4106-a4bc-af8f0ae85352', 'f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Mối quan hệ giữa các đối tượng', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('96380613-e3bf-4d25-97e6-e02fd347217c', '233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '3.6 THAM CHIẾU', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('96ca337e-20e7-45ea-bfa5-b1c3d2d83003', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Chuẩn hóa cơ sở dữ liệu', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('973fe404-138a-4636-9302-cf720f33ecce', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Các cú pháp SQL cơ bản', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('98a2f40f-8c33-46eb-9e6c-714fa4e47c44', 'e119e517-1a3c-4756-bc71-8124ede492e7', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '4.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('9931641b-e9f4-4ee6-ab35-e3a0dfb32d45', '0e36950e-fe57-40da-b564-9ef4866b2c24', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '6.1 Giới thiệu vòng lặp', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('99316f9a-72eb-4c2c-9954-bc551d1c87db', 'b1ba46fe-75f1-4447-8cb0-d4a6c81e1b51', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Câu điều kiện trong Javascript', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('99d4096c-8128-4853-b812-e63197d0b9f7', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Mảng', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('99e3899d-9f18-4be3-92dc-c86211ccd7e2', '603a9390-65b8-43fd-9678-42382611037b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '5.4 Chuỗi nằm trong chuỗi khác', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('9a7932cb-7370-469b-8cbb-fd75361d2000', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Gộp nhiều bảng', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('9b689cac-3bd9-4c96-bc97-2e26578ca681', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Các hàm toán học', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('9d616eec-4d04-4cda-a5e1-a1ae4ae37efc', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Chương trình C++ đầu tiên', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('9ed392f4-7f4e-4f79-b4c9-dafcca590c7a', 'd8e5d8e5-7b6c-4c5b-9209-821e9a533c7a', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '1.3 Cấu trúc chung chương trình C++', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('9f678920-add5-4f08-b3aa-a9f3a88cb1f8', '60d3e2b3-b6e9-41c7-a44c-8139e7b1662d', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '8.1 Giới thiệu về string', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('9facbecd-271f-4d4a-bfc1-fe9a85877f39', 'd0d53c61-e27e-4450-960c-429ea63d5893', '3600145f-dbec-412b-94f1-08942f6afa16', 'Danh sách', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('9fcdcb53-eef7-4b64-b100-f0f3f837e16c', 'e3aa1c57-0005-4713-8b26-9a125169bc56', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '1.1 Giới thiệu về lập trình và Java', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a01c7451-46a1-438d-98f2-2db6d9402c24', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Phương thức toán học', 0, 11, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a0fd1d26-9a4e-4d5b-a8a4-c7af00deb8d3', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Vòng lặp', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a1873476-920e-41ac-8036-dc82cf06a69f', 'a9a98c85-d92a-4980-a5fe-514d1b8b50a3', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Vẽ hình', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a23b65b5-404b-4e1c-a26f-cde72111c245', 'ef55e99a-89af-4040-8547-3ce1ed99aeea', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '2.3 Biến', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a282a055-c98e-4052-81f8-097b1f61081c', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Các loại hình mạng và phân loại', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a473c34b-6186-48bb-af6a-d4806ed2fdd0', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Câu hỏi cuối khóa 1', 0, 10, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a50e7171-8d68-4b37-8cff-336e262eb54b', 'bfc8c9f6-6861-47e7-b8e9-7395048353a4', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Thuộc tính Position', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a50e9dc1-92f5-4c22-9dd3-3cccf1ea4322', 'c3bb7a1a-a6e1-4471-a71b-ff9a4eb042dd', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '9.1 Giới thiệu về hàm trong C++', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a531d510-f9d5-4810-98cd-066b395b9abc', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Tổng quan về khóa học', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a54260f0-6dbc-4962-a24e-fad90d9db08c', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Giới thiệu về cơ sở dữ liệu', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a57f8d45-c3a8-4a5e-adcd-cf3a15f664c0', 'f5d36d9c-624b-4648-b875-190a2aa9f400', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '9.1 Giới thiệu về hàm trong Java', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a5bdba44-9ed7-4165-9d31-39ce5917add1', 'bd6222e5-280f-4779-b6b7-1a845f8d4495', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Responsive trong CSS', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a5e7a5eb-0249-4840-a769-1240fab44348', 'f5d36d9c-624b-4648-b875-190a2aa9f400', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '9.2 Đối số và tham số, tham trị và tham chiếu', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a714a52f-a4e3-42ba-9c46-d557d8a2e662', '2f8f6d1a-4c46-40a8-a903-1bbadba79247', 'f996fe4f-4ab1-4979-9193-3881a8a806c9', 'Mảng', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a721bf6a-edfa-44f5-b28b-2c93a2ef9585', 'a1f7c649-c30c-4be2-9541-d51de4712954', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '3.4 Tổng kết', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a8cf0fa0-3337-4da9-8bd2-724be25a419e', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Công cụ tự động hóa 2: Tự động gửi mail', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a8f185e8-3386-4e78-859a-be8d65972c20', '32aa5bd2-27bf-4235-8887-ac9195a06a74', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Xử lý xâu', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('a9c65ccf-47f2-4083-8a0f-4b62af502b68', '6724d6fa-d2b4-4a7d-9123-0fc06dab0123', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '7.1 XỬ LÝ NGOẠI LỆ C++', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('ab805c43-240b-4f58-bef2-b4a9c5c8dc48', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Các toán tử và đầu vào', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('acdb9840-62a1-4beb-a932-e82fa766c26f', 'bda31c86-19c9-4da5-9a73-152e6c900589', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'CSS selectors', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('ad54ff08-4b4c-48ca-b770-966f6e5a5577', '1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'Map', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('ad95f5b5-63d3-45b5-8176-cf300b28a05e', 'ef55e99a-89af-4040-8547-3ce1ed99aeea', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '2.5 Phạm vi của biến', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('ae3a77ff-cd96-4598-8721-f5808ae4d40b', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Biểu thức điều kiện', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('aea15717-ead4-4a3e-bd29-0a313cbe9a10', 'f867c55e-29ee-420a-8bcc-c45012ea43a9', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Chuyển đổi kiểu và ép kiểu dữ liệu', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('aede4e6f-e67d-4b57-a4b1-ab059af15f62', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Tính kế thừa', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('affe9aa6-6397-4b10-9f18-01b34dab38b6', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Công cụ tự động hóa 1: Quản lý file và thư mục', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('b1c8c0b4-9f77-48d4-9684-761e637681fe', '0f705c03-0eed-485b-a440-caf811670cb5', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '7.2 Các thao tác cơ bản trên mảng', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('b1e9df5d-55f7-4f1d-89c1-29a0ff80d2a5', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Tính đóng gói', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('b254302b-b94e-4a1e-bd80-bf8809f64ae9', '0f705c03-0eed-485b-a440-caf811670cb5', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '7.4 Mảng 2 chiều', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('b2be8018-5a40-4755-98bb-858f6af65e4b', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Vòng lặp: for', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('b2e4ebaa-5732-40f6-9a83-b82d1dd3e9ba', '2f8f6d1a-4c46-40a8-a903-1bbadba79247', 'f996fe4f-4ab1-4979-9193-3881a8a806c9', 'Con trỏ', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('b435387a-67eb-48ef-bdc5-e452efa25dbc', 'd6a96253-4181-4a55-a304-1be89ba51175', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'First C# Program', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('b6009807-c8bd-4366-a4df-4a39b0886a28', '579b2a4f-6031-4429-b244-2061c4e519e0', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán sắp xếp', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('b6ee040f-7ae2-435c-9945-bc928981af0d', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.4 QUEUE VÀ DEQUEUE', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('b852b9dd-05ea-4462-a76c-270eb7477de4', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Thao tác với dữ liệu trong bảng', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('b85c2dc7-6e72-4413-93a6-acebbb845916', '4245ba29-529d-4739-bc2b-b774082f6c58', '3600145f-dbec-412b-94f1-08942f6afa16', 'Làm việc với Package', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('b89bb9af-077e-4799-8f1e-c946185453b7', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Toán tử cơ bản', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('b96034cf-814b-4f81-9f29-4c8383fc017d', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Câu hỏi cuối khóa 2', 0, 11, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('b9933d0c-cba1-4a90-b224-ca9ed10b1ce9', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Cấu trúc dữ liệu cây', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('b9e623c1-07bd-4526-9a17-e9e93e7b2e8d', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Biến tĩnh, phương thức tĩnh', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('ba5174cc-8be0-460e-9c10-198d62817a9a', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Trò chơi Chú gấu phiêu lưu', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('bac94a08-f433-40f2-82c1-70cea2082cc2', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Biến và kiểu dữ liệu', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('bb439488-93ef-4cd4-ad7f-9e4a35769e7f', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Khởi tạo bảng', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('bbf3bf6a-1f87-4c62-89d8-e637f8876df0', '045487cf-89ba-4503-b6e1-20e2e03144b7', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '5.2 Switch case', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('bd76b615-cb07-4368-9f2d-52c6b3cf2e87', '0673c3cb-8017-4f8e-aba4-b60f0ef797a1', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '2.1 Chú thích trong C++', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('bd9552da-aac8-4462-97a4-7bed797c43cf', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Quản lý bảng', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('beab2097-78fa-4d03-ad20-f8e19d466e0f', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Bài tập rèn luyện', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('bfdc274c-b6b9-4838-bdbd-e1f4a33c88d3', 'e3aa1c57-0005-4713-8b26-9a125169bc56', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '1.5 Tổng kết', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('c1688351-a5b2-46d8-9397-5d8398fa713f', '1a75260f-329e-4b1a-963e-6f0856b59bcd', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Bài tập và kiểm tra cuối khóa', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('c1827ae8-b659-4968-b518-7bd87d328e01', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Các vấn đề thường gặp', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('c2477c02-14f8-431e-a586-097ec93c9969', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Thao tác với dữ liệu trong bảng', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('c25f41d9-abe4-42c5-b873-5f9d53b32b9a', '32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Ứng dụng AI trong việc tạo và xử lý ảnh', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('c50f6086-3717-4653-be84-de8139e8d6c1', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Trò chơi Chú gấu phiêu lưu (tiếp theo)', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('c694a863-f49b-4b3c-a727-ce5e49bf88c4', 'f867c55e-29ee-420a-8bcc-c45012ea43a9', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Biến trong Javascript', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('c923c0b3-c571-4a38-913c-3217b554b3ac', 'f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Tính đa hình và trừu tượng', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('cb48fe05-39b7-432b-b5d5-943fe49e8083', '32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Ứng dụng AI trong việc xử lý video', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('cb529ab4-fe25-4824-aaf9-d0dd0172e2d5', '291d0934-6ac5-48ef-944d-cdc06b84b300', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Hàm trong C#', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('cbc5788d-9be6-469e-89c0-3eeaeb0fcb73', 'eea6930e-4a28-42b9-846f-80f642087f1d', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Phương thức trong C#', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('ccc7b344-9b8c-459b-9811-ff4add2b8f96', '1d71ef9c-b28e-4f0b-8439-544d893fb0be', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Cấu trúc mã JavaScript', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('cd04a9ab-cc90-41fa-b25a-36babef6765b', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm ứng dụng: Trình soạn thảo và lập trình', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('ce07cb6c-dd7d-41ba-af7a-85e5c9bc8329', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Làm việc với ngày/giờ', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('cf40c5e3-28d2-42de-aab8-cc116bd14c03', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Ngăn xếp và hàng đợi', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('cf912b1a-f1ab-4c5f-bcb9-b0b5edf912fa', '5e695d8e-500f-40cf-b5ac-2fd1501381d7', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '1.1 ĐỌC FILE', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d0ab2e1b-57a7-4fdc-a324-57954779d576', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Làm việc với ngày/giờ', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d0d5b935-3642-4627-86b2-5b37a842a730', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Dãy số', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d1ff77fa-ac5a-497a-aae0-81f9b6acacff', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Công cụ lập trình', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d2788b66-0224-4600-ad92-593bbda6fd6a', 'a9a98c85-d92a-4980-a5fe-514d1b8b50a3', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Bài kiểm tra số 2', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d2c05d3b-2245-4218-9b84-72f4d0e7b57e', '0e36950e-fe57-40da-b564-9ef4866b2c24', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '6.4 Tổng kết', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d2ceb872-55a3-4c64-9ffa-9996331e1e3b', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Giới thiệu về hệ điều hành', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d3337bd7-2312-4194-b5ca-baddb5cc7034', 'f0fdd269-aacf-41ee-9086-c74c6337b50e', 'd1839060-39f5-4877-a610-7036e35dbcaa', '1.1 Giới thiệu chung', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d339d274-4ebf-4049-8b8c-39d4dbf5bace', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.8 PRIORITY-QUEUE', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d36c42f5-09ff-4994-b7c8-9db5ebc8dec2', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Câu lệ rẽ nhánh', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d39278f6-e2c4-4ce0-bf5f-db9b198e5441', '27aa88e7-a021-49a0-82cb-32c2bfd28f02', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '3.1 Cú pháp nhập - xuất dữ liệu', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d3ec3646-af04-4a83-b451-49fab18cbcab', 'd4001112-3495-4491-8523-3a632ebb407b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '6.1 Tạo hàm đơn giản', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d45cdce9-8250-4fd2-94d3-b81c6aba45b3', '5f970759-175f-48ea-bcfe-c27c4409bb13', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '6.2 Vòng lặp lồng nhau', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d4c1cfeb-6222-49cd-b987-dbd3b1ca2873', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Quản lý Bảng', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d6e0a747-2889-43b8-bc9a-c11644d18404', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Bảo quản và sử dụng thiết bị', 0, 10, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d70d41cd-4c74-4ade-aae6-7144929b5a64', 'fc87a170-547a-4ced-81ae-3274a87caa0d', 'e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Đồ thị cây', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d736fa08-0717-4835-b04f-4cec548f3dc3', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Mảng', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d7a4bc94-15c1-495c-acdc-82c603abbf26', '36860b84-ee67-4b15-9533-1c53d00c48b8', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '8.1 Giới thiệu về String', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d80a1589-8edf-423c-992b-17e7f3a2618b', '7e5584ec-4af7-405e-aa5b-7bac9149303a', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Phân tích độ phức tạp', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d8faa4c0-5943-4c52-a0dd-51435e78a629', 'bda31c86-19c9-4da5-9a73-152e6c900589', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Đơn vị trong CSS', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('d9bbd15d-a3b7-4b7b-b037-aedaa4a534f0', 'f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Bài tập trắc nghiệm', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('dc702f13-714b-4fad-b386-562beda4c058', 'b7ccd7f8-b737-4d9b-9bd3-4faec5567b37', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Mảng trong Javascript', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('dc7143b1-4fd0-41ed-b03f-5b33d1f9b2c5', 'eb01ed8f-8fe0-40da-a6cf-db9d34076dd5', 'd1839060-39f5-4877-a610-7036e35dbcaa', '3.5 Định dạng kiểu số', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('dc7a9064-88de-4a0c-82ed-079f140a54cf', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Biến và các kiểu dữ liệu', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('dda54e6c-e082-44be-8884-e2611b98d6f9', '2737e6c4-1a69-419a-9532-8914175c527d', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '7.5 Tổng kết', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('ddc3f6f1-5abd-4760-a6b4-02f23389d543', 'eea6930e-4a28-42b9-846f-80f642087f1d', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Lớp Math trong C#', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('de09e696-940e-4e60-86ff-30bfe3a897ad', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Các mệnh đề SET', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('df4ca97a-613d-4208-8960-74f50e501de8', '603a9390-65b8-43fd-9678-42382611037b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '5.3 Một số phương thức chuỗi', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('df7554ff-f7fa-4824-a7a7-d0d9e2f52663', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Công cụ tự động hóa 3: Tự động hóa trình duyệt', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('dfe3a7dd-f129-40c4-a653-44dabe5592a0', '4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645', 'd1839060-39f5-4877-a610-7036e35dbcaa', '2.5 Định dạng chuỗi', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e0b66c7a-a24b-450d-bc80-94fbdc45eaea', '233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '3.1 GIỚI THIỆU VỀ CON TRỎ', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e0fa761b-311f-4a95-acb0-65198f5d375e', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Truy vấn dữ liệu', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e1c41720-4e7f-4089-b991-8716822b401b', '0f705c03-0eed-485b-a440-caf811670cb5', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '7.5 Tổng kết', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e273f84f-b9e1-44f9-a835-0c5f02c471be', 'ab47bae5-87c4-46ff-8959-2e40badedc8c', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Mệnh đề if else', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e2a5d1e3-dbec-4442-9eb2-f520140628e0', '2737e6c4-1a69-419a-9532-8914175c527d', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '7.3 Hàm sort mảng một chiều', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e3676b44-c66d-4c26-a94d-cceecaa0be44', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Thiết bị nhập dữ liệu', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e38cf5e1-3d09-475c-97e9-eea1327a0360', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Lập trình thuật toán tìm số nguyên tố', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e3cbd2ef-86f2-46f0-a24a-34ec1e2402de', '603a9390-65b8-43fd-9678-42382611037b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '5.5 Tổng kết', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e46682fb-86ec-40e2-9126-1feb15debbe2', 'a06f1f45-b23e-427c-b114-aa4444c4c111', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Queue', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e47ae315-381c-435d-8316-a6a6ce07dcc1', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Tổng quan, console.log và chú thích', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e52c22b6-1850-4873-954a-8bf2090ff768', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Các kiểu dữ liệu trong SQL', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e53be42f-7bd3-4696-b5ea-23a5a0852c8b', '27aa88e7-a021-49a0-82cb-32c2bfd28f02', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '3.2 Print Newline', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e55140ca-be71-40ba-be28-e2a82bfb9a8d', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Giới thiệu khóa học và nội dung', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e553fb7f-9b1c-4d2e-a8b3-53d039606a2b', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Ràng buộc trong SQL', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e5546e72-d56f-4f70-9d9c-f3361b650689', 'a06f1f45-b23e-427c-b114-aa4444c4c111', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Array', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e56c9de2-9e33-4334-8f5e-555c4d20ac68', '01f76acf-40d6-4601-92f5-c23bc6625a5f', '3600145f-dbec-412b-94f1-08942f6afa16', 'Lớp và đối tượng', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e5a0ee2a-2097-4d1f-bd7c-3a3d432317f7', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Thiết bị lưu trữ dữ liệu', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e60f4586-f7dd-4a25-8840-d41a73f164ef', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Tổng quan về điện toán đám mây', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e68df09f-8a4d-499d-8095-95e70e156dab', '32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'AI và tiện ích văn bản', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e6ad9e66-f65c-4516-8ba0-f45083b8fa07', 'eb01ed8f-8fe0-40da-a6cf-db9d34076dd5', 'd1839060-39f5-4877-a610-7036e35dbcaa', '3.3 Toán tử gán', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('e9d5f308-0afc-4d47-9528-0be2597234b2', '0f705c03-0eed-485b-a440-caf811670cb5', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '7.1 Khái niệm và cách khai báo mảng 1 chiều', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('eb45bcba-5fa7-48c3-8104-6a1d79368f71', '1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'bitset', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('eb6f4029-1471-4e20-a4d1-9c8a7e1cee5e', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Trò chơi Hái sao', 0, 8, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('ec206af4-b9aa-4903-bb38-dd6a8e5417bf', '1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'Vector', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('ec616684-531b-4e0f-b1b0-6fa518e03fcb', 'e4a52d5e-e0a5-458e-9eb7-252490f0dcc9', '3600145f-dbec-412b-94f1-08942f6afa16', 'Cài đặt môi trường lập trình Visual Studio Code', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('ecf349d8-5c52-46a6-9bb9-3b21b74e3fd0', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Hiểu biết về những ràng buộc', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('ed486305-966d-471a-99ff-58024653706d', 'f7883cb8-eb35-47c0-a110-4fa5b40f4c1f', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Giới thiệu về bất đồng bộ', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('eeb7f5b5-8e33-4ded-b491-6276125ba1de', 'f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Tính kế thừa', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('eefc111c-1158-4461-8f58-970b021446e7', '753659d3-4545-4b7e-a74c-6bdc7335fe3e', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Làm việc với HTML', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('ef48d4df-6d34-4b01-b862-b8b4d985b8ff', '95b06f40-f331-47fc-be32-89793d374830', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Vòng lặp', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('efb82d7b-7d96-4f03-a436-8d61b0592528', 'eb1f6aea-2cd3-4885-8897-a096ac15981f', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Cài đặt môi trường', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f0a7e95d-ddd1-4aec-b685-ae69408aecd2', 'eb1f6aea-2cd3-4885-8897-a096ac15981f', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Mục tiêu khóa học', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f1eee410-31e4-4fdf-91d3-ac04999bba18', 'ef55e99a-89af-4040-8547-3ce1ed99aeea', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '2.2 Kiểu dữ liệu', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f239d1d7-9ae5-4b79-b202-61370c264ab1', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Câu hỏi cuối khóa', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f2496cbc-71a3-4971-a960-38e43f3abe2e', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Giải thuật đệ quy', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f262c84f-9de5-466a-a321-82736de980c9', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Lệnh If - Else và Switch - Case', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f29228ca-fabc-4600-b473-f9266c06df15', '4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645', 'd1839060-39f5-4877-a610-7036e35dbcaa', '2.6 Tổng kết', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f2a5c2e3-87b0-4c12-a545-e73daedb3044', 'e3aa1c57-0005-4713-8b26-9a125169bc56', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '1.3 Cấu trúc chung chương trình Java', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f378109a-73ef-479e-8efe-15e2a380adad', '652b916f-f7aa-4fe9-b699-a3b563d1e3bf', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Mảng 2 chiều', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f385e595-c77b-4456-85f4-b7521c3adc82', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Công cụ tự động hóa 5: Tích hợp API', 0, 7, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f390f37d-7278-4585-bc86-d32acf68f2b1', '6f250039-b2e7-45ed-a610-01c4f9f2c518', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Grid trong CSS', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f3c3f4d6-80e1-4097-9aa3-9cd58a8dcf9d', 'a06f1f45-b23e-427c-b114-aa4444c4c111', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Linked List', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f3da57f4-a0b6-4219-8f9d-c481d30e91dd', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Cấu trúc rẽ nhánh', 0, 4, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f446571c-cb01-438e-90a0-cfd8b895b06c', '55e1b573-f06f-421d-881f-9ba3575ddcec', '3600145f-dbec-412b-94f1-08942f6afa16', 'Những lỗi phổ biến khi bắt đầu lập trình Python', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f5413ad6-2619-4a51-8313-6996a3da1d00', 'eb01ed8f-8fe0-40da-a6cf-db9d34076dd5', 'd1839060-39f5-4877-a610-7036e35dbcaa', '3.2 Toán tử số học', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f722b76e-0bbc-42f5-86a0-9eb621427888', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Trò chơi Mèo và chuột', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f7ee32df-f774-413d-b51b-910ecc6b256c', 'dbadb58f-5618-4ab1-be7d-ab0067c665a2', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Backtracking', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f7f447a0-6c28-4078-ae49-6f802ccd1720', '01f76acf-40d6-4601-92f5-c23bc6625a5f', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tổng kết', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f85dfa98-943b-4576-84c7-a314f4dc11f3', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Đầu vào', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f896854a-a680-4758-85ce-5b49a38f84cc', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Bài tập và kiểm tra', 0, 10, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f8bb80ba-0ded-4f44-88e6-fc44b2527769', 'fc87a170-547a-4ced-81ae-3274a87caa0d', 'e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Quy hoạch động', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f8ccca27-99eb-4cf7-888d-bba86c3d0865', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Bộ nhớ RAM/ROM', 0, 5, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f8d5ae04-b8af-4b6d-9ba4-dd84eebef78c', 'e4a52d5e-e0a5-458e-9eb7-252490f0dcc9', '3600145f-dbec-412b-94f1-08942f6afa16', 'Giới thiệu khóa học', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f8e5bd2b-8c1d-43bd-bc4c-d8942b78f251', '4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645', 'd1839060-39f5-4877-a610-7036e35dbcaa', '2.3 Kiểu dữ liệu', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('f90fa342-36e0-44ad-9efd-bc7fd6f471a5', '233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '3.3 CON TRỎ TRỎ TỚI MẢNG', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('fa02ed1e-c741-4940-abb0-3d2882f71392', '55e1b573-f06f-421d-881f-9ba3575ddcec', '3600145f-dbec-412b-94f1-08942f6afa16', 'Xử lý ngoại lệ trong Python', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('fa228b43-9266-4fdc-ba1d-e4187575471b', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Kiểu dữ liệu, biến và ép kiểu', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('face0c5b-b7e7-454b-b87c-31e7ac99b486', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Chương trình đầu tiên và chú thích', 0, 1, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('fb34af88-781a-43ec-9b5d-04eb15a5d1b0', 'fe89c338-a561-45e8-be2e-6465e6ef8552', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Giới thiệu về giao diện của Scratch', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('fbd387bb-e2d9-44b3-a8f2-128e65bf5e07', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Xử lý xâu', 0, 2, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('fbda01ea-d838-449d-9817-954717429eb6', '0673c3cb-8017-4f8e-aba4-b60f0ef797a1', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '2.6 Tổng kết', 0, 6, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('fc792b6b-1d92-474f-be2a-02724143e861', '0c187fb6-d795-4387-aa3f-21f1cbf01a7c', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Đường lên đỉnh Olympia', 0, 3, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
-INSERT INTO public."Lessons" VALUES ('fda13868-16ed-4f54-8a89-b7facab5be53', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Thiết bị xuất dữ liệu', 0, 9, NULL, '2026-04-30 08:23:11.390119+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0016e09e-1d85-49ed-975c-4dfc9f6d31ee', '00056a9e-d5ba-4913-b44e-db626b329749', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '6.3 TỔNG KẾT', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('00b21956-0e1c-430a-b3b0-f301ae5c8034', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Security & IAM', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('01828aa7-1afa-4580-9e36-5ca2300e67ee', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Chương trình đầu tiên và chú thích', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('019ff171-4894-43d8-b3c9-048a5b456a69', '33b1eabc-e72c-44d1-9fc1-a5a9c6dab3dc', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Bài tập và kiểm tra cuối khóa', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('01ac974c-5fed-49b4-8186-2a47ec1154f4', 'd8e5d8e5-7b6c-4c5b-9209-821e9a533c7a', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '1.5 Tổng kết', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('01dc635c-0f95-4162-b58b-c13b2de83d28', '255b3c07-c453-4783-96ef-ae10698fbabd', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Giới thiệu game Gà qua đường', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('01de2986-c6a5-4631-97b1-ffedf0752b03', '36860b84-ee67-4b15-9533-1c53d00c48b8', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '8.2 Các thao tác trên chuỗi', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('01e9894c-3f8c-4dc0-8725-74786e1f578a', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Phân nhóm dữ liệu', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('02a56e01-4495-4984-a9c1-5d942bb3e12e', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Đơn vị xử lý trung tâm ', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('02dc8906-f417-4944-8f53-48eeaac0fb93', 'fc11ed6e-e4ae-480e-b12f-67aec809ce17', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán tìm kiếm', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0306e30d-d939-4220-83c7-c0cbc3197e39', '4ebff68e-c0dd-43c1-a2a4-1aeb0f4ae5d2', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Sử dụng đối tượng trong Javascript', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('032bbbc8-9c31-4a9c-bd16-96f28ca52aba', 'cbb65694-0ff7-4070-9e58-999596582272', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '5.1 Cấu trúc if-else', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('03b3a4a8-1fbf-4b61-90ae-20714380ab02', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Một số ứng dụng của network', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('04ce0acb-911e-47cf-9b3e-b7690d00f8b8', '19f37cb6-945b-493e-8771-835627a148d0', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Vòng lặp for', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0531df44-bbdd-4634-b5e9-4683e9685511', '8a812c9d-4a4d-4c66-8e9b-6d0784ceba7f', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '4.2 Sự khác biệt giữa i++ và ++i trong Java', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('07a0400c-a511-423a-b63c-71401bbf60fb', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Đóng gói và Release trên GitHub', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0818e0c7-efa9-4629-b900-3bac6b292c3f', '8a812c9d-4a4d-4c66-8e9b-6d0784ceba7f', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '4.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0851307e-e5e1-421c-94af-feebc0e5ca88', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Lọc dữ liệu', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('08876f1d-ac07-42c1-8a5e-5fbaea8447e6', '233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '3.7 TỔNG KẾT', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('08f9606a-f132-4603-a759-e6d6add0e6cf', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Chuỗi', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0923d818-10f2-4e2a-b673-2cc54cff6c9a', '16dc7e8b-24cc-4338-bcde-f3532389ad36', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Khai báo cấu hình, hằng số', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0aebd6d4-ace8-4d66-b33c-b71009b40b5e', '32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Ứng dụng AI trong tạo slide thuyết trình', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0b1e4421-19ee-4f01-9977-e2e3ef7a2dcf', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Công cụ tự động hóa 4: Thu thập dữ liệu từ web', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0b3cd112-5c29-4f6a-a632-4e1afb08b2c1', 'ff613291-f29e-4aba-a90f-43566082e70f', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '2.2 CÁC HÀM LÀM TRÒN SỐ THỰC', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0bb28ee1-ff17-4ffd-9f49-25818c4ccc9b', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.5 LIST', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0c05ca66-b8c7-471e-b562-bd86f6076a18', '434104ff-0f72-45b9-853d-dba6e936bea2', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '5.2 UNION', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0ce89b43-243a-4612-b427-f8a9e744cfcb', '7e5584ec-4af7-405e-aa5b-7bac9149303a', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Các thuật ngữ cơ bản', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0d8c9c8a-bd6e-44ae-8661-36434ce780b4', 'eb01ed8f-8fe0-40da-a6cf-db9d34076dd5', 'd1839060-39f5-4877-a610-7036e35dbcaa', '3.4 Hàm toán học phổ biến', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0e2de120-0a2d-41f2-b71c-0155ed693e1b', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Các cổng kết nối', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0e6ee047-b636-43ec-9fad-9f8f46b6a4b0', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Hàm', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0e778d35-4327-490d-b59e-8978aa1ca57b', '16dc7e8b-24cc-4338-bcde-f3532389ad36', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Quản lý người dùng', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0ee43e2e-f4f2-47bf-9b49-5358b1dba4f3', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Các hàm toán học', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0f10883f-72fc-4cc6-abc1-150bc6751b01', 'cbb65694-0ff7-4070-9e58-999596582272', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '5.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('0f21feb0-f821-444f-979c-7d139896ef41', 'eaf42478-1f56-4402-9c5d-272beaa42f7c', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '4.3 TỔNG KẾT', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('10276352-0e53-4e6e-b32f-254aa7e8ae44', 'fe89c338-a561-45e8-be2e-6465e6ef8552', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Giới thiệu chung về lập trình Scratch', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('1168e948-58c5-4bd9-a976-84cc1da41434', 'a1f7c649-c30c-4be2-9541-d51de4712954', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '3.3 In số thực trong C++', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('11bacde1-14fa-477f-8b91-f8d4236d97da', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Programmable Infrastructure', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('11e0874d-bfdd-49db-b0c0-6ced141e9285', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.9 TỔNG KẾT', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('12296772-f6a6-4c8b-9ea2-81b718b305e1', 'ee5bbb65-4634-4c64-b289-9229a42a313b', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Graph', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('123ed5a7-f408-4292-b4ba-d7920bdd6b28', '95b06f40-f331-47fc-be32-89793d374830', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Cấu trúc rẽ nhánh', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('126e2196-84ba-4cc1-a178-b636585aae6b', '0f705c03-0eed-485b-a440-caf811670cb5', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '7.3 Hàm sort mảng 1 chiều', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('131fa31e-71e8-4917-a160-8f4c0a315589', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Đồ thị', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('13640e96-4e7f-4a64-ab70-277c49298e79', 'f0fdd269-aacf-41ee-9086-c74c6337b50e', 'd1839060-39f5-4877-a610-7036e35dbcaa', '1.3 Chương trình đầu tiên "Hello World"', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('1403be59-f42f-48e7-9552-2e1719f1b909', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Số học', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('16ee5481-fc68-400d-bfaf-0b6d60f5c40f', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.2 VECTOR', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('17b196e7-a5bf-4938-8bd8-135d52aeab5f', '63bed55c-0803-48b3-96fb-6cfcbb613ade', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Tạo dự án', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('19f89650-e519-44da-a57f-ccb23715a3a4', 'fc87a170-547a-4ced-81ae-3274a87caa0d', 'e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Chia để trị', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('1a33fdeb-aa9c-453e-848d-82780bd2ed82', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Bài tập trắc nghiệm', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('1b9ac7fa-0fd2-49f9-87e6-bee0f818cefd', '07cc1c31-5bff-416c-9a73-ff7d44b0650b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '4.1 Toán tử so sánh', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('1c381d5a-a8e2-414a-976d-7d7e6d812b22', 'eb01ed8f-8fe0-40da-a6cf-db9d34076dd5', 'd1839060-39f5-4877-a610-7036e35dbcaa', '3.6 Tổng kết', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('1c7d85dc-0745-4ea5-af1a-100249b4f3db', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Truy vấn con', 0, 10, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('1ce422b8-0e3c-408f-8989-5dab23576c1d', 'd8e5d8e5-7b6c-4c5b-9209-821e9a533c7a', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '1.1 Giới thiệu về Lập trình và C++', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('1d7c96ea-e773-4153-a4e8-c584a6d69910', '4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645', 'd1839060-39f5-4877-a610-7036e35dbcaa', '2.4 Nhập xuất dữ liệu', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('1d8d616f-55fd-47cd-ad82-f650235fb17d', '82938d8a-fa31-4c7d-9122-12be8dce501e', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Chú thích', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('1e16ec3f-d62a-42e0-b5cf-762f2266d1eb', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Cách tạo các ứng dụng và báo cáo cho các đối tượng', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('1e4e0e2b-6d6d-4160-b91c-22793c8b1668', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Tổng kết', 0, 10, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('1eff1bd4-0e08-48b9-a2ab-e7ddfd6b1731', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Vòng lặp: while và do-while', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('20876edf-7c51-4659-b84a-1a9a01e34355', 'bd6222e5-280f-4779-b6b7-1a845f8d4495', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Pseudo element trong CSS', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('21efead8-e296-4758-bcbe-79c2c3ee2598', 'bfc8c9f6-6861-47e7-b8e9-7395048353a4', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Font chữ trong CSS', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('236d7e90-3505-4941-a1d2-5b3f9a77b064', 'bda31c86-19c9-4da5-9a73-152e6c900589', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Làm quen với CSS', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2485b4de-f4a2-4dbd-b072-d126bf1ed522', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Giới thiệu chi tiết về Amazon Web Services', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2533c33f-b76c-420b-8c9c-8eb43f5bd8db', '07cc1c31-5bff-416c-9a73-ff7d44b0650b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '4.5 Thoát khỏi luồng điều khiển', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('269870c0-ecf6-4032-a227-0a0a49b45a65', 'f0fdd269-aacf-41ee-9086-c74c6337b50e', 'd1839060-39f5-4877-a610-7036e35dbcaa', '1.2 Cài đặt môi trường lập trình', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('26b4e878-1c35-4aa1-a458-8c6adb4905ad', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Bo mạch chính ', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('26dcc773-62bd-438f-850f-e0a0ff5fcf8b', '1d71ef9c-b28e-4f0b-8439-544d893fb0be', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Giới thiệu khóa học và nội dung', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('26fd855f-9d56-4e39-ad17-3158f1b95d79', 'bda31c86-19c9-4da5-9a73-152e6c900589', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Viền, đệm, lề trong CSS', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('274e46fd-8deb-4519-b37a-75efb71e087f', '16dc7e8b-24cc-4338-bcde-f3532389ad36', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Kết nối cơ sở dữ liệu', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('287bcf1f-7622-410f-8052-e64dfa4ed17e', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Thiết bị chuyển mạch, định tuyến và mô hình đấu nối', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2891a422-93ef-466a-ba9b-eb50ddfcc91f', '2f8f6d1a-4c46-40a8-a903-1bbadba79247', 'f996fe4f-4ab1-4979-9193-3881a8a806c9', 'Kiểu cấu trúc', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('28afeeff-ebb8-4585-9319-8731e99b9f1a', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Hình học', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('28de1d51-e45d-4ef4-941e-90ace493ba67', '4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645', 'd1839060-39f5-4877-a610-7036e35dbcaa', '2.1 Chú thích', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2939eab6-5bee-47dc-91db-1a20b330d606', '0c187fb6-d795-4387-aa3f-21f1cbf01a7c', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Game mèo bắt chuột', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('29b23b29-83f2-4654-925a-c7aafce5ab7b', 'e119e517-1a3c-4756-bc71-8124ede492e7', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '4.2 Sự khác biệt giữa i++ và ++i trong C++', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2aaa061e-376f-4ede-be62-7043c4bc035f', '95b06f40-f331-47fc-be32-89793d374830', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Toán tử trong C#', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2b182c80-a6ad-474d-b49a-d6a63f55604f', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Đầu vào', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2b7be4cb-3877-4192-8dd2-f9bbe62dbe55', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Công cụ tự động hóa 6: Tự động hóa lập lịch, thông báo', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2b8c54e1-655d-48d1-a072-9c9a9fb40ecf', '77199784-d6bf-44b0-ba03-6da9d4198d33', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Giới thiệu về DOM', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2be0769b-fbb8-4802-8961-75dbc0f0d423', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Một số khái niệm về giải thuật', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2c132fa4-0b19-46d8-af93-ebafd0353493', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Các toán tử', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2ce9b03d-0b00-44ab-a660-c2880efe0a5c', 'a9f074bb-55b6-4325-b93e-58eaefe41551', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tệp tin và hệ thống tệp tin', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2d6c0b05-8e76-4ea2-884a-8bf11697e4a3', '2737e6c4-1a69-419a-9532-8914175c527d', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '7.2 Các thao tác cơ bản trên mảng', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2d7f1580-6089-4ae8-9abf-8ab6be102587', '2f8f6d1a-4c46-40a8-a903-1bbadba79247', 'f996fe4f-4ab1-4979-9193-3881a8a806c9', 'Các phép toán thao tác bit', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2e8980af-dc52-4019-b5cb-240e20c48c1e', '00056a9e-d5ba-4913-b44e-db626b329749', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '6.2 FUNCTION TEMPLATE', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2e8fbf8d-6ed1-422b-b297-5d8d49db760d', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'AWS Services', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2ed609d4-5cd3-4077-b6e8-20701fbd7acb', '1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'Set', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2fa53fcc-167c-485e-8732-75edf463983b', 'eaf42478-1f56-4402-9c5d-272beaa42f7c', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '4.1 KỸ THUẬT ĐỆ QUY', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('2fe0467e-75b0-440b-b258-65333bf99c25', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Truy vấn con', 0, 10, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3029978c-9f96-47ce-93e6-f21228c7c968', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Các hàm', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('30efca14-6448-4ea3-9d12-7617e4f961e7', '6724d6fa-d2b4-4a7d-9123-0fc06dab0123', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '7.2 TỔNG KẾT', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('31136b30-c029-4ed5-bd81-2bbc5b7bf9f8', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Mảng và liệt kê', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3199beaf-27e5-4a9b-946e-4b16814c5845', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Hàm', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3327f3ad-6d0a-495a-8727-2e7e41495efd', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Phương thức chuỗi', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('33756a76-ebfd-4268-82bf-0a44137c792c', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Câu hỏi cuối khóa', 0, 11, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('358738bc-b22f-4a7a-8a35-b9cf1e69a504', 'c3bb7a1a-a6e1-4471-a71b-ff9a4eb042dd', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '9.2 Đối số và tham số, tham trị và tham chiếu', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('35d53330-433d-4883-8919-9730ab31afa4', 'ef55e99a-89af-4040-8547-3ce1ed99aeea', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '2.6 Tổng kết', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('35f2a3b4-afc1-4bbb-a589-c754871ad962', 'f0fdd269-aacf-41ee-9086-c74c6337b50e', 'd1839060-39f5-4877-a610-7036e35dbcaa', '1.4 Kí tự thoát trong Python', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('369b89e6-a74a-4aa0-9adc-7ffaab56f103', 'b1ba46fe-75f1-4447-8cb0-d4a6c81e1b51', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Hàm trong Javascript', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('36ad1b85-f2b8-4ad0-8f1b-7b9988da0a6f', 'fc11ed6e-e4ae-480e-b12f-67aec809ce17', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán chia để trị', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('36f75757-9db4-4fb8-8bae-f56852a95d6c', 'f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Biến tĩnh, phương thức tĩnh', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('37291ed6-1137-466d-9acf-a3c82edbaede', 'd4001112-3495-4491-8523-3a632ebb407b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '6.2 Tham số và đối số', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('39f56347-1b51-4695-ac49-0de2ef32495d', '82938d8a-fa31-4c7d-9122-12be8dce501e', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Kiểu dữ liệu', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3a3d4cf9-605a-4f86-9221-319201c9e4a3', '1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'Queue', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3acdda56-6bce-4569-b6c4-f36132d9aee7', '5f970759-175f-48ea-bcfe-c27c4409bb13', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '6.4 Tổng kết', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3ae9b60c-2e0a-49a3-ae36-5d55e74e817f', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm hệ thống', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3b49ea5d-d572-44c1-9d57-8ae6b512fa12', 'd4001112-3495-4491-8523-3a632ebb407b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '6.4 Phạm vi của biến', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3b6de845-4bb5-40cf-83bb-d6ced7d94f02', 'f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Lớp và đối tượng', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3b95fbb7-49a7-460f-8f78-c26dfdccebec', 'fc87a170-547a-4ced-81ae-3274a87caa0d', 'e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'DFS & BFS', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3c1226aa-01d5-412d-886a-a26293866431', 'e3aa1c57-0005-4713-8b26-9a125169bc56', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '1.2 Thiết lập môi trường phát triển', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3c398f01-914b-4654-b2ff-2a4d7187be45', '4245ba29-529d-4739-bc2b-b774082f6c58', '3600145f-dbec-412b-94f1-08942f6afa16', 'Làm việc với Module', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3c8ad36f-8ebf-4e28-8497-8100f5a77adf', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Kiến trúc điện toán đám mây và các yêu cầu, kỹ thuật cơ bản', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3d1e8bcd-993e-4b8b-b31e-cd2dca09ab71', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Vòng lặp', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3d755c6a-1f60-4032-a5b1-35b1237fe752', 'cbabfde1-dc78-4d4b-8615-285b122b9937', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Các kiểu dữ liệu', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3dd96ff4-6fbb-4fa2-8333-4148b2ca92d7', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm ứng dụng: Trình duyệt web', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3ddb7e17-770e-4518-9cb2-84eb174d2832', 'a9a98c85-d92a-4980-a5fe-514d1b8b50a3', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Giải toán', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3fc72bcf-99a9-4267-bc41-2437caa31a83', 'e119e517-1a3c-4756-bc71-8124ede492e7', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '4.1 Các loại toán tử trong C++', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3fedd13a-d120-48fe-93a6-18e2ddc9124c', 'd0d53c61-e27e-4450-960c-429ea63d5893', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tập hợp', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('3ffc1f7a-54a2-4244-94be-5a34b2238b96', '753659d3-4545-4b7e-a74c-6bdc7335fe3e', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Khái niệm cơ bản về HTML', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('406f1880-6042-470d-a17e-3f95062b8489', '55e1b573-f06f-421d-881f-9ba3575ddcec', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tổng kết', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4111f3ed-688a-4abd-b4c8-8b50869ebdce', '16dc7e8b-24cc-4338-bcde-f3532389ad36', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Đăng nhập, đăng xuất', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('412fc311-7975-41da-9c17-f6c384fcdbff', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Truy vấn con', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('42303f02-f809-4fdc-adbf-c3f590655747', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Bài tập và kiểm tra', 0, 12, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('43787a47-4fb7-47e4-8926-a7eb4ba63183', '4245ba29-529d-4739-bc2b-b774082f6c58', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tổng kết', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('43cc142f-bdd0-4fb1-852c-9ecbd3550c9f', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.3 STACK', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('44090892-2049-4558-be67-18e033ef9a96', '434104ff-0f72-45b9-853d-dba6e936bea2', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '5.3 PAIR', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('46ab24f2-0725-4855-bd36-78a866ce42ec', 'a1f7c649-c30c-4be2-9541-d51de4712954', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '3.1 Cú pháp nhập - xuất dữ liệu', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4777cd9b-81d1-4be1-be29-ffbb69a4aa37', '0e36950e-fe57-40da-b564-9ef4866b2c24', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '6.3 Câu lệnh break và continue', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('47c574ca-ab35-4845-85e0-285205012ca4', '0673c3cb-8017-4f8e-aba4-b60f0ef797a1', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '2.5 Phạm vi của biến', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('484d80c9-092b-45b9-a398-e78c86acdbbb', '0c187fb6-d795-4387-aa3f-21f1cbf01a7c', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Game bảo vệ tổ quốc', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('493f4543-d6e8-47a0-be3f-2d47e68f435d', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Giới thiệu về phần mềm', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4960a642-cf3b-41c7-9072-21ef1a03e377', '36860b84-ee67-4b15-9533-1c53d00c48b8', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '8.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('49947184-23b9-482d-834b-decf990d37c3', '1056efbd-e7bc-4f8a-ad52-e9a317b88640', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Triển khai ứng dụng', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('49cd67f8-ae9d-4785-a7ca-b156f9c2ed0d', '233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '3.5 CON TRỎ TRỎ TỚI CON TRỎ', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4a415d3e-747d-4450-8d77-f1d772a3b268', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Các thông số trong truyền tải mạng', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4a5d180c-a20d-4024-8d52-1137a9f0486c', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Cấu trúc dữ liệu mảng', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4a8d42a6-7320-4cc1-96ad-6f6cde8be9e0', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Các toán tử', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4a9de1ba-9f24-4c3d-b360-1531cc9219a5', 'f0fdd269-aacf-41ee-9086-c74c6337b50e', 'd1839060-39f5-4877-a610-7036e35dbcaa', '1.5 Tổng kết', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4b73a9df-d4c0-42d3-bd1f-ca46645a7c8f', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm ứng dụng: Phần mềm tiện ích 1', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4b816608-1efb-472e-b494-fbf986570162', '6f250039-b2e7-45ed-a610-01c4f9f2c518', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Flexbox trong CSS', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4c09fe87-2332-4258-b2db-6f4231dfabaf', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Phương thức số', 0, 12, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4c800036-3433-42c7-9b36-0d50684662e3', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Danh sách liên kết', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4c8e0046-52b1-4ebe-891d-fae57e025e68', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Trò chơi Thảm họa thiên thạch', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4caeb887-9fbb-44c2-8047-fa08230837d5', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Các công nghệ phổ biến trong truyền tải mạng', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4cc876b7-0360-4dee-ae29-32f8faef097f', '5f970759-175f-48ea-bcfe-c27c4409bb13', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '6.3 Câu lệnh break và continue', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4cdb0e92-f80f-460f-9688-0a160cb11171', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Ma trận', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4d956559-c16f-48a0-b961-cde525f97b2e', 'cbb65694-0ff7-4070-9e58-999596582272', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '5.2 Switch case', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4d964775-64eb-49a0-9e31-c4e9f4c4ef47', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Các khái niệm và một số điều cần biết về mạng', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4f0bc72e-5a02-4437-b70e-bffc19bcded6', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Hàm đệ quy', 0, 10, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('4fcbd489-a620-4b12-8bcd-3165c6babdd9', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Bài luyện tập II', 0, 11, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('51c899f8-ba85-4835-bade-c3b33b811a71', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Chuỗi', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('534d0cfe-1f45-4b7a-b96f-2d69b2869f8b', '1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'List', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5375df11-bcad-48ff-a25b-48f02a8ce699', 'ff613291-f29e-4aba-a90f-43566082e70f', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '2.3 TỔNG KẾT', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('53f28ffa-8f47-4918-b58a-ee837c2a065a', '753659d3-4545-4b7e-a74c-6bdc7335fe3e', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Hình ảnh trong HTML', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('53fb6537-0c03-4fd6-8267-18c069ab99ae', 'a9f074bb-55b6-4325-b93e-58eaefe41551', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tổng kết', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('55f72234-28cd-426b-a23f-4a0f38e701e4', '32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Dự án cuối khóa', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('56d3ffcc-1cf4-4cad-8f58-e806262e0632', '0673c3cb-8017-4f8e-aba4-b60f0ef797a1', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '2.3 Biến', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('590a7adc-abf3-4228-a178-c0db16949848', '16dc7e8b-24cc-4338-bcde-f3532389ad36', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Tạo dự án', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('593b64bc-d5f5-4056-91d3-a741c1d3d26e', '01f76acf-40d6-4601-92f5-c23bc6625a5f', '3600145f-dbec-412b-94f1-08942f6afa16', 'Kế thừa và đa hình', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('593e8264-f9e6-4d96-a107-677c6195e2a0', 'e3aa1c57-0005-4713-8b26-9a125169bc56', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '1.4 Chương trình đầu tiên', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5994c332-b4f1-44bc-b108-62c09a08fdbe', '16dc7e8b-24cc-4338-bcde-f3532389ad36', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Redis Cache', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5a2b1917-f8ab-4d51-b728-aa1ab1f89181', '60d3e2b3-b6e9-41c7-a44c-8139e7b1662d', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '8.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5a4b3f60-2101-4fc4-a6a5-2837eab3871f', '0c187fb6-d795-4387-aa3f-21f1cbf01a7c', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Game đua xe', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5ab509c9-0bc7-4150-b7a8-8f71c1d83712', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Tính đa hình và trừu tượng', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5af12322-a94a-465c-8d1d-dc4280b480d8', '32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Ứng dụng AI trong việc xử lý âm thanh', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5b101808-929b-4602-a113-86962d06e021', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm ứng dụng: Phần mềm tiện ích 2', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5bc8ace7-621e-4ed0-8ee5-d130a3649220', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Compute Services', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5bd9133f-7d8e-48d1-949a-b70f0bf8ab1b', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Câu lệnh lựa chọn', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5bf8121e-3283-4ee5-b1e2-5c4cfdeb5871', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Kết hợp Bảng', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5c2114bf-d64f-406e-a24e-e5e01e2442dd', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Trò chơi Mèo chạy đua', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5cf23e1a-7b76-4966-b6c5-965fb4e2e3ea', 'b1ba46fe-75f1-4447-8cb0-d4a6c81e1b51', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Vòng lặp trong Javascript', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5d2a72e2-90b2-40ba-b5f3-d32f4790acb9', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Đếm', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5d53ae38-a645-4d6e-9841-353203d0f19c', '579b2a4f-6031-4429-b244-2061c4e519e0', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán sắp xếp nâng cao', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5d8f5108-449f-41f4-9c37-0920ecad1915', '5e695d8e-500f-40cf-b5ac-2fd1501381d7', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '1.2 GHI FILE', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5e3a75c5-02e1-47a7-9dd3-50560ba9f5f3', 'eb1f6aea-2cd3-4885-8897-a096ac15981f', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Cấu trúc dự án', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5e7fc7ef-f0cc-43b7-b118-44a148cd379e', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.6 MAP', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5e8ee138-b7b1-4503-8f82-cd70fa10bf33', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Bài luyện tập I', 0, 10, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5e971f5b-d6d8-42c5-b5b0-24f335d73947', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Giải thuật sắp xếp', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5eb5086d-afd8-48d7-8956-4025686248b6', 'd4001112-3495-4491-8523-3a632ebb407b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '6.5 Tổng kết', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5eccfda7-e2c9-4723-9d00-ef37b6416bd3', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Phân nhóm dữ liệu', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5f43fed8-9acf-4c0c-afeb-dd6abff8d1da', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Xử lý chuỗi', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5f9abd65-4015-4556-80b9-a8158ea8aff3', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Tìm kiếm', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5fc396c7-d6d7-4025-993a-37980e22ef53', 'd8e5d8e5-7b6c-4c5b-9209-821e9a533c7a', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '1.4 Chương trình đầu tiên', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5fe9881e-7563-499f-822c-06c10edde4cb', '60d3e2b3-b6e9-41c7-a44c-8139e7b1662d', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '8.2 Các thao tác trên chuỗi', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('5feecb0f-0c9e-4b0a-ae2b-23281718131b', 'ee5bbb65-4634-4c64-b289-9229a42a313b', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Shortest Path', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('607e86db-4bce-4668-a145-a9c8a7bbf6c3', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Chuỗi', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('60b038b0-4e06-40bf-90e6-b8a5b72e514f', '27aa88e7-a021-49a0-82cb-32c2bfd28f02', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '3.3 In số thực trong Java', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('61161a73-a8b4-41b5-bf43-c41d7790cc50', '63bed55c-0803-48b3-96fb-6cfcbb613ade', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Quản lý công việc', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('61174faf-bd94-4fd1-b0d0-6759882416bc', '0e36950e-fe57-40da-b564-9ef4866b2c24', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '6.2 Vòng lặp lồng nhau', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('616052bb-ec17-42c2-a9bf-71cb972609a6', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Truyền thông dữ liệu và mạng máy tính', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('622a742a-0808-4911-b327-e04f92f35677', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Biểu thức bảng chung', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('62fd7cdd-019e-44a8-8f51-2d87e3f84574', '77199784-d6bf-44b0-ba03-6da9d4198d33', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Giới thiệu về BOM', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('643fe4ee-1d84-4366-bb73-f3f394de0c60', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Sắp xếp', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('64434b35-31e1-44cf-8c1d-03cd034c2892', '233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '3.4 TRUYỀN CON TRỎ TỚI HÀM TRONG C++', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('6450ef26-6a76-447f-928d-0d75eb7b7397', 'bda31c86-19c9-4da5-9a73-152e6c900589', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Background trong CSS', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('66c26548-7216-4afe-80d0-44ef5aac825e', '07cc1c31-5bff-416c-9a73-ff7d44b0650b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '4.4 Vòng lặp', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('66ea63f5-3d34-4c2a-9de6-3618a82b2bb9', 'f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Tính đóng gói', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('6823f141-689b-4a33-b878-265a21e279a3', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.7 SET', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('682df2f4-961e-417d-bab0-6fb1838a8853', '00056a9e-d5ba-4913-b44e-db626b329749', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '6.1 NAMESPACE TRONG C++', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('68468e0b-ee66-4f1e-a6d8-865c835b11bd', '5e695d8e-500f-40cf-b5ac-2fd1501381d7', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '1.3 TỔNG KẾT', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('68d56178-e5f3-4a9e-ab9d-3c6c6a8aee13', '1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'Stack', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('68faf6a2-04a3-402d-9ffa-81bb60f7c9fd', 'f867c55e-29ee-420a-8bcc-c45012ea43a9', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Các kiểu dữ liệu cơ bản của JavaScript', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('691a8cda-9583-42cc-ba0e-ce0d0935c110', '603a9390-65b8-43fd-9678-42382611037b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '5.1 Chuỗi kí tự', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('69299fb1-ec72-49b3-8fd7-3674482e8f3f', '82938d8a-fa31-4c7d-9122-12be8dce501e', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Tổng kết', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('694dafe1-1db8-429c-987c-ce4d31298649', 'c3bb7a1a-a6e1-4471-a71b-ff9a4eb042dd', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '9.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('69743912-48f5-4a4f-adea-aaabe8e2ee49', '5f970759-175f-48ea-bcfe-c27c4409bb13', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '6.1 Giới thiệu vòng lặp', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('69ce12b4-3641-40fb-942d-1d4bff8bf997', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Hàm Python', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('69ce6a56-e322-4f1e-acf9-457c8d9e7ce6', '8a812c9d-4a4d-4c66-8e9b-6d0784ceba7f', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '4.1 Các loại toán tử trong Java', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('69de0e4e-6dec-4ae3-af17-d08b37597abb', 'fc87a170-547a-4ced-81ae-3274a87caa0d', 'e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Tham lam', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('6aae1c69-2d40-4bce-9df6-877768200001', 'b7ccd7f8-b737-4d9b-9bd3-4faec5567b37', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Toán tử trong Javascript', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('6b04f379-3623-4d2e-9ec1-23d352250c1a', '19f37cb6-945b-493e-8771-835627a148d0', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Vòng lặp while, do-while', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('6c085700-9abb-43f0-8032-7a2d1ea9b775', '233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '3.2 CÁCH SỬ DỤNG CON TRỎ', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('6c23b6bd-7819-4668-ae2e-1dcf9b0aa805', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Vẽ lá cờ Việt Nam bằng Bút vẽ', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('6c24411c-fb28-43c7-ba03-e981e82db7cb', 'd0d53c61-e27e-4450-960c-429ea63d5893', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tổng kết', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('6d78f254-4d4c-47b8-a8a2-847323af0303', '07cc1c31-5bff-416c-9a73-ff7d44b0650b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '4.3 Cấu trúc rẽ nhánh', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('6d9a8c1e-778d-4043-af7a-8914554966a2', '434104ff-0f72-45b9-853d-dba6e936bea2', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '5.1 STRUCT', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('6df44e82-d5b7-4908-a8bb-c52751769e47', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Cáp mạng và phân loại', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('706c521d-e24a-4e4a-a811-69fc2f3b4e2c', '84c29e11-da4c-472d-8034-527a88725a96', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Dự án cuối khóa', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('711613ca-2d50-4a72-a90e-7a018baff791', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Biến', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('71575290-6997-4fde-9ab1-73b40039c979', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Mối quan hệ giữa các đối tượng', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('716f7e14-156b-4604-a676-863ce0cdb593', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Kết hợp dữ liệu', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('719d5dfd-9a22-42f5-90c8-6cf3ca64d3a6', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Kiến thức cần chuẩn bị', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('71cf25c2-56b8-4d29-8e71-3265a322a74c', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm ứng dụng: Phần mềm văn phòng', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('7209f59f-9429-484f-a64d-9b3828c9da84', '0673c3cb-8017-4f8e-aba4-b60f0ef797a1', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '2.4 Ép kiểu dữ liệu', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('72169d59-c215-4bc0-93ef-b00cfab2547a', '0673c3cb-8017-4f8e-aba4-b60f0ef797a1', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '2.2 Kiểu dữ liệu', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('72ed15e4-1128-4040-9bca-735390031692', '95b06f40-f331-47fc-be32-89793d374830', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Tổng kết', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('73309000-d3f2-48ee-9297-a26e9b777506', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Biến', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('736ec45e-fa79-4aa5-a901-2d1c31f70b76', '255b3c07-c453-4783-96ef-ae10698fbabd', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Làm game Gà qua đường', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('73707d27-e5df-4527-bac2-d1aa00963356', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Sửa đổi dữ liệu', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('73729b6a-fdb1-4dd9-822c-63212ba6c4f0', '2737e6c4-1a69-419a-9532-8914175c527d', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '7.1 Khái niệm và cách khai báo mảng một chiều', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('73923dbc-5bb9-4ec3-aa69-b81f8f1fa7b5', '82938d8a-fa31-4c7d-9122-12be8dce501e', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Nhập xuất dữ liệu', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('73f011c0-0be6-496b-8706-848fbdfb2b5f', 'dbadb58f-5618-4ab1-be7d-ab0067c665a2', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Dynamic Programing', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('73f9fc2e-df41-4a8a-87eb-921b0f02d0d6', 'e061903f-9d59-4a06-9953-7800b61be90a', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Giới thiệu khóa học và nội dung', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('74253e2f-1df6-40db-9ecd-37a8e62bbcac', '7e5584ec-4af7-405e-aa5b-7bac9149303a', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Giới thiệu khóa học', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('742f4b5a-e249-4864-8d25-6cca40dcb7e5', 'ef55e99a-89af-4040-8547-3ce1ed99aeea', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '2.4 Ép kiểu dữ liệu', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('75137c2c-b141-43dc-8861-1f3ddc768508', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Các câu lệnh điều kiện', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('758a9c69-30fe-4632-a367-0a9510a78c7f', '434104ff-0f72-45b9-853d-dba6e936bea2', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '5.4 TỔNG KẾT', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('76344c2c-f1dd-46c4-8939-17646de8b485', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Chương trình C đầu tiên', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('764587b6-202c-4d20-8298-fc58d9f0a0b5', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Thao tác với văn bản', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('7670b87e-2ebb-42f2-982d-3c7deff7c18c', 'cbabfde1-dc78-4d4b-8615-285b122b9937', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Biến và cách khai báo', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('77391cc6-ae8b-4acd-979f-d6f9cd29304e', '07cc1c31-5bff-416c-9a73-ff7d44b0650b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '4.6 Tổng kết', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('78195f92-a240-49a8-b370-c54834738f7e', '603a9390-65b8-43fd-9678-42382611037b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '5.2 Các phép toán chuỗi cơ bản', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('781ad4a9-03b1-4e91-9c9b-b474c52d47a5', '69b1070f-85d6-478e-912a-eb0188b372ec', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Các toán tử', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('784f6911-2050-43d1-8093-6a24aa5bc059', '0c187fb6-d795-4387-aa3f-21f1cbf01a7c', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Bài kiểm tra số 1', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('78f79366-a79d-442b-bb10-47afbc417569', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Vòng lặp: while và do-while', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('7a724f0c-9f16-4632-a87c-5b92b5a184d0', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Giải thuật tìm kiếm', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('7c3cf90b-fab1-49a4-9ed9-a748888ea469', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Trò chơi mèo bắt cá', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('7c479a2a-fa8a-4df6-a575-8e10b9cb8629', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Chuẩn hóa cơ sở dữ liệu', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('7cc44e4c-295f-4222-9010-3688c1a6f35e', 'd8e5d8e5-7b6c-4c5b-9209-821e9a533c7a', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '1.2 Thiết lập môi trường phát triển', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('7cfef930-ad4b-4df4-bf5a-90d2965694b4', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Nguồn điện', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('7d3e353c-7b6f-4712-90c4-30e0c4d438ad', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Vòng lặp', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('7d7e735c-342f-4cdb-8f10-ebe2e4129d18', 'd0d53c61-e27e-4450-960c-429ea63d5893', '3600145f-dbec-412b-94f1-08942f6afa16', 'Từ điển', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('7e80663f-307d-40cf-8b36-52419e3531f8', '045487cf-89ba-4503-b6e1-20e2e03144b7', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '5.1 Cấu trúc if-else', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('7fcd7339-ef1e-49c5-8076-5493d7bcd2d4', '045487cf-89ba-4503-b6e1-20e2e03144b7', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '5.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('80b3478f-aab3-444a-9c1f-9625fa2ade60', 'e4a52d5e-e0a5-458e-9eb7-252490f0dcc9', '3600145f-dbec-412b-94f1-08942f6afa16', 'Ôn tập kiến thức cơ bản', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('80eb9a93-6eaf-4155-b684-9a7ab092a3ae', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Giới thiệu về máy tính', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('817178a9-b383-4252-b450-fb8ea1384a17', 'fc87a170-547a-4ced-81ae-3274a87caa0d', 'e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Quay lui', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('818314f9-41ac-4076-a3dd-767ff7576491', 'eb01ed8f-8fe0-40da-a6cf-db9d34076dd5', 'd1839060-39f5-4877-a610-7036e35dbcaa', '3.1 Kiểu dữ liệu số', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('81ae773e-088b-4ac2-bfaa-1de1f8457888', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Vòng lặp', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('81c0c8f2-4527-41b7-a15c-997ffa9102b5', 'ab47bae5-87c4-46ff-8959-2e40badedc8c', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Mệnh đề if else phức tạp', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('825f43ff-c154-4d35-b742-5dd30f0fa16b', 'd0d53c61-e27e-4450-960c-429ea63d5893', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tuple', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('827cc3f3-3c78-4387-aa7e-1c89c31ed44b', 'ef55e99a-89af-4040-8547-3ce1ed99aeea', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '2.1 Chú thích trong Java', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('83acc004-e8a1-48d3-a31b-2080790a7b25', '32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Giới thiệu AI và ứng dụng', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('847126be-39aa-4fb8-a293-64ae72d22b14', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Phương thức mảng', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('84c8bcf9-95dd-4dc2-9ab6-f4c2c2978f69', 'a1f7c649-c30c-4be2-9541-d51de4712954', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '3.2 Print newline', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('85435a7b-e93b-40df-ab85-872091554f54', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Giới thiệu khóa học và nội dung', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('864b64e2-9009-41f9-99eb-7eab9611a6c4', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Mảng', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('8677d703-ec78-48fd-ae23-0705460eb04c', 'd4001112-3495-4491-8523-3a632ebb407b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '6.3 Các kiểu hàm', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('86e76471-25d1-47a4-8720-87764be9beb7', '07cc1c31-5bff-416c-9a73-ff7d44b0650b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '4.2 Toán tử logic', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('86eab7b3-9231-438c-b4b9-5485c84d81a4', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Phương thức dữ liệu', 0, 10, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('87b1a3d7-5d0d-47e7-b117-6c85a3dbda43', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Thao tác với văn bản', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('88418e20-c4a5-4c62-92a1-61cb4a2cb38c', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Vòng lặp: while và do-while', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('89ca7e37-d3d8-457d-98f2-b4c20657587a', '27aa88e7-a021-49a0-82cb-32c2bfd28f02', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '3.4 Tổng kết', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('8a38a878-9539-4ec9-b3c9-aef5874297fe', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Phương thức trong Java', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('8ac35edd-07b9-4013-94b4-e224968b78be', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Phương thức object', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('8afd5524-44b8-43f7-b881-9577cd92aa9d', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Ràng buộc trong SQL', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('8b01a2e8-e683-4b0e-9487-284476cf5540', 'ff613291-f29e-4aba-a90f-43566082e70f', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '2.1 GIỚI THIỆU VỀ MỘT SỐ HÀM TOÁN HỌC', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('8bb9cf70-bf63-4cbe-b65c-5ea0a41157f4', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Hàm đệ quy', 0, 10, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('8bc0b407-c1c1-489e-8095-c72289030a6d', 'f5d36d9c-624b-4648-b875-190a2aa9f400', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '9.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('8c2d7584-6469-496a-bdd6-7cc91c5ca423', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Lớp và đối tượng', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('8d4bfeea-9d7b-4a9a-bbca-422501af77a4', '0c187fb6-d795-4387-aa3f-21f1cbf01a7c', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Game Cá lớn nuốt cá bé', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('8de4ac4f-1f47-4b85-a56e-7202017a7b99', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Các hàm windown', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('8e6360e3-c973-44ee-9375-7c4c36f9e061', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Cấu trúc dữ liệu đồ thị', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('8e790b84-f89d-430a-9c72-48e8ea0ea29a', '4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645', 'd1839060-39f5-4877-a610-7036e35dbcaa', '2.2 Biến', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('8eccaa8b-f125-4a7a-a149-ad22abbba613', 'a06f1f45-b23e-427c-b114-aa4444c4c111', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Stack', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('8ef663e4-545e-42d4-885a-a61babd7f7bb', '82938d8a-fa31-4c7d-9122-12be8dce501e', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Biến', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('90561466-4ef2-436f-b3d8-a563509578ed', 'a06f1f45-b23e-427c-b114-aa4444c4c111', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Tree', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('91478ccb-f283-4bca-94ac-bd3700fafb7a', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Mở rộng', 0, 11, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('9231558a-62b5-4a9d-a280-9216fe64b052', 'ee5bbb65-4634-4c64-b289-9229a42a313b', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Graph Traversal', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('941e94a7-7c35-4a81-8502-c64b1c8f2bf1', '2737e6c4-1a69-419a-9532-8914175c527d', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '7.4 Mảng 2 chiều', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('9446d7c4-cdd2-4be5-ac62-cb9960cad1e9', 'eaf42478-1f56-4402-9c5d-272beaa42f7c', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '4.2 MỘT SỐ BÀI TẬP VỀ ĐỆ QUY', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('9505d42b-baab-4dc2-a0d5-72cef8fd3215', '652b916f-f7aa-4fe9-b699-a3b563d1e3bf', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Mảng trong C#', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('953bdbba-2b4d-4896-882b-92af8a0cea85', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.1 KHÁI QUÁT VỀ TIME VÀ SPACE COMPLEXITY', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('96191de0-b04b-4106-a4bc-af8f0ae85352', 'f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Mối quan hệ giữa các đối tượng', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('96380613-e3bf-4d25-97e6-e02fd347217c', '233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '3.6 THAM CHIẾU', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('96ca337e-20e7-45ea-bfa5-b1c3d2d83003', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Chuẩn hóa cơ sở dữ liệu', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('973fe404-138a-4636-9302-cf720f33ecce', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Các cú pháp SQL cơ bản', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('98a2f40f-8c33-46eb-9e6c-714fa4e47c44', 'e119e517-1a3c-4756-bc71-8124ede492e7', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '4.3 Tổng kết', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('9931641b-e9f4-4ee6-ab35-e3a0dfb32d45', '0e36950e-fe57-40da-b564-9ef4866b2c24', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '6.1 Giới thiệu vòng lặp', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('99316f9a-72eb-4c2c-9954-bc551d1c87db', 'b1ba46fe-75f1-4447-8cb0-d4a6c81e1b51', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Câu điều kiện trong Javascript', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('99d4096c-8128-4853-b812-e63197d0b9f7', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Mảng', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('99e3899d-9f18-4be3-92dc-c86211ccd7e2', '603a9390-65b8-43fd-9678-42382611037b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '5.4 Chuỗi nằm trong chuỗi khác', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('9a7932cb-7370-469b-8cbb-fd75361d2000', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Gộp nhiều bảng', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('9b689cac-3bd9-4c96-bc97-2e26578ca681', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Các hàm toán học', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('9d616eec-4d04-4cda-a5e1-a1ae4ae37efc', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Chương trình C++ đầu tiên', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('9ed392f4-7f4e-4f79-b4c9-dafcca590c7a', 'd8e5d8e5-7b6c-4c5b-9209-821e9a533c7a', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '1.3 Cấu trúc chung chương trình C++', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('9f678920-add5-4f08-b3aa-a9f3a88cb1f8', '60d3e2b3-b6e9-41c7-a44c-8139e7b1662d', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '8.1 Giới thiệu về string', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('9facbecd-271f-4d4a-bfc1-fe9a85877f39', 'd0d53c61-e27e-4450-960c-429ea63d5893', '3600145f-dbec-412b-94f1-08942f6afa16', 'Danh sách', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('9fcdcb53-eef7-4b64-b100-f0f3f837e16c', 'e3aa1c57-0005-4713-8b26-9a125169bc56', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '1.1 Giới thiệu về lập trình và Java', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a01c7451-46a1-438d-98f2-2db6d9402c24', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Phương thức toán học', 0, 11, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a0fd1d26-9a4e-4d5b-a8a4-c7af00deb8d3', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Vòng lặp', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a1873476-920e-41ac-8036-dc82cf06a69f', 'a9a98c85-d92a-4980-a5fe-514d1b8b50a3', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Vẽ hình', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a23b65b5-404b-4e1c-a26f-cde72111c245', 'ef55e99a-89af-4040-8547-3ce1ed99aeea', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '2.3 Biến', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a282a055-c98e-4052-81f8-097b1f61081c', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Các loại hình mạng và phân loại', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a473c34b-6186-48bb-af6a-d4806ed2fdd0', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Câu hỏi cuối khóa 1', 0, 10, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a50e7171-8d68-4b37-8cff-336e262eb54b', 'bfc8c9f6-6861-47e7-b8e9-7395048353a4', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Thuộc tính Position', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a50e9dc1-92f5-4c22-9dd3-3cccf1ea4322', 'c3bb7a1a-a6e1-4471-a71b-ff9a4eb042dd', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '9.1 Giới thiệu về hàm trong C++', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a531d510-f9d5-4810-98cd-066b395b9abc', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Tổng quan về khóa học', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a54260f0-6dbc-4962-a24e-fad90d9db08c', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Giới thiệu về cơ sở dữ liệu', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a57f8d45-c3a8-4a5e-adcd-cf3a15f664c0', 'f5d36d9c-624b-4648-b875-190a2aa9f400', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '9.1 Giới thiệu về hàm trong Java', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a5bdba44-9ed7-4165-9d31-39ce5917add1', 'bd6222e5-280f-4779-b6b7-1a845f8d4495', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Responsive trong CSS', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a5e7a5eb-0249-4840-a769-1240fab44348', 'f5d36d9c-624b-4648-b875-190a2aa9f400', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '9.2 Đối số và tham số, tham trị và tham chiếu', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a714a52f-a4e3-42ba-9c46-d557d8a2e662', '2f8f6d1a-4c46-40a8-a903-1bbadba79247', 'f996fe4f-4ab1-4979-9193-3881a8a806c9', 'Mảng', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a721bf6a-edfa-44f5-b28b-2c93a2ef9585', 'a1f7c649-c30c-4be2-9541-d51de4712954', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '3.4 Tổng kết', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a8cf0fa0-3337-4da9-8bd2-724be25a419e', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Công cụ tự động hóa 2: Tự động gửi mail', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a8f185e8-3386-4e78-859a-be8d65972c20', '32aa5bd2-27bf-4235-8887-ac9195a06a74', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Xử lý xâu', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('a9c65ccf-47f2-4083-8a0f-4b62af502b68', '6724d6fa-d2b4-4a7d-9123-0fc06dab0123', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '7.1 XỬ LÝ NGOẠI LỆ C++', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('ab805c43-240b-4f58-bef2-b4a9c5c8dc48', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Các toán tử và đầu vào', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('acdb9840-62a1-4beb-a932-e82fa766c26f', 'bda31c86-19c9-4da5-9a73-152e6c900589', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'CSS selectors', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('ad54ff08-4b4c-48ca-b770-966f6e5a5577', '1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'Map', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('ad95f5b5-63d3-45b5-8176-cf300b28a05e', 'ef55e99a-89af-4040-8547-3ce1ed99aeea', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '2.5 Phạm vi của biến', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('ae3a77ff-cd96-4598-8721-f5808ae4d40b', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Biểu thức điều kiện', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('aea15717-ead4-4a3e-bd29-0a313cbe9a10', 'f867c55e-29ee-420a-8bcc-c45012ea43a9', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Chuyển đổi kiểu và ép kiểu dữ liệu', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('aede4e6f-e67d-4b57-a4b1-ab059af15f62', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Tính kế thừa', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('affe9aa6-6397-4b10-9f18-01b34dab38b6', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Công cụ tự động hóa 1: Quản lý file và thư mục', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('b1c8c0b4-9f77-48d4-9684-761e637681fe', '0f705c03-0eed-485b-a440-caf811670cb5', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '7.2 Các thao tác cơ bản trên mảng', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('b1e9df5d-55f7-4f1d-89c1-29a0ff80d2a5', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Tính đóng gói', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('b254302b-b94e-4a1e-bd80-bf8809f64ae9', '0f705c03-0eed-485b-a440-caf811670cb5', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '7.4 Mảng 2 chiều', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('b2be8018-5a40-4755-98bb-858f6af65e4b', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Vòng lặp: for', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('b2e4ebaa-5732-40f6-9a83-b82d1dd3e9ba', '2f8f6d1a-4c46-40a8-a903-1bbadba79247', 'f996fe4f-4ab1-4979-9193-3881a8a806c9', 'Con trỏ', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('b435387a-67eb-48ef-bdc5-e452efa25dbc', 'd6a96253-4181-4a55-a304-1be89ba51175', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'First C# Program', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('b6009807-c8bd-4366-a4df-4a39b0886a28', '579b2a4f-6031-4429-b244-2061c4e519e0', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Thuật toán sắp xếp', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('b6ee040f-7ae2-435c-9945-bc928981af0d', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.4 QUEUE VÀ DEQUEUE', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('b852b9dd-05ea-4462-a76c-270eb7477de4', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Thao tác với dữ liệu trong bảng', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('b85c2dc7-6e72-4413-93a6-acebbb845916', '4245ba29-529d-4739-bc2b-b774082f6c58', '3600145f-dbec-412b-94f1-08942f6afa16', 'Làm việc với Package', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('b89bb9af-077e-4799-8f1e-c946185453b7', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Toán tử cơ bản', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('b96034cf-814b-4f81-9f29-4c8383fc017d', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Câu hỏi cuối khóa 2', 0, 11, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('b9933d0c-cba1-4a90-b224-ca9ed10b1ce9', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Cấu trúc dữ liệu cây', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('b9e623c1-07bd-4526-9a17-e9e93e7b2e8d', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Biến tĩnh, phương thức tĩnh', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('ba5174cc-8be0-460e-9c10-198d62817a9a', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Trò chơi Chú gấu phiêu lưu', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('bac94a08-f433-40f2-82c1-70cea2082cc2', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Biến và kiểu dữ liệu', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('bb439488-93ef-4cd4-ad7f-9e4a35769e7f', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Khởi tạo bảng', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('bbf3bf6a-1f87-4c62-89d8-e637f8876df0', '045487cf-89ba-4503-b6e1-20e2e03144b7', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '5.2 Switch case', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('bd76b615-cb07-4368-9f2d-52c6b3cf2e87', '0673c3cb-8017-4f8e-aba4-b60f0ef797a1', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '2.1 Chú thích trong C++', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('bd9552da-aac8-4462-97a4-7bed797c43cf', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Quản lý bảng', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('beab2097-78fa-4d03-ad20-f8e19d466e0f', '67b842a2-8bcc-45b6-ad31-73c0d0e09801', '3a705a75-7389-4e97-aeb8-58a58616032b', 'Bài tập rèn luyện', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('bfdc274c-b6b9-4838-bdbd-e1f4a33c88d3', 'e3aa1c57-0005-4713-8b26-9a125169bc56', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '1.5 Tổng kết', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('c1688351-a5b2-46d8-9397-5d8398fa713f', '1a75260f-329e-4b1a-963e-6f0856b59bcd', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Bài tập và kiểm tra cuối khóa', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('c1827ae8-b659-4968-b518-7bd87d328e01', '613cf8e9-fef7-4c87-8dbf-94eb65106cbe', 'beb4ad6a-76c6-4a1c-aad1-83e3aff6cdfc', 'Các vấn đề thường gặp', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('c2477c02-14f8-431e-a586-097ec93c9969', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Thao tác với dữ liệu trong bảng', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('c25f41d9-abe4-42c5-b873-5f9d53b32b9a', '32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Ứng dụng AI trong việc tạo và xử lý ảnh', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('c50f6086-3717-4653-be84-de8139e8d6c1', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Trò chơi Chú gấu phiêu lưu (tiếp theo)', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('c694a863-f49b-4b3c-a727-ce5e49bf88c4', 'f867c55e-29ee-420a-8bcc-c45012ea43a9', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Biến trong Javascript', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('c923c0b3-c571-4a38-913c-3217b554b3ac', 'f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Tính đa hình và trừu tượng', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('cb48fe05-39b7-432b-b5d5-943fe49e8083', '32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'Ứng dụng AI trong việc xử lý video', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('cb529ab4-fe25-4824-aaf9-d0dd0172e2d5', '291d0934-6ac5-48ef-944d-cdc06b84b300', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Hàm trong C#', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('cbc5788d-9be6-469e-89c0-3eeaeb0fcb73', 'eea6930e-4a28-42b9-846f-80f642087f1d', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Phương thức trong C#', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('ccc7b344-9b8c-459b-9811-ff4add2b8f96', '1d71ef9c-b28e-4f0b-8439-544d893fb0be', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Cấu trúc mã JavaScript', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('cd04a9ab-cc90-41fa-b25a-36babef6765b', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Phần mềm ứng dụng: Trình soạn thảo và lập trình', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('ce07cb6c-dd7d-41ba-af7a-85e5c9bc8329', '2f98161f-7782-444c-aa95-799b88d59c60', 'f9713740-694e-444f-98f3-d506f13c7914', 'Làm việc với ngày/giờ', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('cf40c5e3-28d2-42de-aab8-cc116bd14c03', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Ngăn xếp và hàng đợi', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('cf912b1a-f1ab-4c5f-bcb9-b0b5edf912fa', '5e695d8e-500f-40cf-b5ac-2fd1501381d7', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '1.1 ĐỌC FILE', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d0ab2e1b-57a7-4fdc-a324-57954779d576', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Làm việc với ngày/giờ', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d0d5b935-3642-4627-86b2-5b37a842a730', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Dãy số', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d1ff77fa-ac5a-497a-aae0-81f9b6acacff', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Công cụ lập trình', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d2788b66-0224-4600-ad92-593bbda6fd6a', 'a9a98c85-d92a-4980-a5fe-514d1b8b50a3', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Bài kiểm tra số 2', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d2c05d3b-2245-4218-9b84-72f4d0e7b57e', '0e36950e-fe57-40da-b564-9ef4866b2c24', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '6.4 Tổng kết', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d2ceb872-55a3-4c64-9ffa-9996331e1e3b', 'b8cf0954-df72-4697-a3aa-c511c27460b4', 'a9238453-835c-4c08-96e3-7a6b41bb2b76', 'Giới thiệu về hệ điều hành', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d3337bd7-2312-4194-b5ca-baddb5cc7034', 'f0fdd269-aacf-41ee-9086-c74c6337b50e', 'd1839060-39f5-4877-a610-7036e35dbcaa', '1.1 Giới thiệu chung', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d339d274-4ebf-4049-8b8c-39d4dbf5bace', '4ee9c053-98a1-45c5-8422-1448d19346dc', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '8.8 PRIORITY-QUEUE', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d36c42f5-09ff-4994-b7c8-9db5ebc8dec2', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Câu lệ rẽ nhánh', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d39278f6-e2c4-4ce0-bf5f-db9b198e5441', '27aa88e7-a021-49a0-82cb-32c2bfd28f02', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '3.1 Cú pháp nhập - xuất dữ liệu', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d3ec3646-af04-4a83-b451-49fab18cbcab', 'd4001112-3495-4491-8523-3a632ebb407b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '6.1 Tạo hàm đơn giản', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d45cdce9-8250-4fd2-94d3-b81c6aba45b3', '5f970759-175f-48ea-bcfe-c27c4409bb13', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '6.2 Vòng lặp lồng nhau', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d4c1cfeb-6222-49cd-b987-dbd3b1ca2873', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Quản lý Bảng', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d6e0a747-2889-43b8-bc9a-c11644d18404', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Bảo quản và sử dụng thiết bị', 0, 10, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d70d41cd-4c74-4ade-aae6-7144929b5a64', 'fc87a170-547a-4ced-81ae-3274a87caa0d', 'e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Đồ thị cây', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d736fa08-0717-4835-b04f-4cec548f3dc3', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Mảng', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d7a4bc94-15c1-495c-acdc-82c603abbf26', '36860b84-ee67-4b15-9533-1c53d00c48b8', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '8.1 Giới thiệu về String', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d80a1589-8edf-423c-992b-17e7f3a2618b', '7e5584ec-4af7-405e-aa5b-7bac9149303a', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Phân tích độ phức tạp', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d8faa4c0-5943-4c52-a0dd-51435e78a629', 'bda31c86-19c9-4da5-9a73-152e6c900589', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Đơn vị trong CSS', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('d9bbd15d-a3b7-4b7b-b037-aedaa4a534f0', 'f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Bài tập trắc nghiệm', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('dc702f13-714b-4fad-b386-562beda4c058', 'b7ccd7f8-b737-4d9b-9bd3-4faec5567b37', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Mảng trong Javascript', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('dc7143b1-4fd0-41ed-b03f-5b33d1f9b2c5', 'eb01ed8f-8fe0-40da-a6cf-db9d34076dd5', 'd1839060-39f5-4877-a610-7036e35dbcaa', '3.5 Định dạng kiểu số', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('dc7a9064-88de-4a0c-82ed-079f140a54cf', 'f0ab2743-49da-46c1-b881-2862ba77471a', 'e166a9f1-6df5-4b31-86b6-66b419634bd9', 'Biến và các kiểu dữ liệu', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('dda54e6c-e082-44be-8884-e2611b98d6f9', '2737e6c4-1a69-419a-9532-8914175c527d', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '7.5 Tổng kết', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('ddc3f6f1-5abd-4760-a6b4-02f23389d543', 'eea6930e-4a28-42b9-846f-80f642087f1d', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Lớp Math trong C#', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('de09e696-940e-4e60-86ff-30bfe3a897ad', '761b448f-6f63-4f8a-914c-c5fb8fb69c7b', 'dc53780b-eb7a-4b88-8a8a-9aed47590056', 'Các mệnh đề SET', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('df4ca97a-613d-4208-8960-74f50e501de8', '603a9390-65b8-43fd-9678-42382611037b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '5.3 Một số phương thức chuỗi', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('df7554ff-f7fa-4824-a7a7-d0d9e2f52663', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Công cụ tự động hóa 3: Tự động hóa trình duyệt', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('dfe3a7dd-f129-40c4-a653-44dabe5592a0', '4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645', 'd1839060-39f5-4877-a610-7036e35dbcaa', '2.5 Định dạng chuỗi', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e0b66c7a-a24b-450d-bc80-94fbdc45eaea', '233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '3.1 GIỚI THIỆU VỀ CON TRỎ', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e0fa761b-311f-4a95-acb0-65198f5d375e', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Truy vấn dữ liệu', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e1c41720-4e7f-4089-b991-8716822b401b', '0f705c03-0eed-485b-a440-caf811670cb5', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '7.5 Tổng kết', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e273f84f-b9e1-44f9-a835-0c5f02c471be', 'ab47bae5-87c4-46ff-8959-2e40badedc8c', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Mệnh đề if else', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e2a5d1e3-dbec-4442-9eb2-f520140628e0', '2737e6c4-1a69-419a-9532-8914175c527d', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '7.3 Hàm sort mảng một chiều', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e3676b44-c66d-4c26-a94d-cceecaa0be44', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Thiết bị nhập dữ liệu', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e38cf5e1-3d09-475c-97e9-eea1327a0360', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Lập trình thuật toán tìm số nguyên tố', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e3cbd2ef-86f2-46f0-a24a-34ec1e2402de', '603a9390-65b8-43fd-9678-42382611037b', 'd1839060-39f5-4877-a610-7036e35dbcaa', '5.5 Tổng kết', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e46682fb-86ec-40e2-9126-1feb15debbe2', 'a06f1f45-b23e-427c-b114-aa4444c4c111', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Queue', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e47ae315-381c-435d-8316-a6a6ce07dcc1', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Tổng quan, console.log và chú thích', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e52c22b6-1850-4873-954a-8bf2090ff768', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Các kiểu dữ liệu trong SQL', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e53be42f-7bd3-4696-b5ea-23a5a0852c8b', '27aa88e7-a021-49a0-82cb-32c2bfd28f02', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '3.2 Print Newline', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e55140ca-be71-40ba-be28-e2a82bfb9a8d', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Giới thiệu khóa học và nội dung', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e553fb7f-9b1c-4d2e-a8b3-53d039606a2b', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Ràng buộc trong SQL', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e5546e72-d56f-4f70-9d9c-f3361b650689', 'a06f1f45-b23e-427c-b114-aa4444c4c111', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Array', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e56c9de2-9e33-4334-8f5e-555c4d20ac68', '01f76acf-40d6-4601-92f5-c23bc6625a5f', '3600145f-dbec-412b-94f1-08942f6afa16', 'Lớp và đối tượng', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e5a0ee2a-2097-4d1f-bd7c-3a3d432317f7', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Thiết bị lưu trữ dữ liệu', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e60f4586-f7dd-4a25-8840-d41a73f164ef', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Tổng quan về điện toán đám mây', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e68df09f-8a4d-499d-8095-95e70e156dab', '32c7970e-d889-47c5-ba13-1bf59309402d', 'e79d99e5-6325-4f50-833d-ee7de5bc43c1', 'AI và tiện ích văn bản', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e6ad9e66-f65c-4516-8ba0-f45083b8fa07', 'eb01ed8f-8fe0-40da-a6cf-db9d34076dd5', 'd1839060-39f5-4877-a610-7036e35dbcaa', '3.3 Toán tử gán', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('e9d5f308-0afc-4d47-9528-0be2597234b2', '0f705c03-0eed-485b-a440-caf811670cb5', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '7.1 Khái niệm và cách khai báo mảng 1 chiều', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('eb45bcba-5fa7-48c3-8104-6a1d79368f71', '1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'bitset', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('eb6f4029-1471-4e20-a4d1-9c8a7e1cee5e', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Trò chơi Hái sao', 0, 8, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('ec206af4-b9aa-4903-bb38-dd6a8e5417bf', '1aa80bc2-8195-4d96-b3c1-852a22d3c8cc', 'ce685ee8-dca7-4304-befd-139a5700bc68', 'Vector', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('ec616684-531b-4e0f-b1b0-6fa518e03fcb', 'e4a52d5e-e0a5-458e-9eb7-252490f0dcc9', '3600145f-dbec-412b-94f1-08942f6afa16', 'Cài đặt môi trường lập trình Visual Studio Code', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('ecf349d8-5c52-46a6-9bb9-3b21b74e3fd0', 'd29a8eb3-c15c-483a-8689-db85f3561079', '7e7c3458-5caa-43c3-84d7-383ac98097f1', 'Hiểu biết về những ràng buộc', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('ed486305-966d-471a-99ff-58024653706d', 'f7883cb8-eb35-47c0-a110-4fa5b40f4c1f', 'eef4fafb-022a-430f-aad0-9416d37d656c', 'Giới thiệu về bất đồng bộ', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('eeb7f5b5-8e33-4ded-b491-6276125ba1de', 'f80b3a58-34c2-4ae7-9d20-6ec19d70b402', 'acdafa98-5779-491b-b172-a6aeb14c5af1', 'Tính kế thừa', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('eefc111c-1158-4461-8f58-970b021446e7', '753659d3-4545-4b7e-a74c-6bdc7335fe3e', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Làm việc với HTML', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('ef48d4df-6d34-4b01-b862-b8b4d985b8ff', '95b06f40-f331-47fc-be32-89793d374830', 'fa7b1920-a356-48af-b27e-46550a64a8dc', 'Vòng lặp', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('efb82d7b-7d96-4f03-a436-8d61b0592528', 'eb1f6aea-2cd3-4885-8897-a096ac15981f', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Cài đặt môi trường', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f0a7e95d-ddd1-4aec-b685-ae69408aecd2', 'eb1f6aea-2cd3-4885-8897-a096ac15981f', '00f1a774-5bca-44a5-b0ba-255b1d5047d3', 'Mục tiêu khóa học', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f1eee410-31e4-4fdf-91d3-ac04999bba18', 'ef55e99a-89af-4040-8547-3ce1ed99aeea', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '2.2 Kiểu dữ liệu', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f239d1d7-9ae5-4b79-b202-61370c264ab1', '2e41e951-16a4-4ee6-b352-0f635f1e1fa5', 'a4058b75-8386-431f-89a8-a28fa65ca6bf', 'Câu hỏi cuối khóa', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f2496cbc-71a3-4971-a960-38e43f3abe2e', '752843c7-42af-4fb1-9dd8-a8f9398847c4', '3d68c61e-6eec-4416-8214-21930ae35f02', 'Giải thuật đệ quy', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f262c84f-9de5-466a-a321-82736de980c9', '59858042-cdb4-4568-a0cf-4d96777c7703', '820b7ae8-fcf9-46f4-b206-36d3bc57a496', 'Lệnh If - Else và Switch - Case', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f29228ca-fabc-4600-b473-f9266c06df15', '4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645', 'd1839060-39f5-4877-a610-7036e35dbcaa', '2.6 Tổng kết', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f2a5c2e3-87b0-4c12-a545-e73daedb3044', 'e3aa1c57-0005-4713-8b26-9a125169bc56', '743dd717-48b2-45b1-b9c0-8ded60965ecb', '1.3 Cấu trúc chung chương trình Java', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f378109a-73ef-479e-8efe-15e2a380adad', '652b916f-f7aa-4fe9-b699-a3b563d1e3bf', '737b5551-e148-4e64-aa54-2e85f82a30ff', 'Mảng 2 chiều', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f385e595-c77b-4456-85f4-b7521c3adc82', '330b22e5-bd9d-4b61-bed6-aaab65c123cf', '3dd82fcf-1316-40d6-85bb-a05fc30471db', 'Công cụ tự động hóa 5: Tích hợp API', 0, 7, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f390f37d-7278-4585-bc86-d32acf68f2b1', '6f250039-b2e7-45ed-a610-01c4f9f2c518', 'd1c12cca-e6b1-40a0-b899-d19e62f3fa84', 'Grid trong CSS', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f3c3f4d6-80e1-4097-9aa3-9cd58a8dcf9d', 'a06f1f45-b23e-427c-b114-aa4444c4c111', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Linked List', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f3da57f4-a0b6-4219-8f9d-c481d30e91dd', 'b517837e-dbf8-444f-b273-a735897c1894', '4cd5c8a1-4784-4e9d-a965-c8aed969e868', 'Cấu trúc rẽ nhánh', 0, 4, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f446571c-cb01-438e-90a0-cfd8b895b06c', '55e1b573-f06f-421d-881f-9ba3575ddcec', '3600145f-dbec-412b-94f1-08942f6afa16', 'Những lỗi phổ biến khi bắt đầu lập trình Python', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f5413ad6-2619-4a51-8313-6996a3da1d00', 'eb01ed8f-8fe0-40da-a6cf-db9d34076dd5', 'd1839060-39f5-4877-a610-7036e35dbcaa', '3.2 Toán tử số học', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f722b76e-0bbc-42f5-86a0-9eb621427888', '25171d97-2651-4502-bc58-40cbd572aadf', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Trò chơi Mèo và chuột', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f7ee32df-f774-413d-b51b-910ecc6b256c', 'dbadb58f-5618-4ab1-be7d-ab0067c665a2', '3ffa0664-7966-4aa4-9557-049c00d033b7', 'Backtracking', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f7f447a0-6c28-4078-ae49-6f802ccd1720', '01f76acf-40d6-4601-92f5-c23bc6625a5f', '3600145f-dbec-412b-94f1-08942f6afa16', 'Tổng kết', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f85dfa98-943b-4576-84c7-a314f4dc11f3', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Đầu vào', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f896854a-a680-4758-85ce-5b49a38f84cc', '426c56a8-b491-42e1-a02a-2cb6f1a9b1cb', '97f41add-6aa0-4c20-8ad1-aba7ce768046', 'Bài tập và kiểm tra', 0, 10, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f8bb80ba-0ded-4f44-88e6-fc44b2527769', 'fc87a170-547a-4ced-81ae-3274a87caa0d', 'e2b33def-af48-4e4c-b6cd-863a630f8ee7', 'Quy hoạch động', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f8ccca27-99eb-4cf7-888d-bba86c3d0865', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Bộ nhớ RAM/ROM', 0, 5, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f8d5ae04-b8af-4b6d-9ba4-dd84eebef78c', 'e4a52d5e-e0a5-458e-9eb7-252490f0dcc9', '3600145f-dbec-412b-94f1-08942f6afa16', 'Giới thiệu khóa học', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f8e5bd2b-8c1d-43bd-bc4c-d8942b78f251', '4cbd5ad7-d0d2-4994-99a9-d2d2afd7e645', 'd1839060-39f5-4877-a610-7036e35dbcaa', '2.3 Kiểu dữ liệu', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('f90fa342-36e0-44ad-9efd-bc7fd6f471a5', '233919f7-09cc-41bc-b45e-f5f4fdcd6e17', '961ac01c-382c-4aa5-bae1-d1429f27f06a', '3.3 CON TRỎ TRỎ TỚI MẢNG', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('fa02ed1e-c741-4940-abb0-3d2882f71392', '55e1b573-f06f-421d-881f-9ba3575ddcec', '3600145f-dbec-412b-94f1-08942f6afa16', 'Xử lý ngoại lệ trong Python', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('fa228b43-9266-4fdc-ba1d-e4187575471b', '34ecd2f4-c353-492a-8b7c-3f9be403f03d', 'efe114f7-dc5d-4059-a97b-4bbe5615ff4b', 'Kiểu dữ liệu, biến và ép kiểu', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('face0c5b-b7e7-454b-b87c-31e7ac99b486', 'dcbad372-bc1b-409c-b580-36efeab930a2', '3a7e4e2a-395f-4213-81c5-03d945e1852f', 'Chương trình đầu tiên và chú thích', 0, 1, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('fb34af88-781a-43ec-9b5d-04eb15a5d1b0', 'fe89c338-a561-45e8-be2e-6465e6ef8552', 'e3e2c06a-408b-4330-a30f-6b9df6c5b61a', 'Giới thiệu về giao diện của Scratch', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('fbd387bb-e2d9-44b3-a8f2-128e65bf5e07', '11c9763a-b933-4cd2-b044-23b0606040c3', 'fbd63a54-b48e-417a-afd7-351c843d39f8', 'Xử lý xâu', 0, 2, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('fbda01ea-d838-449d-9817-954717429eb6', '0673c3cb-8017-4f8e-aba4-b60f0ef797a1', '3cfe0502-a9d6-4353-b87f-ed417a83124f', '2.6 Tổng kết', 0, 6, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('fc792b6b-1d92-474f-be2a-02724143e861', '0c187fb6-d795-4387-aa3f-21f1cbf01a7c', '6097a7ef-548b-4542-8c60-5ee180d2dd96', 'Đường lên đỉnh Olympia', 0, 3, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
+INSERT INTO public."Lessons" VALUES ('fda13868-16ed-4f54-8a89-b7facab5be53', '1e0449c7-0839-4125-bf49-5f94c0267a03', '5de9e63d-fd88-4f4a-9a99-cd2051fdcad4', 'Thiết bị xuất dữ liệu', 0, 9, NULL, '2026-04-30 08:34:39.443701+00', NULL, false);
 
 
 --
--- TOC entry 4191 (class 0 OID 52053)
--- Dependencies: 267
+-- TOC entry 4081 (class 0 OID 54028)
+-- Dependencies: 233
 -- Data for Name: Notifications; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4192 (class 0 OID 52058)
--- Dependencies: 268
+-- TOC entry 4092 (class 0 OID 54171)
+-- Dependencies: 244
 -- Data for Name: OrderItems; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4193 (class 0 OID 52063)
--- Dependencies: 269
+-- TOC entry 4082 (class 0 OID 54040)
+-- Dependencies: 234
 -- Data for Name: Orders; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4194 (class 0 OID 52068)
--- Dependencies: 270
+-- TOC entry 4072 (class 0 OID 53946)
+-- Dependencies: 224
 -- Data for Name: OutboxMessages; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4195 (class 0 OID 52073)
--- Dependencies: 271
+-- TOC entry 4088 (class 0 OID 54117)
+-- Dependencies: 240
 -- Data for Name: PaymentTransactions; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4196 (class 0 OID 52078)
--- Dependencies: 272
+-- TOC entry 4093 (class 0 OID 54188)
+-- Dependencies: 245
 -- Data for Name: Reviews; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4197 (class 0 OID 52083)
--- Dependencies: 273
+-- TOC entry 4101 (class 0 OID 54304)
+-- Dependencies: 253
 -- Data for Name: UserLessonProgresses; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- TOC entry 4198 (class 0 OID 52086)
--- Dependencies: 274
+-- TOC entry 4066 (class 0 OID 53471)
+-- Dependencies: 218
 -- Data for Name: __EFMigrationsHistory; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public."__EFMigrationsHistory" VALUES ('20260426113645_Initial', '10.0.5');
+INSERT INTO public."__EFMigrationsHistory" VALUES ('20260430083248_Initial', '10.0.5');
 
 
 --
--- TOC entry 4215 (class 0 OID 0)
--- Dependencies: 219
--- Name: aggregatedcounter_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
---
-
-SELECT pg_catalog.setval('hangfire.aggregatedcounter_id_seq', 1, false);
-
-
---
--- TOC entry 4216 (class 0 OID 0)
--- Dependencies: 221
--- Name: counter_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
---
-
-SELECT pg_catalog.setval('hangfire.counter_id_seq', 1, false);
-
-
---
--- TOC entry 4217 (class 0 OID 0)
--- Dependencies: 223
--- Name: hash_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
---
-
-SELECT pg_catalog.setval('hangfire.hash_id_seq', 1, false);
-
-
---
--- TOC entry 4218 (class 0 OID 0)
+-- TOC entry 4108 (class 0 OID 0)
 -- Dependencies: 225
--- Name: job_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
---
-
-SELECT pg_catalog.setval('hangfire.job_id_seq', 1, false);
-
-
---
--- TOC entry 4219 (class 0 OID 0)
--- Dependencies: 227
--- Name: jobparameter_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
---
-
-SELECT pg_catalog.setval('hangfire.jobparameter_id_seq', 1, false);
-
-
---
--- TOC entry 4220 (class 0 OID 0)
--- Dependencies: 229
--- Name: jobqueue_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
---
-
-SELECT pg_catalog.setval('hangfire.jobqueue_id_seq', 1, false);
-
-
---
--- TOC entry 4221 (class 0 OID 0)
--- Dependencies: 231
--- Name: list_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
---
-
-SELECT pg_catalog.setval('hangfire.list_id_seq', 1, false);
-
-
---
--- TOC entry 4222 (class 0 OID 0)
--- Dependencies: 236
--- Name: set_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
---
-
-SELECT pg_catalog.setval('hangfire.set_id_seq', 1, false);
-
-
---
--- TOC entry 4223 (class 0 OID 0)
--- Dependencies: 238
--- Name: state_id_seq; Type: SEQUENCE SET; Schema: hangfire; Owner: -
---
-
-SELECT pg_catalog.setval('hangfire.state_id_seq', 1, false);
-
-
---
--- TOC entry 4224 (class 0 OID 0)
--- Dependencies: 240
 -- Name: AspNetRoleClaims_Id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -4185,8 +3545,8 @@ SELECT pg_catalog.setval('public."AspNetRoleClaims_Id_seq"', 1, false);
 
 
 --
--- TOC entry 4225 (class 0 OID 0)
--- Dependencies: 243
+-- TOC entry 4109 (class 0 OID 0)
+-- Dependencies: 227
 -- Name: AspNetUserClaims_Id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -4194,144 +3554,7 @@ SELECT pg_catalog.setval('public."AspNetUserClaims_Id_seq"', 1, false);
 
 
 --
--- TOC entry 3811 (class 2606 OID 52099)
--- Name: aggregatedcounter aggregatedcounter_key_key; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.aggregatedcounter
-    ADD CONSTRAINT aggregatedcounter_key_key UNIQUE (key);
-
-
---
--- TOC entry 3813 (class 2606 OID 52101)
--- Name: aggregatedcounter aggregatedcounter_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.aggregatedcounter
-    ADD CONSTRAINT aggregatedcounter_pkey PRIMARY KEY (id);
-
-
---
--- TOC entry 3815 (class 2606 OID 52103)
--- Name: counter counter_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.counter
-    ADD CONSTRAINT counter_pkey PRIMARY KEY (id);
-
-
---
--- TOC entry 3819 (class 2606 OID 52105)
--- Name: hash hash_key_field_key; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.hash
-    ADD CONSTRAINT hash_key_field_key UNIQUE (key, field);
-
-
---
--- TOC entry 3821 (class 2606 OID 52107)
--- Name: hash hash_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.hash
-    ADD CONSTRAINT hash_pkey PRIMARY KEY (id);
-
-
---
--- TOC entry 3827 (class 2606 OID 52109)
--- Name: job job_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.job
-    ADD CONSTRAINT job_pkey PRIMARY KEY (id);
-
-
---
--- TOC entry 3830 (class 2606 OID 52111)
--- Name: jobparameter jobparameter_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.jobparameter
-    ADD CONSTRAINT jobparameter_pkey PRIMARY KEY (id);
-
-
---
--- TOC entry 3835 (class 2606 OID 52113)
--- Name: jobqueue jobqueue_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.jobqueue
-    ADD CONSTRAINT jobqueue_pkey PRIMARY KEY (id);
-
-
---
--- TOC entry 3838 (class 2606 OID 52115)
--- Name: list list_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.list
-    ADD CONSTRAINT list_pkey PRIMARY KEY (id);
-
-
---
--- TOC entry 3840 (class 2606 OID 52117)
--- Name: lock lock_resource_key; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.lock
-    ADD CONSTRAINT lock_resource_key UNIQUE (resource);
-
-ALTER TABLE ONLY hangfire.lock REPLICA IDENTITY USING INDEX lock_resource_key;
-
-
---
--- TOC entry 3842 (class 2606 OID 52119)
--- Name: schema schema_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.schema
-    ADD CONSTRAINT schema_pkey PRIMARY KEY (version);
-
-
---
--- TOC entry 3844 (class 2606 OID 52121)
--- Name: server server_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.server
-    ADD CONSTRAINT server_pkey PRIMARY KEY (id);
-
-
---
--- TOC entry 3848 (class 2606 OID 52123)
--- Name: set set_key_value_key; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.set
-    ADD CONSTRAINT set_key_value_key UNIQUE (key, value);
-
-
---
--- TOC entry 3850 (class 2606 OID 52125)
--- Name: set set_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.set
-    ADD CONSTRAINT set_pkey PRIMARY KEY (id);
-
-
---
--- TOC entry 3853 (class 2606 OID 52127)
--- Name: state state_pkey; Type: CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.state
-    ADD CONSTRAINT state_pkey PRIMARY KEY (id);
-
-
---
--- TOC entry 3856 (class 2606 OID 52129)
+-- TOC entry 3799 (class 2606 OID 53960)
 -- Name: AspNetRoleClaims PK_AspNetRoleClaims; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4340,7 +3563,7 @@ ALTER TABLE ONLY public."AspNetRoleClaims"
 
 
 --
--- TOC entry 3858 (class 2606 OID 52131)
+-- TOC entry 3783 (class 2606 OID 53915)
 -- Name: AspNetRoles PK_AspNetRoles; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4349,7 +3572,7 @@ ALTER TABLE ONLY public."AspNetRoles"
 
 
 --
--- TOC entry 3862 (class 2606 OID 52133)
+-- TOC entry 3802 (class 2606 OID 53973)
 -- Name: AspNetUserClaims PK_AspNetUserClaims; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4358,7 +3581,7 @@ ALTER TABLE ONLY public."AspNetUserClaims"
 
 
 --
--- TOC entry 3865 (class 2606 OID 52135)
+-- TOC entry 3805 (class 2606 OID 53985)
 -- Name: AspNetUserLogins PK_AspNetUserLogins; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4367,7 +3590,7 @@ ALTER TABLE ONLY public."AspNetUserLogins"
 
 
 --
--- TOC entry 3868 (class 2606 OID 52137)
+-- TOC entry 3808 (class 2606 OID 53995)
 -- Name: AspNetUserRoles PK_AspNetUserRoles; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4376,7 +3599,7 @@ ALTER TABLE ONLY public."AspNetUserRoles"
 
 
 --
--- TOC entry 3870 (class 2606 OID 52139)
+-- TOC entry 3810 (class 2606 OID 54012)
 -- Name: AspNetUserTokens PK_AspNetUserTokens; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4385,7 +3608,7 @@ ALTER TABLE ONLY public."AspNetUserTokens"
 
 
 --
--- TOC entry 3873 (class 2606 OID 52141)
+-- TOC entry 3787 (class 2606 OID 53922)
 -- Name: AspNetUsers PK_AspNetUsers; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4394,7 +3617,7 @@ ALTER TABLE ONLY public."AspNetUsers"
 
 
 --
--- TOC entry 3878 (class 2606 OID 52143)
+-- TOC entry 3842 (class 2606 OID 54133)
 -- Name: CartItems PK_CartItems; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4403,7 +3626,7 @@ ALTER TABLE ONLY public."CartItems"
 
 
 --
--- TOC entry 3881 (class 2606 OID 52145)
+-- TOC entry 3813 (class 2606 OID 54022)
 -- Name: Carts PK_Carts; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4412,7 +3635,7 @@ ALTER TABLE ONLY public."Carts"
 
 
 --
--- TOC entry 3883 (class 2606 OID 52147)
+-- TOC entry 3790 (class 2606 OID 53929)
 -- Name: Categories PK_Categories; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4421,7 +3644,7 @@ ALTER TABLE ONLY public."Categories"
 
 
 --
--- TOC entry 3886 (class 2606 OID 52149)
+-- TOC entry 3845 (class 2606 OID 54150)
 -- Name: Chapters PK_Chapters; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4430,7 +3653,7 @@ ALTER TABLE ONLY public."Chapters"
 
 
 --
--- TOC entry 3890 (class 2606 OID 52151)
+-- TOC entry 3823 (class 2606 OID 54058)
 -- Name: Courses PK_Courses; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4439,7 +3662,7 @@ ALTER TABLE ONLY public."Courses"
 
 
 --
--- TOC entry 3894 (class 2606 OID 52153)
+-- TOC entry 3849 (class 2606 OID 54160)
 -- Name: Enrollments PK_Enrollments; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4448,7 +3671,7 @@ ALTER TABLE ONLY public."Enrollments"
 
 
 --
--- TOC entry 3897 (class 2606 OID 52155)
+-- TOC entry 3826 (class 2606 OID 54075)
 -- Name: ExerciseDefaultCodes PK_ExerciseDefaultCodes; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4457,7 +3680,7 @@ ALTER TABLE ONLY public."ExerciseDefaultCodes"
 
 
 --
--- TOC entry 3900 (class 2606 OID 52157)
+-- TOC entry 3829 (class 2606 OID 54087)
 -- Name: ExerciseExamples PK_ExerciseExamples; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4466,7 +3689,7 @@ ALTER TABLE ONLY public."ExerciseExamples"
 
 
 --
--- TOC entry 3903 (class 2606 OID 52159)
+-- TOC entry 3832 (class 2606 OID 54099)
 -- Name: ExerciseTestCases PK_ExerciseTestCases; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4475,7 +3698,7 @@ ALTER TABLE ONLY public."ExerciseTestCases"
 
 
 --
--- TOC entry 3905 (class 2606 OID 52161)
+-- TOC entry 3792 (class 2606 OID 53938)
 -- Name: Exercises PK_Exercises; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4484,7 +3707,7 @@ ALTER TABLE ONLY public."Exercises"
 
 
 --
--- TOC entry 3908 (class 2606 OID 52163)
+-- TOC entry 3835 (class 2606 OID 54111)
 -- Name: FileChunks PK_FileChunks; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4493,7 +3716,7 @@ ALTER TABLE ONLY public."FileChunks"
 
 
 --
--- TOC entry 3910 (class 2606 OID 52165)
+-- TOC entry 3794 (class 2606 OID 53945)
 -- Name: FileEntries PK_FileEntries; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4502,7 +3725,7 @@ ALTER TABLE ONLY public."FileEntries"
 
 
 --
--- TOC entry 3914 (class 2606 OID 52167)
+-- TOC entry 3861 (class 2606 OID 54211)
 -- Name: FileEntryEmbeddings PK_FileEntryEmbeddings; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4511,7 +3734,7 @@ ALTER TABLE ONLY public."FileEntryEmbeddings"
 
 
 --
--- TOC entry 3917 (class 2606 OID 52169)
+-- TOC entry 3868 (class 2606 OID 54245)
 -- Name: LessonCodings PK_LessonCodings; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4520,7 +3743,7 @@ ALTER TABLE ONLY public."LessonCodings"
 
 
 --
--- TOC entry 3921 (class 2606 OID 52171)
+-- TOC entry 3872 (class 2606 OID 54257)
 -- Name: LessonMaterials PK_LessonMaterials; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4529,7 +3752,7 @@ ALTER TABLE ONLY public."LessonMaterials"
 
 
 --
--- TOC entry 3924 (class 2606 OID 52173)
+-- TOC entry 3875 (class 2606 OID 54274)
 -- Name: LessonQuizzes PK_LessonQuizzes; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4538,7 +3761,7 @@ ALTER TABLE ONLY public."LessonQuizzes"
 
 
 --
--- TOC entry 3927 (class 2606 OID 52175)
+-- TOC entry 3878 (class 2606 OID 54286)
 -- Name: LessonReadings PK_LessonReadings; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4547,7 +3770,7 @@ ALTER TABLE ONLY public."LessonReadings"
 
 
 --
--- TOC entry 3930 (class 2606 OID 52177)
+-- TOC entry 3881 (class 2606 OID 54298)
 -- Name: LessonVideos PK_LessonVideos; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4556,7 +3779,7 @@ ALTER TABLE ONLY public."LessonVideos"
 
 
 --
--- TOC entry 3934 (class 2606 OID 52179)
+-- TOC entry 3865 (class 2606 OID 54228)
 -- Name: Lessons PK_Lessons; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4565,7 +3788,7 @@ ALTER TABLE ONLY public."Lessons"
 
 
 --
--- TOC entry 3937 (class 2606 OID 52181)
+-- TOC entry 3816 (class 2606 OID 54034)
 -- Name: Notifications PK_Notifications; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4574,7 +3797,7 @@ ALTER TABLE ONLY public."Notifications"
 
 
 --
--- TOC entry 3941 (class 2606 OID 52183)
+-- TOC entry 3853 (class 2606 OID 54177)
 -- Name: OrderItems PK_OrderItems; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4583,7 +3806,7 @@ ALTER TABLE ONLY public."OrderItems"
 
 
 --
--- TOC entry 3944 (class 2606 OID 52185)
+-- TOC entry 3819 (class 2606 OID 54046)
 -- Name: Orders PK_Orders; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4592,7 +3815,7 @@ ALTER TABLE ONLY public."Orders"
 
 
 --
--- TOC entry 3946 (class 2606 OID 52187)
+-- TOC entry 3796 (class 2606 OID 53952)
 -- Name: OutboxMessages PK_OutboxMessages; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4601,7 +3824,7 @@ ALTER TABLE ONLY public."OutboxMessages"
 
 
 --
--- TOC entry 3949 (class 2606 OID 52189)
+-- TOC entry 3838 (class 2606 OID 54123)
 -- Name: PaymentTransactions PK_PaymentTransactions; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4610,7 +3833,7 @@ ALTER TABLE ONLY public."PaymentTransactions"
 
 
 --
--- TOC entry 3953 (class 2606 OID 52191)
+-- TOC entry 3857 (class 2606 OID 54194)
 -- Name: Reviews PK_Reviews; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4619,7 +3842,7 @@ ALTER TABLE ONLY public."Reviews"
 
 
 --
--- TOC entry 3957 (class 2606 OID 52193)
+-- TOC entry 3885 (class 2606 OID 54308)
 -- Name: UserLessonProgresses PK_UserLessonProgresses; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4628,7 +3851,7 @@ ALTER TABLE ONLY public."UserLessonProgresses"
 
 
 --
--- TOC entry 3959 (class 2606 OID 52195)
+-- TOC entry 3781 (class 2606 OID 53475)
 -- Name: __EFMigrationsHistory PK___EFMigrationsHistory; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4637,119 +3860,7 @@ ALTER TABLE ONLY public."__EFMigrationsHistory"
 
 
 --
--- TOC entry 3816 (class 1259 OID 52196)
--- Name: ix_hangfire_counter_expireat; Type: INDEX; Schema: hangfire; Owner: -
---
-
-CREATE INDEX ix_hangfire_counter_expireat ON hangfire.counter USING btree (expireat);
-
-
---
--- TOC entry 3817 (class 1259 OID 52197)
--- Name: ix_hangfire_counter_key; Type: INDEX; Schema: hangfire; Owner: -
---
-
-CREATE INDEX ix_hangfire_counter_key ON hangfire.counter USING btree (key);
-
-
---
--- TOC entry 3822 (class 1259 OID 52198)
--- Name: ix_hangfire_hash_expireat; Type: INDEX; Schema: hangfire; Owner: -
---
-
-CREATE INDEX ix_hangfire_hash_expireat ON hangfire.hash USING btree (expireat);
-
-
---
--- TOC entry 3823 (class 1259 OID 52199)
--- Name: ix_hangfire_job_expireat; Type: INDEX; Schema: hangfire; Owner: -
---
-
-CREATE INDEX ix_hangfire_job_expireat ON hangfire.job USING btree (expireat);
-
-
---
--- TOC entry 3824 (class 1259 OID 52200)
--- Name: ix_hangfire_job_statename; Type: INDEX; Schema: hangfire; Owner: -
---
-
-CREATE INDEX ix_hangfire_job_statename ON hangfire.job USING btree (statename);
-
-
---
--- TOC entry 3825 (class 1259 OID 52201)
--- Name: ix_hangfire_job_statename_is_not_null; Type: INDEX; Schema: hangfire; Owner: -
---
-
-CREATE INDEX ix_hangfire_job_statename_is_not_null ON hangfire.job USING btree (statename) INCLUDE (id) WHERE (statename IS NOT NULL);
-
-
---
--- TOC entry 3828 (class 1259 OID 52202)
--- Name: ix_hangfire_jobparameter_jobidandname; Type: INDEX; Schema: hangfire; Owner: -
---
-
-CREATE INDEX ix_hangfire_jobparameter_jobidandname ON hangfire.jobparameter USING btree (jobid, name);
-
-
---
--- TOC entry 3831 (class 1259 OID 52203)
--- Name: ix_hangfire_jobqueue_fetchedat_queue_jobid; Type: INDEX; Schema: hangfire; Owner: -
---
-
-CREATE INDEX ix_hangfire_jobqueue_fetchedat_queue_jobid ON hangfire.jobqueue USING btree (fetchedat NULLS FIRST, queue, jobid);
-
-
---
--- TOC entry 3832 (class 1259 OID 52204)
--- Name: ix_hangfire_jobqueue_jobidandqueue; Type: INDEX; Schema: hangfire; Owner: -
---
-
-CREATE INDEX ix_hangfire_jobqueue_jobidandqueue ON hangfire.jobqueue USING btree (jobid, queue);
-
-
---
--- TOC entry 3833 (class 1259 OID 52205)
--- Name: ix_hangfire_jobqueue_queueandfetchedat; Type: INDEX; Schema: hangfire; Owner: -
---
-
-CREATE INDEX ix_hangfire_jobqueue_queueandfetchedat ON hangfire.jobqueue USING btree (queue, fetchedat);
-
-
---
--- TOC entry 3836 (class 1259 OID 52206)
--- Name: ix_hangfire_list_expireat; Type: INDEX; Schema: hangfire; Owner: -
---
-
-CREATE INDEX ix_hangfire_list_expireat ON hangfire.list USING btree (expireat);
-
-
---
--- TOC entry 3845 (class 1259 OID 52207)
--- Name: ix_hangfire_set_expireat; Type: INDEX; Schema: hangfire; Owner: -
---
-
-CREATE INDEX ix_hangfire_set_expireat ON hangfire.set USING btree (expireat);
-
-
---
--- TOC entry 3846 (class 1259 OID 52208)
--- Name: ix_hangfire_set_key_score; Type: INDEX; Schema: hangfire; Owner: -
---
-
-CREATE INDEX ix_hangfire_set_key_score ON hangfire.set USING btree (key, score);
-
-
---
--- TOC entry 3851 (class 1259 OID 52209)
--- Name: ix_hangfire_state_jobid; Type: INDEX; Schema: hangfire; Owner: -
---
-
-CREATE INDEX ix_hangfire_state_jobid ON hangfire.state USING btree (jobid);
-
-
---
--- TOC entry 3871 (class 1259 OID 52210)
+-- TOC entry 3785 (class 1259 OID 54324)
 -- Name: EmailIndex; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4757,7 +3868,7 @@ CREATE INDEX "EmailIndex" ON public."AspNetUsers" USING btree ("NormalizedEmail"
 
 
 --
--- TOC entry 3854 (class 1259 OID 52211)
+-- TOC entry 3797 (class 1259 OID 54319)
 -- Name: IX_AspNetRoleClaims_RoleId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4765,7 +3876,7 @@ CREATE INDEX "IX_AspNetRoleClaims_RoleId" ON public."AspNetRoleClaims" USING btr
 
 
 --
--- TOC entry 3860 (class 1259 OID 52212)
+-- TOC entry 3800 (class 1259 OID 54321)
 -- Name: IX_AspNetUserClaims_UserId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4773,7 +3884,7 @@ CREATE INDEX "IX_AspNetUserClaims_UserId" ON public."AspNetUserClaims" USING btr
 
 
 --
--- TOC entry 3863 (class 1259 OID 52213)
+-- TOC entry 3803 (class 1259 OID 54322)
 -- Name: IX_AspNetUserLogins_UserId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4781,7 +3892,7 @@ CREATE INDEX "IX_AspNetUserLogins_UserId" ON public."AspNetUserLogins" USING btr
 
 
 --
--- TOC entry 3866 (class 1259 OID 52214)
+-- TOC entry 3806 (class 1259 OID 54323)
 -- Name: IX_AspNetUserRoles_RoleId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4789,7 +3900,7 @@ CREATE INDEX "IX_AspNetUserRoles_RoleId" ON public."AspNetUserRoles" USING btree
 
 
 --
--- TOC entry 3875 (class 1259 OID 52215)
+-- TOC entry 3839 (class 1259 OID 54326)
 -- Name: IX_CartItems_CartId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4797,7 +3908,7 @@ CREATE INDEX "IX_CartItems_CartId" ON public."CartItems" USING btree ("CartId");
 
 
 --
--- TOC entry 3876 (class 1259 OID 52216)
+-- TOC entry 3840 (class 1259 OID 54327)
 -- Name: IX_CartItems_CourseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4805,7 +3916,7 @@ CREATE INDEX "IX_CartItems_CourseId" ON public."CartItems" USING btree ("CourseI
 
 
 --
--- TOC entry 3879 (class 1259 OID 52217)
+-- TOC entry 3811 (class 1259 OID 54328)
 -- Name: IX_Carts_StudentId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4813,7 +3924,7 @@ CREATE INDEX "IX_Carts_StudentId" ON public."Carts" USING btree ("StudentId");
 
 
 --
--- TOC entry 3884 (class 1259 OID 52218)
+-- TOC entry 3843 (class 1259 OID 54329)
 -- Name: IX_Chapters_CourseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4821,7 +3932,7 @@ CREATE INDEX "IX_Chapters_CourseId" ON public."Chapters" USING btree ("CourseId"
 
 
 --
--- TOC entry 3887 (class 1259 OID 52219)
+-- TOC entry 3820 (class 1259 OID 54330)
 -- Name: IX_Courses_CategoryId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4829,7 +3940,7 @@ CREATE INDEX "IX_Courses_CategoryId" ON public."Courses" USING btree ("CategoryI
 
 
 --
--- TOC entry 3888 (class 1259 OID 52220)
+-- TOC entry 3821 (class 1259 OID 54331)
 -- Name: IX_Courses_InstructorId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4837,7 +3948,7 @@ CREATE INDEX "IX_Courses_InstructorId" ON public."Courses" USING btree ("Instruc
 
 
 --
--- TOC entry 3891 (class 1259 OID 52221)
+-- TOC entry 3846 (class 1259 OID 54332)
 -- Name: IX_Enrollments_CourseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4845,7 +3956,7 @@ CREATE INDEX "IX_Enrollments_CourseId" ON public."Enrollments" USING btree ("Cou
 
 
 --
--- TOC entry 3892 (class 1259 OID 52222)
+-- TOC entry 3847 (class 1259 OID 54333)
 -- Name: IX_Enrollments_UserId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4853,7 +3964,7 @@ CREATE INDEX "IX_Enrollments_UserId" ON public."Enrollments" USING btree ("UserI
 
 
 --
--- TOC entry 3895 (class 1259 OID 52223)
+-- TOC entry 3824 (class 1259 OID 54334)
 -- Name: IX_ExerciseDefaultCodes_ExerciseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4861,7 +3972,7 @@ CREATE INDEX "IX_ExerciseDefaultCodes_ExerciseId" ON public."ExerciseDefaultCode
 
 
 --
--- TOC entry 3898 (class 1259 OID 52224)
+-- TOC entry 3827 (class 1259 OID 54335)
 -- Name: IX_ExerciseExamples_ExerciseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4869,7 +3980,7 @@ CREATE INDEX "IX_ExerciseExamples_ExerciseId" ON public."ExerciseExamples" USING
 
 
 --
--- TOC entry 3901 (class 1259 OID 52225)
+-- TOC entry 3830 (class 1259 OID 54336)
 -- Name: IX_ExerciseTestCases_ExerciseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4877,7 +3988,7 @@ CREATE INDEX "IX_ExerciseTestCases_ExerciseId" ON public."ExerciseTestCases" USI
 
 
 --
--- TOC entry 3906 (class 1259 OID 52226)
+-- TOC entry 3833 (class 1259 OID 54337)
 -- Name: IX_FileChunks_FileEntryId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4885,7 +3996,7 @@ CREATE INDEX "IX_FileChunks_FileEntryId" ON public."FileChunks" USING btree ("Fi
 
 
 --
--- TOC entry 3911 (class 1259 OID 52227)
+-- TOC entry 3858 (class 1259 OID 54338)
 -- Name: IX_FileEntryEmbeddings_FileChunkId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4893,7 +4004,7 @@ CREATE UNIQUE INDEX "IX_FileEntryEmbeddings_FileChunkId" ON public."FileEntryEmb
 
 
 --
--- TOC entry 3912 (class 1259 OID 52228)
+-- TOC entry 3859 (class 1259 OID 54339)
 -- Name: IX_FileEntryEmbeddings_FileEntryId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4901,7 +4012,7 @@ CREATE INDEX "IX_FileEntryEmbeddings_FileEntryId" ON public."FileEntryEmbeddings
 
 
 --
--- TOC entry 3915 (class 1259 OID 52229)
+-- TOC entry 3866 (class 1259 OID 54340)
 -- Name: IX_LessonCodings_LessonId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4909,7 +4020,7 @@ CREATE UNIQUE INDEX "IX_LessonCodings_LessonId" ON public."LessonCodings" USING 
 
 
 --
--- TOC entry 3918 (class 1259 OID 52230)
+-- TOC entry 3869 (class 1259 OID 54341)
 -- Name: IX_LessonMaterials_DocumentFileId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4917,7 +4028,7 @@ CREATE UNIQUE INDEX "IX_LessonMaterials_DocumentFileId" ON public."LessonMateria
 
 
 --
--- TOC entry 3919 (class 1259 OID 52231)
+-- TOC entry 3870 (class 1259 OID 54342)
 -- Name: IX_LessonMaterials_LessonId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4925,7 +4036,7 @@ CREATE INDEX "IX_LessonMaterials_LessonId" ON public."LessonMaterials" USING btr
 
 
 --
--- TOC entry 3922 (class 1259 OID 52232)
+-- TOC entry 3873 (class 1259 OID 54343)
 -- Name: IX_LessonQuizzes_LessonId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4933,7 +4044,7 @@ CREATE UNIQUE INDEX "IX_LessonQuizzes_LessonId" ON public."LessonQuizzes" USING 
 
 
 --
--- TOC entry 3925 (class 1259 OID 52233)
+-- TOC entry 3876 (class 1259 OID 54344)
 -- Name: IX_LessonReadings_LessonId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4941,7 +4052,7 @@ CREATE UNIQUE INDEX "IX_LessonReadings_LessonId" ON public."LessonReadings" USIN
 
 
 --
--- TOC entry 3928 (class 1259 OID 52234)
+-- TOC entry 3879 (class 1259 OID 54347)
 -- Name: IX_LessonVideos_LessonId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4949,7 +4060,7 @@ CREATE UNIQUE INDEX "IX_LessonVideos_LessonId" ON public."LessonVideos" USING bt
 
 
 --
--- TOC entry 3931 (class 1259 OID 52235)
+-- TOC entry 3862 (class 1259 OID 54345)
 -- Name: IX_Lessons_ChapterId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4957,7 +4068,7 @@ CREATE INDEX "IX_Lessons_ChapterId" ON public."Lessons" USING btree ("ChapterId"
 
 
 --
--- TOC entry 3932 (class 1259 OID 52236)
+-- TOC entry 3863 (class 1259 OID 54346)
 -- Name: IX_Lessons_CourseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4965,7 +4076,7 @@ CREATE INDEX "IX_Lessons_CourseId" ON public."Lessons" USING btree ("CourseId");
 
 
 --
--- TOC entry 3935 (class 1259 OID 52237)
+-- TOC entry 3814 (class 1259 OID 54348)
 -- Name: IX_Notifications_UserId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4973,7 +4084,7 @@ CREATE INDEX "IX_Notifications_UserId" ON public."Notifications" USING btree ("U
 
 
 --
--- TOC entry 3938 (class 1259 OID 52238)
+-- TOC entry 3850 (class 1259 OID 54349)
 -- Name: IX_OrderItems_CourseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4981,7 +4092,7 @@ CREATE INDEX "IX_OrderItems_CourseId" ON public."OrderItems" USING btree ("Cours
 
 
 --
--- TOC entry 3939 (class 1259 OID 52239)
+-- TOC entry 3851 (class 1259 OID 54350)
 -- Name: IX_OrderItems_OrderId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4989,7 +4100,7 @@ CREATE INDEX "IX_OrderItems_OrderId" ON public."OrderItems" USING btree ("OrderI
 
 
 --
--- TOC entry 3942 (class 1259 OID 52240)
+-- TOC entry 3817 (class 1259 OID 54351)
 -- Name: IX_Orders_StudentId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4997,7 +4108,7 @@ CREATE INDEX "IX_Orders_StudentId" ON public."Orders" USING btree ("StudentId");
 
 
 --
--- TOC entry 3947 (class 1259 OID 52241)
+-- TOC entry 3836 (class 1259 OID 54352)
 -- Name: IX_PaymentTransactions_OrderId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5005,7 +4116,7 @@ CREATE UNIQUE INDEX "IX_PaymentTransactions_OrderId" ON public."PaymentTransacti
 
 
 --
--- TOC entry 3950 (class 1259 OID 52242)
+-- TOC entry 3854 (class 1259 OID 54353)
 -- Name: IX_Reviews_CourseId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5013,7 +4124,7 @@ CREATE INDEX "IX_Reviews_CourseId" ON public."Reviews" USING btree ("CourseId");
 
 
 --
--- TOC entry 3951 (class 1259 OID 52243)
+-- TOC entry 3855 (class 1259 OID 54354)
 -- Name: IX_Reviews_StudentId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5021,7 +4132,7 @@ CREATE INDEX "IX_Reviews_StudentId" ON public."Reviews" USING btree ("StudentId"
 
 
 --
--- TOC entry 3954 (class 1259 OID 52244)
+-- TOC entry 3882 (class 1259 OID 54355)
 -- Name: IX_UserLessonProgresses_LessonId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5029,7 +4140,7 @@ CREATE INDEX "IX_UserLessonProgresses_LessonId" ON public."UserLessonProgresses"
 
 
 --
--- TOC entry 3955 (class 1259 OID 52245)
+-- TOC entry 3883 (class 1259 OID 54356)
 -- Name: IX_UserLessonProgresses_StudentId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5037,7 +4148,7 @@ CREATE INDEX "IX_UserLessonProgresses_StudentId" ON public."UserLessonProgresses
 
 
 --
--- TOC entry 3859 (class 1259 OID 52246)
+-- TOC entry 3784 (class 1259 OID 54320)
 -- Name: RoleNameIndex; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5045,7 +4156,7 @@ CREATE UNIQUE INDEX "RoleNameIndex" ON public."AspNetRoles" USING btree ("Normal
 
 
 --
--- TOC entry 3874 (class 1259 OID 52247)
+-- TOC entry 3788 (class 1259 OID 54325)
 -- Name: UserNameIndex; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5053,25 +4164,7 @@ CREATE UNIQUE INDEX "UserNameIndex" ON public."AspNetUsers" USING btree ("Normal
 
 
 --
--- TOC entry 3960 (class 2606 OID 52248)
--- Name: jobparameter jobparameter_jobid_fkey; Type: FK CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.jobparameter
-    ADD CONSTRAINT jobparameter_jobid_fkey FOREIGN KEY (jobid) REFERENCES hangfire.job(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- TOC entry 3961 (class 2606 OID 52253)
--- Name: state state_jobid_fkey; Type: FK CONSTRAINT; Schema: hangfire; Owner: -
---
-
-ALTER TABLE ONLY hangfire.state
-    ADD CONSTRAINT state_jobid_fkey FOREIGN KEY (jobid) REFERENCES hangfire.job(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- TOC entry 3962 (class 2606 OID 52258)
+-- TOC entry 3886 (class 2606 OID 53961)
 -- Name: AspNetRoleClaims FK_AspNetRoleClaims_AspNetRoles_RoleId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5080,7 +4173,7 @@ ALTER TABLE ONLY public."AspNetRoleClaims"
 
 
 --
--- TOC entry 3963 (class 2606 OID 52263)
+-- TOC entry 3887 (class 2606 OID 53974)
 -- Name: AspNetUserClaims FK_AspNetUserClaims_AspNetUsers_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5089,7 +4182,7 @@ ALTER TABLE ONLY public."AspNetUserClaims"
 
 
 --
--- TOC entry 3964 (class 2606 OID 52268)
+-- TOC entry 3888 (class 2606 OID 53986)
 -- Name: AspNetUserLogins FK_AspNetUserLogins_AspNetUsers_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5098,7 +4191,7 @@ ALTER TABLE ONLY public."AspNetUserLogins"
 
 
 --
--- TOC entry 3965 (class 2606 OID 52273)
+-- TOC entry 3889 (class 2606 OID 53996)
 -- Name: AspNetUserRoles FK_AspNetUserRoles_AspNetRoles_RoleId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5107,7 +4200,7 @@ ALTER TABLE ONLY public."AspNetUserRoles"
 
 
 --
--- TOC entry 3966 (class 2606 OID 52278)
+-- TOC entry 3890 (class 2606 OID 54001)
 -- Name: AspNetUserRoles FK_AspNetUserRoles_AspNetUsers_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5116,7 +4209,7 @@ ALTER TABLE ONLY public."AspNetUserRoles"
 
 
 --
--- TOC entry 3967 (class 2606 OID 52283)
+-- TOC entry 3891 (class 2606 OID 54013)
 -- Name: AspNetUserTokens FK_AspNetUserTokens_AspNetUsers_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5125,7 +4218,7 @@ ALTER TABLE ONLY public."AspNetUserTokens"
 
 
 --
--- TOC entry 3968 (class 2606 OID 52288)
+-- TOC entry 3902 (class 2606 OID 54134)
 -- Name: CartItems FK_CartItems_Carts_CartId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5134,7 +4227,7 @@ ALTER TABLE ONLY public."CartItems"
 
 
 --
--- TOC entry 3969 (class 2606 OID 52293)
+-- TOC entry 3903 (class 2606 OID 54139)
 -- Name: CartItems FK_CartItems_Courses_CourseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5143,7 +4236,7 @@ ALTER TABLE ONLY public."CartItems"
 
 
 --
--- TOC entry 3970 (class 2606 OID 52298)
+-- TOC entry 3892 (class 2606 OID 54023)
 -- Name: Carts FK_Carts_AspNetUsers_StudentId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5152,7 +4245,7 @@ ALTER TABLE ONLY public."Carts"
 
 
 --
--- TOC entry 3971 (class 2606 OID 52303)
+-- TOC entry 3904 (class 2606 OID 54151)
 -- Name: Chapters FK_Chapters_Courses_CourseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5161,7 +4254,7 @@ ALTER TABLE ONLY public."Chapters"
 
 
 --
--- TOC entry 3972 (class 2606 OID 52308)
+-- TOC entry 3895 (class 2606 OID 54059)
 -- Name: Courses FK_Courses_AspNetUsers_InstructorId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5170,7 +4263,7 @@ ALTER TABLE ONLY public."Courses"
 
 
 --
--- TOC entry 3973 (class 2606 OID 52313)
+-- TOC entry 3896 (class 2606 OID 54064)
 -- Name: Courses FK_Courses_Categories_CategoryId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5179,7 +4272,7 @@ ALTER TABLE ONLY public."Courses"
 
 
 --
--- TOC entry 3974 (class 2606 OID 52318)
+-- TOC entry 3905 (class 2606 OID 54161)
 -- Name: Enrollments FK_Enrollments_AspNetUsers_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5188,7 +4281,7 @@ ALTER TABLE ONLY public."Enrollments"
 
 
 --
--- TOC entry 3975 (class 2606 OID 52323)
+-- TOC entry 3906 (class 2606 OID 54166)
 -- Name: Enrollments FK_Enrollments_Courses_CourseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5197,7 +4290,7 @@ ALTER TABLE ONLY public."Enrollments"
 
 
 --
--- TOC entry 3976 (class 2606 OID 52328)
+-- TOC entry 3897 (class 2606 OID 54076)
 -- Name: ExerciseDefaultCodes FK_ExerciseDefaultCodes_Exercises_ExerciseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5206,7 +4299,7 @@ ALTER TABLE ONLY public."ExerciseDefaultCodes"
 
 
 --
--- TOC entry 3977 (class 2606 OID 52333)
+-- TOC entry 3898 (class 2606 OID 54088)
 -- Name: ExerciseExamples FK_ExerciseExamples_Exercises_ExerciseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5215,7 +4308,7 @@ ALTER TABLE ONLY public."ExerciseExamples"
 
 
 --
--- TOC entry 3978 (class 2606 OID 52338)
+-- TOC entry 3899 (class 2606 OID 54100)
 -- Name: ExerciseTestCases FK_ExerciseTestCases_Exercises_ExerciseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5224,7 +4317,7 @@ ALTER TABLE ONLY public."ExerciseTestCases"
 
 
 --
--- TOC entry 3979 (class 2606 OID 52343)
+-- TOC entry 3900 (class 2606 OID 54112)
 -- Name: FileChunks FK_FileChunks_FileEntries_FileEntryId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5233,7 +4326,7 @@ ALTER TABLE ONLY public."FileChunks"
 
 
 --
--- TOC entry 3980 (class 2606 OID 52348)
+-- TOC entry 3911 (class 2606 OID 54212)
 -- Name: FileEntryEmbeddings FK_FileEntryEmbeddings_FileChunks_FileChunkId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5242,7 +4335,7 @@ ALTER TABLE ONLY public."FileEntryEmbeddings"
 
 
 --
--- TOC entry 3981 (class 2606 OID 52353)
+-- TOC entry 3912 (class 2606 OID 54217)
 -- Name: FileEntryEmbeddings FK_FileEntryEmbeddings_FileEntries_FileEntryId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5251,7 +4344,7 @@ ALTER TABLE ONLY public."FileEntryEmbeddings"
 
 
 --
--- TOC entry 3982 (class 2606 OID 52358)
+-- TOC entry 3915 (class 2606 OID 54246)
 -- Name: LessonCodings FK_LessonCodings_Lessons_LessonId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5260,7 +4353,7 @@ ALTER TABLE ONLY public."LessonCodings"
 
 
 --
--- TOC entry 3983 (class 2606 OID 52363)
+-- TOC entry 3916 (class 2606 OID 54258)
 -- Name: LessonMaterials FK_LessonMaterials_FileEntries_DocumentFileId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5269,7 +4362,7 @@ ALTER TABLE ONLY public."LessonMaterials"
 
 
 --
--- TOC entry 3984 (class 2606 OID 52368)
+-- TOC entry 3917 (class 2606 OID 54263)
 -- Name: LessonMaterials FK_LessonMaterials_Lessons_LessonId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5278,7 +4371,7 @@ ALTER TABLE ONLY public."LessonMaterials"
 
 
 --
--- TOC entry 3985 (class 2606 OID 52373)
+-- TOC entry 3918 (class 2606 OID 54275)
 -- Name: LessonQuizzes FK_LessonQuizzes_Lessons_LessonId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5287,7 +4380,7 @@ ALTER TABLE ONLY public."LessonQuizzes"
 
 
 --
--- TOC entry 3986 (class 2606 OID 52378)
+-- TOC entry 3919 (class 2606 OID 54287)
 -- Name: LessonReadings FK_LessonReadings_Lessons_LessonId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5296,7 +4389,7 @@ ALTER TABLE ONLY public."LessonReadings"
 
 
 --
--- TOC entry 3987 (class 2606 OID 52383)
+-- TOC entry 3920 (class 2606 OID 54299)
 -- Name: LessonVideos FK_LessonVideos_Lessons_LessonId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5305,7 +4398,7 @@ ALTER TABLE ONLY public."LessonVideos"
 
 
 --
--- TOC entry 3988 (class 2606 OID 52388)
+-- TOC entry 3913 (class 2606 OID 54229)
 -- Name: Lessons FK_Lessons_Chapters_ChapterId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5314,7 +4407,7 @@ ALTER TABLE ONLY public."Lessons"
 
 
 --
--- TOC entry 3989 (class 2606 OID 52393)
+-- TOC entry 3914 (class 2606 OID 54234)
 -- Name: Lessons FK_Lessons_Courses_CourseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5323,7 +4416,7 @@ ALTER TABLE ONLY public."Lessons"
 
 
 --
--- TOC entry 3990 (class 2606 OID 52398)
+-- TOC entry 3893 (class 2606 OID 54035)
 -- Name: Notifications FK_Notifications_AspNetUsers_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5332,7 +4425,7 @@ ALTER TABLE ONLY public."Notifications"
 
 
 --
--- TOC entry 3991 (class 2606 OID 52403)
+-- TOC entry 3907 (class 2606 OID 54178)
 -- Name: OrderItems FK_OrderItems_Courses_CourseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5341,7 +4434,7 @@ ALTER TABLE ONLY public."OrderItems"
 
 
 --
--- TOC entry 3992 (class 2606 OID 52408)
+-- TOC entry 3908 (class 2606 OID 54183)
 -- Name: OrderItems FK_OrderItems_Orders_OrderId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5350,7 +4443,7 @@ ALTER TABLE ONLY public."OrderItems"
 
 
 --
--- TOC entry 3993 (class 2606 OID 52413)
+-- TOC entry 3894 (class 2606 OID 54047)
 -- Name: Orders FK_Orders_AspNetUsers_StudentId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5359,7 +4452,7 @@ ALTER TABLE ONLY public."Orders"
 
 
 --
--- TOC entry 3994 (class 2606 OID 52418)
+-- TOC entry 3901 (class 2606 OID 54124)
 -- Name: PaymentTransactions FK_PaymentTransactions_Orders_OrderId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5368,7 +4461,7 @@ ALTER TABLE ONLY public."PaymentTransactions"
 
 
 --
--- TOC entry 3995 (class 2606 OID 52423)
+-- TOC entry 3909 (class 2606 OID 54195)
 -- Name: Reviews FK_Reviews_AspNetUsers_StudentId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5377,7 +4470,7 @@ ALTER TABLE ONLY public."Reviews"
 
 
 --
--- TOC entry 3996 (class 2606 OID 52428)
+-- TOC entry 3910 (class 2606 OID 54200)
 -- Name: Reviews FK_Reviews_Courses_CourseId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5386,7 +4479,7 @@ ALTER TABLE ONLY public."Reviews"
 
 
 --
--- TOC entry 3997 (class 2606 OID 52433)
+-- TOC entry 3921 (class 2606 OID 54309)
 -- Name: UserLessonProgresses FK_UserLessonProgresses_AspNetUsers_StudentId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5395,7 +4488,7 @@ ALTER TABLE ONLY public."UserLessonProgresses"
 
 
 --
--- TOC entry 3998 (class 2606 OID 52438)
+-- TOC entry 3922 (class 2606 OID 54314)
 -- Name: UserLessonProgresses FK_UserLessonProgresses_Lessons_LessonId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5403,7 +4496,7 @@ ALTER TABLE ONLY public."UserLessonProgresses"
     ADD CONSTRAINT "FK_UserLessonProgresses_Lessons_LessonId" FOREIGN KEY ("LessonId") REFERENCES public."Lessons"("Id") ON DELETE CASCADE;
 
 
--- Completed on 2026-04-30 15:23:48
+-- Completed on 2026-04-30 15:35:13
 
 --
 -- PostgreSQL database dump complete
