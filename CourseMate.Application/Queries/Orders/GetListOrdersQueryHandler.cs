@@ -1,7 +1,9 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Persistent;
+using CourseMate.Persistent.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,10 +22,9 @@ internal sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOr
 
     public override async Task<PagedDto<OrderDto>> Handle(GetListOrdersQuery request, CancellationToken ct)
     {
-        Guid studentId = CurrentUserId;
-
         IQueryable<OrderDto> query = DbContext.Orders
-            .Where(o => o.StudentId == studentId)
+            .WhereIf(IsInRole(Roles.Student), o => o.StudentId == CurrentUserId)
+            .WhereIf(IsInRole(Roles.Instructor), o => DbContext.OrderItems.Any(oi => oi.OrderId == o.Id && DbContext.Courses.Any(c => c.Id == oi.CourseId && c.InstructorId == CurrentUserId)))
             .Select(o => new OrderDto
             {
                 Id = o.Id,
@@ -36,8 +37,7 @@ internal sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOr
 
         List<OrderDto> orders = await query
             .OrderBy(o => o.Id)
-            .Skip((request.PageIndex - 1) * request.PageSize)
-            .Take(request.PageSize)
+            .Paged(request.PageIndex, request.PageSize)
             .ToListAsync(ct);
 
         return new PagedDto<OrderDto>

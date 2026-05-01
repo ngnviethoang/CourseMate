@@ -1,11 +1,15 @@
 using System.Text;
+using CourseMate.API.Hubs;
 using CourseMate.API.Middlewares;
+using CourseMate.API.Services;
 using CourseMate.Application;
+using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Newtonsoft.Json;
@@ -49,6 +53,20 @@ try
                 ValidAudience = configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
             };
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    StringValues accessToken = context.Request.Query["access_token"];
+                    PathString path = context.HttpContext.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/notification"))
+                    {
+                        context.Token = accessToken;
+                    }
+
+                    return Task.CompletedTask;
+                }
+            };
         });
 
     builder.Services.AddIdentityCore<IdentityUser<Guid>>()
@@ -63,6 +81,8 @@ try
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate")!);
     builder.Services.AddHangfireServer();
+    builder.Services.AddSignalR();
+    builder.Services.AddTransient<INotificationService, NotificationService>();
     builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -97,13 +117,14 @@ try
     builder.Services.AddProblemDetails().AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddCors(options =>
     {
-        string[] allowedHosts = builder.Configuration["AllowedHosts"]!.ToLower().Trim().Split(',', StringSplitOptions.RemoveEmptyEntries);
+        string[] allowedHosts = builder.Configuration["AllowedHosts"]!.ToLower().Trim().Split(';', StringSplitOptions.RemoveEmptyEntries);
         options.AddPolicy("CorsPolicy", policy =>
         {
             policy.WithOrigins(allowedHosts)
                 .SetIsOriginAllowedToAllowWildcardSubdomains()
                 .AllowAnyHeader()
-                .AllowAnyMethod();
+                .AllowAnyMethod()
+                .AllowCredentials();
         });
     });
 
@@ -120,6 +141,7 @@ try
     // app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
     app.MapControllers();
     app.MapHangfireDashboard();
+    app.MapHub<NotificationHub>("/hubs/notification");
     Log.Information("Starting web host");
     await app.RunAsync();
 }

@@ -4,7 +4,7 @@ import { courseService } from '@/lib/course-service'
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { LessonType } from '@/lib/types'
+import {LessonType, StudentCourseDetailDto} from '@/lib/types'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { PlayCircle, FileText, CheckCircle2, ChevronLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'

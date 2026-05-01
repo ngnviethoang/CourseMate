@@ -277,7 +277,7 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
       }
       try {
         const result = await lessonMaterialService.getOutline(lessonId)
-        const hasSlides = result?.lectureOutline?.slides?.length > 0
+        const hasSlides = result?.lectureOutline?.slides?.length || 0 > 0
         if (hasSlides) {
           setOutline(result)
           setUploadState('done')
@@ -305,13 +305,13 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
         const result = await lessonMaterialService.getOutline(lessonId)
         if (cancelled) return
 
-        const hasSlides = result?.lectureOutline?.slides?.length > 0
+        const hasSlides = result?.lectureOutline?.slides?.length || 0 > 0
         const hasMaterial = result?.lessonMaterialId
 
         if (hasSlides) {
           // AI already finished → show editor immediately
           setOutline(result)
-          setMaterialId(result.lessonMaterialId)
+          setMaterialId(result?.lessonMaterialId ?? '')
           setUploadState('done')
         } else if (hasMaterial) {
           // Material exists but AI still processing → resume polling
@@ -359,7 +359,7 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
     if (!lessonId) return
     try {
       const result = await lessonMaterialService.getOutline(lessonId)
-      if (result?.lectureOutline?.slides?.length > 0) {
+      if (result?.lectureOutline?.slides?.length || 0 > 0) {
         setOutline(result)
         setUploadState('done')
         toast.success('Outline loaded!')
