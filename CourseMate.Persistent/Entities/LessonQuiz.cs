@@ -13,10 +13,14 @@ public class LessonQuiz : Entity
         PassingScore = passingScore;
     }
 
+    protected LessonQuiz() : base(Guid.Empty) { }
+
     public Guid LessonId { get; set; }
 
     [MaxLength(CourseMateConsts.DescriptionMaxLength)]
     public string Description { get; set; }
 
     public int PassingScore { get; set; }
+
+    public ICollection<LessonQuizQuestion> Questions { get; set; } = new List<LessonQuizQuestion>();
 }

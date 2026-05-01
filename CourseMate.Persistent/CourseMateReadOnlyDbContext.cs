@@ -24,6 +24,9 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<IdentityUser
     public DbSet<LessonReading> LessonReadings { get; set; }
     public DbSet<LessonCoding> LessonCodings { get; set; }
     public DbSet<LessonQuiz> LessonQuizzes { get; set; }
+    public DbSet<LessonQuizQuestion> LessonQuizQuestions { get; set; }
+    public DbSet<LessonQuizAnswer> LessonQuizAnswers { get; set; }
+    public DbSet<LessonSlide> LessonSlides { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }

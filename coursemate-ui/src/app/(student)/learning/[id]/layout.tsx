@@ -4,9 +4,9 @@ import { courseService } from '@/lib/course-service'
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import {LessonType, StudentCourseDetailDto} from '@/lib/types'
+import { LessonType, StudentCourseDetailDto } from '@/lib/types'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { PlayCircle, FileText, CheckCircle2, ChevronLeft, Loader2 } from 'lucide-react'
+import { PlayCircle, FileText, CheckCircle2, ChevronLeft, Loader2, Code2, HelpCircle, Presentation } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
@@ -63,14 +63,17 @@ export default function LearningLayout({ children }: { children: React.ReactNode
           <h2 className="font-bold text-lg line-clamp-2">{course.title}</h2>
           <div className="flex items-center gap-2 mt-2">
             <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-              <div className="h-full bg-emerald-500 w-[10%]" /> {/* Mock progress */}
+              <div 
+                className="h-full bg-emerald-500 transition-all duration-500" 
+                style={{ width: `${course.progressPercentage}%` }} 
+              />
             </div>
-            <span className="text-[10px] font-medium text-muted-foreground">10%</span>
+            <span className="text-[10px] font-medium text-muted-foreground">{Math.round(course.progressPercentage)}%</span>
           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-2">
-          <Accordion className="space-y-1">
+          <Accordion className="space-y-1" type="multiple" defaultValue={course.chapters.map(c => c.id)}>
             {course.chapters.map(chapter => (
               <AccordionItem key={chapter.id} value={chapter.id} className="border-none">
                 <AccordionTrigger className="hover:no-underline hover:bg-muted/50 px-3 py-2 rounded-lg py-3 text-sm font-semibold transition-all">
@@ -82,6 +85,7 @@ export default function LearningLayout({ children }: { children: React.ReactNode
                 <AccordionContent className="pt-1 pb-2 space-y-0.5">
                   {chapter.lessons.map(lesson => {
                     const isActive = lessonId === lesson.id
+                    const isCompleted = lesson.isCompleted
                     return (
                       <Link
                         key={lesson.id}
@@ -92,13 +96,27 @@ export default function LearningLayout({ children }: { children: React.ReactNode
                             : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                         }`}
                       >
-                        {lesson.lessonType === LessonType.Video ? (
-                          <PlayCircle className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-blue-500'}`} />
-                        ) : lesson.lessonType === LessonType.Reading ? (
-                          <FileText className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-amber-500'}`} />
-                        ) : (
-                          <CheckCircle2 className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-emerald-500'}`} />
-                        )}
+                        <div className="relative shrink-0">
+                          {lesson.lessonType === LessonType.Video ? (
+                            <PlayCircle className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-blue-500'}`} />
+                          ) : lesson.lessonType === LessonType.Reading ? (
+                            <FileText className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-amber-500'}`} />
+                          ) : lesson.lessonType === LessonType.Coding ? (
+                            <Code2 className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-purple-500'}`} />
+                          ) : lesson.lessonType === LessonType.Quiz ? (
+                            <HelpCircle className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-orange-500'}`} />
+                          ) : lesson.lessonType === LessonType.Slide ? (
+                            <Presentation className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-pink-500'}`} />
+                          ) : (
+                            <CheckCircle2 className={`h-4 w-4 text-emerald-500`} />
+                          )}
+                          
+                          {isCompleted && (
+                            <div className="absolute -top-1.5 -right-1.5 bg-white dark:bg-slate-900 rounded-full">
+                              <CheckCircle2 className="h-3 w-3 text-emerald-500 fill-emerald-50" />
+                            </div>
+                          )}
+                        </div>
                         <span className="flex-1 line-clamp-1">{lesson.title}</span>
                       </Link>
                     )

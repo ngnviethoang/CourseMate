@@ -36,7 +36,7 @@ const columns: Column<ChapterDto>[] = [
   }
 ]
 
-const emptyForm: CreateChapterRequest = { courseId: '', title: '', position: 1 }
+const emptyForm: CreateChapterRequest = { courseId: '', title: '', position: 0 }
 
 export default function ChaptersPage() {
   const router = useRouter()
@@ -160,15 +160,7 @@ export default function ChaptersPage() {
               <Label>Title</Label>
               <Input value={form.title} onChange={e => f('title', e.target.value)} />
             </div>
-            <div className="space-y-1">
-              <Label>Position</Label>
-              <Input
-                type="number"
-                min={1}
-                value={form.position}
-                onChange={e => f('position', Number(e.target.value))}
-              />
-            </div>
+
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>

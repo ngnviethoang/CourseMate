@@ -28,153 +28,38 @@ import Link from 'next/link'
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
-const LESSON_TYPE_COLOR: Record<LessonType, string> = {
+const LESSON_TYPE_COLOR: Record<string | number, string> = {
   [LessonType.Video]: 'bg-blue-500/10 text-blue-600 border-blue-200',
   [LessonType.Reading]: 'bg-green-500/10 text-green-600 border-green-200',
   [LessonType.Quiz]: 'bg-orange-500/10 text-orange-600 border-orange-200',
   [LessonType.Coding]: 'bg-purple-500/10 text-purple-600 border-purple-200',
-  [LessonType.Slide]: 'bg-teal-500/10 text-teal-600 border-teal-200'
+  [LessonType.Slide]: 'bg-teal-500/10 text-teal-600 border-teal-200',
+  1: 'bg-blue-500/10 text-blue-600 border-blue-200',
+  2: 'bg-green-500/10 text-green-600 border-green-200',
+  3: 'bg-purple-500/10 text-purple-600 border-purple-200',
+  4: 'bg-orange-500/10 text-orange-600 border-orange-200',
+  5: 'bg-teal-500/10 text-teal-600 border-teal-200'
 }
 
-const LESSON_TYPE_ICON: Record<LessonType, string> = {
+const LESSON_TYPE_ICON: Record<string | number, string> = {
   [LessonType.Video]: '🎬',
   [LessonType.Reading]: '📖',
   [LessonType.Quiz]: '📝',
   [LessonType.Coding]: '💻',
-  [LessonType.Slide]: '📽️'
+  [LessonType.Slide]: '📽️',
+  1: '🎬', 2: '📖', 3: '💻', 4: '📝', 5: '📽️'
 }
 
-// ─── Mock AI Data Generators ───────────────────────────────────────────────────
-
-const MOCK_AI_DATA: Record<LessonType, (name: string, raw: string) => object> = {
-  [LessonType.Video]: (name, raw) => ({
-    title: name || 'Giới thiệu về Lập trình Hướng đối tượng',
-    segments: [
-      {
-        time: '00:00 - 03:00',
-        script: `Giới thiệu tổng quan về ${raw || name}. Đây là một trong những khái niệm nền tảng quan trọng nhất trong lập trình hiện đại.`
-      },
-      {
-        time: '03:00 - 08:00',
-        script: `Phân tích 4 trụ cột: Encapsulation, Inheritance, Polymorphism, Abstraction. ${raw ? `Áp dụng vào ngữ cảnh ${raw}.` : ''}`
-      },
-      { time: '08:00 - 12:00', script: 'Demo thực tế với code mẫu và bài tập thực hành để củng cố kiến thức.' }
-    ],
-    timestamps: [
-      { time: '00:00', label: 'Giới thiệu & Mục tiêu' },
-      { time: '01:30', label: 'Khái niệm nền tảng' },
-      { time: '04:00', label: 'Demo code thực tế' },
-      { time: '09:00', label: 'Bài tập thực hành' },
-      { time: '11:30', label: 'Tổng kết' }
-    ]
-  }),
-  [LessonType.Reading]: (name, raw) => ({
-    title: name || 'Bài đọc hiểu',
-    markdown_content: `# ${name || 'Tiêu đề bài đọc'}
-
-## Giới thiệu
-
-${raw || 'Nội dung bài đọc chi tiết.'} Phần mở đầu giúp sinh viên nắm bắt tổng quan chủ đề.
-
-## Nội dung chính
-
-### 1. Khái niệm cơ bản
-
-Các khái niệm nền tảng cần nắm vững:
-
-\`\`\`python
-# Ví dụ code minh họa
-def example(param):
-    """Hàm minh họa khái niệm"""
-    return param * 2
-
-result = example(5)
-print(f"Kết quả: {result}")  # Output: 10
-\`\`\`
-
-### 2. Ứng dụng thực tế
-
-- **Web Development**: Xây dựng ứng dụng web động
-- **Data Science**: Phân tích và xử lý dữ liệu lớn
-- **Machine Learning**: Xây dựng mô hình học máy
-
-## Tổng kết
-
-> 💡 **Ghi nhớ**: Thực hành đều đặn là chìa khóa để thành thạo lập trình.`
-  }),
-  [LessonType.Coding]: (name, raw) => ({
-    title: name || 'Bài tập Lập trình',
-    problem_statement: `## ${name || 'Bài tập thực hành'}\n\n${raw || 'Giải quyết bài toán lập trình sau đây.'}\n\n### Yêu cầu:\n- Thiết kế thuật toán hiệu quả\n- Code clean, có comment\n- Xử lý đầy đủ edge cases`,
-    initial_code: `def solve(n: int) -> list:\n    """\n    TODO: Implement your solution here\n    """\n    result = []\n    # Viết code ở đây\n    return result\n\nif __name__ == "__main__":\n    print(solve(10))`,
-    solution: `def solve(n: int) -> list:\n    """Time: O(n), Space: O(n)"""\n    return [i for i in range(2, n + 1, 2)]\n\nif __name__ == "__main__":\n    print(solve(10))  # [2, 4, 6, 8, 10]`,
-    test_cases: [
-      { input: 'n = 10', output: '[2, 4, 6, 8, 10]', hidden: false },
-      { input: 'n = 2', output: '[2]', hidden: false },
-      { input: 'n = 1', output: '[]', hidden: false },
-      { input: 'n = 20', output: '[2,4,6,8,10,12,14,16,18,20]', hidden: true },
-      { input: 'n = 0', output: '[]', hidden: true }
-    ]
-  }),
-  [LessonType.Quiz]: name => ({
-    title: name || 'Bài kiểm tra',
-    questions: [
-      {
-        q: 'Encapsulation trong OOP có nghĩa là gì?',
-        options: [
-          'Ẩn chi tiết và chỉ lộ interface cần thiết',
-          'Cho phép lớp con kế thừa lớp cha',
-          'Một hàm có nhiều dạng khác nhau',
-          'Tách biệt interface khỏi implementation'
-        ],
-        ans: 0,
-        explanation:
-          'Encapsulation (Đóng gói) ẩn chi tiết triển khai nội bộ, chỉ cung cấp interface công khai cần thiết.'
-      },
-      {
-        q: 'Độ phức tạp thời gian của Binary Search là gì?',
-        options: ['O(n)', 'O(n²)', 'O(log n)', 'O(n log n)'],
-        ans: 2,
-        explanation: 'Binary Search có O(log n) vì mỗi bước giảm không gian tìm kiếm đi một nửa.'
-      },
-      {
-        q: 'HTTP method nào dùng để cập nhật MỘT PHẦN tài nguyên trong REST API?',
-        options: ['PUT', 'POST', 'PATCH', 'UPDATE'],
-        ans: 2,
-        explanation: 'PATCH cập nhật một phần (partial update), PUT thay thế hoàn toàn tài nguyên.'
-      },
-      {
-        q: 'Lệnh Git nào tạo nhánh mới và chuyển sang nhánh đó cùng lúc?',
-        options: ['git branch new', 'git checkout new', 'git checkout -b new', 'git switch new'],
-        ans: 2,
-        explanation: '`git checkout -b new-branch` tạo nhánh mới và chuyển sang trong một lệnh.'
-      },
-      {
-        q: 'Design pattern nào giúp giảm sự phụ thuộc giữa các module?',
-        options: ['Singleton', 'Dependency Injection', 'Factory', 'Observer'],
-        ans: 1,
-        explanation:
-          'Dependency Injection (DI) cho phép object nhận dependencies từ bên ngoài, giúp code dễ test và bảo trì.'
-      }
-    ]
-  }),
-  [LessonType.Slide]: name => ({
-    lesson_info: {
-      title: name || 'Bài giảng Slide',
-      summary: 'Tóm tắt bài giảng',
-      learning_outcomes: ['Hiểu tổng quan', 'Nắm được các vấn đề cốt lõi']
-    },
-    slides: [
-      {
-        slide_number: 1,
-        title: name || 'Tiêu đề Slide',
-        type: 'content_slide',
-        bullet_points: ['Ý chính 1', 'Ý chính 2'],
-        explanation_for_teacher: 'Giải thích...',
-        visual_idea: 'Gợi ý hình ảnh'
-      }
-    ]
-  })
+const getLessonTypeLabel = (type: any) => {
+  if (type === LessonType.Video || type === 1) return 'Video'
+  if (type === LessonType.Reading || type === 2) return 'Reading'
+  if (type === LessonType.Coding || type === 3) return 'Coding'
+  if (type === LessonType.Quiz || type === 4) return 'Quiz'
+  if (type === LessonType.Slide || type === 5) return 'Slide'
+  return type
 }
+
+
 
 // ─── AI Content Storage Key ─────────────────────────────────────────────────────
 
@@ -187,7 +72,7 @@ const emptyLessonForm = (courseId: string, chapterId: string): CreateLessonReque
   chapterId,
   title: '',
   lessonType: LessonType.Video,
-  position: 1
+  position: 0
 })
 
 // ─── Main Component ────────────────────────────────────────────────────────────
@@ -212,12 +97,7 @@ export default function ChapterDetailPage() {
   const [savingLesson, setSavingLesson] = useState(false)
   const [deleteLessonId, setDeleteLessonId] = useState<string | null>(null)
 
-  // AI Generation state
-  const [aiRawContent, setAiRawContent] = useState('')
-  const [aiFile, setAiFile] = useState<File | null>(null)
-  const [aiGenerating, setAiGenerating] = useState(false)
-  const [, setShowPrompt] = useState(false)
-  const [aiMode, setAiMode] = useState(false)
+
 
   // Load chapter and course
   useEffect(() => {
@@ -231,7 +111,7 @@ export default function ChapterDetailPage() {
           try {
             const c = await courseService.getById(ch.courseId)
             setCourse(c)
-          } catch {}
+          } catch { }
         }
       } catch {
         toast.error('Chapter not found.')
@@ -263,10 +143,6 @@ export default function ChapterDetailPage() {
 
   function openAddLesson() {
     setLessonForm(emptyLessonForm(chapter?.courseId || '', id))
-    setAiRawContent('')
-    setAiFile(null)
-    setAiMode(false)
-    setShowPrompt(false)
     setLessonDialog(true)
   }
 
@@ -289,35 +165,7 @@ export default function ChapterDetailPage() {
     }
   }
 
-  async function generateAndCreateLesson() {
-    if (!lessonForm.title.trim()) {
-      toast.error('Please enter a lesson title first.')
-      return
-    }
-    setAiGenerating(true)
-    try {
-      // Step 1: Create the lesson
-      const createdLesson = await lessonService.create(lessonForm)
-      const newLessonId = createdLesson.id
 
-      // Step 2: Upload the file to trigger AI processing (if file provided)
-      if (aiFile) {
-        await lessonMaterialService.uploadMaterial(newLessonId, aiFile)
-        toast.success('Lesson created & AI is analyzing your file... 🚀', { duration: 4000 })
-      } else {
-        toast.success('Lesson created! You can upload a file on the lesson page.', { duration: 3000 })
-      }
-
-      setLessonDialog(false)
-      loadLessons()
-      // Redirect to lesson detail where AiMaterialSection will show & poll
-      router.push(`/management/lessons/${newLessonId}`)
-    } catch {
-      toast.error('Failed to create lesson.')
-    } finally {
-      setAiGenerating(false)
-    }
-  }
 
   async function deleteLesson() {
     if (!deleteLessonId) return
@@ -420,12 +268,12 @@ export default function ChapterDetailPage() {
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                   <span className="text-xs font-medium">{lesson.position}</span>
                 </div>
-                <span className="text-base">{LESSON_TYPE_ICON[lesson.lessonType as LessonType]}</span>
+                <span className="text-base">{LESSON_TYPE_ICON[lesson.lessonType]}</span>
                 <span className="flex-1 font-medium">{lesson.title}</span>
                 <span
-                  className={`text-xs px-2.5 py-1 rounded-full border font-medium ${LESSON_TYPE_COLOR[lesson.lessonType as LessonType]}`}
+                  className={`text-xs px-2.5 py-1 rounded-full border font-medium ${LESSON_TYPE_COLOR[lesson.lessonType]}`}
                 >
-                  {lesson.lessonType}
+                  {getLessonTypeLabel(lesson.lessonType)}
                 </span>
                 <div className="flex gap-1.5 ml-2" onClick={e => e.stopPropagation()}>
                   <button
@@ -460,24 +308,6 @@ export default function ChapterDetailPage() {
           </DialogHeader>
 
           <div className="space-y-5 py-2">
-            {/* Mode toggle */}
-            <div className="flex gap-2 rounded-lg border p-1 bg-muted/30">
-              <button
-                type="button"
-                onClick={() => setAiMode(false)}
-                className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${!aiMode ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                📋 Tạo thủ công
-              </button>
-              <button
-                type="button"
-                onClick={() => setAiMode(true)}
-                className={`flex-1 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-1.5 ${aiMode ? 'bg-purple-600 text-white shadow' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                <Sparkles className="h-3.5 w-3.5" /> Hỗ trợ soạn bài
-              </button>
-            </div>
-
             {/* Basic fields */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5 sm:col-span-2">
@@ -490,7 +320,7 @@ export default function ChapterDetailPage() {
                   onChange={e => lf('title', e.target.value)}
                 />
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 sm:col-span-2">
                 <Label>Type</Label>
                 <Select value={lessonForm.lessonType} onValueChange={v => lf('lessonType', v as LessonType)}>
                   <SelectTrigger>
@@ -509,94 +339,16 @@ export default function ChapterDetailPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1.5">
-                <Label>Position</Label>
-                <Input
-                  type="number"
-                  min={1}
-                  value={lessonForm.position}
-                  onChange={e => lf('position', Number(e.target.value))}
-                />
-              </div>
             </div>
-
-            {/* AI Panel */}
-            {aiMode && (
-              <div className="rounded-xl border border-purple-200 bg-purple-50/50 dark:bg-purple-950/10 dark:border-purple-800 p-4 space-y-4 animate-in fade-in duration-200">
-                <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-purple-500/15">
-                    <Sparkles className="h-4 w-4 text-purple-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-purple-700 dark:text-purple-400">
-                      Trợ lý Phân tích tài liệu → Tự động tạo Outline
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Upload file Word/PDF — AI sẽ phân tích và tạo outline bài giảng{' '}
-                      <Badge
-                        variant="outline"
-                        className="text-xs inline-flex h-4 px-1 text-purple-600 border-purple-300"
-                      >
-                        {lessonForm.lessonType}
-                      </Badge>{' '}
-                      tự động.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-sm font-medium">
-                    File tài liệu <span className="text-muted-foreground font-normal">(tuỳ chọn)</span>
-                  </Label>
-                  <Input
-                    type="file"
-                    accept=".doc,.docx,.pdf"
-                    onChange={e => setAiFile(e.target.files?.[0] || null)}
-                    className="text-xs file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Hỗ trợ .doc, .docx, .pdf — Bạn cũng có thể upload sau trong trang lesson
-                  </p>
-                </div>
-
-                {aiFile && (
-                  <div className="flex items-center gap-2 rounded-lg border border-purple-200 bg-purple-50/50 dark:bg-purple-950/20 px-3 py-2">
-                    <FileText className="h-4 w-4 text-purple-500 shrink-0" />
-                    <span className="text-xs font-medium text-purple-700 truncate">{aiFile.name}</span>
-                    <Badge className="ml-auto bg-purple-100 text-purple-600 border-0 text-[10px]">Ready</Badge>
-                  </div>
-                )}
-              </div>
-              </div>
-            )}
           </div>
 
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setLessonDialog(false)}>
               Cancel
             </Button>
-            {aiMode ? (
-              <Button
-                onClick={generateAndCreateLesson}
-                disabled={aiGenerating || !lessonForm.title.trim()}
-                className="gap-2 bg-purple-600 hover:bg-purple-700 text-white min-w-[200px]"
-              >
-                {aiGenerating ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" /> Đang tạo bài học...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="h-4 w-4" /> {aiFile ? 'Tạo & Phân tích AI' : 'Tạo bài học'}
-                  </>
-                )}
-              </Button>
-            ) : (
-              <Button onClick={saveLesson} disabled={savingLesson || !lessonForm.title.trim()}>
-                {savingLesson ? 'Saving…' : 'Create Lesson'}
-              </Button>
-            )}
+            <Button onClick={saveLesson} disabled={savingLesson || !lessonForm.title.trim()}>
+              {savingLesson ? 'Saving…' : 'Create Lesson'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

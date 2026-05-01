@@ -11,9 +11,9 @@ namespace CourseMate.Application.Queries.Courses;
 
 public class GetListLessonsQuery : GetListQuery<LessonDto>
 {
-    public Guid CourseId { get; set; }
+    public Guid? CourseId { get; set; }
 
-    public Guid ChapterId { get; set; }
+    public Guid? ChapterId { get; set; }
 }
 
 internal sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListLessonsQuery, PagedDto<LessonDto>>
@@ -26,13 +26,20 @@ internal sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListL
     public override async Task<PagedDto<LessonDto>> Handle(GetListLessonsQuery request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
-        await EnsureEnrollmentAsync(request.CourseId);
+        bool isAdmin = IsInRole(Roles.Admin);
+        bool isInstructor = IsInRole(Roles.Instructor);
+
+        if (request.CourseId.HasValue)
+        {
+            await EnsureEnrollmentAsync(request.CourseId.Value);
+        }
 
         IQueryable<LessonDto> query = from lesson in DbContext.Lessons
             join chapter in DbContext.Chapters on lesson.ChapterId equals chapter.Id
             join course in DbContext.Courses on lesson.CourseId equals course.Id
-            where lesson.CourseId == request.CourseId
-            where lesson.ChapterId == request.ChapterId
+            where (request.CourseId == null || lesson.CourseId == request.CourseId)
+               && (request.ChapterId == null || lesson.ChapterId == request.ChapterId)
+               && (course.IsPublished || isAdmin || (isInstructor && course.InstructorId == userId))
             select new LessonDto
             {
                 Id = lesson.Id,
@@ -48,9 +55,7 @@ internal sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListL
                 LastModificationTime = lesson.LastModificationTime
             };
 
-        query = query
-            .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == userId)
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
+        query = query.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
 
         query = request.Sorting switch
         {

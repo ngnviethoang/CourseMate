@@ -10,10 +10,17 @@ import {
   CreateChapterRequest,
   UpdateChapterRequest,
   LessonDto,
+  LessonDetailDto,
   CreateLessonRequest,
   UpdateLessonRequest,
+  UpsertLessonVideoRequest,
+  UpsertLessonReadingRequest,
+  UpsertLessonCodingRequest,
+  UpsertLessonQuizRequest,
+  UpsertLessonSlideRequest,
   StudentMyCourseDto,
-  CourseDetailDto
+  CourseDetailDto,
+  ExerciseDto
 } from './types'
 
 export const courseService = {
@@ -98,13 +105,27 @@ export const courseService = {
   getLessonById: async (id: string) => {
     return api.get<LessonDto | null>(`/api/lessons/${id}`)
   },
+  getLessonDetail: async (id: string) => {
+    return api.get<LessonDetailDto | null>(`/api/lessons/${id}/detail`)
+  },
   createLesson: (body: CreateLessonRequest) => {
     return api.post<ResultIdDto>('/api/lessons', body)
   },
   updateLesson: (id: string, body: UpdateLessonRequest) => {
     return api.put<void>(`/api/lessons/${id}`, body)
   },
-  deleteLesson: (id: string) => api.delete<void>(`/api/lessons/${id}`)
+  upsertLessonVideo: (id: string, body: UpsertLessonVideoRequest) => api.put<void>(`/api/lessons/${id}/video`, body),
+  upsertLessonReading: (id: string, body: UpsertLessonReadingRequest) => api.put<void>(`/api/lessons/${id}/reading`, body),
+  upsertLessonCoding: (id: string, body: UpsertLessonCodingRequest) => api.put<void>(`/api/lessons/${id}/coding`, body),
+  upsertLessonQuiz: (id: string, body: UpsertLessonQuizRequest) => api.put<void>(`/api/lessons/${id}/quiz`, body),
+  upsertLessonSlide: (id: string, body: UpsertLessonSlideRequest) => api.put<void>(`/api/lessons/${id}/slide`, body),
+  deleteLesson: (id: string) => api.delete<void>(`/api/lessons/${id}`),
+
+  searchExercises: async (filter?: string, pageIndex = 1, pageSize = 20) => {
+    const qs = new URLSearchParams({ pageIndex: String(pageIndex), pageSize: String(pageSize) })
+    if (filter) qs.set('filter', filter)
+    return api.get<PagedDto<ExerciseDto>>(`/api/exercises?${qs}`)
+  }
 }
 
 export const chapterService = {
@@ -118,7 +139,16 @@ export const chapterService = {
 export const lessonService = {
   list: courseService.listLessons,
   getById: courseService.getLessonById,
+  getDetail: courseService.getLessonDetail,
   create: courseService.createLesson,
   update: courseService.updateLesson,
-  delete: courseService.deleteLesson
+  upsertVideo: courseService.upsertLessonVideo,
+  upsertReading: courseService.upsertLessonReading,
+  upsertCoding: courseService.upsertLessonCoding,
+  upsertQuiz: courseService.upsertLessonQuiz,
+  upsertSlide: courseService.upsertLessonSlide,
+  delete: courseService.deleteLesson,
+  searchExercises: courseService.searchExercises,
+  updateProgress: (lessonId: string, isCompleted: boolean, score: number = 0) => 
+    api.put<ResultIdDto>(`/api/lessons/${lessonId}/progress`, { lessonId, isCompleted, score })
 }

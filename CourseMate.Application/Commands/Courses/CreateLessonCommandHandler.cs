@@ -63,12 +63,13 @@ internal sealed class CreateLessonCommandHandler : AbstractCommandHandler<Create
             }
         }
 
-        int nextPosition = await DbContext.Lessons
+        int nextPosition = (await DbContext.Lessons
             .Where(x => x.ChapterId == request.ChapterId)
-            .Select(x => x.Position)
-            .MaxAsync(ct);
-        nextPosition++;
-        if (request.Position > nextPosition)
+            .MaxAsync(x => (int?)x.Position, ct) ?? 0) + 1;
+
+        int finalPosition = request.Position == 0 ? nextPosition : request.Position;
+
+        if (finalPosition > nextPosition)
         {
             throw new BusinessException(string.Format(ErrorMessages.PositionOutOfRange, nextPosition));
         }
@@ -79,7 +80,7 @@ internal sealed class CreateLessonCommandHandler : AbstractCommandHandler<Create
             request.CourseId,
             request.Title,
             request.LessonType,
-            request.Position
+            finalPosition
         );
 
         await DbContext.AddAsync(lesson, ct);
