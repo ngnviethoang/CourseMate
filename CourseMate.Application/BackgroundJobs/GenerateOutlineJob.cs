@@ -1,4 +1,5 @@
 using CourseMate.Application.Services.AIServices;
+using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
@@ -16,16 +17,19 @@ public class GenerateOutlineJob
 {
     private readonly IAiService _aiService;
     private readonly CourseMateDbContext _dbContext;
+    private readonly INotificationService _notificationService;
     private readonly ILogger<GenerateOutlineJob> _logger;
 
     public GenerateOutlineJob(
         CourseMateDbContext dbContext,
         ILogger<GenerateOutlineJob> logger,
-        IAiService aiService)
+        IAiService aiService,
+        INotificationService notificationService)
     {
         _dbContext = dbContext;
         _logger = logger;
         _aiService = aiService;
+        _notificationService = notificationService;
     }
 
     [AutomaticRetry(Attempts = 0)]
@@ -96,5 +100,12 @@ public class GenerateOutlineJob
         _dbContext.LessonMaterials.Update(lessonMaterial);
         await _dbContext.SaveChangesAsync(ct);
         _logger.LogInformation("Finished generate outline for lesson {LessonId}", lessonMaterial.LessonId);
+
+        await _notificationService.NotifyDocumentProcessedAsync(new NotificationDto
+        {
+            ReceiverId = lessonMaterial.UserId ?? Guid.Empty,
+            Title = "Document processed",
+            Message = "Outline has been generated",
+        }, ct);
     }
 }
