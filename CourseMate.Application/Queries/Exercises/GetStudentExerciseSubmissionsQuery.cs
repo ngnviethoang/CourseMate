@@ -29,7 +29,7 @@ internal sealed class GetStudentExerciseSubmissionsQueryHandler : AbstractQueryH
                 Id = i.Id,
                 Language = i.Language,
                 Code = i.Code,
-                Passed = i.Passed,
+                Passed = i.IsPassed,
                 Score = i.Score,
                 TotalTime = i.TotalTime,
                 TotalMemory = i.TotalMemory,

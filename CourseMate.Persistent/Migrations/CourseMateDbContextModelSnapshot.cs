@@ -444,7 +444,8 @@ namespace CourseMate.Persistent.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(32768)
+                        .HasColumnType("character varying(32768)");
 
                     b.Property<DateTimeOffset>("CreationTime")
                         .HasColumnType("timestamp with time zone");
@@ -455,15 +456,16 @@ namespace CourseMate.Persistent.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsPassed")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Language")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<DateTimeOffset?>("LastModificationTime")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("Passed")
-                        .HasColumnType("boolean");
 
                     b.Property<uint>("RowVersion")
                         .IsConcurrencyToken()
@@ -487,7 +489,7 @@ namespace CourseMate.Persistent.Migrations
 
                     b.HasIndex("ExerciseId");
 
-                    b.ToTable("ExerciseSubmissions");
+                    b.ToTable("ExerciseSubmissions", (string)null);
                 });
 
             modelBuilder.Entity("CourseMate.Persistent.Entities.ExerciseTestCase", b =>
@@ -1609,13 +1611,11 @@ namespace CourseMate.Persistent.Migrations
 
             modelBuilder.Entity("CourseMate.Persistent.Entities.ExerciseSubmission", b =>
                 {
-                    b.HasOne("CourseMate.Persistent.Entities.Exercise", "Exercise")
+                    b.HasOne("CourseMate.Persistent.Entities.Exercise", null)
                         .WithMany()
                         .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Exercise");
                 });
 
             modelBuilder.Entity("CourseMate.Persistent.Entities.ExerciseTestCase", b =>
