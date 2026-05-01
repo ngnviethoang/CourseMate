@@ -21,6 +21,12 @@ export const exerciseService = {
   getById: (id: string) =>
     api.get<ExerciseDetailDto>(`/api/exercises/${id}`),
 
+  getStudentExerciseById: (id: string) =>
+    api.get<ExerciseDetailDto>(`/api/exercises/${id}/student`),
+
+  getSubmissions: (id: string) =>
+    api.get<any[]>(`/api/exercises/${id}/submissions`),
+
   create: (data: CreateExerciseRequest) =>
     api.post<string>('/api/exercises', data),
 
@@ -42,5 +48,9 @@ export const exerciseService = {
 
   // Default Codes
   upsertDefaultCode: (exerciseId: string, data: { language: string; starterCode: string }) =>
-    api.post(`/api/exercises/${exerciseId}/default-codes`, data)
+    api.post(`/api/exercises/${exerciseId}/default-codes`, data),
+
+  // Submissions
+  submitExercise: (exerciseId: string, data: any) =>
+    api.post<any>(`/api/exercises/${exerciseId}/submissions`, data)
 }

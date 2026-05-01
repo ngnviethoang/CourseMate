@@ -1,8 +1,10 @@
 using CourseMate.Application.Commands.Exercises;
+using CourseMate.Application.Commands.Submissions;
 using CourseMate.Application.Queries.Exercises;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
+using CourseMate.Contracts.DTOs.Exercises;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +34,15 @@ public class ExerciseController : ControllerBase
     public async Task<ActionResult> GetExerciseByIdAsync(Guid id, CancellationToken ct)
     {
         GetExerciseByIdResponse? result = await _mediator.Send(new GetExerciseByIdQuery { Id = id }, ct);
+        return Ok(result);
+    }
+
+    // TODO Need review
+    [HttpGet("{id:guid}/student")]
+    // [Authorize(Roles = Roles.Student)]
+    public async Task<ActionResult> GetStudentExerciseByIdAsync(Guid id, CancellationToken ct)
+    {
+        GetStudentExerciseByIdResponse? result = await _mediator.Send(new GetStudentExerciseByIdQuery { Id = id }, ct);
         return Ok(result);
     }
 
@@ -99,6 +110,32 @@ public class ExerciseController : ControllerBase
     {
         await _mediator.Send(new DeleteTestCaseCommand { Id = tcId }, ct);
         return NoContent();
+    }
+
+    #endregion
+
+    #region API Submissions
+
+    // TODO Need review
+    [HttpPost("{id:guid}/submissions")]
+    public async Task<ActionResult> SubmitExerciseAsync(Guid id, [FromBody] SubmitExerciseRequest request)
+    {
+        SubmitExerciseCommand command = new()
+        {
+            ExerciseId = id,
+            Payload = request
+        };
+        ResultIdDto result = await _mediator.Send(command);
+        return Ok(result);
+    }
+
+    // TODO Need review
+    [HttpGet("{id:guid}/submissions")]
+    // [Authorize(Roles = Roles.Student)]
+    public async Task<ActionResult> GetStudentExerciseSubmissionsAsync(Guid id)
+    {
+        IEnumerable<ExerciseSubmissionDto> result = await _mediator.Send(new GetStudentExerciseSubmissionsQuery { ExerciseId = id });
+        return Ok(result);
     }
 
     #endregion

@@ -16,7 +16,7 @@ function mapToExerciseData(dto: any): ExerciseData {
     category: dto.category,
     description: dto.description,
     // Parse examples from description or keep empty if not defined
-    examples: dto.examples || [], 
+    examples: dto.examples || [],
     constraints: dto.constraints || [],
     hints: dto.hints || [],
     defaultCode: dto.defaultCodes?.reduce((acc: any, curr: any) => {
@@ -27,7 +27,8 @@ function mapToExerciseData(dto: any): ExerciseData {
     testCases: dto.testCases?.map((tc: any) => ({
       input: tc.input,
       expectedOutput: tc.expectedOutput,
-      description: tc.description
+      description: tc.description,
+      isHidden: tc.isHidden
     })) || []
   }
 }
@@ -43,8 +44,8 @@ export default function ExerciseDetailPage({ params: paramsPromise }: { params: 
     const load = async () => {
       try {
         const [detail, listRes] = await Promise.all([
-          exerciseService.getById(params.id),
-          exerciseService.getList({ pageSize: 100 })
+          exerciseService.getStudentExerciseById(params.id),
+          exerciseService.getList({ pageSize: 10 })
         ])
         setExercise(mapToExerciseData(detail))
         setExercises(listRes.items)
@@ -91,9 +92,9 @@ export default function ExerciseDetailPage({ params: paramsPromise }: { params: 
 
   return (
     <div className="fixed inset-0 z-50">
-      <ExerciseEditorModal 
-        exercise={exercise} 
-        isModal={false} 
+      <ExerciseEditorModal
+        exercise={exercise}
+        isModal={false}
         onNext={handleNext}
         onPrev={handlePrev}
         hasNext={hasNext}

@@ -10,6 +10,16 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api-client'
+import { exerciseService } from '@/lib/exercise-service'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 interface ExerciseDto {
   id: string
@@ -47,6 +57,21 @@ export default function ExercisesManagementPage() {
   const [page, setPage] = useState(1)
   const pageSize = 10
 
+  // Create Modal State
+  const [openNewModal, setOpenNewModal] = useState(false)
+  const [creating, setCreating] = useState(false)
+  const [newForm, setNewForm] = useState({
+    title: '',
+    description: '',
+    difficulty: 'Easy',
+    category: '',
+    examples: [],
+    constraints: [],
+    hints: [],
+    testCases: [],
+    defaultCodes: []
+  })
+
   const fetchData = useCallback(async () => {
     setLoading(true)
     try {
@@ -66,6 +91,27 @@ export default function ExercisesManagementPage() {
   }, [page, filter, difficulty])
 
   useEffect(() => { fetchData() }, [fetchData])
+
+  const handleCreate = async () => {
+    if (!newForm.title.trim()) { toast.error('Tiêu đề không được để trống'); return }
+    setCreating(true)
+    try {
+      const payload = {
+        title: newForm.title,
+        description: newForm.description,
+        difficulty: newForm.difficulty,
+        category: newForm.category
+      }
+      const res = await exerciseService.create(payload) as any
+      toast.success('Đã tạo bài tập! Tiếp tục thêm chi tiết.')
+      setOpenNewModal(false)
+      router.push(`/management/exercises/${res.id || res}`)
+    } catch {
+      toast.error('Tạo bài tập thất bại')
+    } finally {
+      setCreating(false)
+    }
+  }
 
   const handleDelete = async (id: string, title: string) => {
     if (!confirm(`Xoá bài tập "${title}" không thể hoàn tác. Tiếp tục?`)) return
@@ -96,11 +142,89 @@ export default function ExercisesManagementPage() {
             Tạo và quản lý bài tập lập trình, test cases, code mẫu
           </p>
         </div>
-        <Button>
-          <Link href="/management/exercises/new">
-            <Plus className="h-4 w-4 mr-2" /> Thêm bài tập
-          </Link>
-        </Button>
+
+        <Dialog open={openNewModal} onOpenChange={setOpenNewModal}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" /> Thêm bài tập
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Tạo bài tập mới</DialogTitle>
+              <DialogDescription>
+                Điền các thông tin cơ bản trước khi thêm test cases và code mẫu.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Tiêu đề <span className="text-red-500">*</span></label>
+                <input
+                  value={newForm.title}
+                  onChange={e => setNewForm(f => ({ ...f, title: e.target.value }))}
+                  placeholder="Ví dụ: Tính tổng A + B"
+                  className="w-full border border-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 bg-background"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Độ khó</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(['Easy', 'Medium', 'Hard'] as const).map(d => (
+                    <button
+                      key={d}
+                      onClick={() => setNewForm(f => ({ ...f, difficulty: d }))}
+                      className={`py-2 rounded-lg text-xs font-semibold border transition-all ${newForm.difficulty === d
+                        ? d === 'Easy' ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/50'
+                          : d === 'Medium' ? 'border-amber-500 bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/50'
+                            : 'border-red-500 bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/50'
+                        : 'border-border text-muted-foreground hover:text-foreground'
+                        }`}
+                    >
+                      {d === 'Easy' ? 'Dễ' : d === 'Medium' ? 'Trung bình' : 'Khó'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Danh mục</label>
+                <input
+                  value={newForm.category}
+                  onChange={e => setNewForm(f => ({ ...f, category: e.target.value }))}
+                  list="category-list"
+                  placeholder="Array, String, Tree..."
+                  className="w-full border border-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 bg-background"
+                />
+                <datalist id="category-list">
+                  {['Array', 'String', 'Tree', 'Graph', 'DP', 'Math', 'Sorting', 'HashTable', 'Cơ bản'].map(c => (
+                    <option key={c} value={c} />
+                  ))}
+                </datalist>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Mô tả ngắn</label>
+                <textarea
+                  value={newForm.description}
+                  onChange={e => setNewForm(f => ({ ...f, description: e.target.value }))}
+                  rows={3}
+                  placeholder="Mô tả tóm tắt về bài tập (có thể chỉnh sửa chi tiết sau)"
+                  className="w-full border border-input rounded-lg px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 bg-background resize-none"
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setOpenNewModal(false)}>Huỷ</Button>
+              <Button onClick={handleCreate} disabled={creating} className="gap-2 min-w-[100px]">
+                {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                {creating ? 'Đang tạo...' : 'Tạo mới'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Filters */}
@@ -154,7 +278,7 @@ export default function ExercisesManagementPage() {
             ) : data?.items.length === 0 ? (
               <tr>
                 <td colSpan={7} className="py-16 text-center text-muted-foreground text-sm">
-                  Không có bài tập nào. <Link href="/management/exercises/new" className="text-primary hover:underline">Tạo bài đầu tiên</Link>
+                  Không có bài tập nào. <button onClick={() => setOpenNewModal(true)} className="text-primary hover:underline cursor-pointer">Tạo bài đầu tiên</button>
                 </td>
               </tr>
             ) : data?.items.map((ex, idx) => (
@@ -191,6 +315,7 @@ export default function ExercisesManagementPage() {
                       size="icon"
                       variant="ghost"
                       className="h-7 w-7"
+                      asChild
                     >
                       <Link href={`/management/exercises/${ex.id}`}>
                         <Pencil className="h-3.5 w-3.5" />
