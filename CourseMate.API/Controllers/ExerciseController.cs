@@ -37,6 +37,7 @@ public class ExerciseController : ControllerBase
         return Ok(result);
     }
 
+    // TODO Need review
     [HttpGet("{id:guid}/student")]
     // [Authorize(Roles = Roles.Student)]
     public async Task<ActionResult> GetStudentExerciseByIdAsync(Guid id, CancellationToken ct)
@@ -115,6 +116,7 @@ public class ExerciseController : ControllerBase
 
     #region API Submissions
 
+    // TODO Need review
     [HttpPost("{id:guid}/submissions")]
     public async Task<ActionResult> SubmitExerciseAsync(Guid id, [FromBody] SubmitExerciseRequest request)
     {
@@ -127,6 +129,7 @@ public class ExerciseController : ControllerBase
         return Ok(result);
     }
 
+    // TODO Need review
     [HttpGet("{id:guid}/submissions")]
     // [Authorize(Roles = Roles.Student)]
     public async Task<ActionResult> GetStudentExerciseSubmissionsAsync(Guid id)
