@@ -117,24 +117,22 @@ try
     builder.Services.AddProblemDetails().AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddCors(options =>
     {
-        string[] allowedHosts = builder.Configuration["AllowedHosts"]!.ToLower().Trim().Split(';', StringSplitOptions.RemoveEmptyEntries);
+        // string[] allowedHosts = builder.Configuration["AllowedHosts"]!.ToLower().Trim().Split(';', StringSplitOptions.RemoveEmptyEntries);
         options.AddPolicy("CorsPolicy", policy =>
         {
-            policy.WithOrigins(allowedHosts)
-                .SetIsOriginAllowedToAllowWildcardSubdomains()
+            policy.AllowAnyHeader()
                 .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
+                .AllowAnyMethod();
         });
     });
 
     WebApplication app = builder.Build();
     // await app.Services.SeedAsync();
+    app.UseCors("CorsPolicy");
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseExceptionHandler();
     app.UseHttpsRedirection();
-    app.UseCors("CorsPolicy");
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseMiddleware<HttpLoggingMiddleware>();
