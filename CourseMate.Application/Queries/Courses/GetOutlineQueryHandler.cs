@@ -15,7 +15,6 @@ namespace CourseMate.Application.Queries.Courses;
 public class GetOutlineQuery : IRequest<OutlineDto?>
 {
     public Guid LessonId { get; set; }
-    public Guid LessonMaterialId { get; set; }
 }
 
 internal sealed class GetOutlineQueryHandler : AbstractQueryHandler<GetOutlineQuery, OutlineDto?>
@@ -30,22 +29,26 @@ internal sealed class GetOutlineQueryHandler : AbstractQueryHandler<GetOutlineQu
 
     public override async Task<OutlineDto?> Handle(GetOutlineQuery request, CancellationToken ct)
     {
-        bool isAuthor = await (
-                from lesson in DbContext.Lessons
-                join course in DbContext.Courses
-                    on lesson.CourseId equals course.Id
-                where lesson.Id == request.LessonId
-                select course.InstructorId
-            )
-            .WhereIf(IsInRole(Roles.Instructor), x => x == CurrentUserId)
-            .AnyAsync(ct);
-
-        if (!isAuthor)
+        if (IsInRole(Roles.Instructor))
         {
-            throw new UnauthorizedAccessException();
+            bool isAuthor = await (
+                    from lesson in DbContext.Lessons
+                    join course in DbContext.Courses
+                        on lesson.CourseId equals course.Id
+                    where lesson.Id == request.LessonId
+                    where course.InstructorId == CurrentUserId
+                    select course.InstructorId
+                )
+                .AnyAsync(ct);
+            if (!isAuthor)
+            {
+                throw new UnauthorizedAccessException();
+            }
         }
-
-        LessonMaterial? lessonMaterial = await DbContext.LessonMaterials.FirstOrDefaultAsync(i => i.Id == request.LessonMaterialId, ct);
+       
+        LessonMaterial? lessonMaterial = await DbContext.LessonMaterials
+            .OrderByDescending(l => l.CreationTime)
+            .FirstOrDefaultAsync(ct);
         if (lessonMaterial == null)
         {
             return new OutlineDto();
@@ -69,7 +72,6 @@ internal sealed class GetOutlineQueryHandler : AbstractQueryHandler<GetOutlineQu
         return new OutlineDto
         {
             LessonId = request.LessonId,
-            LessonMaterialId = request.LessonMaterialId,
             LectureOutline = parsedOutline ?? new LectureOutline()
         };
     }
