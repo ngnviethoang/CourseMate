@@ -27,6 +27,7 @@ public class OllamaService : IAiService
     {
         try
         {
+            _logger.LogInformation("Calling Ollama API");
             EmbedResponse response = await _ollamaApiClient.EmbedAsync(new EmbedRequest
             {
                 Model = OllamaModels.NomicEmbedText,
@@ -35,6 +36,7 @@ public class OllamaService : IAiService
             }, ct);
 
             float[]? vector = response.Embeddings.FirstOrDefault();
+            _logger.LogInformation("Ollama API completed");
             return new ReadOnlyMemory<float>(vector);
         }
         catch (OllamaException ex)
@@ -50,13 +52,14 @@ public class OllamaService : IAiService
         try
         {
             IChatClient chatClient = _ollamaApiClient;
-
+            _logger.LogInformation("Calling Ollama API");
             ChatResponse response = await chatClient.GetResponseAsync(prompt, new ChatOptions
             {
                 ModelId = OllamaModels.Llama3,
                 Temperature = 0.0f,
                 MaxOutputTokens = 1024
             }, ct);
+            _logger.LogInformation("Ollama API completed");
             return response.Text;
         }
         catch (OllamaException ex)
@@ -66,23 +69,21 @@ public class OllamaService : IAiService
         }
     }
 
-    public async Task<string> GenerateContentAsync(
-        string input,
-        CancellationToken ct)
+    public async Task<string> GenerateContentAsync(string input, CancellationToken ct)
     {
         string prompt = PromptBuilder.BuildLectureOutlinePrompt(input);
 
         try
         {
             IChatClient chatClient = _ollamaApiClient;
-
+            _logger.LogInformation("Calling Ollama API");
             ChatResponse response = await chatClient.GetResponseAsync(prompt, new ChatOptions
             {
                 ModelId = OllamaModels.Llama3,
                 Temperature = 0.2f,
                 MaxOutputTokens = 4096
             }, ct);
-
+            _logger.LogInformation("Ollama API completed");
             return response.Text;
         }
 

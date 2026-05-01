@@ -25,12 +25,13 @@ public class GeminiService : IAiService
     {
         try
         {
+            _logger.LogInformation("Calling Gemini API");
             EmbeddingGenerationOptions options = new()
             {
                 ModelId = GeminiModels.Embedding001,
                 Dimensions = 768
             };
-
+            _logger.LogInformation("Gemini API completed");
             return await _client.Models.AsIEmbeddingGenerator().GenerateVectorAsync(input, options, ct);
         }
         catch (GoogleApiException ex)
@@ -45,6 +46,7 @@ public class GeminiService : IAiService
         string prompt = PromptBuilder.BuildResearchPrompt(input);
         try
         {
+            _logger.LogInformation("Calling Gemini API");
             // Strict search
             GenerateContentConfig config = new()
             {
@@ -59,7 +61,8 @@ public class GeminiService : IAiService
                 },
                 Tools = [new Tool { GoogleSearch = new GoogleSearch() }]
             };
-            GenerateContentResponse result = await _client.Models.GenerateContentAsync(GeminiModels.V3FlashPreview, prompt, config, ct);
+            GenerateContentResponse result = await _client.Models.GenerateContentAsync(GeminiModels.V25FlashLite, prompt, config, ct);
+            _logger.LogInformation("Gemini API completed");
             return result.Text ?? string.Empty;
         }
         catch (GoogleApiException ex)
@@ -74,6 +77,7 @@ public class GeminiService : IAiService
         string prompt = PromptBuilder.BuildLectureOutlinePrompt(input);
         try
         {
+            _logger.LogInformation("Calling Gemini API");
             GenerateContentConfig config = new()
             {
                 Temperature = 0.2,
@@ -87,7 +91,8 @@ public class GeminiService : IAiService
                 }
             };
 
-            GenerateContentResponse result = await _client.Models.GenerateContentAsync(GeminiModels.V3FlashPreview, prompt, config, ct);
+            GenerateContentResponse result = await _client.Models.GenerateContentAsync(GeminiModels.V25FlashLite, prompt, config, ct);
+            _logger.LogInformation("Gemini API completed");
             return result.Text ?? string.Empty;
         }
         catch (GoogleApiException ex)
