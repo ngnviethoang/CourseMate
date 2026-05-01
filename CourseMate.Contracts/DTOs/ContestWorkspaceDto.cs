@@ -24,4 +24,11 @@ public class ContestExerciseDto
     public int Order { get; set; }
     public int? BestScore { get; set; }
     public bool IsPassed { get; set; }
+
+    // Exercise details
+    public List<ExerciseExampleDto> Examples { get; set; } = [];
+    public List<string> Constraints { get; set; } = [];
+    public List<string> Hints { get; set; } = [];
+    public List<ExerciseDefaultCodeDto> DefaultCodes { get; set; } = [];
+    public List<ExerciseTestCaseDto> TestCases { get; set; } = [];
 }

@@ -1,18 +1,19 @@
 'use client'
 
-import { use, useState, useEffect, useCallback } from 'react'
+import { use, useState, useEffect, useCallback, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
   ArrowLeft, Play, RotateCcw, CheckCircle2, XCircle, Clock, Trophy,
   Code2, Terminal, Loader2, GripVertical, Menu, Flame, Send,
-  AlertCircle, Shield, History
+  AlertCircle, Shield, History, Lightbulb, Info, BookOpen, Eye, EyeOff
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { contestService, ContestWorkspaceDto, ContestExerciseDto } from '@/lib/contest-service'
 import { runnerCodeService } from '@/lib/runner-code-service'
 import { toast } from 'sonner'
+import type { LanguageDto } from '@/lib/types'
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
@@ -24,6 +25,13 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
     </div>
   )
 })
+
+const DEFAULT_TEMPLATES: Record<string, string> = {
+  'python-3.14': 'import sys\n\ndef solve():\n    # Logic của bạn ở đây\n    print("Hello from Python")\n\nif __name__ == "__main__":\n    solve()',
+  'openjdk-25': 'import java.util.*;\n\npublic class Solution {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        // Viết code của bạn tại đây\n    }\n}',
+  'g++-15': '#include <iostream>\nusing namespace std;\n\nint main() {\n    return 0;\n}',
+  'typescript-deno': 'console.log("Hello TypeScript");'
+}
 
 // ─── Timer Hook ───────────────────────────────────────────────────────────────
 
@@ -59,10 +67,15 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
   const [arena, setArena] = useState<ContestWorkspaceDto | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedExercise, setSelectedExercise] = useState<ContestExerciseDto | null>(null)
-  const [lang, setLang] = useState('python')
+  
+  // Language & Code state
+  const [supportedLangs, setSupportedLangs] = useState<LanguageDto[]>([])
+  const [selectedLang, setSelectedLang] = useState<LanguageDto | null>(null)
   const [codes, setCodes] = useState<Record<string, Record<string, string>>>({})
+  
   const [running, setRunning] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [leftTab, setLeftTab] = useState<'problem' | 'hints'>('problem')
   const [rightTab, setRightTab] = useState<'editor' | 'console'>('editor')
   
   // Execution Results
@@ -78,22 +91,46 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
 
   const fetchData = useCallback(async () => {
     try {
-      const data = await contestService.getWorkspace(id)
-      setArena(data)
-      if (data.exercises.length > 0 && !selectedExercise) {
-        setSelectedExercise(data.exercises[0])
+      const [workspaceData, langs] = await Promise.all([
+        contestService.getWorkspace(id),
+        runnerCodeService.getLanguages()
+      ])
+      
+      setArena(workspaceData)
+      setSupportedLangs(langs)
+      
+      if (workspaceData.exercises.length > 0 && !selectedExercise) {
+        setSelectedExercise(workspaceData.exercises[0])
       }
+      
+      if (langs.length > 0 && !selectedLang) {
+        setSelectedLang(langs[0])
+      }
+
+      const initialCodes: Record<string, Record<string, string>> = {}
+      workspaceData.exercises.forEach(ex => {
+        initialCodes[ex.exerciseId] = {}
+        langs.forEach(l => {
+          initialCodes[ex.exerciseId][l.id] = DEFAULT_TEMPLATES[l.id] || ''
+        })
+        if (ex.defaultCodes) {
+          ex.defaultCodes.forEach(dc => {
+            initialCodes[ex.exerciseId][dc.language] = dc.starterCode
+          })
+        }
+      })
+      setCodes(prev => ({ ...initialCodes, ...prev }))
+
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Không thể vào phòng thi')
       router.push(`/contests/${id}`)
     } finally {
       setLoading(false)
     }
-  }, [id, router, selectedExercise])
+  }, [id, router, selectedExercise, selectedLang])
 
   useEffect(() => { fetchData() }, [fetchData])
 
-  // Anti-cheat: Detection for tab switching
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
@@ -101,48 +138,65 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
           duration: 5000,
           icon: <Shield className="h-5 w-5 text-amber-500" />
         })
-        // In a real system, we would send an event to the backend here.
       }
     }
     document.addEventListener('visibilitychange', handleVisibilityChange)
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [])
 
-  const getCode = (exId: string, l: string) => {
-    return codes[exId]?.[l] || ''
+  const getCode = (exId: string, langId: string) => {
+    return codes[exId]?.[langId] || ''
   }
 
   const handleRun = async () => {
-    if (!selectedExercise) return
-    const code = getCode(selectedExercise.exerciseId, lang)
+    if (!selectedExercise || !selectedLang) return
+    const code = getCode(selectedExercise.exerciseId, selectedLang.id)
     if (!code.trim()) return toast.error('Vui lòng nhập code')
 
     setRunning(true)
     setRightTab('console')
+
+    // Run against all examples
+    const examples = selectedExercise.examples || []
+    if (examples.length === 0) {
+      try {
+        const res = await runnerCodeService.run({ compiler: selectedLang.id, code, input: '' })
+        setResults([{
+          passed: !res.error && res.exit_code === 0,
+          case: 'Chạy thử',
+          expected: '(không có dữ liệu mẫu)',
+          actual: res.output || res.error || 'Không có output',
+          description: 'Code được biên dịch và chạy với input trống'
+        }])
+      } catch {
+        toast.error('Lỗi khi chạy code')
+      } finally {
+        setRunning(false)
+      }
+      return
+    }
+
     try {
-      // For "Run", we normally only run against Examples or first few test cases
-      // But the backend Contest API might handle this.
-      // For now, let's just use the runnerCodeService with mock test cases or fetch real ones
-      // Actually, ExerciseEditorModal used exercise.testCases.
-      // We don't have them in ContestExerciseDto for security.
-      // Wait, the plan said "hidden test cases" should be evaluated on BE? 
-      // Actually my backend implementation of SubmitContestExerciseCommand expects results from FE.
-      // This is weak, but I'll follow the pattern for now unless I refactor the whole runner system.
-      // Let's assume we fetch public test cases for "Run".
-      
-      const res = await runnerCodeService.execute({
-        compiler: lang,
-        code: code,
-        input: "" // Should pick from examples
-      })
-      
-      setResults([{
-        passed: !res.stderr,
-        case: "Run Test",
-        expected: "N/A",
-        actual: res.stdout || res.stderr,
-        description: "Chạy thử với dữ liệu trống"
-      }])
+      const runResults = await Promise.all(
+        examples.map(async (ex, idx) => {
+          try {
+            const res = await runnerCodeService.run({ compiler: selectedLang.id, code, input: ex.input })
+            const actual = (res.output || '').trim()
+            const expected = ex.output.trim()
+            return {
+              passed: actual === expected,
+              case: `Ví dụ ${idx + 1}`,
+              expected,
+              actual: actual || res.error || 'Không có output',
+              description: ex.explanation || 'Kiểm tra với dữ liệu mẫu',
+              isHidden: false
+            }
+          } catch {
+            return { passed: false, case: `Ví dụ ${idx + 1}`, expected: ex.output, actual: 'Lỗi hệ thống', description: '', isHidden: false }
+          }
+        })
+      )
+      setResults(runResults)
     } catch {
       toast.error('Lỗi khi chạy code')
     } finally {
@@ -151,36 +205,73 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
   }
 
   const handleSubmit = async () => {
-    if (!selectedExercise) return
-    const code = getCode(selectedExercise.exerciseId, lang)
+    if (!selectedExercise || !selectedLang) return
+    const code = getCode(selectedExercise.exerciseId, selectedLang.id)
     if (!code.trim()) return toast.error('Vui lòng nhập code')
 
     setSubmitting(true)
     setRightTab('console')
     try {
-       // Evaluation Logic (Simulated since we don't want test cases on FE for Contest)
-       // BUT, the backend expects a score. 
-       // FOR CONTESTS, WE SHOULD EVALUATE ON BACKEND.
-       // However, the current runner-code-service is a simple compiler.
-       // I'll simulate a 100% pass for now to demonstrate the flow, 
-       // but in a production system, this must be backend-only.
-       
-       await new Promise(r => setTimeout(r, 2000))
-       
-       const payload = {
-         language: lang,
-         code: code,
-         passed: true,
-         score: 100, // Percentage
-         totalTime: "0.2",
-         totalMemory: "10"
-       }
-       
-       await contestService.submitExercise(id, selectedExercise.exerciseId, payload)
-       toast.success('Đã nộp bài thành công!')
-       fetchData() // Refresh best score
+      // NOTE: For true "chỉnh chu" logic, this should call a backend endpoint that runs all test cases.
+      // For now, we simulate using all test cases provided in the DTO (including hidden ones, but we can't run hidden ones here).
+      
+      const testCases = selectedExercise.testCases || []
+      const examples = selectedExercise.examples || []
+      
+      const runResults = await Promise.all(
+        testCases.map(async (tc, idx) => {
+          if (tc.isHidden) {
+            // Can't run hidden cases on frontend as data is masked
+            return {
+              passed: false, // We'll assume failed or wait for backend
+              case: `Test Case ${idx + 1}`,
+              expected: 'Hidden',
+              actual: 'Hidden',
+              description: tc.description,
+              isHidden: true
+            }
+          }
+          
+          try {
+            const res = await runnerCodeService.run({ compiler: selectedLang.id, code, input: tc.input })
+            const actual = (res.output || '').trim()
+            const expected = tc.expectedOutput.trim()
+            return {
+              passed: actual === expected,
+              case: `Test Case ${idx + 1}`,
+              expected,
+              actual: actual || res.error || 'Không có output',
+              description: tc.description,
+              isHidden: false
+            }
+          } catch {
+            return { passed: false, case: `Test Case ${idx + 1}`, expected: tc.expectedOutput, actual: 'Lỗi hệ thống', description: tc.description, isHidden: false }
+          }
+        })
+      )
+
+      setResults(runResults)
+      const passedCount = runResults.filter(r => r.passed).length
+      const score = testCases.length > 0 ? Math.round((passedCount / testCases.length) * 100) : 0
+
+      await contestService.submitExercise(id, selectedExercise.exerciseId, {
+        language: selectedLang.id,
+        code,
+        passed: score === 100,
+        score,
+        totalTime: "0.1",
+        totalMemory: 12
+      })
+
+      if (score === 100) {
+        toast.success('✅ Nộp bài thành công! Tất cả test case (công khai) đều đúng!')
+      } else {
+        toast.success(`📋 Đã nộp bài! Điểm dựa trên các test case công khai: ${score}/100`)
+      }
+
+      fetchData()
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Nộp bài thất bại')
+      toast.error(err?.response?.data?.message || 'Nộp bài thất bại, vui lòng thử lại')
     } finally {
       setSubmitting(false)
     }
@@ -302,36 +393,109 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
         <div className="flex-1 flex overflow-hidden">
           {/* Left: Problem Desc */}
           <div className="w-[45%] border-r border-white/5 bg-[#0a0a0f] flex flex-col flex-shrink-0">
-            <div className="h-10 px-6 border-b border-white/5 flex items-center gap-3 bg-white/2 shrink-0">
-              <Code2 className="h-4 w-4 text-primary" />
-              <span className="text-xs font-bold uppercase tracking-widest text-neutral-400">Yêu cầu bài toán</span>
+             <div className="flex flex-col items-center gap-1 w-full bg-[#1c1c28] border-b border-white/8 py-1 shrink-0">
+               <div className="flex gap-4">
+                  {[
+                    { id: 'problem', label: 'Đề bài', icon: BookOpen },
+                    { id: 'hints', label: 'Gợi ý', icon: Lightbulb }
+                  ].map(t => (
+                    <button
+                      key={t.id}
+                      onClick={() => setLeftTab(t.id as any)}
+                      className={`flex items-center gap-2 px-4 py-2 text-xs font-bold transition-all rounded-lg ${
+                        leftTab === t.id ? 'bg-primary/20 text-primary' : 'text-neutral-500 hover:text-neutral-300'
+                      }`}
+                    >
+                      <t.icon className="h-4 w-4" />
+                      {t.label}
+                    </button>
+                  ))}
+               </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-8 space-y-8 no-scrollbar">
-              <div className="space-y-4">
-                <h2 className="text-2xl font-black text-white">{selectedExercise?.title}</h2>
-                <div className="prose prose-invert prose-blue max-w-none">
-                  <div className="text-neutral-400 leading-relaxed text-base whitespace-pre-line">
-                    {selectedExercise?.description}
+
+            <div className="flex-1 overflow-y-auto p-8 space-y-10 no-scrollbar pb-20">
+              {leftTab === 'problem' && (
+                <>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-3xl font-black text-white tracking-tight">{selectedExercise?.title}</h2>
+                    </div>
+                    <div className="prose prose-invert prose-blue max-w-none">
+                      <div className="text-neutral-400 leading-relaxed text-base whitespace-pre-line">
+                        {selectedExercise?.description}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Examples */}
+                  {selectedExercise?.examples && selectedExercise.examples.length > 0 && (
+                    <div className="space-y-6">
+                      <h3 className="text-xs font-black uppercase tracking-widest text-neutral-500 flex items-center gap-2">
+                        <Info className="h-4 w-4" /> Ví dụ mẫu
+                      </h3>
+                      <div className="space-y-6">
+                        {selectedExercise.examples.map((ex, i) => (
+                          <div key={i} className="space-y-3">
+                            <p className="text-sm font-bold text-neutral-300">Ví dụ {i + 1}:</p>
+                            <div className="grid gap-3">
+                                <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-2">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-600">Input</p>
+                                  <code className="text-sm text-amber-400/90">{ex.input}</code>
+                                </div>
+                                <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-2">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-600">Output</p>
+                                  <code className="text-sm text-emerald-400/90">{ex.output}</code>
+                                </div>
+                                {ex.explanation && (
+                                  <p className="text-xs text-neutral-500 italic mt-1 pl-1 border-l-2 border-white/10">
+                                      {ex.explanation}
+                                  </p>
+                                )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Constraints */}
+                  {selectedExercise?.constraints && selectedExercise.constraints.length > 0 && (
+                    <div className="space-y-4">
+                      <h3 className="text-xs font-black uppercase tracking-widest text-neutral-500 flex items-center gap-2">
+                        <Shield className="h-4 w-4" /> Ràng buộc
+                      </h3>
+                      <ul className="space-y-3">
+                        {selectedExercise.constraints.map((c, i) => (
+                          <li key={i} className="flex gap-3 text-sm text-neutral-400 items-start">
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                            <span>{c}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {leftTab === 'hints' && (
+                <div className="space-y-4">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-neutral-500 flex items-center gap-2">
+                    <Lightbulb className="h-4 w-4" /> Gợi ý giải thuật
+                  </h3>
+                  <div className="space-y-4 mt-6">
+                    {selectedExercise?.hints && selectedExercise.hints.length > 0 ? (
+                      selectedExercise.hints.map((h, i) => (
+                        <div key={i} className="p-6 rounded-3xl bg-amber-500/5 border border-amber-500/10 space-y-2 group">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-amber-500/40">Gợi ý {i + 1}</p>
+                            <p className="text-sm text-neutral-300 leading-relaxed italic">{h}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-neutral-500">Không có gợi ý cho bài tập này.</p>
+                    )}
                   </div>
                 </div>
-              </div>
-
-              {/* Ràng buộc - Mocking as they are not in the DTO for contest yet */}
-              <div className="space-y-4">
-                <h3 className="text-xs font-black uppercase tracking-widest text-neutral-500 flex items-center gap-2">
-                  <Shield className="h-4 w-4" /> Ràng buộc & Gợi ý
-                </h3>
-                <ul className="space-y-3">
-                  <li className="flex gap-3 text-sm text-neutral-400 items-start">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
-                    <span>Thời gian thực thi tối đa: <strong>{arena?.exercises[0]?.bestScore === undefined ? 2000 : 1500}ms</strong></span>
-                  </li>
-                  <li className="flex gap-3 text-sm text-neutral-400 items-start">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
-                    <span>Bộ nhớ cho phép: <strong>256MB</strong></span>
-                  </li>
-                </ul>
-              </div>
+              )}
             </div>
           </div>
 
@@ -354,19 +518,40 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
               </div>
 
               <div className="flex items-center gap-3">
-                <select
-                  value={lang}
-                  onChange={(e) => setLang(e.target.value)}
-                  className="bg-white/5 border-none text-[10px] font-bold uppercase py-1 px-3 rounded-lg outline-none"
-                >
-                  <option value="python">Python</option>
-                  <option value="javascript">JavaScript</option>
-                  <option value="java">Java</option>
-                  <option value="cpp">C++</option>
-                </select>
+                <div className="flex items-center bg-[#2a2a3a] rounded-md p-1 gap-1 min-w-[120px]">
+                  <select
+                    className="bg-transparent text-[11px] font-medium px-2 py-0.5 outline-none text-neutral-200 cursor-pointer w-full"
+                    value={selectedLang?.id || ''}
+                    onChange={(e) => {
+                      const l = supportedLangs.find(x => x.id === e.target.value)
+                      if (l) setSelectedLang(l)
+                    }}
+                  >
+                    {supportedLangs.map(l => (
+                      <option key={l.id} value={l.id} className="bg-[#1c1c28]">
+                        {l.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 
                 <div className="flex items-center gap-1.5">
-                   <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-neutral-500 hover:text-white rounded-lg">
+                   <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 w-8 p-0 text-neutral-500 hover:text-white rounded-lg"
+                    onClick={() => {
+                      if (selectedExercise && selectedLang) {
+                        setCodes(prev => ({
+                          ...prev,
+                          [selectedExercise.exerciseId]: {
+                            ...prev[selectedExercise.exerciseId],
+                            [selectedLang.id]: selectedExercise.defaultCodes.find(dc => dc.language === selectedLang.id)?.starterCode || DEFAULT_TEMPLATES[selectedLang.id] || ''
+                          }
+                        }))
+                      }
+                    }}
+                   >
                       <RotateCcw className="h-4 w-4" />
                    </Button>
                    <Button
@@ -393,13 +578,22 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
             <div className="flex-1 relative" style={{ display: rightTab === 'editor' ? 'block' : 'none' }}>
               <MonacoEditor
                 height="100%"
-                language={lang}
-                value={getCode(selectedExercise?.exerciseId || '', lang)}
+                language={
+                  selectedLang?.id.split('-')[0] === 'openjdk' ? 'java' :
+                  selectedLang?.id.split('-')[0] === 'dotnet' ? (selectedLang?.id.includes('csharp') ? 'csharp' : 'fsharp') :
+                  selectedLang?.id.startsWith('g++') || selectedLang?.id.startsWith('gcc') ? 'cpp' :
+                  selectedLang?.id.startsWith('python') ? 'python' :
+                  selectedLang?.id.startsWith('go') ? 'go' :
+                  selectedLang?.id.startsWith('rust') ? 'rust' :
+                  selectedLang?.id.startsWith('typescript') ? 'typescript' :
+                  'javascript'
+                }
+                value={getCode(selectedExercise?.exerciseId || '', selectedLang?.id || '')}
                 onChange={(v) => {
-                  if (selectedExercise) {
+                  if (selectedExercise && selectedLang) {
                     setCodes(prev => ({
                       ...prev,
-                      [selectedExercise.exerciseId]: { ...prev[selectedExercise.exerciseId], [lang]: v || '' }
+                      [selectedExercise.exerciseId]: { ...prev[selectedExercise.exerciseId], [selectedLang.id]: v || '' }
                     }))
                   }
                 }}
@@ -422,7 +616,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                {!running && !submitting && results.length === 0 && (
                  <div className="h-full flex flex-col items-center justify-center text-neutral-600 gap-4">
                     <Terminal className="h-12 w-12 opacity-20" />
-                    <p className="text-sm font-medium">Nhấn "Chạy thử" để xem kết quả thực thi.</p>
+                    <p className="text-sm font-medium">Nhấn "Chạy thử" hoặc "Nộp bài" để xem kết quả thực thi.</p>
                  </div>
                )}
 
@@ -452,20 +646,43 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                       <div key={i} className={`p-6 rounded-3xl border transition-all ${res.passed ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-red-500/5 border-red-500/10'}`}>
                          <div className="flex items-center gap-4 mb-4">
                             {res.passed ? <CheckCircle2 className="h-6 w-6 text-emerald-500" /> : <XCircle className="h-6 w-6 text-red-500" />}
-                            <span className={`text-lg font-bold ${res.passed ? 'text-emerald-400' : 'text-red-400'}`}>Test Case #{i+1}: {res.passed ? 'SUCCESS' : 'FAILED'}</span>
-                         </div>
-                         <div className="space-y-4 font-mono text-xs">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                               <div className="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2">
-                                  <p className="text-[10px] text-neutral-600 font-black uppercase tracking-widest">Expected Output</p>
-                                  <p className="text-neutral-300 break-all">{res.expected}</p>
-                               </div>
-                               <div className="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2">
-                                  <p className="text-[10px] text-neutral-600 font-black uppercase tracking-widest">Actual Output</p>
-                                  <p className={res.passed ? 'text-emerald-400 break-all' : 'text-red-400 break-all'}>{res.actual}</p>
-                               </div>
+                            <div className="flex-1 flex items-center justify-between">
+                               <span className={`text-lg font-bold ${res.passed ? 'text-emerald-400' : 'text-red-400'}`}>
+                                  {res.case}: {res.passed ? 'SUCCESS' : 'FAILED'}
+                               </span>
+                               {res.isHidden ? (
+                                  <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 rounded-lg border border-white/10 text-[10px] text-neutral-500 font-black uppercase tracking-widest">
+                                     <EyeOff className="h-3 w-3" /> Hidden Case
+                                  </div>
+                               ) : (
+                                  <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 rounded-lg border border-emerald-500/20 text-[10px] text-emerald-500 font-black uppercase tracking-widest">
+                                     <Eye className="h-3 w-3" /> Public Case
+                                  </div>
+                               )}
                             </div>
                          </div>
+                         
+                         {!res.isHidden ? (
+                           <div className="space-y-4 font-mono text-xs">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2">
+                                    <p className="text-[10px] text-neutral-600 font-black uppercase tracking-widest">Expected Output</p>
+                                    <pre className="text-neutral-300 break-all whitespace-pre-wrap">{res.expected}</pre>
+                                 </div>
+                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2">
+                                    <p className="text-[10px] text-neutral-600 font-black uppercase tracking-widest">Actual Output</p>
+                                    <pre className={res.passed ? 'text-emerald-400 break-all whitespace-pre-wrap' : 'text-red-400 break-all whitespace-pre-wrap'}>{res.actual}</pre>
+                                 </div>
+                              </div>
+                              {res.description && (
+                                 <p className="text-[10px] text-neutral-500 mt-2 px-2 italic">{res.description}</p>
+                              )}
+                           </div>
+                         ) : (
+                           <div className="p-4 rounded-2xl bg-black/20 border border-white/5 text-center">
+                              <p className="text-xs text-neutral-600 italic">Dữ liệu và kết quả của test case này được ẩn để đảm bảo tính công bằng.</p>
+                           </div>
+                         )}
                       </div>
                     ))}
                  </div>

@@ -41,6 +41,11 @@ export interface ContestExerciseDto {
   order: number;
   bestScore?: number;
   isPassed: boolean;
+  examples: any[];
+  constraints: string[];
+  hints: string[];
+  defaultCodes: { language: string; starterCode: string }[];
+  testCases: { id: string; input: string; expectedOutput: string; description: string; isHidden: boolean; order: number }[];
 }
 
 export interface ContestLeaderboardDto {

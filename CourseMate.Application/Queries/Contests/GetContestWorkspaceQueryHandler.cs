@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Contests;
 
-public class GetContestWorkspaceQuery : IRequest<ContestWorkspaceDto>
+public class GetContestWorkspaceQuery : IRequest<ContestWorkspaceDto?>
 {
     public Guid ContestId { get; set; }
 }
@@ -51,9 +51,6 @@ internal sealed class GetContestWorkspaceQueryHandler : AbstractQueryHandler<Get
         {
              if (contest.StartTime.HasValue && contest.StartTime.Value > DateTimeOffset.UtcNow)
              {
-                 // They can enter waitroom but not workspace.
-                 // Actually this query is FOR the workspace.
-                 // return null or throw? Let's throw.
                  throw new InvalidOperationException("Contest hasn't started yet.");
              }
         }
@@ -75,8 +72,45 @@ internal sealed class GetContestWorkspaceQueryHandler : AbstractQueryHandler<Get
                     .Where(s => s.ContestId == request.ContestId && s.ExerciseId == e.Id && s.StudentId == CurrentUserId)
                     .Max(s => (int?)s.Score),
                 IsPassed = DbContext.ContestSubmissions
-                    .Any(s => s.ContestId == request.ContestId && s.ExerciseId == e.Id && s.StudentId == CurrentUserId && s.Score == 100)
+                    .Any(s => s.ContestId == request.ContestId && s.ExerciseId == e.Id && s.StudentId == CurrentUserId && s.Score == 100),
+                Constraints = e.Constraints.ToList(),
+                Hints = e.Hints.ToList()
             }).ToListAsync(ct);
+
+        foreach (var ex in exercises)
+        {
+            ex.Examples = await DbContext.ExerciseExamples
+                .Where(x => x.ExerciseId == ex.ExerciseId)
+                .Select(x => new ExerciseExampleDto
+                {
+                    Id = x.Id,
+                    Input = x.Input,
+                    Output = x.Output,
+                    Explanation = x.Explanation
+                }).ToListAsync(ct);
+
+            ex.DefaultCodes = await DbContext.ExerciseDefaultCodes
+                .Where(x => x.ExerciseId == ex.ExerciseId)
+                .Select(x => new ExerciseDefaultCodeDto
+                {
+                    Id = x.Id,
+                    Language = x.Language,
+                    StarterCode = x.StarterCode
+                }).ToListAsync(ct);
+
+            ex.TestCases = await DbContext.ExerciseTestCases
+                .Where(x => x.ExerciseId == ex.ExerciseId)
+                .OrderBy(x => x.Order)
+                .Select(x => new ExerciseTestCaseDto
+                {
+                    Id = x.Id,
+                    Input = x.IsHidden ? "Hidden" : x.Input,
+                    ExpectedOutput = x.IsHidden ? "Hidden" : x.ExpectedOutput,
+                    Description = x.Description,
+                    IsHidden = x.IsHidden,
+                    Order = x.Order
+                }).ToListAsync(ct);
+        }
 
         contest.Exercises = exercises;
 

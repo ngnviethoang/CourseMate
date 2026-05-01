@@ -63,7 +63,9 @@ internal sealed class GetContestByIdQueryHandler : AbstractQueryHandler<GetConte
                     Description = e.Description,
                     ScoreWeight = ce.ScoreWeight,
                     Order = ce.Order,
-                    IsPassed = DbContext.ContestSubmissions.Any(s => s.ContestId == ce.ContestId && s.ExerciseId == e.Id && s.StudentId == CurrentUserId && s.Score == 100)
+                    IsPassed = DbContext.ContestSubmissions.Any(s => s.ContestId == ce.ContestId && s.ExerciseId == e.Id && s.StudentId == CurrentUserId && s.Score == 100),
+                    Constraints = e.Constraints.ToList(),
+                    Hints = e.Hints.ToList()
                 }).ToListAsync(ct);
 
             bool shouldMask = IsInRole(Roles.Student) && 
@@ -76,6 +78,34 @@ internal sealed class GetContestByIdQueryHandler : AbstractQueryHandler<GetConte
                 {
                     ex.Title = $"Problem {GetProblemLabel(ex.Order)}";
                     ex.Description = "Nội dung bài tập sẽ được hiển thị khi cuộc thi bắt đầu.";
+                    ex.Constraints = [];
+                    ex.Hints = [];
+                    ex.Examples = [];
+                    ex.DefaultCodes = [];
+                }
+            }
+            else
+            {
+                foreach (var ex in exercises)
+                {
+                    ex.Examples = await DbContext.ExerciseExamples
+                        .Where(x => x.ExerciseId == ex.ExerciseId)
+                        .Select(x => new ExerciseExampleDto
+                        {
+                            Id = x.Id,
+                            Input = x.Input,
+                            Output = x.Output,
+                            Explanation = x.Explanation
+                        }).ToListAsync(ct);
+
+                    ex.DefaultCodes = await DbContext.ExerciseDefaultCodes
+                        .Where(x => x.ExerciseId == ex.ExerciseId)
+                        .Select(x => new ExerciseDefaultCodeDto
+                        {
+                            Id = x.Id,
+                            Language = x.Language,
+                            StarterCode = x.StarterCode
+                        }).ToListAsync(ct);
                 }
             }
 

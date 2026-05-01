@@ -61,7 +61,7 @@ public class GeminiService : IAiService
                 },
                 Tools = [new Tool { GoogleSearch = new GoogleSearch() }]
             };
-            GenerateContentResponse result = await _client.Models.GenerateContentAsync(GeminiModels.V25FlashLite, prompt, config, ct);
+            GenerateContentResponse result = await _client.Models.GenerateContentAsync(GeminiModels.V25Flash, prompt, config, ct);
             _logger.LogInformation("Gemini API completed");
             return result.Text ?? string.Empty;
         }
