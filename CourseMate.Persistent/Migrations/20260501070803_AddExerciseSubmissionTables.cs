@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CourseMate.Persistent.Migrations
 {
     /// <inheritdoc />
-    public partial class AddExerciseSubmission : Migration
+    public partial class AddExerciseSubmissionTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,9 +17,9 @@ namespace CourseMate.Persistent.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ExerciseId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Language = table.Column<string>(type: "text", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: false),
-                    Passed = table.Column<bool>(type: "boolean", nullable: false),
+                    Language = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
+                    Code = table.Column<string>(type: "character varying(32768)", maxLength: 32768, nullable: false),
+                    IsPassed = table.Column<bool>(type: "boolean", nullable: false),
                     Score = table.Column<double>(type: "double precision", nullable: false),
                     TotalTime = table.Column<double>(type: "double precision", nullable: false),
                     TotalMemory = table.Column<double>(type: "double precision", nullable: false),

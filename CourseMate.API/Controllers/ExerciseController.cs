@@ -1,8 +1,10 @@
 using CourseMate.Application.Commands.Exercises;
+using CourseMate.Application.Commands.Submissions;
 using CourseMate.Application.Queries.Exercises;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
+using CourseMate.Contracts.DTOs.Exercises;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +37,7 @@ public class ExerciseController : ControllerBase
         return Ok(result);
     }
 
+    // TODO Need review
     [HttpGet("{id:guid}/student")]
     // [Authorize(Roles = Roles.Student)]
     public async Task<ActionResult> GetStudentExerciseByIdAsync(Guid id, CancellationToken ct)
@@ -50,7 +53,6 @@ public class ExerciseController : ControllerBase
         ResultIdDto result = await _mediator.Send(request, ct);
         return Ok(result);
     }
-
 
     [HttpPut("{id:guid}")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
@@ -114,19 +116,25 @@ public class ExerciseController : ControllerBase
 
     #region API Submissions
 
+    // TODO Need review
     [HttpPost("{id:guid}/submissions")]
-    public async Task<ActionResult> SubmitExerciseAsync(Guid id, [FromBody] CourseMate.Contracts.DTOs.Exercises.SubmitExerciseRequest payload, CancellationToken ct)
+    public async Task<ActionResult> SubmitExerciseAsync(Guid id, [FromBody] SubmitExerciseRequest request)
     {
-        var command = new CourseMate.Application.Commands.Submissions.SubmitExerciseCommand(id, payload);
-        ResultIdDto result = await _mediator.Send(command, ct);
+        SubmitExerciseCommand command = new()
+        {
+            ExerciseId = id,
+            Payload = request
+        };
+        ResultIdDto result = await _mediator.Send(command);
         return Ok(result);
     }
 
+    // TODO Need review
     [HttpGet("{id:guid}/submissions")]
     // [Authorize(Roles = Roles.Student)]
-    public async Task<ActionResult> GetStudentExerciseSubmissionsAsync(Guid id, CancellationToken ct)
+    public async Task<ActionResult> GetStudentExerciseSubmissionsAsync(Guid id)
     {
-        var result = await _mediator.Send(new GetStudentExerciseSubmissionsQuery { ExerciseId = id }, ct);
+        IEnumerable<ExerciseSubmissionDto> result = await _mediator.Send(new GetStudentExerciseSubmissionsQuery { ExerciseId = id });
         return Ok(result);
     }
 

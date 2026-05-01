@@ -3,11 +3,17 @@ using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-
 using CourseMate.Contracts.DTOs.Commons;
+using CourseMate.Contracts.DTOs.Exercises;
 using PayOS.Exceptions;
 
 namespace CourseMate.Application.Commands.Submissions;
+
+public class SubmitExerciseCommand : IRequest<ResultIdDto>
+{
+    public Guid ExerciseId { get; set; }
+    public SubmitExerciseRequest Payload { get; set; }
+}
 
 public class SubmitExerciseCommandHandler : IRequestHandler<SubmitExerciseCommand, ResultIdDto>
 {

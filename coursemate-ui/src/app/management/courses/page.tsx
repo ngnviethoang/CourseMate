@@ -95,7 +95,8 @@ export default function CoursesPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    setUserRole(getRole())
+     const role = getRole()
+    setUserRole(role ? [role] : [])
     setCurrentUserId(getUserId())
   }, [])
 
