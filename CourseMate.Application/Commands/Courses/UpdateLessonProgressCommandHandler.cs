@@ -2,7 +2,6 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +9,7 @@ namespace CourseMate.Application.Commands.Courses;
 
 internal sealed class UpdateLessonProgressCommandHandler : AbstractCommandHandler<UpdateLessonProgressCommand, ResultIdDto>
 {
-    public UpdateLessonProgressCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor) 
+    public UpdateLessonProgressCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
     {
     }
@@ -40,7 +39,7 @@ internal sealed class UpdateLessonProgressCommandHandler : AbstractCommandHandle
             {
                 progress.IsCompleted = request.IsCompleted;
             }
-            
+
             if (request.Score > progress.Score)
             {
                 progress.Score = request.Score;

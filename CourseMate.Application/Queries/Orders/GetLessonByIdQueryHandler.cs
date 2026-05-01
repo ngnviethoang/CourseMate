@@ -41,9 +41,9 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
             return null;
         }
 
-        var progress = await DbContext.UserLessonProgresses
+        UserLessonProgress? progress = await DbContext.UserLessonProgresses
             .FirstOrDefaultAsync(p => p.StudentId == studentId && p.LessonId == request.Id, ct);
-            
+
         lesson.IsCompleted = progress?.IsCompleted ?? false;
         lesson.Score = progress?.Score;
 
@@ -67,6 +67,7 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
                         .Select(e => e.Title)
                         .FirstOrDefaultAsync(ct);
                 }
+
                 break;
             case LessonType.Quiz:
                 LessonQuiz? quiz = await DbContext.LessonQuizzes
@@ -95,6 +96,7 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
                                 }).ToList()
                         }).ToList();
                 }
+
                 break;
             case LessonType.Slide:
                 LessonSlide? slide = await DbContext.LessonSlides.FirstOrDefaultAsync(s => s.LessonId == request.Id, ct);

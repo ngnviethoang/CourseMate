@@ -169,7 +169,7 @@ public class CourseController : ControllerBase
     [Authorize]
     public async Task<ActionResult> GetLessonDetailAsync(Guid id)
     {
-        LessonDetailDto? result = await _mediator.Send(new CourseMate.Application.Queries.Orders.GetLessonByIdQuery { Id = id });
+        LessonDetailDto? result = await _mediator.Send(new Application.Queries.Orders.GetLessonByIdQuery { Id = id });
         return Ok(result);
     }
 

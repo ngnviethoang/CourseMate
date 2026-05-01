@@ -36,7 +36,7 @@ internal sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetList
             from chapter in DbContext.Chapters
             join course in DbContext.Courses on chapter.CourseId equals course.Id
             where (request.CourseId == null || course.Id == request.CourseId)
-               && (course.IsPublished || isAdmin || (isInstructor && course.InstructorId == userId))
+                  && (course.IsPublished || isAdmin || (isInstructor && course.InstructorId == userId))
             select new ChapterDto
             {
                 Id = chapter.Id,

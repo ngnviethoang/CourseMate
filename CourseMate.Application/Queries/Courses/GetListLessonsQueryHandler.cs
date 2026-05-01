@@ -38,8 +38,8 @@ internal sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListL
             join chapter in DbContext.Chapters on lesson.ChapterId equals chapter.Id
             join course in DbContext.Courses on lesson.CourseId equals course.Id
             where (request.CourseId == null || lesson.CourseId == request.CourseId)
-               && (request.ChapterId == null || lesson.ChapterId == request.ChapterId)
-               && (course.IsPublished || isAdmin || (isInstructor && course.InstructorId == userId))
+                  && (request.ChapterId == null || lesson.ChapterId == request.ChapterId)
+                  && (course.IsPublished || isAdmin || (isInstructor && course.InstructorId == userId))
             select new LessonDto
             {
                 Id = lesson.Id,

@@ -62,7 +62,7 @@ internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandl
             .Where(x => x.CourseId == request.CourseId)
             .MaxAsync(x => (int?)x.Position, ct) ?? 0) + 1;
 
-        int finalPosition = request.Position == 0 ? (chapter.Position == 0 ? nextPosition : chapter.Position) : request.Position;
+        int finalPosition = request.Position == 0 ? chapter.Position == 0 ? nextPosition : chapter.Position : request.Position;
 
         if (finalPosition > nextPosition)
         {

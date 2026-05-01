@@ -1,6 +1,5 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Contracts.Options;
