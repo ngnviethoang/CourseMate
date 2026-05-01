@@ -97,8 +97,8 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
             fileEntry.Status = FileStatus.Failed;
         }
 
-        HttpRequest? httpRequest = HttpContextAccessor.HttpContext!.Request;
-        string fileUrl = $"{httpRequest.Scheme}://{httpRequest.Host}/api/files/video/{fileEntry.Id}";
+        HttpRequest httpRequest = HttpContextAccessor.HttpContext!.Request;
+        string fileUrl = $"{httpRequest.Scheme}://{httpRequest.Host}/api/files/videos/stream/{fileEntry.Id}";
         return new CompleteVideoUploadResponse
         {
             FileId = fileEntry.Id,
