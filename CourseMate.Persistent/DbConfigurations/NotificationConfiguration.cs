@@ -12,6 +12,6 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
         builder.ToTable("Notifications");
         builder.Property(i => i.Title).HasColumnType("citext").IsRequired();
         builder.Property(i => i.Message).HasColumnType("citext").IsRequired();
-        builder.HasOne<IdentityUser<Guid>>().WithMany().HasForeignKey(i => i.UserId);
+        builder.HasOne<IdentityUser<Guid>>().WithMany().HasForeignKey(i => i.ReceiverId);
     }
 }
