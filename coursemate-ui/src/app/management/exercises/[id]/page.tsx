@@ -190,7 +190,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
       if (isNew) {
         const res = await exerciseService.create(form)
         toast.success('Tạo bài tập thành công! Bây giờ bạn có thể thêm Test Cases.')
-        router.push(`/management/exercises/${res.id || res}`)
+        router.push(`/management/exercises/${res}`)
       } else {
         await exerciseService.update({ ...form, id })
         toast.success('Cập nhật thành công!')

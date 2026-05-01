@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { courseService } from '@/lib/course-service'
-import { LessonType, StudentLessonDetailDto, CourseDto } from '@/lib/types'
+import {LessonType, StudentLessonDetailDto, CourseDto, CourseDetailDto} from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
@@ -387,7 +387,7 @@ export default function StudentLearningPage() {
 
         // Calculate navigation
         if (course) {
-          const courseDto = course as unknown as CourseDto
+          const courseDto = course as unknown as CourseDetailDto
           const allLessons = courseDto.chapters?.flatMap(c => c.lessons) || []
           const idx = allLessons.findIndex(x => x.id === lessonId)
           setPrevLessonId(idx > 0 ? allLessons[idx - 1].id : null)

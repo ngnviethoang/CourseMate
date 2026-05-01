@@ -96,7 +96,7 @@ export default function ExercisesManagementPage() {
             Tạo và quản lý bài tập lập trình, test cases, code mẫu
           </p>
         </div>
-        <Button asChild>
+        <Button>
           <Link href="/management/exercises/new">
             <Plus className="h-4 w-4 mr-2" /> Thêm bài tập
           </Link>
@@ -191,7 +191,6 @@ export default function ExercisesManagementPage() {
                       size="icon"
                       variant="ghost"
                       className="h-7 w-7"
-                      asChild
                     >
                       <Link href={`/management/exercises/${ex.id}`}>
                         <Pencil className="h-3.5 w-3.5" />
