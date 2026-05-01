@@ -779,14 +779,23 @@ export default function StudentLearningPage() {
             aiContent && 'segments' in aiContent
               ? <VideoPlayer content={aiContent as VideoContent} />
               : lesson.videoUrl ? (
-                <div className="aspect-video rounded-3xl bg-slate-900 border shadow-2xl overflow-hidden ring-8 ring-muted/20">
-                  <iframe
-                    className="w-full h-full"
-                    src={lesson.videoUrl.replace('watch?v=', 'embed/')}
-                    title={lesson.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
+                <div className="aspect-video rounded-3xl bg-slate-950 border shadow-2xl overflow-hidden ring-8 ring-muted/20">
+                  {lesson.videoUrl.includes('youtube.com') || lesson.videoUrl.includes('youtu.be') ? (
+                    <iframe
+                      className="w-full h-full"
+                      src={lesson.videoUrl.replace('watch?v=', 'embed/')}
+                      title={lesson.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <video 
+                      src={lesson.videoUrl} 
+                      controls 
+                      className="w-full h-full"
+                      controlsList="nodownload"
+                    />
+                  )}
                 </div>
               ) : <EmptyContent lesson={lesson} id={id} router={router} />
           )}

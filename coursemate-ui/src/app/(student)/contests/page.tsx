@@ -1,119 +1,84 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { Trophy, Clock, Users, ChevronRight, Calendar, Star, Flame } from 'lucide-react'
+import { Trophy, Clock, Users, ChevronRight, Calendar, Star, Flame, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { contestService, ContestDto } from '@/lib/contest-service'
+import { format } from 'date-fns'
+import { vi } from 'date-fns/locale'
 
-// ─── Mock data ────────────────────────────────────────────────────────────────
-
-type ContestStatus = 'ongoing' | 'upcoming' | 'ended'
-
-const CONTESTS = [
-  {
-    id: 'ct1',
-    title: 'Weekly Code Challenge #12',
-    description: 'Giải quyết 5 bài toán thuật toán trong vòng 90 phút. Chủ đề tuần này: Đồ thị & BFS/DFS.',
-    difficulty: 'Trung bình',
-    difficultyColor: 'bg-amber-100 text-amber-700',
-    status: 'ongoing' as ContestStatus,
-    participants: 312,
-    durationMinutes: 90,
-    endsAt: '2026-03-20T20:00:00+07:00',
-    startsAt: '2026-03-20T10:00:00+07:00',
-    tags: ['Đồ thị', 'BFS', 'DFS'],
-    prize: 'Top 3 nhận voucher 1.250.000 VNĐ'
-  },
-  {
-    id: 'ct2',
-    title: 'Frontend Battle – React & CSS',
-    description: 'Xây dựng một UI component đẹp nhất theo chủ đề cho trước. Đánh giá bởi cộng đồng.',
-    difficulty: 'Dễ',
-    difficultyColor: 'bg-emerald-100 text-emerald-700',
-    status: 'upcoming' as ContestStatus,
-    participants: 0,
-    durationMinutes: 120,
-    endsAt: '2026-03-22T20:00:00+07:00',
-    startsAt: '2026-03-22T10:00:00+07:00',
-    tags: ['React', 'CSS', 'UI'],
-    prize: 'Huy hiệu & chứng chỉ đặc biệt'
-  },
-  {
-    id: 'ct3',
-    title: 'Data Structures Sprint',
-    description: 'Thách thức nhanh về cấu trúc dữ liệu: Stack, Queue, Linked List, Tree trong 45 phút.',
-    difficulty: 'Khó',
-    difficultyColor: 'bg-red-100 text-red-700',
-    status: 'upcoming' as ContestStatus,
-    participants: 0,
-    durationMinutes: 45,
-    endsAt: '2026-03-25T18:00:00+07:00',
-    startsAt: '2026-03-25T16:00:00+07:00',
-    tags: ['Stack', 'Queue', 'Tree'],
-    prize: null
-  },
-  {
-    id: 'ct4',
-    title: 'Weekly Code Challenge #11',
-    description: 'Chủ đề: Dynamic Programming & Memoization.',
-    difficulty: 'Khó',
-    difficultyColor: 'bg-red-100 text-red-700',
-    status: 'ended' as ContestStatus,
-    participants: 287,
-    durationMinutes: 90,
-    endsAt: '2026-03-13T20:00:00+07:00',
-    startsAt: '2026-03-13T10:00:00+07:00',
-    tags: ['DP', 'Memoization'],
-    prize: null
-  }
-]
-
-const STATUS_LABEL: Record<ContestStatus, string> = {
-  ongoing: 'Đang diễn ra',
-  upcoming: 'Sắp diễn ra',
-  ended: 'Đã kết thúc'
+const STATUS_LABEL: Record<string, string> = {
+  Ongoing: 'Đang diễn ra',
+  Upcoming: 'Sắp diễn ra',
+  Ended: 'Đã kết thúc'
 }
 
-const STATUS_COLOR: Record<ContestStatus, string> = {
-  ongoing: 'bg-emerald-500',
-  upcoming: 'bg-blue-500',
-  ended: 'bg-muted-foreground'
+const STATUS_COLOR: Record<string, string> = {
+  Ongoing: 'bg-emerald-500',
+  Upcoming: 'bg-blue-500',
+  Ended: 'bg-muted-foreground'
 }
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function ContestsPage() {
-  const [filter, setFilter] = useState<'all' | ContestStatus>('all')
+  const [contests, setContests] = useState<ContestDto[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState<'All' | string>('All')
 
-  const filtered = filter === 'all' ? CONTESTS : CONTESTS.filter(c => c.status === filter)
-  const ongoing = CONTESTS.filter(c => c.status === 'ongoing')
+  const fetchContests = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res = await contestService.getList({
+        pageSize: 10,
+        ...(filter !== 'All' && { status: filter })
+      })
+      setContests(res.items || [])
+    } catch {
+      // toast.error('Không thể tải danh sách cuộc thi')
+    } finally {
+      setLoading(false)
+    }
+  }, [filter])
+
+  useEffect(() => { fetchContests() }, [fetchContests])
+
+  const ongoing = contests.find(c => c.status === 'Ongoing')
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <div className="border-b bg-muted/30">
-        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <Trophy className="h-6 w-6 text-primary" />
-            Cuộc thi lập trình
+        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+            <Trophy className="h-8 w-8 text-primary" />
+            Đấu trường lập trình
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Tham gia các cuộc thi, rèn luyện kỹ năng và nhận phần thưởng hấp dẫn.
+          <p className="text-muted-foreground mt-2 text-lg">
+            Tham gia các kỳ thi, giải quyết thách thức thuật toán và leo hạng cùng cộng đồng.
           </p>
 
-          {/* Active contest highlight */}
-          {ongoing.length > 0 && (
-            <div className="mt-5 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
-              <Flame className="h-5 w-5 text-emerald-600 flex-shrink-0" />
+          {ongoing && (
+            <div className="mt-8 flex items-center gap-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
+              <div className="h-12 w-12 rounded-xl bg-emerald-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-500/20">
+                <Flame className="h-6 w-6" />
+              </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-emerald-800 leading-tight line-clamp-1">{ongoing[0].title}</p>
-                <p className="text-xs text-emerald-600 mt-0.5">đang diễn ra ngay bây giờ!</p>
+                <p className="font-bold text-emerald-900 text-lg leading-tight line-clamp-1">{ongoing.title}</p>
+                <p className="text-emerald-600 mt-1 flex items-center gap-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  Đang diễn ra ngay bây giờ!
+                </p>
               </div>
               <Button
-                size="sm"
-                className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex-shrink-0 h-8 px-4 text-xs gap-1"
+                asChild
+                className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shrink-0 h-11 px-6 shadow-md"
               >
-                Tham gia <ChevronRight className="h-3.5 w-3.5" />
+                <Link href={`/contests/${ongoing.id}`}>
+                  Tham gia ngay <ChevronRight className="h-4 w-4 ml-1" />
+                </Link>
               </Button>
             </div>
           )}
@@ -122,113 +87,85 @@ export default function ContestsPage() {
 
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Filter tabs */}
-        <div className="flex gap-2 mb-6">
-          {(['all', 'ongoing', 'upcoming', 'ended'] as const).map(tab => (
+        <div className="flex flex-wrap gap-2 mb-8">
+          {(['All', 'Upcoming', 'Ongoing', 'Ended'] as const).map(tab => (
             <button
               key={tab}
               onClick={() => setFilter(tab)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                filter === tab
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-              }`}
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${filter === tab
+                ? 'bg-primary text-primary-foreground shadow-md'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                }`}
             >
-              {tab === 'all' ? 'Tất cả' : STATUS_LABEL[tab]}
-              <span className="ml-1.5 text-xs">
-                ({tab === 'all' ? CONTESTS.length : CONTESTS.filter(c => c.status === tab).length})
-              </span>
+              {tab === 'All' ? 'Tất cả' : STATUS_LABEL[tab]}
             </button>
           ))}
         </div>
 
         {/* Contest list */}
-        <div className="space-y-4">
-          {filtered.map(contest => (
-            <div
-              key={contest.id}
-              className={`group rounded-2xl border bg-card p-5 transition-shadow hover:shadow-md ${
-                contest.status === 'ended' ? 'opacity-70' : ''
-              }`}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                <div className="flex-1 min-w-0">
-                  {/* Status + difficulty badges */}
-                  <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <span
-                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-white ${STATUS_COLOR[contest.status]}`}
-                    >
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : contests.length === 0 ? (
+          <div className="text-center py-20 border-2 border-dashed rounded-3xl">
+            <Trophy className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+            <p className="text-muted-foreground">Chưa có cuộc thi nào trong danh mục này.</p>
+          </div>
+        ) : (
+          <div className="grid gap-6">
+            {contests.map(contest => (
+              <div
+                key={contest.id}
+                className={`group rounded-3xl border bg-card p-6 transition-all hover:shadow-lg hover:border-primary/20 ${contest.status === 'Ended' ? 'opacity-75 grayscale-[0.5]' : ''
+                  }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-start gap-6">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-3 flex-wrap">
                       <span
-                        className={`h-1.5 w-1.5 rounded-full bg-white ${contest.status === 'ongoing' ? 'animate-pulse' : ''}`}
-                      />
-                      {STATUS_LABEL[contest.status]}
-                    </span>
-                    <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${contest.difficultyColor}`}>
-                      {contest.difficulty}
-                    </span>
-                  </div>
-
-                  <Link href={`/contests/${contest.id}`}>
-                    <h3 className="font-semibold leading-snug hover:text-primary transition-colors">{contest.title}</h3>
-                  </Link>
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{contest.description}</p>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1.5 mt-3">
-                    {contest.tags.map(tag => (
-                      <span key={tag} className="rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                        {tag}
+                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold text-white uppercase tracking-wider ${STATUS_COLOR[contest.status]}`}
+                      >
+                        {STATUS_LABEL[contest.status]}
                       </span>
-                    ))}
-                  </div>
-
-                  {/* Meta */}
-                  <div className="flex flex-wrap gap-4 mt-3 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5" /> {contest.durationMinutes} phút
-                    </span>
-                    {contest.participants > 0 && (
-                      <span className="flex items-center gap-1">
-                        <Users className="h-3.5 w-3.5" /> {contest.participants} người tham gia
+                      <span className="bg-muted px-3 py-1 rounded-full text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                        {contest.durationInMinutes} phút
                       </span>
-                    )}
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3.5 w-3.5" />
-                      {new Date(contest.status === 'ended' ? contest.endsAt : contest.startsAt).toLocaleDateString(
-                        'vi-VN',
-                        { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }
-                      )}
-                    </span>
-                  </div>
+                    </div>
 
-                  {contest.prize && (
-                    <p className="mt-2 text-xs font-medium text-amber-700 flex items-center gap-1">
-                      <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> {contest.prize}
+                    <Link href={`/contests/${contest.id}`}>
+                      <h3 className="text-xl font-bold leading-tight group-hover:text-primary transition-colors">
+                        {contest.title}
+                      </h3>
+                    </Link>
+                    <p className="text-muted-foreground mt-2 line-clamp-2 leading-relaxed">
+                      {contest.description}
                     </p>
-                  )}
-                </div>
 
-                {/* CTA */}
-                <div className="flex-shrink-0">
-                  {contest.status === 'ongoing' && (
-                    <Button className="rounded-xl gap-1 h-9 text-sm">
-                      Tham gia <ChevronRight className="h-4 w-4" />
+                    <div className="flex flex-wrap gap-6 mt-5 text-sm text-muted-foreground font-medium">
+                      <span className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-primary/60" />
+                        {contest.participantCount} thí sinh
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-primary/60" />
+                        {contest.startTime ? format(new Date(contest.startTime), 'dd MMMM, HH:mm', { locale: vi }) : 'Chưa cập nhật'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex-shrink-0 flex sm:flex-col justify-end gap-3">
+                    <Button asChild className="rounded-2xl h-12 px-8 font-bold shadow-sm">
+                      <Link href={`/contests/${contest.id}`}>
+                        {contest.status === 'Ended' ? 'Xem kết quả' : 'Chi tiết'}
+                      </Link>
                     </Button>
-                  )}
-                  {contest.status === 'upcoming' && (
-                    <Button variant="outline" className="rounded-xl h-9 text-sm">
-                      Đăng ký
-                    </Button>
-                  )}
-                  {contest.status === 'ended' && (
-                    <Button variant="ghost" size="sm" className="rounded-xl h-9 text-sm text-muted-foreground">
-                      Xem kết quả
-                    </Button>
-                  )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
