@@ -165,6 +165,68 @@ public class CourseController : ControllerBase
         return NoContent();
     }
 
+    [HttpGet("lessons/{id:guid}/detail")]
+    [Authorize]
+    public async Task<ActionResult> GetLessonDetailAsync(Guid id)
+    {
+        LessonDetailDto? result = await _mediator.Send(new CourseMate.Application.Queries.Orders.GetLessonByIdQuery { Id = id });
+        return Ok(result);
+    }
+
+    [HttpPut("lessons/{id:guid}/video")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> UpsertLessonVideoAsync(Guid id, UpsertLessonVideoCommand request)
+    {
+        request.LessonId = id;
+        await _mediator.Send(request);
+        return NoContent();
+    }
+
+    [HttpPut("lessons/{id:guid}/reading")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> UpsertLessonReadingAsync(Guid id, UpsertLessonReadingCommand request)
+    {
+        request.LessonId = id;
+        await _mediator.Send(request);
+        return NoContent();
+    }
+
+    [HttpPut("lessons/{id:guid}/coding")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> UpsertLessonCodingAsync(Guid id, UpsertLessonCodingCommand request)
+    {
+        request.LessonId = id;
+        await _mediator.Send(request);
+        return NoContent();
+    }
+
+    [HttpPut("lessons/{id:guid}/quiz")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> UpsertLessonQuizAsync(Guid id, UpsertLessonQuizCommand request)
+    {
+        request.LessonId = id;
+        await _mediator.Send(request);
+        return NoContent();
+    }
+
+    [HttpPut("lessons/{id:guid}/slide")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> UpsertLessonSlideAsync(Guid id, UpsertLessonSlideCommand request)
+    {
+        request.LessonId = id;
+        await _mediator.Send(request);
+        return NoContent();
+    }
+
+    [HttpPut("lessons/{id:guid}/progress")]
+    [Authorize]
+    public async Task<ActionResult> UpdateLessonProgressAsync(Guid id, [FromBody] UpdateLessonProgressCommand request)
+    {
+        request.LessonId = id;
+        ResultIdDto result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
     #endregion
 
     #region API AI Process Document

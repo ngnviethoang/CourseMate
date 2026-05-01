@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.Commands.Files;
 using CourseMate.Application.Queries.Files;
 using CourseMate.Contracts.DTOs;
@@ -134,6 +134,47 @@ public class FileController : ControllerBase
     public async Task<IActionResult> GetImageAsync(Guid fileId)
     {
         ImageFileResponse? result = await _mediator.Send(new GetImageFileQuery
+        {
+            FileId = fileId
+        });
+
+        if (result == null)
+        {
+            return NotFound();
+        }
+
+        return File(result.Content, result.ContentType, result.FileName);
+    }
+
+    #endregion
+
+    #region API Document
+
+    [HttpPost("documents")]
+    public async Task<ActionResult> UploadDocumentAsync(IFormFile request)
+    {
+        if (request.Length == 0)
+        {
+            return BadRequest();
+        }
+
+        using MemoryStream stream = new();
+        await request.CopyToAsync(stream);
+        UploadDocumentResponse result = await _mediator.Send(new UploadDocumentCommand
+        {
+            FileName = request.FileName,
+            ContentType = request.ContentType,
+            Content = stream.ToArray()
+        });
+
+        return Ok(result);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("documents/{fileId:Guid}")]
+    public async Task<IActionResult> GetDocumentAsync(Guid fileId)
+    {
+        DocumentFileResponse? result = await _mediator.Send(new GetDocumentFileQuery
         {
             FileId = fileId
         });

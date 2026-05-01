@@ -182,6 +182,64 @@ export interface UpdateLessonRequest {
   position: number
 }
 
+export interface QuizAnswerDto {
+  id?: string
+  text: string
+  isCorrect: boolean
+  position: number
+}
+
+export interface QuizQuestionDto {
+  id?: string
+  text: string
+  position: number
+  answers: QuizAnswerDto[]
+}
+
+export interface LessonDetailDto {
+  id: string
+  title: string
+  lessonType: LessonType
+  position: number
+  isCompleted: boolean
+  score?: number
+  // Video
+  videoUrl?: string
+  // Reading
+  readingContent?: string
+  // Coding
+  exerciseId?: string
+  exerciseTitle?: string
+  // Quiz
+  quizDescription?: string
+  quizPassingScore?: number
+  quizQuestions?: QuizQuestionDto[]
+  // Slide
+  slideFileUrl?: string
+}
+
+export interface UpsertLessonVideoRequest {
+  videoUrl: string
+}
+
+export interface UpsertLessonReadingRequest {
+  content: string
+}
+
+export interface UpsertLessonCodingRequest {
+  exerciseId: string
+}
+
+export interface UpsertLessonQuizRequest {
+  description: string
+  passingScore: number
+  questions: QuizQuestionDto[]
+}
+
+export interface UpsertLessonSlideRequest {
+  fileUrl: string
+}
+
 // ─── User ─────────────────────────────────────────────────────────────────────
 
 export interface UserDto {
@@ -241,13 +299,15 @@ export interface StudentLessonDetailDto {
   lessonType: LessonType
   position: number
   isCompleted: boolean
+  score?: number
   videoUrl?: string
   readingContent?: string
-  problemStatement?: string
-  starterCode?: string
-  expectedOutput?: string
+  exerciseId?: string
+  exerciseTitle?: string
   quizDescription?: string
   quizPassingScore?: number
+  quizQuestions?: QuizQuestionDto[]
+  slideFileUrl?: string
 }
 
 export interface StudentChapterDetailDto {

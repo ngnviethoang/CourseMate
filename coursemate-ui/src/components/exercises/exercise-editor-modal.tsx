@@ -142,6 +142,8 @@ interface ExerciseEditorModalProps {
   onPrev?: () => void
   hasNext?: boolean
   hasPrev?: boolean
+  showHeaderNav?: boolean
+  onSubmitSuccess?: (result: { score: number; passed: boolean }) => void
 }
 
 export function ExerciseEditorModal({
@@ -151,7 +153,9 @@ export function ExerciseEditorModal({
   onNext,
   onPrev,
   hasNext,
-  hasPrev
+  hasPrev,
+  showHeaderNav = true,
+  onSubmitSuccess
 }: ExerciseEditorModalProps) {
   const [supportedLangs, setSupportedLangs] = useState<LanguageDto[]>([])
   const [selectedLang, setSelectedLang] = useState<LanguageDto | null>(null)
@@ -384,6 +388,10 @@ export function ExerciseEditorModal({
 
       // Update local history by fetching from server to ensure data consistency
       await fetchSubmissions()
+      
+      if (onSubmitSuccess) {
+        onSubmitSuccess({ score, passed: isAllPassed })
+      }
       // setRightTab('history') // Tắt tự động chuyển để người dùng kịp xem kết quả chấm từng test case
     } catch (err) {
       console.error('Lỗi khi lưu kết quả nộp bài:', err)
@@ -464,50 +472,55 @@ export function ExerciseEditorModal({
 
         {/* Top bar */}
         <div className="editor-topbar flex items-center gap-3 h-11 px-4 bg-[#1c1c28] border-b border-white/8 flex-shrink-0">
-          {isModal && onClose ? (
-            <button
-              onClick={onClose}
-              className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-neutral-100 transition-colors flex-shrink-0"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" /> Bài tập
-            </button>
-          ) : (
-            <Link
-              href="/exercises"
-              className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-neutral-100 transition-colors flex-shrink-0"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" /> Bài tập
-            </Link>
+          {showHeaderNav && (
+            <>
+              {isModal && onClose ? (
+                <button
+                  onClick={onClose}
+                  className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-neutral-100 transition-colors flex-shrink-0"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" /> Bài tập
+                </button>
+              ) : (
+                <Link
+                  href="/exercises"
+                  className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-neutral-100 transition-colors flex-shrink-0"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" /> Bài tập
+                </Link>
+              )}
+              <div className="h-4 w-px bg-white/10" />
+            </>
           )}
-
-          <div className="h-4 w-px bg-white/10" />
           <h1 className="text-xs font-medium text-neutral-200 truncate select-text">{exercise.title}</h1>
           <span className={`rounded px-2 py-0.5 text-[10px] font-bold ${DIFF_STYLE[exercise.difficulty]}`}>
             {exercise.difficulty}
           </span>
 
-          <div className="flex items-center gap-1 mx-2">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-6 w-6 text-neutral-400 hover:text-white"
-              onClick={onPrev}
-              disabled={!hasPrev}
-              title="Bài trước"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-6 w-6 text-neutral-400 hover:text-white"
-              onClick={onNext}
-              disabled={!hasNext}
-              title="Bài kế tiếp"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+          {showHeaderNav && (
+            <div className="flex items-center gap-1 mx-2">
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-6 w-6 text-neutral-400 hover:text-white"
+                onClick={onPrev}
+                disabled={!hasPrev}
+                title="Bài trước"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-6 w-6 text-neutral-400 hover:text-white"
+                onClick={onNext}
+                disabled={!hasNext}
+                title="Bài kế tiếp"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
 
           <div className="flex-1" />
           <div className="h-4 w-px bg-white/10" />

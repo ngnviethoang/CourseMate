@@ -39,7 +39,7 @@ const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false })
 const emptyChapterForm = (courseId: string): CreateChapterRequest => ({
   courseId,
   title: '',
-  position: 1
+  position: 0
 })
 
 function ChapterRow({
@@ -347,15 +347,7 @@ export default function CourseDetailPage() {
                 onChange={e => cf('title', e.target.value)}
               />
             </div>
-            <div className="space-y-1">
-              <Label>Position</Label>
-              <Input
-                type="number"
-                min={1}
-                value={chapterForm.position}
-                onChange={e => cf('position', Number(e.target.value))}
-              />
-            </div>
+
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setChapterDialog(false)}>

@@ -32,5 +32,11 @@ export const fileService = {
 
   async deleteImage(fileId: string) {
     return api.delete<void>(`/api/files/images/${fileId}`)
+  },
+
+  async uploadDocument(file: File) {
+    const formData = new FormData()
+    formData.append('request', file)
+    return api.post<{ fileId: string; fileUrl: string }>('/api/files/documents', formData)
   }
 }

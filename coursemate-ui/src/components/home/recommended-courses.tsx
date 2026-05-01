@@ -108,8 +108,8 @@ function CourseCard({ course, index }: CourseCardProps) {
             alt={course.title}
             className="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105"
             onError={e => {
-              ;(e.target as HTMLImageElement).style.display = 'none'
-              ;(e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden')
+              ; (e.target as HTMLImageElement).style.display = 'none'
+                ; (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden')
             }}
           />
         ) : null}
@@ -177,7 +177,7 @@ function CourseCard({ course, index }: CourseCardProps) {
             ) : course.price > 0 ? (
               <ShoppingCart className="h-3.5 w-3.5" />
             ) : null}
-            {adding ? '...' : course.price === 0 ? 'Enroll' : 'Add cart'}
+            {adding ? '...' : course.price === 0 ? 'Vào học' : 'Thêm'}
           </button>
         </div>
       </div>
@@ -315,11 +315,10 @@ export function RecommendedCourses({ searchQuery, isLoggedIn, selectedCategoryId
                   <button
                     key={page}
                     onClick={() => setPageIndex(page)}
-                    className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${
-                      page === pageIndex
-                        ? 'bg-primary text-primary-foreground shadow-md'
-                        : 'border border-border bg-card shadow-sm hover:bg-accent'
-                    }`}
+                    className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${page === pageIndex
+                      ? 'bg-primary text-primary-foreground shadow-md'
+                      : 'border border-border bg-card shadow-sm hover:bg-accent'
+                      }`}
                   >
                     {page}
                   </button>

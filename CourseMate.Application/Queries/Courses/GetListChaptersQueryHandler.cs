@@ -11,7 +11,7 @@ namespace CourseMate.Application.Queries.Courses;
 
 public class GetListChaptersQuery : GetListQuery<ChapterDto>
 {
-    public Guid CourseId { get; set; }
+    public Guid? CourseId { get; set; }
 }
 
 internal sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetListChaptersQuery, PagedDto<ChapterDto>>
@@ -24,12 +24,19 @@ internal sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetList
     public override async Task<PagedDto<ChapterDto>> Handle(GetListChaptersQuery request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
-        await EnsureEnrollmentAsync(request.CourseId);
+        bool isAdmin = IsInRole(Roles.Admin);
+        bool isInstructor = IsInRole(Roles.Instructor);
+
+        if (request.CourseId.HasValue)
+        {
+            await EnsureEnrollmentAsync(request.CourseId.Value);
+        }
 
         IQueryable<ChapterDto> query =
             from chapter in DbContext.Chapters
             join course in DbContext.Courses on chapter.CourseId equals course.Id
-            where course.Id == request.CourseId
+            where (request.CourseId == null || course.Id == request.CourseId)
+               && (course.IsPublished || isAdmin || (isInstructor && course.InstructorId == userId))
             select new ChapterDto
             {
                 Id = chapter.Id,
@@ -42,9 +49,7 @@ internal sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetList
                 LastModificationTime = chapter.LastModificationTime
             };
 
-        query = query
-            .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == userId)
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
+        query = query.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
 
         query = request.Sorting switch
         {

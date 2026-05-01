@@ -46,8 +46,12 @@ internal sealed class GetListCoursesQueryHandler
                 LastModificationTime = course.LastModificationTime
             };
 
+        bool isAdmin = IsInRole(Roles.Admin);
+        bool isInstructor = IsInRole(Roles.Instructor);
+        Guid userId = CurrentUserId;
+
         query = query
-            .WhereIf(IsInRole(Roles.Instructor), x => x.InstructorId == CurrentUserId)
+            .Where(x => x.IsPublished || isAdmin || (isInstructor && x.InstructorId == userId))
             .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
             .WhereIf(request.CategoryId.HasValue, x => x.CategoryId == request.CategoryId);
 

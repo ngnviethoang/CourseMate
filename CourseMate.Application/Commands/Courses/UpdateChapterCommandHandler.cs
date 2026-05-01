@@ -51,26 +51,27 @@ internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandl
 
         if (request.Position != 0)
         {
-            bool isDuplicate = await DbContext.Chapters.AnyAsync(x => x.CourseId == request.CourseId && x.Position == request.Position, ct);
+            bool isDuplicate = await DbContext.Chapters.AnyAsync(x => x.CourseId == request.CourseId && x.Position == request.Position && x.Id != request.Id, ct);
             if (isDuplicate)
             {
                 throw new BusinessException(ErrorMessages.DuplicatePosition);
             }
         }
 
-        int nextPosition = await DbContext.Chapters
+        int nextPosition = (await DbContext.Chapters
             .Where(x => x.CourseId == request.CourseId)
-            .Select(x => x.Position)
-            .MaxAsync(ct);
-        nextPosition++;
-        if (request.Position > nextPosition)
+            .MaxAsync(x => (int?)x.Position, ct) ?? 0) + 1;
+
+        int finalPosition = request.Position == 0 ? (chapter.Position == 0 ? nextPosition : chapter.Position) : request.Position;
+
+        if (finalPosition > nextPosition)
         {
             throw new BusinessException(string.Format(ErrorMessages.PositionOutOfRange, nextPosition));
         }
 
         chapter.CourseId = request.CourseId;
         chapter.Title = request.Title;
-        chapter.Position = request.Position;
+        chapter.Position = finalPosition;
 
         DbContext.Update(chapter);
         return Codes.Success;

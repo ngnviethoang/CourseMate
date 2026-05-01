@@ -13,18 +13,25 @@ public class LessonDetailDto
     public int Position { get; set; }
 
     public bool IsCompleted { get; set; }
+    public double? Score { get; set; }
 
+    // Video
     public string? VideoUrl { get; set; }
 
+    // Reading
     public string? ReadingContent { get; set; }
 
-    public string? ProblemStatement { get; set; }
+    // Coding — links to an Exercise
+    public Guid? ExerciseId { get; set; }
 
-    public string? StarterCode { get; set; }
+    public string? ExerciseTitle { get; set; }
 
-    public string? ExpectedOutput { get; set; }
-
+    // Quiz
     public string? QuizDescription { get; set; }
 
     public int? QuizPassingScore { get; set; }
+    public List<QuizQuestionDto>? QuizQuestions { get; set; }
+
+    // Slide
+    public string? SlideFileUrl { get; set; }
 }

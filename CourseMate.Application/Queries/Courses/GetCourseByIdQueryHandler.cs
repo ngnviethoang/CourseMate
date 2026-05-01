@@ -25,10 +25,13 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
     {
         Guid studentId = CurrentUserId;
 
+        bool isAdmin = IsInRole(Roles.Admin);
+        bool isInstructor = IsInRole(Roles.Instructor);
+
         IQueryable<CourseDetailDto> courseQuery = from course in DbContext.Courses
             join category in DbContext.Categories on course.CategoryId equals category.Id
             join instructor in DbContext.Users on course.InstructorId equals instructor.Id
-            where course.Id == request.Id && course.IsPublished
+            where course.Id == request.Id && (course.IsPublished || isAdmin || (isInstructor && course.InstructorId == studentId))
             select new CourseDetailDto
             {
                 Id = course.Id,
@@ -42,9 +45,7 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
                 InstructorName = instructor.UserName ?? string.Empty
             };
 
-        CourseDetailDto? result = await courseQuery
-            .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == CurrentUserId)
-            .FirstOrDefaultAsync(ct);
+        CourseDetailDto? result = await courseQuery.FirstOrDefaultAsync(ct);
         if (result == null)
         {
             return null;
