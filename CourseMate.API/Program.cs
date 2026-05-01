@@ -32,6 +32,7 @@ try
     builder.Services.Configure<GoogleAiOptions>(configuration.GetSection("GoogleAi"));
     builder.Services.Configure<OllamaOptions>(configuration.GetSection("Ollama"));
     builder.Services.Configure<OnlineCompilerOptions>(configuration.GetSection("OnlineCompiler"));
+    builder.Services.Configure<CorsOptions>(configuration.GetSection("CORS"));
     builder.Services.AddHttpClient();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<HttpLoggingMiddleware>();
@@ -117,18 +118,24 @@ try
     builder.Services.AddProblemDetails().AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddCors(options =>
     {
-        // string[] allowedHosts = builder.Configuration["AllowedHosts"]!.ToLower().Trim().Split(';', StringSplitOptions.RemoveEmptyEntries);
-        options.AddPolicy("CorsPolicy", policy =>
+        string[] allowedOrigins = builder.Configuration.GetSection("CORS:AllowedOrigins").Get<string[]>()!;
+        options.AddPolicy("AllowAnyOrigin", policy =>
         {
-            policy.AllowAnyHeader()
-                .AllowAnyHeader()
-                .AllowAnyMethod();
+            policy.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
         });
+
+        options.AddPolicy("SignalRHubs", policyBuilder => policyBuilder
+            .WithOrigins(allowedOrigins)
+            .AllowAnyHeader()
+            .WithMethods("GET", "POST")
+            .AllowCredentials());
     });
 
     WebApplication app = builder.Build();
     // await app.Services.SeedAsync();
-    app.UseCors("CorsPolicy");
+    app.UseCors("AllowAnyOrigin");
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseExceptionHandler();
@@ -138,8 +145,8 @@ try
     app.UseMiddleware<HttpLoggingMiddleware>();
     // app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
     app.MapControllers();
+    app.MapHub<NotificationHub>("/hubs/notification").RequireCors("SignalRHubs");
     app.MapHangfireDashboard();
-    app.MapHub<NotificationHub>("/hubs/notification");
     Log.Information("Starting web host");
     await app.RunAsync();
 }
