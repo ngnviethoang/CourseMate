@@ -15,7 +15,6 @@ public class UpsertLessonCodingRequest
     public Guid ExerciseId { get; set; }
 }
 
-
 public class UpsertLessonSlideRequest
 {
     public string FileUrl { get; set; } = string.Empty;

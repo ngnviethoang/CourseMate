@@ -69,7 +69,7 @@ internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<Update
             .Where(x => x.ChapterId == request.ChapterId)
             .MaxAsync(x => (int?)x.Position, ct) ?? 0) + 1;
 
-        int finalPosition = request.Position == 0 ? (lesson.Position == 0 ? nextPosition : lesson.Position) : request.Position;
+        int finalPosition = request.Position == 0 ? lesson.Position == 0 ? nextPosition : lesson.Position : request.Position;
 
         if (finalPosition > nextPosition)
         {
@@ -79,20 +79,35 @@ internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<Update
         if (lesson.LessonType != request.LessonType)
         {
             // If type changed, clear all related content records to avoid "ghost" data
-            var videos = await DbContext.LessonVideos.Where(x => x.LessonId == request.Id).ToListAsync(ct);
-            if (videos.Any()) DbContext.LessonVideos.RemoveRange(videos);
+            List<LessonVideo> videos = await DbContext.LessonVideos.Where(x => x.LessonId == request.Id).ToListAsync(ct);
+            if (videos.Any())
+            {
+                DbContext.LessonVideos.RemoveRange(videos);
+            }
 
-            var readings = await DbContext.LessonReadings.Where(x => x.LessonId == request.Id).ToListAsync(ct);
-            if (readings.Any()) DbContext.LessonReadings.RemoveRange(readings);
+            List<LessonReading> readings = await DbContext.LessonReadings.Where(x => x.LessonId == request.Id).ToListAsync(ct);
+            if (readings.Any())
+            {
+                DbContext.LessonReadings.RemoveRange(readings);
+            }
 
-            var codings = await DbContext.LessonCodings.Where(x => x.LessonId == request.Id).ToListAsync(ct);
-            if (codings.Any()) DbContext.LessonCodings.RemoveRange(codings);
+            List<LessonCoding> codings = await DbContext.LessonCodings.Where(x => x.LessonId == request.Id).ToListAsync(ct);
+            if (codings.Any())
+            {
+                DbContext.LessonCodings.RemoveRange(codings);
+            }
 
-            var quizzes = await DbContext.LessonQuizzes.Where(x => x.LessonId == request.Id).ToListAsync(ct);
-            if (quizzes.Any()) DbContext.LessonQuizzes.RemoveRange(quizzes);
+            List<LessonQuiz> quizzes = await DbContext.LessonQuizzes.Where(x => x.LessonId == request.Id).ToListAsync(ct);
+            if (quizzes.Any())
+            {
+                DbContext.LessonQuizzes.RemoveRange(quizzes);
+            }
 
-            var slides = await DbContext.LessonSlides.Where(x => x.LessonId == request.Id).ToListAsync(ct);
-            if (slides.Any()) DbContext.LessonSlides.RemoveRange(slides);
+            List<LessonSlide> slides = await DbContext.LessonSlides.Where(x => x.LessonId == request.Id).ToListAsync(ct);
+            if (slides.Any())
+            {
+                DbContext.LessonSlides.RemoveRange(slides);
+            }
         }
 
         lesson.ChapterId = request.ChapterId;

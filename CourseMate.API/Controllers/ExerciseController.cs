@@ -24,50 +24,50 @@ public class ExerciseController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetListExercisesAsync([FromQuery] GetListExercisesQuery request, CancellationToken ct)
+    public async Task<ActionResult> GetListExercisesAsync([FromQuery] GetListExercisesQuery request)
     {
-        PagedDto<ExerciseDto> result = await _mediator.Send(request, ct);
+        PagedDto<ExerciseDto> result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult> GetExerciseByIdAsync(Guid id, CancellationToken ct)
+    public async Task<ActionResult> GetExerciseByIdAsync(Guid id)
     {
-        GetExerciseByIdResponse? result = await _mediator.Send(new GetExerciseByIdQuery { Id = id }, ct);
+        GetExerciseByIdResponse? result = await _mediator.Send(new GetExerciseByIdQuery { Id = id });
         return Ok(result);
     }
 
     // TODO Need review
     [HttpGet("{id:guid}/student")]
     // [Authorize(Roles = Roles.Student)]
-    public async Task<ActionResult> GetStudentExerciseByIdAsync(Guid id, CancellationToken ct)
+    public async Task<ActionResult> GetStudentExerciseByIdAsync(Guid id)
     {
-        GetStudentExerciseByIdResponse? result = await _mediator.Send(new GetStudentExerciseByIdQuery { Id = id }, ct);
+        GetStudentExerciseByIdResponse? result = await _mediator.Send(new GetStudentExerciseByIdQuery { Id = id });
         return Ok(result);
     }
 
     [HttpPost]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> CreateExerciseAsync(CreateExerciseCommand request, CancellationToken ct)
+    public async Task<ActionResult> CreateExerciseAsync(CreateExerciseCommand request)
     {
-        ResultIdDto result = await _mediator.Send(request, ct);
+        ResultIdDto result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpPut("{id:guid}")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> UpdateExerciseAsync(Guid id, UpdateExerciseCommand request, CancellationToken ct)
+    public async Task<ActionResult> UpdateExerciseAsync(Guid id, UpdateExerciseCommand request)
     {
         request.Id = id;
-        await _mediator.Send(request, ct);
+        await _mediator.Send(request);
         return NoContent();
     }
 
     [HttpDelete("{id:guid}")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> DeleteExerciseAsync(Guid id, CancellationToken ct)
+    public async Task<ActionResult> DeleteExerciseAsync(Guid id)
     {
-        await _mediator.Send(new DeleteExerciseCommand { Id = id }, ct);
+        await _mediator.Send(new DeleteExerciseCommand { Id = id });
         return NoContent();
     }
 
@@ -75,10 +75,10 @@ public class ExerciseController : ControllerBase
 
     [HttpPost("{id:guid}/default-codes")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> CreateOrUpdateDefaultCodeAsync(Guid id, CreateOrUpdateDefaultCodeCommand request, CancellationToken ct)
+    public async Task<ActionResult> CreateOrUpdateDefaultCodeAsync(Guid id, CreateOrUpdateDefaultCodeCommand request)
     {
         request.ExerciseId = id;
-        await _mediator.Send(request, ct);
+        await _mediator.Send(request);
         return NoContent();
     }
 
@@ -88,27 +88,27 @@ public class ExerciseController : ControllerBase
 
     [HttpPost("{id:guid}/test-cases")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> CreateTestCaseAsync(Guid id, CreateTestCaseCommand request, CancellationToken ct)
+    public async Task<ActionResult> CreateTestCaseAsync(Guid id, CreateTestCaseCommand request)
     {
         request.ExerciseId = id;
-        ResultIdDto result = await _mediator.Send(request, ct);
+        ResultIdDto result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpPut("{id:guid}/test-cases/{tcId:guid}")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> UpdateTestCaseAsync(Guid id, Guid tcId, UpdateTestCaseCommand request, CancellationToken ct)
+    public async Task<ActionResult> UpdateTestCaseAsync(Guid id, Guid tcId, UpdateTestCaseCommand request)
     {
         request.Id = tcId;
-        await _mediator.Send(request, ct);
+        await _mediator.Send(request);
         return NoContent();
     }
 
     [HttpDelete("{id:guid}/test-cases/{tcId:guid}")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> DeleteTestCaseAsync(Guid id, Guid tcId, CancellationToken ct)
+    public async Task<ActionResult> DeleteTestCaseAsync(Guid id, Guid tcId)
     {
-        await _mediator.Send(new DeleteTestCaseCommand { Id = tcId }, ct);
+        await _mediator.Send(new DeleteTestCaseCommand { Id = tcId });
         return NoContent();
     }
 

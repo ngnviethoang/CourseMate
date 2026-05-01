@@ -12,4 +12,10 @@ public class NotificationService(IHubContext<NotificationHub> hubContext) : INot
         await hubContext.Clients.User(notificationDto.ReceiverId.ToString())
             .SendAsync("ReceiveNotification", notificationDto, cancellationToken);
     }
+
+    public async Task NotifyDocumentProcessedAsync(NotificationDto notificationDto, CancellationToken cancellationToken = default)
+    {
+        await hubContext.Clients.User(notificationDto.ReceiverId.ToString())
+            .SendAsync("DocumentProcessed", notificationDto, cancellationToken);
+    }
 }

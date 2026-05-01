@@ -13,7 +13,9 @@ public class LessonQuiz : Entity
         PassingScore = passingScore;
     }
 
-    protected LessonQuiz() : base(Guid.Empty) { }
+    protected LessonQuiz() : base(Guid.Empty)
+    {
+    }
 
     public Guid LessonId { get; set; }
 

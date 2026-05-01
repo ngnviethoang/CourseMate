@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CourseMate.Application.Commands.Courses;
 
 /// <summary>
-/// Shared helper to check if the current user has permission to manage a lesson's content.
+///     Shared helper to check if the current user has permission to manage a lesson's content.
 /// </summary>
 internal static class LessonAccessHelper
 {
@@ -177,7 +177,7 @@ internal sealed class UpsertLessonQuizCommandHandler : AbstractCommandHandler<Up
         {
             existing.Description = request.Description;
             existing.PassingScore = request.PassingScore;
-            
+
             // Hard delete old questions and answers to avoid soft-delete conflicts and concurrency issues
             await DbContext.LessonQuizQuestions
                 .IgnoreQueryFilters()
@@ -186,13 +186,14 @@ internal sealed class UpsertLessonQuizCommandHandler : AbstractCommandHandler<Up
         }
 
         // Add new questions
-        foreach (var q in request.Questions)
+        foreach (QuizQuestionDto q in request.Questions)
         {
-            var question = new LessonQuizQuestion(Guid.NewGuid(), existing.Id, q.Text, q.Position);
-            foreach (var a in q.Answers)
+            LessonQuizQuestion question = new(Guid.NewGuid(), existing.Id, q.Text, q.Position);
+            foreach (QuizAnswerDto a in q.Answers)
             {
                 question.Answers.Add(new LessonQuizAnswer(Guid.NewGuid(), question.Id, a.Text, a.IsCorrect, a.Position));
             }
+
             await DbContext.LessonQuizQuestions.AddAsync(question, ct);
         }
 

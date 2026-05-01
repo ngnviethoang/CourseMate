@@ -1,10 +1,9 @@
-using CourseMate.Contracts.Exceptions;
+using CourseMate.Contracts.DTOs.Commons;
+using CourseMate.Contracts.DTOs.Exercises;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using CourseMate.Contracts.DTOs.Commons;
-using CourseMate.Contracts.DTOs.Exercises;
 using PayOS.Exceptions;
 
 namespace CourseMate.Application.Commands.Submissions;
@@ -26,13 +25,13 @@ public class SubmitExerciseCommandHandler : IRequestHandler<SubmitExerciseComman
 
     public async Task<ResultIdDto> Handle(SubmitExerciseCommand request, CancellationToken cancellationToken)
     {
-        var exerciseExists = await _dbContext.Exercises.AnyAsync(e => e.Id == request.ExerciseId, cancellationToken);
+        bool exerciseExists = await _dbContext.Exercises.AnyAsync(e => e.Id == request.ExerciseId, cancellationToken);
         if (!exerciseExists)
         {
             throw new NotFoundException($"Exercise {request.ExerciseId} not found");
         }
 
-        var submission = new ExerciseSubmission(
+        ExerciseSubmission submission = new(
             Guid.NewGuid(),
             request.ExerciseId,
             request.Payload.Language,

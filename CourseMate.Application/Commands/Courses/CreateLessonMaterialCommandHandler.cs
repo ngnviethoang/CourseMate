@@ -1,4 +1,4 @@
-using CourseMate.Application.BackgroundJobs;
+using CourseMate.Application.Events;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
@@ -8,7 +8,6 @@ using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using CourseMate.Persistent.ExtensionMethods;
-using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -27,9 +26,11 @@ internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandle
 {
     private readonly IEnumerable<string> _allowedImageExtensions = [".doc", ".docx", ".pdf"];
     private readonly StorageOptions _storageOptions;
+    private readonly IMediator _mediator;
 
-    public CreateLessonMaterialCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor, IOptions<StorageOptions> storageOptions) : base(dbContext, httpContextAccessor)
+    public CreateLessonMaterialCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor, IOptions<StorageOptions> storageOptions, IMediator mediator) : base(dbContext, httpContextAccessor)
     {
+        _mediator = mediator;
         _storageOptions = storageOptions.Value;
     }
 
@@ -81,12 +82,10 @@ internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandle
             FileType.Document);
 
         DbContext.FileEntries.Add(fileEntry);
-
         LessonMaterial material = new(Guid.NewGuid(), request.LessonId, fileEntry.Id, LessonMaterialState.GeneratingEmbedding, string.Empty);
         DbContext.LessonMaterials.Add(material);
 
-        string embeddingJobId = BackgroundJob.Enqueue<ProcessFileEmbeddingJob>(job => job.ExecuteAsync(fileEntryId, ct));
-        BackgroundJob.ContinueJobWith<GenerateOutlineJob>(embeddingJobId, job => job.ExecuteAsync(material.Id, ct));
+        await _mediator.Publish(new LessonMaterialCreatedEvent(material.Id, fileEntryId, material.LessonId), ct);
 
         return new ProcessingStatusDto
         {

@@ -10,8 +10,8 @@ public class LessonQuizAnswerConfiguration : IEntityTypeConfiguration<LessonQuiz
     {
         builder.HasKey(x => x.Id);
         builder.HasOne(x => x.Question)
-               .WithMany(x => x.Answers)
-               .HasForeignKey(x => x.QuestionId)
-               .OnDelete(DeleteBehavior.Cascade);
+            .WithMany(x => x.Answers)
+            .HasForeignKey(x => x.QuestionId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -77,6 +77,10 @@ internal sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<Cr
         });
         CreatePaymentLinkResponse paymentLink = await client.PaymentRequests.CreateAsync(paymentRequest);
         _logger.LogInformation("Payment URL created for Order ID: {OrderId}, URL: {PaymentUrl}", request.OrderId, paymentLink.CheckoutUrl);
+
+        order.Status = OrderStatus.Submitted;
+        DbContext.Orders.Update(order);
+
         PaymentTransaction paymentTransaction = new(
             Guid.NewGuid(),
             order.Id,
@@ -92,7 +96,8 @@ internal sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<Cr
         await DbContext.PaymentTransactions.AddAsync(paymentTransaction, ct);
         return new CreatePaymentUrlResponse
         {
-            CheckoutUrl = paymentLink.CheckoutUrl
+            CheckoutUrl = paymentLink.CheckoutUrl,
+            PaymentTransactionId = paymentTransaction.Id
         };
     }
 }
