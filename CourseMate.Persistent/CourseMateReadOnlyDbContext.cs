@@ -41,6 +41,7 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<IdentityUser
     public DbSet<ExerciseExample> ExerciseExamples { get; set; }
     public DbSet<ExerciseTestCase> ExerciseTestCases { get; set; }
     public DbSet<ExerciseDefaultCode> ExerciseDefaultCodes { get; set; }
+    public DbSet<ExerciseSubmission> ExerciseSubmissions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

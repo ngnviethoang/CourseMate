@@ -17,13 +17,15 @@ import {
   GripVertical,
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  History
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { runnerCodeService } from '@/lib/runner-code-service'
 import type { RunCodeRequest, LanguageDto, RunCodeResponse } from '@/lib/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { exerciseService } from '@/lib/exercise-service'
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
@@ -50,7 +52,8 @@ export interface ExerciseData {
   constraints: string[]
   hints: string[]
   defaultCode: Record<string, string>
-  testCases: { input: string; expectedOutput: string; description: string }[]
+  testCases: { input: string; expectedOutput: string; description: string; isHidden?: boolean }[]
+  submissionsHistory?: any[]
 }
 
 interface RunResult {
@@ -59,6 +62,9 @@ interface RunResult {
   expected: string
   actual: string
   description: string
+  isHidden?: boolean
+  time?: number
+  memory?: number
 }
 
 // ─── Drag hooks ──────────────────────────────────────────────────────────────
@@ -138,9 +144,9 @@ interface ExerciseEditorModalProps {
   hasPrev?: boolean
 }
 
-export function ExerciseEditorModal({ 
-  exercise, 
-  onClose, 
+export function ExerciseEditorModal({
+  exercise,
+  onClose,
   isModal = true,
   onNext,
   onPrev,
@@ -155,7 +161,28 @@ export function ExerciseEditorModal({
   const [results, setResults] = useState<RunResult[] | null>(null)
   const [rawOutput, setRawOutput] = useState<{ stdout: string; stderr: string; time?: string; memory?: string; status?: string; exitCode?: number } | null>(null)
   const [leftTab, setLeftTab] = useState<'problem' | 'hints'>('problem')
-  const [rightTab, setRightTab] = useState<'editor' | 'console'>('editor')
+  const [rightTab, setRightTab] = useState<'editor' | 'console' | 'history'>('editor')
+
+  // Submissions state
+  const [submissionsHistory, setSubmissionsHistory] = useState<any[]>([])
+  const [loadingSubmissions, setLoadingSubmissions] = useState(false)
+
+  const fetchSubmissions = useCallback(async () => {
+    if (!exercise.id) return
+    setLoadingSubmissions(true)
+    try {
+      const res = await exerciseService.getSubmissions(exercise.id)
+      setSubmissionsHistory(res)
+    } catch (err) {
+      console.error('Failed to fetch submissions', err)
+    } finally {
+      setLoadingSubmissions(false)
+    }
+  }, [exercise.id])
+
+  useEffect(() => {
+    fetchSubmissions()
+  }, [fetchSubmissions])
 
   const { pct: hPct, onMouseDown: hDrag } = useHorizontalDrag(40)
 
@@ -210,40 +237,71 @@ export function ExerciseEditorModal({
     setRawOutput(null)
   }
 
-  const handleRun = async (input: string) => {
-    if (!selectedLang) return null
+  const handleRun = async () => {
+    if (!selectedLang) return
     setRunning(true)
-    setResults(null)
+    setResults([])
     setRawOutput(null)
     setRightTab('console')
 
-    try {
-      const response = await runnerCodeService.run({
-        compiler: selectedLang.id,
-        code: code,
-        input: input
-      })
+    const newResults: RunResult[] = []
 
-      setRawOutput({
-        stdout: response.output,
-        stderr: response.error,
-        time: response.time,
-        memory: response.memory,
-        status: response.status,
-        exitCode: response.exit_code
-      })
+    for (let i = 0; i < exercise.examples.length; i++) {
+      const ex = exercise.examples[i]
+      try {
+        const response = await runnerCodeService.run({
+          compiler: selectedLang.id,
+          code: code,
+          input: ex.input
+        })
 
-      setRunning(false)
-      return response
-    } catch (err) {
-      console.error('Run failed', err)
-      setRawOutput({
-        stdout: '',
-      })
-      return null
-    } finally {
-      setRunning(false)
+        const actual = (response.output || '').replace(/\r\n/g, '\n').trim()
+        const expected = (ex.output || '').replace(/\r\n/g, '\n').trim()
+
+        const normActual = actual.split('\n').map(l => l.trimEnd()).join('\n')
+        const normExpected = expected.split('\n').map(l => l.trimEnd()).join('\n')
+        const isPassed = normActual === normExpected
+
+        const result: RunResult = {
+          passed: isPassed,
+          case: ex.input,
+          expected: expected,
+          actual: actual,
+          description: `Example ${i + 1}`,
+          isHidden: false,
+          time: parseFloat(response.time || '0'),
+          memory: parseInt(response.memory || '0', 10)
+        }
+        newResults.push(result)
+        setResults([...newResults])
+
+        // Also set raw output for the first example to show detail
+        if (i === 0) {
+          setRawOutput({
+            stdout: response.output,
+            stderr: response.error,
+            time: response.time,
+            memory: response.memory,
+            status: response.status,
+            exitCode: response.exit_code
+          })
+        }
+      } catch (err) {
+        console.error('Run failed', err)
+        newResults.push({
+          passed: false,
+          case: ex.input,
+          expected: ex.output,
+          actual: 'Lỗi thực thi',
+          description: `Example ${i + 1}`,
+          isHidden: false,
+          time: 0,
+          memory: 0
+        })
+        setResults([...newResults])
+      }
     }
+    setRunning(false)
   }
 
   const handleSubmit = async () => {
@@ -265,41 +323,81 @@ export function ExerciseEditorModal({
           input: tc.input
         })
 
-        const actual = (response.output || '').trim()
-        const expected = (tc.expectedOutput || '').trim()
-        const isPassed = actual === expected
+        const actual = (response.output || '').replace(/\r\n/g, '\n').trim()
+        const expected = (tc.expectedOutput || '').replace(/\r\n/g, '\n').trim()
+
+        const normActual = actual.split('\n').map(l => l.trimEnd()).join('\n')
+        const normExpected = expected.split('\n').map(l => l.trimEnd()).join('\n')
+        const isPassed = normActual === normExpected
 
         if (isPassed) passedCount++
 
-        newResults.push({
+        const result = {
           passed: isPassed,
           case: tc.input,
           expected: expected,
           actual: actual,
-          description: tc.description
-        })
+          description: tc.description,
+          isHidden: tc.isHidden,
+          time: parseFloat(response.time || '0'),
+          memory: parseInt(response.memory || '0', 10)
+        }
+        newResults.push(result)
+        setResults([...newResults]) // Update UI progressively
       } catch (err) {
-        newResults.push({
+        const result = {
           passed: false,
           case: tc.input,
           expected: tc.expectedOutput,
           actual: 'Lỗi thực thi',
-          description: tc.description
-        })
+          description: tc.description,
+          isHidden: tc.isHidden,
+          time: 0,
+          memory: 0
+        }
+        newResults.push(result)
+        setResults([...newResults])
       }
     }
 
-    setResults(newResults)
     setRunning(false)
-    
+
+    // Tổng hợp dữ liệu
+    const totalTime = newResults.reduce((acc, r) => acc + (r.time || 0), 0)
+    const totalMemory = newResults.reduce((acc, r) => acc + (r.memory || 0), 0)
+    const isAllPassed = newResults.every(r => r.passed)
+
+    // Tích hợp API lưu lịch sử nộp bài (Submission)
+    try {
+      const passedCountLocal = newResults.filter(r => r.passed).length
+      const score = Math.round((passedCountLocal / newResults.length) * 100)
+
+      await exerciseService.submitExercise(exercise.id, {
+        language: selectedLang.id,
+        code: code,
+        passed: isAllPassed,
+        score: score,
+        totalTime: totalTime.toString(),
+        totalMemory: totalMemory.toString()
+      })
+      console.log('Đã lưu kết quả nộp bài thành công!')
+
+      // Update local history by fetching from server to ensure data consistency
+      await fetchSubmissions()
+      // setRightTab('history') // Tắt tự động chuyển để người dùng kịp xem kết quả chấm từng test case
+    } catch (err) {
+      console.error('Lỗi khi lưu kết quả nộp bài:', err)
+    }
+
     // Nếu vượt qua tất cả, có thể làm gì đó thêm (vd: confetti)
-    if (newResults.every(r => r.passed)) {
-       // logic cho success
+    if (isAllPassed) {
+      // logic cho success
     }
   }
 
-  const allPassed = results?.every(r => r.passed) ?? false
   const passedCount = results?.filter(r => r.passed).length ?? 0
+  const totalTime = results?.reduce((acc, r) => acc + (r.time || 0), 0) ?? 0
+  const totalMemory = results?.reduce((acc, r) => acc + (r.memory || 0), 0) ?? 0
 
   return (
     <>
@@ -443,7 +541,7 @@ export function ExerciseEditorModal({
           <Button
             size="sm"
             className="h-7 px-3 text-[11px] bg-emerald-600 hover:bg-emerald-500 text-white gap-1.5 rounded-md"
-            onClick={() => handleRun(stdin)}
+            onClick={handleRun}
             disabled={running}
           >
             {running ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3 fill-white" />}
@@ -560,8 +658,8 @@ export function ExerciseEditorModal({
                   onClick={() => setLeftTab(t.key)}
                   title={t.label}
                   className={`group relative flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${leftTab === t.key
-                      ? 'bg-blue-500/15 text-blue-400'
-                      : 'text-neutral-600 hover:text-neutral-300 hover:bg-white/5'
+                    ? 'bg-blue-500/15 text-blue-400'
+                    : 'text-neutral-600 hover:text-neutral-300 hover:bg-white/5'
                     }`}
                 >
                   {t.icon}
@@ -594,14 +692,19 @@ export function ExerciseEditorModal({
                   key: 'console' as const,
                   label: `Kết quả${results ? ` (${passedCount}/${results.length})` : ''}`,
                   icon: <Terminal className="h-3.5 w-3.5" />
+                },
+                {
+                  key: 'history' as const,
+                  label: 'Lịch sử',
+                  icon: <History className="h-3.5 w-3.5" />
                 }
               ].map(t => (
                 <button
                   key={t.key}
                   onClick={() => setRightTab(t.key)}
                   className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors ${rightTab === t.key
-                      ? 'border-blue-500 text-blue-400'
-                      : 'border-transparent text-neutral-500 hover:text-neutral-300'
+                    ? 'border-blue-500 text-blue-400'
+                    : 'border-transparent text-neutral-500 hover:text-neutral-300'
                     }`}
                 >
                   {t.icon}
@@ -619,16 +722,16 @@ export function ExerciseEditorModal({
                 height="100%"
                 language={
                   selectedLang?.id.split('-')[0] === 'openjdk' ? 'java' :
-                  selectedLang?.id.split('-')[0] === 'dotnet' ? (selectedLang?.id.includes('csharp') ? 'csharp' : 'fsharp') :
-                  selectedLang?.id.startsWith('g++') || selectedLang?.id.startsWith('gcc') ? 'cpp' :
-                  selectedLang?.id.startsWith('python') ? 'python' :
-                  selectedLang?.id.startsWith('go') ? 'go' :
-                  selectedLang?.id.startsWith('rust') ? 'rust' :
-                  selectedLang?.id.startsWith('typescript') ? 'typescript' :
-                  selectedLang?.id.startsWith('php') ? 'php' :
-                  selectedLang?.id.startsWith('ruby') ? 'ruby' :
-                  selectedLang?.id.startsWith('haskell') ? 'haskell' :
-                  'javascript'
+                    selectedLang?.id.split('-')[0] === 'dotnet' ? (selectedLang?.id.includes('csharp') ? 'csharp' : 'fsharp') :
+                      selectedLang?.id.startsWith('g++') || selectedLang?.id.startsWith('gcc') ? 'cpp' :
+                        selectedLang?.id.startsWith('python') ? 'python' :
+                          selectedLang?.id.startsWith('go') ? 'go' :
+                            selectedLang?.id.startsWith('rust') ? 'rust' :
+                              selectedLang?.id.startsWith('typescript') ? 'typescript' :
+                                selectedLang?.id.startsWith('php') ? 'php' :
+                                  selectedLang?.id.startsWith('ruby') ? 'ruby' :
+                                    selectedLang?.id.startsWith('haskell') ? 'haskell' :
+                                      'javascript'
                 }
                 value={code}
                 onChange={v => setCode(v ?? '')}
@@ -685,47 +788,71 @@ export function ExerciseEditorModal({
                 {/* Submission Results Summary */}
                 {results && results.length > 0 && (
                   <div className="space-y-4">
-                    <div className={`p-4 rounded-xl border flex items-center gap-4 ${
-                      results.every(r => r.passed) 
-                        ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
-                        : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
-                    }`}>
+                    <div className={`p-4 rounded-xl border flex items-center gap-4 ${results.every(r => r.passed)
+                      ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                      : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                      }`}>
                       {results.every(r => r.passed) ? <CheckCircle2 className="h-6 w-6" /> : <XCircle className="h-6 w-6" />}
                       <div className="flex-1">
                         <p className="text-sm font-bold">
                           {results.every(r => r.passed) ? 'Vượt qua tất cả test cases! 🎉' : 'Một số test case không vượt qua.'}
                         </p>
-                        <p className="text-xs opacity-80">
-                          Kết quả: {results.filter(r => r.passed).length}/{results.length} test cases đúng
-                        </p>
+                        <div className="mt-2 flex flex-wrap items-center gap-4 text-xs font-medium opacity-90">
+                          <span className="bg-white/10 px-2.5 py-1 rounded-md">
+                            🎯 {passedCount}/{results.length} đúng
+                          </span>
+                          <span className="bg-white/10 px-2.5 py-1 rounded-md">
+                            ⏱ {(totalTime).toFixed(3)}s
+                          </span>
+                          <span className="bg-white/10 px-2.5 py-1 rounded-md">
+                            💾 {(totalMemory / 1024).toFixed(1)} MB
+                          </span>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-lg font-black">{Math.round((results.filter(r => r.passed).length / results.length) * 100)}/100</p>
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-lg font-black">{Math.round((passedCount / results.length) * 100)}/100</p>
                         <p className="text-[10px] font-bold uppercase tracking-tight opacity-60">Điểm số</p>
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                       {results.map((r, i) => (
-                         <div key={i} className={`p-3 rounded-lg border text-[11px] font-mono ${
-                           r.passed ? 'bg-[#161d16] border-emerald-500/20' : 'bg-[#1d1616] border-red-500/20'
-                         }`}>
-                           <div className="flex items-center justify-between mb-2">
-                             <div className="flex items-center gap-2">
-                               {r.passed ? <CheckCircle2 className="h-3 w-3 text-emerald-500" /> : <XCircle className="h-3 w-3 text-red-500" />}
-                               <span className={r.passed ? 'text-emerald-400' : 'text-red-400'}>Test {i + 1}: {r.description}</span>
-                             </div>
-                             <span className={r.passed ? 'text-emerald-500' : 'text-red-500'}>{r.passed ? 'PASSED' : 'FAILED'}</span>
-                           </div>
-                           {!r.passed && (
-                             <div className="space-y-1 pl-5 opacity-80">
-                               <p><span className="text-neutral-500">Input:</span> {r.case}</p>
-                               <p><span className="text-neutral-500">Expected:</span> <span className="text-emerald-500">{r.expected}</span></p>
-                               <p><span className="text-neutral-500">Actual:</span> <span className="text-red-500">{r.actual}</span></p>
-                             </div>
-                           )}
-                         </div>
-                       ))}
+                      {results.map((r, i) => (
+                        <div key={i} className={`p-3 rounded-lg border text-[11px] font-mono ${r.passed ? 'bg-[#161d16] border-emerald-500/20' : 'bg-[#1d1616] border-red-500/20'
+                          }`}>
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              {r.passed ? <CheckCircle2 className="h-3 w-3 text-emerald-500" /> : <XCircle className="h-3 w-3 text-red-500" />}
+                              <span className={r.passed ? 'text-emerald-400' : 'text-red-400'}>Test {i + 1}: {r.description || (r.isHidden ? 'Hidden Test Case' : 'Test Case')}</span>
+                              {r.isHidden && <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-500 font-bold tracking-wider">ẨN</span>}
+                            </div>
+                            <span className={r.passed ? 'text-emerald-500' : 'text-red-500'}>{r.passed ? 'PASSED' : 'FAILED'}</span>
+                          </div>
+                          {!r.passed && (
+                            <div className="space-y-2 pl-5 pt-1">
+                              {r.isHidden ? (
+                                <div className="text-neutral-500 italic mt-1 bg-white/5 px-3 py-2 rounded">
+                                  Test case này được ẩn để thử thách code của bạn. Bạn hãy kiểm tra lại các trường hợp đặc biệt nhé.
+                                </div>
+                              ) : (
+                                <>
+                                  <div>
+                                    <span className="text-neutral-500 font-sans text-[10px] uppercase tracking-wider block mb-1">Input:</span>
+                                    <pre className="bg-white/5 p-2 rounded text-neutral-300 whitespace-pre-wrap">{r.case}</pre>
+                                  </div>
+                                  <div>
+                                    <span className="text-neutral-500 font-sans text-[10px] uppercase tracking-wider block mb-1">Expected:</span>
+                                    <pre className="bg-emerald-500/10 border border-emerald-500/20 p-2 rounded text-emerald-400 whitespace-pre-wrap">{r.expected}</pre>
+                                  </div>
+                                  <div>
+                                    <span className="text-neutral-500 font-sans text-[10px] uppercase tracking-wider block mb-1">Actual:</span>
+                                    <pre className="bg-red-500/10 border border-red-500/20 p-2 rounded text-red-400 whitespace-pre-wrap">{r.actual || <span className="italic opacity-50">Không có output</span>}</pre>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -769,7 +896,7 @@ export function ExerciseEditorModal({
                 <div className="pt-4 border-t border-white/5">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-3 block">Sử dụng Test Case</Label>
                   <div className="grid grid-cols-1 gap-2">
-                    {exercise.testCases.map((tc, i) => (
+                    {exercise.testCases.filter(tc => !tc.isHidden).map((tc, i) => (
                       <button
                         key={i}
                         onClick={() => {
@@ -779,7 +906,7 @@ export function ExerciseEditorModal({
                         className="flex items-center justify-between p-3 rounded-lg bg-[#16161e] border border-white/5 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all text-left group"
                       >
                         <div className="flex-1 min-w-0">
-                          <p className="text-[11px] font-medium text-neutral-300 truncate">{tc.description || `Test case ${i+1}`}</p>
+                          <p className="text-[11px] font-medium text-neutral-300 truncate">{tc.description || `Test case ${i + 1}`}</p>
                           <code className="text-[10px] text-neutral-500 truncate block mt-0.5">Input: {tc.input}</code>
                         </div>
                         <Play className="h-3 w-3 text-neutral-600 group-hover:text-blue-400 ml-3" />
@@ -787,6 +914,58 @@ export function ExerciseEditorModal({
                     ))}
                   </div>
                 </div>
+              </div>
+            )}
+
+            {rightTab === 'history' && (
+              <div className="flex-1 overflow-y-auto bg-[#0f0f14] p-4 text-sm text-neutral-300">
+                {loadingSubmissions ? (
+                  <div className="flex flex-col items-center justify-center h-full gap-3 opacity-50">
+                    <Loader2 className="h-8 w-8 text-neutral-500 animate-spin" />
+                    <p className="text-sm font-medium text-neutral-400">Đang tải lịch sử...</p>
+                  </div>
+                ) : !submissionsHistory || submissionsHistory.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full gap-3 opacity-50">
+                    <History className="h-8 w-8 text-neutral-500" />
+                    <p className="text-sm font-medium text-neutral-400">Chưa có lịch sử nộp bài</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {submissionsHistory.map((sub, i) => (
+                      <div key={sub.id || i} className="bg-[#1c1c28] border border-white/5 rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            {sub.passed ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <XCircle className="h-4 w-4 text-red-500" />}
+                            <span className={`font-bold ${sub.passed ? 'text-emerald-500' : 'text-red-500'}`}>
+                              {sub.passed ? 'Accepted' : 'Failed'}
+                            </span>
+                          </div>
+                          <span className="text-xs text-neutral-500">
+                            {new Date(sub.creationTime).toLocaleString('vi-VN')}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-4 gap-2 text-xs text-neutral-400 mt-3">
+                          <div className="bg-black/20 p-2 rounded">
+                            <span className="block text-[9px] uppercase tracking-wider opacity-60 mb-1">Ngôn ngữ</span>
+                            <span className="font-mono text-neutral-300">{sub.language}</span>
+                          </div>
+                          <div className="bg-black/20 p-2 rounded">
+                            <span className="block text-[9px] uppercase tracking-wider opacity-60 mb-1">Điểm</span>
+                            <span className="text-neutral-300 font-bold">{sub.score}/100</span>
+                          </div>
+                          <div className="bg-black/20 p-2 rounded">
+                            <span className="block text-[9px] uppercase tracking-wider opacity-60 mb-1">Thời gian</span>
+                            <span className="text-neutral-300">{sub.totalTime?.toFixed(3)}s</span>
+                          </div>
+                          <div className="bg-black/20 p-2 rounded">
+                            <span className="block text-[9px] uppercase tracking-wider opacity-60 mb-1">Bộ nhớ</span>
+                            <span className="text-neutral-300">{(sub.totalMemory / 1024).toFixed(1)} MB</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>

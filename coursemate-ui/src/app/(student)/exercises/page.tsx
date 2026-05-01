@@ -155,6 +155,15 @@ export default function ExercisesPage() {
     }
   }, [activeExercise])
 
+  if (loading) {
+    return (
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center h-screen gap-4 bg-[#0f0f14]">
+        <div className="h-12 w-12 text-blue-500 animate-spin border-4 border-t-blue-500 border-r-transparent border-b-transparent border-l-transparent rounded-full" />
+        <p className="text-neutral-400">Đang tải danh sách bài tập...</p>
+      </div>
+    )
+  }
+
   return (
     <>
       {/* Row click animation */}

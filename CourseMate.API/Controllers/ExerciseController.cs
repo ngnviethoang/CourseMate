@@ -35,6 +35,14 @@ public class ExerciseController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{id:guid}/student")]
+    // [Authorize(Roles = Roles.Student)]
+    public async Task<ActionResult> GetStudentExerciseByIdAsync(Guid id, CancellationToken ct)
+    {
+        GetStudentExerciseByIdResponse? result = await _mediator.Send(new GetStudentExerciseByIdQuery { Id = id }, ct);
+        return Ok(result);
+    }
+
     [HttpPost]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
     public async Task<ActionResult> CreateExerciseAsync(CreateExerciseCommand request, CancellationToken ct)
@@ -42,6 +50,7 @@ public class ExerciseController : ControllerBase
         ResultIdDto result = await _mediator.Send(request, ct);
         return Ok(result);
     }
+
 
     [HttpPut("{id:guid}")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
@@ -99,6 +108,26 @@ public class ExerciseController : ControllerBase
     {
         await _mediator.Send(new DeleteTestCaseCommand { Id = tcId }, ct);
         return NoContent();
+    }
+
+    #endregion
+
+    #region API Submissions
+
+    [HttpPost("{id:guid}/submissions")]
+    public async Task<ActionResult> SubmitExerciseAsync(Guid id, [FromBody] CourseMate.Contracts.DTOs.Exercises.SubmitExerciseRequest payload, CancellationToken ct)
+    {
+        var command = new CourseMate.Application.Commands.Submissions.SubmitExerciseCommand(id, payload);
+        ResultIdDto result = await _mediator.Send(command, ct);
+        return Ok(result);
+    }
+
+    [HttpGet("{id:guid}/submissions")]
+    // [Authorize(Roles = Roles.Student)]
+    public async Task<ActionResult> GetStudentExerciseSubmissionsAsync(Guid id, CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetStudentExerciseSubmissionsQuery { ExerciseId = id }, ct);
+        return Ok(result);
     }
 
     #endregion
