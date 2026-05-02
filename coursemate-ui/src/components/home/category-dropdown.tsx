@@ -18,7 +18,7 @@ export function CategoryDropdown({ value, onChange }: CategoryDropdownProps) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await categoryService.list(25)
+        const res = await categoryService.list({ pageSize: 25 })
         setCategories(res.items.filter(c => c.isActive))
       } catch {
         setCategories([])

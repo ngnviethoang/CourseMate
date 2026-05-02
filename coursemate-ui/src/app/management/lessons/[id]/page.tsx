@@ -5,11 +5,10 @@ import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Loader2, Save, Edit, Video, BookOpen, Code2, FileQuestion, Presentation, CheckCircle2, UploadCloud, FileText, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { lessonService, chapterService, courseService } from '@/lib/course-service'
-import { fileService } from '@/lib/file-service'
 import { exerciseService } from '@/lib/exercise-service'
 import {
   LessonDto, ChapterDto, CourseDto, UpdateLessonRequest, LessonType, LessonDetailDto,
-  ExerciseDto, ExerciseDetailDto
+  ExerciseDto, ExerciseDetailDto, QuizQuestionDto, QuizAnswerDto
 } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -752,8 +751,15 @@ export default function LessonDetailPage() {
     return <div className="text-center py-16 text-muted-foreground">Lesson not found.</div>
   }
 
+  const numericMap: Record<number, LessonType> = {
+    1: LessonType.Video,
+    2: LessonType.Reading,
+    3: LessonType.Coding,
+    4: LessonType.Quiz,
+    5: LessonType.Slide
+  }
   const typeMeta = TYPE_META[lesson.lessonType] || 
-    TYPE_META[({ 1: LessonType.Video, 2: LessonType.Reading, 3: LessonType.Coding, 4: LessonType.Quiz, 5: LessonType.Slide } as any)[lesson.lessonType]] ||
+    TYPE_META[numericMap[lesson.lessonType as unknown as number]] ||
     TYPE_META[LessonType.Video]
 
   return (

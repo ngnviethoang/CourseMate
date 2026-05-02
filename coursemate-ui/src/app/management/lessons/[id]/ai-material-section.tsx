@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Upload,
   Loader2,
@@ -523,6 +523,16 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
     }
   }
 
+  const [particles, setParticles] = useState<{ top: string; left: string; duration: string }[]>([])
+
+  useEffect(() => {
+    setParticles([...Array(6)].map(() => ({
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+      duration: `${1 + Math.random() * 2}s`
+    })))
+  }, [])
+
   return (
     <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
       {/* Header */}
@@ -653,14 +663,14 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
                 <Sparkles className="h-14 w-14 text-white animate-pulse" />
                 {/* Floating particles */}
                 <div className="absolute inset-0 overflow-hidden">
-                  {[...Array(6)].map((_, i) => (
+                  {particles.map((p, i) => (
                     <div
                       key={i}
                       className="absolute h-1 w-1 bg-white rounded-full opacity-40 animate-ping"
                       style={{
-                        top: `${Math.random() * 100}%`,
-                        left: `${Math.random() * 100}%`,
-                        animationDuration: `${1 + Math.random() * 2}s`
+                        top: p.top,
+                        left: p.left,
+                        animationDuration: p.duration
                       }}
                     />
                   ))}

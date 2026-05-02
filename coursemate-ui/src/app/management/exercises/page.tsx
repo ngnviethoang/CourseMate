@@ -100,7 +100,12 @@ export default function ExercisesManagementPage() {
         title: newForm.title,
         description: newForm.description,
         difficulty: newForm.difficulty,
-        category: newForm.category
+        category: newForm.category,
+        examples: [],
+        constraints: [],
+        hints: [],
+        testCases: [],
+        defaultCodes: []
       }
       const res = await exerciseService.create(payload) as any
       toast.success('Đã tạo bài tập! Tiếp tục thêm chi tiết.')

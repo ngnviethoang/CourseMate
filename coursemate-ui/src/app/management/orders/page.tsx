@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 import { orderService } from '@/lib/order-service'
-import { getRole } from '@/lib/auth-token.util'
+import { getRoles } from '@/lib/auth-token.util'
 import type { AdminOrderDto } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Input } from '@/components/ui/input'
@@ -69,7 +69,7 @@ export default function OrdersPage() {
   const [userRole, setUserRole] = useState<string[]>([])
 
   useEffect(() => {
-    setUserRole(getRole())
+    setUserRole(getRoles())
   }, [])
 
   const isAdmin = userRole.includes('Admin')
@@ -78,7 +78,7 @@ export default function OrdersPage() {
     setLoading(true)
     try {
       const res = await orderService.list({ filter, pageIndex, pageSize, sorting })
-      setItems(res.items)
+      setItems(res.items as unknown as AdminOrderDto[])
       setTotalCount(res.totalCount)
     } finally {
       setLoading(false)

@@ -50,7 +50,7 @@ export function ContinueLearning() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await orderService.list(1, 6)
+        const res = await orderService.list({ pageIndex: 0, pageSize: 6 })
         setOrders(res.items)
       } catch {
         setOrders([])

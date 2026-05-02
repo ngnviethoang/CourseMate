@@ -241,12 +241,36 @@ export function ExerciseEditorModal({
     setRawOutput(null)
   }
 
-  const handleRun = async () => {
+  const handleRun = async (customInput?: string) => {
     if (!selectedLang) return
     setRunning(true)
     setResults([])
     setRawOutput(null)
     setRightTab('console')
+
+    // If customInput is provided, run only that one
+    if (customInput !== undefined) {
+      try {
+        const response = await runnerCodeService.run({
+          compiler: selectedLang.id,
+          code: code,
+          input: customInput
+        })
+        setRawOutput({
+          stdout: response.output,
+          stderr: response.error,
+          time: response.time,
+          memory: response.memory,
+          status: response.status,
+          exitCode: response.exit_code
+        })
+      } catch (err) {
+        console.error('Run failed', err)
+      } finally {
+        setRunning(false)
+      }
+      return
+    }
 
     const newResults: RunResult[] = []
 
@@ -554,7 +578,7 @@ export function ExerciseEditorModal({
           <Button
             size="sm"
             className="h-7 px-3 text-[11px] bg-emerald-600 hover:bg-emerald-500 text-white gap-1.5 rounded-md"
-            onClick={handleRun}
+            onClick={() => handleRun()}
             disabled={running}
           >
             {running ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3 fill-white" />}
