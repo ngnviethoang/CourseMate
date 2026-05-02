@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
@@ -42,11 +42,11 @@ internal sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<Cr
     public override async Task<CreatePaymentUrlResponse> Handle(CreatePaymentUrlCommand request, CancellationToken ct)
     {
         Order? order = await DbContext.Orders
-            .Where(i => i.Id == request.OrderId && i.StudentId == CurrentUserId && i.Status == OrderStatus.Submitted)
+            .Where(i => i.Id == request.OrderId && i.StudentId == CurrentUserId && (i.Status == OrderStatus.Submitted || i.Status == OrderStatus.Draft))
             .FirstOrDefaultAsync(ct);
         if (order is null)
         {
-            _logger.LogWarning("Invalid order with ID: {OrderId}", request.OrderId);
+            _logger.LogWarning("Không tìm thấy đơn hàng hợp lệ với ID: {OrderId}", request.OrderId);
             throw new EntityNotFoundException(nameof(Order), request.OrderId);
         }
 

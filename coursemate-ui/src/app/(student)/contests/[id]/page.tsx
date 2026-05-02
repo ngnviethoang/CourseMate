@@ -43,7 +43,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
       const data = await contestService.getById(id)
       setContest(data)
       
-      if (data.status === 'Ended' || data.status === 'Ongoing') {
+      if (tab === 'leaderboard') {
         try {
           const lb = await contestService.getLeaderboard(id)
           setLeaderboard(lb)
@@ -56,7 +56,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
     } finally {
       setLoading(false)
     }
-  }, [id])
+  }, [id, tab])
 
   useEffect(() => { fetchData() }, [fetchData])
 
@@ -255,10 +255,16 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
 
             {tab === 'leaderboard' && (
               <div className="space-y-4">
-                {!leaderboard || leaderboard.entries.length === 0 ? (
+                {!leaderboard ? (
+                   <div className="text-center py-20">
+                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/20 mx-auto mb-4" />
+                     <p className="text-muted-foreground font-medium">Đang tải bảng xếp hạng...</p>
+                   </div>
+                ) : leaderboard.entries.length === 0 ? (
                   <div className="text-center py-20 border-2 border-dashed rounded-3xl">
                     <Trophy className="h-12 w-12 text-muted-foreground/20 mx-auto mb-4" />
-                    <p className="text-muted-foreground font-medium">Bảng xếp hạng sẽ sớm được cập nhật.</p>
+                    <p className="text-muted-foreground font-medium">Chưa có lượt nộp bài nào được ghi nhận.</p>
+                    <p className="text-xs text-muted-foreground/60 mt-1 italic">Dữ liệu sẽ được cập nhật ngay khi có thí sinh nộp bài.</p>
                   </div>
                 ) : (
                   leaderboard.entries.map(entry => (

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { orderService } from '@/lib/order-service'
 import { CartDto } from '@/lib/types'
+import { getUserId } from '@/lib/auth-token.util'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 
@@ -86,8 +87,10 @@ export default function CheckoutPage() {
   const [selectedMethod, setSelectedMethod] = useState('vnpay')
   const [placing, setPlacing] = useState(false)
 
+  const [orderId, setOrderId] = useState<string | null>(null)
+
   useEffect(() => {
-    const fetchCart = async () => {
+    const fetchCartAndCreateOrder = async () => {
       try {
         const res = await orderService.getCart()
         if (!res || res.items.length === 0) {
@@ -95,23 +98,40 @@ export default function CheckoutPage() {
           return
         }
         setCart(res)
+
+        // Step 1: Tạo luôn order khi vào trang checkout
+        const orderRes = await orderService.create()
+        setOrderId(orderRes.id)
       } catch {
         router.replace('/cart')
       } finally {
         setLoading(false)
       }
     }
-    fetchCart()
+    fetchCartAndCreateOrder()
   }, [router])
 
   const handlePlaceOrder = async () => {
+    if (!orderId) return
+
     setPlacing(true)
     try {
-      await orderService.create()
-      toast.success('🎉 Đặt hàng thành công! Chúc bạn học vui.')
+      // Bước 2: Sử dụng api /api/payments/create-url (Backend đã tự cập nhật status sang Submitted)
+      const paymentRes = await orderService.createPaymentUrl(orderId)
+      
+      // Bước 3: Đã xử lý trong Bước 2
+
+      // Bước 4: Sử dụng /api/payments/fake-payos-ipn
+      const studentId = getUserId()
+      if (studentId) {
+        await orderService.fakePayOsIpn(orderId, studentId, paymentRes.paymentTransactionId)
+      }
+
+      toast.success('🎉 Thanh toán thành công! Chúc bạn học vui.')
       router.push('/orders')
-    } catch {
-      // handled by api-client
+    } catch (error) {
+      console.error('Payment error:', error)
+      toast.error('Có lỗi xảy ra trong quá trình thanh toán.')
     } finally {
       setPlacing(false)
     }

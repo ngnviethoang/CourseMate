@@ -32,6 +32,7 @@ try
     builder.Services.Configure<GoogleAiOptions>(configuration.GetSection("GoogleAi"));
     builder.Services.Configure<OllamaOptions>(configuration.GetSection("Ollama"));
     builder.Services.Configure<OnlineCompilerOptions>(configuration.GetSection("OnlineCompiler"));
+    builder.Services.Configure<PayOsOptions>(configuration.GetSection("PayOs"));
     builder.Services.Configure<CorsOptions>(configuration.GetSection("CORS"));
     builder.Services.AddHttpClient();
     builder.Services.AddHttpContextAccessor();

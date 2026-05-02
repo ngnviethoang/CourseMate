@@ -28,34 +28,47 @@ internal sealed class GetContestLeaderboardQueryHandler : AbstractQueryHandler<G
 
         if (contest == null) return null;
 
-        // Get all submissions for this contest
-        var allSubmissions = await DbContext.ContestSubmissions
+        // 1. Get all submissions for this contest
+        var submissions = await DbContext.ContestSubmissions
             .Where(s => s.ContestId == request.ContestId)
-            .Join(DbContext.Users, s => s.StudentId, u => u.Id, (s, u) => new
-            {
-                s.StudentId,
-                u.UserName,
-                s.ExerciseId,
-                s.Score,
-                s.TotalTime,
-                s.CreationTime
-            })
             .ToListAsync(ct);
 
-        // Process in memory to find best scores per exercise per student
-        var entries = allSubmissions
+        if (submissions.Count == 0)
+        {
+            return new ContestLeaderboardDto
+            {
+                ContestId = contest.Id,
+                ContestTitle = contest.Title,
+                Entries = []
+            };
+        }
+
+        // 2. Get unique student IDs and fetch their usernames
+        var studentIds = submissions.Select(s => s.StudentId).Distinct().ToList();
+        var userDict = await DbContext.Users
+            .Where(u => studentIds.Contains(u.Id))
+            .ToDictionaryAsync(u => u.Id, u => u.UserName ?? "Unknown", ct);
+
+        // 3. Process to find best scores per exercise per student
+        var entries = submissions
             .GroupBy(s => s.StudentId)
             .Select(studentGroup =>
             {
+                var studentId = studentGroup.Key;
+                var userName = userDict.GetValueOrDefault(studentId) ?? "Unknown";
+
                 var bestScoresPerExercise = studentGroup
                     .GroupBy(s => s.ExerciseId)
-                    .Select(exerciseGroup => exerciseGroup.OrderByDescending(s => s.Score).ThenBy(s => s.TotalTime).First())
+                    .Select(exerciseGroup => exerciseGroup
+                        .OrderByDescending(s => s.Score)
+                        .ThenBy(s => s.TotalTime)
+                        .First())
                     .ToList();
 
                 return new LeaderboardEntryDto
                 {
-                    StudentId = studentGroup.Key,
-                    StudentName = studentGroup.First().UserName ?? "Unknown",
+                    StudentId = studentId,
+                    StudentName = userName,
                     TotalScore = bestScoresPerExercise.Sum(s => s.Score),
                     TotalRuntime = bestScoresPerExercise.Sum(s => s.TotalTime),
                     LastSubmitTime = bestScoresPerExercise.Max(s => s.CreationTime)

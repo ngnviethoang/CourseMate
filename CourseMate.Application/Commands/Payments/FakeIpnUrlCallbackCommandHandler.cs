@@ -1,4 +1,4 @@
-﻿using CourseMate.Application.Shared;
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
@@ -27,12 +27,13 @@ internal sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<
 
     public override async Task<int> Handle(FakeIpnUrlCallbackCommand request, CancellationToken ct)
     {
-        Order? order = DbContext.Orders.FirstOrDefault(x => x.Id == request.OrderId);
+        Order? order = await DbContext.Orders.FirstOrDefaultAsync(x => x.Id == request.OrderId, ct);
         if (order == null)
         {
             throw new EntityNotFoundException(nameof(Order), request.OrderId);
         }
 
+        Guid studentId = order.StudentId;
         order.Status = OrderStatus.Completed;
         DbContext.Orders.Update(order);
 
@@ -52,13 +53,13 @@ internal sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<
             .ToListAsync(ct);
 
         List<Guid> existingCourseIds = await DbContext.Enrollments
-            .Where(x => x.StudentId == request.StudentId && courseIds.Contains(x.CourseId))
+            .Where(x => x.StudentId == studentId && courseIds.Contains(x.CourseId))
             .Select(x => x.CourseId)
             .ToListAsync(ct);
 
         List<Enrollment> newEnrollments = courseIds
             .Except(existingCourseIds)
-            .Select(courseId => new Enrollment(Guid.NewGuid(), request.StudentId, courseId))
+            .Select(courseId => new Enrollment(Guid.NewGuid(), studentId, courseId))
             .ToList();
 
         if (newEnrollments.Count > 0)
@@ -66,13 +67,9 @@ internal sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<
             await DbContext.Enrollments.AddRangeAsync(newEnrollments, ct);
         }
 
-        List<CartItem> cartItems = await (
-            from cart in DbContext.Carts
-            join cartItem in DbContext.CartItems on cart.Id equals cartItem.CartId
-            where cart.StudentId == request.StudentId && courseIds.Contains(cartItem.CourseId)
-            select cartItem
-        ).ToListAsync(ct);
-        DbContext.CartItems.RemoveRange(cartItems);
+        await DbContext.CartItems
+            .Where(ci => DbContext.Carts.Any(c => c.Id == ci.CartId && c.StudentId == studentId) && courseIds.Contains(ci.CourseId))
+            .ExecuteDeleteAsync(ct);
 
         return Codes.Success;
     }
