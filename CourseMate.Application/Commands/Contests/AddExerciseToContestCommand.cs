@@ -48,7 +48,7 @@ internal sealed class AddExerciseToContestCommandHandler : AbstractCommandHandle
         // Check if already added
         bool alreadyAdded = await DbContext.ContestExercises
             .AnyAsync(x => x.ContestId == request.ContestId && x.ExerciseId == request.ExerciseId, ct);
-        
+
         if (alreadyAdded)
         {
             throw new InvalidOperationException("Exercise already added to this contest.");

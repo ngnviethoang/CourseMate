@@ -32,7 +32,7 @@ internal sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateO
         }
 
         IQueryable<CartItem> cartItemsQuery = DbContext.CartItems.Where(ci => ci.CartId == cart.Id);
-        
+
         // If specific course IDs are provided, filter by them
         if (request.CourseIds != null && request.CourseIds.Any())
         {

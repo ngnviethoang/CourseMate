@@ -48,74 +48,72 @@ internal sealed class GetContestByIdQueryHandler : AbstractQueryHandler<GetConte
                 IsRegistered = DbContext.ContestRegistrations.Any(x => x.ContestId == contest.Id && x.StudentId == CurrentUserId)
             }).FirstOrDefaultAsync(ct);
 
-        if (result != null)
+        if (result == null)
         {
-            var exercises = await (
-                from ce in DbContext.ContestExercises
-                join e in DbContext.Exercises on ce.ExerciseId equals e.Id
-                where ce.ContestId == result.Id
-                orderby ce.Order
-                select new ContestExerciseDto
-                {
-                    Id = ce.Id,
-                    ExerciseId = e.Id,
-                    Title = e.Title,
-                    Description = e.Description,
-                    ScoreWeight = ce.ScoreWeight,
-                    Order = ce.Order,
-                    IsPassed = DbContext.ContestSubmissions.Any(s => s.ContestId == ce.ContestId && s.ExerciseId == e.Id && s.StudentId == CurrentUserId && s.Score == 100),
-                    Constraints = e.Constraints.ToList(),
-                    Hints = e.Hints.ToList()
-                }).ToListAsync(ct);
-
-            bool shouldMask = IsInRole(Roles.Student) && 
-                             (result.Status == ContestStatus.Upcoming || 
-                              result.Status == ContestStatus.Draft);
-
-            if (shouldMask)
-            {
-                foreach (var ex in exercises)
-                {
-                    ex.Title = $"Problem {GetProblemLabel(ex.Order)}";
-                    ex.Description = "Nội dung bài tập sẽ được hiển thị khi cuộc thi bắt đầu.";
-                    ex.Constraints = [];
-                    ex.Hints = [];
-                    ex.Examples = [];
-                    ex.DefaultCodes = [];
-                }
-            }
-            else
-            {
-                foreach (var ex in exercises)
-                {
-                    ex.Examples = await DbContext.ExerciseExamples
-                        .Where(x => x.ExerciseId == ex.ExerciseId)
-                        .Select(x => new ExerciseExampleDto
-                        {
-                            Id = x.Id,
-                            Input = x.Input,
-                            Output = x.Output,
-                            Explanation = x.Explanation
-                        }).ToListAsync(ct);
-
-                    ex.DefaultCodes = await DbContext.ExerciseDefaultCodes
-                        .Where(x => x.ExerciseId == ex.ExerciseId)
-                        .Select(x => new ExerciseDefaultCodeDto
-                        {
-                            Id = x.Id,
-                            Language = x.Language,
-                            StarterCode = x.StarterCode
-                        }).ToListAsync(ct);
-                }
-            }
-
-            result.Exercises = exercises;
+            return null;
         }
 
+        List<ContestExerciseDto> exercises = await (
+            from ce in DbContext.ContestExercises
+            join e in DbContext.Exercises on ce.ExerciseId equals e.Id
+            where ce.ContestId == result.Id
+            orderby ce.Order
+            select new ContestExerciseDto
+            {
+                Id = ce.Id,
+                ExerciseId = e.Id,
+                Title = e.Title,
+                Description = e.Description,
+                ScoreWeight = ce.ScoreWeight,
+                Order = ce.Order,
+                IsPassed = DbContext.ContestSubmissions.Any(s => s.ContestId == ce.ContestId && s.ExerciseId == e.Id && s.StudentId == CurrentUserId && s.Score == 100),
+                Constraints = e.Constraints.ToList(),
+                Hints = e.Hints.ToList()
+            }).ToListAsync(ct);
+
+        bool shouldMask = IsInRole(Roles.Student) && result.Status is ContestStatus.Upcoming or ContestStatus.Draft;
+        if (shouldMask)
+        {
+            foreach (ContestExerciseDto ex in exercises)
+            {
+                ex.Title = $"Problem {GetProblemLabel(ex.Order)}";
+                ex.Description = "Nội dung bài tập sẽ được hiển thị khi cuộc thi bắt đầu.";
+                ex.Constraints = [];
+                ex.Hints = [];
+                ex.Examples = [];
+                ex.DefaultCodes = [];
+            }
+        }
+        else
+        {
+            foreach (ContestExerciseDto ex in exercises)
+            {
+                ex.Examples = await DbContext.ExerciseExamples
+                    .Where(x => x.ExerciseId == ex.ExerciseId)
+                    .Select(x => new ExerciseExampleDto
+                    {
+                        Id = x.Id,
+                        Input = x.Input,
+                        Output = x.Output,
+                        Explanation = x.Explanation
+                    }).ToListAsync(ct);
+
+                ex.DefaultCodes = await DbContext.ExerciseDefaultCodes
+                    .Where(x => x.ExerciseId == ex.ExerciseId)
+                    .Select(x => new ExerciseDefaultCodeDto
+                    {
+                        Id = x.Id,
+                        Language = x.Language,
+                        StarterCode = x.StarterCode
+                    }).ToListAsync(ct);
+            }
+        }
+
+        result.Exercises = exercises;
         return result;
     }
 
-    private string GetProblemLabel(int order)
+    private static string GetProblemLabel(int order)
     {
         return ((char)('A' + (order - 1))).ToString();
     }

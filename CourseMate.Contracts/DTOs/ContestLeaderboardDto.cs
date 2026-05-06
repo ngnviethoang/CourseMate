@@ -6,13 +6,3 @@ public class ContestLeaderboardDto
     public string ContestTitle { get; set; } = string.Empty;
     public List<LeaderboardEntryDto> Entries { get; set; } = [];
 }
-
-public class LeaderboardEntryDto
-{
-    public int Rank { get; set; }
-    public Guid StudentId { get; set; }
-    public string StudentName { get; set; } = string.Empty;
-    public int TotalScore { get; set; }
-    public float TotalRuntime { get; set; }
-    public DateTimeOffset LastSubmitTime { get; set; }
-}

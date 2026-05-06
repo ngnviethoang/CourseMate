@@ -29,6 +29,7 @@ public class ContestSubmission : Entity
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
     public string Language { get; set; }
 
+    [MaxLength(CourseMateConsts.ContentMaxLength)]
     public string Code { get; set; }
 
     public int Score { get; set; }
@@ -38,8 +39,4 @@ public class ContestSubmission : Entity
     public int TotalMemory { get; set; }
 
     public bool IsFinal { get; set; }
-
-    public virtual Contest Contest { get; set; } = null!;
-
-    public virtual Exercise Exercise { get; set; } = null!;
 }

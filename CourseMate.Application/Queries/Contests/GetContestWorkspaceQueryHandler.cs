@@ -44,15 +44,18 @@ internal sealed class GetContestWorkspaceQueryHandler : AbstractQueryHandler<Get
                 JoinTime = registration.JoinTime
             }).FirstOrDefaultAsync(ct);
 
-        if (contest == null) return null;
+        if (contest == null)
+        {
+            return null;
+        }
 
         // Check if student can enter yet
         if (contest.Status == ContestStatus.Draft || contest.Status == ContestStatus.Upcoming)
         {
-             if (contest.StartTime.HasValue && contest.StartTime.Value > DateTimeOffset.UtcNow)
-             {
-                 throw new InvalidOperationException("Contest hasn't started yet.");
-             }
+            if (contest.StartTime.HasValue && contest.StartTime.Value > DateTimeOffset.UtcNow)
+            {
+                throw new InvalidOperationException("Contest hasn't started yet.");
+            }
         }
 
         List<ContestExerciseDto> exercises = await (
@@ -77,7 +80,7 @@ internal sealed class GetContestWorkspaceQueryHandler : AbstractQueryHandler<Get
                 Hints = e.Hints.ToList()
             }).ToListAsync(ct);
 
-        foreach (var ex in exercises)
+        foreach (ContestExerciseDto ex in exercises)
         {
             ex.Examples = await DbContext.ExerciseExamples
                 .Where(x => x.ExerciseId == ex.ExerciseId)

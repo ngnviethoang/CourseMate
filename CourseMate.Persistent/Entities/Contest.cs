@@ -5,7 +5,7 @@ using CourseMate.Persistent.Entities.Abstracts;
 
 namespace CourseMate.Persistent.Entities;
 
-public class Contest : Entity, IAuditable, ISoftDelete
+public class Contest : Entity
 {
     public Contest(Guid id, string title, string description, ContestStatus status, DateTimeOffset? startTime, DateTimeOffset? endTime, int durationInMinutes, string allowedLanguages, int memoryLimit, int timeLimit, AntiCheatLevel antiCheatLevel, Guid creatorId)
         : base(id)
@@ -47,10 +47,4 @@ public class Contest : Entity, IAuditable, ISoftDelete
     public AntiCheatLevel AntiCheatLevel { get; set; }
 
     public Guid CreatorId { get; set; }
-
-    public virtual ICollection<ContestExercise> ContestExercises { get; set; } = [];
-
-    public virtual ICollection<ContestRegistration> ContestRegistrations { get; set; } = [];
-
-    public virtual ICollection<ContestSubmission> ContestSubmissions { get; set; } = [];
 }

@@ -1,5 +1,6 @@
 using CourseMate.Application.Shared;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ internal sealed class RemoveExerciseFromContestCommandHandler : AbstractCommandH
 
     public override async Task<Unit> Handle(RemoveExerciseFromContestCommand request, CancellationToken ct)
     {
-        var ce = await DbContext.ContestExercises
+        ContestExercise? ce = await DbContext.ContestExercises
             .FirstOrDefaultAsync(x => x.Id == request.ContestExerciseId && x.ContestId == request.ContestId, ct);
 
         if (ce == null)

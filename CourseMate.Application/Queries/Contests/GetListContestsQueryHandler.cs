@@ -1,8 +1,8 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
+using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
 using CourseMate.Persistent.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
@@ -51,7 +51,7 @@ internal sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetList
             .WhereIf(IsInRole(Roles.Instructor), x => x.CreatorId == CurrentUserId)
             .WhereIf(IsInRole(Roles.Student), x => x.Status != ContestStatus.Draft)
             .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
-            .WhereIf(request.Status.HasValue, x => x.Status == request.Status.Value);
+            .WhereIf(request.Status.HasValue, x => x.Status == request.Status);
 
         query = request.Sorting switch
         {

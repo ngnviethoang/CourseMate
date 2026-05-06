@@ -3,6 +3,7 @@ using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -23,8 +24,11 @@ internal sealed class GetContestExercisesQueryHandler : AbstractQueryHandler<Get
 
     public override async Task<List<ContestExerciseDto>> Handle(GetContestExercisesQuery request, CancellationToken ct)
     {
-        var contest = await DbContext.Contests.FirstOrDefaultAsync(x => x.Id == request.ContestId, ct);
-        if (contest == null) throw new KeyNotFoundException("Contest not found.");
+        Contest? contest = await DbContext.Contests.FirstOrDefaultAsync(x => x.Id == request.ContestId, ct);
+        if (contest == null)
+        {
+            throw new KeyNotFoundException("Contest not found.");
+        }
 
         if (IsInRole(Roles.Student))
         {
@@ -47,7 +51,7 @@ internal sealed class GetContestExercisesQueryHandler : AbstractQueryHandler<Get
                 Description = e.Description,
                 ScoreWeight = ce.ScoreWeight,
                 Order = ce.Order,
-                IsPassed = false 
+                IsPassed = false
             }).ToListAsync(ct);
     }
 }

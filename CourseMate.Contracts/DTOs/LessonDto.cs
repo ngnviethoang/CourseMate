@@ -22,12 +22,6 @@ public class LessonDto
 
     public int Position { get; set; }
 
-    public string? VideoUrl { get; set; }
-
-    public string? ReadingContent { get; set; }
-
-    public string? SlideFileUrl { get; set; }
-
     public DateTimeOffset CreationTime { get; set; }
 
     public DateTimeOffset? LastModificationTime { get; set; }

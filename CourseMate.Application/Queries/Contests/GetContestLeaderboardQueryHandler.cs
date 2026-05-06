@@ -1,6 +1,7 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -26,10 +27,13 @@ internal sealed class GetContestLeaderboardQueryHandler : AbstractQueryHandler<G
             .Select(x => new { x.Id, x.Title })
             .FirstOrDefaultAsync(ct);
 
-        if (contest == null) return null;
+        if (contest == null)
+        {
+            return null;
+        }
 
         // 1. Get all submissions for this contest
-        var submissions = await DbContext.ContestSubmissions
+        List<ContestSubmission> submissions = await DbContext.ContestSubmissions
             .Where(s => s.ContestId == request.ContestId)
             .ToListAsync(ct);
 
@@ -44,20 +48,20 @@ internal sealed class GetContestLeaderboardQueryHandler : AbstractQueryHandler<G
         }
 
         // 2. Get unique student IDs and fetch their usernames
-        var studentIds = submissions.Select(s => s.StudentId).Distinct().ToList();
-        var userDict = await DbContext.Users
+        List<Guid> studentIds = submissions.Select(s => s.StudentId).Distinct().ToList();
+        Dictionary<Guid, string> userDict = await DbContext.Users
             .Where(u => studentIds.Contains(u.Id))
             .ToDictionaryAsync(u => u.Id, u => u.UserName ?? "Unknown", ct);
 
         // 3. Process to find best scores per exercise per student
-        var entries = submissions
+        List<LeaderboardEntryDto> entries = submissions
             .GroupBy(s => s.StudentId)
             .Select(studentGroup =>
             {
-                var studentId = studentGroup.Key;
-                var userName = userDict.GetValueOrDefault(studentId) ?? "Unknown";
+                Guid studentId = studentGroup.Key;
+                string userName = userDict.GetValueOrDefault(studentId) ?? "Unknown";
 
-                var bestScoresPerExercise = studentGroup
+                List<ContestSubmission> bestScoresPerExercise = studentGroup
                     .GroupBy(s => s.ExerciseId)
                     .Select(exerciseGroup => exerciseGroup
                         .OrderByDescending(s => s.Score)

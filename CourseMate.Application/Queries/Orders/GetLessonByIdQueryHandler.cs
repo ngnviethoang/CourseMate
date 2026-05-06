@@ -41,31 +41,31 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
             return null;
         }
 
-        var progress = await DbContext.UserLessonProgresses
+        UserLessonProgress? progress = await DbContext.UserLessonProgresses
             .FirstOrDefaultAsync(p => p.StudentId == studentId && p.LessonId == request.Id, ct);
-            
+
         lesson.IsCompleted = progress?.IsCompleted ?? false;
         lesson.Score = progress?.Score;
 
         // Populate content based on type using direct queries
         if (lesson.LessonType == LessonType.Video)
         {
-            var video = await DbContext.LessonVideos.FirstOrDefaultAsync(v => v.LessonId == lesson.Id, ct);
+            LessonVideo? video = await DbContext.LessonVideos.FirstOrDefaultAsync(v => v.LessonId == lesson.Id, ct);
             lesson.VideoUrl = video?.VideoUrl ?? "";
         }
         else if (lesson.LessonType == LessonType.Reading)
         {
-            var reading = await DbContext.LessonReadings.FirstOrDefaultAsync(r => r.LessonId == lesson.Id, ct);
+            LessonReading? reading = await DbContext.LessonReadings.FirstOrDefaultAsync(r => r.LessonId == lesson.Id, ct);
             lesson.ReadingContent = reading?.Content ?? "";
         }
         else if (lesson.LessonType == LessonType.Slide)
         {
-            var slide = await DbContext.LessonSlides.FirstOrDefaultAsync(s => s.LessonId == lesson.Id, ct);
+            LessonSlide? slide = await DbContext.LessonSlides.FirstOrDefaultAsync(s => s.LessonId == lesson.Id, ct);
             lesson.SlideFileUrl = slide?.FileUrl ?? "";
         }
         else if (lesson.LessonType == LessonType.Coding)
         {
-            var coding = await DbContext.LessonCodings.FirstOrDefaultAsync(c => c.LessonId == lesson.Id, ct);
+            LessonCoding? coding = await DbContext.LessonCodings.FirstOrDefaultAsync(c => c.LessonId == lesson.Id, ct);
             if (coding != null)
             {
                 lesson.ExerciseId = coding.ExerciseId;
@@ -77,7 +77,7 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
         }
         else if (lesson.LessonType == LessonType.Quiz)
         {
-            var quiz = await DbContext.LessonQuizzes
+            LessonQuiz? quiz = await DbContext.LessonQuizzes
                 .Include(q => q.Questions)
                 .ThenInclude(q => q.Answers)
                 .FirstOrDefaultAsync(q => q.LessonId == lesson.Id, ct);

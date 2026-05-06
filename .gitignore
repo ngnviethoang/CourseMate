@@ -259,3 +259,5 @@ paket-files/
 /etc/logs/
 /docker-volumes/*
 
+# macOS
+.DS_Store

@@ -9,7 +9,6 @@ public class ExerciseSubmissionConfiguration : IEntityTypeConfiguration<Exercise
     public void Configure(EntityTypeBuilder<ExerciseSubmission> builder)
     {
         builder.ToTable("ExerciseSubmissions");
-        builder.Property(i => i.IsPassed).HasColumnName("Passed");
         builder.HasOne<Exercise>().WithMany().HasForeignKey(i => i.ExerciseId);
     }
 }

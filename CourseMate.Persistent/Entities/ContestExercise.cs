@@ -20,8 +20,4 @@ public class ContestExercise : Entity
     public int ScoreWeight { get; set; }
 
     public int Order { get; set; }
-
-    public virtual Contest Contest { get; set; } = null!;
-
-    public virtual Exercise Exercise { get; set; } = null!;
 }

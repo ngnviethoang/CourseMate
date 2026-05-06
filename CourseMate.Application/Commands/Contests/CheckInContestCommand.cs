@@ -39,12 +39,12 @@ internal sealed class CheckInContestCommandHandler : AbstractCommandHandler<Chec
         Contest? contest = await DbContext.Contests.FindAsync([request.ContestId], ct);
         if (contest == null || contest.Status == ContestStatus.Draft || contest.Status == ContestStatus.Upcoming)
         {
-             // Maybe allow check-in 5-10 mins before? The plan said "Before giờ thi 5-10 phút, sinh viên vào phòng chờ."
-             // For now let's just check if StartTime is near.
-             if (contest?.StartTime.HasValue == true && contest.StartTime.Value > DateTimeOffset.UtcNow.AddMinutes(10))
-             {
-                 throw new InvalidOperationException("Contest hasn't started yet.");
-             }
+            // Maybe allow check-in 5-10 mins before? The plan said "Before giờ thi 5-10 phút, sinh viên vào phòng chờ."
+            // For now let's just check if StartTime is near.
+            if (contest?.StartTime.HasValue == true && contest.StartTime.Value > DateTimeOffset.UtcNow.AddMinutes(10))
+            {
+                throw new InvalidOperationException("Contest hasn't started yet.");
+            }
         }
 
         registration.JoinTime = DateTimeOffset.UtcNow;

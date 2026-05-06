@@ -24,6 +24,4 @@ public class ContestRegistration : Entity
     public DateTimeOffset? SubmitTime { get; set; }
 
     public bool IsDisqualified { get; set; }
-
-    public virtual Contest Contest { get; set; } = null!;
 }

@@ -59,14 +59,14 @@ internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandl
         // Calculate score weight
         ContestExercise? ce = await DbContext.ContestExercises
             .FirstOrDefaultAsync(x => x.ContestId == request.ContestId && x.ExerciseId == request.ExerciseId, ct);
-        
+
         if (ce == null)
         {
             throw new KeyNotFoundException("Exercise is not part of this contest.");
         }
 
         // Score in payload is 0-100 percentage
-        int weightedScore = (int)((request.Payload.Score / 100f) * ce.ScoreWeight);
+        int weightedScore = (int)(request.Payload.Score / 100f * ce.ScoreWeight);
 
         ContestSubmission submission = new(
             Guid.NewGuid(),
@@ -85,7 +85,7 @@ internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandl
         // Logic to maintain IsFinal: only one submission per (Contest, Exercise, Student) should be IsFinal=true (the one with highest score)
         // Actually the leaderboard logic said "Total Score (Sum of max scores per exercise)".
         // So we can just find the max score in the query. IsFinal is just an optimization.
-        
+
         await DbContext.ContestSubmissions.AddAsync(submission, ct);
         await DbContext.SaveChangesAsync(ct);
 
