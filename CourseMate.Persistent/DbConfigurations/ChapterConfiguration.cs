@@ -9,7 +9,7 @@ public class ChapterConfiguration : IEntityTypeConfiguration<Chapter>
     public void Configure(EntityTypeBuilder<Chapter> builder)
     {
         builder.ToTable("Chapters");
-        builder.Property(i => i.Title).HasColumnType("citext").IsRequired();
+        builder.Property(i => i.Title).HasColumnType("citext");
         builder.HasOne<Course>().WithMany().HasForeignKey(i => i.CourseId);
     }
 }

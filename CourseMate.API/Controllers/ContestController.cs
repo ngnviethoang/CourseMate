@@ -55,7 +55,7 @@ public class ContestController : ControllerBase
 
     [HttpPost("{id:guid}/exercises")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> AddExercise(Guid id, AddExerciseToContestCommand request)
+    public async Task<ActionResult> CreateExercise(Guid id, CreateExerciseToContestCommand request)
     {
         request.ContestId = id;
         ResultIdDto result = await _mediator.Send(request);

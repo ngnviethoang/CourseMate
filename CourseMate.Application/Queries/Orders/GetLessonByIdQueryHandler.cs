@@ -47,64 +47,83 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
         lesson.IsCompleted = progress?.IsCompleted ?? false;
         lesson.Score = progress?.Score;
 
-        // Populate content based on type using direct queries
-        if (lesson.LessonType == LessonType.Video)
+        switch (lesson.LessonType)
         {
-            LessonVideo? video = await DbContext.LessonVideos.FirstOrDefaultAsync(v => v.LessonId == lesson.Id, ct);
-            lesson.VideoUrl = video?.VideoUrl ?? "";
-        }
-        else if (lesson.LessonType == LessonType.Reading)
-        {
-            LessonReading? reading = await DbContext.LessonReadings.FirstOrDefaultAsync(r => r.LessonId == lesson.Id, ct);
-            lesson.ReadingContent = reading?.Content ?? "";
-        }
-        else if (lesson.LessonType == LessonType.Slide)
-        {
-            LessonSlide? slide = await DbContext.LessonSlides.FirstOrDefaultAsync(s => s.LessonId == lesson.Id, ct);
-            lesson.SlideFileUrl = slide?.FileUrl ?? "";
-        }
-        else if (lesson.LessonType == LessonType.Coding)
-        {
-            LessonCoding? coding = await DbContext.LessonCodings.FirstOrDefaultAsync(c => c.LessonId == lesson.Id, ct);
-            if (coding != null)
+            case LessonType.Video:
             {
-                lesson.ExerciseId = coding.ExerciseId;
-                lesson.ExerciseTitle = await DbContext.Exercises
-                    .Where(e => e.Id == coding.ExerciseId)
-                    .Select(e => e.Title)
-                    .FirstOrDefaultAsync(ct);
+                LessonVideo? video = await DbContext.LessonVideos.FirstOrDefaultAsync(v => v.LessonId == lesson.Id, ct);
+                lesson.VideoUrl = video?.VideoUrl;
+                break;
             }
-        }
-        else if (lesson.LessonType == LessonType.Quiz)
-        {
-            LessonQuiz? quiz = await DbContext.LessonQuizzes
-                .Include(q => q.Questions)
-                .ThenInclude(q => q.Answers)
-                .FirstOrDefaultAsync(q => q.LessonId == lesson.Id, ct);
-            if (quiz != null)
+            case LessonType.Reading:
             {
-                lesson.QuizDescription = quiz.Description;
-                lesson.QuizPassingScore = quiz.PassingScore;
-                lesson.QuizQuestions = quiz.Questions
-                    .OrderBy(q => q.Position)
-                    .Select(q => new QuizQuestionDto
-                    {
-                        Id = q.Id,
-                        Text = q.Text,
-                        Position = q.Position,
-                        Answers = q.Answers
-                            .OrderBy(a => a.Position)
-                            .Select(a => new QuizAnswerDto
-                            {
-                                Id = a.Id,
-                                Text = a.Text,
-                                IsCorrect = a.IsCorrect,
-                                Position = a.Position
-                            }).ToList()
-                    }).ToList();
+                LessonReading? reading = await DbContext.LessonReadings.FirstOrDefaultAsync(r => r.LessonId == lesson.Id, ct);
+                lesson.ReadingContent = reading?.Content;
+                break;
+            }
+            case LessonType.Coding:
+            {
+                LessonCoding? coding = await DbContext.LessonCodings.FirstOrDefaultAsync(c => c.LessonId == lesson.Id, ct);
+                if (coding != null)
+                {
+                    lesson.ExerciseId = coding.ExerciseId;
+                    lesson.ExerciseTitle = await DbContext.Exercises
+                        .Where(e => e.Id == coding.ExerciseId)
+                        .Select(e => e.Title)
+                        .FirstOrDefaultAsync(ct);
+                }
+
+                break;
+            }
+            case LessonType.Quiz:
+            {
+                await QueryLessonQuiz(lesson);
+                break;
             }
         }
 
         return lesson;
+    }
+
+    private async Task QueryLessonQuiz(LessonDetailDto lesson)
+    {
+        LessonQuiz? lessonQuiz = await DbContext.LessonQuizzes.FirstOrDefaultAsync(q => q.LessonId == lesson.Id);
+        if (lessonQuiz != null)
+        {
+            lesson.QuizDescription = lessonQuiz.Description;
+            lesson.QuizPassingScore = lessonQuiz.PassingScore;
+
+            List<LessonQuizQuestion> lessonQuizQuestions = await DbContext.LessonQuizQuestions
+                .Where(q => q.LessonQuizId == lessonQuiz.Id)
+                .OrderBy(q => q.Position)
+                .ToListAsync();
+
+            IEnumerable<Guid> lessonQuizQuestionIds = lessonQuizQuestions.Select(q => q.Id);
+
+            List<LessonQuizAnswer> lessonQuizAnswer = await DbContext.LessonQuizAnswers
+                .Where(a => lessonQuizQuestionIds.Contains(a.LessonQuizQuestionId))
+                .OrderBy(a => a.Position)
+                .ToListAsync();
+
+            lesson.QuizQuestions = lessonQuizQuestions
+                .Select(q => new QuizQuestionDto
+                {
+                    Id = q.Id,
+                    Text = q.Text,
+                    Position = q.Position,
+                    Answers = lessonQuizAnswer
+                        .Where(a => a.LessonQuizQuestionId == q.Id)
+                        .OrderBy(a => a.Position)
+                        .Select(a => new QuizAnswerDto
+                        {
+                            Id = a.Id,
+                            Text = a.Text,
+                            IsCorrect = a.IsCorrect,
+                            Position = a.Position
+                        })
+                        .ToList()
+                })
+                .ToList();
+        }
     }
 }

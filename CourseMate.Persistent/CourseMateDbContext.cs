@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using System.Security.Claims;
 using CourseMate.Persistent.Entities;
 using CourseMate.Persistent.Entities.Abstracts;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CourseMate.Persistent;
 
@@ -32,7 +30,6 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
     public DbSet<LessonQuiz> LessonQuizzes { get; set; }
     public DbSet<LessonQuizQuestion> LessonQuizQuestions { get; set; }
     public DbSet<LessonQuizAnswer> LessonQuizAnswers { get; set; }
-    public DbSet<LessonSlide> LessonSlides { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
@@ -63,7 +60,7 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
         modelBuilder.HasPostgresExtension("vector");
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
 
-        foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
+        /*foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
         {
             if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
             {
@@ -73,28 +70,28 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
                 LambdaExpression lambda = Expression.Lambda(notIsDeleted, parameter);
                 modelBuilder.Entity(entityType.ClrType).HasQueryFilter(SoftDeletionFilter, lambda);
             }
-        }
+        }*/
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
-        ApplyAuditAndSoftDelete();
+        ApplyAudit();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken ct = default)
     {
-        ApplyAuditAndSoftDelete();
+        ApplyAudit();
         return base.SaveChangesAsync(ct);
     }
 
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken ct = default)
     {
-        ApplyAuditAndSoftDelete();
+        ApplyAudit();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, ct);
     }
 
-    private void ApplyAuditAndSoftDelete()
+    private void ApplyAudit()
     {
         DateTimeOffset now = DateTimeOffset.UtcNow;
         Guid? userId = GetUserId();
@@ -116,11 +113,11 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
                 }
             }
 
-            if (entry is { Entity: ISoftDelete softDelete, State: EntityState.Deleted })
+            /*if (entry is { Entity: ISoftDelete softDelete, State: EntityState.Deleted })
             {
                 entry.State = EntityState.Modified;
                 softDelete.IsDeleted = true;
-            }
+            }*/
         }
     }
 

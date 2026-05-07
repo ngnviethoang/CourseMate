@@ -175,7 +175,7 @@ public class CourseController : ControllerBase
 
     [HttpPut("lessons/{id:guid}/video")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> UpsertLessonVideoAsync(Guid id, UpsertLessonVideoCommand request)
+    public async Task<ActionResult> UpsertLessonVideoAsync(Guid id, CreateOrUpdateLessonVideoCommand request)
     {
         request.LessonId = id;
         await _mediator.Send(request);
@@ -184,7 +184,7 @@ public class CourseController : ControllerBase
 
     [HttpPut("lessons/{id:guid}/reading")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> UpsertLessonReadingAsync(Guid id, UpsertLessonReadingCommand request)
+    public async Task<ActionResult> UpsertLessonReadingAsync(Guid id, CreateOrUpdateLessonReadingCommand request)
     {
         request.LessonId = id;
         await _mediator.Send(request);
@@ -193,7 +193,7 @@ public class CourseController : ControllerBase
 
     [HttpPut("lessons/{id:guid}/coding")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> UpsertLessonCodingAsync(Guid id, UpsertLessonCodingCommand request)
+    public async Task<ActionResult> UpsertLessonCodingAsync(Guid id, CreateOrUpdateLessonCodingCommand request)
     {
         request.LessonId = id;
         await _mediator.Send(request);
@@ -202,16 +202,7 @@ public class CourseController : ControllerBase
 
     [HttpPut("lessons/{id:guid}/quiz")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> UpsertLessonQuizAsync(Guid id, UpsertLessonQuizCommand request)
-    {
-        request.LessonId = id;
-        await _mediator.Send(request);
-        return NoContent();
-    }
-
-    [HttpPut("lessons/{id:guid}/slide")]
-    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> UpsertLessonSlideAsync(Guid id, UpsertLessonSlideCommand request)
+    public async Task<ActionResult> UpsertLessonQuizAsync(Guid id, CreateOrUpdateLessonQuizCommand request)
     {
         request.LessonId = id;
         await _mediator.Send(request);

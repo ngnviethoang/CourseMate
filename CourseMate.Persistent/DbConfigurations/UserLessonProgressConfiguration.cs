@@ -10,7 +10,7 @@ internal sealed class UserLessonProgressConfiguration : IEntityTypeConfiguration
     public void Configure(EntityTypeBuilder<UserLessonProgress> builder)
     {
         builder.ToTable("UserLessonProgresses");
-        builder.HasOne<IdentityUser<Guid>>().WithMany().HasForeignKey(x => x.StudentId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne<Lesson>().WithMany().HasForeignKey(x => x.LessonId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<IdentityUser<Guid>>().WithMany().HasForeignKey(x => x.StudentId);
+        builder.HasOne<Lesson>().WithMany().HasForeignKey(x => x.LessonId);
     }
 }

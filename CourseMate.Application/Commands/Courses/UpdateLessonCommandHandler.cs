@@ -102,12 +102,6 @@ internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<Update
             {
                 DbContext.LessonQuizzes.RemoveRange(quizzes);
             }
-
-            List<LessonSlide> slides = await DbContext.LessonSlides.Where(x => x.LessonId == request.Id).ToListAsync(ct);
-            if (slides.Any())
-            {
-                DbContext.LessonSlides.RemoveRange(slides);
-            }
         }
 
         lesson.ChapterId = request.ChapterId;

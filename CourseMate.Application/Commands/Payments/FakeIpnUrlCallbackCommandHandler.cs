@@ -64,7 +64,7 @@ internal sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<
         {
             await DbContext.Enrollments.AddRangeAsync(newEnrollments, ct);
         }
-        
+
         return Codes.Success;
     }
 }
