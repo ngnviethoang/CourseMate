@@ -82,9 +82,9 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost("orders")]
-    public async Task<ActionResult> CreateOrdersAsync()
+    public async Task<ActionResult> CreateOrdersAsync([FromBody] CreateOrderCommand request)
     {
-        ResultIdDto result = await _mediator.Send(new CreateOrderCommand());
+        ResultIdDto result = await _mediator.Send(request);
         return Ok(result);
     }
 

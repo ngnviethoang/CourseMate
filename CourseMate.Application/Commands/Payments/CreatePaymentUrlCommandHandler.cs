@@ -42,11 +42,12 @@ internal sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<Cr
     public override async Task<CreatePaymentUrlResponse> Handle(CreatePaymentUrlCommand request, CancellationToken ct)
     {
         Order? order = await DbContext.Orders
-            .Where(i => i.Id == request.OrderId && i.StudentId == CurrentUserId && (i.Status == OrderStatus.Submitted || i.Status == OrderStatus.Draft))
+            .Where(i => i.StudentId == CurrentUserId)
+            .Where(i => i.Id == request.OrderId)
+            .Where(i => i.Status == OrderStatus.Submitted || i.Status == OrderStatus.Draft)
             .FirstOrDefaultAsync(ct);
         if (order is null)
         {
-            _logger.LogWarning("Không tìm thấy đơn hàng hợp lệ với ID: {OrderId}", request.OrderId);
             throw new EntityNotFoundException(nameof(Order), request.OrderId);
         }
 

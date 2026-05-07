@@ -16,4 +16,7 @@ public static class ErrorMessages
     public const string EmbeddingFailed = "AI embedding failed";
     public const string ResearchGenerationFailed = "AI research generation failed";
     public const string LectureOutlineGenerationFailed = "AI lecture outline generation failed";
+    public const string EmptyOrder = "Order must contain at least one item.";
+    public const string CourseAlreadyInCart = "Course already exists in cart.";
+    public const string CourseAlreadyEnrolled = "Student already enrolled in this course.";
 }

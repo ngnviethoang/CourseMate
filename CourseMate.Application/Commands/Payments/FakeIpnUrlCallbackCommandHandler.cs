@@ -13,7 +13,6 @@ namespace CourseMate.Application.Commands.Payments;
 public class FakeIpnUrlCallbackCommand : IRequest<int>
 {
     public Guid OrderId { get; set; }
-    public Guid StudentId { get; set; }
     public Guid PaymentTransactionId { get; set; }
 }
 
@@ -33,7 +32,6 @@ internal sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<
             throw new EntityNotFoundException(nameof(Order), request.OrderId);
         }
 
-        Guid studentId = order.StudentId;
         order.Status = OrderStatus.Completed;
         DbContext.Orders.Update(order);
 
@@ -53,24 +51,20 @@ internal sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<
             .ToListAsync(ct);
 
         List<Guid> existingCourseIds = await DbContext.Enrollments
-            .Where(x => x.StudentId == studentId && courseIds.Contains(x.CourseId))
+            .Where(x => x.StudentId == order.StudentId && courseIds.Contains(x.CourseId))
             .Select(x => x.CourseId)
             .ToListAsync(ct);
 
         List<Enrollment> newEnrollments = courseIds
             .Except(existingCourseIds)
-            .Select(courseId => new Enrollment(Guid.NewGuid(), studentId, courseId))
+            .Select(courseId => new Enrollment(Guid.NewGuid(), order.StudentId, courseId))
             .ToList();
 
         if (newEnrollments.Count > 0)
         {
             await DbContext.Enrollments.AddRangeAsync(newEnrollments, ct);
         }
-
-        await DbContext.CartItems
-            .Where(ci => DbContext.Carts.Any(c => c.Id == ci.CartId && c.StudentId == studentId) && courseIds.Contains(ci.CourseId))
-            .ExecuteDeleteAsync(ct);
-
+        
         return Codes.Success;
     }
 }
