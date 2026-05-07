@@ -9,8 +9,8 @@ public class PaymentConfiguration : IEntityTypeConfiguration<PaymentTransaction>
     public void Configure(EntityTypeBuilder<PaymentTransaction> builder)
     {
         builder.ToTable("PaymentTransactions");
-        builder.Property(i => i.Provider).HasColumnType("citext").IsRequired();
-        builder.Property(i => i.TransactionId).HasColumnType("citext").IsRequired();
+        builder.Property(i => i.Provider).HasColumnType("citext");
+        builder.Property(i => i.TransactionId).HasColumnType("citext");
         builder.HasOne<Order>().WithOne().HasForeignKey<PaymentTransaction>(i => i.OrderId);
     }
 }

@@ -25,8 +25,8 @@ public class CreateLessonMaterialCommand : IRequest<ProcessingStatusDto>
 internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandler<CreateLessonMaterialCommand, ProcessingStatusDto>
 {
     private readonly IEnumerable<string> _allowedImageExtensions = [".doc", ".docx", ".pdf"];
-    private readonly StorageOptions _storageOptions;
     private readonly IMediator _mediator;
+    private readonly StorageOptions _storageOptions;
 
     public CreateLessonMaterialCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor, IOptions<StorageOptions> storageOptions, IMediator mediator) : base(dbContext, httpContextAccessor)
     {

@@ -128,23 +128,23 @@ export default function StudentProfilePage() {
         </Card>
 
         {/* Security & Password */}
-        <Card className="border-none shadow-xl bg-gradient-to-br from-slate-900 to-slate-800 text-white overflow-hidden relative">
-          <div className="absolute top-0 right-0 p-8 opacity-10">
-            <Key className="h-24 w-24 rotate-12" />
+        <Card className="border-none shadow-xl bg-white text-slate-900 overflow-hidden relative">
+          <div className="absolute top-0 right-0 p-8 opacity-5">
+            <Key className="h-24 w-24 rotate-12 text-slate-900" />
           </div>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg text-white">
-              <Lock className="h-5 w-5 text-amber-400" /> Security
+            <CardTitle className="flex items-center gap-2 text-lg text-slate-900">
+              <Lock className="h-5 w-5 text-amber-500" /> Security
             </CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardDescription className="text-slate-500">
               Protect your account by managing your password.
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-4 pb-8">
-            <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-4 shadow-inner">
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-4 shadow-inner">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-slate-300">Password</span>
-                <span className="text-xs font-mono text-slate-500">••••••••••••</span>
+                <span className="text-sm font-medium text-slate-700">Password</span>
+                <span className="text-xs font-mono text-slate-400">••••••••••••</span>
               </div>
               <p className="text-xs text-slate-500 leading-relaxed">
                 It&apos;s a good idea to use a strong password that you&apos;re not using elsewhere.
@@ -153,10 +153,10 @@ export default function StudentProfilePage() {
           </CardContent>
           <CardFooter>
             <Dialog open={cpDialogOpen} onOpenChange={setCpDialogOpen}>
-              <DialogTrigger>
-                <div className="w-full bg-white text-slate-900 hover:bg-slate-200 font-bold h-11 inline-flex items-center justify-center rounded-lg">
+              <DialogTrigger asChild>
+                <Button className="w-full bg-slate-900 text-white hover:bg-slate-800 font-bold h-11">
                   Change Password
-                </div>
+                </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <form onSubmit={handleChangePassword}>

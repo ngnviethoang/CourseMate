@@ -4,8 +4,10 @@ import React, { useState } from 'react'
 import { UploadCloud, CheckCircle2, AlertCircle, Loader2, Video, Edit } from 'lucide-react'
 import { toast } from 'sonner'
 import { fileService } from '@/lib/file-service'
+import { lessonService } from '@/lib/course-service'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import { Badge } from '@/components/ui/badge'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: string; initialVideoUrl?: string }) {
@@ -33,14 +35,16 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
 
     try {
       // Step 1: Init
-      const { fileId, maxTotalTrunks } = await fileService.initVideoUpload(file.name, file.size)
+      const { fileId } = await fileService.initVideoUpload(file.name, file.size)
 
-      const chunkSize = Math.ceil(file.size / maxTotalTrunks)
+      // Calculate chunks in frontend (e.g., 5MB per chunk)
+      const CHUNK_SIZE = 5 * 1024 * 1024
+      const maxTotalTrunks = Math.ceil(file.size / CHUNK_SIZE)
 
       // Step 2: Upload Chunks
       for (let i = 1; i <= maxTotalTrunks; i++) {
-        const start = (i - 1) * chunkSize
-        const end = Math.min(i * chunkSize, file.size)
+        const start = (i - 1) * CHUNK_SIZE
+        const end = Math.min(i * CHUNK_SIZE, file.size)
         const chunk = file.slice(start, end)
 
         await fileService.uploadVideoChunk(fileId, i, chunk)
@@ -51,10 +55,13 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
       // Step 3: Complete
       const { fileUrl } = await fileService.completeVideoUpload(fileId, maxTotalTrunks)
 
+      // Step 4: Link video to lesson
+      await lessonService.upsertVideo(lessonId, { videoUrl: fileUrl })
+
       setVideoUrl(fileUrl)
       setStatus('success')
       setIsEditing(false)
-      toast.success('Video uploaded successfully!')
+      toast.success('Video uploaded and saved successfully!')
     } catch (error) {
       console.error(error)
       setStatus('error')
@@ -132,13 +139,30 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
               <div className="h-16 w-28 bg-zinc-950 rounded flex items-center justify-center shrink-0 border border-zinc-800">
                 <Video className="h-6 w-6 text-zinc-500" />
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{videoUrl}</p>
-                <div className="flex items-center gap-3 mt-1">
-                  <a href={videoUrl} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline">
-                    Watch Video
-                  </a>
-                  <span className="text-muted-foreground text-[10px]">Ready to stream</span>
+              <div className="flex-1 min-w-0 space-y-3">
+                <div className="relative aspect-video w-full max-w-sm bg-zinc-950 rounded-lg overflow-hidden border border-zinc-800 group shadow-lg">
+                  <video 
+                    src={videoUrl} 
+                    className="w-full h-full object-contain"
+                    controls={false}
+                  />
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <a 
+                      href={videoUrl} 
+                      target="_blank" 
+                      rel="noreferrer" 
+                      className="bg-white text-black hover:bg-zinc-200 px-4 py-2 rounded-full text-xs font-bold transform translate-y-2 group-hover:translate-y-0 transition-all"
+                    >
+                      Preview Video
+                    </a>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <p className="text-[10px] font-mono text-muted-foreground truncate max-w-[250px] bg-muted px-2 py-1 rounded">{videoUrl}</p>
+                  <span className="flex items-center gap-1.5 text-[10px] font-bold text-green-500">
+                    <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                    READY
+                  </span>
                 </div>
               </div>
             </div>

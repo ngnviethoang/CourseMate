@@ -17,8 +17,8 @@ public class GenerateOutlineJob
 {
     private readonly IAiService _aiService;
     private readonly CourseMateDbContext _dbContext;
-    private readonly INotificationService _notificationService;
     private readonly ILogger<GenerateOutlineJob> _logger;
+    private readonly INotificationService _notificationService;
 
     public GenerateOutlineJob(
         CourseMateDbContext dbContext,
@@ -105,7 +105,7 @@ public class GenerateOutlineJob
         {
             ReceiverId = lessonMaterial.UserId ?? Guid.Empty,
             Title = "Document processed",
-            Message = "Outline has been generated",
+            Message = "Outline has been generated"
         }, ct);
     }
 }

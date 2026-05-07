@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
@@ -12,7 +13,7 @@ namespace CourseMate.Application.Commands.Orders;
 
 public class CreateOrderCommand : IRequest<ResultIdDto>
 {
-    public IEnumerable<Guid> CourseIds { get; set; } = [];
+    public IEnumerable<Guid> CartItemIds { get; set; } = [];
 }
 
 internal sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateOrderCommand, ResultIdDto>
@@ -32,30 +33,31 @@ internal sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateO
         }
 
         List<CartItem> cartItems = await DbContext.CartItems
-            .Where(ci => request.CourseIds.Contains(ci.CourseId))
+            .Where(ci => request.CartItemIds.Contains(ci.Id))
+            .Where(ci => ci.CartId == cart.Id)
             .ToListAsync(ct);
-
-        if (cartItems.Count == 0)
+        if (!cartItems.Any())
         {
-            throw new EntityNotFoundException(nameof(CartItem), Guid.Empty);
-        }
-
-        List<Course> courses = await DbContext.Courses.Where(c => request.CourseIds.Contains(c.Id)).ToListAsync(ct);
-
-        Guid orderId = Guid.NewGuid();
-        decimal totalAmount = courses.Sum(c => c.Price);
-
-        Order order = new(orderId, CurrentUserId, totalAmount, OrderStatus.Draft, string.Empty);
-        await DbContext.Orders.AddAsync(order, ct);
-
-        foreach (Course course in courses)
-        {
-            OrderItem orderItem = new(Guid.NewGuid(), orderId, course.Id, course.Price);
-            await DbContext.OrderItems.AddAsync(orderItem, ct);
+            throw new BusinessException(ErrorMessages.EmptyOrder);
         }
 
         DbContext.CartItems.RemoveRange(cartItems);
 
-        return new ResultIdDto { Id = orderId };
+        List<Guid> courseIds = cartItems.Select(i => i.CourseId).Distinct().ToList();
+        List<Course> courses = await DbContext.Courses.Where(c => courseIds.Contains(c.Id)).ToListAsync(ct);
+        if (!courses.Any())
+        {
+            throw new BusinessException(ErrorMessages.EmptyOrder);
+        }
+
+        Order order = new(Guid.NewGuid(), CurrentUserId, courses.Sum(c => c.Price), OrderStatus.Draft, $"Payment for {courses.Count} courses");
+        await DbContext.Orders.AddAsync(order, ct);
+        foreach (Course course in courses)
+        {
+            OrderItem orderItem = new(Guid.NewGuid(), order.Id, course.Id, course.Price);
+            await DbContext.OrderItems.AddAsync(orderItem, ct);
+        }
+
+        return new ResultIdDto { Id = order.Id };
     }
 }

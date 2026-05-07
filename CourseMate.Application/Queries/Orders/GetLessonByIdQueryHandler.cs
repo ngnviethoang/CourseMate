@@ -50,15 +50,20 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
         switch (lesson.LessonType)
         {
             case LessonType.Video:
-                LessonVideo? video = await DbContext.LessonVideos.FirstOrDefaultAsync(v => v.LessonId == request.Id, ct);
+            {
+                LessonVideo? video = await DbContext.LessonVideos.FirstOrDefaultAsync(v => v.LessonId == lesson.Id, ct);
                 lesson.VideoUrl = video?.VideoUrl;
                 break;
+            }
             case LessonType.Reading:
-                LessonReading? reading = await DbContext.LessonReadings.FirstOrDefaultAsync(r => r.LessonId == request.Id, ct);
+            {
+                LessonReading? reading = await DbContext.LessonReadings.FirstOrDefaultAsync(r => r.LessonId == lesson.Id, ct);
                 lesson.ReadingContent = reading?.Content;
                 break;
+            }
             case LessonType.Coding:
-                LessonCoding? coding = await DbContext.LessonCodings.FirstOrDefaultAsync(c => c.LessonId == request.Id, ct);
+            {
+                LessonCoding? coding = await DbContext.LessonCodings.FirstOrDefaultAsync(c => c.LessonId == lesson.Id, ct);
                 if (coding != null)
                 {
                     lesson.ExerciseId = coding.ExerciseId;
@@ -69,41 +74,56 @@ internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLesson
                 }
 
                 break;
+            }
             case LessonType.Quiz:
-                LessonQuiz? quiz = await DbContext.LessonQuizzes
-                    .Include(q => q.Questions)
-                    .ThenInclude(q => q.Answers)
-                    .FirstOrDefaultAsync(q => q.LessonId == request.Id, ct);
-                if (quiz != null)
-                {
-                    lesson.QuizDescription = quiz.Description;
-                    lesson.QuizPassingScore = quiz.PassingScore;
-                    lesson.QuizQuestions = quiz.Questions
-                        .OrderBy(q => q.Position)
-                        .Select(q => new QuizQuestionDto
-                        {
-                            Id = q.Id,
-                            Text = q.Text,
-                            Position = q.Position,
-                            Answers = q.Answers
-                                .OrderBy(a => a.Position)
-                                .Select(a => new QuizAnswerDto
-                                {
-                                    Id = a.Id,
-                                    Text = a.Text,
-                                    IsCorrect = a.IsCorrect,
-                                    Position = a.Position
-                                }).ToList()
-                        }).ToList();
-                }
-
+            {
+                await QueryLessonQuiz(lesson);
                 break;
-            case LessonType.Slide:
-                LessonSlide? slide = await DbContext.LessonSlides.FirstOrDefaultAsync(s => s.LessonId == request.Id, ct);
-                lesson.SlideFileUrl = slide?.FileUrl;
-                break;
+            }
         }
 
         return lesson;
+    }
+
+    private async Task QueryLessonQuiz(LessonDetailDto lesson)
+    {
+        LessonQuiz? lessonQuiz = await DbContext.LessonQuizzes.FirstOrDefaultAsync(q => q.LessonId == lesson.Id);
+        if (lessonQuiz != null)
+        {
+            lesson.QuizDescription = lessonQuiz.Description;
+            lesson.QuizPassingScore = lessonQuiz.PassingScore;
+
+            List<LessonQuizQuestion> lessonQuizQuestions = await DbContext.LessonQuizQuestions
+                .Where(q => q.LessonQuizId == lessonQuiz.Id)
+                .OrderBy(q => q.Position)
+                .ToListAsync();
+
+            IEnumerable<Guid> lessonQuizQuestionIds = lessonQuizQuestions.Select(q => q.Id);
+
+            List<LessonQuizAnswer> lessonQuizAnswer = await DbContext.LessonQuizAnswers
+                .Where(a => lessonQuizQuestionIds.Contains(a.LessonQuizQuestionId))
+                .OrderBy(a => a.Position)
+                .ToListAsync();
+
+            lesson.QuizQuestions = lessonQuizQuestions
+                .Select(q => new QuizQuestionDto
+                {
+                    Id = q.Id,
+                    Text = q.Text,
+                    Position = q.Position,
+                    Answers = lessonQuizAnswer
+                        .Where(a => a.LessonQuizQuestionId == q.Id)
+                        .OrderBy(a => a.Position)
+                        .Select(a => new QuizAnswerDto
+                        {
+                            Id = a.Id,
+                            Text = a.Text,
+                            IsCorrect = a.IsCorrect,
+                            Position = a.Position
+                        })
+                        .ToList()
+                })
+                .ToList();
+        }
     }
 }

@@ -7,7 +7,7 @@ export const fileService = {
 
   async uploadVideoChunk(fileId: string, chunkIndex: number, file: Blob) {
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append('file', file, 'chunk.mp4')
 
     return api.post<void>(`/api/files/videos/${fileId}/chunks/${chunkIndex}`, formData)
   },

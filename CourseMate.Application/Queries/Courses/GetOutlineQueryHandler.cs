@@ -3,7 +3,6 @@ using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
-using CourseMate.Persistent.ExtensionMethods;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -45,7 +44,7 @@ internal sealed class GetOutlineQueryHandler : AbstractQueryHandler<GetOutlineQu
                 throw new UnauthorizedAccessException();
             }
         }
-       
+
         LessonMaterial? lessonMaterial = await DbContext.LessonMaterials
             .OrderByDescending(l => l.CreationTime)
             .FirstOrDefaultAsync(ct);

@@ -10,6 +10,6 @@ public class LessonCodingConfiguration : IEntityTypeConfiguration<LessonCoding>
     {
         builder.ToTable("LessonCodings");
         builder.HasOne<Lesson>().WithOne().HasForeignKey<LessonCoding>(i => i.LessonId);
-        builder.HasOne<Exercise>().WithMany().HasForeignKey(nameof(LessonCoding.ExerciseId));
+        builder.HasOne<Exercise>().WithMany().HasForeignKey(i => i.ExerciseId);
     }
 }

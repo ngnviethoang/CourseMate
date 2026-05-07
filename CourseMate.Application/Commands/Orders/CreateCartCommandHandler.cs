@@ -42,10 +42,16 @@ internal sealed class CreateCartCommandHandler : AbstractCommandHandler<CreateCa
             await DbContext.Carts.AddAsync(cart, ct);
         }
 
-        CartItem? existingItem = await DbContext.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cart.Id && ci.CourseId == request.CourseId, ct);
-        if (existingItem != null)
+        bool isExistItem = await DbContext.CartItems.AnyAsync(ci => ci.CartId == cart.Id && ci.CourseId == request.CourseId, ct);
+        if (isExistItem)
         {
-            return new ResultIdDto { Id = existingItem.Id };
+            throw new BusinessException(ErrorMessages.CourseAlreadyInCart);
+        }
+
+        bool isExistEnrollment = await DbContext.Enrollments.AnyAsync(ci => ci.StudentId == request.StudentId && ci.CourseId == request.CourseId, ct);
+        if (isExistEnrollment)
+        {
+            throw new BusinessException(ErrorMessages.CourseAlreadyEnrolled);
         }
 
         CartItem cartItem = new(Guid.NewGuid(), cart.Id, request.CourseId);

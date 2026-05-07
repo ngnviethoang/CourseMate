@@ -8,10 +8,7 @@ public class LessonQuizAnswerConfiguration : IEntityTypeConfiguration<LessonQuiz
 {
     public void Configure(EntityTypeBuilder<LessonQuizAnswer> builder)
     {
-        builder.HasKey(x => x.Id);
-        builder.HasOne(x => x.Question)
-            .WithMany(x => x.Answers)
-            .HasForeignKey(x => x.QuestionId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.ToTable("LessonQuizAnswers");
+        builder.HasOne<LessonQuizQuestion>().WithMany().HasForeignKey(x => x.LessonQuizQuestionId);
     }
 }

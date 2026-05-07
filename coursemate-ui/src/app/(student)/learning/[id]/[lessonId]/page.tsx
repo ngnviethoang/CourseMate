@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { courseService } from '@/lib/course-service'
-import { LessonType, StudentLessonDetailDto, CourseDto, RunCodeResponse } from '@/lib/types'
+import { LessonType, StudentLessonDetailDto, CourseDto, RunCodeResponse, CourseDetailDto } from '@/lib/types'
 import { lessonService } from '@/lib/course-service'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -342,7 +342,7 @@ function QuizInteraction({ questions, passingScore, lessonId }: { questions: any
           <div
             key={q.id || qi}
             className={`p-6 rounded-2xl border bg-card shadow-sm space-y-5 transition-all ${submitted
-                ? (q.answers.find(a => a.id === answers[qi])?.isCorrect ? 'ring-2 ring-emerald-500/20 border-emerald-500/30' : 'ring-2 ring-red-500/20 border-red-500/30')
+                ? (q.answers.find((a: any) => a.id === answers[qi])?.isCorrect ? 'ring-2 ring-emerald-500/20 border-emerald-500/30' : 'ring-2 ring-red-500/20 border-red-500/30')
                 : ''
               }`}
           >
@@ -354,7 +354,7 @@ function QuizInteraction({ questions, passingScore, lessonId }: { questions: any
             </div>
 
             <div className="grid grid-cols-1 gap-3 ml-11">
-              {q.answers.map((opt, oi) => {
+              {q.answers.map((opt: any, oi: number) => {
                 const isSelected = answers[qi] === opt.id
                 const isCorrect = opt.isCorrect
 
@@ -675,7 +675,7 @@ export default function StudentLearningPage() {
 
         // Calculate navigation
         if (course) {
-          const courseDto = course as unknown as CourseDto
+          const courseDto = course as unknown as CourseDetailDto
           const allLessons = courseDto.chapters?.flatMap(c => c.lessons) || []
           const idx = allLessons.findIndex(x => x.id === lessonId)
           setPrevLessonId(idx > 0 ? allLessons[idx - 1].id : null)
@@ -779,14 +779,23 @@ export default function StudentLearningPage() {
             aiContent && 'segments' in aiContent
               ? <VideoPlayer content={aiContent as VideoContent} />
               : lesson.videoUrl ? (
-                <div className="aspect-video rounded-3xl bg-slate-900 border shadow-2xl overflow-hidden ring-8 ring-muted/20">
-                  <iframe
-                    className="w-full h-full"
-                    src={lesson.videoUrl.replace('watch?v=', 'embed/')}
-                    title={lesson.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
+                <div className="aspect-video rounded-3xl bg-slate-950 border shadow-2xl overflow-hidden ring-8 ring-muted/20">
+                  {lesson.videoUrl.includes('youtube.com') || lesson.videoUrl.includes('youtu.be') ? (
+                    <iframe
+                      className="w-full h-full"
+                      src={lesson.videoUrl.replace('watch?v=', 'embed/')}
+                      title={lesson.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <video 
+                      src={lesson.videoUrl} 
+                      controls 
+                      className="w-full h-full"
+                      controlsList="nodownload"
+                    />
+                  )}
                 </div>
               ) : <EmptyContent lesson={lesson} id={id} router={router} />
           )}
@@ -821,7 +830,7 @@ export default function StudentLearningPage() {
           {/* QUIZ */}
           {lesson.lessonType === LessonType.Quiz && (
             lesson.quizQuestions && lesson.quizQuestions.length > 0
-              ? <QuizInteraction questions={lesson.quizQuestions} passingScore={lesson.quizPassingScore || 70} />
+              ? <QuizInteraction questions={lesson.quizQuestions} passingScore={lesson.quizPassingScore || 70} lessonId={lessonId} />
               : aiContent && 'questions' in aiContent
                 ? <QuizInteractionOld content={aiContent as QuizContent} />
                 : <EmptyContent lesson={lesson} id={id} router={router} />

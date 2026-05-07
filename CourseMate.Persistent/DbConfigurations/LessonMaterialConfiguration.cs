@@ -9,7 +9,7 @@ public class LessonMaterialConfiguration : IEntityTypeConfiguration<LessonMateri
     public void Configure(EntityTypeBuilder<LessonMaterial> builder)
     {
         builder.ToTable("LessonMaterials");
-        builder.HasOne<Lesson>().WithMany().HasForeignKey(x => x.LessonId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne<FileEntry>().WithOne().HasForeignKey<LessonMaterial>(x => x.DocumentFileId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<Lesson>().WithMany().HasForeignKey(x => x.LessonId);
+        builder.HasOne<FileEntry>().WithOne().HasForeignKey<LessonMaterial>(x => x.DocumentFileId);
     }
 }

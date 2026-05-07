@@ -9,8 +9,8 @@ public class FileEntryEmbeddingConfiguration : IEntityTypeConfiguration<FileEntr
     public void Configure(EntityTypeBuilder<FileEntryEmbedding> builder)
     {
         builder.ToTable("FileEntryEmbeddings");
-        builder.HasOne<FileEntry>().WithMany().HasForeignKey(x => x.FileEntryId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne<FileChunk>().WithOne().HasForeignKey<FileEntryEmbedding>(x => x.FileChunkId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<FileEntry>().WithMany().HasForeignKey(x => x.FileEntryId);
+        builder.HasOne<FileChunk>().WithOne().HasForeignKey<FileEntryEmbedding>(x => x.FileChunkId);
         builder.Property(b => b.Embedding).HasColumnType("vector(768)");
     }
 }

@@ -35,5 +35,13 @@ export const orderService = {
   // Enrollment
   enrollFree: async (courseId: string): Promise<ResultIdDto> => {
     return api.post<ResultIdDto>('/api/enrollments/free', { courseId })
+  },
+
+  // Payment
+  createPaymentUrl: async (orderId: string): Promise<{ checkoutUrl: string; paymentTransactionId: string }> => {
+    return api.post<{ checkoutUrl: string; paymentTransactionId: string }>('/api/payments/create-url', { orderId })
+  },
+  fakePayOsIpn: async (orderId: string, studentId: string, paymentTransactionId: string): Promise<number> => {
+    return api.post<number>('/api/payments/fake-payos-ipn', { orderId, studentId, paymentTransactionId })
   }
 }

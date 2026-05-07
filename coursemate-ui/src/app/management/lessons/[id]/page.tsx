@@ -2,14 +2,13 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, Save, Edit, Video, BookOpen, Code2, FileQuestion, Presentation, CheckCircle2, UploadCloud, FileText } from 'lucide-react'
+import { ArrowLeft, Loader2, Save, Edit, Video, BookOpen, Code2, FileQuestion, Presentation, CheckCircle2, UploadCloud, FileText, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { lessonService, chapterService, courseService } from '@/lib/course-service'
-import { fileService } from '@/lib/file-service'
 import { exerciseService } from '@/lib/exercise-service'
 import {
   LessonDto, ChapterDto, CourseDto, UpdateLessonRequest, LessonType, LessonDetailDto,
-  ExerciseDto, ExerciseDetailDto
+  ExerciseDto, ExerciseDetailDto, QuizQuestionDto, QuizAnswerDto
 } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import Link from 'next/link'
 import { VideoUploadSection } from './video-upload'
+import { AiMaterialSection } from './ai-material-section'
 
 // ─── Lesson Type Icon & Color ─────────────────────────────────────────────────
 
@@ -578,98 +578,82 @@ function QuizContentSection({ lessonId, initialDescription, initialPassingScore,
 // ─── Slide Content Section ────────────────────────────────────────────────────
 
 function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; initialFileUrl?: string }) {
-  const [fileUrl, setFileUrl] = useState(initialFileUrl ?? '')
-  const [isEditing, setIsEditing] = useState(!initialFileUrl)
-  const [uploading, setUploading] = useState(false)
-  const [file, setFile] = useState<File | null>(null)
-
-  async function handleUpload() {
-    if (!file) return
-    setUploading(true)
-    try {
-      const result = await fileService.uploadDocument(file)
-      await lessonService.upsertSlide(lessonId, { fileUrl: result.fileUrl })
-      setFileUrl(result.fileUrl)
-      toast.success('Slide uploaded successfully.')
-      setIsEditing(false)
-      setFile(null)
-    } catch {
-      toast.error('Failed to upload slide.')
-    } finally {
-      setUploading(false)
-    }
-  }
+  const [activeTab, setActiveTab] = useState<'ai' | 'upload'>(initialFileUrl ? 'upload' : 'ai')
 
   return (
-    <div className="rounded-xl border bg-card p-6 shadow-sm space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
-          <Presentation className="h-5 w-5 text-pink-600" /> Slide Content
+        <h2 className="text-xl font-bold flex items-center gap-2">
+          <Presentation className="h-6 w-6 text-pink-600" /> 
+          Slide Management
         </h2>
-        {fileUrl && !uploading && (
-          <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)} className="gap-2">
-            {isEditing ? 'Cancel' : (
-              <>
-                <Edit className="h-3.5 w-3.5" /> Change Slide
-              </>
-            )}
+        <div className="flex bg-muted/50 p-1 rounded-lg border">
+          <Button 
+            variant={activeTab === 'ai' ? 'secondary' : 'ghost'} 
+            size="sm" 
+            className="gap-2"
+            onClick={() => setActiveTab('ai')}
+          >
+            <Sparkles className="h-4 w-4 text-purple-600" />
+            Hỗ trợ soạn thảo
           </Button>
-        )}
+          <Button 
+            variant={activeTab === 'upload' ? 'secondary' : 'ghost'} 
+            size="sm" 
+            className="gap-2"
+            onClick={() => setActiveTab('upload')}
+          >
+            <UploadCloud className="h-4 w-4 text-blue-600" />
+            Direct Upload
+          </Button>
+        </div>
       </div>
 
-      {isEditing ? (
-        <div className="space-y-6">
-          <div className="flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-8 bg-muted/20">
-            <UploadCloud className="h-10 w-10 text-muted-foreground mb-4" />
-            <h3 className="font-semibold text-sm text-center">Upload Slide Document</h3>
-            <p className="text-xs text-muted-foreground mb-4 text-center">PDF, PPTX, or DOCX up to 50MB</p>
-
-            <input
-              type="file"
-              accept=".pdf,.pptx,.ppt,.docx,.doc,.txt"
-              onChange={e => setFile(e.target.files?.[0] || null)}
-              className="block w-full max-w-sm text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
-              disabled={uploading}
-            />
+      {activeTab === 'ai' ? (
+        <AiMaterialSection lessonId={lessonId} />
+      ) : (
+        <div className="rounded-xl border bg-card p-6 shadow-sm space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold flex items-center gap-2">
+              <FileText className="h-5 w-5 text-blue-600" /> Upload Existing Slide
+            </h3>
           </div>
-
-          {file && (
-            <div className="flex flex-col items-center gap-3 max-w-sm mx-auto">
-              <div className="flex items-center gap-3 w-full p-3 bg-muted/30 rounded-lg border">
-                <FileText className="h-8 w-8 text-primary shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{file.name}</p>
-                  <p className="text-[10px] text-muted-foreground">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
+          
+          <div className="space-y-6">
+            {initialFileUrl ? (
+              <div className="max-w-2xl bg-muted/20 rounded-lg p-5 border border-dashed space-y-3">
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Current Slide Resource</p>
+                <div className="flex items-center gap-4">
+                  <div className="h-16 w-16 bg-pink-500/10 rounded flex items-center justify-center shrink-0 border border-pink-200">
+                    <Presentation className="h-8 w-8 text-pink-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{initialFileUrl}</p>
+                    <div className="flex items-center gap-3 mt-1">
+                      <a href={initialFileUrl} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline font-medium">
+                        View Document
+                      </a>
+                      <span className="text-muted-foreground text-[10px]">Public Link</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <Button onClick={handleUpload} disabled={uploading} className="w-full gap-2">
-                {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
-                {uploading ? 'Uploading...' : 'Start Upload'}
+            ) : null}
+
+            <div className="flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-12 bg-muted/20 hover:bg-muted/30 transition-colors cursor-pointer">
+              <UploadCloud className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="font-semibold text-sm text-center">Select your slide file</h3>
+              <p className="text-xs text-muted-foreground mb-6 text-center max-w-xs">Upload a PDF, PPTX, or DOCX directly. Students will see this as the primary lesson content.</p>
+              <Input 
+                type="file" 
+                className="max-w-sm" 
+                accept=".pdf,.pptx,.ppt,.docx,.doc" 
+              />
+              <Button className="mt-4 gap-2">
+                <UploadCloud className="h-4 w-4" /> Upload Document
               </Button>
             </div>
-          )}
-        </div>
-      ) : (
-        <div className="max-w-2xl bg-muted/20 rounded-lg p-5 border border-dashed space-y-3">
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Slide Resource</p>
-          {fileUrl ? (
-            <div className="flex items-center gap-4">
-              <div className="h-16 w-16 bg-pink-500/10 rounded flex items-center justify-center shrink-0 border border-pink-200">
-                <Presentation className="h-8 w-8 text-pink-600" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{fileUrl}</p>
-                <div className="flex items-center gap-3 mt-1">
-                  <a href={fileUrl} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline">
-                    View Document
-                  </a>
-                  <span className="text-muted-foreground text-[10px]">Public Link</span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <p className="text-sm italic text-muted-foreground">No slide file uploaded yet.</p>
-          )}
+          </div>
         </div>
       )}
     </div>
@@ -767,8 +751,15 @@ export default function LessonDetailPage() {
     return <div className="text-center py-16 text-muted-foreground">Lesson not found.</div>
   }
 
+  const numericMap: Record<number, LessonType> = {
+    1: LessonType.Video,
+    2: LessonType.Reading,
+    3: LessonType.Coding,
+    4: LessonType.Quiz,
+    5: LessonType.Slide
+  }
   const typeMeta = TYPE_META[lesson.lessonType] || 
-    TYPE_META[({ 1: LessonType.Video, 2: LessonType.Reading, 3: LessonType.Coding, 4: LessonType.Quiz, 5: LessonType.Slide } as any)[lesson.lessonType]] ||
+    TYPE_META[numericMap[lesson.lessonType as unknown as number]] ||
     TYPE_META[LessonType.Video]
 
   return (

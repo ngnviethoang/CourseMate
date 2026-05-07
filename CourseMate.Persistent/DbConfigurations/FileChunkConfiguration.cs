@@ -9,6 +9,6 @@ public class FileChunkConfiguration : IEntityTypeConfiguration<FileChunk>
     public void Configure(EntityTypeBuilder<FileChunk> builder)
     {
         builder.ToTable("FileChunks");
-        builder.HasOne<FileEntry>().WithMany().HasForeignKey(c => c.FileEntryId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<FileEntry>().WithMany().HasForeignKey(c => c.FileEntryId);
     }
 }

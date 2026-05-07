@@ -33,7 +33,7 @@ export default function OrderDetailPage() {
     setLoading(true)
     try {
       const data = await orderService.getById(orderId)
-      setOrder(data as AdminOrderDto || null)
+      setOrder((data as unknown as AdminOrderDto) || null)
     } catch {
       toast.error('Failed to load order details')
       router.push('/management/orders')

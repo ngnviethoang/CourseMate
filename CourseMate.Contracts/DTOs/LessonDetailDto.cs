@@ -30,8 +30,6 @@ public class LessonDetailDto
     public string? QuizDescription { get; set; }
 
     public int? QuizPassingScore { get; set; }
-    public List<QuizQuestionDto>? QuizQuestions { get; set; }
 
-    // Slide
-    public string? SlideFileUrl { get; set; }
+    public List<QuizQuestionDto>? QuizQuestions { get; set; }
 }

@@ -9,7 +9,6 @@ public class LessonVideoConfiguration : IEntityTypeConfiguration<LessonVideo>
     public void Configure(EntityTypeBuilder<LessonVideo> builder)
     {
         builder.ToTable("LessonVideos");
-        builder.Property(i => i.VideoUrl).HasColumnType("citext").IsRequired();
         builder.HasOne<Lesson>().WithOne().HasForeignKey<LessonVideo>(i => i.LessonId);
     }
 }
