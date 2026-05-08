@@ -33,31 +33,29 @@ internal sealed class DeleteFileCommandHandler : AbstractCommandHandler<DeleteFi
     {
         Guid userId = CurrentUserId;
         FileEntry? fileEntry = await DbContext.FileEntries.FirstOrDefaultAsync(f => f.Id == request.FileId && f.UserId == userId, ct);
-
         if (fileEntry == null)
         {
             return Codes.Success;
         }
 
-        List<FileChunk> fileChunks = await DbContext.FileChunks.Where(f => f.FileEntryId == fileEntry.Id).ToListAsync(ct);
         DbContext.FileEntries.Remove(fileEntry);
-        DbContext.FileChunks.RemoveRange(fileChunks);
 
-        string filePath = Path.Combine(_storageOptions.RootPath, fileEntry.FilePath);
+        string filePath = Path.Combine(_storageOptions.RootPath, fileEntry.FileLocation);
         if (File.Exists(filePath))
         {
             File.Delete(filePath);
         }
 
-        if (string.IsNullOrEmpty(fileEntry.TempDirPath))
-        {
-            return Codes.Success;
-        }
+        List<FileChunk> fileChunks = await DbContext.FileChunks.Where(f => f.FileEntryId == fileEntry.Id).ToListAsync(ct);
+        DbContext.FileChunks.RemoveRange(fileChunks);
 
-        string tempDirPath = Path.Combine(_storageOptions.RootPath, fileEntry.TempDirPath);
-        if (Directory.Exists(tempDirPath))
+        foreach (FileChunk fileChunk in fileChunks)
         {
-            Directory.Delete(tempDirPath, true);
+            string chunkPath = Path.Combine(_storageOptions.TempPath, fileChunk.ChunkLocation);
+            if (File.Exists(chunkPath))
+            {
+                File.Delete(chunkPath);
+            }
         }
 
         return Codes.Success;

@@ -33,7 +33,6 @@ try
     AppSettings appSettings = new();
     configuration.Bind(appSettings);
     Util.CreateDirectoryIfNotExist(appSettings.Storage.TempPath);
-    Util.CreateDirectoryIfNotExist(appSettings.Storage.PrivatePath);
     Util.CreateDirectoryIfNotExist(appSettings.Storage.PublicPath);
     builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
     builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));

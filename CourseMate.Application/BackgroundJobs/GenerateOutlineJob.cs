@@ -69,7 +69,7 @@ public class GenerateOutlineJob
         List<string> chunks = [];
         foreach (FileChunk fileChunk in fileChunks)
         {
-            chunks.Add(await File.ReadAllTextAsync(fileChunk.ChunkPath, ct));
+            chunks.Add(await File.ReadAllTextAsync(fileChunk.ChunkLocation, ct));
         }
 
         string docContext = string.Join("\n\n---\n\n", chunks);

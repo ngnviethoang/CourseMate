@@ -39,12 +39,12 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
 
     public override async Task<int> Handle(UploadVideoChunkCommand request, CancellationToken ct)
     {
-        if (!_allowedImageExtensions.Contains(Path.GetExtension(request.FileName), StringComparer.OrdinalIgnoreCase))
+        if (!_allowedImageExtensions.Contains(Path.GetExtension(request.FileName), StringComparer.InvariantCultureIgnoreCase))
         {
             throw new BusinessException(ErrorMessages.InvalidFileType);
         }
 
-        if (request.Content.Length > _storageOptions.MaxImageFileSizeMb * 1024 * 1024)
+        if (request.Content.Length > _storageOptions.MaxChunkSizeMb * 1024 * 1024)
         {
             throw new BusinessException(ErrorMessages.FileTooLarge);
         }
@@ -61,8 +61,8 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
             throw new EntityNotFoundException(nameof(FileEntry), request.FileId);
         }
 
-        string chunkFileName = $"chunk_{request.ChunkIndex}.dat";
-        string chunkFilePath = Path.Combine(fileEntry.TempDirPath, chunkFileName);
+        string chunkFileName = $"{fileEntry.Id}_chunk_{request.ChunkIndex}.dat";
+        string chunkFilePath = Path.Combine(_storageOptions.TempPath, chunkFileName);
         if (File.Exists(chunkFilePath))
         {
             File.Delete(chunkFilePath);
@@ -71,7 +71,13 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
         await using FileStream stream = new(chunkFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
         await stream.WriteAsync(request.Content, ct);
 
-        FileChunk fileChunk = new(Guid.NewGuid(), fileEntry.Id, request.ChunkIndex, chunkFilePath, request.Content.LongLength, true);
+        FileChunk fileChunk = new(
+            Guid.NewGuid(),
+            fileEntry.Id,
+            request.ChunkIndex,
+            chunkFilePath.Replace(_storageOptions.TempPath, string.Empty),
+            request.Content.LongLength,
+            true);
         await DbContext.FileChunks.AddAsync(fileChunk, ct);
         fileEntry.UploadedChunks += 1;
         DbContext.FileEntries.Update(fileEntry);

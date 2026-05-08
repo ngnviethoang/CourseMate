@@ -27,19 +27,16 @@ internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<Ini
     public override async Task<InitVideoUploadResponse> Handle(InitVideoUploadCommand request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
+        string userDir = Path.Combine(_storageOptions.RootPath, userId.ToString());
+        Util.CreateDirectoryIfNotExist(userDir);
         Guid fileId = Guid.NewGuid();
         string fileName = $"{fileId}.mp4";
-        string userDir = Path.Combine(_storageOptions.PrivatePath, userId.ToString());
-        Util.CreateDirectoryIfNotExist(userDir);
-        string tempDir = Path.Combine(_storageOptions.TempPath, fileId.ToString());
-        Directory.CreateDirectory(tempDir);
-        string filePath = Path.Combine(userDir, fileId.ToString());
+        string fileLocation = Path.Combine(userDir, fileId.ToString());
         FileEntry fileEntry = new(
             fileId,
             fileName,
             0,
-            filePath.Replace(_storageOptions.RootPath, string.Empty),
-            tempDir.Replace(_storageOptions.RootPath, string.Empty),
+            fileLocation.Replace(_storageOptions.RootPath, string.Empty),
             FileStatus.Uploading,
             0,
             0,

@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using CourseMate.Application.Services.AIServices;
+using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using DocumentFormat.OpenXml.Packaging;
@@ -8,6 +9,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Pgvector;
 
 namespace CourseMate.Application.BackgroundJobs;
@@ -17,15 +19,18 @@ public class ProcessFileEmbeddingJob
     private readonly IAiService _aIService;
     private readonly CourseMateDbContext _dbContext;
     private readonly ILogger<ProcessFileEmbeddingJob> _logger;
+    private readonly StorageOptions _storageOptions;
 
     public ProcessFileEmbeddingJob(
         CourseMateDbContext dbContext,
+        IOptions<StorageOptions> storageOptions,
         ILogger<ProcessFileEmbeddingJob> logger,
         IAiService aIService)
     {
         _dbContext = dbContext;
         _logger = logger;
         _aIService = aIService;
+        _storageOptions = storageOptions.Value;
     }
 
     [AutomaticRetry(Attempts = 0)]
@@ -39,17 +44,9 @@ public class ProcessFileEmbeddingJob
             return;
         }
 
-        if (!File.Exists(fileEntry.FilePath))
+        if (!File.Exists(Path.Combine(_storageOptions.RootPath, fileEntry.FileLocation)))
         {
-            _logger.LogWarning("File does not exist at path: {FilePath} for file ID: {FileId}", fileEntry.FilePath, fileId);
-            return;
-        }
-
-        string? parentPath = Path.GetDirectoryName(fileEntry.FilePath);
-
-        if (parentPath is null)
-        {
-            _logger.LogWarning("Cannot get parent directory from file path: {FilePath} for file ID: {FileId}", fileEntry.FilePath, fileEntry.Id);
+            _logger.LogWarning("File does not exist at path: {FilePath} for file ID: {FileId}", fileEntry.FileLocation, fileId);
             return;
         }
 
@@ -59,17 +56,17 @@ public class ProcessFileEmbeddingJob
             _logger.LogInformation("Reading file content for: {FileName} (FileID: {FileId})", fileEntry.FileName, fileId);
             // NOTE: ReadAllTextAsync may not work properly for binary files like .pdf/.docx without a library.
             // This seems to be the current implementation, logging it clearly.
-            string content = ReadWordText(fileEntry.FilePath);
+            string content = ReadWordText(fileEntry.FileLocation);
 
             IEnumerable<Chunk> chunks = ChunkSentences(content);
             int chunkCount = 1;
+            string tempDir = Path.Combine(_storageOptions.TempPath, fileEntry.FileLocation);
 
             foreach (Chunk chunk in chunks)
             {
                 _logger.LogDebug("Generating embedding for chunk {ChunkIndex} of file {FileId}", chunkCount, fileId);
-
-                string chunkFileName = $"{fileId}_chunk{chunkCount}.txt";
-                string chunkFilePath = Path.Combine(parentPath, chunkFileName);
+                string chunkFileName = $"{fileEntry.Id}_chunk{chunkCount}.txt";
+                string chunkFilePath = Path.Combine(_storageOptions.TempPath, chunkFileName);
                 await using FileStream stream = new(chunkFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
                 await stream.WriteAsync(Encoding.UTF8.GetBytes(chunk.Content), ct);
                 FileChunk fileChunk = new(Guid.NewGuid(), fileEntry.Id, chunkCount, chunkFilePath, chunk.Content.Length, true);

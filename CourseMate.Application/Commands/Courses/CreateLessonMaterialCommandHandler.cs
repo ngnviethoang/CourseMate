@@ -22,7 +22,7 @@ public class CreateLessonMaterialCommand : IRequest<ProcessingStatusDto>
 
 internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandler<CreateLessonMaterialCommand, ProcessingStatusDto>
 {
-    private readonly IEnumerable<string> _allowedImageExtensions = [".doc", ".docx", ".pdf"];
+    private readonly IEnumerable<string> _allowedImageExtensions = [".doc", ".docx"];
     private readonly IMediator _mediator;
     private readonly StorageOptions _storageOptions;
 
@@ -42,20 +42,18 @@ internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandle
 
         await EnsureAuthorCourseAsync(request.LessonId, ct);
         Guid userId = CurrentUserId;
-        string userDir = Path.Combine(_storageOptions.PrivatePath, userId.ToString());
+        string userDir = Path.Combine(_storageOptions.RootPath, userId.ToString());
         Util.CreateDirectoryIfNotExist(userDir);
         Guid fileEntryId = Guid.NewGuid();
         string fileName = $"{fileEntryId}{fileExtension}";
         string filePath = Path.Combine(userDir, fileName);
-
         await using FileStream stream = new(filePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
         await stream.WriteAsync(request.Content, ct);
 
         FileEntry fileEntry = new(fileEntryId,
             fileName,
             request.Content.LongLength,
-            filePath,
-            string.Empty,
+            filePath.Replace(_storageOptions.RootPath, string.Empty),
             FileStatus.Processing,
             0,
             0, DateTimeOffset.UtcNow,
@@ -64,9 +62,7 @@ internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandle
         DbContext.FileEntries.Add(fileEntry);
         LessonMaterial material = new(Guid.NewGuid(), request.LessonId, fileEntry.Id, LessonMaterialState.GeneratingEmbedding, string.Empty);
         DbContext.LessonMaterials.Add(material);
-
         await _mediator.Publish(new LessonMaterialCreatedEvent(material.Id, fileEntryId, material.LessonId), ct);
-
         return new ProcessingStatusDto
         {
             LessonMaterialId = fileEntryId,

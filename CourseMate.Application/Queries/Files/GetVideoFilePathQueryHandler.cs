@@ -36,7 +36,7 @@ internal sealed class GetVideoFilePathQueryHandler : AbstractQueryHandler<GetVid
 
         return new VideoFilePathDto
         {
-            FilePath = fileEntry.FilePath,
+            FilePath = fileEntry.FileLocation,
             FileName = fileEntry.FileName
         };
     }

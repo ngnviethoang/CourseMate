@@ -1,7 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Net.Mime;
 using CourseMate.Application.Commands.Files;
 using CourseMate.Application.Queries.Files;
 using CourseMate.Contracts.DTOs;
+using CourseMate.Persistent.Entities;
+using Google.GenAI;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +33,39 @@ public class FileController : ControllerBase
         });
 
         return NoContent();
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> UploadFileAsync(IFormFile request)
+    {
+        if (request.Length == 0)
+        {
+            return BadRequest();
+        }
+
+        using MemoryStream stream = new();
+        await request.CopyToAsync(stream);
+        FileUploadResponse result = await _mediator.Send(new UploadFileCommand
+        {
+            FileName = request.FileName,
+            ContentType = request.ContentType,
+            Content = stream.ToArray()
+        });
+
+        return Ok(result);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{fileId:guid}/download")]
+    public async Task<IActionResult> Download(Guid fileId)
+    {
+        FileContentResponse? result = await _mediator.Send(new GetFileByIdQuery { FileId = fileId });
+        if (result == null)
+        {
+            return NotFound();
+        }
+
+        return File(result.Content, MediaTypeNames.Application.Octet, WebUtility.HtmlEncode(result.FileName));
     }
 
     #region API Video
@@ -93,88 +130,6 @@ public class FileController : ControllerBase
 
         FileStream stream = new(result.FilePath, FileMode.Open, FileAccess.Read);
         return File(stream, "video/mp4", true);
-    }
-
-    #endregion
-
-    #region API Image
-
-    [HttpPost("images")]
-    public async Task<ActionResult> UploadImageAsync(IFormFile request)
-    {
-        if (request.Length == 0)
-        {
-            return BadRequest();
-        }
-
-        using MemoryStream stream = new();
-        await request.CopyToAsync(stream);
-        FileUploadResponse result = await _mediator.Send(new UploadImageCommand
-        {
-            FileName = request.FileName,
-            ContentType = request.ContentType,
-            Content = stream.ToArray()
-        });
-
-        return Ok(result);
-    }
-
-    [AllowAnonymous]
-    [HttpGet("images/{fileId:Guid}")]
-    public async Task<IActionResult> GetImageAsync(Guid fileId)
-    {
-        ImageFileResponse? result = await _mediator.Send(new GetImageFileQuery
-        {
-            FileId = fileId
-        });
-
-        if (result == null)
-        {
-            return NotFound();
-        }
-
-        return File(result.Content, result.ContentType, result.FileName);
-    }
-
-    #endregion
-
-    #region API Document
-
-    [HttpPost("documents")]
-    public async Task<ActionResult> UploadDocumentAsync(IFormFile request)
-    {
-        if (request.Length == 0)
-        {
-            return BadRequest();
-        }
-
-        using MemoryStream stream = new();
-        await request.CopyToAsync(stream);
-        FileUploadResponse result = await _mediator.Send(new UploadDocumentCommand
-        {
-            FileName = request.FileName,
-            ContentType = request.ContentType,
-            Content = stream.ToArray()
-        });
-
-        return Ok(result);
-    }
-
-    [AllowAnonymous]
-    [HttpGet("documents/{fileId:Guid}")]
-    public async Task<IActionResult> GetDocumentAsync(Guid fileId)
-    {
-        DocumentFileResponse? result = await _mediator.Send(new GetDocumentFileQuery
-        {
-            FileId = fileId
-        });
-
-        if (result == null)
-        {
-            return NotFound();
-        }
-
-        return File(result.Content, result.ContentType, result.FileName);
     }
 
     #endregion
