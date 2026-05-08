@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CourseMate.Persistent.Migrations
 {
     /// <inheritdoc />
-    public partial class AddContestTables : Migration
+    public partial class AddContestAndRenameTempDirColumn : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -41,6 +41,11 @@ namespace CourseMate.Persistent.Migrations
                 name: "IX_LessonQuizAnswers_QuestionId",
                 table: "LessonQuizAnswers",
                 newName: "IX_LessonQuizAnswers_LessonQuizQuestionId");
+
+            migrationBuilder.RenameColumn(
+                name: "TempFilePath",
+                table: "FileEntries",
+                newName: "TempDirPath");
 
             migrationBuilder.AlterColumn<string>(
                 name: "VideoUrl",
@@ -311,6 +316,11 @@ namespace CourseMate.Persistent.Migrations
                 name: "IX_LessonQuizAnswers_LessonQuizQuestionId",
                 table: "LessonQuizAnswers",
                 newName: "IX_LessonQuizAnswers_QuestionId");
+
+            migrationBuilder.RenameColumn(
+                name: "TempDirPath",
+                table: "FileEntries",
+                newName: "TempFilePath");
 
             migrationBuilder.AlterColumn<string>(
                 name: "VideoUrl",

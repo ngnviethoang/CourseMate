@@ -7,10 +7,8 @@ using CourseMate.Contracts.Exceptions;
 using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
-using CourseMate.Persistent.ExtensionMethods;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace CourseMate.Application.Commands.Courses;
@@ -36,37 +34,19 @@ internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandle
 
     public override async Task<ProcessingStatusDto> Handle(CreateLessonMaterialCommand request, CancellationToken ct)
     {
-        bool isAuthor = await (
-                from lesson in DbContext.Lessons
-                join course in DbContext.Courses
-                    on lesson.CourseId equals course.Id
-                where lesson.Id == request.LessonId
-                select course.InstructorId
-            )
-            .WhereIf(IsInRole(Roles.Instructor), x => x == CurrentUserId)
-            .AnyAsync(ct);
-
-        if (!isAuthor)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
         string fileExtension = Path.GetExtension(request.FileName);
         if (!_allowedImageExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
         {
             throw new BusinessException(ErrorMessages.InvalidFileType);
         }
 
+        await EnsureAuthorCourseAsync(request.LessonId, ct);
         Guid userId = CurrentUserId;
-        string documentsDir = Path.Combine(_storageOptions.DocumentsPath, userId.ToString());
-        if (!Directory.Exists(documentsDir))
-        {
-            Directory.CreateDirectory(documentsDir);
-        }
-
+        string userDir = Path.Combine(_storageOptions.PrivatePath, userId.ToString());
+        Util.CreateDirectoryIfNotExist(userDir);
         Guid fileEntryId = Guid.NewGuid();
         string fileName = $"{fileEntryId}{fileExtension}";
-        string filePath = Path.Combine(documentsDir, fileName);
+        string filePath = Path.Combine(userDir, fileName);
 
         await using FileStream stream = new(filePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
         await stream.WriteAsync(request.Content, ct);

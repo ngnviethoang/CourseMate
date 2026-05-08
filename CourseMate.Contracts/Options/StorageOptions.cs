@@ -3,35 +3,47 @@ namespace CourseMate.Contracts.Options;
 public class StorageOptions
 {
     /// <summary>
-    ///     Folder path to store uploaded files
+    ///     Root folder path to store uploaded files
     /// </summary>
-    public string Path { get; set; } = string.Empty;
+    public string RootPath { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Static files request path, e.g. /coursemate-files
+    /// </summary>
+    public string StaticRequestPath { get; set; } = string.Empty;
 
     /// <summary>
     ///     Maximum size of each upload chunk in MB
     /// </summary>
-    public int MaxSizeTrunkFile { get; set; }
+    public int MaxChunkSizeMb { get; set; }
 
     /// <summary>
     ///     Maximum video file size in MB
     /// </summary>
-    public int MaxSizeFileVideo { get; set; }
+    public int MaxVideoFileSizeMb { get; set; }
 
     /// <summary>
     ///     Maximum image file size in MB
     /// </summary>
-    public int MaxSizeFileImage { get; set; }
+    public int MaxImageFileSizeMb { get; set; }
 
     /// <summary>
     ///     Maximum document file size in MB
     /// </summary>
-    public int MaxSizeFileDocument { get; set; }
+    public int MaxDocumentFileSizeMb { get; set; }
 
-    public string TempPath => System.IO.Path.Combine(Path, "temp");
+    /// <summary>
+    ///     Public static files folder
+    /// </summary>
+    public string PublicPath => Path.Combine(RootPath, "public");
 
-    public string VideosPath => System.IO.Path.Combine(Path, "videos");
+    /// <summary>
+    ///     Private protected files folder
+    /// </summary>
+    public string PrivatePath => Path.Combine(RootPath, "private");
 
-    public string ImagesPath => System.IO.Path.Combine(Path, "images");
-
-    public string DocumentsPath => System.IO.Path.Combine(Path, "documents");
+    /// <summary>
+    ///     Temporary upload folder
+    /// </summary>
+    public string TempPath => Path.Combine(RootPath, "temp");
 }

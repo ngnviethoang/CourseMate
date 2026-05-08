@@ -1,6 +1,6 @@
 namespace CourseMate.Contracts.DTOs;
 
-public class CompleteVideoUploadResponse
+public class FileUploadResponse
 {
     public Guid FileId { get; set; }
     public string FileUrl { get; set; } = string.Empty;

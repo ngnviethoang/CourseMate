@@ -5,7 +5,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace CourseMate.Application.Shared;
 
-public static class Utils
+public static class Util
 {
     public static string HmacSha512(string key, string inputData)
     {
@@ -47,5 +47,15 @@ public static class Utils
         }
 
         return ipAddress;
+    }
+
+    public static string CreateDirectoryIfNotExist(string path)
+    {
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        return path;
     }
 }

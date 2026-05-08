@@ -20,18 +20,29 @@ public class FileController : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpDelete("{fileId:Guid}")]
+    public async Task<ActionResult> DeleteFileAsync(Guid fileId)
+    {
+        await _mediator.Send(new DeleteFileCommand
+        {
+            FileId = fileId
+        });
+
+        return NoContent();
+    }
+
     #region API Video
 
-    /// <summary>
-    ///     fileName is .mp4
-    /// </summary>
     [HttpPost("videos/init")]
-    public async Task<ActionResult> InitUploadVideoAsync(InitVideoUploadCommand request)
+    public async Task<ActionResult> InitUploadVideoAsync()
     {
-        InitVideoUploadResponse result = await _mediator.Send(request);
+        InitVideoUploadResponse result = await _mediator.Send(new InitVideoUploadCommand());
         return Ok(result);
     }
 
+    /// <summary>
+    ///     Only accept is .mp4 file
+    /// </summary>
     [HttpPost("videos/{fileId:Guid}/chunks/{chunkIndex:int}")]
     public async Task<ActionResult> UploadVideoChunkAsync([FromRoute] Guid fileId, [FromRoute] [Range(1, 100)] int chunkIndex, IFormFile file)
     {
@@ -50,7 +61,7 @@ public class FileController : ControllerBase
     [HttpPost("videos/completed")]
     public async Task<ActionResult> UploadVideoCompletedAsync(CompletedVideoUploadCommand request)
     {
-        CompleteVideoUploadResponse result = await _mediator.Send(request);
+        FileUploadResponse result = await _mediator.Send(request);
         return Ok(result);
     }
 
@@ -63,16 +74,6 @@ public class FileController : ControllerBase
             FileId = fileId
         });
         return Ok(result);
-    }
-
-    [HttpDelete("videos/{fileId:guid}")]
-    public async Task<ActionResult> DeleteVideoIdAsync(Guid fileId)
-    {
-        await _mediator.Send(new DeleteVideoByIdCommand
-        {
-            FileId = fileId
-        });
-        return NoContent();
     }
 
     [AllowAnonymous]
@@ -108,7 +109,7 @@ public class FileController : ControllerBase
 
         using MemoryStream stream = new();
         await request.CopyToAsync(stream);
-        UploadImageResponse result = await _mediator.Send(new UploadImageCommand
+        FileUploadResponse result = await _mediator.Send(new UploadImageCommand
         {
             FileName = request.FileName,
             ContentType = request.ContentType,
@@ -116,17 +117,6 @@ public class FileController : ControllerBase
         });
 
         return Ok(result);
-    }
-
-    [HttpDelete("images/{fileId:Guid}")]
-    public async Task<ActionResult> DeleteImageAsync(Guid fileId)
-    {
-        await _mediator.Send(new DeleteImageCommand
-        {
-            FileId = fileId
-        });
-
-        return NoContent();
     }
 
     [AllowAnonymous]
@@ -160,7 +150,7 @@ public class FileController : ControllerBase
 
         using MemoryStream stream = new();
         await request.CopyToAsync(stream);
-        UploadDocumentResponse result = await _mediator.Send(new UploadDocumentCommand
+        FileUploadResponse result = await _mediator.Send(new UploadDocumentCommand
         {
             FileName = request.FileName,
             ContentType = request.ContentType,

@@ -8,13 +8,13 @@ namespace CourseMate.Persistent.Entities;
 public class FileEntry : Entity
 {
     public FileEntry(Guid id, string fileName, double fileSize, string filePath,
-        string tempFilePath, FileStatus status, int totalChunks, int uploadedChunks,
+        string tempDirPath, FileStatus status, int totalChunks, int uploadedChunks,
         DateTimeOffset? completedAt, FileType fileType) : base(id)
     {
         FileName = fileName;
         FileSize = fileSize;
         FilePath = filePath;
-        TempFilePath = tempFilePath;
+        TempDirPath = tempDirPath;
         Status = status;
         TotalChunks = totalChunks;
         UploadedChunks = uploadedChunks;
@@ -31,7 +31,7 @@ public class FileEntry : Entity
     public string FilePath { get; set; }
 
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
-    public string TempFilePath { get; set; }
+    public string TempDirPath { get; set; }
 
     public FileStatus Status { get; set; }
 

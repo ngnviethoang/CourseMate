@@ -4,8 +4,8 @@ using CourseMate.API.Middlewares;
 using CourseMate.API.Services;
 using CourseMate.Application;
 using CourseMate.Application.Services.NotificationServices;
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.Options;
-using CourseMate.Contracts.Utils;
 using CourseMate.Persistent;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -32,6 +32,9 @@ try
 
     AppSettings appSettings = new();
     configuration.Bind(appSettings);
+    Util.CreateDirectoryIfNotExist(appSettings.Storage.TempPath);
+    Util.CreateDirectoryIfNotExist(appSettings.Storage.PrivatePath);
+    Util.CreateDirectoryIfNotExist(appSettings.Storage.PublicPath);
     builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
     builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
     builder.Services.Configure<GoogleAiOptions>(configuration.GetSection("GoogleAi"));
@@ -142,11 +145,10 @@ try
     // await app.Services.SeedAsync();
     app.UseHsts();
     app.UseHttpsRedirection();
-    Util.CreateDirectoryIfNotExist(appSettings.Storage.Path);
     app.UseStaticFiles(new StaticFileOptions
     {
-        FileProvider = new PhysicalFileProvider(appSettings.Storage.Path),
-        RequestPath = "/coursemate-files"
+        FileProvider = new PhysicalFileProvider(appSettings.Storage.PublicPath),
+        RequestPath = appSettings.Storage.StaticRequestPath
     });
     app.UseCors("AllowAnyOrigin");
     app.UseSwagger();

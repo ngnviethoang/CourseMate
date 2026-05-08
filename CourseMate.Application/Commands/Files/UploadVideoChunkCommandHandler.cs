@@ -44,24 +44,25 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
             throw new BusinessException(ErrorMessages.InvalidFileType);
         }
 
-        if (request.Content.Length > _storageOptions.MaxSizeFileVideo * 1024 * 1024)
+        if (request.Content.Length > _storageOptions.MaxImageFileSizeMb * 1024 * 1024)
         {
             throw new BusinessException(ErrorMessages.FileTooLarge);
         }
 
         Guid userId = CurrentUserId;
-        FileEntry? fileEntry = await DbContext.FileEntries
-            .Where(f => f.UserId == userId)
-            .Where(f => f.Status == FileStatus.Uploading)
-            .FirstOrDefaultAsync(f => f.Id == request.FileId, ct);
+        FileEntry? fileEntry = await DbContext.FileEntries.FirstOrDefaultAsync(f =>
+                f.Id == request.FileId &&
+                f.UserId == userId &&
+                f.Status == FileStatus.Uploading,
+            ct);
 
         if (fileEntry == null)
         {
             throw new EntityNotFoundException(nameof(FileEntry), request.FileId);
         }
 
-        string chunkFileName = $"chunk_{request.ChunkIndex:D5}.dat";
-        string chunkFilePath = Path.Combine(fileEntry.TempFilePath, chunkFileName);
+        string chunkFileName = $"chunk_{request.ChunkIndex}.dat";
+        string chunkFilePath = Path.Combine(fileEntry.TempDirPath, chunkFileName);
         if (File.Exists(chunkFilePath))
         {
             File.Delete(chunkFilePath);
@@ -72,7 +73,6 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
 
         FileChunk fileChunk = new(Guid.NewGuid(), fileEntry.Id, request.ChunkIndex, chunkFilePath, request.Content.LongLength, true);
         await DbContext.FileChunks.AddAsync(fileChunk, ct);
-
         fileEntry.UploadedChunks += 1;
         DbContext.FileEntries.Update(fileEntry);
         return Codes.Success;

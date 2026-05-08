@@ -870,7 +870,7 @@ namespace CourseMate.Persistent.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<string>("TempFilePath")
+                    b.Property<string>("TempDirPath")
                         .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");

@@ -12,14 +12,14 @@ using Microsoft.Extensions.Options;
 
 namespace CourseMate.Application.Commands.Files;
 
-public class UploadImageCommand : IRequest<UploadImageResponse>
+public class UploadImageCommand : IRequest<FileUploadResponse>
 {
     public string FileName { get; set; } = string.Empty;
     public string ContentType { get; set; } = string.Empty;
     public byte[] Content { get; set; } = [];
 }
 
-internal sealed class UploadImageCommandHandler : AbstractCommandHandler<UploadImageCommand, UploadImageResponse>
+internal sealed class UploadImageCommandHandler : AbstractCommandHandler<UploadImageCommand, FileUploadResponse>
 {
     private readonly IEnumerable<string> _allowedImageExtensions = [".jpg", ".jpeg", ".png"];
     private readonly StorageOptions _storageOptions;
@@ -33,42 +33,33 @@ internal sealed class UploadImageCommandHandler : AbstractCommandHandler<UploadI
         _storageOptions = storageOptions.Value;
     }
 
-    public override async Task<UploadImageResponse> Handle(UploadImageCommand request, CancellationToken ct)
+    public override async Task<FileUploadResponse> Handle(UploadImageCommand request, CancellationToken ct)
     {
         if (!_allowedImageExtensions.Contains(Path.GetExtension(request.FileName), StringComparer.OrdinalIgnoreCase))
         {
             throw new BusinessException(ErrorMessages.InvalidFileType);
         }
 
-        Guid userId = CurrentUserId;
-        string userDir = Path.Combine(_storageOptions.ImagesPath, userId.ToString());
-        if (!Directory.Exists(userDir))
-        {
-            Directory.CreateDirectory(userDir);
-        }
-
+        Util.CreateDirectoryIfNotExist(_storageOptions.PublicPath);
         Guid fileId = Guid.NewGuid();
         string fileName = $"{fileId}{Path.GetExtension(request.FileName)}";
-        string filePath = Path.Combine(userDir, fileName);
+        string filePath = Path.Combine(_storageOptions.PublicPath, fileName);
         await File.WriteAllBytesAsync(filePath, request.Content, ct);
-
         FileEntry fileEntry = new(
             fileId,
             fileName,
             request.Content.Length,
-            filePath,
+            filePath.Replace(_storageOptions.RootPath, string.Empty),
             string.Empty,
             FileStatus.Completed,
             1,
             1,
             DateTimeOffset.UtcNow,
             FileType.Image);
-
         await DbContext.FileEntries.AddAsync(fileEntry, ct);
-
         HttpRequest? httpRequest = HttpContextAccessor.HttpContext!.Request;
-        string fileUrl = $"{httpRequest.Scheme}://{httpRequest.Host}/api/files/images/{fileId}";
-        return new UploadImageResponse
+        string fileUrl = $"{httpRequest.Scheme}://{httpRequest.Host}{_storageOptions.StaticRequestPath}/{filePath}";
+        return new FileUploadResponse
         {
             FileId = fileId,
             FileUrl = fileUrl
