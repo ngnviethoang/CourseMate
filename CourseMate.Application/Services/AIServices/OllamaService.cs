@@ -65,7 +65,7 @@ public class OllamaService : IAiService
         catch (OllamaException ex)
         {
             _logger.LogError(ex, "Ollama research request failed");
-            throw new BusinessException(ErrorMessages.ResearchGenerationFailed, ex);
+            throw new BusinessException(ErrorMessages.AiGenerationFailed, ex);
         }
     }
 
@@ -90,7 +90,7 @@ public class OllamaService : IAiService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Ollama lecture outline request failed");
-            throw new BusinessException(ErrorMessages.LectureOutlineGenerationFailed, ex);
+            throw new BusinessException(ErrorMessages.AiGenerationFailed, ex);
         }
     }
 }

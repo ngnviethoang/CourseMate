@@ -4,8 +4,6 @@ using System.Net.Mime;
 using CourseMate.Application.Commands.Files;
 using CourseMate.Application.Queries.Files;
 using CourseMate.Contracts.DTOs;
-using CourseMate.Persistent.Entities;
-using Google.GenAI;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
