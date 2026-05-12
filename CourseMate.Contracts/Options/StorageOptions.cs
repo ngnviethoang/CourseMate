@@ -3,35 +3,37 @@ namespace CourseMate.Contracts.Options;
 public class StorageOptions
 {
     /// <summary>
-    ///     Folder path to store uploaded files
+    ///     Root folder path to store uploaded files
     /// </summary>
-    public string Path { get; set; } = string.Empty;
+    public string RootPath { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Static files request path, e.g. /coursemate-files
+    /// </summary>
+    public string StaticRequestPath { get; set; } = string.Empty;
 
     /// <summary>
     ///     Maximum size of each upload chunk in MB
     /// </summary>
-    public int MaxSizeTrunkFile { get; set; }
+    public int MaxChunkSizeMb { get; set; }
 
     /// <summary>
     ///     Maximum video file size in MB
     /// </summary>
-    public int MaxSizeFileVideo { get; set; }
+    public int MaxVideoFileSizeMb { get; set; }
 
     /// <summary>
-    ///     Maximum image file size in MB
+    ///     Default maximum file size in MB
     /// </summary>
-    public int MaxSizeFileImage { get; set; }
+    public int DefaultMaxFileSizeMb { get; set; }
 
     /// <summary>
-    ///     Maximum document file size in MB
+    ///     Public static files folder
     /// </summary>
-    public int MaxSizeFileDocument { get; set; }
+    public string PublicPath => Path.Combine(RootPath, "public");
 
-    public string TempPath => System.IO.Path.Combine(Path, "temp");
-
-    public string VideosPath => System.IO.Path.Combine(Path, "videos");
-
-    public string ImagesPath => System.IO.Path.Combine(Path, "images");
-
-    public string DocumentsPath => System.IO.Path.Combine(Path, "documents");
+    /// <summary>
+    ///     Temporary upload folder
+    /// </summary>
+    public string TempPath => Path.Combine(RootPath, "temp");
 }

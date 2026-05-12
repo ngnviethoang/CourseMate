@@ -6,11 +6,11 @@ namespace CourseMate.Persistent.Entities;
 
 public class FileChunk : Entity
 {
-    public FileChunk(Guid id, Guid fileEntryId, int chunkIndex, string chunkPath, long chunkSize, bool isUploaded) : base(id)
+    public FileChunk(Guid id, Guid fileEntryId, int chunkIndex, string chunkLocation, long chunkSize, bool isUploaded) : base(id)
     {
         FileEntryId = fileEntryId;
         ChunkIndex = chunkIndex;
-        ChunkPath = chunkPath;
+        ChunkLocation = chunkLocation;
         ChunkSize = chunkSize;
         IsUploaded = isUploaded;
     }
@@ -20,7 +20,7 @@ public class FileChunk : Entity
     public int ChunkIndex { get; set; }
 
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
-    public string ChunkPath { get; set; }
+    public string ChunkLocation { get; set; }
 
     public long ChunkSize { get; set; }
 

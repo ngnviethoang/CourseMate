@@ -51,7 +51,7 @@ internal sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<Cr
             throw new EntityNotFoundException(nameof(Order), request.OrderId);
         }
 
-        string clientIp = Utils.GetIpAddress(HttpContextAccessor.HttpContext!);
+        string clientIp = Util.GetIpAddress(HttpContextAccessor.HttpContext!);
         if (!IPAddress.TryParse(clientIp, out IPAddress? _))
         {
             _logger.LogWarning("Invalid IP detected - IP: {ClientIp}", clientIp);

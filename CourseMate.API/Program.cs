@@ -4,11 +4,13 @@ using CourseMate.API.Middlewares;
 using CourseMate.API.Services;
 using CourseMate.Application;
 using CourseMate.Application.Services.NotificationServices;
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
@@ -28,6 +30,11 @@ try
         .CreateLogger();
     builder.Host.UseSerilog();
 
+    AppSettings appSettings = new();
+    configuration.Bind(appSettings);
+    Util.CreateDirectoryIfNotExist(appSettings.Storage.TempPath);
+    Util.CreateDirectoryIfNotExist(appSettings.Storage.PublicPath);
+    builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
     builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
     builder.Services.Configure<GoogleAiOptions>(configuration.GetSection("GoogleAi"));
     builder.Services.Configure<OllamaOptions>(configuration.GetSection("Ollama"));
@@ -119,7 +126,6 @@ try
     builder.Services.AddProblemDetails().AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddCors(options =>
     {
-        string[] allowedOrigins = builder.Configuration.GetSection("CORS:AllowedOrigins").Get<string[]>()!;
         options.AddPolicy("AllowAnyOrigin", policy =>
         {
             policy.AllowAnyOrigin()
@@ -128,7 +134,7 @@ try
         });
 
         options.AddPolicy("SignalRHubs", policyBuilder => policyBuilder
-            .WithOrigins(allowedOrigins)
+            .WithOrigins(appSettings.Cors.AllowedOrigins)
             .AllowAnyHeader()
             .WithMethods("GET", "POST")
             .AllowCredentials());
@@ -136,6 +142,13 @@ try
 
     WebApplication app = builder.Build();
     // await app.Services.SeedAsync();
+    app.UseHsts();
+    app.UseHttpsRedirection();
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(appSettings.Storage.PublicPath),
+        RequestPath = appSettings.Storage.StaticRequestPath
+    });
     app.UseCors("AllowAnyOrigin");
     app.UseSwagger();
     app.UseSwaggerUI();

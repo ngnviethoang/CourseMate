@@ -26,21 +26,18 @@ internal sealed class GetVideoUploadStatusQueryHandler : AbstractQueryHandler<Ge
     public override async Task<VideoUploadStatusDto?> Handle(GetVideoUploadStatusQuery request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
-        FileEntry? fileEntry = await DbContext.FileEntries
-            .Where(f => f.UserId == userId)
-            .FirstOrDefaultAsync(f => f.Id == request.FileId, ct);
+        FileEntry? fileEntry = await DbContext.FileEntries.FirstOrDefaultAsync(f => f.Id == request.FileId && f.UserId == userId, ct);
         if (fileEntry == null)
         {
             return null;
         }
 
         int progress;
-
-        if (fileEntry.Status == FileStatus.Completed || fileEntry.Status == FileStatus.Processing)
+        if (fileEntry.Status is FileStatus.Completed or FileStatus.Processing)
         {
             progress = 100;
         }
-        else if (fileEntry.Status == FileStatus.Uploading && fileEntry.TotalChunks > 0)
+        else if (fileEntry is { Status: FileStatus.Uploading, TotalChunks: > 0 })
         {
             progress = (int)Math.Round((double)fileEntry.UploadedChunks / fileEntry.TotalChunks * 100);
             progress = Math.Max(0, Math.Min(100, progress));

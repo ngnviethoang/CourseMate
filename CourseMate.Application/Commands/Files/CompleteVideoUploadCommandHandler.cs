@@ -13,52 +13,43 @@ using Microsoft.Extensions.Options;
 
 namespace CourseMate.Application.Commands.Files;
 
-public class CompletedVideoUploadCommand : IRequest<CompleteVideoUploadResponse>
+public class CompletedVideoUploadCommand : IRequest<FileUploadResponse>
 {
     public Guid FileId { get; set; }
     public int TotalChunks { get; set; }
 }
 
 // TODO Refactor to background job
-internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler<CompletedVideoUploadCommand, CompleteVideoUploadResponse>
+internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler<CompletedVideoUploadCommand, FileUploadResponse>
 {
     private readonly StorageOptions _storageOptions;
 
     public CompleteVideoUploadCommandHandler(
+        IOptions<StorageOptions> storageOptions,
         CourseMateDbContext dbContext,
-        IHttpContextAccessor httpContextAccessor,
-        IOptions<StorageOptions> storageOptions)
+        IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
     {
         _storageOptions = storageOptions.Value;
     }
 
-    public override async Task<CompleteVideoUploadResponse> Handle(CompletedVideoUploadCommand request, CancellationToken ct)
+    public override async Task<FileUploadResponse> Handle(CompletedVideoUploadCommand request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
-        FileEntry? fileEntry = await DbContext.FileEntries
-            .Where(f => f.UserId == userId)
-            .Where(f => f.Status == FileStatus.Uploading)
-            .FirstOrDefaultAsync(f => f.Id == request.FileId, ct);
-
+        FileEntry? fileEntry = await DbContext.FileEntries.FirstOrDefaultAsync(f =>
+                f.Id == request.FileId &&
+                f.UserId == userId &&
+                f.Status == FileStatus.Uploading,
+            ct);
         if (fileEntry == null)
         {
             throw new EntityNotFoundException(nameof(FileEntry), request.FileId);
         }
 
-        if (fileEntry.UploadedChunks < request.TotalChunks)
+        if (fileEntry.UploadedChunks != request.TotalChunks)
         {
             throw new BusinessException(string.Format(ErrorMessages.UploadIncomplete, fileEntry.UploadedChunks, request.TotalChunks));
         }
-
-        string dirVideoPath = Path.Combine(_storageOptions.VideosPath, userId.ToString());
-        if (!Directory.Exists(dirVideoPath))
-        {
-            Directory.CreateDirectory(dirVideoPath);
-        }
-
-        string fileName = $"{fileEntry.Id}{Path.GetExtension(fileEntry.FileName)}";
-        string filePath = Path.Combine(dirVideoPath, fileName);
 
         List<FileChunk> fileTrunks = await DbContext.FileChunks
             .Where(f => f.FileEntryId == fileEntry.Id)
@@ -67,7 +58,7 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
 
         foreach (FileChunk fileTrunk in fileTrunks)
         {
-            if (!File.Exists(fileTrunk.ChunkPath))
+            if (!File.Exists(Path.Combine(_storageOptions.RootPath, fileTrunk.ChunkLocation)))
             {
                 throw new BusinessException(string.Format(ErrorMessages.ChunkFileMissing, fileTrunk.ChunkIndex, fileEntry.Id));
             }
@@ -75,22 +66,21 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
 
         try
         {
+            string filePath = Path.Combine(_storageOptions.RootPath, fileEntry.FileLocation);
+            Util.CreateDirectoryIfNotExist(filePath);
             await using (FileStream outputStream = new(filePath, FileMode.CreateNew, FileAccess.Write))
             {
                 foreach (FileChunk fileTrunk in fileTrunks)
                 {
-                    byte[] chunkData = await File.ReadAllBytesAsync(fileTrunk.ChunkPath, ct);
+                    byte[] chunkData = await File.ReadAllBytesAsync(Path.Combine(_storageOptions.RootPath, fileTrunk.ChunkLocation), ct);
                     await outputStream.WriteAsync(chunkData, ct);
+                    Directory.Delete(Path.Combine(_storageOptions.TempPath, fileTrunk.ChunkLocation), true);
                 }
             }
 
-            fileEntry.TotalChunks = request.TotalChunks;
             fileEntry.Status = FileStatus.Completed;
-            fileEntry.FilePath = filePath;
             fileEntry.CompletedAt = DateTimeOffset.UtcNow;
             fileEntry.TotalChunks = fileTrunks.Count;
-            string tempPath = Path.Combine(_storageOptions.TempPath, fileEntry.Id.ToString());
-            Directory.Delete(tempPath, true);
         }
         catch (OperationCanceledException)
         {
@@ -99,7 +89,7 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
 
         HttpRequest httpRequest = HttpContextAccessor.HttpContext!.Request;
         string fileUrl = $"{httpRequest.Scheme}://{httpRequest.Host}/api/files/videos/stream/{fileEntry.Id}";
-        return new CompleteVideoUploadResponse
+        return new FileUploadResponse
         {
             FileId = fileEntry.Id,
             FileUrl = fileUrl

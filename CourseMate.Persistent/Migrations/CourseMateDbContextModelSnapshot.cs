@@ -788,7 +788,7 @@ namespace CourseMate.Persistent.Migrations
                     b.Property<int>("ChunkIndex")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ChunkPath")
+                    b.Property<string>("ChunkLocation")
                         .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
@@ -839,12 +839,12 @@ namespace CourseMate.Persistent.Migrations
                     b.Property<DateTimeOffset>("CreationTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("FileName")
+                    b.Property<string>("FileLocation")
                         .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
 
-                    b.Property<string>("FilePath")
+                    b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
@@ -869,11 +869,6 @@ namespace CourseMate.Persistent.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
-
-                    b.Property<string>("TempFilePath")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
 
                     b.Property<int>("TotalChunks")
                         .HasColumnType("integer");
