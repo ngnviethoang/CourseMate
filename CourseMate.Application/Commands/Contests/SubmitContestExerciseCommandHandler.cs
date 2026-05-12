@@ -2,6 +2,7 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.DTOs.Exercises;
 using CourseMate.Contracts.Enums;
+using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
@@ -37,12 +38,12 @@ internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandl
 
         if (registration.IsDisqualified)
         {
-            throw new InvalidOperationException("You have been disqualified from this contest.");
+            throw new BusinessException("You have been disqualified from this contest.");
         }
 
         if (registration.SubmitTime.HasValue)
         {
-            throw new InvalidOperationException("You have already submitted your final contest entry.");
+            throw new BusinessException("You have already submitted your final contest entry.");
         }
 
         Contest? contest = await DbContext.Contests.FindAsync([request.ContestId], ct);
@@ -52,7 +53,7 @@ internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandl
             // Usually contest ends for everyone at EndTime.
             if (contest?.EndTime.HasValue == true && contest.EndTime.Value < DateTimeOffset.UtcNow)
             {
-                throw new InvalidOperationException("Contest has ended.");
+                throw new BusinessException("Contest has ended.");
             }
         }
 
@@ -62,7 +63,7 @@ internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandl
 
         if (ce == null)
         {
-            throw new KeyNotFoundException("Exercise is not part of this contest.");
+            throw new BusinessException("Exercise is not part of this contest.");
         }
 
         // Score in payload is 0-100 percentage

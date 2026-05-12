@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
@@ -7,27 +8,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Contests;
 
-public class RemoveExerciseFromContestCommand : IRequest<Unit>
+public class DeleteExerciseFromContestCommand : IRequest<Unit>
 {
     public Guid ContestId { get; set; }
     public Guid ContestExerciseId { get; set; }
 }
 
-internal sealed class RemoveExerciseFromContestCommandHandler : AbstractCommandHandler<RemoveExerciseFromContestCommand, Unit>
+internal sealed class DeleteExerciseFromContestCommandHandler : AbstractCommandHandler<DeleteExerciseFromContestCommand, Unit>
 {
-    public RemoveExerciseFromContestCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+    public DeleteExerciseFromContestCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
     {
     }
 
-    public override async Task<Unit> Handle(RemoveExerciseFromContestCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(DeleteExerciseFromContestCommand request, CancellationToken ct)
     {
         ContestExercise? ce = await DbContext.ContestExercises
             .FirstOrDefaultAsync(x => x.Id == request.ContestExerciseId && x.ContestId == request.ContestId, ct);
 
         if (ce == null)
         {
-            throw new KeyNotFoundException("Exercise not found in this contest.");
+            throw new BusinessException("Exercise not found in this contest.");
         }
 
         DbContext.ContestExercises.Remove(ce);

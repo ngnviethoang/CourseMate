@@ -1,6 +1,8 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Enums;
+using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
@@ -33,16 +35,14 @@ internal sealed class UpdateContestCommandHandler : AbstractCommandHandler<Updat
 
     public override async Task<ResultIdDto> Handle(UpdateContestCommand request, CancellationToken ct)
     {
-        Contest? contest = await DbContext.Contests
-            .FirstOrDefaultAsync(x => x.Id == request.Id, ct);
-
+        Contest? contest = await DbContext.Contests.FirstOrDefaultAsync(x => x.Id == request.Id, ct);
         if (contest == null)
         {
-            throw new KeyNotFoundException("Contest not found.");
+            throw new EntityNotFoundException(nameof(Contest), request.Id);
         }
 
         // Check if current user is the creator (or admin - assuming admin check is done via controller roles but good to have here too)
-        if (contest.CreatorId != CurrentUserId && !IsInRole("Admin"))
+        if (contest.CreatorId != CurrentUserId && !IsInRole(Roles.Admin))
         {
             throw new UnauthorizedAccessException("You are not authorized to update this contest.");
         }

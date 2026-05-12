@@ -74,7 +74,7 @@ public class ContestController : ControllerBase
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
     public async Task<ActionResult> DeleteExercise(Guid id, Guid contestExerciseId)
     {
-        await _mediator.Send(new RemoveExerciseFromContestCommand { ContestId = id, ContestExerciseId = contestExerciseId });
+        await _mediator.Send(new DeleteExerciseFromContestCommand { ContestId = id, ContestExerciseId = contestExerciseId });
         return NoContent();
     }
 

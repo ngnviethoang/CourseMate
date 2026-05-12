@@ -2,10 +2,18 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Courses;
+
+public class UpdateLessonProgressCommand : IRequest<ResultIdDto>
+{
+    public Guid LessonId { get; set; }
+    public bool IsCompleted { get; set; }
+    public double Score { get; set; }
+}
 
 internal sealed class UpdateLessonProgressCommandHandler : AbstractCommandHandler<UpdateLessonProgressCommand, ResultIdDto>
 {

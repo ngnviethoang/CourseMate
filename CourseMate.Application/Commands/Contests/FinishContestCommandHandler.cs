@@ -1,5 +1,6 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Commons;
+using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
@@ -27,7 +28,7 @@ internal sealed class FinishContestCommandHandler : AbstractCommandHandler<Finis
 
         if (registration == null)
         {
-            throw new InvalidOperationException("You are not registered for this contest.");
+            throw new BusinessException("You are not registered for this contest.");
         }
 
         if (registration.SubmitTime.HasValue)

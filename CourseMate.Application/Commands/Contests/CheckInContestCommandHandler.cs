@@ -1,6 +1,7 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Enums;
+using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
@@ -28,7 +29,7 @@ internal sealed class CheckInContestCommandHandler : AbstractCommandHandler<Chec
 
         if (registration == null)
         {
-            throw new InvalidOperationException("You are not registered for this contest.");
+            throw new BusinessException("You are not registered for this contest.");
         }
 
         if (registration.JoinTime.HasValue)
@@ -43,7 +44,7 @@ internal sealed class CheckInContestCommandHandler : AbstractCommandHandler<Chec
             // For now let's just check if StartTime is near.
             if (contest?.StartTime.HasValue == true && contest.StartTime.Value > DateTimeOffset.UtcNow.AddMinutes(10))
             {
-                throw new InvalidOperationException("Contest hasn't started yet.");
+                throw new BusinessException("Contest hasn't started yet.");
             }
         }
 

@@ -1,6 +1,7 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Enums;
+using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
@@ -28,17 +29,17 @@ internal sealed class RegisterForContestCommandHandler : AbstractCommandHandler<
 
         if (contest == null)
         {
-            throw new KeyNotFoundException("Contest not found.");
+            throw new EntityNotFoundException(nameof(Contest), request.ContestId);
         }
 
         if (contest.Status == ContestStatus.Draft)
         {
-            throw new InvalidOperationException("Contest is not open for registration.");
+            throw new BusinessException("Contest is not open for registration.");
         }
 
         if (contest.EndTime.HasValue && contest.EndTime.Value < DateTimeOffset.UtcNow)
         {
-            throw new InvalidOperationException("Contest has already ended.");
+            throw new BusinessException("Contest has already ended.");
         }
 
         // Check if already registered
