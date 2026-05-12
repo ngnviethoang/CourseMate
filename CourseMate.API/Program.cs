@@ -41,6 +41,7 @@ try
     builder.Services.Configure<OnlineCompilerOptions>(configuration.GetSection("OnlineCompiler"));
     builder.Services.Configure<PayOsOptions>(configuration.GetSection("PayOs"));
     builder.Services.Configure<CorsOptions>(configuration.GetSection("CORS"));
+    builder.Services.Configure<SmtpOptions>(configuration.GetSection("Smtp"));
     builder.Services.AddHttpClient();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<HttpLoggingMiddleware>();

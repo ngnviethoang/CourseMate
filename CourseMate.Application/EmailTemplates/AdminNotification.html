@@ -1,0 +1,17 @@
+﻿<p>Hello Admin,</p>
+
+<p>Student <strong>@Model.StudentName</strong> has just enrolled in the course <strong>@Model.CourseTitle</strong> on
+    CourseMate on @Model.EnrollmentDate.ToString("HH:mm MM/dd/yyyy").</p>
+
+<h3>Order Information</h3>
+<ul>
+    <li><strong>Order ID:</strong> @Model.OrderId.ToString()</li>
+    <li><strong>Total Amount:</strong> @Model.TotalAmount?.ToString("C0")</li>
+</ul>
+
+<p>Student contact information:</p>
+<ul>
+    <li>Email: @Model.StudentEmail</li>
+</ul>
+
+<p>Please review and manage the information promptly.</p>

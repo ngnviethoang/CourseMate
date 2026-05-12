@@ -1,8 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using CourseMate.Application.BackgroundJobs;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
+using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using MimeKit;
 
 namespace CourseMate.Application.Commands.Auth;
 
@@ -61,8 +64,25 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
         }
 
         await _userManager.AddToRoleAsync(user, request.Role);
-
+        
         // TODO SendConfirmationEmailAsync
+        MimeMessage message = new();
+        message.To.Add(MailboxAddress.Parse(request.Email));
+        message.Subject = "Welcome to CourseMate";
+        message.Body = new BodyBuilder
+        {
+            HtmlBody = await RenderTemplateEmail(request.UserName, request.Email)
+        }.ToMessageBody();
+        BackgroundJob.Enqueue<EmailSenderJob>(job => job.Execute(message));
         return Codes.Success;
+    }
+
+    public async Task<string> RenderTemplateEmail(string userName, string email)
+    {
+        string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "TemplateEmails", "CourseEnrollment.html");
+        string html = await File.ReadAllTextAsync(templatePath);
+        return html
+            .Replace("{{userName}}", userName)
+            .Replace("{{email}}", email);
     }
 }
