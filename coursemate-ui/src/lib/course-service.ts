@@ -49,7 +49,11 @@ export const courseService = {
 
   getMyCourses: async (pageIndex = 1, pageSize = 12, filter?: string): Promise<PagedDto<StudentMyCourseDto>> => {
     const studentId = getUserId()
-    const params = new URLSearchParams({ pageIndex: String(pageIndex), pageSize: String(pageSize), studentId: studentId ?? '' })
+    const params = new URLSearchParams({
+      pageIndex: String(pageIndex),
+      pageSize: String(pageSize),
+      studentId: studentId ?? ''
+    })
     if (filter) params.set('filter', filter)
     return api.get<PagedDto<StudentMyCourseDto>>(`/api/courses/my?${params}`)
   },
@@ -115,7 +119,8 @@ export const courseService = {
     return api.put<void>(`/api/lessons/${id}`, body)
   },
   upsertLessonVideo: (id: string, body: UpsertLessonVideoRequest) => api.put<void>(`/api/lessons/${id}/video`, body),
-  upsertLessonReading: (id: string, body: UpsertLessonReadingRequest) => api.put<void>(`/api/lessons/${id}/reading`, body),
+  upsertLessonReading: (id: string, body: UpsertLessonReadingRequest) =>
+    api.put<void>(`/api/lessons/${id}/reading`, body),
   upsertLessonCoding: (id: string, body: UpsertLessonCodingRequest) => api.put<void>(`/api/lessons/${id}/coding`, body),
   upsertLessonQuiz: (id: string, body: UpsertLessonQuizRequest) => api.put<void>(`/api/lessons/${id}/quiz`, body),
   upsertLessonSlide: (id: string, body: UpsertLessonSlideRequest) => api.put<void>(`/api/lessons/${id}/slide`, body),
@@ -149,6 +154,6 @@ export const lessonService = {
   upsertSlide: courseService.upsertLessonSlide,
   delete: courseService.deleteLesson,
   searchExercises: courseService.searchExercises,
-  updateProgress: (lessonId: string, isCompleted: boolean, score: number = 0) => 
+  updateProgress: (lessonId: string, isCompleted: boolean, score: number = 0) =>
     api.put<ResultIdDto>(`/api/lessons/${lessonId}/progress`, { lessonId, isCompleted, score })
 }

@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { ChevronDown, LogOut, Settings, User } from 'lucide-react'
+import { NotificationDropdown } from '@/components/home/notification-dropdown'
 
 function getUserFromToken() {
   try {
@@ -141,7 +142,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <span className="text-lg font-bold tracking-tight text-foreground">
             {user?.role === 'Instructor' ? 'Hệ thống Giảng viên' : 'Hệ thống Quản trị'}
           </span>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            <NotificationDropdown />
             <UserDropdown user={user} mounted={mounted} onLogout={handleLogout} />
           </div>
         </header>

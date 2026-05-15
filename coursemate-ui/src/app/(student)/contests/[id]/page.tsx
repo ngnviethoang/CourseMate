@@ -4,8 +4,22 @@ import { use, useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
-  ArrowLeft, Trophy, Clock, Users, Calendar, Star, Flame,
-  Medal, ChevronRight, CheckCircle2, Code2, Loader2, Shield, AlertTriangle, Layout, List
+  ArrowLeft,
+  Trophy,
+  Clock,
+  Users,
+  Calendar,
+  Star,
+  Flame,
+  Medal,
+  ChevronRight,
+  CheckCircle2,
+  Code2,
+  Loader2,
+  Shield,
+  AlertTriangle,
+  Layout,
+  List
 } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { contestService, ContestDto, ContestLeaderboardDto } from '@/lib/contest-service'
@@ -30,7 +44,7 @@ const RANK_MEDAL: Record<number, string> = { 1: 'text-amber-400', 2: 'text-slate
 export default function ContestDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
-  
+
   const [contest, setContest] = useState<ContestDto | null>(null)
   const [leaderboard, setLeaderboard] = useState<ContestLeaderboardDto | null>(null)
   const [loading, setLoading] = useState(true)
@@ -42,7 +56,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
     try {
       const data = await contestService.getById(id)
       setContest(data)
-      
+
       if (tab === 'leaderboard') {
         try {
           const lb = await contestService.getLeaderboard(id)
@@ -58,7 +72,9 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
     }
   }, [id, tab])
 
-  useEffect(() => { fetchData() }, [fetchData])
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const handleRegister = async () => {
     setRegistering(true)
@@ -82,21 +98,23 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
     }
   }
 
-  if (loading) return (
-    <div className="min-h-[60vh] flex items-center justify-center">
-      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-    </div>
-  )
+  if (loading)
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
 
-  if (!contest) return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-      <Trophy className="h-12 w-12 text-muted-foreground opacity-40" />
-      <p className="text-muted-foreground">Không tìm thấy cuộc thi.</p>
-      <Link href="/contests" className={buttonVariants({ variant: 'outline' })}>
-        ← Quay lại
-      </Link>
-    </div>
-  )
+  if (!contest)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <Trophy className="h-12 w-12 text-muted-foreground opacity-40" />
+        <p className="text-muted-foreground">Không tìm thấy cuộc thi.</p>
+        <Link href="/contests" className={buttonVariants({ variant: 'outline' })}>
+          ← Quay lại
+        </Link>
+      </div>
+    )
 
   const exercises = contest.exercises || []
 
@@ -115,7 +133,9 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
             <div className="flex-1 space-y-4">
               <div className="flex flex-wrap items-center gap-3">
-                <span className={`px-3 py-1 rounded-full text-[11px] font-bold text-white uppercase tracking-wider ${STATUS_COLOR[contest.status]}`}>
+                <span
+                  className={`px-3 py-1 rounded-full text-[11px] font-bold text-white uppercase tracking-wider ${STATUS_COLOR[contest.status]}`}
+                >
                   {STATUS_LABEL[contest.status]}
                 </span>
                 {contest.antiCheatLevel !== 'None' && (
@@ -126,11 +146,13 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               <h1 className="text-4xl font-extrabold tracking-tight">{contest.title}</h1>
-              
+
               <div className="flex flex-wrap gap-6 text-muted-foreground font-medium">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-5 w-5 text-primary/60" />
-                  {contest.startTime ? format(new Date(contest.startTime), 'EEEE, dd MMMM HH:mm', { locale: vi }) : 'TBA'}
+                  {contest.startTime
+                    ? format(new Date(contest.startTime), 'EEEE, dd MMMM HH:mm', { locale: vi })
+                    : 'TBA'}
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="h-5 w-5 text-primary/60" />
@@ -146,27 +168,34 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
             <div className="shrink-0 flex flex-col gap-3">
               {contest.status === 'Ongoing' ? (
                 contest.isRegistered ? (
-                  <Button onClick={handleJoin} className="h-14 px-10 rounded-2xl text-lg font-bold shadow-xl shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 gap-2">
+                  <Button
+                    onClick={handleJoin}
+                    className="h-14 px-10 rounded-2xl text-lg font-bold shadow-xl shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 gap-2"
+                  >
                     <Flame className="h-5 w-5" /> Vào phòng thi
                   </Button>
                 ) : (
-                  <Button onClick={handleRegister} disabled={registering} className="h-14 px-10 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20 gap-2">
+                  <Button
+                    onClick={handleRegister}
+                    disabled={registering}
+                    className="h-14 px-10 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20 gap-2"
+                  >
                     {registering ? <Loader2 className="h-5 w-5 animate-spin" /> : <Trophy className="h-5 w-5" />}
                     Đăng ký & Thi ngay
                   </Button>
                 )
               ) : contest.status === 'Upcoming' ? (
-                <Button 
-                  onClick={handleRegister} 
-                  disabled={registering || contest.isRegistered} 
-                  variant={contest.isRegistered ? "outline" : "default"}
+                <Button
+                  onClick={handleRegister}
+                  disabled={registering || contest.isRegistered}
+                  variant={contest.isRegistered ? 'outline' : 'default'}
                   className="h-14 px-10 rounded-2xl text-lg font-bold shadow-lg"
                 >
                   {contest.isRegistered ? '✓ Đã đăng ký' : 'Đăng ký tham dự'}
                 </Button>
               ) : (
                 <Button asChild variant="secondary" className="h-14 px-10 rounded-2xl text-lg font-bold">
-                   <Link href={`/contests/${id}/leaderboard`}>Xem kết quả cuối cùng</Link>
+                  <Link href={`/contests/${id}/leaderboard`}>Xem kết quả cuối cùng</Link>
                 </Button>
               )}
             </div>
@@ -187,7 +216,9 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
               key={t.id}
               onClick={() => setTab(t.id as any)}
               className={`flex items-center gap-2 pb-4 text-sm font-bold border-b-2 transition-all whitespace-nowrap ${
-                tab === t.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+                tab === t.id
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
               <t.icon className="h-4 w-4" />
@@ -206,7 +237,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                     {contest.description}
                   </div>
                 </div>
-                
+
                 <div className="p-6 rounded-3xl bg-blue-50 border border-blue-100 dark:bg-blue-500/5 dark:border-blue-500/20 space-y-4">
                   <h3 className="font-bold text-blue-900 dark:text-blue-400 flex items-center gap-2">
                     <AlertTriangle className="h-5 w-5" /> Thông tin kỹ thuật
@@ -226,45 +257,57 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
             )}
 
             {tab === 'exercises' && (
-               <div className="space-y-4">
-                  {exercises.length === 0 ? (
-                    <div className="text-center py-20 border-2 border-dashed rounded-3xl">
-                      <List className="h-12 w-12 text-muted-foreground/20 mx-auto mb-4" />
-                      <p className="text-muted-foreground font-medium">Danh sách bài tập sẽ sớm được cập nhật.</p>
-                    </div>
-                  ) : (
-                    <div className="grid gap-4">
-                      {exercises.map((ex, idx) => (
-                        <div key={ex.id} className="flex items-center gap-4 p-5 rounded-2xl border bg-card hover:border-primary/30 transition-all group">
-                           <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
-                              {idx + 1}
-                           </div>
-                           <div className="flex-1 min-w-0">
-                              <h4 className="font-bold truncate">{ex.title}</h4>
-                              <p className="text-xs text-muted-foreground mt-1">{ex.scoreWeight} điểm • {ex.isPassed ? 'Đã hoàn thành' : 'Chưa giải'}</p>
-                           </div>
-                           <Button size="sm" variant="ghost" onClick={handleJoin} className="rounded-xl gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              Làm bài <ChevronRight className="h-4 w-4" />
-                           </Button>
+              <div className="space-y-4">
+                {exercises.length === 0 ? (
+                  <div className="text-center py-20 border-2 border-dashed rounded-3xl">
+                    <List className="h-12 w-12 text-muted-foreground/20 mx-auto mb-4" />
+                    <p className="text-muted-foreground font-medium">Danh sách bài tập sẽ sớm được cập nhật.</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4">
+                    {exercises.map((ex, idx) => (
+                      <div
+                        key={ex.id}
+                        className="flex items-center gap-4 p-5 rounded-2xl border bg-card hover:border-primary/30 transition-all group"
+                      >
+                        <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
+                          {idx + 1}
                         </div>
-                      ))}
-                    </div>
-                  )}
-               </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold truncate">{ex.title}</h4>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {ex.scoreWeight} điểm • {ex.isPassed ? 'Đã hoàn thành' : 'Chưa giải'}
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={handleJoin}
+                          className="rounded-xl gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          Làm bài <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
 
             {tab === 'leaderboard' && (
               <div className="space-y-4">
                 {!leaderboard ? (
-                   <div className="text-center py-20">
-                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/20 mx-auto mb-4" />
-                     <p className="text-muted-foreground font-medium">Đang tải bảng xếp hạng...</p>
-                   </div>
+                  <div className="text-center py-20">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/20 mx-auto mb-4" />
+                    <p className="text-muted-foreground font-medium">Đang tải bảng xếp hạng...</p>
+                  </div>
                 ) : leaderboard.entries.length === 0 ? (
                   <div className="text-center py-20 border-2 border-dashed rounded-3xl">
                     <Trophy className="h-12 w-12 text-muted-foreground/20 mx-auto mb-4" />
                     <p className="text-muted-foreground font-medium">Chưa có lượt nộp bài nào được ghi nhận.</p>
-                    <p className="text-xs text-muted-foreground/60 mt-1 italic">Dữ liệu sẽ được cập nhật ngay khi có thí sinh nộp bài.</p>
+                    <p className="text-xs text-muted-foreground/60 mt-1 italic">
+                      Dữ liệu sẽ được cập nhật ngay khi có thí sinh nộp bài.
+                    </p>
                   </div>
                 ) : (
                   leaderboard.entries.map(entry => (
@@ -284,7 +327,8 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                       <div className="flex-1">
                         <p className="font-bold text-lg">{entry.studentName}</p>
                         <p className="text-sm text-muted-foreground">
-                          {entry.totalRuntime.toFixed(2)}s runtime • {format(new Date(entry.lastSubmitTime), 'HH:mm:ss')}
+                          {entry.totalRuntime.toFixed(2)}s runtime •{' '}
+                          {format(new Date(entry.lastSubmitTime), 'HH:mm:ss')}
                         </p>
                       </div>
                       <div className="text-right">
@@ -319,31 +363,31 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
 
           {/* Sidebar Area */}
           <div className="space-y-8">
-             <div className="p-6 rounded-3xl border bg-card shadow-sm space-y-6">
-                <h3 className="font-bold flex items-center gap-2">
-                  <Star className="h-5 w-5 text-amber-500 fill-amber-500" /> Giải thưởng
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Chứng chỉ CourseMate Pro và huy hiệu đặc biệt cho Top 10 thí sinh có điểm cao nhất.
-                </p>
-                <div className="pt-4 border-t space-y-4">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Người tổ chức</span>
-                    <span className="font-bold">CourseMate Official</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Phân loại</span>
-                    <span className="font-bold">Công khai</span>
-                  </div>
+            <div className="p-6 rounded-3xl border bg-card shadow-sm space-y-6">
+              <h3 className="font-bold flex items-center gap-2">
+                <Star className="h-5 w-5 text-amber-500 fill-amber-500" /> Giải thưởng
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Chứng chỉ CourseMate Pro và huy hiệu đặc biệt cho Top 10 thí sinh có điểm cao nhất.
+              </p>
+              <div className="pt-4 border-t space-y-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Người tổ chức</span>
+                  <span className="font-bold">CourseMate Official</span>
                 </div>
-             </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Phân loại</span>
+                  <span className="font-bold">Công khai</span>
+                </div>
+              </div>
+            </div>
 
-             <div className="p-6 rounded-3xl border border-primary/10 bg-primary/5 space-y-4">
-                <h4 className="font-bold text-sm uppercase tracking-widest text-primary">Cần trợ giúp?</h4>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Nếu bạn gặp sự cố kỹ thuật trong khi thi, vui lòng liên hệ bộ phận hỗ trợ qua kênh Discord hoặc Email.
-                </p>
-             </div>
+            <div className="p-6 rounded-3xl border border-primary/10 bg-primary/5 space-y-4">
+              <h4 className="font-bold text-sm uppercase tracking-widest text-primary">Cần trợ giúp?</h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Nếu bạn gặp sự cố kỹ thuật trong khi thi, vui lòng liên hệ bộ phận hỗ trợ qua kênh Discord hoặc Email.
+              </p>
+            </div>
           </div>
         </div>
       </div>

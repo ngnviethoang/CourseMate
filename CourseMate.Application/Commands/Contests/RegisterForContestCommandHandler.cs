@@ -56,7 +56,8 @@ internal sealed class RegisterForContestCommandHandler : AbstractCommandHandler<
             request.ContestId,
             CurrentUserId,
             DateTimeOffset.UtcNow,
-            false
+            false,
+            string.Empty
         );
 
         await DbContext.ContestRegistrations.AddAsync(registration, ct);

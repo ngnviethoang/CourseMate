@@ -5,8 +5,17 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import {
-  Plus, Search, Filter, Pencil, Trash2, Eye, Loader2,
-  Code2, CheckCircle2, ChevronLeft, ChevronRight
+  Plus,
+  Search,
+  Filter,
+  Pencil,
+  Trash2,
+  Eye,
+  Loader2,
+  Code2,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api-client'
@@ -18,8 +27,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+  DialogTrigger
+} from '@/components/ui/dialog'
 
 interface ExerciseDto {
   id: string
@@ -90,10 +99,15 @@ export default function ExercisesManagementPage() {
     }
   }, [page, filter, difficulty])
 
-  useEffect(() => { fetchData() }, [fetchData])
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const handleCreate = async () => {
-    if (!newForm.title.trim()) { toast.error('Tiêu đề không được để trống'); return }
+    if (!newForm.title.trim()) {
+      toast.error('Tiêu đề không được để trống')
+      return
+    }
     setCreating(true)
     try {
       const payload = {
@@ -107,7 +121,7 @@ export default function ExercisesManagementPage() {
         testCases: [],
         defaultCodes: []
       }
-      const res = await exerciseService.create(payload) as any
+      const res = (await exerciseService.create(payload)) as any
       toast.success('Đã tạo bài tập! Tiếp tục thêm chi tiết.')
       setOpenNewModal(false)
       router.push(`/management/exercises/${res.id || res}`)
@@ -143,9 +157,7 @@ export default function ExercisesManagementPage() {
             <Code2 className="h-6 w-6 text-primary" />
             Quản lý Bài tập
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Tạo và quản lý bài tập lập trình, test cases, code mẫu
-          </p>
+          <p className="text-sm text-muted-foreground mt-1">Tạo và quản lý bài tập lập trình, test cases, code mẫu</p>
         </div>
 
         <Dialog open={openNewModal} onOpenChange={setOpenNewModal}>
@@ -157,14 +169,14 @@ export default function ExercisesManagementPage() {
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle>Tạo bài tập mới</DialogTitle>
-              <DialogDescription>
-                Điền các thông tin cơ bản trước khi thêm test cases và code mẫu.
-              </DialogDescription>
+              <DialogDescription>Điền các thông tin cơ bản trước khi thêm test cases và code mẫu.</DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4 py-4">
               <div className="space-y-1.5">
-                <label className="text-sm font-medium">Tiêu đề <span className="text-red-500">*</span></label>
+                <label className="text-sm font-medium">
+                  Tiêu đề <span className="text-red-500">*</span>
+                </label>
                 <input
                   value={newForm.title}
                   onChange={e => setNewForm(f => ({ ...f, title: e.target.value }))}
@@ -180,12 +192,15 @@ export default function ExercisesManagementPage() {
                     <button
                       key={d}
                       onClick={() => setNewForm(f => ({ ...f, difficulty: d }))}
-                      className={`py-2 rounded-lg text-xs font-semibold border transition-all ${newForm.difficulty === d
-                        ? d === 'Easy' ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/50'
-                          : d === 'Medium' ? 'border-amber-500 bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/50'
-                            : 'border-red-500 bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/50'
-                        : 'border-border text-muted-foreground hover:text-foreground'
-                        }`}
+                      className={`py-2 rounded-lg text-xs font-semibold border transition-all ${
+                        newForm.difficulty === d
+                          ? d === 'Easy'
+                            ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/50'
+                            : d === 'Medium'
+                              ? 'border-amber-500 bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/50'
+                              : 'border-red-500 bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/50'
+                          : 'border-border text-muted-foreground hover:text-foreground'
+                      }`}
                     >
                       {d === 'Easy' ? 'Dễ' : d === 'Medium' ? 'Trung bình' : 'Khó'}
                     </button>
@@ -222,7 +237,9 @@ export default function ExercisesManagementPage() {
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setOpenNewModal(false)}>Huỷ</Button>
+              <Button variant="outline" onClick={() => setOpenNewModal(false)}>
+                Huỷ
+              </Button>
               <Button onClick={handleCreate} disabled={creating} className="gap-2 min-w-[100px]">
                 {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                 {creating ? 'Đang tạo...' : 'Tạo mới'}
@@ -240,7 +257,10 @@ export default function ExercisesManagementPage() {
             type="text"
             placeholder="Tìm kiếm bài tập..."
             value={filter}
-            onChange={e => { setFilter(e.target.value); setPage(1) }}
+            onChange={e => {
+              setFilter(e.target.value)
+              setPage(1)
+            }}
             className="w-full pl-9 pr-4 py-2 text-sm border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
@@ -248,7 +268,10 @@ export default function ExercisesManagementPage() {
           <Filter className="h-4 w-4 text-muted-foreground" />
           <select
             value={difficulty}
-            onChange={e => { setDifficulty(e.target.value); setPage(1) }}
+            onChange={e => {
+              setDifficulty(e.target.value)
+              setPage(1)
+            }}
             className="text-sm border border-input rounded-lg px-3 py-2 bg-background focus:outline-none"
           >
             <option value="">Tất cả độ khó</option>
@@ -283,65 +306,64 @@ export default function ExercisesManagementPage() {
             ) : data?.items.length === 0 ? (
               <tr>
                 <td colSpan={7} className="py-16 text-center text-muted-foreground text-sm">
-                  Không có bài tập nào. <button onClick={() => setOpenNewModal(true)} className="text-primary hover:underline cursor-pointer">Tạo bài đầu tiên</button>
+                  Không có bài tập nào.{' '}
+                  <button onClick={() => setOpenNewModal(true)} className="text-primary hover:underline cursor-pointer">
+                    Tạo bài đầu tiên
+                  </button>
                 </td>
               </tr>
-            ) : data?.items.map((ex, idx) => (
-              <tr key={ex.id} className="hover:bg-muted/30 transition-colors">
-                <td className="px-4 py-3 text-muted-foreground text-xs">
-                  {(page - 1) * pageSize + idx + 1}
-                </td>
-                <td className="px-4 py-3">
-                  <p className="font-medium line-clamp-1">{ex.title}</p>
-                  <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 hidden sm:block">
-                    {ex.description}
-                  </p>
-                </td>
-                <td className="px-4 py-3 hidden md:table-cell">
-                  <span className="text-xs bg-muted px-2 py-0.5 rounded-md">{ex.category}</span>
-                </td>
-                <td className="px-4 py-3">
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${DIFF_STYLE[ex.difficulty]}`}>
-                    {DIFF_LABEL[ex.difficulty] ?? ex.difficulty}
-                  </span>
-                </td>
-                <td className="px-4 py-3 hidden lg:table-cell">
-                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <CheckCircle2 className="h-3 w-3" />
-                    {ex.testCaseCount} test cases
-                  </span>
-                </td>
-                <td className="px-4 py-3 hidden xl:table-cell text-xs text-muted-foreground">
-                  {ex.createdByName ?? '—'}
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center justify-end gap-1">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-7 w-7"
-                      asChild
-                    >
-                      <Link href={`/management/exercises/${ex.id}`}>
-                        <Pencil className="h-3.5 w-3.5" />
-                      </Link>
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-50"
-                      onClick={() => handleDelete(ex.id, ex.title)}
-                      disabled={deletingId === ex.id}
-                    >
-                      {deletingId === ex.id
-                        ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        : <Trash2 className="h-3.5 w-3.5" />
-                      }
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            ) : (
+              data?.items.map((ex, idx) => (
+                <tr key={ex.id} className="hover:bg-muted/30 transition-colors">
+                  <td className="px-4 py-3 text-muted-foreground text-xs">{(page - 1) * pageSize + idx + 1}</td>
+                  <td className="px-4 py-3">
+                    <p className="font-medium line-clamp-1">{ex.title}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 hidden sm:block">
+                      {ex.description}
+                    </p>
+                  </td>
+                  <td className="px-4 py-3 hidden md:table-cell">
+                    <span className="text-xs bg-muted px-2 py-0.5 rounded-md">{ex.category}</span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${DIFF_STYLE[ex.difficulty]}`}>
+                      {DIFF_LABEL[ex.difficulty] ?? ex.difficulty}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 hidden lg:table-cell">
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <CheckCircle2 className="h-3 w-3" />
+                      {ex.testCaseCount} test cases
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 hidden xl:table-cell text-xs text-muted-foreground">
+                    {ex.createdByName ?? '—'}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center justify-end gap-1">
+                      <Button size="icon" variant="ghost" className="h-7 w-7" asChild>
+                        <Link href={`/management/exercises/${ex.id}`}>
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Link>
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-50"
+                        onClick={() => handleDelete(ex.id, ex.title)}
+                        disabled={deletingId === ex.id}
+                      >
+                        {deletingId === ex.id ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-3.5 w-3.5" />
+                        )}
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -349,13 +371,29 @@ export default function ExercisesManagementPage() {
       {/* Pagination */}
       {data && data.totalCount > pageSize && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>Hiển thị {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, data.totalCount)} / {data.totalCount} bài</span>
+          <span>
+            Hiển thị {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, data.totalCount)} / {data.totalCount} bài
+          </span>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setPage(p => p - 1)} disabled={page === 1}>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setPage(p => p - 1)}
+              disabled={page === 1}
+            >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="text-xs">{page} / {totalPages}</span>
-            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setPage(p => p + 1)} disabled={page === totalPages}>
+            <span className="text-xs">
+              {page} / {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setPage(p => p + 1)}
+              disabled={page === totalPages}
+            >
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

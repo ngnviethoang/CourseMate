@@ -47,7 +47,11 @@ const LESSON_TYPE_ICON: Record<string | number, string> = {
   [LessonType.Quiz]: '📝',
   [LessonType.Coding]: '💻',
   [LessonType.Slide]: '📽️',
-  1: '🎬', 2: '📖', 3: '💻', 4: '📝', 5: '📽️'
+  1: '🎬',
+  2: '📖',
+  3: '💻',
+  4: '📝',
+  5: '📽️'
 }
 
 const getLessonTypeLabel = (type: any) => {
@@ -58,8 +62,6 @@ const getLessonTypeLabel = (type: any) => {
   if (type === LessonType.Slide || type === 5) return 'Slide'
   return type
 }
-
-
 
 // ─── AI Content Storage Key ─────────────────────────────────────────────────────
 
@@ -97,8 +99,6 @@ export default function ChapterDetailPage() {
   const [savingLesson, setSavingLesson] = useState(false)
   const [deleteLessonId, setDeleteLessonId] = useState<string | null>(null)
 
-
-
   // Load chapter and course
   useEffect(() => {
     const loadChapter = async () => {
@@ -111,7 +111,7 @@ export default function ChapterDetailPage() {
           try {
             const c = await courseService.getById(ch.courseId)
             setCourse(c)
-          } catch { }
+          } catch {}
         }
       } catch {
         toast.error('Chapter not found.')
@@ -164,8 +164,6 @@ export default function ChapterDetailPage() {
       setSavingLesson(false)
     }
   }
-
-
 
   async function deleteLesson() {
     if (!deleteLessonId) return

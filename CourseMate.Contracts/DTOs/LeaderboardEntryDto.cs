@@ -1,4 +1,4 @@
-﻿namespace CourseMate.Contracts.DTOs;
+namespace CourseMate.Contracts.DTOs;
 
 public class LeaderboardEntryDto
 {
@@ -8,4 +8,5 @@ public class LeaderboardEntryDto
     public int TotalScore { get; set; }
     public float TotalRuntime { get; set; }
     public DateTimeOffset LastSubmitTime { get; set; }
+    public bool IsDisqualified { get; set; }
 }

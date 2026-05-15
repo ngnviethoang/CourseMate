@@ -40,6 +40,7 @@ internal sealed class GetContestByIdQueryHandler : AbstractQueryHandler<GetConte
                 MemoryLimit = contest.MemoryLimit,
                 TimeLimit = contest.TimeLimit,
                 AntiCheatLevel = contest.AntiCheatLevel,
+                MaxViolations = contest.MaxViolations,
                 CreatorId = contest.CreatorId,
                 CreatorName = user.UserName,
                 CreationTime = contest.CreationTime,

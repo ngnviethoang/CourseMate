@@ -7,7 +7,7 @@ namespace CourseMate.Persistent.Entities;
 
 public class Contest : Entity
 {
-    public Contest(Guid id, string title, string description, ContestStatus status, DateTimeOffset? startTime, DateTimeOffset? endTime, int durationInMinutes, string allowedLanguages, int memoryLimit, int timeLimit, AntiCheatLevel antiCheatLevel, Guid creatorId)
+    public Contest(Guid id, string title, string description, ContestStatus status, DateTimeOffset? startTime, DateTimeOffset? endTime, int durationInMinutes, string allowedLanguages, int memoryLimit, int timeLimit, AntiCheatLevel antiCheatLevel, Guid creatorId, int maxViolations = 5)
         : base(id)
     {
         Title = title;
@@ -21,6 +21,7 @@ public class Contest : Entity
         TimeLimit = timeLimit;
         AntiCheatLevel = antiCheatLevel;
         CreatorId = creatorId;
+        MaxViolations = maxViolations;
     }
 
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
@@ -47,4 +48,6 @@ public class Contest : Entity
     public AntiCheatLevel AntiCheatLevel { get; set; }
 
     public Guid CreatorId { get; set; }
+
+    public int MaxViolations { get; set; }
 }

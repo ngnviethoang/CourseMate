@@ -5,15 +5,30 @@ import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { toast } from 'sonner'
 import {
-  Save, Loader2, Plus, Trash2, Eye, EyeOff,
-  GripVertical, ArrowLeft, Code2, FlaskConical, Info, Pencil
+  Save,
+  Loader2,
+  Plus,
+  Trash2,
+  Eye,
+  EyeOff,
+  GripVertical,
+  ArrowLeft,
+  Code2,
+  FlaskConical,
+  Info,
+  Pencil
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { exerciseService } from '@/lib/exercise-service'
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
-  loading: () => <div className="flex items-center justify-center h-full text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin mr-2" />Đang tải editor…</div>
+  loading: () => (
+    <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
+      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+      Đang tải editor…
+    </div>
+  )
 })
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -67,15 +82,22 @@ const LANGUAGES = [
 ]
 
 const TEMPLATES: Record<string, string> = {
-  'python-3.14': 'import sys\n\ndef solve():\n    # Đọc dữ liệu từ stdin\n    # input_data = sys.stdin.read().split()\n    \n    print("Hello from Python")\n\nif __name__ == "__main__":\n    solve()',
-  'g++-15': '#include <iostream>\n#include <vector>\n#include <string>\n\nusing namespace std;\n\nint main() {\n    // Giải quyết bài toán tại đây\n    \n    return 0;\n}',
+  'python-3.14':
+    'import sys\n\ndef solve():\n    # Đọc dữ liệu từ stdin\n    # input_data = sys.stdin.read().split()\n    \n    print("Hello from Python")\n\nif __name__ == "__main__":\n    solve()',
+  'g++-15':
+    '#include <iostream>\n#include <vector>\n#include <string>\n\nusing namespace std;\n\nint main() {\n    // Giải quyết bài toán tại đây\n    \n    return 0;\n}',
   'gcc-15': '#include <stdio.h>\n\nint main() {\n    // Giải quyết bài toán tại đây\n    \n    return 0;\n}',
-  'openjdk-25': 'import java.util.*;\n\npublic class Solution {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        // Code của bạn\n    }\n}',
-  'dotnet-csharp-9': 'using System;\n\nclass Program {\n    static void Main() {\n        // Đọc dữ liệu\n        // string line = Console.ReadLine();\n        \n        Console.WriteLine("Hello C#");\n    }\n}',
-  'go-1.26': 'package main\n\nimport "fmt"\n\nfunc main() {\n    var input string\n    fmt.Scanln(&input)\n    fmt.Println("Hello Go")\n}',
-  'rust-1.93': 'use std::io;\n\nfn main() {\n    let mut input = String::new();\n    io::stdin().read_line(&mut input).unwrap();\n    println!("Hello Rust");\n}',
-  'typescript-deno': 'const input = new TextDecoder().decode(await Deno.readAll(Deno.stdin));\nconsole.log("Hello TypeScript");',
-  'php-8.5': '<?php\n\n$stdin = fopen(\'php://stdin\', \'r\');\n// $line = fgets($stdin);\n\necho "Hello PHP";',
+  'openjdk-25':
+    'import java.util.*;\n\npublic class Solution {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        // Code của bạn\n    }\n}',
+  'dotnet-csharp-9':
+    'using System;\n\nclass Program {\n    static void Main() {\n        // Đọc dữ liệu\n        // string line = Console.ReadLine();\n        \n        Console.WriteLine("Hello C#");\n    }\n}',
+  'go-1.26':
+    'package main\n\nimport "fmt"\n\nfunc main() {\n    var input string\n    fmt.Scanln(&input)\n    fmt.Println("Hello Go")\n}',
+  'rust-1.93':
+    'use std::io;\n\nfn main() {\n    let mut input = String::new();\n    io::stdin().read_line(&mut input).unwrap();\n    println!("Hello Rust");\n}',
+  'typescript-deno':
+    'const input = new TextDecoder().decode(await Deno.readAll(Deno.stdin));\nconsole.log("Hello TypeScript");',
+  'php-8.5': "<?php\n\n$stdin = fopen('php://stdin', 'r');\n// $line = fgets($stdin);\n\necho \"Hello PHP\";",
   'ruby-4.0': 'input = gets\nputs "Hello Ruby"',
   'dotnet-fsharp-9': 'open System\n\n[<EntryPoint>]\nlet main argv = \n    printfn "Hello F#"\n    0',
   'haskell-9.12': 'main :: IO ()\nmain = do\n    input <- getLine\n    putStrLn "Hello Haskell"'
@@ -127,29 +149,32 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
   useEffect(() => {
     if (isNew) return
     setLoading(true)
-    exerciseService.getById(id)
-      .then(data => setForm({
-        title: data.title,
-        description: data.description,
-        difficulty: data.difficulty,
-        category: data.category,
-        examples: data.examples || [],
-        constraints: data.constraints || [],
-        hints: data.hints || [],
-        testCases: data.testCases.map((tc: any) => ({
-          id: tc.id,
-          input: tc.input,
-          expectedOutput: tc.expectedOutput,
-          description: tc.description,
-          isHidden: tc.isHidden,
-          order: tc.order
-        })),
-        defaultCodes: data.defaultCodes.map((dc: any) => ({
-          id: dc.id,
-          language: dc.language,
-          starterCode: dc.starterCode
-        }))
-      }))
+    exerciseService
+      .getById(id)
+      .then(data =>
+        setForm({
+          title: data.title,
+          description: data.description,
+          difficulty: data.difficulty,
+          category: data.category,
+          examples: data.examples || [],
+          constraints: data.constraints || [],
+          hints: data.hints || [],
+          testCases: data.testCases.map((tc: any) => ({
+            id: tc.id,
+            input: tc.input,
+            expectedOutput: tc.expectedOutput,
+            description: tc.description,
+            isHidden: tc.isHidden,
+            order: tc.order
+          })),
+          defaultCodes: data.defaultCodes.map((dc: any) => ({
+            id: dc.id,
+            language: dc.language,
+            starterCode: dc.starterCode
+          }))
+        })
+      )
       .catch(() => toast.error('Không thể tải bài tập'))
       .finally(() => setLoading(false))
   }, [id, isNew])
@@ -160,50 +185,63 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
 
   // Examples
   const addExample = () => updateForm({ examples: [...form.examples, { input: '', output: '', explanation: '' }] })
-  const updateExample = (idx: number, patch: Partial<Example>) => updateForm({
-    examples: form.examples.map((ex, i) => i === idx ? { ...ex, ...patch } : ex)
-  })
+  const updateExample = (idx: number, patch: Partial<Example>) =>
+    updateForm({
+      examples: form.examples.map((ex, i) => (i === idx ? { ...ex, ...patch } : ex))
+    })
   const removeExample = (idx: number) => updateForm({ examples: form.examples.filter((_, i) => i !== idx) })
 
   // Constraints & Hints
   const addItem = (field: 'constraints' | 'hints') => updateForm({ [field]: [...form[field], ''] })
-  const updateItem = (field: 'constraints' | 'hints', idx: number, val: string) => updateForm({
-    [field]: form[field].map((v, i) => i === idx ? val : v)
-  })
-  const removeItem = (field: 'constraints' | 'hints', idx: number) => updateForm({ [field]: form[field].filter((_, i) => i !== idx) })
+  const updateItem = (field: 'constraints' | 'hints', idx: number, val: string) =>
+    updateForm({
+      [field]: form[field].map((v, i) => (i === idx ? val : v))
+    })
+  const removeItem = (field: 'constraints' | 'hints', idx: number) =>
+    updateForm({ [field]: form[field].filter((_, i) => i !== idx) })
 
   const addTestCase = () => {
     const newIdx = form.testCases.length
     setForm(f => ({
       ...f,
-      testCases: [...f.testCases, { input: '', expectedOutput: '', description: `Test case ${newIdx + 1}`, isHidden: false, order: newIdx }]
+      testCases: [
+        ...f.testCases,
+        { input: '', expectedOutput: '', description: `Test case ${newIdx + 1}`, isHidden: false, order: newIdx }
+      ]
     }))
     toggleTestCaseEditMode(newIdx, true)
   }
 
-  const removeTestCase = (idx: number) => setForm(f => ({
-    ...f,
-    testCases: f.testCases.filter((_, i) => i !== idx).map((tc, i) => ({ ...tc, order: i }))
-  }))
+  const removeTestCase = (idx: number) =>
+    setForm(f => ({
+      ...f,
+      testCases: f.testCases.filter((_, i) => i !== idx).map((tc, i) => ({ ...tc, order: i }))
+    }))
 
-  const updateTestCase = (idx: number, patch: Partial<TestCase>) => setForm(f => ({
-    ...f,
-    testCases: f.testCases.map((tc, i) => i === idx ? { ...tc, ...patch } : tc)
-  }))
+  const updateTestCase = (idx: number, patch: Partial<TestCase>) =>
+    setForm(f => ({
+      ...f,
+      testCases: f.testCases.map((tc, i) => (i === idx ? { ...tc, ...patch } : tc))
+    }))
 
   const getDefaultCode = (lang: string) => {
     const existing = form.defaultCodes.find(d => d.language === lang)?.starterCode
     return existing ?? TEMPLATES[lang] ?? ''
   }
 
-  const setDefaultCode = (lang: string, code: string) => setForm(f => {
-    const exists = f.defaultCodes.find(d => d.language === lang)
-    if (exists) return { ...f, defaultCodes: f.defaultCodes.map(d => d.language === lang ? { ...d, starterCode: code } : d) }
-    return { ...f, defaultCodes: [...f.defaultCodes, { language: lang, starterCode: code }] }
-  })
+  const setDefaultCode = (lang: string, code: string) =>
+    setForm(f => {
+      const exists = f.defaultCodes.find(d => d.language === lang)
+      if (exists)
+        return { ...f, defaultCodes: f.defaultCodes.map(d => (d.language === lang ? { ...d, starterCode: code } : d)) }
+      return { ...f, defaultCodes: [...f.defaultCodes, { language: lang, starterCode: code }] }
+    })
 
   const handleSave = async () => {
-    if (!form.title.trim()) { toast.error('Tiêu đề không được để trống'); return }
+    if (!form.title.trim()) {
+      toast.error('Tiêu đề không được để trống')
+      return
+    }
     setSaving(true)
     try {
       if (isNew) {
@@ -253,7 +291,11 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center py-32"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+    return (
+      <div className="flex items-center justify-center py-32">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
   }
 
   // ─── UI ────────────────────────────────────────────────────────────────────────
@@ -302,13 +344,16 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
               key={t.key}
               disabled={t.disabled}
               onClick={() => setActiveTab(t.key)}
-              className={`flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors -mb-px ${t.disabled ? 'opacity-40 cursor-not-allowed' :
-                activeTab === t.key
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
-                }`}
+              className={`flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors -mb-px ${
+                t.disabled
+                  ? 'opacity-40 cursor-not-allowed'
+                  : activeTab === t.key
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
             >
-              {t.icon}{t.label}
+              {t.icon}
+              {t.label}
               {t.disabled && <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded ml-1">Khoá</span>}
             </button>
           ))}
@@ -320,7 +365,9 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-5">
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">Tiêu đề <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium">
+                Tiêu đề <span className="text-red-500">*</span>
+              </label>
               <input
                 value={form.title}
                 onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
@@ -330,7 +377,9 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">Mô tả bài tập <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium">
+                Mô tả bài tập <span className="text-red-500">*</span>
+              </label>
               <p className="text-xs text-muted-foreground">
                 Hỗ trợ Markdown. Mô tả yêu cầu, ví dụ, ràng buộc và hướng dẫn giải.
               </p>
@@ -352,12 +401,15 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                   <button
                     key={d}
                     onClick={() => setForm(f => ({ ...f, difficulty: d }))}
-                    className={`py-2 rounded-lg text-xs font-semibold border transition-all ${form.difficulty === d
-                      ? d === 'Easy' ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/50'
-                        : d === 'Medium' ? 'border-amber-500 bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/50'
-                          : 'border-red-500 bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/50'
-                      : 'border-border text-muted-foreground hover:text-foreground'
-                      }`}
+                    className={`py-2 rounded-lg text-xs font-semibold border transition-all ${
+                      form.difficulty === d
+                        ? d === 'Easy'
+                          ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/50'
+                          : d === 'Medium'
+                            ? 'border-amber-500 bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/50'
+                            : 'border-red-500 bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/50'
+                        : 'border-border text-muted-foreground hover:text-foreground'
+                    }`}
                   >
                     {d === 'Easy' ? 'Dễ' : d === 'Medium' ? 'Trung bình' : 'Khó'}
                   </button>
@@ -384,10 +436,24 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
             {/* Summary card */}
             <div className="rounded-xl border bg-muted/30 p-4 space-y-2 text-sm">
               <p className="font-medium text-xs uppercase tracking-widest text-muted-foreground">Tóm tắt</p>
-              <div className="flex justify-between"><span className="text-muted-foreground">Độ khó</span><span className="font-medium">{form.difficulty === 'Easy' ? 'Dễ' : form.difficulty === 'Medium' ? 'Trung bình' : 'Khó'}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Test Cases</span><span className="font-medium">{form.testCases.length}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Test ẩn</span><span className="font-medium">{form.testCases.filter(t => t.isHidden).length}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Ngôn ngữ</span><span className="font-medium">{form.defaultCodes.length}</span></div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Độ khó</span>
+                <span className="font-medium">
+                  {form.difficulty === 'Easy' ? 'Dễ' : form.difficulty === 'Medium' ? 'Trung bình' : 'Khó'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Test Cases</span>
+                <span className="font-medium">{form.testCases.length}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Test ẩn</span>
+                <span className="font-medium">{form.testCases.filter(t => t.isHidden).length}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Ngôn ngữ</span>
+                <span className="font-medium">{form.defaultCodes.length}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -412,7 +478,10 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
             {form.examples.map((ex, idx) => (
               <div key={idx} className="p-4 border rounded-xl bg-card space-y-3 relative group">
                 {editMode['examples'] && (
-                  <button onClick={() => removeExample(idx)} className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => removeExample(idx)}
+                    className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
                     <Trash2 className="h-4 w-4" />
                   </button>
                 )}
@@ -427,7 +496,9 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                         rows={2}
                       />
                     ) : (
-                      <pre className="w-full border rounded-md p-2 text-sm font-mono bg-muted/30 whitespace-pre-wrap">{ex.input}</pre>
+                      <pre className="w-full border rounded-md p-2 text-sm font-mono bg-muted/30 whitespace-pre-wrap">
+                        {ex.input}
+                      </pre>
                     )}
                   </div>
                   <div className="space-y-1.5">
@@ -440,12 +511,16 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                         rows={2}
                       />
                     ) : (
-                      <pre className="w-full border rounded-md p-2 text-sm font-mono bg-muted/30 whitespace-pre-wrap">{ex.output}</pre>
+                      <pre className="w-full border rounded-md p-2 text-sm font-mono bg-muted/30 whitespace-pre-wrap">
+                        {ex.output}
+                      </pre>
                     )}
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold uppercase text-muted-foreground">Giải thích (Dành cho học sinh)</label>
+                  <label className="text-xs font-bold uppercase text-muted-foreground">
+                    Giải thích (Dành cho học sinh)
+                  </label>
                   {editMode['examples'] ? (
                     <input
                       value={ex.explanation}
@@ -454,21 +529,33 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                       placeholder="Ví dụ: Vì n=5 là số lẻ nên kết quả là NO..."
                     />
                   ) : (
-                    <p className="text-sm bg-muted/10 p-2 rounded-md border border-transparent">{ex.explanation || <span className="text-muted-foreground italic">Không có giải thích</span>}</p>
+                    <p className="text-sm bg-muted/10 p-2 rounded-md border border-transparent">
+                      {ex.explanation || <span className="text-muted-foreground italic">Không có giải thích</span>}
+                    </p>
                   )}
                 </div>
               </div>
             ))}
             {form.examples.length === 0 && (
               <div className="py-12 text-center border border-dashed rounded-xl text-muted-foreground italic text-sm">
-                Chưa có ví dụ nào. {editMode['examples'] ? 'Nhấn "Thêm ví dụ" để bắt đầu.' : 'Nhấn "Chỉnh sửa" để thêm.'}
+                Chưa có ví dụ nào.{' '}
+                {editMode['examples'] ? 'Nhấn "Thêm ví dụ" để bắt đầu.' : 'Nhấn "Chỉnh sửa" để thêm.'}
               </div>
             )}
           </div>
           {editMode['examples'] && (
             <div className="mt-8 pt-6 border-t flex justify-end gap-3">
-              <Button variant="outline" onClick={() => toggleEditMode('examples')}>Hủy</Button>
-              <Button onClick={async () => { await handleSave(); toggleEditMode('examples'); }} disabled={saving} className="gap-2 px-8">
+              <Button variant="outline" onClick={() => toggleEditMode('examples')}>
+                Hủy
+              </Button>
+              <Button
+                onClick={async () => {
+                  await handleSave()
+                  toggleEditMode('examples')
+                }}
+                disabled={saving}
+                className="gap-2 px-8"
+              >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 Lưu thay đổi Ví dụ
               </Button>
@@ -478,68 +565,88 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
       )}
 
       {/* ─── Tab: Ràng buộc & Gợi ý ─── */}
-      {(['constraints', 'hints'] as const).map(tab => activeTab === tab && (
-        <div key={tab} className="space-y-4">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              {tab === 'constraints' ? 'Các giới hạn về thời gian, bộ nhớ hoặc giá trị đầu vào.' : 'Các mẹo nhỏ giúp học sinh khi gặp khó khăn.'}
-            </p>
-            {editMode[tab] ? (
-              <Button size="sm" variant="outline" onClick={() => addItem(tab)} className="gap-1.5">
-                <Plus className="h-3.5 w-3.5" /> Thêm {tab === 'constraints' ? 'ràng buộc' : 'gợi ý'}
-              </Button>
-            ) : (
-              <Button size="sm" variant="outline" onClick={() => toggleEditMode(tab)} className="gap-1.5">
-                <Pencil className="h-3.5 w-3.5" /> Chỉnh sửa
-              </Button>
-            )}
-          </div>
-          <div className="space-y-2">
-            {form[tab].map((item, idx) => (
-              <div key={idx} className="flex gap-2">
+      {(['constraints', 'hints'] as const).map(
+        tab =>
+          activeTab === tab && (
+            <div key={tab} className="space-y-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  {tab === 'constraints'
+                    ? 'Các giới hạn về thời gian, bộ nhớ hoặc giá trị đầu vào.'
+                    : 'Các mẹo nhỏ giúp học sinh khi gặp khó khăn.'}
+                </p>
                 {editMode[tab] ? (
-                  <>
-                    <input
-                      value={item}
-                      onChange={e => updateItem(tab, idx, e.target.value)}
-                      className="flex-1 border rounded-md px-3 py-2 text-sm bg-background"
-                      placeholder={tab === 'constraints' ? '1 <= n <= 10^5' : 'Hãy sử dụng thuật toán Sàng Eratosthenes...'}
-                    />
-                    <Button size="icon" variant="ghost" onClick={() => removeItem(tab, idx)} className="text-red-500 h-9 w-9">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </>
+                  <Button size="sm" variant="outline" onClick={() => addItem(tab)} className="gap-1.5">
+                    <Plus className="h-3.5 w-3.5" /> Thêm {tab === 'constraints' ? 'ràng buộc' : 'gợi ý'}
+                  </Button>
                 ) : (
-                  <div className="flex-1 border rounded-md px-3 py-2 text-sm bg-muted/30">
-                    {item}
+                  <Button size="sm" variant="outline" onClick={() => toggleEditMode(tab)} className="gap-1.5">
+                    <Pencil className="h-3.5 w-3.5" /> Chỉnh sửa
+                  </Button>
+                )}
+              </div>
+              <div className="space-y-2">
+                {form[tab].map((item, idx) => (
+                  <div key={idx} className="flex gap-2">
+                    {editMode[tab] ? (
+                      <>
+                        <input
+                          value={item}
+                          onChange={e => updateItem(tab, idx, e.target.value)}
+                          className="flex-1 border rounded-md px-3 py-2 text-sm bg-background"
+                          placeholder={
+                            tab === 'constraints' ? '1 <= n <= 10^5' : 'Hãy sử dụng thuật toán Sàng Eratosthenes...'
+                          }
+                        />
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => removeItem(tab, idx)}
+                          className="text-red-500 h-9 w-9"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </>
+                    ) : (
+                      <div className="flex-1 border rounded-md px-3 py-2 text-sm bg-muted/30">{item}</div>
+                    )}
+                  </div>
+                ))}
+                {form[tab].length === 0 && (
+                  <div className="py-12 text-center border border-dashed rounded-xl text-muted-foreground italic text-sm">
+                    Chưa có {tab === 'constraints' ? 'ràng buộc' : 'gợi ý'} nào.
                   </div>
                 )}
               </div>
-            ))}
-            {form[tab].length === 0 && (
-              <div className="py-12 text-center border border-dashed rounded-xl text-muted-foreground italic text-sm">
-                Chưa có {tab === 'constraints' ? 'ràng buộc' : 'gợi ý'} nào.
-              </div>
-            )}
-          </div>
-          {editMode[tab] && (
-            <div className="mt-8 pt-6 border-t flex justify-end gap-3">
-              <Button variant="outline" onClick={() => toggleEditMode(tab)}>Hủy</Button>
-              <Button onClick={async () => { await handleSave(); toggleEditMode(tab); }} disabled={saving} className="gap-2 px-8">
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                Lưu thay đổi {tab === 'constraints' ? 'Ràng buộc' : 'Gợi ý'}
-              </Button>
+              {editMode[tab] && (
+                <div className="mt-8 pt-6 border-t flex justify-end gap-3">
+                  <Button variant="outline" onClick={() => toggleEditMode(tab)}>
+                    Hủy
+                  </Button>
+                  <Button
+                    onClick={async () => {
+                      await handleSave()
+                      toggleEditMode(tab)
+                    }}
+                    disabled={saving}
+                    className="gap-2 px-8"
+                  >
+                    {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                    Lưu thay đổi {tab === 'constraints' ? 'Ràng buộc' : 'Gợi ý'}
+                  </Button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      ))}
+          )
+      )}
 
       {/* ─── Tab 2: Test Cases ─── */}
       {activeTab === 'testcases' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              Thêm các test case để kiểm tra bài làm của học sinh. Test case <strong>ẩn</strong> sẽ không hiện cho học sinh thấy input/output.
+              Thêm các test case để kiểm tra bài làm của học sinh. Test case <strong>ẩn</strong> sẽ không hiện cho học
+              sinh thấy input/output.
             </p>
             <Button size="sm" onClick={addTestCase} className="gap-1.5">
               <Plus className="h-3.5 w-3.5" /> Thêm Test Case
@@ -549,23 +656,30 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
           {form.testCases.length === 0 && (
             <div className="text-center py-16 text-muted-foreground border rounded-xl border-dashed">
               <FlaskConical className="h-10 w-10 mx-auto mb-3 opacity-40" />
-              <p className="text-sm">Chưa có test case. Nhấn <strong>Thêm Test Case</strong> để bắt đầu.</p>
+              <p className="text-sm">
+                Chưa có test case. Nhấn <strong>Thêm Test Case</strong> để bắt đầu.
+              </p>
             </div>
           )}
 
           <div className="space-y-3">
             {form.testCases.map((tc, idx) => (
-              <div key={idx} className={`rounded-xl border p-4 space-y-3 ${tc.isHidden ? 'border-amber-300/50 bg-amber-50/30 dark:bg-amber-500/5' : 'bg-card'}`}>
+              <div
+                key={idx}
+                className={`rounded-xl border p-4 space-y-3 ${tc.isHidden ? 'border-amber-300/50 bg-amber-50/30 dark:bg-amber-500/5' : 'bg-card'}`}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
                     <span className="text-sm font-semibold">Test case #{idx + 1}</span>
                     {tc.isHidden && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 font-medium">Ẩn</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 font-medium">
+                        Ẩn
+                      </span>
                     )}
                   </div>
                   <div className="flex items-center gap-1">
-                    {(editModeTestCases[idx] || !tc.id) ? (
+                    {editModeTestCases[idx] || !tc.id ? (
                       <>
                         {tc.id && (
                           <Button
@@ -607,7 +721,12 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                       {tc.isHidden ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
                       {tc.isHidden ? 'Ẩn' : 'Hiện'}
                     </Button>
-                    <Button size="icon" variant="ghost" className="h-7 w-7 text-red-500 hover:bg-red-50" onClick={() => removeTestCase(idx)}>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-7 w-7 text-red-500 hover:bg-red-50"
+                      onClick={() => removeTestCase(idx)}
+                    >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
@@ -615,8 +734,10 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-widest">Input (stdin)</label>
-                    {(editModeTestCases[idx] || !tc.id) ? (
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
+                      Input (stdin)
+                    </label>
+                    {editModeTestCases[idx] || !tc.id ? (
                       <textarea
                         value={tc.input}
                         onChange={e => updateTestCase(idx, { input: e.target.value })}
@@ -625,12 +746,16 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                         className="w-full border border-input rounded-lg px-3 py-2 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 bg-background resize-none"
                       />
                     ) : (
-                      <pre className="w-full border border-input rounded-lg px-3 py-2 text-xs font-mono bg-muted/30 whitespace-pre-wrap min-h-[74px]">{tc.input || <span className="italic text-muted-foreground">Trống</span>}</pre>
+                      <pre className="w-full border border-input rounded-lg px-3 py-2 text-xs font-mono bg-muted/30 whitespace-pre-wrap min-h-[74px]">
+                        {tc.input || <span className="italic text-muted-foreground">Trống</span>}
+                      </pre>
                     )}
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-widest">Expected Output</label>
-                    {(editModeTestCases[idx] || !tc.id) ? (
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
+                      Expected Output
+                    </label>
+                    {editModeTestCases[idx] || !tc.id ? (
                       <textarea
                         value={tc.expectedOutput}
                         onChange={e => updateTestCase(idx, { expectedOutput: e.target.value })}
@@ -639,14 +764,16 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                         className="w-full border border-input rounded-lg px-3 py-2 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 bg-background resize-none"
                       />
                     ) : (
-                      <pre className="w-full border border-input rounded-lg px-3 py-2 text-xs font-mono bg-muted/30 whitespace-pre-wrap min-h-[74px]">{tc.expectedOutput || <span className="italic text-muted-foreground">Trống</span>}</pre>
+                      <pre className="w-full border border-input rounded-lg px-3 py-2 text-xs font-mono bg-muted/30 whitespace-pre-wrap min-h-[74px]">
+                        {tc.expectedOutput || <span className="italic text-muted-foreground">Trống</span>}
+                      </pre>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-1">
                   <label className="text-xs font-medium text-muted-foreground uppercase tracking-widest">Mô tả</label>
-                  {(editModeTestCases[idx] || !tc.id) ? (
+                  {editModeTestCases[idx] || !tc.id ? (
                     <input
                       value={tc.description}
                       onChange={e => updateTestCase(idx, { description: e.target.value })}
@@ -678,8 +805,11 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                 key={lang.id}
                 type="button"
                 onClick={() => setActiveLang(lang.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${activeLang === lang.id ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'
-                  }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                  activeLang === lang.id
+                    ? 'bg-background shadow-sm text-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
               >
                 {lang.label}
               </button>
@@ -717,8 +847,6 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
           </p>
         </div>
       )}
-
-
     </div>
   )
 }

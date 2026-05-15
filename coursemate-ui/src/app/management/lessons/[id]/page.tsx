@@ -2,13 +2,35 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, Save, Edit, Video, BookOpen, Code2, FileQuestion, Presentation, CheckCircle2, UploadCloud, FileText, Sparkles } from 'lucide-react'
+import {
+  ArrowLeft,
+  Loader2,
+  Save,
+  Edit,
+  Video,
+  BookOpen,
+  Code2,
+  FileQuestion,
+  Presentation,
+  CheckCircle2,
+  UploadCloud,
+  FileText,
+  Sparkles
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { lessonService, chapterService, courseService } from '@/lib/course-service'
 import { exerciseService } from '@/lib/exercise-service'
 import {
-  LessonDto, ChapterDto, CourseDto, UpdateLessonRequest, LessonType, LessonDetailDto,
-  ExerciseDto, ExerciseDetailDto, QuizQuestionDto, QuizAnswerDto
+  LessonDto,
+  ChapterDto,
+  CourseDto,
+  UpdateLessonRequest,
+  LessonType,
+  LessonDetailDto,
+  ExerciseDto,
+  ExerciseDetailDto,
+  QuizQuestionDto,
+  QuizAnswerDto
 } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,11 +46,31 @@ import { AiMaterialSection } from './ai-material-section'
 // ─── Lesson Type Icon & Color ─────────────────────────────────────────────────
 
 const TYPE_META: Record<LessonType, { icon: React.ReactNode; label: string; color: string }> = {
-  [LessonType.Video]: { icon: <Video className="h-4 w-4" />, label: 'Video', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-  [LessonType.Reading]: { icon: <BookOpen className="h-4 w-4" />, label: 'Reading', color: 'bg-green-100 text-green-700 border-green-200' },
-  [LessonType.Coding]: { icon: <Code2 className="h-4 w-4" />, label: 'Coding', color: 'bg-orange-100 text-orange-700 border-orange-200' },
-  [LessonType.Quiz]: { icon: <FileQuestion className="h-4 w-4" />, label: 'Quiz', color: 'bg-purple-100 text-purple-700 border-purple-200' },
-  [LessonType.Slide]: { icon: <Presentation className="h-4 w-4" />, label: 'Slide', color: 'bg-pink-100 text-pink-700 border-pink-200' },
+  [LessonType.Video]: {
+    icon: <Video className="h-4 w-4" />,
+    label: 'Video',
+    color: 'bg-blue-100 text-blue-700 border-blue-200'
+  },
+  [LessonType.Reading]: {
+    icon: <BookOpen className="h-4 w-4" />,
+    label: 'Reading',
+    color: 'bg-green-100 text-green-700 border-green-200'
+  },
+  [LessonType.Coding]: {
+    icon: <Code2 className="h-4 w-4" />,
+    label: 'Coding',
+    color: 'bg-orange-100 text-orange-700 border-orange-200'
+  },
+  [LessonType.Quiz]: {
+    icon: <FileQuestion className="h-4 w-4" />,
+    label: 'Quiz',
+    color: 'bg-purple-100 text-purple-700 border-purple-200'
+  },
+  [LessonType.Slide]: {
+    icon: <Presentation className="h-4 w-4" />,
+    label: 'Slide',
+    color: 'bg-pink-100 text-pink-700 border-pink-200'
+  }
 }
 
 // ─── Reading Content Section ──────────────────────────────────────────────────
@@ -60,7 +102,15 @@ function ReadingContentSection({ lessonId, initialContent }: { lessonId: string;
         <div className="flex items-center gap-2">
           {isEditing ? (
             <>
-              <Button variant="ghost" size="sm" onClick={() => { setContent(initialContent ?? ''); setIsEditing(false) }} disabled={saving}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setContent(initialContent ?? '')
+                  setIsEditing(false)
+                }}
+                disabled={saving}
+              >
                 Cancel
               </Button>
               <Button onClick={handleSave} disabled={saving} size="sm" className="gap-2">
@@ -88,7 +138,9 @@ function ReadingContentSection({ lessonId, initialContent }: { lessonId: string;
         </>
       ) : (
         <div className="min-h-[200px] rounded-lg bg-muted/20 p-6 prose prose-sm dark:prose-invert max-w-none border border-dashed">
-          {content || <span className="text-muted-foreground italic">No content yet. Click edit to add reading material.</span>}
+          {content || (
+            <span className="text-muted-foreground italic">No content yet. Click edit to add reading material.</span>
+          )}
         </div>
       )}
     </div>
@@ -97,7 +149,11 @@ function ReadingContentSection({ lessonId, initialContent }: { lessonId: string;
 
 // ─── Coding Content Section ───────────────────────────────────────────────────
 
-function CodingContentSection({ lessonId, initialExerciseId, initialExerciseTitle }: {
+function CodingContentSection({
+  lessonId,
+  initialExerciseId,
+  initialExerciseTitle
+}: {
   lessonId: string
   initialExerciseId?: string
   initialExerciseTitle?: string
@@ -156,7 +212,10 @@ function CodingContentSection({ lessonId, initialExerciseId, initialExerciseTitl
   }, [search, doSearch])
 
   async function handleSave() {
-    if (!selectedId) { toast.error('Please select an exercise.'); return }
+    if (!selectedId) {
+      toast.error('Please select an exercise.')
+      return
+    }
     setSaving(true)
     try {
       await lessonService.upsertCoding(lessonId, { exerciseId: selectedId })
@@ -186,12 +245,17 @@ function CodingContentSection({ lessonId, initialExerciseId, initialExerciseTitl
         <div className="flex items-center gap-2">
           {isEditing ? (
             <>
-              <Button variant="ghost" size="sm" onClick={() => {
-                setSelectedId(initialExerciseId ?? '');
-                setSelectedTitle(initialExerciseTitle ?? '');
-                if (initialExerciseId) fetchDetail(initialExerciseId);
-                setIsEditing(false)
-              }} disabled={saving}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSelectedId(initialExerciseId ?? '')
+                  setSelectedTitle(initialExerciseTitle ?? '')
+                  if (initialExerciseId) fetchDetail(initialExerciseId)
+                  setIsEditing(false)
+                }}
+                disabled={saving}
+              >
                 Cancel
               </Button>
               <Button onClick={handleSave} disabled={saving || !selectedId} size="sm" className="gap-2">
@@ -217,7 +281,10 @@ function CodingContentSection({ lessonId, initialExerciseId, initialExerciseTitl
                 <Input
                   placeholder="Type to search exercises..."
                   value={search}
-                  onChange={e => { setSearch(e.target.value); setShowResults(true) }}
+                  onChange={e => {
+                    setSearch(e.target.value)
+                    setShowResults(true)
+                  }}
                   onFocus={() => setShowResults(true)}
                 />
                 {searching && (
@@ -241,13 +308,17 @@ function CodingContentSection({ lessonId, initialExerciseId, initialExerciseTitl
                           onClick={() => handleSelect(ex)}
                           className={`w-full px-4 py-3 text-left hover:bg-muted/60 transition-colors flex items-start gap-3 border-b last:border-0 ${selectedId === ex.id ? 'bg-primary/5' : ''}`}
                         >
-                          <div className={`mt-0.5 p-1.5 rounded-md ${selectedId === ex.id ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                          <div
+                            className={`mt-0.5 p-1.5 rounded-md ${selectedId === ex.id ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}
+                          >
                             <Code2 className="h-4 w-4" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">{ex.title}</p>
                             <div className="flex items-center gap-2 mt-0.5">
-                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 capitalize">{ex.difficulty}</Badge>
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 capitalize">
+                                {ex.difficulty}
+                              </Badge>
                               <span className="text-[10px] text-muted-foreground">{ex.category}</span>
                             </div>
                           </div>
@@ -285,13 +356,19 @@ function CodingContentSection({ lessonId, initialExerciseId, initialExerciseTitl
               <span className="text-xs">Loading detail...</span>
             </div>
           ) : exerciseDetail ? (
-            <div className={`rounded-lg border bg-muted/20 overflow-hidden flex flex-col ${isEditing ? 'h-[400px]' : 'min-h-[300px]'}`}>
+            <div
+              className={`rounded-lg border bg-muted/20 overflow-hidden flex flex-col ${isEditing ? 'h-[400px]' : 'min-h-[300px]'}`}
+            >
               <div className="px-4 py-3 border-b bg-card">
                 <h3 className="font-medium">{exerciseDetail.title}</h3>
                 <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="outline" className="text-[10px] capitalize">{exerciseDetail.difficulty}</Badge>
+                  <Badge variant="outline" className="text-[10px] capitalize">
+                    {exerciseDetail.difficulty}
+                  </Badge>
                   <span className="text-[10px] text-muted-foreground">{exerciseDetail.category}</span>
-                  <span className="text-[10px] text-muted-foreground ml-auto">{exerciseDetail.testCases?.length || 0} Test Cases</span>
+                  <span className="text-[10px] text-muted-foreground ml-auto">
+                    {exerciseDetail.testCases?.length || 0} Test Cases
+                  </span>
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -304,7 +381,9 @@ function CodingContentSection({ lessonId, initialExerciseId, initialExerciseTitl
 
                 {exerciseDetail.defaultCodes && exerciseDetail.defaultCodes.length > 0 && (
                   <div className="space-y-1.5">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Starter Code ({exerciseDetail.defaultCodes[0].language})</p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                      Starter Code ({exerciseDetail.defaultCodes[0].language})
+                    </p>
                     <pre className="p-3 rounded-md bg-zinc-950 text-zinc-100 text-[10px] font-mono overflow-x-auto">
                       {exerciseDetail.defaultCodes[0].starterCode}
                     </pre>
@@ -325,7 +404,9 @@ function CodingContentSection({ lessonId, initialExerciseId, initialExerciseTitl
             <div className="h-[300px] rounded-lg border border-dashed flex flex-col items-center justify-center text-muted-foreground text-center px-8">
               <Code2 className="h-8 w-8 mb-2 opacity-20" />
               <p className="text-xs">
-                {isEditing ? 'Select an exercise from the left to see a preview.' : 'No exercise linked yet. Click "Change Exercise" to link one.'}
+                {isEditing
+                  ? 'Select an exercise from the left to see a preview.'
+                  : 'No exercise linked yet. Click "Change Exercise" to link one.'}
               </p>
             </div>
           )}
@@ -337,7 +418,12 @@ function CodingContentSection({ lessonId, initialExerciseId, initialExerciseTitl
 
 // ─── Quiz Content Section ─────────────────────────────────────────────────────
 
-function QuizContentSection({ lessonId, initialDescription, initialPassingScore, initialQuestions }: {
+function QuizContentSection({
+  lessonId,
+  initialDescription,
+  initialPassingScore,
+  initialQuestions
+}: {
   lessonId: string
   initialDescription?: string
   initialPassingScore?: number
@@ -350,11 +436,23 @@ function QuizContentSection({ lessonId, initialDescription, initialPassingScore,
   const [saving, setSaving] = useState(false)
 
   async function handleSave() {
-    if (questions.length === 0) { toast.error('Please add at least one question.'); return }
+    if (questions.length === 0) {
+      toast.error('Please add at least one question.')
+      return
+    }
     for (const q of questions) {
-      if (!q.text.trim()) { toast.error('Question text cannot be empty.'); return }
-      if (q.answers.length < 2) { toast.error(`Question "${q.text}" needs at least 2 answers.`); return }
-      if (!q.answers.some(a => a.isCorrect)) { toast.error(`Question "${q.text}" needs at least one correct answer.`); return }
+      if (!q.text.trim()) {
+        toast.error('Question text cannot be empty.')
+        return
+      }
+      if (q.answers.length < 2) {
+        toast.error(`Question "${q.text}" needs at least 2 answers.`)
+        return
+      }
+      if (!q.answers.some(a => a.isCorrect)) {
+        toast.error(`Question "${q.text}" needs at least one correct answer.`)
+        return
+      }
     }
 
     setSaving(true)
@@ -375,7 +473,7 @@ function QuizContentSection({ lessonId, initialDescription, initialPassingScore,
       position: questions.length,
       answers: [
         { text: '', isCorrect: true, position: 0 },
-        { text: '', isCorrect: false, position: 1 },
+        { text: '', isCorrect: false, position: 1 }
       ]
     }
     setQuestions([...questions, newQ])
@@ -402,7 +500,9 @@ function QuizContentSection({ lessonId, initialDescription, initialPassingScore,
     const nextAnswers = [...q.answers]
     // If setting IsCorrect to true, set others to false (assuming single choice for now, or remove this if multiple)
     if (updates.isCorrect) {
-      nextAnswers.forEach((a, i) => { a.isCorrect = i === aIdx })
+      nextAnswers.forEach((a, i) => {
+        a.isCorrect = i === aIdx
+      })
     } else {
       nextAnswers[aIdx] = { ...nextAnswers[aIdx], ...updates }
     }
@@ -411,7 +511,10 @@ function QuizContentSection({ lessonId, initialDescription, initialPassingScore,
 
   const removeAnswer = (qIdx: number, aIdx: number) => {
     const q = questions[qIdx]
-    if (q.answers.length <= 2) { toast.error('Minimum 2 answers required.'); return }
+    if (q.answers.length <= 2) {
+      toast.error('Minimum 2 answers required.')
+      return
+    }
     const nextAnswers = q.answers.filter((_, i) => i !== aIdx).map((a, i) => ({ ...a, position: i }))
     updateQuestion(qIdx, { answers: nextAnswers })
   }
@@ -425,12 +528,17 @@ function QuizContentSection({ lessonId, initialDescription, initialPassingScore,
         <div className="flex items-center gap-2">
           {isEditing ? (
             <>
-              <Button variant="ghost" size="sm" onClick={() => {
-                setDescription(initialDescription ?? '');
-                setPassingScore(initialPassingScore ?? 70);
-                setQuestions(initialQuestions ?? []);
-                setIsEditing(false)
-              }} disabled={saving}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setDescription(initialDescription ?? '')
+                  setPassingScore(initialPassingScore ?? 70)
+                  setQuestions(initialQuestions ?? [])
+                  setIsEditing(false)
+                }}
+                disabled={saving}
+              >
                 Cancel
               </Button>
               <Button onClick={handleSave} disabled={saving} size="sm" className="gap-2">
@@ -461,11 +569,7 @@ function QuizContentSection({ lessonId, initialDescription, initialPassingScore,
             </div>
             <div className="space-y-1.5">
               <Label>Passing Score (%)</Label>
-              <Input
-                type="number"
-                value={passingScore}
-                onChange={e => setPassingScore(Number(e.target.value))}
-              />
+              <Input type="number" value={passingScore} onChange={e => setPassingScore(Number(e.target.value))} />
             </div>
           </div>
 
@@ -474,8 +578,15 @@ function QuizContentSection({ lessonId, initialDescription, initialPassingScore,
             {questions.map((q, qIdx) => (
               <div key={qIdx} className="relative group rounded-xl border bg-card overflow-hidden">
                 <div className="bg-muted/50 px-4 py-2 border-b flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Question {qIdx + 1}</span>
-                  <Button variant="ghost" size="sm" className="h-7 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => removeQuestion(qIdx)}>
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Question {qIdx + 1}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => removeQuestion(qIdx)}
+                  >
                     Remove
                   </Button>
                 </div>
@@ -505,13 +616,23 @@ function QuizContentSection({ lessonId, initialDescription, initialPassingScore,
                             value={a.text}
                             onChange={e => updateAnswer(qIdx, aIdx, { text: e.target.value })}
                           />
-                          <Button variant="ghost" size="sm" className="h-9 w-9 p-0 text-muted-foreground hover:text-destructive" onClick={() => removeAnswer(qIdx, aIdx)}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-9 w-9 p-0 text-muted-foreground hover:text-destructive"
+                            onClick={() => removeAnswer(qIdx, aIdx)}
+                          >
                             &times;
                           </Button>
                         </div>
                       ))}
                     </div>
-                    <Button variant="ghost" size="sm" className="h-8 text-xs text-primary" onClick={() => addAnswer(qIdx)}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 text-xs text-primary"
+                      onClick={() => addAnswer(qIdx)}
+                    >
                       + Add Answer Option
                     </Button>
                   </div>
@@ -519,7 +640,11 @@ function QuizContentSection({ lessonId, initialDescription, initialPassingScore,
               </div>
             ))}
 
-            <Button variant="outline" className="w-full border-dashed py-8 h-auto flex-col gap-2 hover:bg-primary/5 hover:border-primary/50" onClick={addQuestion}>
+            <Button
+              variant="outline"
+              className="w-full border-dashed py-8 h-auto flex-col gap-2 hover:bg-primary/5 hover:border-primary/50"
+              onClick={addQuestion}
+            >
               <div className="p-2 rounded-full bg-primary/10 text-primary">
                 <FileQuestion className="h-5 w-5" />
               </div>
@@ -539,7 +664,9 @@ function QuizContentSection({ lessonId, initialDescription, initialPassingScore,
             </div>
             <div className="space-y-1">
               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Passing Score</p>
-              <Badge variant="secondary" className="text-sm px-3">{passingScore}%</Badge>
+              <Badge variant="secondary" className="text-sm px-3">
+                {passingScore}%
+              </Badge>
             </div>
             <div className="space-y-1">
               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Questions</p>
@@ -555,7 +682,10 @@ function QuizContentSection({ lessonId, initialDescription, initialPassingScore,
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 ml-7">
                   {q.answers.map((a, j) => (
-                    <div key={j} className={`text-xs p-2 rounded border flex items-center justify-between ${a.isCorrect ? 'bg-green-50 border-green-200 text-green-700 dark:bg-green-950/20 dark:border-green-900' : 'bg-muted/30 text-muted-foreground'}`}>
+                    <div
+                      key={j}
+                      className={`text-xs p-2 rounded border flex items-center justify-between ${a.isCorrect ? 'bg-green-50 border-green-200 text-green-700 dark:bg-green-950/20 dark:border-green-900' : 'bg-muted/30 text-muted-foreground'}`}
+                    >
                       <span>{a.text}</span>
                       {a.isCorrect && <CheckCircle2 className="h-3.5 w-3.5" />}
                     </div>
@@ -584,22 +714,22 @@ function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; i
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold flex items-center gap-2">
-          <Presentation className="h-6 w-6 text-pink-600" /> 
+          <Presentation className="h-6 w-6 text-pink-600" />
           Slide Management
         </h2>
         <div className="flex bg-muted/50 p-1 rounded-lg border">
-          <Button 
-            variant={activeTab === 'ai' ? 'secondary' : 'ghost'} 
-            size="sm" 
+          <Button
+            variant={activeTab === 'ai' ? 'secondary' : 'ghost'}
+            size="sm"
             className="gap-2"
             onClick={() => setActiveTab('ai')}
           >
             <Sparkles className="h-4 w-4 text-purple-600" />
             Hỗ trợ soạn thảo
           </Button>
-          <Button 
-            variant={activeTab === 'upload' ? 'secondary' : 'ghost'} 
-            size="sm" 
+          <Button
+            variant={activeTab === 'upload' ? 'secondary' : 'ghost'}
+            size="sm"
             className="gap-2"
             onClick={() => setActiveTab('upload')}
           >
@@ -618,11 +748,13 @@ function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; i
               <FileText className="h-5 w-5 text-blue-600" /> Upload Existing Slide
             </h3>
           </div>
-          
+
           <div className="space-y-6">
             {initialFileUrl ? (
               <div className="max-w-2xl bg-muted/20 rounded-lg p-5 border border-dashed space-y-3">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Current Slide Resource</p>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  Current Slide Resource
+                </p>
                 <div className="flex items-center gap-4">
                   <div className="h-16 w-16 bg-pink-500/10 rounded flex items-center justify-center shrink-0 border border-pink-200">
                     <Presentation className="h-8 w-8 text-pink-600" />
@@ -630,7 +762,12 @@ function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; i
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{initialFileUrl}</p>
                     <div className="flex items-center gap-3 mt-1">
-                      <a href={initialFileUrl} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline font-medium">
+                      <a
+                        href={initialFileUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs text-primary hover:underline font-medium"
+                      >
                         View Document
                       </a>
                       <span className="text-muted-foreground text-[10px]">Public Link</span>
@@ -643,12 +780,10 @@ function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; i
             <div className="flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-12 bg-muted/20 hover:bg-muted/30 transition-colors cursor-pointer">
               <UploadCloud className="h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="font-semibold text-sm text-center">Select your slide file</h3>
-              <p className="text-xs text-muted-foreground mb-6 text-center max-w-xs">Upload a PDF, PPTX, or DOCX directly. Students will see this as the primary lesson content.</p>
-              <Input 
-                type="file" 
-                className="max-w-sm" 
-                accept=".pdf,.pptx,.ppt,.docx,.doc" 
-              />
+              <p className="text-xs text-muted-foreground mb-6 text-center max-w-xs">
+                Upload a PDF, PPTX, or DOCX directly. Students will see this as the primary lesson content.
+              </p>
+              <Input type="file" className="max-w-sm" accept=".pdf,.pptx,.ppt,.docx,.doc" />
               <Button className="mt-4 gap-2">
                 <UploadCloud className="h-4 w-4" /> Upload Document
               </Button>
@@ -686,10 +821,7 @@ export default function LessonDetailPage() {
     const fetchLesson = async () => {
       setLoading(true)
       try {
-        const [l, d] = await Promise.all([
-          lessonService.getById(id),
-          lessonService.getDetail(id)
-        ])
+        const [l, d] = await Promise.all([lessonService.getById(id), lessonService.getDetail(id)])
         setLesson(l)
         setDetail(d)
         setForm({
@@ -725,10 +857,7 @@ export default function LessonDetailPage() {
     try {
       await lessonService.update(id, form)
       toast.success('Lesson updated successfully.')
-      const [updated, updatedDetail] = await Promise.all([
-        lessonService.getById(id),
-        lessonService.getDetail(id)
-      ])
+      const [updated, updatedDetail] = await Promise.all([lessonService.getById(id), lessonService.getDetail(id)])
       setLesson(updated)
       setDetail(updatedDetail)
     } catch {
@@ -758,7 +887,8 @@ export default function LessonDetailPage() {
     4: LessonType.Quiz,
     5: LessonType.Slide
   }
-  const typeMeta = TYPE_META[lesson.lessonType] || 
+  const typeMeta =
+    TYPE_META[lesson.lessonType] ||
     TYPE_META[numericMap[lesson.lessonType as unknown as number]] ||
     TYPE_META[LessonType.Video]
 
@@ -826,14 +956,18 @@ export default function LessonDetailPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {Object.values(LessonType).map(t => (
-                    <SelectItem key={t} value={t}>{t}</SelectItem>
+                    <SelectItem key={t} value={t}>
+                      {t}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleSave} disabled={saving} className="gap-2">
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               {saving ? 'Saving...' : 'Save Changes'}

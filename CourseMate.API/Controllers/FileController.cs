@@ -66,7 +66,7 @@ public class FileController : ControllerBase
         return File(result.Content, MediaTypeNames.Application.Octet, WebUtility.HtmlEncode(result.FileName));
     }
 
-    #region API Video
+    #region Video APIs
 
     [HttpPost("videos/init")]
     public async Task<ActionResult> InitUploadVideoAsync()

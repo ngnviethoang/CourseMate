@@ -25,6 +25,56 @@ namespace CourseMate.Persistent.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "vector");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("CourseMate.Persistent.Entities.AntiCheatViolation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ContestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreationTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasMaxLength(32768)
+                        .HasColumnType("character varying(32768)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LastModificationTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ViolationType")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("ContestId", "StudentId");
+
+                    b.ToTable("AntiCheatViolations", (string)null);
+                });
+
             modelBuilder.Entity("CourseMate.Persistent.Entities.Cart", b =>
                 {
                     b.Property<Guid>("Id")
@@ -219,6 +269,9 @@ namespace CourseMate.Persistent.Migrations
                     b.Property<DateTimeOffset?>("LastModificationTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("MaxViolations")
+                        .HasColumnType("integer");
+
                     b.Property<int>("MemoryLimit")
                         .HasColumnType("integer");
 
@@ -309,6 +362,14 @@ namespace CourseMate.Persistent.Migrations
                     b.Property<DateTimeOffset>("CreationTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTimeOffset?>("DisqualifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DisqualifiedReason")
+                        .IsRequired()
+                        .HasMaxLength(32768)
+                        .HasColumnType("character varying(32768)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -338,6 +399,9 @@ namespace CourseMate.Persistent.Migrations
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("ViolationCount")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -1832,6 +1896,21 @@ namespace CourseMate.Persistent.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("CourseMate.Persistent.Entities.AntiCheatViolation", b =>
+                {
+                    b.HasOne("CourseMate.Persistent.Entities.Contest", null)
+                        .WithMany()
+                        .HasForeignKey("ContestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", null)
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CourseMate.Persistent.Entities.Cart", b =>

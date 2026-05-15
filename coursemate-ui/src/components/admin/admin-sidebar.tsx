@@ -2,7 +2,18 @@
 
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutGrid, BookOpen, Users, Tag, GraduationCap, LogOut, ShoppingCart, UserCheck, Code2, Trophy } from 'lucide-react'
+import {
+  LayoutGrid,
+  BookOpen,
+  Users,
+  Tag,
+  GraduationCap,
+  LogOut,
+  ShoppingCart,
+  UserCheck,
+  Code2,
+  Trophy
+} from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,

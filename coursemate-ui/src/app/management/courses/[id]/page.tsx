@@ -347,7 +347,6 @@ export default function CourseDetailPage() {
                 onChange={e => cf('title', e.target.value)}
               />
             </div>
-
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setChapterDialog(false)}>

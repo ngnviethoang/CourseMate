@@ -118,7 +118,7 @@ export default function CheckoutPage() {
     try {
       // Bước 2: Sử dụng api /api/payments/create-url (Backend đã tự cập nhật status sang Submitted)
       const paymentRes = await orderService.createPaymentUrl(orderId)
-      
+
       // Bước 3: Đã xử lý trong Bước 2
 
       // Bước 4: Sử dụng /api/payments/fake-payos-ipn

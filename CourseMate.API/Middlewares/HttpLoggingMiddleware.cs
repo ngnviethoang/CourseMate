@@ -30,12 +30,12 @@ public class HttpLoggingMiddleware : IMiddleware
         {
             try
             {
-                _logger.LogInformation("HTTP Request {method} {path}{query}", context.Request.Method, context.Request.Path, context.Request.QueryString);
+                _logger.LogInformation("HTTP Request {method} {path}", context.Request.Method, context.Request.Path);
                 await next(context);
             }
             finally
             {
-                _logger.LogInformation("HTTP Response {method} {path}{query} => {statusCode}", context.Request.Method, context.Request.Path, context.Request.QueryString, context.Response.StatusCode);
+                _logger.LogInformation("HTTP Response {method} {path} => {statusCode}", context.Request.Method, context.Request.Path, context.Response.StatusCode);
             }
         }
     }

@@ -24,6 +24,7 @@ public class UpdateContestCommand : IRequest<ResultIdDto>
     public int MemoryLimit { get; set; }
     public int TimeLimit { get; set; }
     public AntiCheatLevel AntiCheatLevel { get; set; }
+    public int MaxViolations { get; set; } = 5;
 }
 
 internal sealed class UpdateContestCommandHandler : AbstractCommandHandler<UpdateContestCommand, ResultIdDto>
@@ -57,6 +58,7 @@ internal sealed class UpdateContestCommandHandler : AbstractCommandHandler<Updat
         contest.MemoryLimit = request.MemoryLimit;
         contest.TimeLimit = request.TimeLimit;
         contest.AntiCheatLevel = request.AntiCheatLevel;
+        contest.MaxViolations = request.MaxViolations;
 
         await DbContext.SaveChangesAsync(ct);
 

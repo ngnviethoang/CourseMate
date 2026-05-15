@@ -6,4 +6,5 @@ public interface INotificationService
 {
     Task SendNotificationToUserAsync(NotificationDto notificationDto, CancellationToken cancellationToken = default);
     Task NotifyDocumentProcessedAsync(NotificationDto notificationDto, CancellationToken cancellationToken = default);
+    Task<NotificationDto> CreateAndSendAsync(Guid receiverId, string title, string message, CancellationToken cancellationToken = default);
 }

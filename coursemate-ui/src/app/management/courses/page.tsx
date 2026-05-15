@@ -95,7 +95,7 @@ export default function CoursesPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-     const role = getRole()
+    const role = getRole()
     setUserRole(role ? [role] : [])
     setCurrentUserId(getUserId())
   }, [])
@@ -280,12 +280,9 @@ export default function CoursesPage() {
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-4xl p-0 gap-0 overflow-hidden rounded-2xl shadow-2xl">
-
           {/* Header */}
           <DialogHeader className="px-6 py-5 border-b">
-            <DialogTitle className="text-xl font-bold">
-              {editing ? 'Edit Course' : 'New Course'}
-            </DialogTitle>
+            <DialogTitle className="text-xl font-bold">{editing ? 'Edit Course' : 'New Course'}</DialogTitle>
             <p className="text-sm text-muted-foreground mt-0.5">
               {editing ? 'Update course details below' : 'Fill in the details to publish a new course'}
             </p>
@@ -293,10 +290,8 @@ export default function CoursesPage() {
 
           {/* Body */}
           <div className="grid grid-cols-1 md:grid-cols-5 max-h-[72vh] overflow-y-auto custom-scrollbar">
-
             {/* Left — Thumbnail & Status */}
             <div className="md:col-span-2 p-6 bg-muted/20 border-r flex flex-col gap-5">
-
               {/* Click-to-upload image area */}
               <div
                 role="button"
@@ -316,19 +311,23 @@ export default function CoursesPage() {
                     src={form.imageUrl}
                     alt="Thumbnail preview"
                     className="w-full h-full object-cover"
-                    onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
+                    onError={e => {
+                      ;(e.target as HTMLImageElement).style.display = 'none'
+                    }}
                   />
                 )}
 
                 {/* Overlay */}
-                <div className={cn(
-                  'absolute inset-0 flex flex-col items-center justify-center gap-1.5 transition-all',
-                  uploadingImage
-                    ? 'bg-background/70'
-                    : form.imageUrl
-                      ? 'opacity-0 hover:opacity-100 bg-black/50 text-white'
-                      : 'text-muted-foreground'
-                )}>
+                <div
+                  className={cn(
+                    'absolute inset-0 flex flex-col items-center justify-center gap-1.5 transition-all',
+                    uploadingImage
+                      ? 'bg-background/70'
+                      : form.imageUrl
+                        ? 'opacity-0 hover:opacity-100 bg-black/50 text-white'
+                        : 'text-muted-foreground'
+                  )}
+                >
                   {uploadingImage ? (
                     <>
                       <div className="h-7 w-7 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
@@ -337,9 +336,7 @@ export default function CoursesPage() {
                   ) : (
                     <>
                       <Upload className="h-7 w-7 opacity-70" />
-                      <p className="text-xs font-semibold">
-                        {form.imageUrl ? 'Click to change' : 'Click to upload'}
-                      </p>
+                      <p className="text-xs font-semibold">{form.imageUrl ? 'Click to change' : 'Click to upload'}</p>
                       {!form.imageUrl && <p className="text-xs opacity-50">JPG, PNG, WebP, GIF</p>}
                     </>
                   )}
@@ -377,9 +374,7 @@ export default function CoursesPage() {
               <div
                 className={cn(
                   'rounded-xl border-2 p-4 transition-all duration-300 cursor-pointer select-none',
-                  form.isPublished
-                    ? 'border-primary/30 bg-primary/5'
-                    : 'border-border bg-muted/20'
+                  form.isPublished ? 'border-primary/30 bg-primary/5' : 'border-border bg-muted/20'
                 )}
                 onClick={() => f('isPublished', !form.isPublished)}
               >
@@ -403,7 +398,6 @@ export default function CoursesPage() {
 
             {/* Right — Form Fields */}
             <div className="md:col-span-3 p-6 space-y-5">
-
               {/* Title */}
               <div className="space-y-1.5">
                 <Label className="font-semibold">
@@ -437,20 +431,38 @@ export default function CoursesPage() {
                       disabled={loadingDropdowns}
                       className="h-9 w-full flex items-center justify-between gap-2 rounded-lg border border-input bg-transparent px-3 text-sm hover:bg-muted/40 transition-all disabled:opacity-50"
                     >
-                      {selectedCategoryName
-                        ? <span>{selectedCategoryName}</span>
-                        : <span className="text-muted-foreground">{loadingDropdowns ? 'Loading…' : 'Select category'}</span>}
+                      {selectedCategoryName ? (
+                        <span>{selectedCategoryName}</span>
+                      ) : (
+                        <span className="text-muted-foreground">
+                          {loadingDropdowns ? 'Loading…' : 'Select category'}
+                        </span>
+                      )}
                       <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 opacity-50" />
                     </PopoverTrigger>
                     <PopoverContent style={{ width: 'var(--anchor-width)' }} className="p-0">
                       <Command shouldFilter={false}>
-                        <CommandInput placeholder="Search categories…" value={categorySearch} onValueChange={setCategorySearch} />
+                        <CommandInput
+                          placeholder="Search categories…"
+                          value={categorySearch}
+                          onValueChange={setCategorySearch}
+                        />
                         <CommandList>
                           <CommandEmpty>No categories found.</CommandEmpty>
                           <CommandGroup>
                             {categories.map(c => (
-                              <CommandItem key={c.id} value={c.id} onSelect={() => { f('categoryId', c.id); setSelectedCategoryName(c.name); setCategoryOpen(false) }}>
-                                <Check className={cn('mr-2 h-4 w-4', form.categoryId === c.id ? 'opacity-100' : 'opacity-0')} />
+                              <CommandItem
+                                key={c.id}
+                                value={c.id}
+                                onSelect={() => {
+                                  f('categoryId', c.id)
+                                  setSelectedCategoryName(c.name)
+                                  setCategoryOpen(false)
+                                }}
+                              >
+                                <Check
+                                  className={cn('mr-2 h-4 w-4', form.categoryId === c.id ? 'opacity-100' : 'opacity-0')}
+                                />
                                 {c.name}
                               </CommandItem>
                             ))}
@@ -470,20 +482,41 @@ export default function CoursesPage() {
                         disabled={loadingDropdowns}
                         className="h-9 w-full flex items-center justify-between gap-2 rounded-lg border border-input bg-transparent px-3 text-sm hover:bg-muted/40 transition-all disabled:opacity-50"
                       >
-                        {selectedInstructorName
-                          ? <span>{selectedInstructorName}</span>
-                          : <span className="text-muted-foreground">{loadingDropdowns ? 'Loading…' : 'Assign instructor'}</span>}
+                        {selectedInstructorName ? (
+                          <span>{selectedInstructorName}</span>
+                        ) : (
+                          <span className="text-muted-foreground">
+                            {loadingDropdowns ? 'Loading…' : 'Assign instructor'}
+                          </span>
+                        )}
                         <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 opacity-50" />
                       </PopoverTrigger>
                       <PopoverContent style={{ width: 'var(--anchor-width)' }} className="p-0">
                         <Command shouldFilter={false}>
-                          <CommandInput placeholder="Search instructors…" value={instructorSearch} onValueChange={setInstructorSearch} />
+                          <CommandInput
+                            placeholder="Search instructors…"
+                            value={instructorSearch}
+                            onValueChange={setInstructorSearch}
+                          />
                           <CommandList>
                             <CommandEmpty>No instructors found.</CommandEmpty>
                             <CommandGroup>
                               {users.map(u => (
-                                <CommandItem key={u.id} value={u.id} onSelect={() => { f('instructorId', u.id); setSelectedInstructorName(u.userName ?? u.email ?? ''); setInstructorOpen(false) }}>
-                                  <Check className={cn('mr-2 h-4 w-4', form.instructorId === u.id ? 'opacity-100' : 'opacity-0')} />
+                                <CommandItem
+                                  key={u.id}
+                                  value={u.id}
+                                  onSelect={() => {
+                                    f('instructorId', u.id)
+                                    setSelectedInstructorName(u.userName ?? u.email ?? '')
+                                    setInstructorOpen(false)
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      'mr-2 h-4 w-4',
+                                      form.instructorId === u.id ? 'opacity-100' : 'opacity-0'
+                                    )}
+                                  />
                                   {u.userName ?? u.email}
                                 </CommandItem>
                               ))}
@@ -509,13 +542,12 @@ export default function CoursesPage() {
                     onChange={e => f('price', Number(e.target.value))}
                     className="pr-14"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">VNĐ</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">
+                    VNĐ
+                  </span>
                 </div>
-                {form.price === 0 && (
-                  <p className="text-xs text-muted-foreground">This course will be free</p>
-                )}
+                {form.price === 0 && <p className="text-xs text-muted-foreground">This course will be free</p>}
               </div>
-
             </div>
           </div>
 
@@ -530,10 +562,13 @@ export default function CoursesPage() {
                   <span className="h-4 w-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
                   Saving…
                 </span>
-              ) : editing ? 'Update Course' : 'Create Course'}
+              ) : editing ? (
+                'Update Course'
+              ) : (
+                'Create Course'
+              )}
             </Button>
           </DialogFooter>
-
         </DialogContent>
       </Dialog>
 

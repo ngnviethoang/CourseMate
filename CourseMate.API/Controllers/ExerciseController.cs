@@ -71,7 +71,7 @@ public class ExerciseController : ControllerBase
         return NoContent();
     }
 
-    #region API Default Code
+    #region Default Code APIs
 
     [HttpPost("{id:guid}/default-codes")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
@@ -84,7 +84,7 @@ public class ExerciseController : ControllerBase
 
     #endregion
 
-    #region API Test Case
+    #region Test Case APIs
 
     [HttpPost("{id:guid}/test-cases")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
@@ -114,7 +114,7 @@ public class ExerciseController : ControllerBase
 
     #endregion
 
-    #region API Submissions
+    #region Submissions APIs
 
     // TODO Need review
     [HttpPost("{id:guid}/submissions")]
