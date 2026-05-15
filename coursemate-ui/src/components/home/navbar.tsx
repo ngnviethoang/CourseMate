@@ -1,9 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { Bell, GraduationCap } from 'lucide-react'
+import { GraduationCap } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
+import { NotificationDropdown } from '@/components/home/notification-dropdown'
 
 export function Navbar() {
   return (
@@ -35,10 +35,7 @@ export function Navbar() {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="relative rounded-full">
-            <Bell className="h-5 w-5" />
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500" />
-          </Button>
+          <NotificationDropdown />
           <Avatar className="h-8 w-8 cursor-pointer ring-2 ring-primary/20">
             <AvatarImage src="https://i.pravatar.cc/150?img=12" alt="Student" />
             <AvatarFallback>HN</AvatarFallback>

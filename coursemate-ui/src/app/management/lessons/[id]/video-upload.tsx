@@ -79,7 +79,9 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
         </h2>
         {videoUrl && !uploading && (
           <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)} className="gap-2">
-            {isEditing ? 'Cancel' : (
+            {isEditing ? (
+              'Cancel'
+            ) : (
               <>
                 <Edit className="h-3.5 w-3.5" /> Change Video
               </>
@@ -141,16 +143,12 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
               </div>
               <div className="flex-1 min-w-0 space-y-3">
                 <div className="relative aspect-video w-full max-w-sm bg-zinc-950 rounded-lg overflow-hidden border border-zinc-800 group shadow-lg">
-                  <video 
-                    src={videoUrl} 
-                    className="w-full h-full object-contain"
-                    controls={false}
-                  />
+                  <video src={videoUrl} className="w-full h-full object-contain" controls={false} />
                   <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <a 
-                      href={videoUrl} 
-                      target="_blank" 
-                      rel="noreferrer" 
+                    <a
+                      href={videoUrl}
+                      target="_blank"
+                      rel="noreferrer"
                       className="bg-white text-black hover:bg-zinc-200 px-4 py-2 rounded-full text-xs font-bold transform translate-y-2 group-hover:translate-y-0 transition-all"
                     >
                       Preview Video
@@ -158,7 +156,9 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <p className="text-[10px] font-mono text-muted-foreground truncate max-w-[250px] bg-muted px-2 py-1 rounded">{videoUrl}</p>
+                  <p className="text-[10px] font-mono text-muted-foreground truncate max-w-[250px] bg-muted px-2 py-1 rounded">
+                    {videoUrl}
+                  </p>
                   <span className="flex items-center gap-1.5 text-[10px] font-bold text-green-500">
                     <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
                     READY

@@ -4,28 +4,35 @@ import { useState, useEffect, useCallback, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import {
-  Trophy, Save, ArrowLeft, Plus, Trash2, Layout,
-  Settings, Users, Calendar, Clock, Shield, Globe,
-  Loader2, GripVertical, CheckCircle2, Search
+  Trophy,
+  Save,
+  ArrowLeft,
+  Plus,
+  Trash2,
+  Layout,
+  Settings,
+  Users,
+  Calendar,
+  Clock,
+  Shield,
+  Globe,
+  Loader2,
+  GripVertical,
+  CheckCircle2,
+  Search
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { contestService, ContestDto, ContestExerciseDto } from '@/lib/contest-service'
 import { api } from '@/lib/api-client'
 import { format } from 'date-fns'
 import Link from 'next/link'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
 export default function ContestDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params)
   const id = resolvedParams.id
   const router = useRouter()
-  
+
   const [contest, setContest] = useState<ContestDto | null>(null)
   const [exercises, setExercises] = useState<ContestExerciseDto[]>([])
   const [loading, setLoading] = useState(true)
@@ -42,7 +49,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
       const data = await contestService.getById(id)
       setContest(data)
       // Fetch exercises for this contest
-      // Note: Backend might return exercises in ContestDto or separate API. 
+      // Note: Backend might return exercises in ContestDto or separate API.
       // Based on my implementation of GetContestByIdQuery, it doesn't return exercises.
       // I should add a query for Contest Exercises or implement it in Workspace.
       // For now let's assume we fetch them separately or update the DTO.
@@ -56,7 +63,9 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
     }
   }, [id])
 
-  useEffect(() => { fetchContest() }, [fetchContest])
+  useEffect(() => {
+    fetchContest()
+  }, [fetchContest])
 
   const handleUpdate = async () => {
     if (!contest) return
@@ -108,11 +117,12 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
     }
   }
 
-  if (loading) return (
-    <div className="h-[60vh] flex items-center justify-center">
-      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-    </div>
-  )
+  if (loading)
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
 
   if (!contest) return <div>Không tìm thấy cuộc thi</div>
 
@@ -127,9 +137,13 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-3xl font-bold">{contest.title}</h1>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border ${
-                contest.status === 'Ongoing' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-50 text-slate-500'
-              }`}>
+              <span
+                className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border ${
+                  contest.status === 'Ongoing'
+                    ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                    : 'bg-slate-50 text-slate-500'
+                }`}
+              >
                 {contest.status}
               </span>
             </div>
@@ -149,7 +163,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <Settings className="h-5 w-5 text-primary" /> Thông tin cơ bản
             </h2>
-            
+
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium">Tiêu đề</label>
@@ -159,7 +173,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                   className="w-full border border-input rounded-lg px-4 py-2.5 bg-background focus:ring-2 focus:ring-primary/20 outline-none"
                 />
               </div>
-              
+
               <div className="space-y-1.5">
                 <label className="text-sm font-medium">Mô tả (Markdown)</label>
                 <textarea
@@ -223,10 +237,15 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                     </div>
                     <div className="space-y-2 max-h-[40vh] overflow-y-auto pr-2">
                       {allExercises.map(ex => (
-                        <div key={ex.id} className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50">
+                        <div
+                          key={ex.id}
+                          className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50"
+                        >
                           <div>
                             <p className="font-medium">{ex.title}</p>
-                            <p className="text-xs text-muted-foreground">{ex.category} • {ex.difficulty}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {ex.category} • {ex.difficulty}
+                            </p>
                           </div>
                           <Button size="sm" variant="ghost" onClick={() => addExercise(ex)}>
                             <Plus className="h-4 w-4" />
@@ -247,29 +266,36 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                 <div className="text-center py-12 border-2 border-dashed rounded-xl text-muted-foreground">
                   Chưa có bài tập nào. Hãy thêm từ thư viện.
                 </div>
-              ) : exercises.map((ex, idx) => (
-                <div key={ex.id} className="flex items-center gap-4 p-4 rounded-lg border bg-card hover:border-primary/30 transition-colors group">
-                  <GripVertical className="h-5 w-5 text-muted-foreground/30 cursor-grab" />
-                  <div className="flex-1">
-                    <p className="font-semibold">{idx + 1}. {ex.title}</p>
-                    <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{ex.description}</p>
-                  </div>
-                  <div className="flex items-center gap-6">
-                    <div className="text-right">
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Trọng số</p>
-                      <p className="font-mono">{ex.scoreWeight}đ</p>
+              ) : (
+                exercises.map((ex, idx) => (
+                  <div
+                    key={ex.id}
+                    className="flex items-center gap-4 p-4 rounded-lg border bg-card hover:border-primary/30 transition-colors group"
+                  >
+                    <GripVertical className="h-5 w-5 text-muted-foreground/30 cursor-grab" />
+                    <div className="flex-1">
+                      <p className="font-semibold">
+                        {idx + 1}. {ex.title}
+                      </p>
+                      <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{ex.description}</p>
                     </div>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-8 w-8 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => removeExercise(ex.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center gap-6">
+                      <div className="text-right">
+                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Trọng số</p>
+                        <p className="font-mono">{ex.scoreWeight}đ</p>
+                      </div>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => removeExercise(ex.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </section>
         </div>
@@ -302,7 +328,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
             <h3 className="font-semibold flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" /> Ràng buộc kỹ thuật
             </h3>
-            
+
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium flex items-center gap-2">

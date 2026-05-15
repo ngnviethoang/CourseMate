@@ -21,7 +21,7 @@ public class OrderController : ControllerBase
         _mediator = mediator;
     }
 
-    #region API Enrollment
+    #region Enrollment APIs
 
     [HttpPost("enrollments/free")]
     [Authorize(Roles = Roles.Student)]
@@ -33,7 +33,7 @@ public class OrderController : ControllerBase
 
     #endregion
 
-    #region API Cart
+    #region Cart APIs
 
     [HttpGet("carts")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Student}")]
@@ -65,7 +65,7 @@ public class OrderController : ControllerBase
 
     #endregion
 
-    #region API Order
+    #region Order APIs
 
     [HttpGet("orders")]
     public async Task<ActionResult> GetOrdersAsync([FromQuery] GetListOrdersQuery request)

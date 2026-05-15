@@ -20,12 +20,7 @@
         "output": "[0,1]"
       }
     ],
-    "constraints": [
-      "2 ≤ nums.length ≤ 10⁴",
-      "-10⁹ ≤ nums[i] ≤ 10⁹",
-      "-10⁹ ≤ target ≤ 10⁹",
-      "Chỉ có đúng một nghiệm"
-    ],
+    "constraints": ["2 ≤ nums.length ≤ 10⁴", "-10⁹ ≤ nums[i] ≤ 10⁹", "-10⁹ ≤ target ≤ 10⁹", "Chỉ có đúng một nghiệm"],
     "hints": [
       "Dùng HashMap để lưu các phần tử đã duyệt qua.",
       "Với mỗi phần tử x, kiểm tra xem (target - x) đã tồn tại trong map chưa."
@@ -69,13 +64,8 @@
         "output": "[\"h\",\"a\",\"n\",\"n\",\"a\",\"H\"]"
       }
     ],
-    "constraints": [
-      "1 ≤ s.length ≤ 10⁵",
-      "s[i] là ký tự ASCII có thể in được"
-    ],
-    "hints": [
-      "Dùng hai con trỏ: một từ đầu, một từ cuối, swap rồi tiến vào giữa."
-    ],
+    "constraints": ["1 ≤ s.length ≤ 10⁵", "s[i] là ký tự ASCII có thể in được"],
+    "hints": ["Dùng hai con trỏ: một từ đầu, một từ cuối, swap rồi tiến vào giữa."],
     "defaultCode": {
       "javascript": "function reverseString(s) {\n    // Viết code của bạn ở đây\n    \n}",
       "python": "class Solution:\n    def reverseString(self, s: list[str]) -> None:\n        pass",
@@ -116,12 +106,8 @@
         "output": "false"
       }
     ],
-    "constraints": [
-      "-2³¹ ≤ x ≤ 2³¹ - 1"
-    ],
-    "hints": [
-      "Có thể chuyển số thành chuỗi để so sánh hoặc đảo ngược các chữ số."
-    ],
+    "constraints": ["-2³¹ ≤ x ≤ 2³¹ - 1"],
+    "hints": ["Có thể chuyển số thành chuỗi để so sánh hoặc đảo ngược các chữ số."],
     "defaultCode": {
       "javascript": "/**\n * @param {number} x\n * @return {boolean}\n */\nfunction isPalindrome(x) {\n    // Viết code của bạn ở đây\n    \n}",
       "python": "class Solution:\n    def isPalindrome(self, x: int) -> bool:\n        pass",
@@ -165,12 +151,8 @@
         "output": "[\"1\",\"2\",\"Fizz\",\"4\",\"Buzz\",\"Fizz\",\"7\",\"8\",\"Fizz\",\"Buzz\",\"11\",\"Fizz\",\"13\",\"14\",\"FizzBuzz\"]"
       }
     ],
-    "constraints": [
-      "1 ≤ n ≤ 10⁴"
-    ],
-    "hints": [
-      "Sử dụng vòng lặp từ 1 đến n và kiểm tra điều kiện chia hết cho 3, 5."
-    ],
+    "constraints": ["1 ≤ n ≤ 10⁴"],
+    "hints": ["Sử dụng vòng lặp từ 1 đến n và kiểm tra điều kiện chia hết cho 3, 5."],
     "defaultCode": {
       "javascript": "function fizzBuzz(n) {\n    // Viết code của bạn ở đây\n    \n}",
       "python": "class Solution:\n    def fizzBuzz(self, n: int) -> list[str]:\n        pass",
@@ -215,10 +197,7 @@
         "output": "[]"
       }
     ],
-    "constraints": [
-      "0 ≤ số nút ≤ 2000",
-      "-1000 ≤ Node.val ≤ 1000"
-    ],
+    "constraints": ["0 ≤ số nút ≤ 2000", "-1000 ≤ Node.val ≤ 1000"],
     "hints": [
       "Sử dụng hàng đợi (Queue) để duyệt BFS.",
       "Tại mỗi tầng, xử lý tất cả các nút hiện có trong queue trước khi sang tầng tiếp theo."
@@ -262,13 +241,8 @@
         "output": "-1"
       }
     ],
-    "constraints": [
-      "Mảng không rỗng",
-      "Số lượng phần tử ≤ 10⁵"
-    ],
-    "hints": [
-      "Lưu biến max hiện tại và duyệt qua mảng để cập nhật."
-    ],
+    "constraints": ["Mảng không rỗng", "Số lượng phần tử ≤ 10⁵"],
+    "hints": ["Lưu biến max hiện tại và duyệt qua mảng để cập nhật."],
     "defaultCode": {
       "javascript": "function findMax(nums) {\n    // Viết code của bạn ở đây\n    \n}",
       "python": "def find_max(nums):\n    pass",
@@ -303,12 +277,8 @@
         "output": "0"
       }
     ],
-    "constraints": [
-      "-10⁹ ≤ a, b ≤ 10⁹"
-    ],
-    "hints": [
-      "Đọc dữ liệu từ stdin và cộng hai số lại."
-    ],
+    "constraints": ["-10⁹ ≤ a, b ≤ 10⁹"],
+    "hints": ["Đọc dữ liệu từ stdin và cộng hai số lại."],
     "defaultCode": {
       "javascript": "// Ví dụ JavaScript (Deno)\nconst input = Deno.readTextFileSync(0);\nconst [a, b] = input.split(' ').map(Number);\nconsole.log(a + b);",
       "python": "import sys\n# Đọc tất cả từ stdin\ndata = sys.stdin.read().split()\na = int(data[0])\nb = int(data[1])\nprint(a + b)",
@@ -348,12 +318,8 @@
         "output": "-5"
       }
     ],
-    "constraints": [
-      "-10⁹ ≤ a, b ≤ 10⁹"
-    ],
-    "hints": [
-      "Dùng toán tử trừ (-)."
-    ],
+    "constraints": ["-10⁹ ≤ a, b ≤ 10⁹"],
+    "hints": ["Dùng toán tử trừ (-)."],
     "defaultCode": {
       "javascript": "const input = Deno.readTextFileSync(0);\nconst [a, b] = input.split(' ').map(Number);\nconsole.log(a - b);",
       "python": "import sys\ndata = sys.stdin.read().split()\na, b = map(int, data[:2])\nprint(a - b)",

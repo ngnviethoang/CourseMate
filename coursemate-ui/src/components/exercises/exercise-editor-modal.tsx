@@ -117,20 +117,25 @@ const LANGUAGE_MAPPING: Record<string, string> = {
 }
 
 const DEFAULT_TEMPLATES: Record<string, string> = {
-  'python-3.14': 'import sys\n\ndef solve():\n    # Đọc dữ liệu từ stdin\n    # input_data = sys.stdin.read().split()\n    \n    # Logic của bạn ở đây\n    print("Hello from Python")\n\nif __name__ == "__main__":\n    solve()',
-  'g++-15': '#include <iostream>\n#include <vector>\n#include <string>\n\nusing namespace std;\n\nint main() {\n    // Giải quyết bài toán tại đây\n    \n    return 0;\n}',
+  'python-3.14':
+    'import sys\n\ndef solve():\n    # Đọc dữ liệu từ stdin\n    # input_data = sys.stdin.read().split()\n    \n    # Logic của bạn ở đây\n    print("Hello from Python")\n\nif __name__ == "__main__":\n    solve()',
+  'g++-15':
+    '#include <iostream>\n#include <vector>\n#include <string>\n\nusing namespace std;\n\nint main() {\n    // Giải quyết bài toán tại đây\n    \n    return 0;\n}',
   'gcc-15': '#include <stdio.h>\n\nint main() {\n    // Giải quyết bài toán tại đây\n    \n    return 0;\n}',
-  'openjdk-25': 'import java.util.*;\n\npublic class Solution {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        // Viết code của bạn tại đây\n    }\n}',
-  'dotnet-csharp-9': 'using System;\n\nclass Program {\n    static void Main() {\n        // Đọc dữ liệu: string line = Console.ReadLine();\n        Console.WriteLine("Hello C#");\n    }\n}',
+  'openjdk-25':
+    'import java.util.*;\n\npublic class Solution {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        // Viết code của bạn tại đây\n    }\n}',
+  'dotnet-csharp-9':
+    'using System;\n\nclass Program {\n    static void Main() {\n        // Đọc dữ liệu: string line = Console.ReadLine();\n        Console.WriteLine("Hello C#");\n    }\n}',
   'go-1.26': 'package main\n\nimport "fmt"\n\nfunc main() {\n    // Code của bạn\n    fmt.Println("Hello Go")\n}',
-  'rust-1.93': 'use std::io;\n\nfn main() {\n    let mut input = String::new();\n    io::stdin().read_line(&mut input).unwrap();\n    println!("Hello Rust");\n}',
-  'typescript-deno': 'const input = new TextDecoder().decode(await Deno.readAll(Deno.stdin));\nconsole.log("Hello TypeScript (Deno)");',
-  'php-8.5': '<?php\n\n$stdin = fopen(\'php://stdin\', \'r\');\necho "Hello PHP";',
+  'rust-1.93':
+    'use std::io;\n\nfn main() {\n    let mut input = String::new();\n    io::stdin().read_line(&mut input).unwrap();\n    println!("Hello Rust");\n}',
+  'typescript-deno':
+    'const input = new TextDecoder().decode(await Deno.readAll(Deno.stdin));\nconsole.log("Hello TypeScript (Deno)");',
+  'php-8.5': "<?php\n\n$stdin = fopen('php://stdin', 'r');\necho \"Hello PHP\";",
   'ruby-4.0': 'input = gets\nputs "Hello Ruby"',
   'dotnet-fsharp-9': 'open System\n\n[<EntryPoint>]\nlet main argv = \n    printfn "Hello F#"\n    0',
   'haskell-9.12': 'main :: IO ()\nmain = do\n    putStrLn "Hello Haskell"'
 }
-
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -163,7 +168,14 @@ export function ExerciseEditorModal({
   const [stdin, setStdin] = useState('')
   const [running, setRunning] = useState(false)
   const [results, setResults] = useState<RunResult[] | null>(null)
-  const [rawOutput, setRawOutput] = useState<{ stdout: string; stderr: string; time?: string; memory?: string; status?: string; exitCode?: number } | null>(null)
+  const [rawOutput, setRawOutput] = useState<{
+    stdout: string
+    stderr: string
+    time?: string
+    memory?: string
+    status?: string
+    exitCode?: number
+  } | null>(null)
   const [leftTab, setLeftTab] = useState<'problem' | 'hints'>('problem')
   const [rightTab, setRightTab] = useState<'editor' | 'console' | 'history'>('editor')
 
@@ -216,7 +228,6 @@ export function ExerciseEditorModal({
       setStdin(firstInput)
     }
   }, [exercise])
-
 
   // Esc to close
   useEffect(() => {
@@ -286,8 +297,14 @@ export function ExerciseEditorModal({
         const actual = (response.output || '').replace(/\r\n/g, '\n').trim()
         const expected = (ex.output || '').replace(/\r\n/g, '\n').trim()
 
-        const normActual = actual.split('\n').map(l => l.trimEnd()).join('\n')
-        const normExpected = expected.split('\n').map(l => l.trimEnd()).join('\n')
+        const normActual = actual
+          .split('\n')
+          .map(l => l.trimEnd())
+          .join('\n')
+        const normExpected = expected
+          .split('\n')
+          .map(l => l.trimEnd())
+          .join('\n')
         const isPassed = normActual === normExpected
 
         const result: RunResult = {
@@ -354,8 +371,14 @@ export function ExerciseEditorModal({
         const actual = (response.output || '').replace(/\r\n/g, '\n').trim()
         const expected = (tc.expectedOutput || '').replace(/\r\n/g, '\n').trim()
 
-        const normActual = actual.split('\n').map(l => l.trimEnd()).join('\n')
-        const normExpected = expected.split('\n').map(l => l.trimEnd()).join('\n')
+        const normActual = actual
+          .split('\n')
+          .map(l => l.trimEnd())
+          .join('\n')
+        const normExpected = expected
+          .split('\n')
+          .map(l => l.trimEnd())
+          .join('\n')
         const isPassed = normActual === normExpected
 
         if (isPassed) passedCount++
@@ -412,7 +435,7 @@ export function ExerciseEditorModal({
 
       // Update local history by fetching from server to ensure data consistency
       await fetchSubmissions()
-      
+
       if (onSubmitSuccess) {
         onSubmitSuccess({ score, passed: isAllPassed })
       }
@@ -553,7 +576,7 @@ export function ExerciseEditorModal({
             <select
               className="bg-transparent text-[11px] font-medium px-2 py-0.5 outline-none text-neutral-200 cursor-pointer w-full"
               value={selectedLang?.id || ''}
-              onChange={(e) => {
+              onChange={e => {
                 const l = supportedLangs.find(x => x.id === e.target.value)
                 if (l) handleLangChange(l)
               }}
@@ -694,10 +717,11 @@ export function ExerciseEditorModal({
                   key={t.key}
                   onClick={() => setLeftTab(t.key)}
                   title={t.label}
-                  className={`group relative flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${leftTab === t.key
-                    ? 'bg-blue-500/15 text-blue-400'
-                    : 'text-neutral-600 hover:text-neutral-300 hover:bg-white/5'
-                    }`}
+                  className={`group relative flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
+                    leftTab === t.key
+                      ? 'bg-blue-500/15 text-blue-400'
+                      : 'text-neutral-600 hover:text-neutral-300 hover:bg-white/5'
+                  }`}
                 >
                   {t.icon}
                   {leftTab === t.key && (
@@ -739,10 +763,11 @@ export function ExerciseEditorModal({
                 <button
                   key={t.key}
                   onClick={() => setRightTab(t.key)}
-                  className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors ${rightTab === t.key
-                    ? 'border-blue-500 text-blue-400'
-                    : 'border-transparent text-neutral-500 hover:text-neutral-300'
-                    }`}
+                  className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors ${
+                    rightTab === t.key
+                      ? 'border-blue-500 text-blue-400'
+                      : 'border-transparent text-neutral-500 hover:text-neutral-300'
+                  }`}
                 >
                   {t.icon}
                   {t.label}
@@ -758,17 +783,29 @@ export function ExerciseEditorModal({
               <MonacoEditor
                 height="100%"
                 language={
-                  selectedLang?.id.split('-')[0] === 'openjdk' ? 'java' :
-                    selectedLang?.id.split('-')[0] === 'dotnet' ? (selectedLang?.id.includes('csharp') ? 'csharp' : 'fsharp') :
-                      selectedLang?.id.startsWith('g++') || selectedLang?.id.startsWith('gcc') ? 'cpp' :
-                        selectedLang?.id.startsWith('python') ? 'python' :
-                          selectedLang?.id.startsWith('go') ? 'go' :
-                            selectedLang?.id.startsWith('rust') ? 'rust' :
-                              selectedLang?.id.startsWith('typescript') ? 'typescript' :
-                                selectedLang?.id.startsWith('php') ? 'php' :
-                                  selectedLang?.id.startsWith('ruby') ? 'ruby' :
-                                    selectedLang?.id.startsWith('haskell') ? 'haskell' :
-                                      'javascript'
+                  selectedLang?.id.split('-')[0] === 'openjdk'
+                    ? 'java'
+                    : selectedLang?.id.split('-')[0] === 'dotnet'
+                      ? selectedLang?.id.includes('csharp')
+                        ? 'csharp'
+                        : 'fsharp'
+                      : selectedLang?.id.startsWith('g++') || selectedLang?.id.startsWith('gcc')
+                        ? 'cpp'
+                        : selectedLang?.id.startsWith('python')
+                          ? 'python'
+                          : selectedLang?.id.startsWith('go')
+                            ? 'go'
+                            : selectedLang?.id.startsWith('rust')
+                              ? 'rust'
+                              : selectedLang?.id.startsWith('typescript')
+                                ? 'typescript'
+                                : selectedLang?.id.startsWith('php')
+                                  ? 'php'
+                                  : selectedLang?.id.startsWith('ruby')
+                                    ? 'ruby'
+                                    : selectedLang?.id.startsWith('haskell')
+                                      ? 'haskell'
+                                      : 'javascript'
                 }
                 value={code}
                 onChange={v => setCode(v ?? '')}
@@ -793,10 +830,12 @@ export function ExerciseEditorModal({
               <div className="flex-1 overflow-y-auto bg-[#0a0a12] p-5 space-y-5">
                 {/* Custom Input */}
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Custom Input (stdin)</Label>
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">
+                    Custom Input (stdin)
+                  </Label>
                   <textarea
                     value={stdin}
-                    onChange={(e) => setStdin(e.target.value)}
+                    onChange={e => setStdin(e.target.value)}
                     placeholder="Nhập dữ liệu đầu vào..."
                     className="w-full h-20 bg-[#1c1c28] border border-white/8 rounded-lg p-3 text-xs font-mono outline-none focus:border-blue-500/50 transition-colors resize-none"
                   />
@@ -817,7 +856,8 @@ export function ExerciseEditorModal({
                       <Play className="h-6 w-6 text-neutral-500" />
                     </div>
                     <p className="text-xs text-neutral-500">
-                      Nhấn <strong className="text-neutral-300">Chạy thử</strong> hoặc <strong className="text-neutral-300">Nộp bài</strong>
+                      Nhấn <strong className="text-neutral-300">Chạy thử</strong> hoặc{' '}
+                      <strong className="text-neutral-300">Nộp bài</strong>
                     </p>
                   </div>
                 )}
@@ -825,22 +865,29 @@ export function ExerciseEditorModal({
                 {/* Submission Results Summary */}
                 {results && results.length > 0 && (
                   <div className="space-y-4">
-                    <div className={`p-4 rounded-xl border flex items-center gap-4 ${results.every(r => r.passed)
-                      ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                      : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
-                      }`}>
-                      {results.every(r => r.passed) ? <CheckCircle2 className="h-6 w-6" /> : <XCircle className="h-6 w-6" />}
+                    <div
+                      className={`p-4 rounded-xl border flex items-center gap-4 ${
+                        results.every(r => r.passed)
+                          ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                          : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                      }`}
+                    >
+                      {results.every(r => r.passed) ? (
+                        <CheckCircle2 className="h-6 w-6" />
+                      ) : (
+                        <XCircle className="h-6 w-6" />
+                      )}
                       <div className="flex-1">
                         <p className="text-sm font-bold">
-                          {results.every(r => r.passed) ? 'Vượt qua tất cả test cases! 🎉' : 'Một số test case không vượt qua.'}
+                          {results.every(r => r.passed)
+                            ? 'Vượt qua tất cả test cases! 🎉'
+                            : 'Một số test case không vượt qua.'}
                         </p>
                         <div className="mt-2 flex flex-wrap items-center gap-4 text-xs font-medium opacity-90">
                           <span className="bg-white/10 px-2.5 py-1 rounded-md">
                             🎯 {passedCount}/{results.length} đúng
                           </span>
-                          <span className="bg-white/10 px-2.5 py-1 rounded-md">
-                            ⏱ {(totalTime).toFixed(3)}s
-                          </span>
+                          <span className="bg-white/10 px-2.5 py-1 rounded-md">⏱ {totalTime.toFixed(3)}s</span>
                           <span className="bg-white/10 px-2.5 py-1 rounded-md">
                             💾 {(totalMemory / 1024).toFixed(1)} MB
                           </span>
@@ -854,35 +901,64 @@ export function ExerciseEditorModal({
 
                     <div className="space-y-2">
                       {results.map((r, i) => (
-                        <div key={i} className={`p-3 rounded-lg border text-[11px] font-mono ${r.passed ? 'bg-[#161d16] border-emerald-500/20' : 'bg-[#1d1616] border-red-500/20'
-                          }`}>
+                        <div
+                          key={i}
+                          className={`p-3 rounded-lg border text-[11px] font-mono ${
+                            r.passed ? 'bg-[#161d16] border-emerald-500/20' : 'bg-[#1d1616] border-red-500/20'
+                          }`}
+                        >
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
-                              {r.passed ? <CheckCircle2 className="h-3 w-3 text-emerald-500" /> : <XCircle className="h-3 w-3 text-red-500" />}
-                              <span className={r.passed ? 'text-emerald-400' : 'text-red-400'}>Test {i + 1}: {r.description || (r.isHidden ? 'Hidden Test Case' : 'Test Case')}</span>
-                              {r.isHidden && <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-500 font-bold tracking-wider">ẨN</span>}
+                              {r.passed ? (
+                                <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                              ) : (
+                                <XCircle className="h-3 w-3 text-red-500" />
+                              )}
+                              <span className={r.passed ? 'text-emerald-400' : 'text-red-400'}>
+                                Test {i + 1}: {r.description || (r.isHidden ? 'Hidden Test Case' : 'Test Case')}
+                              </span>
+                              {r.isHidden && (
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-500 font-bold tracking-wider">
+                                  ẨN
+                                </span>
+                              )}
                             </div>
-                            <span className={r.passed ? 'text-emerald-500' : 'text-red-500'}>{r.passed ? 'PASSED' : 'FAILED'}</span>
+                            <span className={r.passed ? 'text-emerald-500' : 'text-red-500'}>
+                              {r.passed ? 'PASSED' : 'FAILED'}
+                            </span>
                           </div>
                           {!r.passed && (
                             <div className="space-y-2 pl-5 pt-1">
                               {r.isHidden ? (
                                 <div className="text-neutral-500 italic mt-1 bg-white/5 px-3 py-2 rounded">
-                                  Test case này được ẩn để thử thách code của bạn. Bạn hãy kiểm tra lại các trường hợp đặc biệt nhé.
+                                  Test case này được ẩn để thử thách code của bạn. Bạn hãy kiểm tra lại các trường hợp
+                                  đặc biệt nhé.
                                 </div>
                               ) : (
                                 <>
                                   <div>
-                                    <span className="text-neutral-500 font-sans text-[10px] uppercase tracking-wider block mb-1">Input:</span>
-                                    <pre className="bg-white/5 p-2 rounded text-neutral-300 whitespace-pre-wrap">{r.case}</pre>
+                                    <span className="text-neutral-500 font-sans text-[10px] uppercase tracking-wider block mb-1">
+                                      Input:
+                                    </span>
+                                    <pre className="bg-white/5 p-2 rounded text-neutral-300 whitespace-pre-wrap">
+                                      {r.case}
+                                    </pre>
                                   </div>
                                   <div>
-                                    <span className="text-neutral-500 font-sans text-[10px] uppercase tracking-wider block mb-1">Expected:</span>
-                                    <pre className="bg-emerald-500/10 border border-emerald-500/20 p-2 rounded text-emerald-400 whitespace-pre-wrap">{r.expected}</pre>
+                                    <span className="text-neutral-500 font-sans text-[10px] uppercase tracking-wider block mb-1">
+                                      Expected:
+                                    </span>
+                                    <pre className="bg-emerald-500/10 border border-emerald-500/20 p-2 rounded text-emerald-400 whitespace-pre-wrap">
+                                      {r.expected}
+                                    </pre>
                                   </div>
                                   <div>
-                                    <span className="text-neutral-500 font-sans text-[10px] uppercase tracking-wider block mb-1">Actual:</span>
-                                    <pre className="bg-red-500/10 border border-red-500/20 p-2 rounded text-red-400 whitespace-pre-wrap">{r.actual || <span className="italic opacity-50">Không có output</span>}</pre>
+                                    <span className="text-neutral-500 font-sans text-[10px] uppercase tracking-wider block mb-1">
+                                      Actual:
+                                    </span>
+                                    <pre className="bg-red-500/10 border border-red-500/20 p-2 rounded text-red-400 whitespace-pre-wrap">
+                                      {r.actual || <span className="italic opacity-50">Không có output</span>}
+                                    </pre>
                                   </div>
                                 </>
                               )}
@@ -899,10 +975,13 @@ export function ExerciseEditorModal({
                     {rawOutput.stdout && (
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <Label className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Standard Output (stdout)</Label>
+                          <Label className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">
+                            Standard Output (stdout)
+                          </Label>
                           {rawOutput.time && (
                             <span className="text-[10px] text-neutral-500 font-mono">
-                              {rawOutput.status} • {rawOutput.time}s • {Math.round(parseInt(rawOutput.memory || '0') / 1024)}MB • Exit: {rawOutput.exitCode}
+                              {rawOutput.status} • {rawOutput.time}s •{' '}
+                              {Math.round(parseInt(rawOutput.memory || '0') / 1024)}MB • Exit: {rawOutput.exitCode}
                             </span>
                           )}
                         </div>
@@ -914,7 +993,9 @@ export function ExerciseEditorModal({
 
                     {rawOutput.stderr && (
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-bold uppercase tracking-widest text-red-500">Error Output (stderr)</Label>
+                        <Label className="text-[10px] font-bold uppercase tracking-widest text-red-500">
+                          Error Output (stderr)
+                        </Label>
                         <pre className="bg-red-500/5 border border-red-500/20 rounded-lg p-4 text-xs font-mono text-red-300 text-wrap">
                           {rawOutput.stderr}
                         </pre>
@@ -931,24 +1012,32 @@ export function ExerciseEditorModal({
 
                 {/* Test Cases Quick Access */}
                 <div className="pt-4 border-t border-white/5">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-3 block">Sử dụng Test Case</Label>
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-3 block">
+                    Sử dụng Test Case
+                  </Label>
                   <div className="grid grid-cols-1 gap-2">
-                    {exercise.testCases.filter(tc => !tc.isHidden).map((tc, i) => (
-                      <button
-                        key={i}
-                        onClick={() => {
-                          setStdin(tc.input)
-                          handleRun(tc.input)
-                        }}
-                        className="flex items-center justify-between p-3 rounded-lg bg-[#16161e] border border-white/5 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all text-left group"
-                      >
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[11px] font-medium text-neutral-300 truncate">{tc.description || `Test case ${i + 1}`}</p>
-                          <code className="text-[10px] text-neutral-500 truncate block mt-0.5">Input: {tc.input}</code>
-                        </div>
-                        <Play className="h-3 w-3 text-neutral-600 group-hover:text-blue-400 ml-3" />
-                      </button>
-                    ))}
+                    {exercise.testCases
+                      .filter(tc => !tc.isHidden)
+                      .map((tc, i) => (
+                        <button
+                          key={i}
+                          onClick={() => {
+                            setStdin(tc.input)
+                            handleRun(tc.input)
+                          }}
+                          className="flex items-center justify-between p-3 rounded-lg bg-[#16161e] border border-white/5 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all text-left group"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] font-medium text-neutral-300 truncate">
+                              {tc.description || `Test case ${i + 1}`}
+                            </p>
+                            <code className="text-[10px] text-neutral-500 truncate block mt-0.5">
+                              Input: {tc.input}
+                            </code>
+                          </div>
+                          <Play className="h-3 w-3 text-neutral-600 group-hover:text-blue-400 ml-3" />
+                        </button>
+                      ))}
                   </div>
                 </div>
               </div>
@@ -972,7 +1061,11 @@ export function ExerciseEditorModal({
                       <div key={sub.id || i} className="bg-[#1c1c28] border border-white/5 rounded-lg p-3">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            {sub.passed ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <XCircle className="h-4 w-4 text-red-500" />}
+                            {sub.passed ? (
+                              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                            ) : (
+                              <XCircle className="h-4 w-4 text-red-500" />
+                            )}
                             <span className={`font-bold ${sub.passed ? 'text-emerald-500' : 'text-red-500'}`}>
                               {sub.passed ? 'Accepted' : 'Failed'}
                             </span>

@@ -101,11 +101,10 @@ public class GenerateOutlineJob
         await _dbContext.SaveChangesAsync(ct);
         _logger.LogInformation("Finished generate outline for lesson {LessonId}", lessonMaterial.LessonId);
 
-        await _notificationService.NotifyDocumentProcessedAsync(new NotificationDto
-        {
-            ReceiverId = lessonMaterial.UserId ?? Guid.Empty,
-            Title = "Document processed",
-            Message = "Outline has been generated"
-        }, ct);
+        await _notificationService.CreateAndSendAsync(
+            lessonMaterial.UserId ?? Guid.Empty,
+            "Tạo outline thành công",
+            "Outline cho bài giảng đã được tạo xong.",
+            ct);
     }
 }

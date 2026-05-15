@@ -20,8 +20,6 @@ public class CodeRunner : ControllerBase
         _mediator = mediator;
     }
 
-    #region API Code Runner
-
     [HttpPost]
     public async Task<ActionResult> RunAsync(RunCodeCommand request)
     {
@@ -36,6 +34,4 @@ public class CodeRunner : ControllerBase
         IEnumerable<CompilerInfo> result = await _mediator.Send(new GetListCompilersQuery());
         return Ok(result);
     }
-
-    #endregion
 }

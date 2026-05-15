@@ -2,6 +2,7 @@ using CourseMate.Application.Commands.Contests;
 using CourseMate.Application.Queries.Contests;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
+using CourseMate.Contracts.DTOs.AntiCheat;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.DTOs.Exercises;
 using MediatR;
@@ -125,6 +126,43 @@ public class ContestController : ControllerBase
     public async Task<ActionResult> GetContestLeaderboard(Guid id)
     {
         ContestLeaderboardDto? result = await _mediator.Send(new GetContestLeaderboardQuery { ContestId = id });
+        return Ok(result);
+    }
+
+    #endregion
+
+    #region Anti-Cheat APIs
+
+    [HttpGet("{id:guid}/violations")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> GetContestViolations(Guid id)
+    {
+        ContestViolationsDto? result = await _mediator.Send(new GetContestViolationsQuery { ContestId = id });
+        return Ok(result);
+    }
+
+    [HttpPost("{id:guid}/disqualify/{studentId:guid}")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> DisqualifyStudent(Guid id, Guid studentId, [FromBody] DisqualifyStudentRequest request)
+    {
+        ResultIdDto result = await _mediator.Send(new DisqualifyStudentCommand
+        {
+            ContestId = id,
+            StudentId = studentId,
+            Reason = request.Reason
+        });
+        return Ok(result);
+    }
+
+    [HttpPost("{id:guid}/reinstate/{studentId:guid}")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> ReinstateStudent(Guid id, Guid studentId)
+    {
+        ResultIdDto result = await _mediator.Send(new ReinstateStudentCommand
+        {
+            ContestId = id,
+            StudentId = studentId
+        });
         return Ok(result);
     }
 

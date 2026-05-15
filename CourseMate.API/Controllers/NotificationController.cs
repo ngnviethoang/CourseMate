@@ -1,3 +1,4 @@
+using CourseMate.Application.Commands.Notifications;
 using CourseMate.Application.Queries.Notifications;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
@@ -24,5 +25,26 @@ public class NotificationController : ControllerBase
     {
         PagedDto<NotificationDto> result = await _mediator.Send(request);
         return Ok(result);
+    }
+
+    [HttpGet("unread-count")]
+    public async Task<ActionResult> GetUnreadCount()
+    {
+        int count = await _mediator.Send(new GetUnreadCountQuery());
+        return Ok(new { count });
+    }
+
+    [HttpPut("{id:guid}/read")]
+    public async Task<ActionResult> MarkAsRead(Guid id)
+    {
+        ResultIdDto result = await _mediator.Send(new MarkNotificationReadCommand { NotificationId = id });
+        return Ok(result);
+    }
+
+    [HttpPut("read-all")]
+    public async Task<ActionResult> MarkAllAsRead()
+    {
+        int count = await _mediator.Send(new MarkAllNotificationsReadCommand());
+        return Ok(new { count });
     }
 }

@@ -1,18 +1,39 @@
 'use client'
 
-import { use, useState, useEffect, useCallback, useRef } from 'react'
+import { use, useState, useEffect, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
-  ArrowLeft, Play, RotateCcw, CheckCircle2, XCircle, Clock, Trophy,
-  Code2, Terminal, Loader2, GripVertical, Menu, Flame, Send,
-  AlertCircle, Shield, History, Lightbulb, Info, BookOpen, Eye, EyeOff
+  ArrowLeft,
+  Play,
+  RotateCcw,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Trophy,
+  Code2,
+  Terminal,
+  Loader2,
+  GripVertical,
+  Menu,
+  Flame,
+  Send,
+  AlertCircle,
+  Shield,
+  History,
+  Lightbulb,
+  Info,
+  BookOpen,
+  Eye,
+  EyeOff,
+  Ban
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { contestService, ContestWorkspaceDto, ContestExerciseDto } from '@/lib/contest-service'
 import { runnerCodeService } from '@/lib/runner-code-service'
 import { toast } from 'sonner'
+import { useAntiCheat } from '@/hooks/useAntiCheat'
 import type { LanguageDto } from '@/lib/types'
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
@@ -27,8 +48,10 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
 })
 
 const DEFAULT_TEMPLATES: Record<string, string> = {
-  'python-3.14': 'import sys\n\ndef solve():\n    # Logic của bạn ở đây\n    print("Hello from Python")\n\nif __name__ == "__main__":\n    solve()',
-  'openjdk-25': 'import java.util.*;\n\npublic class Solution {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        // Viết code của bạn tại đây\n    }\n}',
+  'python-3.14':
+    'import sys\n\ndef solve():\n    # Logic của bạn ở đây\n    print("Hello from Python")\n\nif __name__ == "__main__":\n    solve()',
+  'openjdk-25':
+    'import java.util.*;\n\npublic class Solution {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        // Viết code của bạn tại đây\n    }\n}',
   'g++-15': '#include <iostream>\nusing namespace std;\n\nint main() {\n    return 0;\n}',
   'typescript-deno': 'console.log("Hello TypeScript");'
 }
@@ -38,11 +61,11 @@ const DEFAULT_TEMPLATES: Record<string, string> = {
 function useCountdown(joinTime?: string, durationInMinutes?: number) {
   const getRemaining = useCallback(() => {
     if (!joinTime || !durationInMinutes) return { h: 0, m: 0, s: 0, total: 0 }
-    
+
     const startTime = new Date(joinTime).getTime()
     const endTime = startTime + durationInMinutes * 60 * 1000
     const diff = endTime - Date.now()
-    
+
     if (diff <= 0) return { h: 0, m: 0, s: 0, total: 0 }
     const s = Math.floor(diff / 1000)
     return { h: Math.floor(s / 3600), m: Math.floor((s % 3600) / 60), s: s % 60, total: diff }
@@ -63,25 +86,25 @@ function useCountdown(joinTime?: string, durationInMinutes?: number) {
 export default function ContestArenaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
-  
+
   const [arena, setArena] = useState<ContestWorkspaceDto | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedExercise, setSelectedExercise] = useState<ContestExerciseDto | null>(null)
-  
+
   // Language & Code state
   const [supportedLangs, setSupportedLangs] = useState<LanguageDto[]>([])
   const [selectedLang, setSelectedLang] = useState<LanguageDto | null>(null)
   const [codes, setCodes] = useState<Record<string, Record<string, string>>>({})
-  
+
   const [running, setRunning] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [leftTab, setLeftTab] = useState<'problem' | 'hints'>('problem')
   const [rightTab, setRightTab] = useState<'editor' | 'console'>('editor')
-  
+
   // Execution Results
   const [results, setResults] = useState<any[]>([])
   const [isFinishing, setIsFinishing] = useState(false)
-  
+
   // Sidebar state
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [hPct, setHPct] = useState(24)
@@ -89,20 +112,30 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
   const timer = useCountdown(arena?.joinTime, arena?.durationInMinutes)
   const timerDanger = timer.total < 5 * 60 * 1000 && timer.total > 0
 
+  // Anti-cheat integration
+  const [disqualifiedReason, setDisqualifiedReason] = useState<string | null>(null)
+  const antiCheat = useAntiCheat({
+    contestId: id,
+    antiCheatLevel: arena?.antiCheatLevel ?? 'None',
+    maxViolations: arena?.maxViolations ?? 5,
+    initialViolationCount: arena?.violationCount ?? 0,
+    onDisqualified: reason => setDisqualifiedReason(reason)
+  })
+
   const fetchData = useCallback(async () => {
     try {
       const [workspaceData, langs] = await Promise.all([
         contestService.getWorkspace(id),
         runnerCodeService.getLanguages()
       ])
-      
+
       setArena(workspaceData)
       setSupportedLangs(langs)
-      
+
       if (workspaceData.exercises.length > 0 && !selectedExercise) {
         setSelectedExercise(workspaceData.exercises[0])
       }
-      
+
       if (langs.length > 0 && !selectedLang) {
         setSelectedLang(langs[0])
       }
@@ -120,7 +153,6 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
         }
       })
       setCodes(prev => ({ ...initialCodes, ...prev }))
-
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Không thể vào phòng thi')
       router.push(`/contests/${id}`)
@@ -129,20 +161,16 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
     }
   }, [id, router, selectedExercise, selectedLang])
 
-  useEffect(() => { fetchData() }, [fetchData])
-
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        toast.warning('Cảnh báo Anti-cheat: Bạn đã chuyển tab. Hành vi này đang được ghi lại!', {
-          duration: 5000,
-          icon: <Shield className="h-5 w-5 text-amber-500" />
-        })
-      }
+    fetchData()
+  }, [fetchData])
+
+  // Check if already disqualified on load
+  useEffect(() => {
+    if (arena?.isDisqualified) {
+      setDisqualifiedReason('Bạn đã bị loại khỏi cuộc thi này.')
     }
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [])
+  }, [arena?.isDisqualified])
 
   const getCode = (exId: string, langId: string) => {
     return codes[exId]?.[langId] || ''
@@ -161,13 +189,15 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
     if (examples.length === 0) {
       try {
         const res = await runnerCodeService.run({ compiler: selectedLang.id, code, input: '' })
-        setResults([{
-          passed: !res.error && res.exit_code === 0,
-          case: 'Chạy thử',
-          expected: '(không có dữ liệu mẫu)',
-          actual: res.output || res.error || 'Không có output',
-          description: 'Code được biên dịch và chạy với input trống'
-        }])
+        setResults([
+          {
+            passed: !res.error && res.exit_code === 0,
+            case: 'Chạy thử',
+            expected: '(không có dữ liệu mẫu)',
+            actual: res.output || res.error || 'Không có output',
+            description: 'Code được biên dịch và chạy với input trống'
+          }
+        ])
       } catch {
         toast.error('Lỗi khi chạy code')
       } finally {
@@ -192,7 +222,14 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
               isHidden: false
             }
           } catch {
-            return { passed: false, case: `Ví dụ ${idx + 1}`, expected: ex.output, actual: 'Lỗi hệ thống', description: '', isHidden: false }
+            return {
+              passed: false,
+              case: `Ví dụ ${idx + 1}`,
+              expected: ex.output,
+              actual: 'Lỗi hệ thống',
+              description: '',
+              isHidden: false
+            }
           }
         })
       )
@@ -214,10 +251,10 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
     try {
       // NOTE: For true "chỉnh chu" logic, this should call a backend endpoint that runs all test cases.
       // For now, we simulate using all test cases provided in the DTO (including hidden ones, but we can't run hidden ones here).
-      
+
       const testCases = selectedExercise.testCases || []
       const examples = selectedExercise.examples || []
-      
+
       const runResults = await Promise.all(
         testCases.map(async (tc, idx) => {
           if (tc.isHidden) {
@@ -231,7 +268,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
               isHidden: true
             }
           }
-          
+
           try {
             const res = await runnerCodeService.run({ compiler: selectedLang.id, code, input: tc.input })
             const actual = (res.output || '').trim()
@@ -245,7 +282,14 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
               isHidden: false
             }
           } catch {
-            return { passed: false, case: `Test Case ${idx + 1}`, expected: tc.expectedOutput, actual: 'Lỗi hệ thống', description: tc.description, isHidden: false }
+            return {
+              passed: false,
+              case: `Test Case ${idx + 1}`,
+              expected: tc.expectedOutput,
+              actual: 'Lỗi hệ thống',
+              description: tc.description,
+              isHidden: false
+            }
           }
         })
       )
@@ -259,7 +303,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
         code,
         passed: score === 100,
         score,
-        totalTime: "0.1",
+        totalTime: '0.1',
         totalMemory: 12
       })
 
@@ -291,13 +335,42 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
     }
   }
 
-  if (loading) return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0a0a12]">
-      <Loader2 className="h-10 w-10 animate-spin text-primary" />
-    </div>
-  )
+  if (loading)
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0a0a12]">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      </div>
+    )
 
   const myScore = arena?.exercises.reduce((sum, ex) => sum + (ex.bestScore || 0), 0) || 0
+
+  // Disqualification overlay
+  if (disqualifiedReason) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0a0a0f]/95 backdrop-blur-xl">
+        <div className="max-w-lg w-full mx-4 text-center space-y-8">
+          <div className="w-24 h-24 mx-auto rounded-full bg-red-500/10 border-2 border-red-500/30 flex items-center justify-center">
+            <Ban className="h-12 w-12 text-red-500" />
+          </div>
+          <div className="space-y-3">
+            <h1 className="text-3xl font-black text-red-400 tracking-tight">Bạn đã bị loại</h1>
+            <p className="text-neutral-400 text-sm leading-relaxed max-w-sm mx-auto">{disqualifiedReason}</p>
+          </div>
+          <div className="p-4 rounded-2xl bg-red-500/5 border border-red-500/10">
+            <p className="text-xs text-neutral-500">
+              Số lần vi phạm: <span className="text-red-400 font-bold">{antiCheat.violationCount}</span>
+            </p>
+          </div>
+          <Button
+            onClick={() => router.push(`/contests/${id}`)}
+            className="bg-white/5 hover:bg-white/10 text-neutral-300 font-bold rounded-xl px-8 h-12"
+          >
+            Quay lại trang cuộc thi
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-[#0a0a0f] text-neutral-100 overflow-hidden font-sans">
@@ -311,21 +384,26 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
         <Link href={`/contests/${id}`} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
           <ArrowLeft className="h-5 w-5 text-neutral-400" />
         </Link>
-        
+
         <div className="h-6 w-px bg-white/10" />
-        
+
         <div className="flex-1 min-w-0">
           <h1 className="font-bold text-sm truncate flex items-center gap-2">
             <Trophy className="h-4 w-4 text-amber-500" />
             {arena?.title}
           </h1>
-          <p className="text-[10px] text-neutral-500 font-medium uppercase tracking-widest mt-0.5">Phòng thi trực tuyến</p>
+          <p className="text-[10px] text-neutral-500 font-medium uppercase tracking-widest mt-0.5">
+            Phòng thi trực tuyến
+          </p>
         </div>
 
         {/* Timer */}
-        <div className={`flex items-center gap-3 px-4 py-1.5 rounded-xl border ${
-          timerDanger ? 'bg-red-500/10 border-red-500/30 text-red-400 animate-pulse' : 'bg-white/5 border-white/10 text-neutral-200'
-        } font-mono font-bold tabular-nums text-sm`}>
+        <div
+          className={`flex items-center gap-3 px-4 py-1.5 rounded-xl border ${timerDanger
+              ? 'bg-red-500/10 border-red-500/30 text-red-400 animate-pulse'
+              : 'bg-white/5 border-white/10 text-neutral-200'
+            } font-mono font-bold tabular-nums text-sm`}
+        >
           <Clock className="h-4 w-4" />
           {String(timer.h).padStart(2, '0')}:{String(timer.m).padStart(2, '0')}:{String(timer.s).padStart(2, '0')}
         </div>
@@ -334,23 +412,31 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
 
         {/* Score */}
         <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-           <span className="text-[10px] font-bold text-amber-500/70 uppercase">Score</span>
-           <span className="text-lg font-black text-amber-500 leading-none">{myScore}</span>
+          <span className="text-[10px] font-bold text-amber-500/70 uppercase">Score</span>
+          <span className="text-lg font-black text-amber-500 leading-none">{myScore}</span>
         </div>
 
-        <Button onClick={handleFinish} disabled={isFinishing} className="bg-primary hover:bg-primary/90 text-white font-bold rounded-xl px-6 h-10 shadow-lg shadow-primary/20">
-           {isFinishing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Nộp bài & Kết thúc'}
+        <Button
+          onClick={handleFinish}
+          disabled={isFinishing}
+          className="bg-primary hover:bg-primary/90 text-white font-bold rounded-xl px-6 h-10 shadow-lg shadow-primary/20"
+        >
+          {isFinishing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Nộp bài & Kết thúc'}
         </Button>
       </header>
 
       {/* Main Layout */}
       <main className="flex flex-1 overflow-hidden relative">
-        
         {/* Sidebar: Exercise List */}
         {sidebarOpen && (
-          <aside className="border-r border-white/5 bg-[#0f0f16] flex-shrink-0 flex flex-col transition-all" style={{ width: `${hPct}%` }}>
+          <aside
+            className="border-r border-white/5 bg-[#0f0f16] flex-shrink-0 flex flex-col transition-all"
+            style={{ width: `${hPct}%` }}
+          >
             <div className="p-4 border-b border-white/5 flex items-center justify-between">
-              <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Danh sách bài ({arena?.exercises.length})</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">
+                Danh sách bài ({arena?.exercises.length})
+              </span>
             </div>
             <div className="flex-1 overflow-y-auto no-scrollbar py-2">
               {arena?.exercises.map((ex, idx) => {
@@ -359,23 +445,33 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                   <button
                     key={ex.id}
                     onClick={() => setSelectedExercise(ex)}
-                    className={`w-full p-4 flex items-start gap-4 transition-all group ${
-                      isActive ? 'bg-primary/10 border-r-2 border-primary' : 'hover:bg-white/5'
-                    }`}
+                    className={`w-full p-4 flex items-start gap-4 transition-all group ${isActive ? 'bg-primary/10 border-r-2 border-primary' : 'hover:bg-white/5'
+                      }`}
                   >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 ${
-                      ex.isPassed ? 'bg-emerald-500 text-white' : isActive ? 'bg-primary text-white' : 'bg-white/5 text-neutral-500'
-                    }`}>
+                    <div
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 ${ex.isPassed
+                          ? 'bg-emerald-500 text-white'
+                          : isActive
+                            ? 'bg-primary text-white'
+                            : 'bg-white/5 text-neutral-500'
+                        }`}
+                    >
                       {idx + 1}
                     </div>
                     <div className="flex-1 text-left min-w-0">
-                      <p className={`text-sm font-bold truncate ${isActive ? 'text-primary' : ex.isPassed ? 'text-emerald-400' : 'text-neutral-300'}`}>
+                      <p
+                        className={`text-sm font-bold truncate ${isActive ? 'text-primary' : ex.isPassed ? 'text-emerald-400' : 'text-neutral-300'}`}
+                      >
                         {ex.title}
                       </p>
                       <div className="flex items-center gap-3 mt-1.5">
-                        <span className="text-[10px] font-bold text-neutral-600 tracking-tighter">{ex.scoreWeight} PTS</span>
+                        <span className="text-[10px] font-bold text-neutral-600 tracking-tighter">
+                          {ex.scoreWeight} PTS
+                        </span>
                         {ex.bestScore !== undefined && (
-                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${ex.bestScore === ex.scoreWeight ? 'bg-emerald-500/20 text-emerald-500' : 'bg-white/5 text-neutral-500'}`}>
+                          <span
+                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${ex.bestScore === ex.scoreWeight ? 'bg-emerald-500/20 text-emerald-500' : 'bg-white/5 text-neutral-500'}`}
+                          >
                             BEST: {ex.bestScore}
                           </span>
                         )}
@@ -393,24 +489,23 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
         <div className="flex-1 flex overflow-hidden">
           {/* Left: Problem Desc */}
           <div className="w-[45%] border-r border-white/5 bg-[#0a0a0f] flex flex-col flex-shrink-0">
-             <div className="flex flex-col items-center gap-1 w-full bg-[#1c1c28] border-b border-white/8 py-1 shrink-0">
-               <div className="flex gap-4">
-                  {[
-                    { id: 'problem', label: 'Đề bài', icon: BookOpen },
-                    { id: 'hints', label: 'Gợi ý', icon: Lightbulb }
-                  ].map(t => (
-                    <button
-                      key={t.id}
-                      onClick={() => setLeftTab(t.id as any)}
-                      className={`flex items-center gap-2 px-4 py-2 text-xs font-bold transition-all rounded-lg ${
-                        leftTab === t.id ? 'bg-primary/20 text-primary' : 'text-neutral-500 hover:text-neutral-300'
+            <div className="flex flex-col items-center gap-1 w-full bg-[#1c1c28] border-b border-white/8 py-1 shrink-0">
+              <div className="flex gap-4">
+                {[
+                  { id: 'problem', label: 'Đề bài', icon: BookOpen },
+                  { id: 'hints', label: 'Gợi ý', icon: Lightbulb }
+                ].map(t => (
+                  <button
+                    key={t.id}
+                    onClick={() => setLeftTab(t.id as any)}
+                    className={`flex items-center gap-2 px-4 py-2 text-xs font-bold transition-all rounded-lg ${leftTab === t.id ? 'bg-primary/20 text-primary' : 'text-neutral-500 hover:text-neutral-300'
                       }`}
-                    >
-                      <t.icon className="h-4 w-4" />
-                      {t.label}
-                    </button>
-                  ))}
-               </div>
+                  >
+                    <t.icon className="h-4 w-4" />
+                    {t.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="flex-1 overflow-y-auto p-8 space-y-10 no-scrollbar pb-20">
@@ -438,19 +533,23 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                           <div key={i} className="space-y-3">
                             <p className="text-sm font-bold text-neutral-300">Ví dụ {i + 1}:</p>
                             <div className="grid gap-3">
-                                <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-2">
-                                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-600">Input</p>
-                                  <code className="text-sm text-amber-400/90">{ex.input}</code>
-                                </div>
-                                <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-2">
-                                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-600">Output</p>
-                                  <code className="text-sm text-emerald-400/90">{ex.output}</code>
-                                </div>
-                                {ex.explanation && (
-                                  <p className="text-xs text-neutral-500 italic mt-1 pl-1 border-l-2 border-white/10">
-                                      {ex.explanation}
-                                  </p>
-                                )}
+                              <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-2">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-600">
+                                  Input
+                                </p>
+                                <code className="text-sm text-amber-400/90">{ex.input}</code>
+                              </div>
+                              <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-2">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-600">
+                                  Output
+                                </p>
+                                <code className="text-sm text-emerald-400/90">{ex.output}</code>
+                              </div>
+                              {ex.explanation && (
+                                <p className="text-xs text-neutral-500 italic mt-1 pl-1 border-l-2 border-white/10">
+                                  {ex.explanation}
+                                </p>
+                              )}
                             </div>
                           </div>
                         ))}
@@ -485,9 +584,14 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                   <div className="space-y-4 mt-6">
                     {selectedExercise?.hints && selectedExercise.hints.length > 0 ? (
                       selectedExercise.hints.map((h, i) => (
-                        <div key={i} className="p-6 rounded-3xl bg-amber-500/5 border border-amber-500/10 space-y-2 group">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-amber-500/40">Gợi ý {i + 1}</p>
-                            <p className="text-sm text-neutral-300 leading-relaxed italic">{h}</p>
+                        <div
+                          key={i}
+                          className="p-6 rounded-3xl bg-amber-500/5 border border-amber-500/10 space-y-2 group"
+                        >
+                          <p className="text-[10px] font-black uppercase tracking-widest text-amber-500/40">
+                            Gợi ý {i + 1}
+                          </p>
+                          <p className="text-sm text-neutral-300 leading-relaxed italic">{h}</p>
                         </div>
                       ))
                     ) : (
@@ -504,13 +608,14 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
             {/* Editor Toolbar */}
             <div className="h-10 bg-[#1e1e1e] border-b border-white/5 flex items-center px-4 justify-between shrink-0">
               <div className="flex items-center gap-1">
-                {['editor', 'console'].map((t) => (
+                {['editor', 'console'].map(t => (
                   <button
                     key={t}
                     onClick={() => setRightTab(t as any)}
-                    className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
-                      rightTab === t ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-neutral-500 hover:text-neutral-300'
-                    }`}
+                    className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${rightTab === t
+                        ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                        : 'text-neutral-500 hover:text-neutral-300'
+                      }`}
                   >
                     {t === 'editor' ? 'Code Editor' : 'Results'}
                   </button>
@@ -522,7 +627,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                   <select
                     className="bg-transparent text-[11px] font-medium px-2 py-0.5 outline-none text-neutral-200 cursor-pointer w-full"
                     value={selectedLang?.id || ''}
-                    onChange={(e) => {
+                    onChange={e => {
                       const l = supportedLangs.find(x => x.id === e.target.value)
                       if (l) setSelectedLang(l)
                     }}
@@ -534,11 +639,11 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                     ))}
                   </select>
                 </div>
-                
+
                 <div className="flex items-center gap-1.5">
-                   <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     className="h-8 w-8 p-0 text-neutral-500 hover:text-white rounded-lg"
                     onClick={() => {
                       if (selectedExercise && selectedLang) {
@@ -546,30 +651,33 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                           ...prev,
                           [selectedExercise.exerciseId]: {
                             ...prev[selectedExercise.exerciseId],
-                            [selectedLang.id]: selectedExercise.defaultCodes.find(dc => dc.language === selectedLang.id)?.starterCode || DEFAULT_TEMPLATES[selectedLang.id] || ''
+                            [selectedLang.id]:
+                              selectedExercise.defaultCodes.find(dc => dc.language === selectedLang.id)?.starterCode ||
+                              DEFAULT_TEMPLATES[selectedLang.id] ||
+                              ''
                           }
                         }))
                       }
                     }}
-                   >
-                      <RotateCcw className="h-4 w-4" />
-                   </Button>
-                   <Button
-                     onClick={handleRun}
-                     disabled={running || submitting}
-                     className="h-8 px-4 bg-white/5 hover:bg-white/10 text-neutral-200 text-[10px] font-black uppercase tracking-widest rounded-lg gap-2"
-                   >
-                     {running ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3 fill-current" />}
-                     Chạy thử
-                   </Button>
-                   <Button
-                     onClick={handleSubmit}
-                     disabled={running || submitting}
-                     className="h-8 px-5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-lg gap-2 shadow-lg shadow-emerald-500/20"
-                   >
-                     {submitting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
-                     Nộp bài
-                   </Button>
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    onClick={handleRun}
+                    disabled={running || submitting}
+                    className="h-8 px-4 bg-white/5 hover:bg-white/10 text-neutral-200 text-[10px] font-black uppercase tracking-widest rounded-lg gap-2"
+                  >
+                    {running ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3 fill-current" />}
+                    Chạy thử
+                  </Button>
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={running || submitting}
+                    className="h-8 px-5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-lg gap-2 shadow-lg shadow-emerald-500/20"
+                  >
+                    {submitting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
+                    Nộp bài
+                  </Button>
                 </div>
               </div>
             </div>
@@ -579,21 +687,33 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
               <MonacoEditor
                 height="100%"
                 language={
-                  selectedLang?.id.split('-')[0] === 'openjdk' ? 'java' :
-                  selectedLang?.id.split('-')[0] === 'dotnet' ? (selectedLang?.id.includes('csharp') ? 'csharp' : 'fsharp') :
-                  selectedLang?.id.startsWith('g++') || selectedLang?.id.startsWith('gcc') ? 'cpp' :
-                  selectedLang?.id.startsWith('python') ? 'python' :
-                  selectedLang?.id.startsWith('go') ? 'go' :
-                  selectedLang?.id.startsWith('rust') ? 'rust' :
-                  selectedLang?.id.startsWith('typescript') ? 'typescript' :
-                  'javascript'
+                  selectedLang?.id.split('-')[0] === 'openjdk'
+                    ? 'java'
+                    : selectedLang?.id.split('-')[0] === 'dotnet'
+                      ? selectedLang?.id.includes('csharp')
+                        ? 'csharp'
+                        : 'fsharp'
+                      : selectedLang?.id.startsWith('g++') || selectedLang?.id.startsWith('gcc')
+                        ? 'cpp'
+                        : selectedLang?.id.startsWith('python')
+                          ? 'python'
+                          : selectedLang?.id.startsWith('go')
+                            ? 'go'
+                            : selectedLang?.id.startsWith('rust')
+                              ? 'rust'
+                              : selectedLang?.id.startsWith('typescript')
+                                ? 'typescript'
+                                : 'javascript'
                 }
                 value={getCode(selectedExercise?.exerciseId || '', selectedLang?.id || '')}
-                onChange={(v) => {
+                onChange={v => {
                   if (selectedExercise && selectedLang) {
                     setCodes(prev => ({
                       ...prev,
-                      [selectedExercise.exerciseId]: { ...prev[selectedExercise.exerciseId], [selectedLang.id]: v || '' }
+                      [selectedExercise.exerciseId]: {
+                        ...prev[selectedExercise.exerciseId],
+                        [selectedLang.id]: v || ''
+                      }
                     }))
                   }
                 }}
@@ -612,81 +732,111 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
             </div>
 
             {/* Results Container */}
-            <div className="flex-1 bg-[#09090f] overflow-y-auto p-8" style={{ display: rightTab === 'console' ? 'block' : 'none' }}>
-               {!running && !submitting && results.length === 0 && (
-                 <div className="h-full flex flex-col items-center justify-center text-neutral-600 gap-4">
-                    <Terminal className="h-12 w-12 opacity-20" />
-                    <p className="text-sm font-medium">Nhấn "Chạy thử" hoặc "Nộp bài" để xem kết quả thực thi.</p>
-                 </div>
-               )}
+            <div
+              className="flex-1 bg-[#09090f] overflow-y-auto p-8"
+              style={{ display: rightTab === 'console' ? 'block' : 'none' }}
+            >
+              {!running && !submitting && results.length === 0 && (
+                <div className="h-full flex flex-col items-center justify-center text-neutral-600 gap-4">
+                  <Terminal className="h-12 w-12 opacity-20" />
+                  <p className="text-sm font-medium">Nhấn "Chạy thử" hoặc "Nộp bài" để xem kết quả thực thi.</p>
+                </div>
+              )}
 
-               {(running || submitting) && (
-                 <div className="h-full flex flex-col items-center justify-center gap-6">
-                    <div className="relative">
-                       <div className="h-16 w-16 rounded-3xl border-4 border-primary/20 border-t-primary animate-spin" />
-                       <Flame className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-primary animate-pulse" />
-                    </div>
-                    <div className="text-center space-y-1">
-                      <p className="text-lg font-bold text-white tracking-tight">{submitting ? 'Đang nộp bài...' : 'Đang thực thi code...'}</p>
-                      <p className="text-xs text-neutral-500 uppercase tracking-widest font-black">Vui lòng không đóng cửa sổ này</p>
-                    </div>
-                 </div>
-               )}
+              {(running || submitting) && (
+                <div className="h-full flex flex-col items-center justify-center gap-6">
+                  <div className="relative">
+                    <div className="h-16 w-16 rounded-3xl border-4 border-primary/20 border-t-primary animate-spin" />
+                    <Flame className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-primary animate-pulse" />
+                  </div>
+                  <div className="text-center space-y-1">
+                    <p className="text-lg font-bold text-white tracking-tight">
+                      {submitting ? 'Đang nộp bài...' : 'Đang thực thi code...'}
+                    </p>
+                    <p className="text-xs text-neutral-500 uppercase tracking-widest font-black">
+                      Vui lòng không đóng cửa sổ này
+                    </p>
+                  </div>
+                </div>
+              )}
 
-               {!running && !submitting && results.length > 0 && (
-                 <div className="space-y-6 max-w-3xl">
-                    <div className="flex items-center justify-between mb-8">
-                       <h3 className="text-xl font-black text-white uppercase tracking-tighter italic">Kết quả thực thi</h3>
-                       <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-500 font-bold text-sm">
-                          {results.filter(r => r.passed).length} / {results.length} PASSED
-                       </div>
+              {!running && !submitting && results.length > 0 && (
+                <div className="space-y-6 max-w-3xl">
+                  <div className="flex items-center justify-between mb-8">
+                    <h3 className="text-xl font-black text-white uppercase tracking-tighter italic">
+                      Kết quả thực thi
+                    </h3>
+                    <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-500 font-bold text-sm">
+                      {results.filter(r => r.passed).length} / {results.length} PASSED
                     </div>
+                  </div>
 
-                    {results.map((res, i) => (
-                      <div key={i} className={`p-6 rounded-3xl border transition-all ${res.passed ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-red-500/5 border-red-500/10'}`}>
-                         <div className="flex items-center gap-4 mb-4">
-                            {res.passed ? <CheckCircle2 className="h-6 w-6 text-emerald-500" /> : <XCircle className="h-6 w-6 text-red-500" />}
-                            <div className="flex-1 flex items-center justify-between">
-                               <span className={`text-lg font-bold ${res.passed ? 'text-emerald-400' : 'text-red-400'}`}>
-                                  {res.case}: {res.passed ? 'SUCCESS' : 'FAILED'}
-                               </span>
-                               {res.isHidden ? (
-                                  <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 rounded-lg border border-white/10 text-[10px] text-neutral-500 font-black uppercase tracking-widest">
-                                     <EyeOff className="h-3 w-3" /> Hidden Case
-                                  </div>
-                               ) : (
-                                  <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 rounded-lg border border-emerald-500/20 text-[10px] text-emerald-500 font-black uppercase tracking-widest">
-                                     <Eye className="h-3 w-3" /> Public Case
-                                  </div>
-                               )}
+                  {results.map((res, i) => (
+                    <div
+                      key={i}
+                      className={`p-6 rounded-3xl border transition-all ${res.passed ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-red-500/5 border-red-500/10'}`}
+                    >
+                      <div className="flex items-center gap-4 mb-4">
+                        {res.passed ? (
+                          <CheckCircle2 className="h-6 w-6 text-emerald-500" />
+                        ) : (
+                          <XCircle className="h-6 w-6 text-red-500" />
+                        )}
+                        <div className="flex-1 flex items-center justify-between">
+                          <span className={`text-lg font-bold ${res.passed ? 'text-emerald-400' : 'text-red-400'}`}>
+                            {res.case}: {res.passed ? 'SUCCESS' : 'FAILED'}
+                          </span>
+                          {res.isHidden ? (
+                            <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 rounded-lg border border-white/10 text-[10px] text-neutral-500 font-black uppercase tracking-widest">
+                              <EyeOff className="h-3 w-3" /> Hidden Case
                             </div>
-                         </div>
-                         
-                         {!res.isHidden ? (
-                           <div className="space-y-4 font-mono text-xs">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2">
-                                    <p className="text-[10px] text-neutral-600 font-black uppercase tracking-widest">Expected Output</p>
-                                    <pre className="text-neutral-300 break-all whitespace-pre-wrap">{res.expected}</pre>
-                                 </div>
-                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2">
-                                    <p className="text-[10px] text-neutral-600 font-black uppercase tracking-widest">Actual Output</p>
-                                    <pre className={res.passed ? 'text-emerald-400 break-all whitespace-pre-wrap' : 'text-red-400 break-all whitespace-pre-wrap'}>{res.actual}</pre>
-                                 </div>
-                              </div>
-                              {res.description && (
-                                 <p className="text-[10px] text-neutral-500 mt-2 px-2 italic">{res.description}</p>
-                              )}
-                           </div>
-                         ) : (
-                           <div className="p-4 rounded-2xl bg-black/20 border border-white/5 text-center">
-                              <p className="text-xs text-neutral-600 italic">Dữ liệu và kết quả của test case này được ẩn để đảm bảo tính công bằng.</p>
-                           </div>
-                         )}
+                          ) : (
+                            <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 rounded-lg border border-emerald-500/20 text-[10px] text-emerald-500 font-black uppercase tracking-widest">
+                              <Eye className="h-3 w-3" /> Public Case
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    ))}
-                 </div>
-               )}
+
+                      {!res.isHidden ? (
+                        <div className="space-y-4 font-mono text-xs">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2">
+                              <p className="text-[10px] text-neutral-600 font-black uppercase tracking-widest">
+                                Expected Output
+                              </p>
+                              <pre className="text-neutral-300 break-all whitespace-pre-wrap">{res.expected}</pre>
+                            </div>
+                            <div className="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2">
+                              <p className="text-[10px] text-neutral-600 font-black uppercase tracking-widest">
+                                Actual Output
+                              </p>
+                              <pre
+                                className={
+                                  res.passed
+                                    ? 'text-emerald-400 break-all whitespace-pre-wrap'
+                                    : 'text-red-400 break-all whitespace-pre-wrap'
+                                }
+                              >
+                                {res.actual}
+                              </pre>
+                            </div>
+                          </div>
+                          {res.description && (
+                            <p className="text-[10px] text-neutral-500 mt-2 px-2 italic">{res.description}</p>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="p-4 rounded-2xl bg-black/20 border border-white/5 text-center">
+                          <p className="text-xs text-neutral-600 italic">
+                            Dữ liệu và kết quả của test case này được ẩn để đảm bảo tính công bằng.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -694,13 +844,22 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
 
       {/* Progress Footer */}
       <footer className="h-8 bg-[#0a0a0f] border-t border-white/5 px-6 flex items-center justify-between text-[9px] font-black uppercase tracking-[0.2em] text-neutral-600">
-         <div className="flex gap-6">
-            <span className="flex items-center gap-1.5"><Shield className="h-3 w-3" /> Anti-cheat active</span>
-            <span className="flex items-center gap-1.5"><History className="h-3 w-3" /> Autosave enabled</span>
-         </div>
-         <div>
-            Connection stable • CourseMate V2.0
-         </div>
+        <div className="flex gap-6">
+          <span className="flex items-center gap-1.5">
+            <Shield className="h-3 w-3" />
+            Anti-cheat: {arena?.antiCheatLevel ?? 'None'}
+            {arena?.antiCheatLevel !== 'None' && (
+              <span className="text-amber-500">
+                {' '}
+                ({antiCheat.violationCount}/{arena?.maxViolations ?? '∞'})
+              </span>
+            )}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <History className="h-3 w-3" /> Autosave enabled
+          </span>
+        </div>
+        <div>Connection stable • CourseMate V2.0</div>
       </footer>
     </div>
   )

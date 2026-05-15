@@ -63,12 +63,14 @@ export default function LearningLayout({ children }: { children: React.ReactNode
           <h2 className="font-bold text-lg line-clamp-2">{course.title}</h2>
           <div className="flex items-center gap-2 mt-2">
             <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-emerald-500 transition-all duration-500" 
-                style={{ width: `${course.progressPercentage}%` }} 
+              <div
+                className="h-full bg-emerald-500 transition-all duration-500"
+                style={{ width: `${course.progressPercentage}%` }}
               />
             </div>
-            <span className="text-[10px] font-medium text-muted-foreground">{Math.round(course.progressPercentage)}%</span>
+            <span className="text-[10px] font-medium text-muted-foreground">
+              {Math.round(course.progressPercentage)}%
+            </span>
           </div>
         </div>
 
@@ -110,7 +112,7 @@ export default function LearningLayout({ children }: { children: React.ReactNode
                           ) : (
                             <CheckCircle2 className={`h-4 w-4 text-emerald-500`} />
                           )}
-                          
+
                           {isCompleted && (
                             <div className="absolute -top-1.5 -right-1.5 bg-white dark:bg-slate-900 rounded-full">
                               <CheckCircle2 className="h-3 w-3 text-emerald-500 fill-emerald-50" />

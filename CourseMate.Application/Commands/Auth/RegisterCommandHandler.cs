@@ -64,7 +64,7 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
         }
 
         await _userManager.AddToRoleAsync(user, request.Role);
-        
+
         // TODO SendConfirmationEmailAsync
         MimeMessage message = new();
         message.To.Add(MailboxAddress.Parse(request.Email));

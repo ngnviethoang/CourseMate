@@ -19,17 +19,19 @@ function mapToExerciseData(dto: any): ExerciseData {
     examples: dto.examples || [],
     constraints: dto.constraints || [],
     hints: dto.hints || [],
-    defaultCode: dto.defaultCodes?.reduce((acc: any, curr: any) => {
-      // Dùng ID ngôn ngữ làm key (ví dụ: python-3.14)
-      acc[curr.language] = curr.starterCode || curr.code
-      return acc
-    }, {}) || {},
-    testCases: dto.testCases?.map((tc: any) => ({
-      input: tc.input,
-      expectedOutput: tc.expectedOutput,
-      description: tc.description,
-      isHidden: tc.isHidden
-    })) || []
+    defaultCode:
+      dto.defaultCodes?.reduce((acc: any, curr: any) => {
+        // Dùng ID ngôn ngữ làm key (ví dụ: python-3.14)
+        acc[curr.language] = curr.starterCode || curr.code
+        return acc
+      }, {}) || {},
+    testCases:
+      dto.testCases?.map((tc: any) => ({
+        input: tc.input,
+        expectedOutput: tc.expectedOutput,
+        description: tc.description,
+        isHidden: tc.isHidden
+      })) || []
   }
 }
 

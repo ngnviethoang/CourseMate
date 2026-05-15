@@ -11,5 +11,9 @@ public class ContestWorkspaceDto
     public DateTimeOffset? EndTime { get; set; }
     public int DurationInMinutes { get; set; }
     public DateTimeOffset? JoinTime { get; set; }
+    public AntiCheatLevel AntiCheatLevel { get; set; }
+    public int MaxViolations { get; set; }
+    public int ViolationCount { get; set; }
+    public bool IsDisqualified { get; set; }
     public List<ContestExerciseDto> Exercises { get; set; } = [];
 }

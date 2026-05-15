@@ -21,7 +21,7 @@ public class CourseController : ControllerBase
         _mediator = mediator;
     }
 
-    #region API Course
+    #region Course APIs
 
     [HttpGet("courses")]
     [AllowAnonymous]
@@ -81,7 +81,7 @@ public class CourseController : ControllerBase
 
     #endregion
 
-    #region API Chapter
+    #region Chapter APIs
 
     [HttpGet("chapters")]
     public async Task<ActionResult> GetListChapterAsync([FromQuery] GetListChaptersQuery request)
@@ -124,7 +124,7 @@ public class CourseController : ControllerBase
 
     #endregion
 
-    #region API Lesson
+    #region Lesson APIs
 
     [HttpGet("lessons")]
     public async Task<ActionResult> GetListLessonAsync([FromQuery] GetListLessonsQuery request)
@@ -220,7 +220,7 @@ public class CourseController : ControllerBase
 
     #endregion
 
-    #region API AI Process Document
+    #region AI Process Document APIs
 
     /// <summary>
     ///     Upload a Word/PDF file for the lesson and trigger AI processing (parse + outline generation)

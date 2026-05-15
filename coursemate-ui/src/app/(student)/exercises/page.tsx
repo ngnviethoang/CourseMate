@@ -7,24 +7,15 @@ import { exerciseService } from '@/lib/exercise-service'
 import type { ExerciseDto } from '@/lib/types'
 
 const DIFF_LIST_COLOR: Record<string, string> = {
-  'Easy': 'text-emerald-600',
-  'Medium': 'text-amber-600',
-  'Hard': 'text-red-600',
-  'Dễ': 'text-emerald-600',
+  Easy: 'text-emerald-600',
+  Medium: 'text-amber-600',
+  Hard: 'text-red-600',
+  Dễ: 'text-emerald-600',
   'Trung bình': 'text-amber-600',
-  'Khó': 'text-red-600'
+  Khó: 'text-red-600'
 }
 
-const CATEGORIES = [
-  'Tất cả',
-  'Array',
-  'String',
-  'Tree',
-  'DP',
-  'Graph',
-  'Sorting',
-  'HashTable'
-]
+const CATEGORIES = ['Tất cả', 'Array', 'String', 'Tree', 'DP', 'Graph', 'Sorting', 'HashTable']
 
 // Dữ liệu chi tiết đã được chuyển sang file JSON
 
@@ -39,15 +30,17 @@ function mapToExerciseData(dto: any): ExerciseData {
     examples: dto.examples || [],
     constraints: dto.constraints || [],
     hints: dto.hints || [],
-    defaultCode: dto.defaultCodes?.reduce((acc: any, curr: any) => {
-      acc[curr.language] = curr.starterCode || curr.code
-      return acc
-    }, {}) || {},
-    testCases: dto.testCases?.map((tc: any) => ({
-      input: tc.input,
-      expectedOutput: tc.expectedOutput,
-      description: tc.description
-    })) || []
+    defaultCode:
+      dto.defaultCodes?.reduce((acc: any, curr: any) => {
+        acc[curr.language] = curr.starterCode || curr.code
+        return acc
+      }, {}) || {},
+    testCases:
+      dto.testCases?.map((tc: any) => ({
+        input: tc.input,
+        expectedOutput: tc.expectedOutput,
+        description: tc.description
+      })) || []
   }
 }
 
@@ -212,7 +205,9 @@ export default function ExercisesPage() {
               </div>
               <div className="flex items-center gap-1 text-primary">
                 <Zap className="h-4 w-4 fill-primary" />
-                <span className="text-sm font-bold">{exercises.length > 0 ? Math.round((solvedCount / exercises.length) * 100) : 0}%</span>
+                <span className="text-sm font-bold">
+                  {exercises.length > 0 ? Math.round((solvedCount / exercises.length) * 100) : 0}%
+                </span>
               </div>
             </div>
           </div>
@@ -229,10 +224,11 @@ export default function ExercisesPage() {
                 <button
                   key={d}
                   onClick={() => setDiffFilter(d)}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors border ${diffFilter === d
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-transparent bg-muted text-muted-foreground hover:text-foreground'
-                    }`}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors border ${
+                    diffFilter === d
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-transparent bg-muted text-muted-foreground hover:text-foreground'
+                  }`}
                 >
                   {d}
                 </button>
@@ -240,10 +236,11 @@ export default function ExercisesPage() {
             </div>
             <button
               onClick={() => setShowSolved(v => !v)}
-              className={`px-3 py-1 rounded-lg text-xs font-medium border transition-colors ${!showSolved
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-transparent bg-muted text-muted-foreground hover:text-foreground'
-                }`}
+              className={`px-3 py-1 rounded-lg text-xs font-medium border transition-colors ${
+                !showSolved
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-transparent bg-muted text-muted-foreground hover:text-foreground'
+              }`}
             >
               {showSolved ? 'Ẩn bài đã làm' : 'Hiện bài đã làm'}
             </button>
@@ -255,10 +252,11 @@ export default function ExercisesPage() {
               <button
                 key={cat}
                 onClick={() => setCatFilter(cat as typeof catFilter)}
-                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${catFilter === cat
-                  ? 'bg-foreground text-background'
-                  : 'bg-muted text-muted-foreground hover:text-foreground'
-                  }`}
+                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                  catFilter === cat
+                    ? 'bg-foreground text-background'
+                    : 'bg-muted text-muted-foreground hover:text-foreground'
+                }`}
               >
                 {cat}
               </button>
@@ -274,8 +272,9 @@ export default function ExercisesPage() {
                 key={ex.id}
                 onClick={() => openExercise(ex)}
                 disabled={clickedId !== null}
-                className={`relative w-full flex items-center gap-4 px-5 py-3.5 bg-card hover:bg-muted/40 transition-colors group text-left ${clickedId === ex.id ? 'row-clicked' : ''
-                  }`}
+                className={`relative w-full flex items-center gap-4 px-5 py-3.5 bg-card hover:bg-muted/40 transition-colors group text-left ${
+                  clickedId === ex.id ? 'row-clicked' : ''
+                }`}
               >
                 <span className="w-6 flex-shrink-0 text-xs text-muted-foreground text-right">{idx + 1}</span>
                 <div className="w-5 flex-shrink-0 flex justify-center">
@@ -285,7 +284,9 @@ export default function ExercisesPage() {
                   <p className="text-sm font-medium leading-snug group-hover:text-primary transition-colors line-clamp-1">
                     {ex.title}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1 hidden sm:block truncate">{ex.description.replace(/<[^>]*>?/gm, '')}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1 hidden sm:block truncate">
+                    {ex.description.replace(/<[^>]*>?/gm, '')}
+                  </p>
                 </div>
                 <span className="hidden md:block flex-shrink-0 rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                   {ex.category}

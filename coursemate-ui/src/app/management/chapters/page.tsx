@@ -160,7 +160,6 @@ export default function ChaptersPage() {
               <Label>Title</Label>
               <Input value={form.title} onChange={e => f('title', e.target.value)} />
             </div>
-
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>

@@ -8,7 +8,23 @@ import { lessonService } from '@/lib/course-service'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
-import { Loader2, ChevronLeft, ChevronRight, PlayCircle, FileText, HelpCircle, Sparkles, Code2, Presentation, Download, CheckCircle, XCircle, Terminal, Send, Eye } from 'lucide-react'
+import {
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+  PlayCircle,
+  FileText,
+  HelpCircle,
+  Sparkles,
+  Code2,
+  Presentation,
+  Download,
+  CheckCircle,
+  XCircle,
+  Terminal,
+  Send,
+  Eye
+} from 'lucide-react'
 import { exerciseService } from '@/lib/exercise-service'
 import { runnerCodeService } from '@/lib/runner-code-service'
 import { ExerciseEditorModal, type ExerciseData, type Difficulty } from '@/components/exercises/exercise-editor-modal'
@@ -23,16 +39,18 @@ function mapToExerciseData(dto: any): ExerciseData {
     examples: dto.examples || [],
     constraints: dto.constraints || [],
     hints: dto.hints || [],
-    defaultCode: dto.defaultCodes?.reduce((acc: any, curr: any) => {
-      acc[curr.language] = curr.starterCode || curr.code
-      return acc
-    }, {}) || {},
-    testCases: dto.testCases?.map((tc: any) => ({
-      input: tc.input,
-      expectedOutput: tc.expectedOutput,
-      description: tc.description,
-      isHidden: tc.isHidden
-    })) || []
+    defaultCode:
+      dto.defaultCodes?.reduce((acc: any, curr: any) => {
+        acc[curr.language] = curr.starterCode || curr.code
+        return acc
+      }, {}) || {},
+    testCases:
+      dto.testCases?.map((tc: any) => ({
+        input: tc.input,
+        expectedOutput: tc.expectedOutput,
+        description: tc.description,
+        isHidden: tc.isHidden
+      })) || []
   }
 }
 
@@ -152,8 +170,8 @@ function EmptyContent({ lesson, id, router }: { lesson: any; id: string; router:
       <div className="space-y-2">
         <h3 className="text-xl font-bold">Content Coming Soon</h3>
         <p className="text-muted-foreground max-w-sm">
-          We&apos;re currently preparing the {lesson.lessonType?.toString().toLowerCase()} material for this
-          lesson. Please check back later!
+          We&apos;re currently preparing the {lesson.lessonType?.toString().toLowerCase()} material for this lesson.
+          Please check back later!
         </p>
       </div>
       <Button variant="secondary" onClick={() => router.push(`/courses/${id}`)}>
@@ -220,11 +238,7 @@ function SlideView({ fileUrl, title }: { fileUrl: string; title: string }) {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="aspect-video rounded-2xl bg-muted/30 border shadow-sm overflow-hidden relative flex flex-col items-center justify-center">
-        <iframe
-          src={`${fileUrl}#toolbar=0`}
-          className="w-full h-full border-0"
-          title={title}
-        />
+        <iframe src={`${fileUrl}#toolbar=0`} className="w-full h-full border-0" title={title} />
         <div className="absolute top-4 right-4">
           <Button variant="secondary" size="sm" asChild className="gap-2 shadow-lg">
             <a href={fileUrl} target="_blank" rel="noopener noreferrer">
@@ -246,7 +260,7 @@ function SlideView({ fileUrl, title }: { fileUrl: string; title: string }) {
   )
 }
 
-function CodingExercise({ exerciseId, lessonId }: { exerciseId: string, lessonId: string }) {
+function CodingExercise({ exerciseId, lessonId }: { exerciseId: string; lessonId: string }) {
   const [exercise, setExercise] = useState<ExerciseData | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -265,7 +279,7 @@ function CodingExercise({ exerciseId, lessonId }: { exerciseId: string, lessonId
     loadExercise()
   }, [exerciseId])
 
-  const handleExerciseSuccess = async (result: { score: number, passed: boolean }) => {
+  const handleExerciseSuccess = async (result: { score: number; passed: boolean }) => {
     try {
       await lessonService.updateProgress(lessonId, result.passed, result.score)
       if (result.passed) {
@@ -276,22 +290,35 @@ function CodingExercise({ exerciseId, lessonId }: { exerciseId: string, lessonId
     }
   }
 
-  if (loading) return <div className="flex justify-center p-12"><Loader2 className="h-8 w-8 animate-spin" /></div>
+  if (loading)
+    return (
+      <div className="flex justify-center p-12">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    )
   if (!exercise) return <div className="text-center p-12 text-muted-foreground">Exercise not found</div>
 
   return (
     <div className="h-[750px] rounded-2xl overflow-hidden border shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <ExerciseEditorModal 
-        exercise={exercise} 
-        isModal={false} 
-        showHeaderNav={false} 
+      <ExerciseEditorModal
+        exercise={exercise}
+        isModal={false}
+        showHeaderNav={false}
         onSubmitSuccess={handleExerciseSuccess}
       />
     </div>
   )
 }
 
-function QuizInteraction({ questions, passingScore, lessonId }: { questions: any[]; passingScore: number; lessonId: string }) {
+function QuizInteraction({
+  questions,
+  passingScore,
+  lessonId
+}: {
+  questions: any[]
+  passingScore: number
+  lessonId: string
+}) {
   const [answers, setAnswers] = useState<Record<number, string>>({})
   const [submitted, setSubmitted] = useState(false)
 
@@ -341,10 +368,13 @@ function QuizInteraction({ questions, passingScore, lessonId }: { questions: any
         {questions.map((q, qi) => (
           <div
             key={q.id || qi}
-            className={`p-6 rounded-2xl border bg-card shadow-sm space-y-5 transition-all ${submitted
-                ? (q.answers.find((a: any) => a.id === answers[qi])?.isCorrect ? 'ring-2 ring-emerald-500/20 border-emerald-500/30' : 'ring-2 ring-red-500/20 border-red-500/30')
+            className={`p-6 rounded-2xl border bg-card shadow-sm space-y-5 transition-all ${
+              submitted
+                ? q.answers.find((a: any) => a.id === answers[qi])?.isCorrect
+                  ? 'ring-2 ring-emerald-500/20 border-emerald-500/30'
+                  : 'ring-2 ring-red-500/20 border-red-500/30'
                 : ''
-              }`}
+            }`}
           >
             <div className="flex gap-4">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">
@@ -375,8 +405,9 @@ function QuizInteraction({ questions, passingScore, lessonId }: { questions: any
                     className={`flex items-center gap-4 px-5 py-4 rounded-xl text-left transition-all group ${btnClass}`}
                   >
                     <div
-                      className={`h-5 w-5 rounded-full border-2 flex items-center justify-center text-[10px] font-bold shrink-0 transition-colors ${isSelected ? 'border-primary bg-primary text-white' : 'border-muted-foreground/30'
-                        }`}
+                      className={`h-5 w-5 rounded-full border-2 flex items-center justify-center text-[10px] font-bold shrink-0 transition-colors ${
+                        isSelected ? 'border-primary bg-primary text-white' : 'border-muted-foreground/30'
+                      }`}
                     >
                       {isSelected && <CheckCircle className="h-3 w-3" />}
                     </div>
@@ -404,20 +435,23 @@ function QuizInteraction({ questions, passingScore, lessonId }: { questions: any
         ) : (
           <div className="text-center space-y-6">
             <div
-              className={`p-10 rounded-3xl border-4 animate-in zoom-in duration-500 ${pass
+              className={`p-10 rounded-3xl border-4 animate-in zoom-in duration-500 ${
+                pass
                   ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/10'
                   : 'border-red-500 bg-red-50 dark:bg-red-950/10'
-                }`}
+              }`}
             >
-              <div className={`h-20 w-20 mx-auto rounded-full flex items-center justify-center mb-4 ${pass ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
+              <div
+                className={`h-20 w-20 mx-auto rounded-full flex items-center justify-center mb-4 ${pass ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}
+              >
                 {pass ? <CheckCircle className="h-10 w-10" /> : <HelpCircle className="h-10 w-10" />}
               </div>
               <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-1">Kết quả của bạn</p>
-              <h3 className={`text-6xl font-black mb-2 ${pass ? 'text-emerald-600' : 'text-red-600'}`}>
-                {score}%
-              </h3>
+              <h3 className={`text-6xl font-black mb-2 ${pass ? 'text-emerald-600' : 'text-red-600'}`}>{score}%</h3>
               <p className="text-lg font-semibold">
-                {pass ? '🎉 Tuyệt vời! Bạn đã vượt qua bài kiểm tra.' : '💪 Đừng nản chí! Hãy ôn tập lại và thử lại nhé.'}
+                {pass
+                  ? '🎉 Tuyệt vời! Bạn đã vượt qua bài kiểm tra.'
+                  : '💪 Đừng nản chí! Hãy ôn tập lại và thử lại nhé.'}
               </p>
               <p className="text-sm text-muted-foreground mt-2">
                 Bạn trả lời đúng {correctCount}/{questions.length} câu hỏi.
@@ -436,11 +470,7 @@ function QuizInteraction({ questions, passingScore, lessonId }: { questions: any
               >
                 Làm lại
               </Button>
-              <Button
-                size="lg"
-                className="flex-1 h-14 rounded-2xl"
-                asChild
-              >
+              <Button size="lg" className="flex-1 h-14 rounded-2xl" asChild>
                 <a href="#top" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
                   Xem lại đáp án <Eye className="ml-2 h-4 w-4" />
                 </a>
@@ -573,7 +603,8 @@ function QuizInteractionOld({ content }: { content: QuizContent }) {
                 const isCorrect = q.ans === oi
                 let btnClass = 'border-2 hover:border-primary/50 hover:bg-primary/5'
                 if (submitted) {
-                  if (isCorrect) btnClass = 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 font-bold'
+                  if (isCorrect)
+                    btnClass = 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 font-bold'
                   else if (isSelected) btnClass = 'border-red-500 bg-red-50 dark:bg-red-950/20 text-red-700'
                   else btnClass = 'opacity-50 grayscale cursor-not-allowed'
                 } else if (isSelected) {
@@ -775,73 +806,82 @@ export default function StudentLearningPage() {
       <div className="flex-1 overflow-y-auto pb-20">
         <div className="animate-in fade-in duration-700">
           {/* VIDEO */}
-          {lesson.lessonType === LessonType.Video && (
-            aiContent && 'segments' in aiContent
-              ? <VideoPlayer content={aiContent as VideoContent} />
-              : lesson.videoUrl ? (
-                <div className="aspect-video rounded-3xl bg-slate-950 border shadow-2xl overflow-hidden ring-8 ring-muted/20">
-                  {lesson.videoUrl.includes('youtube.com') || lesson.videoUrl.includes('youtu.be') ? (
-                    <iframe
-                      className="w-full h-full"
-                      src={lesson.videoUrl.replace('watch?v=', 'embed/')}
-                      title={lesson.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <video 
-                      src={lesson.videoUrl} 
-                      controls 
-                      className="w-full h-full"
-                      controlsList="nodownload"
-                    />
-                  )}
-                </div>
-              ) : <EmptyContent lesson={lesson} id={id} router={router} />
-          )}
+          {lesson.lessonType === LessonType.Video &&
+            (aiContent && 'segments' in aiContent ? (
+              <VideoPlayer content={aiContent as VideoContent} />
+            ) : lesson.videoUrl ? (
+              <div className="aspect-video rounded-3xl bg-slate-950 border shadow-2xl overflow-hidden ring-8 ring-muted/20">
+                {lesson.videoUrl.includes('youtube.com') || lesson.videoUrl.includes('youtu.be') ? (
+                  <iframe
+                    className="w-full h-full"
+                    src={lesson.videoUrl.replace('watch?v=', 'embed/')}
+                    title={lesson.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video src={lesson.videoUrl} controls className="w-full h-full" controlsList="nodownload" />
+                )}
+              </div>
+            ) : (
+              <EmptyContent lesson={lesson} id={id} router={router} />
+            ))}
 
           {/* READING */}
-          {lesson.lessonType === LessonType.Reading && (
-            lesson.readingContent
-              ? <ReadingView content={{ title: lesson.title, markdown_content: lesson.readingContent }} />
-              : aiContent && 'markdown_content' in aiContent
-                ? <ReadingView content={aiContent as ReadingContent} />
-                : <EmptyContent lesson={lesson} id={id} router={router} />
-          )}
+          {lesson.lessonType === LessonType.Reading &&
+            (lesson.readingContent ? (
+              <ReadingView content={{ title: lesson.title, markdown_content: lesson.readingContent }} />
+            ) : aiContent && 'markdown_content' in aiContent ? (
+              <ReadingView content={aiContent as ReadingContent} />
+            ) : (
+              <EmptyContent lesson={lesson} id={id} router={router} />
+            ))}
 
           {/* QUIZ */}
-          {lesson.lessonType === LessonType.Quiz && (
-            lesson.quizQuestions && lesson.quizQuestions.length > 0
-              ? <QuizInteraction questions={lesson.quizQuestions} passingScore={lesson.quizPassingScore || 70} lessonId={lessonId as string} />
-              : aiContent && 'questions' in aiContent
-                ? <QuizInteractionOld content={aiContent as QuizContent} />
-                : <EmptyContent lesson={lesson} id={id} router={router} />
-          )}
+          {lesson.lessonType === LessonType.Quiz &&
+            (lesson.quizQuestions && lesson.quizQuestions.length > 0 ? (
+              <QuizInteraction
+                questions={lesson.quizQuestions}
+                passingScore={lesson.quizPassingScore || 70}
+                lessonId={lessonId as string}
+              />
+            ) : aiContent && 'questions' in aiContent ? (
+              <QuizInteractionOld content={aiContent as QuizContent} />
+            ) : (
+              <EmptyContent lesson={lesson} id={id} router={router} />
+            ))}
 
           {/* CODING */}
-          {lesson.lessonType === LessonType.Coding && (
-            lesson.exerciseId
-              ? <CodingExercise exerciseId={lesson.exerciseId} lessonId={lessonId as string} />
-              : aiContent && 'test_cases' in aiContent
-                ? <CodingExerciseOld content={aiContent as CodingContent} />
-                : <EmptyContent lesson={lesson} id={id} router={router} />
-          )}
+          {lesson.lessonType === LessonType.Coding &&
+            (lesson.exerciseId ? (
+              <CodingExercise exerciseId={lesson.exerciseId} lessonId={lessonId as string} />
+            ) : aiContent && 'test_cases' in aiContent ? (
+              <CodingExerciseOld content={aiContent as CodingContent} />
+            ) : (
+              <EmptyContent lesson={lesson} id={id} router={router} />
+            ))}
 
           {/* QUIZ */}
-          {lesson.lessonType === LessonType.Quiz && (
-            lesson.quizQuestions && lesson.quizQuestions.length > 0
-              ? <QuizInteraction questions={lesson.quizQuestions} passingScore={lesson.quizPassingScore || 70} lessonId={lessonId} />
-              : aiContent && 'questions' in aiContent
-                ? <QuizInteractionOld content={aiContent as QuizContent} />
-                : <EmptyContent lesson={lesson} id={id} router={router} />
-          )}
+          {lesson.lessonType === LessonType.Quiz &&
+            (lesson.quizQuestions && lesson.quizQuestions.length > 0 ? (
+              <QuizInteraction
+                questions={lesson.quizQuestions}
+                passingScore={lesson.quizPassingScore || 70}
+                lessonId={lessonId}
+              />
+            ) : aiContent && 'questions' in aiContent ? (
+              <QuizInteractionOld content={aiContent as QuizContent} />
+            ) : (
+              <EmptyContent lesson={lesson} id={id} router={router} />
+            ))}
 
           {/* SLIDE */}
-          {lesson.lessonType === LessonType.Slide && (
-            lesson.slideFileUrl
-              ? <SlideView fileUrl={lesson.slideFileUrl} title={lesson.title} />
-              : <EmptyContent lesson={lesson} id={id} router={router} />
-          )}
+          {lesson.lessonType === LessonType.Slide &&
+            (lesson.slideFileUrl ? (
+              <SlideView fileUrl={lesson.slideFileUrl} title={lesson.title} />
+            ) : (
+              <EmptyContent lesson={lesson} id={id} router={router} />
+            ))}
         </div>
       </div>
 

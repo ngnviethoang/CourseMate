@@ -40,7 +40,9 @@ export default function ContestsPage() {
     }
   }, [filter])
 
-  useEffect(() => { fetchContests() }, [fetchContests])
+  useEffect(() => {
+    fetchContests()
+  }, [fetchContests])
 
   const ongoing = contests.find(c => c.status === 'Ongoing')
 
@@ -92,10 +94,11 @@ export default function ContestsPage() {
             <button
               key={tab}
               onClick={() => setFilter(tab)}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${filter === tab
-                ? 'bg-primary text-primary-foreground shadow-md'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                }`}
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                filter === tab
+                  ? 'bg-primary text-primary-foreground shadow-md'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              }`}
             >
               {tab === 'All' ? 'Tất cả' : STATUS_LABEL[tab]}
             </button>
@@ -117,8 +120,9 @@ export default function ContestsPage() {
             {contests.map(contest => (
               <div
                 key={contest.id}
-                className={`group rounded-3xl border bg-card p-6 transition-all hover:shadow-lg hover:border-primary/20 ${contest.status === 'Ended' ? 'opacity-75 grayscale-[0.5]' : ''
-                  }`}
+                className={`group rounded-3xl border bg-card p-6 transition-all hover:shadow-lg hover:border-primary/20 ${
+                  contest.status === 'Ended' ? 'opacity-75 grayscale-[0.5]' : ''
+                }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-start gap-6">
                   <div className="flex-1 min-w-0">
@@ -138,9 +142,7 @@ export default function ContestsPage() {
                         {contest.title}
                       </h3>
                     </Link>
-                    <p className="text-muted-foreground mt-2 line-clamp-2 leading-relaxed">
-                      {contest.description}
-                    </p>
+                    <p className="text-muted-foreground mt-2 line-clamp-2 leading-relaxed">{contest.description}</p>
 
                     <div className="flex flex-wrap gap-6 mt-5 text-sm text-muted-foreground font-medium">
                       <span className="flex items-center gap-2">
@@ -149,7 +151,9 @@ export default function ContestsPage() {
                       </span>
                       <span className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 text-primary/60" />
-                        {contest.startTime ? format(new Date(contest.startTime), 'dd MMMM, HH:mm', { locale: vi }) : 'Chưa cập nhật'}
+                        {contest.startTime
+                          ? format(new Date(contest.startTime), 'dd MMMM, HH:mm', { locale: vi })
+                          : 'Chưa cập nhật'}
                       </span>
                     </div>
                   </div>

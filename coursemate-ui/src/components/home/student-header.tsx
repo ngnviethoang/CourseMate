@@ -8,6 +8,7 @@ import { removeToken } from '@/lib/auth-token.util'
 import { CourseMateLogoIcon } from '@/components/icons/coursemate-logo'
 import { buttonVariants } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { NotificationDropdown } from '@/components/home/notification-dropdown'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -97,6 +98,8 @@ export function StudentHeader() {
         <div className="flex items-center gap-1 ml-auto">
           {user ? (
             <>
+              <NotificationDropdown />
+
               <Link
                 href="/cart"
                 aria-label="Giỏ hàng"

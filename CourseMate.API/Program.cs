@@ -69,7 +69,7 @@ try
                 {
                     StringValues accessToken = context.Request.Query["access_token"];
                     PathString path = context.HttpContext.Request.Path;
-                    if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/notification"))
+                    if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/hubs/notification") || path.StartsWithSegments("/hubs/contest")))
                     {
                         context.Token = accessToken;
                     }
@@ -161,6 +161,7 @@ try
     // app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
     app.MapControllers();
     app.MapHub<NotificationHub>("/hubs/notification").RequireCors("SignalRHubs");
+    app.MapHub<ContestHub>("/hubs/contest").RequireCors("SignalRHubs");
     app.MapHangfireDashboard();
     Log.Information("Starting web host");
     await app.RunAsync();

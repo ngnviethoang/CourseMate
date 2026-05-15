@@ -1,6 +1,7 @@
 ﻿<p>Hello <strong>@Model.StudentName</strong>,</p>
 
-<p>You have successfully enrolled in the course <strong>@Model.CourseTitle</strong> on @Model.PurchaseDate.ToString("HH:mm MM/dd/yyyy").</p>
+<p>You have successfully enrolled in the course <strong>@Model.CourseTitle</strong> on
+    @Model.PurchaseDate.ToString("HH:mm MM/dd/yyyy").</p>
 
 <h3>Invoice Information</h3>
 <ul>
@@ -11,6 +12,6 @@
 
 <p>To start learning, please click the button below:</p>
 
-<a href="@Model.RedirectLink" class="button">Go to CourseMate</a>
+<a class="button" href="@Model.RedirectLink">Go to CourseMate</a>
 
 <p>We wish you an effective and successful learning journey!</p>

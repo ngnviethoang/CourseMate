@@ -85,10 +85,26 @@ function EditableSlide({
               }}
               autoFocus
             />
-            <Button size="icon" variant="ghost" className="h-8 w-8 text-green-600 hover:bg-green-50" onClick={() => { onChange({ ...slide, title: titleDraft }); setEditingTitle(false) }}>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8 text-green-600 hover:bg-green-50"
+              onClick={() => {
+                onChange({ ...slide, title: titleDraft })
+                setEditingTitle(false)
+              }}
+            >
               <Check className="h-4 w-4" />
             </Button>
-            <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:bg-destructive/5" onClick={() => { setTitleDraft(slide.title); setEditingTitle(false) }}>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8 text-destructive hover:bg-destructive/5"
+              onClick={() => {
+                setTitleDraft(slide.title)
+                setEditingTitle(false)
+              }}
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -150,7 +166,11 @@ function EditableSlide({
               </p>
               <div className="flex flex-wrap gap-2">
                 {slide.relatedLinks.map((link, li) => (
-                  <Badge key={li} variant="secondary" className="font-normal text-[10px] bg-blue-50/50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/10 dark:text-blue-400 border-0">
+                  <Badge
+                    key={li}
+                    variant="secondary"
+                    className="font-normal text-[10px] bg-blue-50/50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/10 dark:text-blue-400 border-0"
+                  >
                     {link}
                   </Badge>
                 ))}
@@ -177,7 +197,9 @@ function SlidePreviewer({ slides }: { slides: LectureSlide[] }) {
     if (!emblaApi) return
     onSelect()
     emblaApi.on('select', onSelect)
-    return () => { emblaApi.off('select', onSelect) }
+    return () => {
+      emblaApi.off('select', onSelect)
+    }
   }, [emblaApi, onSelect])
 
   return (
@@ -193,18 +215,20 @@ function SlidePreviewer({ slides }: { slides: LectureSlide[] }) {
                       Slide {slide.slideNumber} of {slides.length}
                     </Badge>
                     <h2 className="text-4xl font-extrabold text-white tracking-tight leading-tight">
-                      {slide.title || "Untitled Slide"}
+                      {slide.title || 'Untitled Slide'}
                     </h2>
                     <div className="h-1.5 w-24 bg-primary rounded-full mt-4" />
                   </div>
 
                   <div className="flex-1 space-y-4">
                     {slide.bullets.map((bullet, bi) => (
-                      <div key={bi} className="flex items-start gap-4 animate-in fade-in slide-in-from-left-4 duration-500" style={{ animationDelay: `${bi * 100}ms` }}>
+                      <div
+                        key={bi}
+                        className="flex items-start gap-4 animate-in fade-in slide-in-from-left-4 duration-500"
+                        style={{ animationDelay: `${bi * 100}ms` }}
+                      >
                         <div className="mt-2.5 h-2 w-2 shrink-0 rounded-full bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
-                        <p className="text-xl text-zinc-300 font-medium leading-relaxed">
-                          {bullet}
-                        </p>
+                        <p className="text-xl text-zinc-300 font-medium leading-relaxed">{bullet}</p>
                       </div>
                     ))}
                   </div>
@@ -326,7 +350,12 @@ function OutlineEditor({
 
         <div className="flex items-center gap-3">
           {view === 'edit' && (
-            <Button onClick={handleSave} disabled={saving} size="sm" className="gap-2 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
+            <Button
+              onClick={handleSave}
+              disabled={saving}
+              size="sm"
+              className="gap-2 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+            >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               {saving ? 'Saving...' : 'Save Changes'}
             </Button>
@@ -348,7 +377,9 @@ function OutlineEditor({
                 <Sparkles className="h-6 w-6 text-purple-600" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-bold text-purple-600 uppercase tracking-[0.2em] mb-1">Generated Lesson</p>
+                <p className="text-[10px] font-bold text-purple-600 uppercase tracking-[0.2em] mb-1">
+                  Generated Lesson
+                </p>
                 <Input
                   className="border-0 bg-transparent p-0 h-auto text-2xl font-black shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/30"
                   value={draft.lessonTitle}
@@ -415,30 +446,27 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
   const [pollingCount, setPollingCount] = useState(0)
 
   // Poll for outline after upload
-  const pollOutline = useCallback(
-    async (lessonId: string, attempts = 0, maxAttempts = 40) => {
-      if (attempts >= maxAttempts) {
-        setUploadState('error')
-        toast.error('Quá trình hỗ trợ làm bài giảng đã quá thời gian. Vui lòng thử lại.')
+  const pollOutline = useCallback(async (lessonId: string, attempts = 0, maxAttempts = 40) => {
+    if (attempts >= maxAttempts) {
+      setUploadState('error')
+      toast.error('Quá trình hỗ trợ làm bài giảng đã quá thời gian. Vui lòng thử lại.')
+      return
+    }
+    try {
+      const result = await lessonMaterialService.getOutline(lessonId)
+      const hasSlides = result?.lectureOutline?.slides?.length || 0 > 0
+      if (hasSlides) {
+        setOutline(result)
+        setUploadState('done')
+        toast.success('Dàn ý bài giảng đã sẵn sàng! 🎉')
         return
       }
-      try {
-        const result = await lessonMaterialService.getOutline(lessonId)
-        const hasSlides = result?.lectureOutline?.slides?.length || 0 > 0
-        if (hasSlides) {
-          setOutline(result)
-          setUploadState('done')
-          toast.success('Dàn ý bài giảng đã sẵn sàng! 🎉')
-          return
-        }
-      } catch {
-        // Ignore errors while polling — outline may not be ready yet
-      }
-      setPollingCount(attempts + 1)
-      setTimeout(() => pollOutline(lessonId, attempts + 1, maxAttempts), 3000)
-    },
-    []
-  )
+    } catch {
+      // Ignore errors while polling — outline may not be ready yet
+    }
+    setPollingCount(attempts + 1)
+    setTimeout(() => pollOutline(lessonId, attempts + 1, maxAttempts), 3000)
+  }, [])
 
   // ── On mount: check if AI is already running or done for this lesson ──────
   // This handles the case where file was uploaded from the chapter modal
@@ -473,7 +501,9 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
     }
 
     checkExistingOutline()
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [lessonId, pollOutline])
 
   const startGeneration = async () => {
@@ -526,11 +556,13 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
   const [particles, setParticles] = useState<{ top: string; left: string; duration: string }[]>([])
 
   useEffect(() => {
-    setParticles([...Array(6)].map(() => ({
-      top: `${Math.random() * 100}%`,
-      left: `${Math.random() * 100}%`,
-      duration: `${1 + Math.random() * 2}s`
-    })))
+    setParticles(
+      [...Array(6)].map(() => ({
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        duration: `${1 + Math.random() * 2}s`
+      }))
+    )
   }, [])
 
   return (
@@ -572,11 +604,17 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
                 </div>
                 <div className="max-w-xs">
                   <p className="font-bold text-lg tracking-tight">Tải lên tài liệu nguồn</p>
-                  <p className="text-sm text-muted-foreground mt-1">Hệ thống sẽ hỗ trợ trích xuất các ý chính và tạo slide cho bạn.</p>
-                  <p className="text-[10px] font-medium text-muted-foreground/60 mt-4 uppercase tracking-[0.2em]">Hỗ trợ PDF, DOCX</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Hệ thống sẽ hỗ trợ trích xuất các ý chính và tạo slide cho bạn.
+                  </p>
+                  <p className="text-[10px] font-medium text-muted-foreground/60 mt-4 uppercase tracking-[0.2em]">
+                    Hỗ trợ PDF, DOCX
+                  </p>
                 </div>
                 {uploadState === 'error' && (
-                  <Badge variant="destructive" className="mt-2">Something went wrong. Try again.</Badge>
+                  <Badge variant="destructive" className="mt-2">
+                    Something went wrong. Try again.
+                  </Badge>
                 )}
               </div>
             ) : (
@@ -589,10 +627,15 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
                     <div className="flex-1 min-w-0">
                       <h4 className="font-bold text-lg truncate pr-8">{selectedFile.name}</h4>
                       <div className="flex items-center gap-3 mt-1.5">
-                        <Badge variant="secondary" className="bg-purple-50 text-purple-600 dark:bg-purple-900/20 border-0">
+                        <Badge
+                          variant="secondary"
+                          className="bg-purple-50 text-purple-600 dark:bg-purple-900/20 border-0"
+                        >
                           {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                         </Badge>
-                        <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">Ready to process</span>
+                        <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">
+                          Ready to process
+                        </span>
                       </div>
                     </div>
                     <Button
@@ -678,12 +721,10 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
               </div>
             </div>
             <div className="text-center space-y-3 max-w-md">
-              <h3 className="font-black text-3xl tracking-tighter text-primary">
-                Đang hỗ trợ soạn thảo bài giảng
-              </h3>
+              <h3 className="font-black text-3xl tracking-tighter text-primary">Đang hỗ trợ soạn thảo bài giảng</h3>
               <p className="text-muted-foreground text-sm leading-relaxed px-4">
-                Chúng tôi đang phân tích cấu trúc, trích xuất các điểm chính và thiết kế các slide.
-                Quá trình này thường mất khoảng một phút.
+                Chúng tôi đang phân tích cấu trúc, trích xuất các điểm chính và thiết kế các slide. Quá trình này thường
+                mất khoảng một phút.
               </p>
               <div className="flex flex-col items-center gap-3 pt-4">
                 <div className="flex gap-2">

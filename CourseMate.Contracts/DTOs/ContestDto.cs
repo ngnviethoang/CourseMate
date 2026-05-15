@@ -15,6 +15,7 @@ public class ContestDto
     public int MemoryLimit { get; set; }
     public int TimeLimit { get; set; }
     public AntiCheatLevel AntiCheatLevel { get; set; }
+    public int MaxViolations { get; set; }
     public Guid CreatorId { get; set; }
     public string? CreatorName { get; set; }
     public DateTimeOffset CreationTime { get; set; }

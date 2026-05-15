@@ -41,7 +41,11 @@ internal sealed class GetContestWorkspaceQueryHandler : AbstractQueryHandler<Get
                 StartTime = x.StartTime,
                 EndTime = x.EndTime,
                 DurationInMinutes = x.DurationInMinutes,
-                JoinTime = registration.JoinTime
+                JoinTime = registration.JoinTime,
+                AntiCheatLevel = x.AntiCheatLevel,
+                MaxViolations = x.MaxViolations,
+                ViolationCount = registration.ViolationCount,
+                IsDisqualified = registration.IsDisqualified
             }).FirstOrDefaultAsync(ct);
 
         if (contest == null)
