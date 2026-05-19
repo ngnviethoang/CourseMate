@@ -1,22 +1,15 @@
-'use client'
-
 import { useEffect, useRef, useCallback, useState } from 'react'
 import { HubConnectionBuilder, HubConnection, LogLevel } from '@microsoft/signalr'
 import { getAccessToken } from '@/lib/auth-token.util'
 import { toast } from 'sonner'
 
-type AntiCheatLevel = 'None' | 'Basic' | 'Strict'
-
-// Must match backend CourseMate.Contracts.Enums.ViolationType
 export enum ViolationType {
   TabSwitch = 'TabSwitch',
   WindowBlur = 'WindowBlur',
   CopyPaste = 'CopyPaste',
   RightClick = 'RightClick',
   DevToolsOpen = 'DevToolsOpen',
-  ScreenResize = 'ScreenResize',
-  MultipleMonitors = 'MultipleMonitors',
-  ExternalPaste = 'ExternalPaste'
+  ScreenResize = 'ScreenResize'
 }
 
 interface ViolationWarning {
@@ -27,21 +20,22 @@ interface ViolationWarning {
 
 interface ForceDisqualifyEvent {
   reason: string
-  disqualifiedAt: string
 }
 
 interface UseAntiCheatOptions {
   contestId: string
-  antiCheatLevel: AntiCheatLevel
+  antiCheatLevel: 'None' | 'Basic' | 'Strict'
   maxViolations: number
   initialViolationCount?: number
   onDisqualified?: (reason: string) => void
 }
 
-interface UseAntiCheatResult {
+export interface UseAntiCheatResult {
   violationCount: number
   isDisqualified: boolean
   connection: HubConnection | null
+  lockedUntil: number | null
+  lockoutReason: string
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
@@ -55,12 +49,84 @@ export function useAntiCheat({
 }: UseAntiCheatOptions): UseAntiCheatResult {
   const [violationCount, setViolationCount] = useState(initialViolationCount)
   const [isDisqualified, setIsDisqualified] = useState(false)
+  const [lockedUntil, setLockedUntil] = useState<number | null>(null)
+  const [lockoutReason, setLockoutReason] = useState<string>('')
+
   const connectionRef = useRef<HubConnection | null>(null)
   const lastViolationTimeRef = useRef<Record<string, number>>({})
+  const deviceFingerprintRef = useRef<string>('')
+  const userAgentRef = useRef<string>('')
+
+  // CRITICAL FIX: Reset and sync all states when contestId changes
+  // This prevents leakage between different contests
+  useEffect(() => {
+    setViolationCount(initialViolationCount)
+    setIsDisqualified(false)
+    setLockedUntil(null)
+    setLockoutReason('')
+    lastViolationTimeRef.current = {}
+    
+    // Check for existing lockout for THIS specific contest
+    if (typeof window !== 'undefined' && contestId) {
+      const lockData = localStorage.getItem(`coursemate_lockout_${contestId}`)
+      if (lockData) {
+        try {
+          const parsed = JSON.parse(lockData)
+          if (parsed.lockedUntil > Date.now()) {
+            setLockedUntil(parsed.lockedUntil)
+            setLockoutReason(parsed.reason)
+          } else {
+            localStorage.removeItem(`coursemate_lockout_${contestId}`)
+          }
+        } catch {
+          // ignore
+        }
+      }
+    }
+  }, [contestId, initialViolationCount])
+
+  // Generate fingerprint once
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      userAgentRef.current = navigator.userAgent
+      const screenRes = `${window.screen.width}x${window.screen.height}`
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+      const lang = navigator.language
+      const raw = `${userAgentRef.current}|${screenRes}|${tz}|${lang}`
+      
+      // Simple hash function
+      let hash = 0
+      for (let i = 0; i < raw.length; i++) {
+        const char = raw.charCodeAt(i)
+        hash = (hash << 5) - hash + char
+        hash |= 0 // Convert to 32bit int
+      }
+      deviceFingerprintRef.current = `dev_${Math.abs(hash).toString(16)}`
+    }
+  }, [])
+
+  // Clear lockout when time expires
+  useEffect(() => {
+    if (lockedUntil) {
+      const remaining = lockedUntil - Date.now()
+      if (remaining > 0) {
+        const timer = setTimeout(() => {
+          setLockedUntil(null)
+          setLockoutReason('')
+          localStorage.removeItem(`coursemate_lockout_${contestId}`)
+        }, remaining)
+        return () => clearTimeout(timer)
+      } else {
+        setLockedUntil(null)
+        setLockoutReason('')
+        localStorage.removeItem(`coursemate_lockout_${contestId}`)
+      }
+    }
+  }, [lockedUntil, contestId])
 
   // Report a violation via SignalR
   const reportViolation = useCallback(
-    async (violationType: ViolationType, details?: string) => {
+    async (violationType: ViolationType | string, details?: string) => {
       if (isDisqualified || antiCheatLevel === 'None') return
 
       // Client-side throttle: 1 per type per 2 seconds
@@ -69,18 +135,71 @@ export function useAntiCheat({
       if (now - lastTime < 2000) return
       lastViolationTimeRef.current[violationType] = now
 
+      // Client-side immediate warning
+      let userMessage = ''
+      switch (violationType) {
+        case ViolationType.TabSwitch:
+        case ViolationType.WindowBlur:
+          userMessage = '🚫 Cảnh báo: Vui lòng không chuyển tab hoặc rời khỏi màn hình thi!'
+          break
+        case ViolationType.CopyPaste:
+          userMessage = '🚫 Không được phép dán (paste) nội dung trong khi thi!'
+          break
+        case ViolationType.RightClick:
+          userMessage = '🚫 Không được phép sử dụng chuột phải!'
+          break
+        case ViolationType.DevToolsOpen:
+        case ViolationType.ScreenResize:
+          userMessage = '🚫 CẢNH BÁO: Không được phép sử dụng công cụ gian lận!'
+          break
+      }
+
+      if (userMessage) {
+        toast.error(userMessage, { id: violationType, duration: 4000 })
+      }
+
+      // Local Increment & Penalty Trigger
+      setViolationCount(prev => {
+        const newCount = prev + 1
+        
+        // Trigger Penalty Locally
+        if (antiCheatLevel === 'Strict' || antiCheatLevel === 'Basic') {
+          if (newCount === 3) {
+            const lockTime = Date.now() + 60 * 1000 // 1 minute
+            const reason = 'Vi phạm lần 3: Màn hình thi bị khóa tạm thời 1 phút.'
+            setLockedUntil(lockTime)
+            setLockoutReason(reason)
+            localStorage.setItem(`coursemate_lockout_${contestId}`, JSON.stringify({ lockedUntil: lockTime, reason }))
+          } else if (newCount === 4) {
+            const lockTime = Date.now() + 180 * 1000 // 3 minutes
+            const reason = 'Vi phạm lần 4: Màn hình thi bị khóa tạm thời 3 phút.'
+            setLockedUntil(lockTime)
+            setLockoutReason(reason)
+            localStorage.setItem(`coursemate_lockout_${contestId}`, JSON.stringify({ lockedUntil: lockTime, reason }))
+          } else if (newCount >= 5) {
+            // Disqualify on 5th violation (or exceeding max)
+            setIsDisqualified(true)
+            setLockedUntil(null) // Clear penalty to show DQ overlay
+            localStorage.removeItem(`coursemate_lockout_${contestId}`)
+          }
+        }
+        return newCount
+      })
+
       try {
         await connectionRef.current?.invoke('ReportViolation', {
           contestId,
           violationType,
           details,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          userAgent: userAgentRef.current,
+          deviceFingerprint: deviceFingerprintRef.current
         })
       } catch (err) {
         console.error('Failed to report violation:', err)
       }
     },
-    [contestId, antiCheatLevel, isDisqualified]
+    [contestId, antiCheatLevel, isDisqualified, lockedUntil]
   )
 
   // Set up SignalR connection
@@ -100,20 +219,17 @@ export function useAntiCheat({
 
     // Handle server events
     connection.on('ViolationWarning', (data: ViolationWarning) => {
-      setViolationCount(data.violationCount)
+      // Sync with server if server count is higher
+      setViolationCount(prev => Math.max(prev, data.violationCount))
       const remaining = data.maxViolations - data.violationCount
 
-      if (antiCheatLevel === 'Strict' && remaining <= 2 && remaining > 0) {
+      if (remaining <= 2 && remaining > 0 && antiCheatLevel === 'Strict') {
         toast.error(
           `⚠️ Cảnh báo ${data.violationCount}/${data.maxViolations}: Còn ${remaining} lần vi phạm trước khi bị loại!`,
-          {
-            duration: 8000
-          }
+          { duration: 8000 }
         )
       } else {
-        toast.warning(`⚠️ Vi phạm ${data.violationCount}/${data.maxViolations}: ${data.message}`, {
-          duration: 5000
-        })
+        toast.warning(`⚠️ Thông báo vi phạm: ${data.message}`, { duration: 5000 })
       }
     })
 
@@ -232,6 +348,8 @@ export function useAntiCheat({
   return {
     violationCount,
     isDisqualified,
-    connection: connectionRef.current
+    connection: connectionRef.current,
+    lockedUntil,
+    lockoutReason
   }
 }
