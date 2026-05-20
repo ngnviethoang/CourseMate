@@ -8,7 +8,7 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get('accessToken')?.value
   const roles = getRoles(token)
   const isAuth = isAuthenticated(token)
-  const publicPaths = ['/', '/login', '/register', '/about', '/contact']
+  const publicPaths = ['/', '/login', '/register', '/about', '/contact', '/google-callback']
 
   if (publicPaths.includes(pathname)) {
     return NextResponse.next()

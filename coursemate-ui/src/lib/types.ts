@@ -27,7 +27,28 @@ export interface RegisterCommand {
 
 export interface LoginResponse {
   accessToken: string
+  roles: string[]
 }
+
+export interface VerifyEmailRequest {
+  userId: string
+  token: string
+}
+
+export interface ForgotPasswordRequest {
+  email: string
+}
+
+export interface ResetPasswordRequest {
+  email: string
+  token: string
+  newPassword: string
+}
+
+export interface SelectRoleRequest {
+  role: string
+}
+
 
 // ─── Category ─────────────────────────────────────────────────────────────────
 

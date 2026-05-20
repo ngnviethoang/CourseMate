@@ -3,6 +3,7 @@ using CourseMate.API.Hubs;
 using CourseMate.API.Middlewares;
 using CourseMate.API.Services;
 using CourseMate.Application;
+using CourseMate.Application.Services;
 using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Options;
@@ -42,6 +43,8 @@ try
     builder.Services.Configure<PayOsOptions>(configuration.GetSection("PayOs"));
     builder.Services.Configure<CorsOptions>(configuration.GetSection("CORS"));
     builder.Services.Configure<SmtpOptions>(configuration.GetSection("Smtp"));
+    builder.Services.Configure<GoogleAuthOptions>(configuration.GetSection("Authentication:Google"));
+    builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
     builder.Services.AddHttpClient();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<HttpLoggingMiddleware>();
@@ -158,7 +161,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseMiddleware<HttpLoggingMiddleware>();
-    // app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
+    app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
     app.MapControllers();
     app.MapHub<NotificationHub>("/hubs/notification").RequireCors("SignalRHubs");
     app.MapHub<ContestHub>("/hubs/contest").RequireCors("SignalRHubs");

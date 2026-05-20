@@ -5,7 +5,11 @@ import type {
   ProfileDto,
   RegisterCommand,
   UpdateProfileRequest,
-  ChangePasswordRequest
+  ChangePasswordRequest,
+  VerifyEmailRequest,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+  SelectRoleRequest
 } from '@/lib/types'
 
 const BASE = '/api/auth'
@@ -13,7 +17,15 @@ const BASE = '/api/auth'
 export const authService = {
   login: (body: LoginCommand): Promise<LoginResponse> => api.post<LoginResponse>(`${BASE}/login`, body),
 
-  register: (body: RegisterCommand): Promise<void> => api.post<void>(`${BASE}/register`, body)
+  register: (body: RegisterCommand): Promise<void> => api.post<void>(`${BASE}/register`, body),
+
+  verifyEmail: (body: VerifyEmailRequest): Promise<void> => api.post<void>(`${BASE}/verify-email`, body),
+
+  forgotPassword: (body: ForgotPasswordRequest): Promise<void> => api.post<void>(`${BASE}/forgot-password`, body),
+
+  resetPassword: (body: ResetPasswordRequest): Promise<void> => api.post<void>(`${BASE}/reset-password`, body),
+
+  selectRole: (body: SelectRoleRequest): Promise<LoginResponse> => api.post<LoginResponse>(`${BASE}/select-role`, body)
 }
 
 export const profileService = {
