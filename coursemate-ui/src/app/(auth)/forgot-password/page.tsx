@@ -58,9 +58,7 @@ export default function ForgotPasswordPage() {
         <Card className="shadow-2xl shadow-black/5 dark:shadow-black/20 bg-background/60 backdrop-blur-xl">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="text-xl font-semibold">Quên mật khẩu</CardTitle>
-            <CardDescription className="text-sm">
-              Nhập email đăng ký để nhận liên kết đặt lại mật khẩu.
-            </CardDescription>
+            <CardDescription className="text-sm">Nhập email đăng ký để nhận liên kết đặt lại mật khẩu.</CardDescription>
           </CardHeader>
           <CardContent>
             {sent ? (
@@ -71,8 +69,8 @@ export default function ForgotPasswordPage() {
                 <div className="space-y-2">
                   <p className="font-semibold text-foreground">Email đã được gửi!</p>
                   <p className="text-sm text-muted-foreground">
-                    Vui lòng kiểm tra hộp thư đến và nhấn vào liên kết đặt lại mật khẩu.
-                    Liên kết sẽ hết hạn sau <strong>1 giờ</strong>.
+                    Vui lòng kiểm tra hộp thư đến và nhấn vào liên kết đặt lại mật khẩu. Liên kết sẽ hết hạn sau{' '}
+                    <strong>1 giờ</strong>.
                   </p>
                 </div>
                 <Link href="/login" className="text-sm text-primary hover:underline mt-2">

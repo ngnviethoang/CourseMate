@@ -24,7 +24,6 @@ public static class ErrorMessages
     public const string DuplicateExerciseOrder = "Exercise order already exists in this contest.";
     public const string UserNotFound = "Không tìm thấy tài khoản.";
     public const string InvalidResetToken = "Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.";
-    public const string InvalidVerifyToken = "Liên kết xác thực email không hợp lệ hoặc đã hết hạn.";
     public const string GoogleLoginFailed = "Đăng nhập bằng Google không thành công.";
     public const string GoogleLoginCancelled = "Đăng nhập bằng Google đã bị hủy.";
     public const string InvalidOAuthState = "Phiên đăng nhập không hợp lệ. Vui lòng thử lại.";

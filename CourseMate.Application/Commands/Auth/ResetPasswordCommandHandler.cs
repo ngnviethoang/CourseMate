@@ -16,7 +16,7 @@ public class ResetPasswordCommand : IRequest<int>
     public string Token { get; set; } = string.Empty;
 
     [Required]
-    [MinLength(6)]
+    [MaxLength(32)]
     public string NewPassword { get; set; } = string.Empty;
 }
 
@@ -40,7 +40,7 @@ internal sealed class ResetPasswordCommandHandler : IRequestHandler<ResetPasswor
         IdentityResult result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
         if (!result.Succeeded)
         {
-            throw new BusinessException(ErrorMessages.InvalidResetToken);
+            throw new BusinessException(result.Errors.FirstOrDefault()?.Description ?? string.Empty);
         }
 
         return Codes.Success;

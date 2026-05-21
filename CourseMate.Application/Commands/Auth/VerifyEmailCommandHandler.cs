@@ -9,7 +9,7 @@ namespace CourseMate.Application.Commands.Auth;
 public class VerifyEmailCommand : IRequest<int>
 {
     [Required]
-    public string UserId { get; set; } = string.Empty;
+    public Guid UserId { get; set; }
 
     [Required]
     public string Token { get; set; } = string.Empty;
@@ -26,16 +26,16 @@ internal sealed class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCom
 
     public async Task<int> Handle(VerifyEmailCommand request, CancellationToken ct)
     {
-        IdentityUser<Guid>? user = await _userManager.FindByIdAsync(request.UserId);
+        IdentityUser<Guid>? user = await _userManager.FindByIdAsync(request.UserId.ToString());
         if (user == null)
         {
-            throw new BusinessException(ErrorMessages.UserNotFound);
+            throw new EntityNotFoundException(nameof(user), request.UserId);
         }
 
         IdentityResult result = await _userManager.ConfirmEmailAsync(user, request.Token);
         if (!result.Succeeded)
         {
-            throw new BusinessException(ErrorMessages.InvalidVerifyToken);
+            throw new BusinessException(result.Errors.FirstOrDefault()?.Description ?? string.Empty);
         }
 
         return Codes.Success;

@@ -143,7 +143,9 @@ export default function CoursesPage() {
     setLoadingDropdowns(true)
     try {
       const promises: Promise<unknown>[] = [
-        categoryService.list({ filter: '', pageSize: 25, sorting: 'name', hasCourse: true }).then(res => setCategories(res.items))
+        categoryService
+          .list({ filter: '', pageSize: 25, sorting: 'name', hasCourse: true })
+          .then(res => setCategories(res.items))
       ]
 
       if (isAdmin) {
@@ -312,7 +314,7 @@ export default function CoursesPage() {
                     alt="Thumbnail preview"
                     className="w-full h-full object-cover"
                     onError={e => {
-                      ; (e.target as HTMLImageElement).style.display = 'none'
+                      ;(e.target as HTMLImageElement).style.display = 'none'
                     }}
                   />
                 )}

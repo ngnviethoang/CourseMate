@@ -11,7 +11,7 @@ namespace CourseMate.Application.Queries.Categories;
 
 public class GetListCategoriesQuery : GetListQuery<CategoryDto>
 {
-    public bool? HasCourse { get; set; } 
+    public bool? HasCourse { get; set; }
 }
 
 internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetListCategoriesQuery, PagedDto<CategoryDto>>
@@ -19,7 +19,6 @@ internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetList
     public GetListCategoryQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
     {
-        
     }
 
     public override async Task<PagedDto<CategoryDto>> Handle(GetListCategoriesQuery request, CancellationToken ct)

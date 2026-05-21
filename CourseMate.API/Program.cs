@@ -3,12 +3,12 @@ using CourseMate.API.Hubs;
 using CourseMate.API.Middlewares;
 using CourseMate.API.Services;
 using CourseMate.Application;
-using CourseMate.Application.Services;
 using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using Hangfire;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
@@ -44,7 +44,6 @@ try
     builder.Services.Configure<CorsOptions>(configuration.GetSection("CORS"));
     builder.Services.Configure<SmtpOptions>(configuration.GetSection("Smtp"));
     builder.Services.Configure<GoogleAuthOptions>(configuration.GetSection("Authentication:Google"));
-    builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
     builder.Services.AddHttpClient();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<HttpLoggingMiddleware>();
@@ -53,7 +52,9 @@ try
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         })
+        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
@@ -80,17 +81,20 @@ try
                     return Task.CompletedTask;
                 }
             };
+        })
+        .AddGoogle(options =>
+        {
+            options.ClientId = configuration["Authentication:Google:ClientId"]!;
+            options.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
+            options.CallbackPath = configuration["Authentication:Google:CallbackPath"]!; // This is a callback for Google middleware, NOT your controller action.
+            options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         });
 
     builder.Services.AddIdentityCore<IdentityUser<Guid>>()
         .AddSignInManager()
         .AddRoles<IdentityRole<Guid>>()
         .AddEntityFrameworkStores<CourseMateDbContext>();
-    builder.Services.Configure<IdentityOptions>(options =>
-    {
-        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-";
-        options.User.RequireUniqueEmail = true;
-    });
+    builder.Services.Configure<IdentityOptions>(options => { options.User.RequireUniqueEmail = true; });
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate")!);
     builder.Services.AddHangfireServer();
@@ -161,7 +165,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseMiddleware<HttpLoggingMiddleware>();
-    app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
+    // app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
     app.MapControllers();
     app.MapHub<NotificationHub>("/hubs/notification").RequireCors("SignalRHubs");
     app.MapHub<ContestHub>("/hubs/contest").RequireCors("SignalRHubs");

@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.BackgroundJobs;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.Exceptions;
 using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -19,8 +18,8 @@ public class ForgotPasswordCommand : IRequest<int>
 
 internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordCommand, int>
 {
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
     private readonly IConfiguration _configuration;
+    private readonly UserManager<IdentityUser<Guid>> _userManager;
 
     public ForgotPasswordCommandHandler(
         UserManager<IdentityUser<Guid>> userManager,
@@ -61,11 +60,6 @@ internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPassw
     private static async Task<string> RenderResetPasswordTemplate(string userName, string resetUrl)
     {
         string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "ResetPassword.html");
-        if (!File.Exists(templatePath))
-        {
-            return $"<p>Xin chào <strong>{userName}</strong>,</p><p>Vui lòng <a href=\"{resetUrl}\">nhấn vào đây</a> để đặt lại mật khẩu của bạn.</p>";
-        }
-
         string html = await File.ReadAllTextAsync(templatePath);
         return html
             .Replace("{{userName}}", userName)

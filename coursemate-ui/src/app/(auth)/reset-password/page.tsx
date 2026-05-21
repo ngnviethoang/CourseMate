@@ -72,9 +72,7 @@ function ResetPasswordForm() {
             </div>
             <div className="space-y-2">
               <p className="font-semibold text-foreground">Đặt lại mật khẩu thành công!</p>
-              <p className="text-sm text-muted-foreground">
-                Đang chuyển hướng về trang đăng nhập...
-              </p>
+              <p className="text-sm text-muted-foreground">Đang chuyển hướng về trang đăng nhập...</p>
             </div>
           </div>
         ) : (

@@ -8,14 +8,19 @@ import type {
   ChangePasswordRequest,
   VerifyEmailRequest,
   ForgotPasswordRequest,
-  ResetPasswordRequest,
-  SelectRoleRequest
+  ResetPasswordRequest
 } from '@/lib/types'
 
 const BASE = '/api/auth'
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? '').replace(/\/$/, '')
 
 export const authService = {
   login: (body: LoginCommand): Promise<LoginResponse> => api.post<LoginResponse>(`${BASE}/login`, body),
+
+  getGoogleSignInUrl: (redirectUrl: string): string => {
+    const params = new URLSearchParams({ RedirectUrl: redirectUrl })
+    return `${API_BASE_URL}${BASE}/signin-google?${params.toString()}`
+  },
 
   register: (body: RegisterCommand): Promise<void> => api.post<void>(`${BASE}/register`, body),
 
@@ -23,9 +28,7 @@ export const authService = {
 
   forgotPassword: (body: ForgotPasswordRequest): Promise<void> => api.post<void>(`${BASE}/forgot-password`, body),
 
-  resetPassword: (body: ResetPasswordRequest): Promise<void> => api.post<void>(`${BASE}/reset-password`, body),
-
-  selectRole: (body: SelectRoleRequest): Promise<LoginResponse> => api.post<LoginResponse>(`${BASE}/select-role`, body)
+  resetPassword: (body: ResetPasswordRequest): Promise<void> => api.post<void>(`${BASE}/reset-password`, body)
 }
 
 export const profileService = {

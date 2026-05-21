@@ -68,8 +68,9 @@ export function CategoryDropdown({ value, onChange }: CategoryDropdownProps) {
                 onChange('')
                 setOpen(false)
               }}
-              className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition-colors ${!value ? 'bg-primary/10 font-semibold text-primary' : 'text-foreground hover:bg-accent'
-                }`}
+              className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition-colors ${
+                !value ? 'bg-primary/10 font-semibold text-primary' : 'text-foreground hover:bg-accent'
+              }`}
             >
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-slate-400 to-gray-500 text-white text-xs font-bold shadow-sm">
                 All
@@ -99,8 +100,9 @@ export function CategoryDropdown({ value, onChange }: CategoryDropdownProps) {
                     onChange(cat.id)
                     setOpen(false)
                   }}
-                  className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition-colors ${isSelected ? 'bg-primary/10 font-semibold text-primary' : 'text-foreground hover:bg-accent'
-                    }`}
+                  className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition-colors ${
+                    isSelected ? 'bg-primary/10 font-semibold text-primary' : 'text-foreground hover:bg-accent'
+                  }`}
                 >
                   <span
                     className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${gradient} text-white text-xs font-bold shadow-sm`}

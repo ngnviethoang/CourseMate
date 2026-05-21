@@ -26,7 +26,7 @@ export default function CatalogPage() {
       try {
         const res = await categoryService.list({ pageSize: 50, hasCourse: true })
         setCategories(res.items || [])
-      } catch { }
+      } catch {}
     }
     fetchCategories()
   }, [])

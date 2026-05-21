@@ -3,14 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -69,15 +62,13 @@ export default function RegisterPage() {
     try {
       await authService.register(payload)
       if (payload.role === 'Instructor') {
-        toast.success(
-          'Đăng ký giảng viên thành công! Vui lòng kiểm tra email để xác thực tài khoản.',
-          { duration: 5000 }
-        )
+        toast.success('Đăng ký giảng viên thành công! Vui lòng kiểm tra email để xác thực tài khoản.', {
+          duration: 5000
+        })
       } else {
-        toast.success(
-          'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản trước khi đăng nhập.',
-          { duration: 5000 }
-        )
+        toast.success('Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản trước khi đăng nhập.', {
+          duration: 5000
+        })
       }
       router.push('/login')
     } catch {
@@ -163,7 +154,8 @@ export default function RegisterPage() {
         <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/30 p-3 rounded-md mt-4">
           <Info className="w-4 h-4 shrink-0 text-primary" />
           <p>
-            Tài khoản giảng viên cần được quản trị viên phê duyệt trước khi có thể bắt đầu tạo khóa học. Bạn sẽ nhận được thông báo sau khi được duyệt.
+            Tài khoản giảng viên cần được quản trị viên phê duyệt trước khi có thể bắt đầu tạo khóa học. Bạn sẽ nhận
+            được thông báo sau khi được duyệt.
           </p>
         </div>
       )}

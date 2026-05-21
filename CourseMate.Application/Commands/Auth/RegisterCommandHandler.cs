@@ -16,25 +16,25 @@ public class RegisterCommand : IRequest<int>
     public string Email { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(128)]
+    [MaxLength(32)]
     public string Password { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(128)]
+    [MaxLength(32)]
     public string UserName { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(128)]
+    [MaxLength(32)]
     public string Role { get; set; } = string.Empty;
 }
 
 internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, int>
 {
+    private readonly IConfiguration _configuration;
     private readonly IUserEmailStore<IdentityUser<Guid>> _emailStore;
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
     private readonly IUserStore<IdentityUser<Guid>> _userStore;
-    private readonly IConfiguration _configuration;
 
     public RegisterCommandHandler(
         UserManager<IdentityUser<Guid>> userManager,
@@ -92,11 +92,6 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
     private static async Task<string> RenderVerifyEmailTemplate(string userName, string verifyUrl)
     {
         string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "VerifyEmail.html");
-        if (!File.Exists(templatePath))
-        {
-            return $"<p>Xin chào <strong>{userName}</strong>,</p><p>Vui lòng <a href=\"{verifyUrl}\">nhấn vào đây</a> để xác thực email của bạn.</p>";
-        }
-
         string html = await File.ReadAllTextAsync(templatePath);
         return html
             .Replace("{{userName}}", userName)

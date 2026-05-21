@@ -49,7 +49,6 @@ export interface SelectRoleRequest {
   role: string
 }
 
-
 // ─── Category ─────────────────────────────────────────────────────────────────
 
 export interface CategoryDto {
