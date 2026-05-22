@@ -13,11 +13,11 @@ import { formatCurrency } from '@/lib/utils'
 
 import { useRouter } from 'next/navigation'
 
-// Static mock reviews – no review API yet
+// Dữ liệu đánh giá mô phỏng tạm thời
 function getReview(idx: number) {
   const ratings = [4.9, 4.8, 4.7, 4.6, 4.8, 4.5, 4.9, 4.7]
   const students = [18400, 12700, 24900, 9300, 15200, 8100, 21000, 11000]
-  const badges = ['Bestseller', 'New', 'Top Rated', null, 'Bestseller', null, 'Top Rated', 'New']
+  const badges = ['Bán chạy', 'Mới', 'Đánh giá cao', null, 'Bán chạy', null, 'Đánh giá cao', 'Mới']
   return {
     rating: ratings[idx % ratings.length],
     students: students[idx % students.length],
@@ -26,9 +26,9 @@ function getReview(idx: number) {
 }
 
 const BADGE_STYLES: Record<string, string> = {
-  Bestseller: 'bg-amber-500 text-white border-0',
-  New: 'bg-emerald-500 text-white border-0',
-  'Top Rated': 'bg-blue-500 text-white border-0'
+  'Bán chạy': 'bg-amber-500 text-white border-0',
+  Mới: 'bg-emerald-500 text-white border-0',
+  'Đánh giá cao': 'bg-blue-500 text-white border-0'
 }
 
 const GRADIENT_FALLBACKS = [
@@ -146,7 +146,7 @@ function CourseCard({ course, index }: CourseCardProps) {
         </h3>
 
         {/* Instructor */}
-        <p className="mt-1 text-xs text-muted-foreground">{course.instructorName ?? 'Instructor'}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{course.instructorName ?? 'Giảng viên'}</p>
 
         {/* Rating + students */}
         <div className="mt-2 flex items-center gap-3 text-xs">
@@ -220,7 +220,7 @@ export function RecommendedCourses({ searchQuery, isLoggedIn, selectedCategoryId
     }
   }, [])
 
-  // Reset to page 1 when filters change
+  // Trở về trang 1 khi bộ lọc thay đổi
   useEffect(() => {
     setPageIndex(1)
   }, [searchQuery, selectedCategoryId, isLoggedIn])

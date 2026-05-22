@@ -29,7 +29,7 @@ internal sealed class CheckInContestCommandHandler : AbstractCommandHandler<Chec
 
         if (registration == null)
         {
-            throw new BusinessException("You are not registered for this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "You are not registered for this contest.");
         }
 
         if (registration.JoinTime.HasValue)
@@ -44,7 +44,7 @@ internal sealed class CheckInContestCommandHandler : AbstractCommandHandler<Chec
             // For now let's just check if StartTime is near.
             if (contest?.StartTime.HasValue == true && contest.StartTime.Value > DateTimeOffset.UtcNow.AddMinutes(10))
             {
-                throw new BusinessException("Contest hasn't started yet.");
+                throw new BusinessException(ErrorCode.Unknown, "Contest hasn't started yet.");
             }
         }
 

@@ -37,9 +37,9 @@ export function Pagination({ pageIndex, pageSize, totalCount, onPageChange }: Pa
   return (
     <div className="flex items-center justify-between px-2 py-4 border-t">
       <div className="text-sm text-muted-foreground">
-        Showing <span className="font-medium">{pageIndex * pageSize + 1}</span> to{' '}
-        <span className="font-medium">{Math.min((pageIndex + 1) * pageSize, totalCount)}</span> of{' '}
-        <span className="font-medium">{totalCount}</span> results
+        Hiển thị <span className="font-medium">{pageIndex * pageSize + 1}</span> đến{' '}
+        <span className="font-medium">{Math.min((pageIndex + 1) * pageSize, totalCount)}</span> trên tổng{' '}
+        <span className="font-medium">{totalCount}</span> kết quả
       </div>
       <div className="flex items-center gap-1">
         <Button

@@ -29,7 +29,7 @@ function getUserFromToken() {
       payload['unique_name'] ??
       payload['name'] ??
       payload['sub'] ??
-      'User'
+      'Người dùng'
     const role: string =
       payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? payload['role'] ?? ''
     return { name, role }
@@ -59,7 +59,7 @@ export function StudentHeader() {
   }, [])
 
   const initials = mounted && user?.name ? user.name.slice(0, 2).toUpperCase() : 'U'
-  const displayName = mounted && user?.name ? user.name : 'User'
+  const displayName = mounted && user?.name ? user.name : 'Người dùng'
   const displayRole = mounted && user?.role ? user.role : ''
 
   const handleLogout = () => {

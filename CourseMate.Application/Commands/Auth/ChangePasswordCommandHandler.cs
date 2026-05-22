@@ -37,12 +37,11 @@ internal sealed class ChangePasswordCommandHandler : AbstractCommandHandler<Chan
         }
 
         IdentityResult changePasswordResult = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
-        if (changePasswordResult.Succeeded)
+        if (!changePasswordResult.Succeeded)
         {
-            return Codes.Success;
+            throw new BusinessException(ErrorCode.Unknown, changePasswordResult.Errors.FirstOrDefault()?.Description ?? string.Empty);
         }
 
-        string errors = string.Join(", ", changePasswordResult.Errors.Select(e => e.Description));
-        throw new BusinessException(errors);
+        return Codes.Success;
     }
 }

@@ -41,12 +41,12 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
     {
         if (!_allowedImageExtensions.Contains(Path.GetExtension(request.FileName), StringComparer.InvariantCultureIgnoreCase))
         {
-            throw new BusinessException(ErrorMessages.InvalidFileType);
+            throw new BusinessException(ErrorCode.InvalidFileType, "Invalid file type. This file type is not allowed.");
         }
 
         if (request.Content.Length > _storageOptions.MaxChunkSizeMb * 1024 * 1024)
         {
-            throw new BusinessException(ErrorMessages.FileTooLarge);
+            throw new BusinessException(ErrorCode.FileTooLarge, "File too large.");
         }
 
         Guid userId = CurrentUserId;

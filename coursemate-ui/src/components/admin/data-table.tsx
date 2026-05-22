@@ -82,7 +82,7 @@ export function DataTable<T extends { id: string }>({
             ))}
             {hasActions && (
               <TableHead className="w-24 text-right">
-                <span className="font-semibold text-xs uppercase tracking-wide">Actions</span>
+                <span className="font-semibold text-xs uppercase tracking-wide">Thao tác</span>
               </TableHead>
             )}
           </TableRow>
@@ -94,7 +94,7 @@ export function DataTable<T extends { id: string }>({
                 colSpan={columns.length + (hasActions ? 1 : 0)}
                 className="h-24 text-center text-muted-foreground text-sm"
               >
-                No records found.
+                Không có dữ liệu.
               </TableCell>
             </TableRow>
           ) : (

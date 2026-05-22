@@ -117,7 +117,7 @@ export function useNotifications(): UseNotificationsResult {
     connection.start().catch(err => console.error('Failed to connect to NotificationHub:', err))
 
     return () => {
-      connection.stop().catch(() => { })
+      connection.stop().catch(() => {})
     }
   }, [])
 

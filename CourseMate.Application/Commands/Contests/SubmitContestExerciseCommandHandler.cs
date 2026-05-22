@@ -38,12 +38,12 @@ internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandl
 
         if (registration.IsDisqualified)
         {
-            throw new BusinessException("You have been disqualified from this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "You have been disqualified from this contest.");
         }
 
         if (registration.SubmitTime.HasValue)
         {
-            throw new BusinessException("You have already submitted your final contest entry.");
+            throw new BusinessException(ErrorCode.Unknown, "You have already submitted your final contest entry.");
         }
 
         Contest? contest = await DbContext.Contests.FindAsync([request.ContestId], ct);
@@ -53,7 +53,7 @@ internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandl
             // Usually contest ends for everyone at EndTime.
             if (contest?.EndTime.HasValue == true && contest.EndTime.Value < DateTimeOffset.UtcNow)
             {
-                throw new BusinessException("Contest has ended.");
+                throw new BusinessException(ErrorCode.Unknown, "Contest has ended.");
             }
         }
 
@@ -63,7 +63,7 @@ internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandl
 
         if (ce == null)
         {
-            throw new BusinessException("Exercise is not part of this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "Exercise is not part of this contest.");
         }
 
         // Score in payload is 0-100 percentage

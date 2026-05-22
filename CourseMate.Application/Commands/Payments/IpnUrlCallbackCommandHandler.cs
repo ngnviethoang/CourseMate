@@ -99,7 +99,7 @@ internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnU
         }
         catch (PayOSException ex)
         {
-            throw new BusinessException($"Webhook processing error {ex.Message}");
+            throw new BusinessException(ErrorCode.Unknown, $"Webhook processing error {ex.Message}");
         }
     }
 

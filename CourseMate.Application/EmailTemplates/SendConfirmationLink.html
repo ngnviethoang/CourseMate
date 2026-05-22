@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Xác thực tài khoản - CourseMate</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            max-width: 600px;
+            margin: auto;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0056D2 0%, #0073E6 100%);
+            color: #ffffff;
+            font-size: 26px;
+            padding: 24px 32px;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .content {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #333333;
+            padding: 32px;
+        }
+
+        .content p {
+            margin: 0 0 16px;
+        }
+
+        .button-wrapper {
+            text-align: center;
+            margin: 32px 0;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 14px 36px;
+            background: linear-gradient(135deg, #0056D2 0%, #0073E6 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(0, 86, 210, 0.3);
+        }
+
+        .note {
+            font-size: 13px;
+            color: #888888;
+            background-color: #f8f9fa;
+            border-left: 4px solid #0056D2;
+            padding: 12px 16px;
+            border-radius: 0 6px 6px 0;
+            margin-top: 24px;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #aaaaaa;
+            text-align: center;
+            padding: 20px 32px;
+            border-top: 1px solid #eeeeee;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">CourseMate</div>
+    <div class="content">
+        <p>Xin chào <strong>{{userName}}</strong>,</p>
+        <p>Bạn vừa đăng nhập bằng Google trên CourseMate. Để hoàn tất kích hoạt tài khoản, vui lòng xác thực email bằng
+            liên kết bên dưới.</p>
+        <div class="button-wrapper">
+            <a class="button" href="{{confirmationLink}}">Xác thực tài khoản</a>
+        </div>
+        <div class="note">
+            Liên kết xác thực này sẽ hết hạn sau <strong>24 giờ</strong>. Nếu bạn không thực hiện thao tác này, vui lòng
+            bỏ qua email.
+        </div>
+        <p style="margin-top: 24px;">Nếu nút không hoạt động, hãy sao chép và dán liên kết sau vào trình duyệt:</p>
+        <p style="font-size: 13px; color: #0056D2; word-break: break-all;">{{confirmationLink}}</p>
+    </div>
+    <div class="footer">
+        &copy; 2026 CourseMate. All rights reserved.<br/>
+        Hỗ trợ: support@coursemate.com
+    </div>
+</div>
+</body>
+</html>

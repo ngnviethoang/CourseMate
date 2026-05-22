@@ -8,6 +8,7 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using Hangfire;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
@@ -42,6 +43,7 @@ try
     builder.Services.Configure<PayOsOptions>(configuration.GetSection("PayOs"));
     builder.Services.Configure<CorsOptions>(configuration.GetSection("CORS"));
     builder.Services.Configure<SmtpOptions>(configuration.GetSection("Smtp"));
+    builder.Services.Configure<GoogleAuthOptions>(configuration.GetSection("Authentication:Google"));
     builder.Services.AddHttpClient();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<HttpLoggingMiddleware>();
@@ -50,7 +52,9 @@ try
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         })
+        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
@@ -77,17 +81,20 @@ try
                     return Task.CompletedTask;
                 }
             };
+        })
+        .AddGoogle(options =>
+        {
+            options.ClientId = configuration["Authentication:Google:ClientId"]!;
+            options.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
+            options.CallbackPath = configuration["Authentication:Google:CallbackPath"]!; // This is a callback for Google middleware, NOT your controller action.
+            options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         });
 
     builder.Services.AddIdentityCore<IdentityUser<Guid>>()
         .AddSignInManager()
         .AddRoles<IdentityRole<Guid>>()
         .AddEntityFrameworkStores<CourseMateDbContext>();
-    builder.Services.Configure<IdentityOptions>(options =>
-    {
-        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-";
-        options.User.RequireUniqueEmail = true;
-    });
+    builder.Services.Configure<IdentityOptions>(options => { options.User.RequireUniqueEmail = true; });
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate")!);
     builder.Services.AddHangfireServer();

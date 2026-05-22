@@ -41,27 +41,54 @@ internal sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginR
 
     public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken ct)
     {
+        // Allow login by username OR email
         IdentityUser<Guid>? user = await _userManager.FindByNameAsync(request.UserName);
         if (user == null)
         {
-            throw new BusinessException(ErrorMessages.InvalidUsernameOrPassword);
+            user = await _userManager.FindByEmailAsync(request.UserName);
+        }
+
+        if (user == null)
+        {
+            throw new BusinessException(ErrorCode.InvalidUsernameOrPassword, "Invalid username or password.");
+        }
+
+        // Check email confirmed
+        if (!await _userManager.IsEmailConfirmedAsync(user))
+        {
+            throw new BusinessException(ErrorCode.EmailNotVerified, "This account has not verified its email address.");
+        }
+
+        // Check account lockout
+        if (await _userManager.IsLockedOutAsync(user))
+        {
+            throw new BusinessException(ErrorCode.AccountLocked, "This account has been locked.");
         }
 
         SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
         if (!result.Succeeded)
         {
-            throw new BusinessException(result.ToString());
+            if (result.IsLockedOut)
+            {
+                throw new BusinessException(ErrorCode.AccountLocked, "This account has been locked.");
+            }
+
+            throw new BusinessException(ErrorCode.InvalidUsernameOrPassword, "Invalid username or password.");
         }
 
         IList<string> roles = await _userManager.GetRolesAsync(user);
-        string accessToken = GenerateJwtToken(user, roles);
+
+        // For single-role users, embed the role in the token directly
+        // For multi-role users, return roles list so the client can prompt role selection
+        string accessToken = GenerateJwtToken(user, roles.Count == 1 ? roles : []);
         return new LoginResponse
         {
-            AccessToken = accessToken
+            AccessToken = accessToken,
+            Roles = roles.ToList()
         };
     }
 
-    private string GenerateJwtToken(IdentityUser<Guid> user, IList<string> roles)
+    private string GenerateJwtToken(IdentityUser<Guid> user, IEnumerable<string> roles)
     {
         ICollection<Claim> claims =
         [

@@ -36,13 +36,13 @@ axiosInstance.interceptors.response.use(
     const problem: ProblemDetails = error.response?.data || {}
     const status = error.response?.status
     if (status === 403) {
-      toast.error(problem.detail ?? 'Access denied.')
+      toast.error(problem.detail ?? 'Truy cập bị từ chối.')
     } else if (status === 422 || status === 400) {
-      toast.error(problem.detail ?? problem.title ?? 'Validation error.')
+      toast.error(problem.detail ?? problem.title ?? 'Lỗi xác thực dữ liệu.')
     } else if (status === 404) {
-      toast.error(problem.detail ?? 'Resource not found.')
+      toast.error(problem.detail ?? 'Không tìm thấy tài nguyên.')
     } else if (status && status >= 500) {
-      toast.error(problem.detail ?? 'A server error occurred. Please try again.')
+      toast.error(problem.detail ?? 'Đã xảy ra lỗi máy chủ. Vui lòng thử lại.')
     }
 
     return Promise.reject(problem)

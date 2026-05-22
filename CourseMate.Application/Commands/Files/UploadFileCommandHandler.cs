@@ -77,14 +77,14 @@ internal sealed class UploadFileCommandHandler : AbstractCommandHandler<UploadFi
 
         if (string.IsNullOrWhiteSpace(extension))
         {
-            throw new BusinessException(ErrorMessages.InvalidFileType);
+            throw new BusinessException(ErrorCode.InvalidFileType, "Invalid file type. This file type is not allowed.");
         }
 
         bool isAllowed = AllowedExtensions.Values.Any(x => x.Contains(extension));
 
         if (!isAllowed)
         {
-            throw new BusinessException(ErrorMessages.InvalidFileType);
+            throw new BusinessException(ErrorCode.InvalidFileType, "Invalid file type. This file type is not allowed.");
         }
 
         return extension;
@@ -100,7 +100,7 @@ internal sealed class UploadFileCommandHandler : AbstractCommandHandler<UploadFi
             }
         }
 
-        throw new BusinessException(ErrorMessages.InvalidFileType);
+        throw new BusinessException(ErrorCode.InvalidFileType, "Invalid file type. This file type is not allowed.");
     }
 
     private string BuildFileUrl(string storedFileName)

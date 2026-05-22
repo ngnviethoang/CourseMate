@@ -11,7 +11,7 @@ import { Progress } from '@/components/ui/progress'
 import { OrderDto } from '@/lib/types'
 import { formatCurrency } from '@/lib/utils'
 
-// Category colour mapping based on course title keywords
+// Ánh xạ màu danh mục theo từ khóa tiêu đề khóa học
 function getCategoryColor(title: string) {
   const t = title.toLowerCase()
   if (
@@ -21,13 +21,13 @@ function getCategoryColor(title: string) {
     t.includes('javascript') ||
     t.includes('typescript')
   )
-    return { label: 'Development', color: 'bg-indigo-500' }
+    return { label: 'Phát triển', color: 'bg-indigo-500' }
   if (t.includes('design') || t.includes('figma') || t.includes('ui') || t.includes('ux') || t.includes('css'))
-    return { label: 'Design', color: 'bg-pink-500' }
+    return { label: 'Thiết kế', color: 'bg-pink-500' }
   if (t.includes('data') || t.includes('machine') || t.includes('python') || t.includes('ai') || t.includes('ml'))
-    return { label: 'Data Science', color: 'bg-emerald-500' }
-  if (t.includes('market') || t.includes('business')) return { label: 'Business', color: 'bg-amber-500' }
-  return { label: 'Course', color: 'bg-primary' }
+    return { label: 'Khoa học dữ liệu', color: 'bg-emerald-500' }
+  if (t.includes('market') || t.includes('business')) return { label: 'Kinh doanh', color: 'bg-amber-500' }
+  return { label: 'Khóa học', color: 'bg-primary' }
 }
 
 function SkeletonCard() {
@@ -61,7 +61,7 @@ export function ContinueLearning() {
     fetchOrders()
   }, [])
 
-  // Flatten all items from completed/paid orders
+  // Gom toàn bộ khóa học từ các đơn hàng đã thanh toán
   const enrolledItems = orders
     .filter(o => o.status === 'Paid') // status Paid
     .flatMap(o => o.items)
@@ -71,8 +71,8 @@ export function ContinueLearning() {
       <section>
         <div className="mb-5 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold">Continue Learning</h2>
-            <p className="text-sm text-muted-foreground">Pick up where you left off</p>
+            <h2 className="text-xl font-semibold">Tiếp tục học</h2>
+            <p className="text-sm text-muted-foreground">Tiếp tục hành trình học của bạn</p>
           </div>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -86,21 +86,21 @@ export function ContinueLearning() {
 
   if (enrolledItems.length === 0) return null
 
-  // Show up to 3 courses
+  // Hiển thị tối đa 3 khóa học
   const displayItems = enrolledItems.slice(0, 3)
 
   return (
     <section>
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold">Continue Learning</h2>
-          <p className="text-sm text-muted-foreground">Pick up where you left off</p>
+          <h2 className="text-xl font-semibold">Tiếp tục học</h2>
+          <p className="text-sm text-muted-foreground">Tiếp tục hành trình học của bạn</p>
         </div>
         <Link
           href="/orders"
           className={buttonVariants({ variant: 'ghost', size: 'sm', className: 'gap-1 text-primary' })}
         >
-          See all <ChevronRight className="h-4 w-4" />
+          Xem tất cả <ChevronRight className="h-4 w-4" />
         </Link>
       </div>
 
@@ -126,7 +126,7 @@ export function ContinueLearning() {
                   alt={item.courseTitle}
                   className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   onError={e => {
-                    ;(e.target as HTMLImageElement).src = `https://placehold.co/400x225/6366f1/ffffff?text=Course`
+                    ;(e.target as HTMLImageElement).src = `https://placehold.co/400x225/6366f1/ffffff?text=KhoaHoc`
                   }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
@@ -148,9 +148,9 @@ export function ContinueLearning() {
 
               <CardContent className="space-y-1.5 pb-0">
                 <div className="flex justify-between text-xs text-muted-foreground">
-                  <span className="font-medium text-foreground">{progress}% complete</span>
+                  <span className="font-medium text-foreground">{progress}% hoàn thành</span>
                   <span className="flex items-center gap-1">
-                    <BookOpen className="h-3 w-3" /> In progress
+                    <BookOpen className="h-3 w-3" /> Đang học
                   </span>
                 </div>
                 <Progress value={progress} />
@@ -161,7 +161,7 @@ export function ContinueLearning() {
                   href={`/courses/${item.courseId}`}
                   className={buttonVariants({ size: 'sm', className: 'w-full rounded-full' })}
                 >
-                  <Play className="mr-1.5 h-3.5 w-3.5" /> Resume
+                  <Play className="mr-1.5 h-3.5 w-3.5" /> Tiếp tục học
                 </Link>
               </CardFooter>
             </Card>

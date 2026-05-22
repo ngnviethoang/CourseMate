@@ -42,7 +42,7 @@ public class OllamaService : IAiService
         catch (OllamaException ex)
         {
             _logger.LogError(ex, "Ollama embedding failed");
-            throw new BusinessException(ErrorMessages.EmbeddingFailed, ex);
+            throw new BusinessException(ErrorCode.EmbeddingFailed, "AI embedding failed.", ex);
         }
     }
 
@@ -65,7 +65,7 @@ public class OllamaService : IAiService
         catch (OllamaException ex)
         {
             _logger.LogError(ex, "Ollama research request failed");
-            throw new BusinessException(ErrorMessages.AiGenerationFailed, ex);
+            throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex);
         }
     }
 
@@ -90,7 +90,7 @@ public class OllamaService : IAiService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Ollama lecture outline request failed");
-            throw new BusinessException(ErrorMessages.AiGenerationFailed, ex);
+            throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex);
         }
     }
 }

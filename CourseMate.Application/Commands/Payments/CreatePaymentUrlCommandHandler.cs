@@ -55,7 +55,7 @@ internal sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<Cr
         if (!IPAddress.TryParse(clientIp, out IPAddress? _))
         {
             _logger.LogWarning("Invalid IP detected - IP: {ClientIp}", clientIp);
-            throw new BusinessException(ErrorMessages.InvalidIp);
+            throw new BusinessException(ErrorCode.InvalidIp, "IP address is invalid.");
         }
 
         long externalOrderId = DateTimeOffset.UtcNow.ToUnixTimeSeconds();

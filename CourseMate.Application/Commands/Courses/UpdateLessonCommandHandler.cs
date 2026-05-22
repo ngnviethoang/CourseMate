@@ -61,7 +61,7 @@ internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<Update
             bool isDuplicate = await DbContext.Lessons.AnyAsync(x => x.ChapterId == request.ChapterId && x.Position == request.Position && x.Id != request.Id, ct);
             if (isDuplicate)
             {
-                throw new BusinessException(ErrorMessages.DuplicatePosition);
+                throw new BusinessException(ErrorCode.DuplicatePosition, "Duplicate position.");
             }
         }
 
@@ -73,7 +73,7 @@ internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<Update
 
         if (finalPosition > nextPosition)
         {
-            throw new BusinessException(string.Format(ErrorMessages.PositionOutOfRange, nextPosition));
+            throw new BusinessException(ErrorCode.PositionOutOfRange, string.Format("Position must be 0 or equal to next position '{0}'.", nextPosition));
         }
 
         if (lesson.LessonType != request.LessonType)

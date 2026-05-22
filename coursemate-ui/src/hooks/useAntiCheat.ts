@@ -65,7 +65,7 @@ export function useAntiCheat({
     setLockedUntil(null)
     setLockoutReason('')
     lastViolationTimeRef.current = {}
-    
+
     // Check for existing lockout for THIS specific contest
     if (typeof window !== 'undefined' && contestId) {
       const lockData = localStorage.getItem(`coursemate_lockout_${contestId}`)
@@ -93,7 +93,7 @@ export function useAntiCheat({
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
       const lang = navigator.language
       const raw = `${userAgentRef.current}|${screenRes}|${tz}|${lang}`
-      
+
       // Simple hash function
       let hash = 0
       for (let i = 0; i < raw.length; i++) {
@@ -161,7 +161,7 @@ export function useAntiCheat({
       // Local Increment & Penalty Trigger
       setViolationCount(prev => {
         const newCount = prev + 1
-        
+
         // Trigger Penalty Locally
         if (antiCheatLevel === 'Strict' || antiCheatLevel === 'Basic') {
           if (newCount === 3) {

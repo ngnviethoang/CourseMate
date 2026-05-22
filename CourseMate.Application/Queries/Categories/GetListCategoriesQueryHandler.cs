@@ -9,7 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Categories;
 
-public class GetListCategoriesQuery : GetListQuery<CategoryDto>;
+public class GetListCategoriesQuery : GetListQuery<CategoryDto>
+{
+    public bool? HasCourse { get; set; }
+}
 
 internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetListCategoriesQuery, PagedDto<CategoryDto>>
 {
@@ -21,7 +24,9 @@ internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetList
     public override async Task<PagedDto<CategoryDto>> Handle(GetListCategoriesQuery request, CancellationToken ct)
     {
         IQueryable<Category> query = DbContext.Categories
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Name, $"%{request.Filter}%"));
+            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Name, $"%{request.Filter}%"))
+            .WhereIf(request.HasCourse == true, x => DbContext.Courses.Any(c => c.CategoryId == x.Id))
+            .WhereIf(request.HasCourse == false, x => !DbContext.Courses.Any(c => c.CategoryId == x.Id));
 
         query = request.Sorting switch
         {

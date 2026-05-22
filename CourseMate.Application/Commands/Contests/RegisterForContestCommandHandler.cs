@@ -34,12 +34,12 @@ internal sealed class RegisterForContestCommandHandler : AbstractCommandHandler<
 
         if (contest.Status == ContestStatus.Draft)
         {
-            throw new BusinessException("Contest is not open for registration.");
+            throw new BusinessException(ErrorCode.Unknown, "Contest is not open for registration.");
         }
 
         if (contest.EndTime.HasValue && contest.EndTime.Value < DateTimeOffset.UtcNow)
         {
-            throw new BusinessException("Contest has already ended.");
+            throw new BusinessException(ErrorCode.Unknown, "Contest has already ended.");
         }
 
         // Check if already registered

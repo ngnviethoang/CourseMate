@@ -67,6 +67,6 @@ internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfil
         }
 
         string errors = string.Join(", ", result.Errors.Select(e => e.Description));
-        throw new BusinessException(errors);
+        throw new BusinessException(ErrorCode.Unknown, errors);
     }
 }

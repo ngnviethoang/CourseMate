@@ -37,7 +37,7 @@ internal sealed class DeleteUserAbstractCommandHandler : AbstractCommandHandler<
         if (!result.Succeeded)
         {
             string errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new BusinessException(errors);
+            throw new BusinessException(ErrorCode.Unknown, errors);
         }
 
         return Codes.Success;

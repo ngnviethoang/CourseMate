@@ -5,7 +5,7 @@ using CourseMate.Contracts.Exceptions;
 using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using MimeKit;
+using Microsoft.Extensions.Configuration;
 
 namespace CourseMate.Application.Commands.Auth;
 
@@ -15,20 +15,21 @@ public class RegisterCommand : IRequest<int>
     public string Email { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(128)]
+    [MaxLength(32)]
     public string Password { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(128)]
+    [MaxLength(32)]
     public string UserName { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(128)]
+    [MaxLength(32)]
     public string Role { get; set; } = string.Empty;
 }
 
 internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, int>
 {
+    private readonly IConfiguration _configuration;
     private readonly IUserEmailStore<IdentityUser<Guid>> _emailStore;
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
@@ -37,52 +38,55 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
     public RegisterCommandHandler(
         UserManager<IdentityUser<Guid>> userManager,
         IUserStore<IdentityUser<Guid>> userStore,
-        RoleManager<IdentityRole<Guid>> roleManager)
+        RoleManager<IdentityRole<Guid>> roleManager,
+        IConfiguration configuration)
     {
         _userManager = userManager;
         _userStore = userStore;
         _roleManager = roleManager;
         _emailStore = (IUserEmailStore<IdentityUser<Guid>>)userStore;
+        _configuration = configuration;
     }
 
     public async Task<int> Handle(RegisterCommand request, CancellationToken ct)
     {
-        request.Role = request.Role.Trim().ToLowerInvariant();
-        if (await _roleManager.RoleExistsAsync(request.Role))
+        string role = request.Role.Trim();
+
+        // FIX: throw when role does NOT exist (was inverted before)
+        if (!await _roleManager.RoleExistsAsync(role))
         {
-            throw new BusinessException(string.Format(ErrorMessages.RoleNotExists, request.Role));
+            throw new BusinessException(ErrorCode.RoleNotExists, string.Format("{0} role does not exist.", role));
         }
 
         IdentityUser<Guid> user = new(request.UserName);
         await _userStore.SetUserNameAsync(user, request.UserName, CancellationToken.None);
         await _emailStore.SetEmailAsync(user, request.Email, CancellationToken.None);
-        IdentityResult result = await _userManager.CreateAsync(user, request.Password);
 
+        IdentityResult result = await _userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded)
         {
-            throw new BusinessException(result.Errors.FirstOrDefault()?.Description ?? string.Empty);
+            throw new BusinessException(ErrorCode.Unknown, result.Errors.FirstOrDefault()?.Description ?? string.Empty);
         }
 
-        await _userManager.AddToRoleAsync(user, request.Role);
+        await _userManager.AddToRoleAsync(user, role);
 
-        // TODO SendConfirmationEmailAsync
-        MimeMessage message = new();
-        message.To.Add(MailboxAddress.Parse(request.Email));
-        message.Subject = "Welcome to CourseMate";
-        message.Body = new BodyBuilder
-        {
-            HtmlBody = await RenderTemplateEmail(request.UserName, request.Email)
-        }.ToMessageBody();
-        BackgroundJob.Enqueue<EmailSenderJob>(job => job.Execute(message));
+        // Generate email verification token and send confirmation email
+        string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        string encodedToken = Uri.EscapeDataString(token);
+        string frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+        string verifyUrl = $"{frontendUrl}/verify-email?userId={user.Id}&token={encodedToken}";
+
+        string htmlBody = await RenderVerifyEmailTemplate(request.UserName, verifyUrl);
+        BackgroundJob.Enqueue<EmailSenderJob>(job => job.Execute(request.Email, "Xác thực tài khoản CourseMate", htmlBody));
         return Codes.Success;
     }
 
-    public async Task<string> RenderTemplateEmail(string userName, string email)
+    private static async Task<string> RenderVerifyEmailTemplate(string userName, string verifyUrl)
     {
-        string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "TemplateEmails", "CourseEnrollment.html");
+        string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "VerifyEmail.html");
         string html = await File.ReadAllTextAsync(templatePath);
         return html
             .Replace("{{userName}}", userName)
-            .Replace("{{email}}", email);
+            .Replace("{{verifyUrl}}", verifyUrl);
     }
 }

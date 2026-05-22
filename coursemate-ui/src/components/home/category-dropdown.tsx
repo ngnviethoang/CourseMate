@@ -18,7 +18,7 @@ export function CategoryDropdown({ value, onChange }: CategoryDropdownProps) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await categoryService.list({ pageSize: 25 })
+        const res = await categoryService.list({ hasCourse: true, pageSize: 25 })
         setCategories(res.items.filter(c => c.isActive))
       } catch {
         setCategories([])
@@ -73,7 +73,7 @@ export function CategoryDropdown({ value, onChange }: CategoryDropdownProps) {
               }`}
             >
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-slate-400 to-gray-500 text-white text-xs font-bold shadow-sm">
-                All
+                TC
               </span>
               <span>Tất cả danh mục</span>
             </button>

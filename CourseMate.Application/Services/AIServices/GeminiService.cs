@@ -39,7 +39,7 @@ public class GeminiService : IAiService
         catch (GoogleApiException ex)
         {
             _logger.LogError(ex, "Gemini embedding failed. StatusCode={StatusCode}", ex.HttpStatusCode);
-            throw new BusinessException(ErrorMessages.AiGenerationFailed, ex);
+            throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex);
         }
     }
 
@@ -109,7 +109,7 @@ public class GeminiService : IAiService
         catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Forbidden)
         {
             _logger.LogWarning(ex, "Gemini model {Model} returned 403 Forbidden", model);
-            return isThrow ? throw new BusinessException(ErrorMessages.AiGenerationFailed, ex) : string.Empty;
+            return isThrow ? throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex) : string.Empty;
         }
     }
 }
