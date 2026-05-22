@@ -26,11 +26,11 @@ export default function SettingsPage() {
     setSaving(true)
     try {
       await profileService.changePassword(form)
-      toast.success('Password changed successfully.')
+      toast.success('Đổi mật khẩu thành công.')
       setForm({ currentPassword: '', newPassword: '' })
       setConfirmPassword('')
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to change password.'
+      const message = err instanceof Error ? err.message : 'Không thể đổi mật khẩu.'
       toast.error(message)
     } finally {
       setSaving(false)
@@ -41,8 +41,8 @@ export default function SettingsPage() {
     <div className="max-w-xl space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-semibold">Settings</h1>
-        <p className="text-sm text-muted-foreground">Manage your account security</p>
+        <h1 className="text-2xl font-semibold">Cài đặt</h1>
+        <p className="text-sm text-muted-foreground">Quản lý bảo mật tài khoản</p>
       </div>
 
       {/* Change Password Card */}
@@ -52,19 +52,19 @@ export default function SettingsPage() {
             <KeyRound className="h-4 w-4 text-primary" />
           </div>
           <div>
-            <p className="font-medium text-sm">Change Password</p>
-            <p className="text-xs text-muted-foreground">Keep your account secure with a strong password</p>
+            <p className="font-medium text-sm">Đổi mật khẩu</p>
+            <p className="text-xs text-muted-foreground">Giữ an toàn tài khoản với mật khẩu mạnh</p>
           </div>
         </div>
 
         <div className="space-y-1">
-          <Label>Current Password</Label>
+          <Label>Mật khẩu hiện tại</Label>
           <div className="relative">
             <Input
               type={showCurrent ? 'text' : 'password'}
               value={form.currentPassword}
               onChange={e => setForm(prev => ({ ...prev, currentPassword: e.target.value }))}
-              placeholder="Enter current password"
+              placeholder="Nhập mật khẩu hiện tại"
               className="pr-10"
             />
             <button
@@ -78,13 +78,13 @@ export default function SettingsPage() {
         </div>
 
         <div className="space-y-1">
-          <Label>New Password</Label>
+          <Label>Mật khẩu mới</Label>
           <div className="relative">
             <Input
               type={showNew ? 'text' : 'password'}
               value={form.newPassword}
               onChange={e => setForm(prev => ({ ...prev, newPassword: e.target.value }))}
-              placeholder="Min. 6 characters"
+              placeholder="Tối thiểu 6 ký tự"
               className="pr-10"
             />
             <button
@@ -96,18 +96,18 @@ export default function SettingsPage() {
             </button>
           </div>
           {form.newPassword.length > 0 && form.newPassword.length < 6 && (
-            <p className="text-xs text-destructive">Password must be at least 6 characters.</p>
+            <p className="text-xs text-destructive">Mật khẩu phải có ít nhất 6 ký tự.</p>
           )}
         </div>
 
         <div className="space-y-1">
-          <Label>Confirm New Password</Label>
+          <Label>Xác nhận mật khẩu mới</Label>
           <div className="relative">
             <Input
               type={showConfirm ? 'text' : 'password'}
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)}
-              placeholder="Re-enter new password"
+              placeholder="Nhập lại mật khẩu mới"
               className={`pr-10 ${passwordMismatch ? '-destructive focus-visible:ring-destructive' : ''}`}
             />
             <button
@@ -118,12 +118,12 @@ export default function SettingsPage() {
               {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
-          {passwordMismatch && <p className="text-xs text-destructive">Passwords do not match.</p>}
+          {passwordMismatch && <p className="text-xs text-destructive">Mật khẩu xác nhận không khớp.</p>}
         </div>
 
         <div className="flex justify-end pt-2">
           <Button onClick={handleSubmit} disabled={!canSubmit || saving}>
-            {saving ? 'Changing…' : 'Change Password'}
+            {saving ? 'Đang đổi...' : 'Đổi mật khẩu'}
           </Button>
         </div>
       </div>

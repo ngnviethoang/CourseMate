@@ -38,7 +38,7 @@ export default function StudentProfilePage() {
         const res = await profileService.getMe()
         setUser(res)
       } catch {
-        toast.error('Failed to load profile.')
+        toast.error('Không thể tải hồ sơ.')
       } finally {
         setLoading(false)
       }
@@ -49,16 +49,16 @@ export default function StudentProfilePage() {
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault()
     if (cpForm.newPassword !== cpForm.confirmPassword) {
-      return toast.error('New passwords do not match.')
+      return toast.error('Mật khẩu mới không khớp.')
     }
     if (cpForm.newPassword.length < 6) {
-      return toast.error('Password must be at least 6 characters.')
+      return toast.error('Mật khẩu phải có ít nhất 6 ký tự.')
     }
 
     setCpLoading(true)
     try {
       await profileService.changePassword({ currentPassword: cpForm.oldPassword, newPassword: cpForm.newPassword })
-      toast.success('Password changed successfully!')
+      toast.success('Đổi mật khẩu thành công!')
       setCpDialogOpen(false)
       setCpForm({ oldPassword: '', newPassword: '', confirmPassword: '' })
     } catch {
@@ -77,7 +77,7 @@ export default function StudentProfilePage() {
   }
 
   if (!user) {
-    return <div className="text-center py-20 text-muted-foreground">User not found.</div>
+    return <div className="text-center py-20 text-muted-foreground">Không tìm thấy người dùng.</div>
   }
 
   return (
@@ -93,7 +93,7 @@ export default function StudentProfilePage() {
           </p>
           <div className="flex items-center justify-center md:justify-start gap-2 mt-2">
             <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 -emerald-500/20 flex items-center gap-1">
-              <CheckCircle2 className="h-3 w-3" /> Active Student
+              <CheckCircle2 className="h-3 w-3" /> Học viên đang hoạt động
             </span>
           </div>
         </div>
@@ -104,26 +104,26 @@ export default function StudentProfilePage() {
         <Card className="-none shadow-xl bg-gradient-to-br from-card to-muted/30 overflow-hidden group">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Shield className="h-5 w-5 text-primary" /> Account Information
+              <Shield className="h-5 w-5 text-primary" /> Thông tin tài khoản
             </CardTitle>
-            <CardDescription>Managed account details and security settings.</CardDescription>
+            <CardDescription>Quản lý thông tin tài khoản và cài đặt bảo mật.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
             <div className="space-y-1 p-3 rounded-xl bg-muted/50 group-hover:bg-muted transition-colors">
-              <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">User ID</Label>
+              <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Mã người dùng</Label>
               <p className="font-mono text-xs truncate opacity-70">{user.id}</p>
             </div>
             <div className="space-y-1 p-3 rounded-xl bg-muted/50 group-hover:bg-muted transition-colors">
-              <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Username</Label>
+              <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Tên đăng nhập</Label>
               <p className="text-sm font-semibold">{user.userName}</p>
             </div>
             <div className="space-y-1 p-3 rounded-xl bg-muted/50 group-hover:bg-muted transition-colors">
-              <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Role</Label>
-              <p className="text-sm font-semibold capitalize">{user.roles?.[0] || 'Student'}</p>
+              <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Vai trò</Label>
+              <p className="text-sm font-semibold capitalize">{user.roles?.[0] || 'Học viên'}</p>
             </div>
           </CardContent>
           <CardFooter className="pt-2">
-            <p className="text-xs text-muted-foreground italic">Registered since {new Date().toLocaleDateString()}</p>
+            <p className="text-xs text-muted-foreground italic">Tham gia từ {new Date().toLocaleDateString('vi-VN')}</p>
           </CardFooter>
         </Card>
 
@@ -134,20 +134,18 @@ export default function StudentProfilePage() {
           </div>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg text-slate-900">
-              <Lock className="h-5 w-5 text-amber-500" /> Security
+              <Lock className="h-5 w-5 text-amber-500" /> Bảo mật
             </CardTitle>
-            <CardDescription className="text-slate-500">
-              Protect your account by managing your password.
-            </CardDescription>
+            <CardDescription className="text-slate-500">Bảo vệ tài khoản bằng cách quản lý mật khẩu.</CardDescription>
           </CardHeader>
           <CardContent className="pt-4 pb-8">
             <div className="p-4 rounded-xl bg-slate-50 -slate-100 space-y-4 shadow-inner">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-slate-700">Password</span>
+                <span className="text-sm font-medium text-slate-700">Mật khẩu</span>
                 <span className="text-xs font-mono text-slate-400">••••••••••••</span>
               </div>
               <p className="text-xs text-slate-500 leading-relaxed">
-                It&apos;s a good idea to use a strong password that you&apos;re not using elsewhere.
+                Bạn nên dùng mật khẩu mạnh và không trùng với mật khẩu ở dịch vụ khác.
               </p>
             </div>
           </CardContent>
@@ -155,22 +153,22 @@ export default function StudentProfilePage() {
             <Dialog open={cpDialogOpen} onOpenChange={setCpDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="w-full bg-slate-900 text-white hover:bg-slate-800 font-bold h-11">
-                  Change Password
+                  Đổi mật khẩu
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <form onSubmit={handleChangePassword}>
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                      <Key className="h-5 w-5 text-primary" /> Change Password
+                      <Key className="h-5 w-5 text-primary" /> Đổi mật khẩu
                     </DialogTitle>
                     <DialogDescription>
-                      Enter your current password and your new password to update your account security.
+                      Nhập mật khẩu hiện tại và mật khẩu mới để cập nhật bảo mật tài khoản.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 py-6">
                     <div className="space-y-2">
-                      <Label htmlFor="old">Current Password</Label>
+                      <Label htmlFor="old">Mật khẩu hiện tại</Label>
                       <Input
                         id="old"
                         type="password"
@@ -180,7 +178,7 @@ export default function StudentProfilePage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="new">New Password</Label>
+                      <Label htmlFor="new">Mật khẩu mới</Label>
                       <Input
                         id="new"
                         type="password"
@@ -190,7 +188,7 @@ export default function StudentProfilePage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="confirm">Confirm New Password</Label>
+                      <Label htmlFor="confirm">Xác nhận mật khẩu mới</Label>
                       <Input
                         id="confirm"
                         type="password"
@@ -203,7 +201,7 @@ export default function StudentProfilePage() {
                   <DialogFooter>
                     <Button type="submit" disabled={cpLoading} className="w-full h-11 font-bold">
                       {cpLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                      Update Password
+                      Cập nhật mật khẩu
                     </Button>
                   </DialogFooter>
                 </form>
@@ -214,7 +212,7 @@ export default function StudentProfilePage() {
       </div>
 
       <div className="pt-12 flex items-center justify-center">
-        <p className="text-xs text-muted-foreground opacity-50">CourseMate Student Profile v1.0 • Security Verified</p>
+        <p className="text-xs text-muted-foreground opacity-50">Hồ sơ học viên CourseMate v1.0 • Đã xác thực bảo mật</p>
       </div>
     </div>
   )

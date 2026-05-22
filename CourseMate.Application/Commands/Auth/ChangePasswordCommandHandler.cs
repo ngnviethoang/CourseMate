@@ -39,7 +39,7 @@ internal sealed class ChangePasswordCommandHandler : AbstractCommandHandler<Chan
         IdentityResult changePasswordResult = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
         if (!changePasswordResult.Succeeded)
         {
-            throw new BusinessException(changePasswordResult.Errors.FirstOrDefault()?.Description ?? string.Empty);
+            throw new BusinessException(ErrorCode.Unknown, changePasswordResult.Errors.FirstOrDefault()?.Description ?? string.Empty);
         }
 
         return Codes.Success;

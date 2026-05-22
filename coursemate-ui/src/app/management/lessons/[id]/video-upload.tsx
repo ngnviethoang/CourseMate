@@ -61,11 +61,11 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
       setVideoUrl(fileUrl)
       setStatus('success')
       setIsEditing(false)
-      toast.success('Video uploaded and saved successfully!')
+      toast.success('Tải video lên và lưu thành công!')
     } catch (error) {
       console.error(error)
       setStatus('error')
-      toast.error('Failed to upload video. Please try again.')
+      toast.error('Không thể tải video lên. Vui lòng thử lại.')
     } finally {
       setUploading(false)
     }
@@ -75,15 +75,15 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
     <div className="rounded-xl bg-card p-6 shadow-md border-0 space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold flex items-center gap-2">
-          <Video className="h-5 w-5 text-blue-600" /> Video Content
+          <Video className="h-5 w-5 text-blue-600" /> Nội dung video
         </h2>
         {videoUrl && !uploading && (
           <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)} className="gap-2">
             {isEditing ? (
-              'Cancel'
+              'Hủy'
             ) : (
               <>
-                <Edit className="h-3.5 w-3.5" /> Change Video
+                <Edit className="h-3.5 w-3.5" /> Đổi video
               </>
             )}
           </Button>
@@ -94,8 +94,8 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
         <div className="space-y-6">
           <div className="flex flex-col items-center justify-center -2 -dashed rounded-xl p-8 bg-muted/20">
             <UploadCloud className="h-10 w-10 text-muted-foreground mb-4" />
-            <h3 className="font-semibold text-sm">Upload Video</h3>
-            <p className="text-xs text-muted-foreground mb-4">Select a video file to upload in chunks</p>
+            <h3 className="font-semibold text-sm">Tải video lên</h3>
+            <p className="text-xs text-muted-foreground mb-4">Chọn tệp video để tải lên theo từng phần</p>
 
             <input
               type="file"
@@ -122,20 +122,20 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
 
               {status === 'error' && (
                 <div className="flex items-center gap-2 text-sm text-destructive justify-center">
-                  <AlertCircle className="h-4 w-4" /> Upload failed. Please try again.
+                  <AlertCircle className="h-4 w-4" /> Tải lên thất bại. Vui lòng thử lại.
                 </div>
               )}
 
               <Button onClick={handleUpload} disabled={uploading} className="w-full gap-2">
                 {uploading && <Loader2 className="h-4 w-4 animate-spin" />}
-                {uploading ? 'Uploading...' : 'Start Upload'}
+                {uploading ? 'Đang tải lên...' : 'Bắt đầu tải lên'}
               </Button>
             </div>
           )}
         </div>
       ) : (
         <div className="max-w-2xl bg-muted/20 rounded-lg p-5 border-0 -dashed bg-muted/30 shadow-inner space-y-3">
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Video Resource</p>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Nguồn video</p>
           {videoUrl ? (
             <div className="flex items-center gap-4">
               <div className="h-16 w-28 bg-zinc-950 rounded flex items-center justify-center shrink-0 -zinc-800">
@@ -151,7 +151,7 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
                       rel="noreferrer"
                       className="bg-white text-black hover:bg-zinc-200 px-4 py-2 rounded-full text-xs font-bold transform translate-y-2 group-hover:translate-y-0 transition-all"
                     >
-                      Preview Video
+                      Xem trước video
                     </a>
                   </div>
                 </div>
@@ -161,13 +161,13 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
                   </p>
                   <span className="flex items-center gap-1.5 text-[10px] font-bold text-green-500">
                     <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
-                    READY
+                    SẴN SÀNG
                   </span>
                 </div>
               </div>
             </div>
           ) : (
-            <p className="text-sm italic text-muted-foreground">No video uploaded yet.</p>
+            <p className="text-sm italic text-muted-foreground">Chưa có video nào được tải lên.</p>
           )}
         </div>
       )}

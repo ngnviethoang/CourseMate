@@ -38,7 +38,7 @@ internal sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateO
             .ToListAsync(ct);
         if (!cartItems.Any())
         {
-            throw new BusinessException(ErrorMessages.EmptyOrder);
+            throw new BusinessException(ErrorCode.EmptyOrder, "Order must contain at least one item.");
         }
 
         DbContext.CartItems.RemoveRange(cartItems);
@@ -47,7 +47,7 @@ internal sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateO
         List<Course> courses = await DbContext.Courses.Where(c => courseIds.Contains(c.Id)).ToListAsync(ct);
         if (!courses.Any())
         {
-            throw new BusinessException(ErrorMessages.EmptyOrder);
+            throw new BusinessException(ErrorCode.EmptyOrder, "Order must contain at least one item.");
         }
 
         Order order = new(Guid.NewGuid(), CurrentUserId, courses.Sum(c => c.Price), OrderStatus.Draft, $"Payment for {courses.Count} courses");

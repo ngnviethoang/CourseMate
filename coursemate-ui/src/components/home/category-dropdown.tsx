@@ -73,7 +73,7 @@ export function CategoryDropdown({ value, onChange }: CategoryDropdownProps) {
               }`}
             >
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-slate-400 to-gray-500 text-white text-xs font-bold shadow-sm">
-                All
+                TC
               </span>
               <span>Tất cả danh mục</span>
             </button>

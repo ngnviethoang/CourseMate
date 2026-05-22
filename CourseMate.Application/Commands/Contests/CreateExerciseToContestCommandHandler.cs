@@ -53,14 +53,14 @@ internal sealed class CreateExerciseToContestCommandHandler : AbstractCommandHan
 
         if (alreadyAdded)
         {
-            throw new BusinessException(ErrorMessages.ExerciseAlreadyAddedToContest);
+            throw new BusinessException(ErrorCode.ExerciseAlreadyAddedToContest, "Exercise has already been added to this contest.");
         }
 
         bool duplicatedOrder = request.Order != 0 && await DbContext.ContestExercises
             .AnyAsync(x => x.ContestId == request.ContestId && x.Order == request.Order, ct);
         if (duplicatedOrder)
         {
-            throw new BusinessException(ErrorMessages.DuplicateExerciseOrder);
+            throw new BusinessException(ErrorCode.DuplicateExerciseOrder, "Exercise order already exists in this contest.");
         }
 
         ContestExercise contestExercise = new(

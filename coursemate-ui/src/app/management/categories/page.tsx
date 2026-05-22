@@ -25,19 +25,21 @@ import { Switch } from '@/components/ui/switch'
 import { formatDate } from '@/lib/utils'
 
 const columns: Column<CategoryDto>[] = [
-  { key: 'name', header: 'Name', sortKey: 'name' },
-  { key: 'description', header: 'Description' },
+  { key: 'name', header: 'Tên', sortKey: 'name' },
+  { key: 'description', header: 'Mô tả' },
   {
     key: 'isActive',
-    header: 'Status',
+    header: 'Trạng thái',
     render: row => (
-      <Badge variant={row.isActive ? 'default' : 'secondary'}>{row.isActive ? 'Active' : 'Inactive'}</Badge>
+      <Badge variant={row.isActive ? 'default' : 'secondary'}>
+        {row.isActive ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+      </Badge>
     )
   },
-  { key: 'creationTime', header: 'Created', sortKey: 'creationTime', render: row => formatDate(row.creationTime) },
+  { key: 'creationTime', header: 'Ngày tạo', sortKey: 'creationTime', render: row => formatDate(row.creationTime) },
   {
     key: 'lastModificationTime',
-    header: 'Updated',
+    header: 'Cập nhật',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }
@@ -97,10 +99,10 @@ export default function CategoriesPage() {
     try {
       if (editing) {
         await categoryService.update(editing.id, form)
-        toast.success('Category updated.')
+        toast.success('Đã cập nhật danh mục.')
       } else {
         await categoryService.create(form)
-        toast.success('Category created.')
+        toast.success('Đã tạo danh mục.')
       }
       setDialogOpen(false)
       load()
@@ -112,7 +114,7 @@ export default function CategoriesPage() {
   async function handleDelete() {
     if (!deleteId) return
     await categoryService.delete(deleteId)
-    toast.success('Category deleted.')
+    toast.success('Đã xóa danh mục.')
     setDeleteId(null)
     load()
   }
@@ -121,11 +123,11 @@ export default function CategoriesPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Categories</h1>
-          <p className="text-sm text-muted-foreground">Manage course categories</p>
+          <h1 className="text-2xl font-semibold">Danh mục</h1>
+          <p className="text-sm text-muted-foreground">Quản lý danh mục khóa học</p>
         </div>
         <Button onClick={openCreate} className="gap-2">
-          <Plus className="h-4 w-4" /> New Category
+          <Plus className="h-4 w-4" /> Tạo danh mục
         </Button>
       </div>
 
@@ -133,7 +135,7 @@ export default function CategoriesPage() {
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           className="pl-9"
-          placeholder="Search categories…"
+          placeholder="Tìm danh mục..."
           value={filter}
           onChange={e => setFilter(e.target.value)}
         />
@@ -159,15 +161,15 @@ export default function CategoriesPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editing ? 'Edit Category' : 'New Category'}</DialogTitle>
+            <DialogTitle>{editing ? 'Chỉnh sửa danh mục' : 'Tạo danh mục mới'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1">
-              <Label htmlFor="cat-name">Name</Label>
+              <Label htmlFor="cat-name">Tên</Label>
               <Input id="cat-name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="cat-desc">Description</Label>
+              <Label htmlFor="cat-desc">Mô tả</Label>
               <Input
                 id="cat-desc"
                 value={form.description}
@@ -180,15 +182,15 @@ export default function CategoriesPage() {
                 checked={form.isActive}
                 onCheckedChange={v => setForm({ ...form, isActive: v })}
               />
-              <Label htmlFor="cat-active">Active</Label>
+              <Label htmlFor="cat-active">Đang hoạt động</Label>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
+              Hủy
             </Button>
             <Button onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving…' : 'Save'}
+              {saving ? 'Đang lưu...' : 'Lưu'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -198,16 +200,16 @@ export default function CategoriesPage() {
       <AlertDialog open={!!deleteId} onOpenChange={open => !open && setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete category?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogTitle>Xóa danh mục?</AlertDialogTitle>
+            <AlertDialogDescription>Hành động này không thể hoàn tác.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDelete}
             >
-              Delete
+              Xóa
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

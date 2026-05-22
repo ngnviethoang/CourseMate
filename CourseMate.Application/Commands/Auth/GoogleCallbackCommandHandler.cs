@@ -1,7 +1,10 @@
 using System.Security.Claims;
+using CourseMate.Application.BackgroundJobs;
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
+using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -16,17 +19,17 @@ public class GoogleCallbackCommand : IRequest<Unit>;
 internal sealed class GoogleCallbackCommandHandler : AbstractCommandHandler<GoogleCallbackCommand, Unit>
 {
     private const string Provider = "Google";
+    private readonly IConfiguration _configuration;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
     public GoogleCallbackCommandHandler(
         CourseMateDbContext courseMateDbContext,
         IHttpContextAccessor httpContextAccessor,
         UserManager<IdentityUser<Guid>> userManager,
-        SignInManager<IdentityUser<Guid>> signInManager,
-        RoleManager<IdentityUser<Guid>> roleManager,
         IConfiguration configuration
     ) : base(courseMateDbContext, httpContextAccessor)
     {
+        _configuration = configuration;
         _userManager = userManager;
     }
 
@@ -40,7 +43,7 @@ internal sealed class GoogleCallbackCommandHandler : AbstractCommandHandler<Goog
 
         if (principal == null || string.IsNullOrWhiteSpace(nameIdentifier) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(role))
         {
-            throw new BusinessException("Google login failed.");
+            throw new BusinessException(ErrorCode.GoogleLoginFailed, "Google login failed.");
         }
 
         List<IdentityError> errors = [];
@@ -78,22 +81,33 @@ internal sealed class GoogleCallbackCommandHandler : AbstractCommandHandler<Goog
             errors.AddRange(addLoginResult.Errors);
         }
 
-        if (!errors.Any())
+        if (errors.Any())
         {
             string errorString = string.Join(", ", errors.Select(e => e.Description));
-            throw new BusinessException(errorString);
+            throw new BusinessException(ErrorCode.Unknown, errorString);
         }
 
-        /*string code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        await _emailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
-
-        // If account confirmation is required, we need to show the link if we don't have a real email sender
-        if (_userManager.Options.SignIn.RequireConfirmedAccount)
+        bool requireConfirmedAccount = _userManager.Options.SignIn.RequireConfirmedAccount;
+        if (requireConfirmedAccount && !user.EmailConfirmed && !string.IsNullOrWhiteSpace(user.Email))
         {
-            return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
-        }*/
+            string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            string encodedToken = Uri.EscapeDataString(token);
+            string frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+            string confirmationLink = $"{frontendUrl}/verify-email?userId={user.Id}&token={encodedToken}";
+
+            string htmlBody = await RenderSendConfirmationLinkTemplate(user.UserName ?? user.Email, confirmationLink);
+            BackgroundJob.Enqueue<EmailSenderJob>(job => job.Execute(user.Email, "Xác thực tài khoản CourseMate", htmlBody));
+        }
 
         return Unit.Value;
+    }
+
+    private static async Task<string> RenderSendConfirmationLinkTemplate(string userName, string confirmationLink)
+    {
+        string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "SendConfirmationLink.html");
+        string html = await File.ReadAllTextAsync(templatePath);
+        return html
+            .Replace("{{userName}}", userName)
+            .Replace("{{confirmationLink}}", confirmationLink);
     }
 }

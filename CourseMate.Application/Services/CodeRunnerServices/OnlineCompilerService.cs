@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Exceptions;
@@ -47,11 +48,11 @@ public class OnlineCompilerService : ICodeRunnerService
         }
         catch (HttpRequestException ex)
         {
-            throw new BusinessException($"HTTP error when calling OnlineCompiler API: {ex.Message}", ex);
+            throw new BusinessException(ErrorCode.Unknown, $"HTTP error when calling OnlineCompiler API: {ex.Message}", ex);
         }
         catch (JsonException ex)
         {
-            throw new BusinessException($"JSON parse error when reading OnlineCompiler response: {ex.Message}", ex);
+            throw new BusinessException(ErrorCode.Unknown, $"JSON parse error when reading OnlineCompiler response: {ex.Message}", ex);
         }
     }
 
@@ -70,11 +71,11 @@ public class OnlineCompilerService : ICodeRunnerService
         }
         catch (HttpRequestException ex)
         {
-            throw new BusinessException($"HTTP error when calling OnlineCompiler API: {ex.Message}", ex);
+            throw new BusinessException(ErrorCode.Unknown, $"HTTP error when calling OnlineCompiler API: {ex.Message}", ex);
         }
         catch (JsonException ex)
         {
-            throw new BusinessException($"JSON parse error when reading OnlineCompiler response: {ex.Message}", ex);
+            throw new BusinessException(ErrorCode.Unknown, $"JSON parse error when reading OnlineCompiler response: {ex.Message}", ex);
         }
     }
 }

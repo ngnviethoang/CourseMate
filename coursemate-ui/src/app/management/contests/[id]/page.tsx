@@ -29,6 +29,13 @@ import { format } from 'date-fns'
 import Link from 'next/link'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
+const CONTEST_STATUS_LABELS: Record<string, string> = {
+  Draft: 'Bản nháp',
+  Upcoming: 'Sắp diễn ra',
+  Ongoing: 'Đang diễn ra',
+  Ended: 'Đã kết thúc'
+}
+
 export default function ContestDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params)
   const id = resolvedParams.id
@@ -141,7 +148,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
               <span
                 className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${contest.status === 'Ongoing' ? 'bg-emerald-50 text-emerald-600 -emerald-200' : 'bg-slate-50 text-slate-500'}`}
               >
-                {contest.status}
+                {CONTEST_STATUS_LABELS[contest.status] ?? contest.status}
               </span>
             </div>
             <p className="text-muted-foreground mt-1">Quản lý nội dung và cấu hình cuộc thi</p>
@@ -154,7 +161,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 -red-500/20 text-red-500 hover:bg-red-500/20 transition-colors text-sm font-semibold"
             >
               <MonitorPlay className="h-4 w-4" />
-              Live Monitor
+              Giám sát trực tiếp
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
@@ -319,15 +326,15 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                 onChange={e => setContest({ ...contest, status: e.target.value as any })}
                 className="w-full rounded-lg px-3 py-2.5 bg-background text-sm font-medium"
               >
-                <option value="Draft">Bản nháp (Draft)</option>
-                <option value="Upcoming">Sắp diễn ra (Upcoming)</option>
-                <option value="Ongoing">Đang diễn ra (Ongoing)</option>
-                <option value="Ended">Đã kết thúc (Ended)</option>
+                <option value="Draft">Bản nháp</option>
+                <option value="Upcoming">Sắp diễn ra</option>
+                <option value="Ongoing">Đang diễn ra</option>
+                <option value="Ended">Đã kết thúc</option>
               </select>
               <div className="p-3 bg-blue-50 -blue-100 rounded-lg dark:bg-blue-500/5 dark:-blue-500/20">
                 <p className="text-xs text-blue-700 dark:text-blue-400">
                   <span className="font-bold uppercase block mb-1">Lưu ý:</span>
-                  Cuộc thi Ongoing sẽ cho phép thí sinh đăng ký và tham gia làm bài ngay lập tức.
+                  Trạng thái đang diễn ra sẽ cho phép thí sinh đăng ký và làm bài ngay lập tức.
                 </p>
               </div>
             </div>
@@ -352,7 +359,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-medium">Memory Limit (MB)</label>
+                <label className="text-sm font-medium">Giới hạn bộ nhớ (MB)</label>
                 <input
                   type="number"
                   value={contest.memoryLimit}
@@ -362,7 +369,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-medium">Time Limit (ms)</label>
+                <label className="text-sm font-medium">Giới hạn thời gian (ms)</label>
                 <input
                   type="number"
                   value={contest.timeLimit}
@@ -372,15 +379,15 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-medium">Cấp độ Anti-cheat</label>
+                <label className="text-sm font-medium">Cấp độ chống gian lận</label>
                 <select
                   value={contest.antiCheatLevel}
                   onChange={e => setContest({ ...contest, antiCheatLevel: e.target.value as any })}
                   className="w-full -input rounded-lg px-3 py-2 text-sm bg-background"
                 >
-                  <option value="None">None</option>
-                  <option value="Basic">Basic (Tab switching)</option>
-                  <option value="Strict">Strict (Camera/Lockdown)</option>
+                  <option value="None">Không bật</option>
+                  <option value="Basic">Cơ bản (chuyển tab)</option>
+                  <option value="Strict">Nghiêm ngặt (camera/khóa màn hình)</option>
                 </select>
               </div>
 
@@ -388,7 +395,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium flex items-center gap-2">
                     <Shield className="h-4 w-4 text-amber-500" />
-                    Số vi phạm tối đa (Strict mode)
+                    Số vi phạm tối đa (chế độ nghiêm ngặt)
                   </label>
                   <input
                     type="number"
@@ -399,7 +406,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                     className="w-full -input rounded-lg px-3 py-2 text-sm bg-background"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Khi Strict: sinh viên bị loại sau khi vượt ngưỡng này.
+                    Khi chọn nghiêm ngặt: thí sinh sẽ bị loại nếu vượt ngưỡng này.
                   </p>
                 </div>
               )}

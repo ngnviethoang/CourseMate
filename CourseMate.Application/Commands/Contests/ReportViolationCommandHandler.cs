@@ -32,7 +32,7 @@ internal sealed class ReportViolationCommandHandler : AbstractCommandHandler<Rep
 
         if (registration == null)
         {
-            throw new BusinessException("You are not registered for this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "You are not registered for this contest.");
         }
 
         if (registration.IsDisqualified)

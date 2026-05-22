@@ -193,7 +193,7 @@ export default function RegisterPage() {
               <TabsList className="grid w-full grid-cols-2 p-1 bg-muted/50 rounded-lg">
                 <TabsTrigger value="Student" className="rounded-md transition-all data-[state=active]:shadow-sm">
                   <BookOpen className="w-4 h-4 mr-2" />
-                  Học sinh
+                  Học viên
                 </TabsTrigger>
                 <TabsTrigger value="Instructor" className="rounded-md transition-all data-[state=active]:shadow-sm">
                   <Briefcase className="w-4 h-4 mr-2" />

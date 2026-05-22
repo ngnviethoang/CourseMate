@@ -6,7 +6,6 @@ using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using MimeKit;
 
 namespace CourseMate.Application.Commands.Auth;
 
@@ -56,7 +55,7 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
         // FIX: throw when role does NOT exist (was inverted before)
         if (!await _roleManager.RoleExistsAsync(role))
         {
-            throw new BusinessException(string.Format(ErrorMessages.RoleNotExists, role));
+            throw new BusinessException(ErrorCode.RoleNotExists, string.Format("{0} role does not exist.", role));
         }
 
         IdentityUser<Guid> user = new(request.UserName);
@@ -66,7 +65,7 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
         IdentityResult result = await _userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded)
         {
-            throw new BusinessException(result.Errors.FirstOrDefault()?.Description ?? string.Empty);
+            throw new BusinessException(ErrorCode.Unknown, result.Errors.FirstOrDefault()?.Description ?? string.Empty);
         }
 
         await _userManager.AddToRoleAsync(user, role);
@@ -77,15 +76,8 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
         string frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
         string verifyUrl = $"{frontendUrl}/verify-email?userId={user.Id}&token={encodedToken}";
 
-        MimeMessage message = new();
-        message.To.Add(MailboxAddress.Parse(request.Email));
-        message.Subject = "Xác thực tài khoản CourseMate";
-        message.Body = new BodyBuilder
-        {
-            HtmlBody = await RenderVerifyEmailTemplate(request.UserName, verifyUrl)
-        }.ToMessageBody();
-
-        BackgroundJob.Enqueue<EmailSenderJob>(job => job.Execute(message));
+        string htmlBody = await RenderVerifyEmailTemplate(request.UserName, verifyUrl);
+        BackgroundJob.Enqueue<EmailSenderJob>(job => job.Execute(request.Email, "Xác thực tài khoản CourseMate", htmlBody));
         return Codes.Success;
     }
 

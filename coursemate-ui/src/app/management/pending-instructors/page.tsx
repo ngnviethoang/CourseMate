@@ -48,9 +48,9 @@ export default function PendingInstructorsPage() {
     if (!approveId) return
     try {
       // TODO: re-enable when POST /api/users/pending-instructors/{id}/approve is added
-      toast.error('Endpoint not yet available in the new API.')
+      toast.error('API này hiện chưa khả dụng.')
     } catch {
-      toast.error('Failed to approve instructor.')
+      toast.error('Không thể duyệt giảng viên.')
     } finally {
       setApproveId(null)
     }
@@ -60,21 +60,21 @@ export default function PendingInstructorsPage() {
     if (!rejectId) return
     try {
       // TODO: re-enable when POST /api/users/pending-instructors/{id}/reject is added
-      toast.error('Endpoint not yet available in the new API.')
+      toast.error('API này hiện chưa khả dụng.')
     } catch {
-      toast.error('Failed to reject instructor application.')
+      toast.error('Không thể từ chối yêu cầu giảng viên.')
     } finally {
       setRejectId(null)
     }
   }
 
   const columns: Column<UserDto>[] = [
-    { key: 'userName', header: 'Username' },
+    { key: 'userName', header: 'Tên đăng nhập' },
     { key: 'email', header: 'Email' },
-    { key: 'phoneNumber', header: 'Phone' },
+    { key: 'phoneNumber', header: 'Số điện thoại' },
     {
       key: 'id',
-      header: 'Actions',
+      header: 'Thao tác',
       render: row => (
         <div className="flex items-center gap-2">
           <Button
@@ -84,7 +84,7 @@ export default function PendingInstructorsPage() {
             onClick={() => setApproveId(row.id)}
           >
             <CheckCircle className="w-4 h-4 mr-1" />
-            Approve
+            Duyệt
           </Button>
           <Button
             size="sm"
@@ -93,7 +93,7 @@ export default function PendingInstructorsPage() {
             onClick={() => setRejectId(row.id)}
           >
             <XCircle className="w-4 h-4 mr-1" />
-            Reject
+            Từ chối
           </Button>
         </div>
       )
@@ -104,8 +104,8 @@ export default function PendingInstructorsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Instructor Approvals</h1>
-          <p className="text-sm text-muted-foreground">Review users pending instructor access</p>
+          <h1 className="text-2xl font-semibold">Duyệt giảng viên</h1>
+          <p className="text-sm text-muted-foreground">Xét duyệt người dùng đăng ký quyền giảng viên</p>
         </div>
       </div>
 
@@ -113,7 +113,7 @@ export default function PendingInstructorsPage() {
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           className="pl-9"
-          placeholder="Search pending instructors…"
+          placeholder="Tìm giảng viên chờ duyệt..."
           value={filter}
           onChange={e => setFilter(e.target.value)}
         />
@@ -124,18 +124,18 @@ export default function PendingInstructorsPage() {
       <AlertDialog open={!!approveId} onOpenChange={open => !open && setApproveId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Approve Instructor?</AlertDialogTitle>
+            <AlertDialogTitle>Duyệt giảng viên?</AlertDialogTitle>
             <AlertDialogDescription>
-              This user will be granted the Instructor role and allowed to create courses.
+              Người dùng này sẽ được cấp vai trò Giảng viên và có quyền tạo khóa học.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               className="bg-primary text-primary-foreground hover:bg-primary/90"
               onClick={handleApprove}
             >
-              Approve
+              Duyệt
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -144,18 +144,18 @@ export default function PendingInstructorsPage() {
       <AlertDialog open={!!rejectId} onOpenChange={open => !open && setRejectId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Reject Instructor Application?</AlertDialogTitle>
+            <AlertDialogTitle>Từ chối yêu cầu giảng viên?</AlertDialogTitle>
             <AlertDialogDescription>
-              This user will remain a standard Student and will not be granted Instructor privileges.
+              Người dùng này sẽ giữ vai trò Học viên và không được cấp quyền Giảng viên.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleReject}
             >
-              Reject
+              Từ chối
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -39,6 +39,12 @@ const STATUS_COLOR: Record<string, string> = {
   Ended: 'bg-muted-foreground'
 }
 
+const ANTI_CHEAT_LABEL: Record<string, string> = {
+  None: 'Không bật',
+  Basic: 'Cơ bản',
+  Strict: 'Nghiêm ngặt'
+}
+
 const RANK_MEDAL: Record<number, string> = { 1: 'text-amber-400', 2: 'text-slate-400', 3: 'text-amber-600' }
 
 export default function ContestDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -147,7 +153,8 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                 </span>
                 {contest.antiCheatLevel !== 'None' && (
                   <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[11px] font-bold uppercase flex items-center gap-1.5">
-                    <Shield className="h-3 w-3" /> Anti-cheat: {contest.antiCheatLevel}
+                    <Shield className="h-3 w-3" /> Chống gian lận:{' '}
+                    {ANTI_CHEAT_LABEL[contest.antiCheatLevel] ?? contest.antiCheatLevel}
                   </span>
                 )}
               </div>
@@ -159,7 +166,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                   <Calendar className="h-5 w-5 text-primary/60" />
                   {contest.startTime
                     ? format(new Date(contest.startTime), 'EEEE, dd MMMM HH:mm', { locale: vi })
-                    : 'TBA'}
+                    : 'Sẽ thông báo'}
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="h-5 w-5 text-primary/60" />
@@ -328,7 +335,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                       <div className="flex-1">
                         <p className="font-bold text-lg">{entry.studentName}</p>
                         <p className="text-sm text-muted-foreground">
-                          {entry.totalRuntime.toFixed(2)}s runtime •{' '}
+                          {entry.totalRuntime.toFixed(2)}s thời gian chạy •{' '}
                           {format(new Date(entry.lastSubmitTime), 'HH:mm:ss')}
                         </p>
                       </div>
@@ -347,9 +354,9 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                 <div className="space-y-4">
                   {[
                     'Sử dụng các ngôn ngữ lập trình được cho phép.',
-                    'Hệ thống Anti-cheat sẽ theo dõi các hành vi bất thường (chuyển tab, sao chép code).',
-                    'Bài làm được chấm tự động dựa trên bộ test cases mẫu và ẩn.',
-                    'Thứ hạng dựa trên Tổng điểm > Runtime > Thời gian nộp bài.',
+                    'Hệ thống chống gian lận sẽ theo dõi các hành vi bất thường (chuyển tab, sao chép mã).',
+                    'Bài làm được chấm tự động dựa trên các bộ kiểm thử mẫu và ẩn.',
+                    'Thứ hạng dựa trên Tổng điểm > Thời gian chạy > Thời gian nộp bài.',
                     'Mọi hành vi gian lận sẽ dẫn đến việc bị huỷ kết quả thi ngay lập tức.'
                   ].map((rule, i) => (
                     <div key={i} className="flex gap-4 p-4 rounded-2xl bg-muted/30">
@@ -374,7 +381,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
               <div className="pt-4 shadow-md border-0 border-t-0 space-y-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Người tổ chức</span>
-                  <span className="font-bold">CourseMate Official</span>
+                  <span className="font-bold">Đội ngũ CourseMate</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Phân loại</span>

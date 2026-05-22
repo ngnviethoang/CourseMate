@@ -5,7 +5,6 @@ using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using MimeKit;
 
 namespace CourseMate.Application.Commands.Auth;
 
@@ -45,15 +44,8 @@ internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPassw
         string frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
         string resetUrl = $"{frontendUrl}/reset-password?email={encodedEmail}&token={encodedToken}";
 
-        MimeMessage message = new();
-        message.To.Add(MailboxAddress.Parse(request.Email));
-        message.Subject = "Đặt lại mật khẩu CourseMate";
-        message.Body = new BodyBuilder
-        {
-            HtmlBody = await RenderResetPasswordTemplate(user.UserName ?? request.Email, resetUrl)
-        }.ToMessageBody();
-
-        BackgroundJob.Enqueue<EmailSenderJob>(job => job.Execute(message));
+        string htmlBody = await RenderResetPasswordTemplate(user.UserName ?? request.Email, resetUrl);
+        BackgroundJob.Enqueue<EmailSenderJob>(job => job.Execute(request.Email, "Đặt lại mật khẩu CourseMate", htmlBody));
         return Codes.Success;
     }
 

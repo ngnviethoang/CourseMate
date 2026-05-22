@@ -35,7 +35,7 @@ internal sealed class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCom
         IdentityResult result = await _userManager.ConfirmEmailAsync(user, request.Token);
         if (!result.Succeeded)
         {
-            throw new BusinessException(result.Errors.FirstOrDefault()?.Description ?? string.Empty);
+            throw new BusinessException(ErrorCode.Unknown, result.Errors.FirstOrDefault()?.Description ?? string.Empty);
         }
 
         return Codes.Success;

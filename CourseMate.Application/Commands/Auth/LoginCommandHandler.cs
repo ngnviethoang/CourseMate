@@ -50,19 +50,19 @@ internal sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginR
 
         if (user == null)
         {
-            throw new BusinessException(ErrorMessages.InvalidUsernameOrPassword);
+            throw new BusinessException(ErrorCode.InvalidUsernameOrPassword, "Invalid username or password.");
         }
 
         // Check email confirmed
         if (!await _userManager.IsEmailConfirmedAsync(user))
         {
-            throw new BusinessException(ErrorMessages.EmailNotVerified);
+            throw new BusinessException(ErrorCode.EmailNotVerified, "This account has not verified its email address.");
         }
 
         // Check account lockout
         if (await _userManager.IsLockedOutAsync(user))
         {
-            throw new BusinessException(ErrorMessages.AccountLocked);
+            throw new BusinessException(ErrorCode.AccountLocked, "This account has been locked.");
         }
 
         SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
@@ -70,10 +70,10 @@ internal sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginR
         {
             if (result.IsLockedOut)
             {
-                throw new BusinessException(ErrorMessages.AccountLocked);
+                throw new BusinessException(ErrorCode.AccountLocked, "This account has been locked.");
             }
 
-            throw new BusinessException(ErrorMessages.InvalidUsernameOrPassword);
+            throw new BusinessException(ErrorCode.InvalidUsernameOrPassword, "Invalid username or password.");
         }
 
         IList<string> roles = await _userManager.GetRolesAsync(user);

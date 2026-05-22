@@ -83,24 +83,24 @@ const LANGUAGES = [
 
 const TEMPLATES: Record<string, string> = {
   'python-3.14':
-    'import sys\n\ndef solve():\n # Đọc dữ liệu từ stdin\n # input_data = sys.stdin.read().split()\n \n print("Hello from Python")\n\nif __name__ == "__main__":\n solve()',
+    'import sys\n\ndef solve():\n # Đọc dữ liệu từ stdin\n # input_data = sys.stdin.read().split()\n \n print("Xin chao Python")\n\nif __name__ == "__main__":\n solve()',
   'g++-15':
     '#include <iostream>\n#include <vector>\n#include <string>\n\nusing namespace std;\n\nint main() {\n // Giải quyết bài toán tại đây\n \n return 0;\n}',
   'gcc-15': '#include <stdio.h>\n\nint main() {\n // Giải quyết bài toán tại đây\n \n return 0;\n}',
   'openjdk-25':
     'import java.util.*;\n\npublic class Solution {\n public static void main(String[] args) {\n Scanner sc = new Scanner(System.in);\n // Code của bạn\n }\n}',
   'dotnet-csharp-9':
-    'using System;\n\nclass Program {\n static void Main() {\n // Đọc dữ liệu\n // string line = Console.ReadLine();\n \n Console.WriteLine("Hello C#");\n }\n}',
+    'using System;\n\nclass Program {\n static void Main() {\n // Đọc dữ liệu\n // string line = Console.ReadLine();\n \n Console.WriteLine("Xin chao C#");\n }\n}',
   'go-1.26':
-    'package main\n\nimport "fmt"\n\nfunc main() {\n var input string\n fmt.Scanln(&input)\n fmt.Println("Hello Go")\n}',
+    'package main\n\nimport "fmt"\n\nfunc main() {\n var input string\n fmt.Scanln(&input)\n fmt.Println("Xin chao Go")\n}',
   'rust-1.93':
-    'use std::io;\n\nfn main() {\n let mut input = String::new();\n io::stdin().read_line(&mut input).unwrap();\n println!("Hello Rust");\n}',
+    'use std::io;\n\nfn main() {\n let mut input = String::new();\n io::stdin().read_line(&mut input).unwrap();\n println!("Xin chao Rust");\n}',
   'typescript-deno':
-    'const input = new TextDecoder().decode(await Deno.readAll(Deno.stdin));\nconsole.log("Hello TypeScript");',
-  'php-8.5': "<?php\n\n$stdin = fopen('php://stdin', 'r');\n// $line = fgets($stdin);\n\necho \"Hello PHP\";",
-  'ruby-4.0': 'input = gets\nputs "Hello Ruby"',
-  'dotnet-fsharp-9': 'open System\n\n[<EntryPoint>]\nlet main argv = \n printfn "Hello F#"\n 0',
-  'haskell-9.12': 'main :: IO ()\nmain = do\n input <- getLine\n putStrLn "Hello Haskell"'
+    'const input = new TextDecoder().decode(await Deno.readAll(Deno.stdin));\nconsole.log("Xin chao TypeScript");',
+  'php-8.5': "<?php\n\n$stdin = fopen('php://stdin', 'r');\n// $line = fgets($stdin);\n\necho \"Xin chao PHP\";",
+  'ruby-4.0': 'input = gets\nputs "Xin chao Ruby"',
+  'dotnet-fsharp-9': 'open System\n\n[<EntryPoint>]\nlet main argv = \n printfn "Xin chao F#"\n 0',
+  'haskell-9.12': 'main :: IO ()\nmain = do\n input <- getLine\n putStrLn "Xin chao Haskell"'
 }
 
 const EMPTY_FORM: ExerciseForm = {
@@ -206,7 +206,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
       ...f,
       testCases: [
         ...f.testCases,
-        { input: '', expectedOutput: '', description: `Test case ${newIdx + 1}`, isHidden: false, order: newIdx }
+        { input: '', expectedOutput: '', description: `Bộ kiểm thử ${newIdx + 1}`, isHidden: false, order: newIdx }
       ]
     }))
     toggleTestCaseEditMode(newIdx, true)
@@ -246,7 +246,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
     try {
       if (isNew) {
         const res = await exerciseService.create(form)
-        toast.success('Tạo bài tập thành công! Bây giờ bạn có thể thêm Test Cases.')
+        toast.success('Tạo bài tập thành công! Bây giờ bạn có thể thêm bộ kiểm thử.')
         router.push(`/management/exercises/${res}`)
       } else {
         await exerciseService.update({ ...form, id })
@@ -265,15 +265,15 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
     try {
       if (tc.id) {
         await exerciseService.updateTestCase(id as string, tc.id, tc)
-        toast.success(`Đã cập nhật Test case #${idx + 1}`)
+        toast.success(`Đã cập nhật bộ kiểm thử #${idx + 1}`)
       } else {
         const res = await exerciseService.addTestCase(id as string, tc)
         updateTestCase(idx, { id: res.id || res })
-        toast.success(`Đã thêm Test case #${idx + 1}`)
+        toast.success(`Đã thêm bộ kiểm thử #${idx + 1}`)
       }
       toggleTestCaseEditMode(idx, false)
     } catch {
-      toast.error('Lưu test case thất bại')
+      toast.error('Lưu bộ kiểm thử thất bại')
     }
   }
 
@@ -307,7 +307,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
     { key: 'hints', label: '4. Gợi ý', icon: <Plus className="h-4 w-4" /> },
     {
       key: 'testcases',
-      label: `5. Test Cases (${form.testCases.length})`,
+      label: `5. Bộ kiểm thử (${form.testCases.length})`,
       icon: <FlaskConical className="h-4 w-4" />,
       disabled: isNew
     },
@@ -381,7 +381,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                 value={form.description}
                 onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                 rows={12}
-                placeholder={`## Mô tả\nCho hai số nguyên a và b...\n\n## Ví dụ\n**Input:** 5 3\n**Output:** 8\n\n**Hướng dẫn học:** Dùng toán tử +`}
+                placeholder={`## Mô tả\nCho hai số nguyên a và b...\n\n## Ví dụ\n**Đầu vào:** 5 3\n**Đầu ra:** 8\n\n**Hướng dẫn học:** Dùng toán tử +`}
                 className="w-full -input rounded-lg px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 bg-background resize-none"
               />
             </div>
@@ -409,13 +409,15 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                 value={form.category}
                 onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
                 list="category-list"
-                placeholder="Array, String, Tree..."
+                placeholder="Mảng, Chuỗi, Cây..."
                 className="w-full -input rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 bg-background"
               />
               <datalist id="category-list">
-                {['Array', 'String', 'Tree', 'Graph', 'DP', 'Math', 'Sorting', 'HashTable', 'Cơ bản'].map(c => (
-                  <option key={c} value={c} />
-                ))}
+                {['Mảng', 'Chuỗi', 'Cây', 'Đồ thị', 'Quy hoạch động', 'Toán học', 'Sắp xếp', 'Bảng băm', 'Cơ bản'].map(
+                  c => (
+                    <option key={c} value={c} />
+                  )
+                )}
               </datalist>
             </div>
 
@@ -429,7 +431,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Test Cases</span>
+                <span className="text-muted-foreground">Bộ kiểm thử</span>
                 <span className="font-medium">{form.testCases.length}</span>
               </div>
               <div className="flex justify-between">
@@ -473,7 +475,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                 )}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase text-muted-foreground">Input</label>
+                    <label className="text-xs font-bold uppercase text-muted-foreground">Đầu vào</label>
                     {editMode['examples'] ? (
                       <textarea
                         value={ex.input}
@@ -488,7 +490,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                     )}
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase text-muted-foreground">Output</label>
+                    <label className="text-xs font-bold uppercase text-muted-foreground">Đầu ra</label>
                     {editMode['examples'] ? (
                       <textarea
                         value={ex.output}
@@ -631,11 +633,11 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              Thêm các test case để kiểm tra bài làm của học sinh. Test case <strong>ẩn</strong> sẽ không hiện cho học
-              sinh thấy input/output.
+              Thêm các bộ kiểm thử để đánh giá bài làm của học sinh. Bộ kiểm thử <strong>ẩn</strong> sẽ không hiện cho
+              học sinh thấy đầu vào/đầu ra.
             </p>
             <Button size="sm" onClick={addTestCase} className="gap-1.5">
-              <Plus className="h-3.5 w-3.5" /> Thêm Test Case
+              <Plus className="h-3.5 w-3.5" /> Thêm bộ kiểm thử
             </Button>
           </div>
 
@@ -643,7 +645,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
             <div className="text-center py-16 text-muted-foreground rounded-xl -dashed">
               <FlaskConical className="h-10 w-10 mx-auto mb-3 opacity-40" />
               <p className="text-sm">
-                Chưa có test case. Nhấn <strong>Thêm Test Case</strong> để bắt đầu.
+                Chưa có bộ kiểm thử. Nhấn <strong>Thêm bộ kiểm thử</strong> để bắt đầu.
               </p>
             </div>
           )}
@@ -657,7 +659,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
-                    <span className="text-sm font-semibold">Test case #{idx + 1}</span>
+                    <span className="text-sm font-semibold">Bộ kiểm thử #{idx + 1}</span>
                     {tc.isHidden && (
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 font-medium">
                         Ẩn
@@ -721,7 +723,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <label className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
-                      Input (stdin)
+                      Đầu vào (stdin)
                     </label>
                     {editModeTestCases[idx] || !tc.id ? (
                       <textarea
@@ -739,7 +741,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
-                      Expected Output
+                      Đầu ra mong đợi
                     </label>
                     {editModeTestCases[idx] || !tc.id ? (
                       <textarea

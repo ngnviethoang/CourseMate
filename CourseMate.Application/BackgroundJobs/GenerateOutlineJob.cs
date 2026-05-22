@@ -1,5 +1,6 @@
 using CourseMate.Application.Services.AIServices;
 using CourseMate.Application.Services.NotificationServices;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
@@ -92,7 +93,7 @@ public class GenerateOutlineJob
         catch (JsonException ex)
         {
             _logger.LogWarning(ex, "Failed to parse AI outline for lesson {LessonId}. Raw output: {Outline}", lessonMaterial.LessonId, outline);
-            throw new BusinessException($"Invalid AI outline for lesson {lessonMaterial.LessonId}", ex);
+            throw new BusinessException(ErrorCode.Unknown, $"Invalid AI outline for lesson {lessonMaterial.LessonId}", ex);
         }
 
 

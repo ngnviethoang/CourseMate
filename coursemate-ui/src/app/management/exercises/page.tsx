@@ -157,7 +157,7 @@ export default function ExercisesManagementPage() {
             <Code2 className="h-6 w-6 text-primary" />
             Quản lý Bài tập
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">Tạo và quản lý bài tập lập trình, test cases, code mẫu</p>
+          <p className="text-sm text-muted-foreground mt-1">Tạo và quản lý bài tập lập trình, bộ kiểm thử và mã mẫu</p>
         </div>
 
         <Dialog open={openNewModal} onOpenChange={setOpenNewModal}>
@@ -169,7 +169,7 @@ export default function ExercisesManagementPage() {
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle>Tạo bài tập mới</DialogTitle>
-              <DialogDescription>Điền các thông tin cơ bản trước khi thêm test cases và code mẫu.</DialogDescription>
+              <DialogDescription>Điền các thông tin cơ bản trước khi thêm bộ kiểm thử và mã mẫu.</DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4 py-4">
@@ -206,13 +206,15 @@ export default function ExercisesManagementPage() {
                   value={newForm.category}
                   onChange={e => setNewForm(f => ({ ...f, category: e.target.value }))}
                   list="category-list"
-                  placeholder="Array, String, Tree..."
+                  placeholder="Mảng, Chuỗi, Cây..."
                   className="w-full -input rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 bg-background"
                 />
                 <datalist id="category-list">
-                  {['Array', 'String', 'Tree', 'Graph', 'DP', 'Math', 'Sorting', 'HashTable', 'Cơ bản'].map(c => (
-                    <option key={c} value={c} />
-                  ))}
+                  {['Mảng', 'Chuỗi', 'Cây', 'Đồ thị', 'Quy hoạch động', 'Toán', 'Sắp xếp', 'Bảng băm', 'Cơ bản'].map(
+                    c => (
+                      <option key={c} value={c} />
+                    )
+                  )}
                 </datalist>
               </div>
 
@@ -283,7 +285,9 @@ export default function ExercisesManagementPage() {
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Tiêu đề</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Danh mục</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Độ khó</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Test Cases</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">
+                Bộ kiểm thử
+              </th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden xl:table-cell">Người tạo</th>
               <th className="text-right px-4 py-3 font-medium text-muted-foreground">Thao tác</th>
             </tr>
@@ -325,7 +329,7 @@ export default function ExercisesManagementPage() {
                   <td className="px-4 py-3 hidden lg:table-cell">
                     <span className="flex items-center gap-1 text-xs text-muted-foreground">
                       <CheckCircle2 className="h-3 w-3" />
-                      {ex.testCaseCount} test cases
+                      {ex.testCaseCount} bộ kiểm thử
                     </span>
                   </td>
                   <td className="px-4 py-3 hidden xl:table-cell text-xs text-muted-foreground">

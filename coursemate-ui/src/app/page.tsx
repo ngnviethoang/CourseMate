@@ -69,7 +69,7 @@ export default function Home() {
       </main>
 
       <footer className="mt-16 shadow-md border-0 border-t-0 py-8 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} CourseMate. All rights reserved.
+        © {new Date().getFullYear()} CourseMate. Bảo lưu mọi quyền.
       </footer>
     </div>
   )

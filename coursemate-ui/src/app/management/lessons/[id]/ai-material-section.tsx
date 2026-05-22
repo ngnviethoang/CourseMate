@@ -113,7 +113,7 @@ function EditableSlide({
             className="flex-1 text-sm font-bold truncate cursor-pointer hover:text-primary transition-colors flex items-center gap-2"
             onClick={() => setEditingTitle(true)}
           >
-            {slide.title || <span className="text-muted-foreground/50 font-normal italic">Untitled slide</span>}
+            {slide.title || <span className="text-muted-foreground/50 font-normal italic">Slide chưa có tiêu đề</span>}
             <Pencil className="h-3 w-3 opacity-0 group-hover:opacity-50 transition-opacity" />
           </div>
         )}
@@ -136,7 +136,7 @@ function EditableSlide({
                   className="flex-1 min-h-[44px] resize-none rounded-xl border-transparent bg-muted/20 hover:-muted-foreground/10 focus:-primary/30 focus:bg-background px-3 py-2.5 text-sm outline-none transition-all placeholder:text-muted-foreground/30"
                   value={bullet}
                   rows={1}
-                  placeholder="Slide point..."
+                  placeholder="Ý chính của slide..."
                   onChange={e => updateBullet(bi, e.target.value)}
                 />
                 <button
@@ -212,10 +212,10 @@ function SlidePreviewer({ slides }: { slides: LectureSlide[] }) {
                 <div className="relative z-10 flex-1 flex flex-col">
                   <div className="mb-8">
                     <Badge variant="outline" className="text-zinc-500 -zinc-800 mb-4">
-                      Slide {slide.slideNumber} of {slides.length}
+                      Slide {slide.slideNumber}/{slides.length}
                     </Badge>
                     <h2 className="text-4xl font-extrabold text-white tracking-tight leading-tight">
-                      {slide.title || 'Untitled Slide'}
+                      {slide.title || 'Slide chưa có tiêu đề'}
                     </h2>
                     <div className="h-1.5 w-24 bg-primary rounded-full mt-4" />
                   </div>
@@ -314,10 +314,10 @@ function OutlineEditor({
         lessonMaterialId: materialId,
         lectureOutline: draft
       })
-      toast.success('Outline saved successfully!')
+      toast.success('Đã lưu dàn ý thành công!')
       onSaved(result)
     } catch {
-      toast.error('Failed to save outline.')
+      toast.error('Không thể lưu dàn ý.')
     } finally {
       setSaving(false)
     }
@@ -344,7 +344,7 @@ function OutlineEditor({
             onClick={() => setView('preview')}
           >
             <Play className="h-4 w-4" />
-            Live Preview
+            Xem trước trực tiếp
           </Button>
         </div>
 
@@ -357,7 +357,7 @@ function OutlineEditor({
               className="gap-2 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {saving ? 'Saving...' : 'Save Changes'}
+              {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
             </Button>
           )}
         </div>
@@ -378,17 +378,17 @@ function OutlineEditor({
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[10px] font-bold text-purple-600 uppercase tracking-[0.2em] mb-1">
-                  Generated Lesson
+                  Bài giảng đã tạo
                 </p>
                 <Input
                   className="-0 bg-transparent p-0 h-auto text-2xl font-black shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/30"
                   value={draft.lessonTitle}
-                  placeholder="Enter lesson title..."
+                  placeholder="Nhập tiêu đề bài học..."
                   onChange={e => setDraft(prev => ({ ...prev, lessonTitle: e.target.value }))}
                 />
               </div>
               <Badge className="bg-purple-500 hover:bg-purple-600 text-white border-0 px-3 py-1 rounded-full shadow-md shadow-purple-500/20 shrink-0">
-                {draft.slides.length} slides
+                {draft.slides.length} slide
               </Badge>
             </div>
           </div>
@@ -517,14 +517,14 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
       pollOutline(lessonId)
     } catch {
       setUploadState('error')
-      toast.error('Upload failed. Please try again.')
+      toast.error('Tải tệp lên thất bại. Vui lòng thử lại.')
     }
   }
 
   const handleFileSelect = (file: File) => {
     const ext = file.name.split('.').pop()?.toLowerCase()
     if (!['doc', 'docx', 'pdf'].includes(ext ?? '')) {
-      toast.error('Only .doc, .docx, and .pdf files are supported.')
+      toast.error('Chỉ hỗ trợ tệp .doc, .docx và .pdf.')
       return
     }
     setSelectedFile(file)
@@ -549,7 +549,7 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
         toast.info('Hệ thống vẫn đang xử lý. Vui lòng chờ trong giây lát.')
       }
     } catch {
-      toast.error('Could not fetch outline.')
+      toast.error('Không thể tải dàn ý.')
     }
   }
 

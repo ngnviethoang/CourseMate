@@ -17,37 +17,37 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 const STATUS_MAP: Record<string, { label: string; color: string }> = {
-  Draft: { label: 'Draft', color: 'bg-gray-100 text-gray-800 hover:bg-gray-200' },
-  Pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' },
-  Paid: { label: 'Paid', color: 'bg-green-100 text-green-800 hover:bg-green-200' },
-  Failed: { label: 'Failed', color: 'bg-red-100 text-red-800 hover:bg-red-200' },
-  Refunded: { label: 'Refunded', color: 'bg-orange-100 text-orange-800 hover:bg-orange-200' }
+  Draft: { label: 'Nháp', color: 'bg-gray-100 text-gray-800 hover:bg-gray-200' },
+  Pending: { label: 'Chờ thanh toán', color: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' },
+  Paid: { label: 'Đã thanh toán', color: 'bg-green-100 text-green-800 hover:bg-green-200' },
+  Failed: { label: 'Thất bại', color: 'bg-red-100 text-red-800 hover:bg-red-200' },
+  Refunded: { label: 'Đã hoàn tiền', color: 'bg-orange-100 text-orange-800 hover:bg-orange-200' }
 }
 
 const columns: Column<AdminOrderDto>[] = [
   {
     key: 'id',
-    header: 'Order ID',
+    header: 'Mã đơn hàng',
     render: row => <span className="text-xs font-mono">{row.id.substring(0, 8)}...</span>
   },
-  { key: 'studentName', header: 'Student' },
+  { key: 'studentName', header: 'Học viên' },
   { key: 'studentEmail', header: 'Email' },
   {
     key: 'totalAmount',
-    header: 'Total',
+    header: 'Tổng tiền',
     render: row => <span className="font-medium">{formatCurrency(row.totalAmount)}</span>
   },
   {
     key: 'status',
-    header: 'Status',
+    header: 'Trạng thái',
     render: row => {
-      const status = STATUS_MAP[row.status] || { label: 'Unknown', color: 'bg-gray-100 text-gray-800' }
+      const status = STATUS_MAP[row.status] || { label: 'Không xác định', color: 'bg-gray-100 text-gray-800' }
       return <Badge className={`${status.color} border-transparent shadow-none`}>{status.label}</Badge>
     }
   },
   {
     key: 'creationTime',
-    header: 'Date',
+    header: 'Ngày tạo',
     render: row => new Date(row.creationTime).toLocaleDateString()
   }
 ]
@@ -105,7 +105,7 @@ export default function OrdersPage() {
     setSaving(true)
     try {
       await orderService.update(editing.id, { id: editing.id, status: statusVal })
-      toast.success('Order status updated.')
+      toast.success('Đã cập nhật trạng thái đơn hàng.')
       setDialogOpen(false)
       load()
     } finally {
@@ -116,11 +116,13 @@ export default function OrdersPage() {
   return (
     <div className="space-y-10 max-w-[1600px] mx-auto pb-10">
       <div className="flex flex-col gap-2">
-        <h1 className="text-4xl font-bold tracking-tight">{isAdmin ? 'All Orders' : 'My Course Sales'}</h1>
+        <h1 className="text-4xl font-bold tracking-tight">
+          {isAdmin ? 'Tất cả đơn hàng' : 'Doanh thu khóa học của tôi'}
+        </h1>
         <p className="text-lg text-muted-foreground">
           {isAdmin
-            ? 'Manage student course purchases and enrollments'
-            : 'Monitor sales and student enrollments for your courses'}
+            ? 'Quản lý việc mua khóa học và ghi danh của học viên'
+            : 'Theo dõi doanh thu và ghi danh học viên cho các khóa học của bạn'}
         </p>
       </div>
 
@@ -129,7 +131,7 @@ export default function OrdersPage() {
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
           <Input
             className="pl-11 h-12 text-base rounded-xl -muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-            placeholder="Search by student name or email..."
+            placeholder="Tìm theo tên hoặc email học viên..."
             value={filter}
             onChange={e => {
               setFilter(e.target.value)
@@ -160,18 +162,18 @@ export default function OrdersPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Update Order Status</DialogTitle>
+            <DialogTitle>Cập nhật trạng thái đơn hàng</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Order ID</Label>
+              <Label>Mã đơn hàng</Label>
               <div className="text-sm font-mono bg-muted p-2 rounded-md">{editing?.id}</div>
             </div>
             <div className="space-y-2">
-              <Label>Current Status</Label>
+              <Label>Trạng thái hiện tại</Label>
               <Select value={statusVal} onValueChange={val => val && setStatusVal(val)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
+                  <SelectValue placeholder="Chọn trạng thái" />
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(STATUS_MAP).map(([val, { label }]) => (
@@ -183,16 +185,16 @@ export default function OrdersPage() {
               </Select>
             </div>
             <p className="text-xs text-muted-foreground">
-              Note: Updating order status to <strong>Paid</strong> will automatically enroll the student into the
-              purchased courses.
+              Lưu ý: Chuyển trạng thái sang <strong>Đã thanh toán</strong> sẽ tự động ghi danh học viên vào các khóa học
+              đã mua.
             </p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
+              Hủy
             </Button>
             <Button onClick={handleSaveStatus} disabled={saving}>
-              {saving ? 'Updating...' : 'Update Status'}
+              {saving ? 'Đang cập nhật...' : 'Cập nhật trạng thái'}
             </Button>
           </DialogFooter>
         </DialogContent>

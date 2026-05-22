@@ -54,7 +54,7 @@ internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandl
             bool isDuplicate = await DbContext.Chapters.AnyAsync(x => x.CourseId == request.CourseId && x.Position == request.Position && x.Id != request.Id, ct);
             if (isDuplicate)
             {
-                throw new BusinessException(ErrorMessages.DuplicatePosition);
+                throw new BusinessException(ErrorCode.DuplicatePosition, "Duplicate position.");
             }
         }
 
@@ -66,7 +66,7 @@ internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandl
 
         if (finalPosition > nextPosition)
         {
-            throw new BusinessException(string.Format(ErrorMessages.PositionOutOfRange, nextPosition));
+            throw new BusinessException(ErrorCode.PositionOutOfRange, string.Format("Position must be 0 or equal to next position '{0}'.", nextPosition));
         }
 
         chapter.CourseId = request.CourseId;

@@ -48,7 +48,7 @@ internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUs
         request.Role = request.Role.Trim().ToLowerInvariant();
         if (await _roleManager.RoleExistsAsync(request.Role))
         {
-            throw new BusinessException(string.Format(ErrorMessages.RoleNotExists, request.Role));
+            throw new BusinessException(ErrorCode.RoleNotExists, string.Format("{0} role does not exist.", request.Role));
         }
 
         IdentityUser<Guid> user = new()
@@ -67,6 +67,6 @@ internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUs
         }
 
         string errors = string.Join(", ", result.Errors.Select(e => e.Description));
-        throw new BusinessException(errors);
+        throw new BusinessException(ErrorCode.Unknown, errors);
     }
 }

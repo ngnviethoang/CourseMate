@@ -27,7 +27,7 @@ function getUserFromToken() {
       payload['unique_name'] ??
       payload['name'] ??
       payload['sub'] ??
-      'User'
+      'Người dùng'
     const role: string =
       payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? payload['role'] ?? ''
     return { name, role }
@@ -47,7 +47,7 @@ function UserDropdown({
 }) {
   // Use a stable initials value for the first render to match SSR
   const initials = mounted && user?.name ? user.name.slice(0, 2).toUpperCase() : 'U'
-  const displayName = mounted && user?.name ? user.name : 'User'
+  const displayName = mounted && user?.name ? user.name : 'Người dùng'
   const displayRole = mounted && user?.role ? user.role : ''
 
   return (
@@ -92,18 +92,18 @@ function UserDropdown({
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => (window.location.href = '/management/profile')}>
             <User className="mr-2 h-4 w-4" />
-            Profile
+            Hồ sơ
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => (window.location.href = '/management/settings')}>
             <Settings className="mr-2 h-4 w-4" />
-            Settings
+            Cài đặt
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem variant="destructive" onClick={onLogout}>
             <LogOut className="mr-2 h-4 w-4" />
-            Logout
+            Đăng xuất
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

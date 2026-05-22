@@ -41,8 +41,8 @@ export default function LearningLayout({ children }: { children: React.ReactNode
   if (!course) {
     return (
       <div className="flex flex-col items-center justify-center h-[80vh] space-y-4">
-        <p className="text-muted-foreground text-lg">Course not found.</p>
-        <Button onClick={() => router.push('/courses')}>Back to Courses</Button>
+        <p className="text-muted-foreground text-lg">Không tìm thấy khóa học.</p>
+        <Button onClick={() => router.push('/courses')}>Quay lại danh sách khóa học</Button>
       </div>
     )
   }
@@ -58,7 +58,7 @@ export default function LearningLayout({ children }: { children: React.ReactNode
             onClick={() => router.push(`/courses/${id}`)}
             className="mb-2 gap-2 text-muted-foreground hover:text-foreground p-0 h-auto"
           >
-            <ChevronLeft className="h-4 w-4" /> Back to Course
+            <ChevronLeft className="h-4 w-4" /> Quay lại khóa học
           </Button>
           <h2 className="font-bold text-lg line-clamp-2">{course.title}</h2>
           <div className="flex items-center gap-2 mt-2">

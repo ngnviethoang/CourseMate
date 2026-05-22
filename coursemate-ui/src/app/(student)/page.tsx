@@ -38,7 +38,7 @@ export default function CatalogPage() {
         const res = await courseService.list({ pageIndex: 0, pageSize: 50, filter: search })
         if (!cancelled) setCourses(res.items || [])
       } catch {
-        if (!cancelled) toast.error('Failed to load courses')
+        if (!cancelled) toast.error('Không thể tải danh sách khóa học.')
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -55,8 +55,8 @@ export default function CatalogPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Explore Courses</h1>
-        <p className="text-muted-foreground mt-2">Discover the best courses tailored for you.</p>
+        <h1 className="text-3xl font-bold tracking-tight">Khám phá khóa học</h1>
+        <p className="text-muted-foreground mt-2">Tìm những khóa học phù hợp nhất với bạn.</p>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
@@ -64,7 +64,7 @@ export default function CatalogPage() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search courses..."
+            placeholder="Tìm kiếm khóa học..."
             className="pl-8"
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -76,7 +76,7 @@ export default function CatalogPage() {
             className="cursor-pointer"
             onClick={() => setSelectedCategory('')}
           >
-            All
+            Tất cả
           </Badge>
           {categories.map(cat => (
             <Badge
@@ -98,7 +98,7 @@ export default function CatalogPage() {
           ))}
         </div>
       ) : filteredCourses.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">No courses found.</div>
+        <div className="text-center py-12 text-muted-foreground">Không tìm thấy khóa học nào.</div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredCourses.map(course => (
@@ -110,7 +110,7 @@ export default function CatalogPage() {
               <div className="relative h-48 w-full overflow-hidden bg-muted">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={course.imageUrl || 'https://placehold.co/600x400?text=No+Image'}
+                  src={course.imageUrl || 'https://placehold.co/600x400?text=Khong+anh'}
                   alt={course.title}
                   className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
@@ -124,7 +124,7 @@ export default function CatalogPage() {
                   {course.title}
                 </CardTitle>
                 <CardDescription className="text-xs mt-1">
-                  {course.instructorName || 'Unknown Instructor'}
+                  {course.instructorName || 'Không rõ giảng viên'}
                 </CardDescription>
               </CardHeader>
 
@@ -135,7 +135,7 @@ export default function CatalogPage() {
               <CardFooter className="p-4 pt-0 flex items-center justify-between shadow-md border-0 border-t-0 mt-auto">
                 <span className="text-lg font-bold text-primary">{formatCurrency(course.price)}</span>
                 <Button size="sm" variant="default" className="rounded-full">
-                  View Details
+                  Xem chi tiết
                 </Button>
               </CardFooter>
             </Card>

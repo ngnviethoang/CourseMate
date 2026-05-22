@@ -24,13 +24,13 @@ import { Label } from '@/components/ui/label'
 import { formatDate } from '@/lib/utils'
 
 const columns: Column<ChapterDto>[] = [
-  { key: 'title', header: 'Title', sortKey: 'title' },
-  { key: 'courseName', header: 'Course' },
-  { key: 'position', header: 'Position', sortKey: 'position' },
-  { key: 'creationTime', header: 'Created', sortKey: 'creationTime', render: row => formatDate(row.creationTime) },
+  { key: 'title', header: 'Tiêu đề', sortKey: 'title' },
+  { key: 'courseName', header: 'Khóa học' },
+  { key: 'position', header: 'Vị trí', sortKey: 'position' },
+  { key: 'creationTime', header: 'Ngày tạo', sortKey: 'creationTime', render: row => formatDate(row.creationTime) },
   {
     key: 'lastModificationTime',
-    header: 'Updated',
+    header: 'Cập nhật',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }
@@ -85,10 +85,10 @@ export default function ChaptersPage() {
     try {
       if (editing) {
         await chapterService.update(editing.id, form)
-        toast.success('Chapter updated.')
+        toast.success('Đã cập nhật chương.')
       } else {
         await chapterService.create(form)
-        toast.success('Chapter created.')
+        toast.success('Đã tạo chương.')
       }
       setDialogOpen(false)
       load()
@@ -100,7 +100,7 @@ export default function ChaptersPage() {
   async function handleDelete() {
     if (!deleteId) return
     await chapterService.delete(deleteId)
-    toast.success('Chapter deleted.')
+    toast.success('Đã xóa chương.')
     setDeleteId(null)
     load()
   }
@@ -111,22 +111,17 @@ export default function ChaptersPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Chapters</h1>
-          <p className="text-sm text-muted-foreground">Manage course chapters</p>
+          <h1 className="text-2xl font-semibold">Chương</h1>
+          <p className="text-sm text-muted-foreground">Quản lý chương của khóa học</p>
         </div>
         <Button onClick={openCreate} className="gap-2">
-          <Plus className="h-4 w-4" /> New Chapter
+          <Plus className="h-4 w-4" /> Tạo chương
         </Button>
       </div>
 
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          className="pl-9"
-          placeholder="Search chapters…"
-          value={filter}
-          onChange={e => setFilter(e.target.value)}
-        />
+        <Input className="pl-9" placeholder="Tìm chương..." value={filter} onChange={e => setFilter(e.target.value)} />
       </div>
 
       <DataTable
@@ -149,24 +144,24 @@ export default function ChaptersPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editing ? 'Edit Chapter' : 'New Chapter'}</DialogTitle>
+            <DialogTitle>{editing ? 'Chỉnh sửa chương' : 'Tạo chương mới'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1">
-              <Label>Course ID</Label>
+              <Label>ID khóa học</Label>
               <Input value={form.courseId} onChange={e => f('courseId', e.target.value)} />
             </div>
             <div className="space-y-1">
-              <Label>Title</Label>
+              <Label>Tiêu đề</Label>
               <Input value={form.title} onChange={e => f('title', e.target.value)} />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
+              Hủy
             </Button>
             <Button onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving…' : 'Save'}
+              {saving ? 'Đang lưu...' : 'Lưu'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -175,16 +170,16 @@ export default function ChaptersPage() {
       <AlertDialog open={!!deleteId} onOpenChange={open => !open && setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete chapter?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogTitle>Xóa chương?</AlertDialogTitle>
+            <AlertDialogDescription>Hành động này không thể hoàn tác.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDelete}
             >
-              Delete
+              Xóa
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

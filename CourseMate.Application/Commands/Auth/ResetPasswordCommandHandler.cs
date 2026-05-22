@@ -34,13 +34,13 @@ internal sealed class ResetPasswordCommandHandler : IRequestHandler<ResetPasswor
         IdentityUser<Guid>? user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
         {
-            throw new BusinessException(ErrorMessages.UserNotFound);
+            throw new BusinessException(ErrorCode.UserNotFound, "Account not found.");
         }
 
         IdentityResult result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
         if (!result.Succeeded)
         {
-            throw new BusinessException(result.Errors.FirstOrDefault()?.Description ?? string.Empty);
+            throw new BusinessException(ErrorCode.Unknown, result.Errors.FirstOrDefault()?.Description ?? string.Empty);
         }
 
         return Codes.Success;

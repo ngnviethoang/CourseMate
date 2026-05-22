@@ -28,7 +28,7 @@ internal sealed class DeleteExerciseFromContestCommandHandler : AbstractCommandH
 
         if (ce == null)
         {
-            throw new BusinessException("Exercise not found in this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "Exercise not found in this contest.");
         }
 
         DbContext.ContestExercises.Remove(ce);

@@ -29,7 +29,7 @@ export default function CourseDetailPage() {
         const res = await courseService.getById(id)
         setCourse(res as unknown as StudentCourseDetailDto)
       } catch {
-        toast.error('Failed to load course details.')
+        toast.error('Không thể tải chi tiết khóa học.')
       } finally {
         setLoading(false)
       }
@@ -44,7 +44,7 @@ export default function CourseDetailPage() {
     setSubmitting(true)
     try {
       await orderService.addToCart(course.id)
-      toast.success('Added to cart successfully!')
+      toast.success('Đã thêm vào giỏ hàng thành công!')
     } catch {
       // Error handled by api-client automatically
     } finally {
@@ -58,7 +58,7 @@ export default function CourseDetailPage() {
     setSubmitting(true)
     try {
       await orderService.enrollFree(course.id)
-      toast.success('Enrolled successfully!')
+      toast.success('Đăng ký khóa học thành công!')
       router.push(`/learning/${course.id}`)
     } catch {
       // Error handled by api-client automatically
@@ -76,7 +76,7 @@ export default function CourseDetailPage() {
   }
 
   if (!course) {
-    return <div className="text-center py-20 text-muted-foreground">Course not found.</div>
+    return <div className="text-center py-20 text-muted-foreground">Không tìm thấy khóa học.</div>
   }
 
   const totalLessons = course.chapters.reduce((acc, ch) => acc + ch.lessons.length, 0)
@@ -92,15 +92,15 @@ export default function CourseDetailPage() {
           <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
-              <span>{course.chapters.length} chapters</span>
+              <span>{course.chapters.length} chương</span>
             </div>
             <div className="flex items-center gap-2">
               <PlayCircle className="h-4 w-4" />
-              <span>{totalLessons} lessons</span>
+              <span>{totalLessons} bài học</span>
             </div>
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4" />
-              <span>By {course.instructorName || 'Unknown Instructor'}</span>
+              <span>Bởi {course.instructorName || 'Không rõ giảng viên'}</span>
             </div>
           </div>
 
@@ -111,7 +111,7 @@ export default function CourseDetailPage() {
                 className="w-full md:w-auto h-12 px-8"
                 onClick={() => router.push(`/learning/${course.id}`)}
               >
-                Continue Learning
+                Tiếp tục học
               </Button>
             ) : (
               <>
@@ -124,7 +124,7 @@ export default function CourseDetailPage() {
                       onClick={handleEnrollFree}
                       disabled={submitting}
                     >
-                      {submitting ? 'Enrolling...' : 'Enroll'}
+                      {submitting ? 'Đang đăng ký...' : 'Đăng ký học'}
                     </Button>
                   ) : (
                     <Button
@@ -134,7 +134,7 @@ export default function CourseDetailPage() {
                       disabled={submitting}
                     >
                       <ShoppingCart className="h-5 w-5" />
-                      {submitting ? 'Adding...' : 'Add to Cart'}
+                      {submitting ? 'Đang thêm...' : 'Thêm vào giỏ hàng'}
                     </Button>
                   )}
                 </div>
@@ -146,7 +146,7 @@ export default function CourseDetailPage() {
         <div className="relative aspect-video rounded-xl overflow-hidden bg-muted shadow-xl">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={course.imageUrl || 'https://placehold.co/800x450?text=Course+Image'}
+            src={course.imageUrl || 'https://placehold.co/800x450?text=KhoaHoc'}
             alt={course.title}
             className="object-cover w-full h-full"
           />
@@ -156,7 +156,7 @@ export default function CourseDetailPage() {
       {/* Course Description */}
       {course.description && (
         <div className="space-y-6 pt-8 shadow-md border-0 border-t-0">
-          <h2 className="text-2xl font-bold">About this course</h2>
+          <h2 className="text-2xl font-bold">Về khóa học này</h2>
           <div className="relative flex flex-col rounded-xl bg-card p-6 md:p-8 shadow-md border-0">
             <div
               className={`prose prose-sm md:prose-base max-w-none dark:prose-invert prose-img:rounded-lg prose-img:mx-auto transition-all duration-300 ${!showFullDesc ? 'max-h-64 overflow-hidden' : ''}`}
@@ -170,7 +170,7 @@ export default function CourseDetailPage() {
               onClick={() => setShowFullDesc(!showFullDesc)}
               className="mt-6 self-center w-full max-w-xs font-medium"
             >
-              {showFullDesc ? 'Show less' : 'Show more description'}
+              {showFullDesc ? 'Thu gọn' : 'Xem thêm mô tả'}
             </Button>
           </div>
         </div>
@@ -178,10 +178,10 @@ export default function CourseDetailPage() {
 
       {/* Syllabus Section */}
       <div className="space-y-6 pt-8 shadow-md border-0 border-t-0">
-        <h2 className="text-2xl font-bold">Course Syllabus</h2>
+        <h2 className="text-2xl font-bold">Giáo trình khóa học</h2>
 
         {course.chapters.length === 0 ? (
-          <p className="text-muted-foreground">No chapters available yet.</p>
+          <p className="text-muted-foreground">Chưa có chương nào.</p>
         ) : (
           <Accordion className="w-full">
             {course.chapters.map(chapter => (
@@ -192,14 +192,14 @@ export default function CourseDetailPage() {
                       {chapter.position}. {chapter.title}
                     </span>
                     <Badge variant="secondary" className="font-normal text-xs">
-                      {chapter.lessons.length} lessons
+                      {chapter.lessons.length} bài học
                     </Badge>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="pt-2 pb-4">
                   <div className="space-y-2">
                     {chapter.lessons.length === 0 ? (
-                      <p className="text-sm text-muted-foreground pl-4">No lessons in this chapter.</p>
+                      <p className="text-sm text-muted-foreground pl-4">Chưa có bài học trong chương này.</p>
                     ) : (
                       chapter.lessons.map(lesson => (
                         <div
@@ -228,7 +228,7 @@ export default function CourseDetailPage() {
                                 variant="default"
                                 className="bg-emerald-500 text-[10px] uppercase tracking-wider text-white"
                               >
-                                Completed
+                                Hoàn thành
                               </Badge>
                             )}
                           </div>

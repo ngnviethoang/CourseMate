@@ -82,7 +82,7 @@ export default function ManagementPage() {
   return (
     <div className="space-y-10 max-w-[1600px] mx-auto pb-10">
       <div className="flex flex-col gap-2">
-        <h1 className="text-4xl font-bold tracking-tight">Dashboard Quản lý</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Bảng điều khiển quản lý</h1>
         <p className="text-lg text-muted-foreground">Tổng quan về hoạt động kinh doanh và hiệu suất của nền tảng.</p>
       </div>
 
@@ -192,7 +192,7 @@ export default function ManagementPage() {
                         variant="outline"
                         className="text-[11px] font-bold px-2 py-0 h-5 mt-1 -emerald-200 bg-emerald-50 text-emerald-700"
                       >
-                        Level {4 - i}
+                        Hạng {4 - i}
                       </Badge>
                     </div>
                   </div>
@@ -266,7 +266,7 @@ export default function ManagementPage() {
                   </TableCell>
                   <TableCell className="text-right px-8">
                     <Badge className="bg-emerald-500/10 text-emerald-600 -none px-4 py-1.5 text-sm font-bold rounded-full">
-                      Active
+                      Đang hoạt động
                     </Badge>
                   </TableCell>
                 </TableRow>

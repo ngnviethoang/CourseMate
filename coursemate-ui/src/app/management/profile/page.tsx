@@ -23,7 +23,7 @@ export default function ProfilePage() {
         setProfile(p)
         setForm({ userName: p.userName, email: p.email ?? '', phoneNumber: p.phoneNumber ?? '' })
       } catch {
-        toast.error('Failed to load profile.')
+        toast.error('Không thể tải hồ sơ.')
       } finally {
         setLoading(false)
       }
@@ -35,10 +35,10 @@ export default function ProfilePage() {
     setSaving(true)
     try {
       await profileService.updateProfile(form)
-      toast.success('Profile updated successfully.')
+      toast.success('Cập nhật hồ sơ thành công.')
       setProfile(prev => (prev ? { ...prev, ...form } : prev))
     } catch {
-      toast.error('Failed to update profile.')
+      toast.error('Không thể cập nhật hồ sơ.')
     } finally {
       setSaving(false)
     }
@@ -56,8 +56,8 @@ export default function ProfilePage() {
     <div className="max-w-xl space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-semibold">Profile</h1>
-        <p className="text-sm text-muted-foreground">Manage your account information</p>
+        <h1 className="text-2xl font-semibold">Hồ sơ</h1>
+        <p className="text-sm text-muted-foreground">Quản lý thông tin tài khoản</p>
       </div>
 
       {/* Avatar + Roles */}
@@ -67,7 +67,7 @@ export default function ProfilePage() {
         </div>
         <div>
           <p className="font-semibold text-lg">{profile?.userName}</p>
-          <p className="text-sm text-muted-foreground">{profile?.email ?? 'No email'}</p>
+          <p className="text-sm text-muted-foreground">{profile?.email ?? 'Chưa có email'}</p>
           <div className="flex gap-1.5 mt-1.5 flex-wrap">
             {profile?.roles.map(r => (
               <Badge key={r} variant="outline" className="text-xs capitalize gap-1">
@@ -81,17 +81,17 @@ export default function ProfilePage() {
 
       {/* Edit Form */}
       <div className="rounded-xl bg-card p-5 shadow-md border-0 space-y-4">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Edit Information</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Chỉnh sửa thông tin</p>
 
         <div className="space-y-1">
           <Label className="flex items-center gap-2">
             <User className="h-3.5 w-3.5 text-muted-foreground" />
-            Username
+            Tên đăng nhập
           </Label>
           <Input
             value={form.userName}
             onChange={e => setForm(prev => ({ ...prev, userName: e.target.value }))}
-            placeholder="Username"
+            placeholder="Tên đăng nhập"
           />
         </div>
 
@@ -111,7 +111,7 @@ export default function ProfilePage() {
         <div className="space-y-1">
           <Label className="flex items-center gap-2">
             <Phone className="h-3.5 w-3.5 text-muted-foreground" />
-            Phone Number
+            Số điện thoại
           </Label>
           <Input
             value={form.phoneNumber ?? ''}
@@ -122,7 +122,7 @@ export default function ProfilePage() {
 
         <div className="flex justify-end pt-2">
           <Button onClick={handleSave} disabled={saving}>
-            {saving ? 'Saving…' : 'Save Changes'}
+            {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
           </Button>
         </div>
       </div>

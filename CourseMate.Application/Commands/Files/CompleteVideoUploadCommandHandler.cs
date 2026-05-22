@@ -48,7 +48,7 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
 
         if (fileEntry.UploadedChunks != request.TotalChunks)
         {
-            throw new BusinessException(string.Format(ErrorMessages.UploadIncomplete, fileEntry.UploadedChunks, request.TotalChunks));
+            throw new BusinessException(ErrorCode.UploadIncomplete, string.Format("Upload incomplete. {0}/{1} chunks uploaded.", fileEntry.UploadedChunks, request.TotalChunks));
         }
 
         List<FileChunk> fileTrunks = await DbContext.FileChunks
@@ -60,7 +60,7 @@ internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler
         {
             if (!File.Exists(Path.Combine(_storageOptions.RootPath, fileTrunk.ChunkLocation)))
             {
-                throw new BusinessException(string.Format(ErrorMessages.ChunkFileMissing, fileTrunk.ChunkIndex, fileEntry.Id));
+                throw new BusinessException(ErrorCode.ChunkFileMissing, string.Format("Chunk {0} for upload '{1}' is missing.", fileTrunk.ChunkIndex, fileEntry.Id));
             }
         }
 

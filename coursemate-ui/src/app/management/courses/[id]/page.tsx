@@ -129,7 +129,7 @@ export default function CourseDetailPage() {
       const c = await courseService.getById(id)
       setCourse(c)
     } catch {
-      toast.error('Course not found.')
+      toast.error('Không tìm thấy khóa học.')
     } finally {
       setCourseLoading(false)
     }
@@ -174,11 +174,11 @@ export default function CourseDetailPage() {
     setSavingCourse(true)
     try {
       await courseService.update(id, courseForm)
-      toast.success('Course updated successfully.')
+      toast.success('Cập nhật khóa học thành công.')
       setCourseDialog(false)
       loadCourse()
     } catch {
-      toast.error('Failed to update course.')
+      toast.error('Không thể cập nhật khóa học.')
     } finally {
       setSavingCourse(false)
     }
@@ -202,10 +202,10 @@ export default function CourseDetailPage() {
     try {
       if (editingChapter) {
         await chapterService.update(editingChapter.id, chapterForm as UpdateChapterRequest)
-        toast.success('Chapter updated.')
+        toast.success('Đã cập nhật chương.')
       } else {
         await chapterService.create(chapterForm)
-        toast.success('Chapter created.')
+        toast.success('Đã tạo chương.')
       }
       setChapterDialog(false)
       loadChapters()
@@ -217,7 +217,7 @@ export default function CourseDetailPage() {
   async function deleteChapter() {
     if (!deleteChapterId) return
     await chapterService.delete(deleteChapterId)
-    toast.success('Chapter deleted.')
+    toast.success('Đã xóa chương.')
     setDeleteChapterId(null)
     loadChapters()
   }
@@ -235,7 +235,7 @@ export default function CourseDetailPage() {
   }
 
   if (!course) {
-    return <div className="text-center py-16 text-muted-foreground">Course not found.</div>
+    return <div className="text-center py-16 text-muted-foreground">Không tìm thấy khóa học.</div>
   }
 
   return (
@@ -252,22 +252,22 @@ export default function CourseDetailPage() {
           <h1 className="text-2xl font-semibold truncate">{course.title}</h1>
           <div className="flex flex-wrap items-center gap-3 mt-1 text-sm text-muted-foreground">
             <span>📂 {course.categoryName}</span>
-            <span>👤 {course.instructorName ?? 'No instructor'}</span>
+            <span>👤 {course.instructorName ?? 'Chưa có giảng viên'}</span>
             <span>💵 {formatCurrency(course.price)}</span>
             <Badge variant={course.isPublished ? 'default' : 'secondary'}>
-              {course.isPublished ? 'Published' : 'Draft'}
+              {course.isPublished ? 'Đã xuất bản' : 'Bản nháp'}
             </Badge>
           </div>
         </div>
         <Button size="sm" variant="outline" className="h-9 gap-2 shadow-sm shrink-0" onClick={openEditCourse}>
-          <Settings className="h-4 w-4" /> Edit Course
+          <Settings className="h-4 w-4" /> Chỉnh sửa khóa học
         </Button>
       </div>
 
       {/* Description section */}
       {course.description && (
         <div className="rounded-xl bg-card p-6 shadow-md border-0 overflow-hidden flex flex-col">
-          <h2 className="text-base font-semibold mb-4">Course Description</h2>
+          <h2 className="text-base font-semibold mb-4">Mô tả khóa học</h2>
           <div className="relative">
             <div
               className={`prose prose-sm max-w-none dark:prose-invert prose-img:rounded-md prose-img:mx-auto transition-all duration-300 ${!showFullDesc ? 'max-h-64 overflow-hidden' : ''}`}
@@ -283,7 +283,7 @@ export default function CourseDetailPage() {
             onClick={() => setShowFullDesc(!showFullDesc)}
             className="mt-2 self-center text-muted-foreground hover:text-foreground"
           >
-            {showFullDesc ? 'Show less' : 'Show more'}
+            {showFullDesc ? 'Thu gọn' : 'Xem thêm'}
           </Button>
         </div>
       )}
@@ -292,10 +292,10 @@ export default function CourseDetailPage() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-base font-semibold">
-            Chapters <span className="text-muted-foreground font-normal text-sm">({chapters.length})</span>
+            Chương <span className="text-muted-foreground font-normal text-sm">({chapters.length})</span>
           </h2>
           <Button size="sm" onClick={openCreateChapter} className="gap-1.5">
-            <Plus className="h-3.5 w-3.5" /> Add Chapter
+            <Plus className="h-3.5 w-3.5" /> Thêm chương
           </Button>
         </div>
 
@@ -305,9 +305,9 @@ export default function CourseDetailPage() {
           </div>
         ) : chapters.length === 0 ? (
           <div className="rounded-xl border-0 -dashed bg-muted/30 shadow-inner py-12 text-center">
-            <p className="text-sm text-muted-foreground">No chapters yet.</p>
+            <p className="text-sm text-muted-foreground">Chưa có chương nào.</p>
             <Button size="sm" variant="outline" onClick={openCreateChapter} className="mt-3 gap-1.5">
-              <Plus className="h-3.5 w-3.5" /> Add first chapter
+              <Plus className="h-3.5 w-3.5" /> Thêm chương đầu tiên
             </Button>
           </div>
         ) : (
@@ -336,13 +336,13 @@ export default function CourseDetailPage() {
       <Dialog open={chapterDialog} onOpenChange={setChapterDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editingChapter ? 'Edit Chapter' : 'New Chapter'}</DialogTitle>
+            <DialogTitle>{editingChapter ? 'Chỉnh sửa chương' : 'Tạo chương mới'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1">
-              <Label>Title</Label>
+              <Label>Tiêu đề</Label>
               <Input
-                placeholder="Chapter title"
+                placeholder="Tiêu đề chương"
                 value={chapterForm.title}
                 onChange={e => cf('title', e.target.value)}
               />
@@ -350,10 +350,10 @@ export default function CourseDetailPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setChapterDialog(false)}>
-              Cancel
+              Hủy
             </Button>
             <Button onClick={saveChapter} disabled={savingChapter}>
-              {savingChapter ? 'Saving…' : editingChapter ? 'Save Changes' : 'Create Chapter'}
+              {savingChapter ? 'Đang lưu...' : editingChapter ? 'Lưu thay đổi' : 'Tạo chương'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -363,16 +363,16 @@ export default function CourseDetailPage() {
       <AlertDialog open={!!deleteChapterId} onOpenChange={open => !open && setDeleteChapterId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete chapter?</AlertDialogTitle>
-            <AlertDialogDescription>All lessons inside this chapter will also be deleted.</AlertDialogDescription>
+            <AlertDialogTitle>Xóa chương?</AlertDialogTitle>
+            <AlertDialogDescription>Toàn bộ bài học trong chương này cũng sẽ bị xóa.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={deleteChapter}
             >
-              Delete
+              Xóa
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -383,11 +383,11 @@ export default function CourseDetailPage() {
           {mounted && (
             <>
               <DialogHeader>
-                <DialogTitle>Edit Course Information</DialogTitle>
+                <DialogTitle>Chỉnh sửa thông tin khóa học</DialogTitle>
               </DialogHeader>
               <div className="space-y-6 py-2">
                 <div className="space-y-1.5">
-                  <Label>Title</Label>
+                  <Label>Tiêu đề</Label>
                   <Input
                     value={courseForm.title}
                     onChange={e => setCourseForm(f => ({ ...f, title: e.target.value }))}
@@ -395,21 +395,21 @@ export default function CourseDetailPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label>Category ID</Label>
+                    <Label>ID danh mục</Label>
                     <Input
                       value={courseForm.categoryId}
                       onChange={e => setCourseForm(f => ({ ...f, categoryId: e.target.value }))}
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label>Instructor ID</Label>
+                    <Label>ID giảng viên</Label>
                     <Input
                       value={courseForm.instructorId}
                       onChange={e => setCourseForm(f => ({ ...f, instructorId: e.target.value }))}
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label>Price (VNĐ)</Label>
+                    <Label>Giá (VNĐ)</Label>
                     <Input
                       type="number"
                       min={0}
@@ -419,7 +419,7 @@ export default function CourseDetailPage() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label>Image URL (Thumbnail)</Label>
+                    <Label>URL ảnh (thumbnail)</Label>
                     <Input
                       value={courseForm.imageUrl}
                       onChange={e => setCourseForm(f => ({ ...f, imageUrl: e.target.value }))}
@@ -429,10 +429,8 @@ export default function CourseDetailPage() {
 
                 <div className="flex items-center justify-between rounded-lg p-4 bg-muted/20">
                   <div className="space-y-0.5">
-                    <Label className="text-base">Publish Course</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Make this course visible to students. Select to publish.
-                    </p>
+                    <Label className="text-base">Xuất bản khóa học</Label>
+                    <p className="text-sm text-muted-foreground">Bật để hiển thị khóa học cho học viên.</p>
                   </div>
                   <Switch
                     checked={courseForm.isPublished}
@@ -442,7 +440,7 @@ export default function CourseDetailPage() {
 
                 <div className="space-y-1.5 pt-2">
                   <Label>
-                    Description <span className="text-muted-foreground font-normal">(Rich Text)</span>
+                    Mô tả <span className="text-muted-foreground font-normal">(Rich Text)</span>
                   </Label>
                   <div className="h-72 mb-10 overflow-hidden rounded-md">
                     <ReactQuill
@@ -456,10 +454,10 @@ export default function CourseDetailPage() {
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setCourseDialog(false)}>
-                  Cancel
+                  Hủy
                 </Button>
                 <Button onClick={saveCourse} disabled={savingCourse}>
-                  {savingCourse ? 'Saving…' : 'Save Changes'}
+                  {savingCourse ? 'Đang lưu...' : 'Lưu thay đổi'}
                 </Button>
               </DialogFooter>
             </>

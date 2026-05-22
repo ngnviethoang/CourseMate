@@ -52,11 +52,17 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
 
 const DEFAULT_TEMPLATES: Record<string, string> = {
   'python-3.14':
-    'import sys\n\ndef solve():\n # Logic của bạn ở đây\n print("Hello from Python")\n\nif __name__ == "__main__":\n solve()',
+    'import sys\n\ndef solve():\n # Logic của bạn ở đây\n print("Xin chao Python")\n\nif __name__ == "__main__":\n solve()',
   'openjdk-25':
     'import java.util.*;\n\npublic class Solution {\n public static void main(String[] args) {\n Scanner sc = new Scanner(System.in);\n // Viết code của bạn tại đây\n }\n}',
   'g++-15': '#include <iostream>\nusing namespace std;\n\nint main() {\n return 0;\n}',
-  'typescript-deno': 'console.log("Hello TypeScript");'
+  'typescript-deno': 'console.log("Xin chao TypeScript");'
+}
+
+const ANTI_CHEAT_LEVEL_LABELS: Record<string, string> = {
+  None: 'Tắt',
+  Basic: 'Cơ bản',
+  Strict: 'Nghiêm ngặt'
 }
 
 // ─── Timer Hook ───────────────────────────────────────────────────────────────
@@ -222,8 +228,8 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
             passed: !res.error && res.exit_code === 0,
             case: 'Chạy thử',
             expected: '(không có dữ liệu mẫu)',
-            actual: res.output || res.error || 'Không có output',
-            description: 'Code được biên dịch và chạy với input trống'
+            actual: res.output || res.error || 'Không có kết quả đầu ra',
+            description: 'Mã nguồn được biên dịch và chạy với đầu vào trống'
           }
         ])
       } catch {
@@ -245,7 +251,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
               passed: actual === expected,
               case: `Ví dụ ${idx + 1}`,
               expected,
-              actual: actual || res.error || 'Không có output',
+              actual: actual || res.error || 'Không có kết quả đầu ra',
               description: ex.explanation || 'Kiểm tra với dữ liệu mẫu',
               isHidden: false
             }
@@ -287,9 +293,9 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
       if (response?.testResults && Array.isArray(response.testResults)) {
         const runResults = response.testResults.map((tc: any, idx: number) => ({
           passed: tc.passed,
-          case: `Test Case ${idx + 1}`,
-          expected: tc.isHidden ? 'Hidden' : (tc.expectedOutput ?? ''),
-          actual: tc.isHidden ? 'Hidden' : (tc.actualOutput ?? ''),
+          case: `Bộ kiểm thử ${idx + 1}`,
+          expected: tc.isHidden ? 'Ẩn' : (tc.expectedOutput ?? ''),
+          actual: tc.isHidden ? 'Ẩn' : (tc.actualOutput ?? ''),
           description: tc.description ?? '',
           isHidden: tc.isHidden ?? false
         }))
@@ -297,12 +303,12 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
         const passedCount = runResults.filter((r: any) => r.passed).length
         const total = runResults.length
         if (passedCount === total) {
-          toast.success(`✅ Nộp bài thành công! ${passedCount}/${total} test case đúng!`)
+          toast.success(`✅ Nộp bài thành công! ${passedCount}/${total} bộ kiểm thử đúng!`)
         } else {
-          toast.warning(`📋 Đã nộp! ${passedCount}/${total} test case đúng.`)
+          toast.warning(`📋 Đã nộp! ${passedCount}/${total} bộ kiểm thử đúng.`)
         }
       } else {
-        // Backend chưa trả về chi tiết test cases — chỉ báo đã nộp
+        // Backend chưa trả về chi tiết bộ kiểm thử — chỉ báo đã nộp
         setResults([])
         toast.success('📋 Đã nộp bài thành công! Điểm sẽ được cập nhật sau.')
       }
@@ -439,7 +445,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
 
         {/* Score */}
         <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 -amber-500/20 rounded-xl">
-          <span className="text-[10px] font-bold text-amber-500/70 uppercase">Score</span>
+          <span className="text-[10px] font-bold text-amber-500/70 uppercase">Điểm</span>
           <span className="text-lg font-black text-amber-500 leading-none">{myScore}</span>
         </div>
 
@@ -564,13 +570,13 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                             <div className="grid gap-3">
                               <div className="p-4 rounded-2xl bg-white/5 -white/5 space-y-2">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-neutral-600">
-                                  Input
+                                  Đầu vào
                                 </p>
                                 <code className="text-sm text-amber-400/90">{ex.input}</code>
                               </div>
                               <div className="p-4 rounded-2xl bg-white/5 -white/5 space-y-2">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-neutral-600">
-                                  Output
+                                  Đầu ra
                                 </p>
                                 <code className="text-sm text-emerald-400/90">{ex.output}</code>
                               </div>
@@ -644,7 +650,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                         : 'text-neutral-500 hover:text-neutral-300'
                     }`}
                   >
-                    {t === 'editor' ? 'Code Editor' : 'Results'}
+                    {t === 'editor' ? 'Trình soạn thảo' : 'Kết quả'}
                   </button>
                 ))}
               </div>
@@ -766,7 +772,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
               {!running && !submitting && results.length === 0 && (
                 <div className="h-full flex flex-col items-center justify-center text-neutral-600 gap-4">
                   <Terminal className="h-12 w-12 opacity-20" />
-                  <p className="text-sm font-medium">Nhấn "Chạy thử" hoặc "Nộp bài" để xem kết quả thực thi.</p>
+                  <p className="text-sm font-medium">Nhấn Chạy thử hoặc Nộp bài để xem kết quả thực thi.</p>
                 </div>
               )}
 
@@ -778,7 +784,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                   </div>
                   <div className="text-center space-y-1">
                     <p className="text-lg font-bold text-white tracking-tight">
-                      {submitting ? 'Đang nộp bài...' : 'Đang thực thi code...'}
+                      {submitting ? 'Đang nộp bài...' : 'Đang thực thi mã nguồn...'}
                     </p>
                     <p className="text-xs text-neutral-500 uppercase tracking-widest font-black">
                       Vui lòng không đóng cửa sổ này
@@ -794,7 +800,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                       Kết quả thực thi
                     </h3>
                     <div className="px-4 py-2 bg-emerald-500/10 -emerald-500/20 rounded-2xl text-emerald-500 font-bold text-sm">
-                      {results.filter(r => r.passed).length} / {results.length} PASSED
+                      {results.filter(r => r.passed).length} / {results.length} ĐẠT
                     </div>
                   </div>
 
@@ -811,15 +817,15 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                         )}
                         <div className="flex-1 flex items-center justify-between">
                           <span className={`text-lg font-bold ${res.passed ? 'text-emerald-400' : 'text-red-400'}`}>
-                            {res.case}: {res.passed ? 'SUCCESS' : 'FAILED'}
+                            {res.case}: {res.passed ? 'ĐẠT' : 'KHÔNG ĐẠT'}
                           </span>
                           {res.isHidden ? (
                             <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 rounded-lg -white/10 text-[10px] text-neutral-500 font-black uppercase tracking-widest">
-                              <EyeOff className="h-3 w-3" /> Hidden Case
+                              <EyeOff className="h-3 w-3" /> Bộ kiểm thử ẩn
                             </div>
                           ) : (
                             <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 rounded-lg -emerald-500/20 text-[10px] text-emerald-500 font-black uppercase tracking-widest">
-                              <Eye className="h-3 w-3" /> Public Case
+                              <Eye className="h-3 w-3" /> Bộ kiểm thử công khai
                             </div>
                           )}
                         </div>
@@ -830,13 +836,13 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="p-4 rounded-2xl bg-black/40 -white/5 space-y-2">
                               <p className="text-[10px] text-neutral-600 font-black uppercase tracking-widest">
-                                Expected Output
+                                Kết quả mong đợi
                               </p>
                               <pre className="text-neutral-300 break-all whitespace-pre-wrap">{res.expected}</pre>
                             </div>
                             <div className="p-4 rounded-2xl bg-black/40 -white/5 space-y-2">
                               <p className="text-[10px] text-neutral-600 font-black uppercase tracking-widest">
-                                Actual Output
+                                Kết quả thực tế
                               </p>
                               <pre
                                 className={
@@ -856,7 +862,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                       ) : (
                         <div className="p-4 rounded-2xl bg-black/20 -white/5 text-center">
                           <p className="text-xs text-neutral-600 italic">
-                            Dữ liệu và kết quả của test case này được ẩn để đảm bảo tính công bằng.
+                            Dữ liệu và kết quả của bộ kiểm thử này được ẩn để đảm bảo tính công bằng.
                           </p>
                         </div>
                       )}
@@ -874,7 +880,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
         <div className="flex gap-6">
           <span className="flex items-center gap-1.5">
             <Shield className="h-3 w-3" />
-            Anti-cheat: {arena?.antiCheatLevel ?? 'None'}
+            Chống gian lận: {ANTI_CHEAT_LEVEL_LABELS[arena?.antiCheatLevel ?? 'None'] ?? arena?.antiCheatLevel ?? 'Tắt'}
             {arena?.antiCheatLevel !== 'None' && (
               <span className="text-amber-500">
                 {' '}
@@ -883,7 +889,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
             )}
           </span>
           <span className="flex items-center gap-1.5">
-            <History className="h-3 w-3" /> Autosave enabled
+            <History className="h-3 w-3" /> Tự động lưu đã bật
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -897,10 +903,10 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
             }`}
           />
           {antiCheat.connection?.state === 'Connected'
-            ? 'Connected'
+            ? 'Đã kết nối'
             : arena?.antiCheatLevel === 'None'
-              ? 'Monitor off'
-              : 'Connecting...'}{' '}
+              ? 'Giám sát tắt'
+              : 'Đang kết nối...'}{' '}
           • CourseMate V2.0
         </div>
       </footer>

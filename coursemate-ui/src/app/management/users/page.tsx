@@ -23,9 +23,9 @@ import {
 import { Label } from '@/components/ui/label'
 
 const columns: Column<UserDto>[] = [
-  { key: 'userName', header: 'Username' },
+  { key: 'userName', header: 'Tên đăng nhập' },
   { key: 'email', header: 'Email' },
-  { key: 'phoneNumber', header: 'Phone' }
+  { key: 'phoneNumber', header: 'Số điện thoại' }
 ]
 
 const emptyCreate: CreateUserRequest = { userName: '', email: '', phoneNumber: '', password: '', role: 'Student' }
@@ -74,10 +74,10 @@ export default function UsersPage() {
     try {
       if (editing) {
         await userService.update(editing.id, updateForm)
-        toast.success('User updated.')
+        toast.success('Đã cập nhật người dùng.')
       } else {
         await userService.create(createForm)
-        toast.success('User created.')
+        toast.success('Đã tạo người dùng.')
       }
       setDialogOpen(false)
       load()
@@ -89,7 +89,7 @@ export default function UsersPage() {
   async function handleDelete() {
     if (!deleteId) return
     await userService.delete(deleteId)
-    toast.success('User deleted.')
+    toast.success('Đã xóa người dùng.')
     setDeleteId(null)
     load()
   }
@@ -98,17 +98,22 @@ export default function UsersPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Users</h1>
-          <p className="text-sm text-muted-foreground">Manage system users</p>
+          <h1 className="text-2xl font-semibold">Người dùng</h1>
+          <p className="text-sm text-muted-foreground">Quản lý người dùng hệ thống</p>
         </div>
         <Button onClick={openCreate} className="gap-2">
-          <Plus className="h-4 w-4" /> New User
+          <Plus className="h-4 w-4" /> Tạo người dùng
         </Button>
       </div>
 
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input className="pl-9" placeholder="Search users…" value={filter} onChange={e => setFilter(e.target.value)} />
+        <Input
+          className="pl-9"
+          placeholder="Tìm người dùng..."
+          value={filter}
+          onChange={e => setFilter(e.target.value)}
+        />
       </div>
 
       <DataTable
@@ -124,11 +129,11 @@ export default function UsersPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editing ? 'Edit User' : 'New User'}</DialogTitle>
+            <DialogTitle>{editing ? 'Chỉnh sửa người dùng' : 'Tạo người dùng mới'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1">
-              <Label>Username</Label>
+              <Label>Tên đăng nhập</Label>
               <Input
                 value={editing ? updateForm.userName : createForm.userName}
                 onChange={e =>
@@ -151,7 +156,7 @@ export default function UsersPage() {
               />
             </div>
             <div className="space-y-1">
-              <Label>Phone</Label>
+              <Label>Số điện thoại</Label>
               <Input
                 value={editing ? updateForm.phoneNumber : createForm.phoneNumber}
                 onChange={e =>
@@ -164,7 +169,7 @@ export default function UsersPage() {
             {!editing && (
               <>
                 <div className="space-y-1">
-                  <Label>Password</Label>
+                  <Label>Mật khẩu</Label>
                   <Input
                     type="password"
                     value={createForm.password}
@@ -172,18 +177,18 @@ export default function UsersPage() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label>Role</Label>
+                  <Label>Vai trò</Label>
                   <Select
                     value={createForm.role ?? 'Student'}
                     onValueChange={val => setCreateForm({ ...createForm, role: val || undefined })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a role" />
+                      <SelectValue placeholder="Chọn vai trò" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Student">Student</SelectItem>
-                      <SelectItem value="Instructor">Instructor</SelectItem>
-                      <SelectItem value="Admin">Admin</SelectItem>
+                      <SelectItem value="Student">Học viên</SelectItem>
+                      <SelectItem value="Instructor">Giảng viên</SelectItem>
+                      <SelectItem value="Admin">Quản trị viên</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -192,10 +197,10 @@ export default function UsersPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
+              Hủy
             </Button>
             <Button onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving…' : 'Save'}
+              {saving ? 'Đang lưu...' : 'Lưu'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -204,16 +209,16 @@ export default function UsersPage() {
       <AlertDialog open={!!deleteId} onOpenChange={open => !open && setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete user?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogTitle>Xóa người dùng?</AlertDialogTitle>
+            <AlertDialogDescription>Hành động này không thể hoàn tác.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDelete}
             >
-              Delete
+              Xóa
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

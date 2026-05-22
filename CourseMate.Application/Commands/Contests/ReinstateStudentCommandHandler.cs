@@ -42,12 +42,12 @@ internal sealed class ReinstateStudentCommandHandler : AbstractCommandHandler<Re
 
         if (registration == null)
         {
-            throw new BusinessException("Student is not registered for this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "Student is not registered for this contest.");
         }
 
         if (!registration.IsDisqualified)
         {
-            throw new BusinessException("Student is not currently disqualified.");
+            throw new BusinessException(ErrorCode.Unknown, "Student is not currently disqualified.");
         }
 
         registration.IsDisqualified = false;

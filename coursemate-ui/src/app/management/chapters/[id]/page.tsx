@@ -56,9 +56,9 @@ const LESSON_TYPE_ICON: Record<string | number, string> = {
 
 const getLessonTypeLabel = (type: any) => {
   if (type === LessonType.Video || type === 1) return 'Video'
-  if (type === LessonType.Reading || type === 2) return 'Reading'
-  if (type === LessonType.Coding || type === 3) return 'Coding'
-  if (type === LessonType.Quiz || type === 4) return 'Quiz'
+  if (type === LessonType.Reading || type === 2) return 'Đọc'
+  if (type === LessonType.Coding || type === 3) return 'Lập trình'
+  if (type === LessonType.Quiz || type === 4) return 'Trắc nghiệm'
   if (type === LessonType.Slide || type === 5) return 'Slide'
   return type
 }
@@ -114,7 +114,7 @@ export default function ChapterDetailPage() {
           } catch {}
         }
       } catch {
-        toast.error('Chapter not found.')
+        toast.error('Không tìm thấy chương.')
       } finally {
         setChapterLoading(false)
       }
@@ -129,7 +129,7 @@ export default function ChapterDetailPage() {
       setLessons(res.items)
       setTotalCount(res.totalCount)
     } catch {
-      toast.error('Failed to load lessons')
+      toast.error('Không thể tải danh sách bài học.')
     } finally {
       setLessonsLoading(false)
     }
@@ -148,18 +148,18 @@ export default function ChapterDetailPage() {
 
   async function saveLesson() {
     if (!lessonForm.title.trim()) {
-      toast.error('Please enter a lesson title.')
+      toast.error('Vui lòng nhập tiêu đề bài học.')
       return
     }
     setSavingLesson(true)
     try {
       const result = await lessonService.create(lessonForm)
-      toast.success('Lesson created!')
+      toast.success('Đã tạo bài học!')
       setLessonDialog(false)
       loadLessons()
       router.push(`/management/lessons/${result.id}`)
     } catch {
-      toast.error('Failed to create lesson')
+      toast.error('Không thể tạo bài học.')
     } finally {
       setSavingLesson(false)
     }
@@ -170,10 +170,10 @@ export default function ChapterDetailPage() {
     try {
       await lessonService.delete(deleteLessonId)
       localStorage.removeItem(AI_CONTENT_KEY(deleteLessonId))
-      toast.success('Lesson deleted.')
+      toast.success('Đã xóa bài học.')
       loadLessons()
     } catch {
-      toast.error('Failed to delete lesson')
+      toast.error('Không thể xóa bài học.')
     } finally {
       setDeleteLessonId(null)
     }
@@ -190,7 +190,7 @@ export default function ChapterDetailPage() {
   }
 
   if (!chapter) {
-    return <div className="text-center py-16 text-muted-foreground">Chapter not found.</div>
+    return <div className="text-center py-16 text-muted-foreground">Không tìm thấy chương.</div>
   }
 
   return (
@@ -209,10 +209,10 @@ export default function ChapterDetailPage() {
               href={`/management/courses/${chapter.courseId}`}
               className="text-sm font-medium text-primary hover:underline"
             >
-              {course ? course.title : chapter.courseName || 'Course'}
+              {course ? course.title : chapter.courseName || 'Khóa học'}
             </Link>
             <span className="text-muted-foreground text-sm">/</span>
-            <span className="text-sm text-muted-foreground">Chapter {chapter.position}</span>
+            <span className="text-sm text-muted-foreground">Chương {chapter.position}</span>
           </div>
           <h1 className="text-2xl font-semibold truncate">{chapter.title}</h1>
         </div>
@@ -220,14 +220,14 @@ export default function ChapterDetailPage() {
 
       {/* Basic Info */}
       <div className="rounded-xl bg-card p-5 shadow-md border-0 space-y-4">
-        <h2 className="text-base font-semibold">Basic Information</h2>
+        <h2 className="text-base font-semibold">Thông tin cơ bản</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <span className="text-sm text-muted-foreground">Title</span>
+            <span className="text-sm text-muted-foreground">Tiêu đề</span>
             <p className="font-medium">{chapter.title}</p>
           </div>
           <div>
-            <span className="text-sm text-muted-foreground">Position</span>
+            <span className="text-sm text-muted-foreground">Vị trí</span>
             <p className="font-medium">{chapter.position}</p>
           </div>
         </div>
@@ -237,10 +237,10 @@ export default function ChapterDetailPage() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold">
-            Lessons <span className="text-muted-foreground font-normal text-sm">({lessons.length})</span>
+            Bài học <span className="text-muted-foreground font-normal text-sm">({lessons.length})</span>
           </h2>
           <Button size="sm" onClick={openAddLesson} className="gap-1.5">
-            <Plus className="h-3.5 w-3.5" /> Add Lesson
+            <Plus className="h-3.5 w-3.5" /> Thêm bài học
           </Button>
         </div>
 
@@ -250,9 +250,9 @@ export default function ChapterDetailPage() {
           </div>
         ) : lessons.length === 0 ? (
           <div className="rounded-xl border-0 -dashed bg-muted/30 shadow-inner py-12 text-center">
-            <p className="text-sm text-muted-foreground">No lessons yet.</p>
+            <p className="text-sm text-muted-foreground">Chưa có bài học nào.</p>
             <Button size="sm" variant="outline" onClick={openAddLesson} className="mt-3 gap-1.5">
-              <Plus className="h-3.5 w-3.5" /> Add first lesson
+              <Plus className="h-3.5 w-3.5" /> Thêm bài học đầu tiên
             </Button>
           </div>
         ) : (
@@ -301,7 +301,7 @@ export default function ChapterDetailPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <BookOpen className="h-5 w-5" />
-              New Lesson
+              Bài học mới
             </DialogTitle>
           </DialogHeader>
 
@@ -310,7 +310,7 @@ export default function ChapterDetailPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5 sm:col-span-2">
                 <Label>
-                  Lesson Title <span className="text-destructive">*</span>
+                  Tiêu đề bài học <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   placeholder="Nhập tên bài học..."
@@ -319,7 +319,7 @@ export default function ChapterDetailPage() {
                 />
               </div>
               <div className="space-y-1.5 sm:col-span-2">
-                <Label>Type</Label>
+                <Label>Loại</Label>
                 <Select value={lessonForm.lessonType} onValueChange={v => lf('lessonType', v as LessonType)}>
                   <SelectTrigger>
                     <SelectValue>
@@ -342,10 +342,10 @@ export default function ChapterDetailPage() {
 
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setLessonDialog(false)}>
-              Cancel
+              Hủy
             </Button>
             <Button onClick={saveLesson} disabled={savingLesson || !lessonForm.title.trim()}>
-              {savingLesson ? 'Saving…' : 'Create Lesson'}
+              {savingLesson ? 'Đang lưu...' : 'Tạo bài học'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -355,18 +355,18 @@ export default function ChapterDetailPage() {
       <AlertDialog open={!!deleteLessonId} onOpenChange={open => !open && setDeleteLessonId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete lesson?</AlertDialogTitle>
+            <AlertDialogTitle>Xóa bài học?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. AI content for this lesson will also be removed.
+              Hành động này không thể hoàn tác. Nội dung AI của bài học này cũng sẽ bị xóa.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={deleteLesson}
             >
-              Delete
+              Xóa
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -31,26 +31,26 @@ import { Switch } from '@/components/ui/switch'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 const columns: Column<CourseDto>[] = [
-  { key: 'title', header: 'Title', sortKey: 'title' },
-  { key: 'categoryName', header: 'Category' },
-  { key: 'instructorName', header: 'Instructor' },
+  { key: 'title', header: 'Tiêu đề', sortKey: 'title' },
+  { key: 'categoryName', header: 'Danh mục' },
+  { key: 'instructorName', header: 'Giảng viên' },
   {
     key: 'price',
-    header: 'Price',
+    header: 'Giá',
     sortKey: 'price',
     render: row => formatCurrency(row.price)
   },
   {
     key: 'isPublished',
-    header: 'Status',
+    header: 'Trạng thái',
     render: row => (
-      <Badge variant={row.isPublished ? 'default' : 'secondary'}>{row.isPublished ? 'Published' : 'Draft'}</Badge>
+      <Badge variant={row.isPublished ? 'default' : 'secondary'}>{row.isPublished ? 'Đã xuất bản' : 'Bản nháp'}</Badge>
     )
   },
-  { key: 'creationTime', header: 'Created', sortKey: 'creationTime', render: row => formatDate(row.creationTime) },
+  { key: 'creationTime', header: 'Ngày tạo', sortKey: 'creationTime', render: row => formatDate(row.creationTime) },
   {
     key: 'lastModificationTime',
-    header: 'Updated',
+    header: 'Cập nhật',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }
@@ -197,9 +197,9 @@ export default function CoursesPage() {
       formData.append('request', file)
       const result = await api.post<{ fileId: string; fileUrl: string }>('/api/files/images', formData)
       f('imageUrl', result.fileUrl)
-      toast.success('Image uploaded!')
+      toast.success('Tải ảnh lên thành công!')
     } catch {
-      toast.error('Failed to upload image. Please try again.')
+      toast.error('Không thể tải ảnh lên. Vui lòng thử lại.')
     } finally {
       setUploadingImage(false)
     }
@@ -210,10 +210,10 @@ export default function CoursesPage() {
     try {
       if (editing) {
         await courseService.update(editing.id, form)
-        toast.success('Course updated.')
+        toast.success('Đã cập nhật khóa học.')
       } else {
         await courseService.create(form)
-        toast.success('Course created.')
+        toast.success('Đã tạo khóa học.')
       }
       setDialogOpen(false)
       load()
@@ -225,7 +225,7 @@ export default function CoursesPage() {
   async function handleDelete() {
     if (!deleteId) return
     await courseService.delete(deleteId)
-    toast.success('Course deleted.')
+    toast.success('Đã xóa khóa học.')
     setDeleteId(null)
     load()
   }
@@ -236,16 +236,16 @@ export default function CoursesPage() {
     <div className="space-y-8 max-w-[1600px] mx-auto pb-10">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight">{isAdmin ? 'All Courses' : 'My Courses'}</h1>
+          <h1 className="text-4xl font-bold tracking-tight">{isAdmin ? 'Tất cả khóa học' : 'Khóa học của tôi'}</h1>
           <p className="text-lg text-muted-foreground mt-2">
-            {isAdmin ? 'Manage all courses in the platform' : 'Manage your courses and content'}
+            {isAdmin ? 'Quản lý toàn bộ khóa học trên nền tảng' : 'Quản lý khóa học và nội dung của bạn'}
           </p>
         </div>
         <Button
           onClick={openCreate}
           className="gap-2 h-12 px-6 text-base shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
         >
-          <Plus className="h-5 w-5" /> New Course
+          <Plus className="h-5 w-5" /> Tạo khóa học
         </Button>
       </div>
 
@@ -254,7 +254,7 @@ export default function CoursesPage() {
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
           <Input
             className="pl-11 h-12 text-base rounded-xl -muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all"
-            placeholder="Search courses by name or category…"
+            placeholder="Tìm khóa học theo tên hoặc danh mục..."
             value={filter}
             onChange={e => setFilter(e.target.value)}
           />
@@ -284,9 +284,11 @@ export default function CoursesPage() {
         <DialogContent className="sm:max-w-4xl p-0 gap-0 overflow-hidden rounded-2xl shadow-2xl">
           {/* Header */}
           <DialogHeader className="px-6 py-5 shadow-md border-0 border-b-0">
-            <DialogTitle className="text-xl font-bold">{editing ? 'Edit Course' : 'New Course'}</DialogTitle>
+            <DialogTitle className="text-xl font-bold">
+              {editing ? 'Chỉnh sửa khóa học' : 'Tạo khóa học mới'}
+            </DialogTitle>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {editing ? 'Update course details below' : 'Fill in the details to publish a new course'}
+              {editing ? 'Cập nhật thông tin khóa học bên dưới' : 'Điền thông tin để xuất bản khóa học mới'}
             </p>
           </DialogHeader>
 
@@ -311,7 +313,7 @@ export default function CoursesPage() {
                 {form.imageUrl && (
                   <img
                     src={form.imageUrl}
-                    alt="Thumbnail preview"
+                    alt="Ảnh xem trước"
                     className="w-full h-full object-cover"
                     onError={e => {
                       ;(e.target as HTMLImageElement).style.display = 'none'
@@ -333,12 +335,12 @@ export default function CoursesPage() {
                   {uploadingImage ? (
                     <>
                       <div className="h-7 w-7 -2 -primary/30 shadow-md border-0 border-t-0-primary rounded-full animate-spin" />
-                      <p className="text-xs font-medium text-foreground">Uploading…</p>
+                      <p className="text-xs font-medium text-foreground">Đang tải lên...</p>
                     </>
                   ) : (
                     <>
                       <Upload className="h-7 w-7 opacity-70" />
-                      <p className="text-xs font-semibold">{form.imageUrl ? 'Click to change' : 'Click to upload'}</p>
+                      <p className="text-xs font-semibold">{form.imageUrl ? 'Bấm để thay đổi' : 'Bấm để tải lên'}</p>
                       {!form.imageUrl && <p className="text-xs opacity-50">JPG, PNG, WebP, GIF</p>}
                     </>
                   )}
@@ -362,7 +364,7 @@ export default function CoursesPage() {
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Link2 className="h-3 w-3" />
-                  Or paste image URL
+                  Hoặc dán URL ảnh
                 </Label>
                 <Input
                   className="text-sm h-9"
@@ -383,10 +385,10 @@ export default function CoursesPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className={cn('font-semibold text-sm', form.isPublished ? 'text-primary' : '')}>
-                      {form.isPublished ? 'Published' : 'Draft'}
+                      {form.isPublished ? 'Đã xuất bản' : 'Bản nháp'}
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {form.isPublished ? 'Visible to students' : 'Hidden from students'}
+                      {form.isPublished ? 'Hiển thị cho học viên' : 'Ẩn với học viên'}
                     </p>
                   </div>
                   <Switch
@@ -403,10 +405,10 @@ export default function CoursesPage() {
               {/* Title */}
               <div className="space-y-1.5">
                 <Label className="font-semibold">
-                  Title <span className="text-destructive text-xs">*</span>
+                  Tiêu đề <span className="text-destructive text-xs">*</span>
                 </Label>
                 <Input
-                  placeholder="e.g. The Complete Web Development Bootcamp 2026"
+                  placeholder="VD: Khóa học phát triển web toàn diện 2026"
                   value={form.title}
                   onChange={e => f('title', e.target.value)}
                 />
@@ -414,10 +416,10 @@ export default function CoursesPage() {
 
               {/* Description */}
               <div className="space-y-1.5">
-                <Label className="font-semibold">Description</Label>
+                <Label className="font-semibold">Mô tả</Label>
                 <textarea
                   className="w-full rounded-lg -input bg-transparent px-3 py-2 text-sm shadow-md border-0 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring min-h-[110px] resize-none custom-scrollbar"
-                  placeholder="What will students learn in this course?"
+                  placeholder="Học viên sẽ học được gì trong khóa học này?"
                   value={form.description}
                   onChange={e => f('description', e.target.value)}
                 />
@@ -426,7 +428,7 @@ export default function CoursesPage() {
               {/* Category + Instructor */}
               <div className={cn('grid gap-4', isAdmin ? 'grid-cols-2' : 'grid-cols-1')}>
                 <div className="space-y-1.5">
-                  <Label className="font-semibold">Category</Label>
+                  <Label className="font-semibold">Danh mục</Label>
                   <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
                     <PopoverTrigger
                       role="combobox"
@@ -437,7 +439,7 @@ export default function CoursesPage() {
                         <span>{selectedCategoryName}</span>
                       ) : (
                         <span className="text-muted-foreground">
-                          {loadingDropdowns ? 'Loading…' : 'Select category'}
+                          {loadingDropdowns ? 'Đang tải...' : 'Chọn danh mục'}
                         </span>
                       )}
                       <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 opacity-50" />
@@ -445,12 +447,12 @@ export default function CoursesPage() {
                     <PopoverContent style={{ width: 'var(--anchor-width)' }} className="p-0">
                       <Command shouldFilter={false}>
                         <CommandInput
-                          placeholder="Search categories…"
+                          placeholder="Tìm danh mục..."
                           value={categorySearch}
                           onValueChange={setCategorySearch}
                         />
                         <CommandList>
-                          <CommandEmpty>No categories found.</CommandEmpty>
+                          <CommandEmpty>Không tìm thấy danh mục.</CommandEmpty>
                           <CommandGroup>
                             {categories.map(c => (
                               <CommandItem
@@ -477,7 +479,7 @@ export default function CoursesPage() {
 
                 {isAdmin && (
                   <div className="space-y-1.5">
-                    <Label className="font-semibold">Instructor</Label>
+                    <Label className="font-semibold">Giảng viên</Label>
                     <Popover open={instructorOpen} onOpenChange={setInstructorOpen}>
                       <PopoverTrigger
                         role="combobox"
@@ -488,7 +490,7 @@ export default function CoursesPage() {
                           <span>{selectedInstructorName}</span>
                         ) : (
                           <span className="text-muted-foreground">
-                            {loadingDropdowns ? 'Loading…' : 'Assign instructor'}
+                            {loadingDropdowns ? 'Đang tải...' : 'Chọn giảng viên'}
                           </span>
                         )}
                         <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 opacity-50" />
@@ -496,12 +498,12 @@ export default function CoursesPage() {
                       <PopoverContent style={{ width: 'var(--anchor-width)' }} className="p-0">
                         <Command shouldFilter={false}>
                           <CommandInput
-                            placeholder="Search instructors…"
+                            placeholder="Tìm giảng viên..."
                             value={instructorSearch}
                             onValueChange={setInstructorSearch}
                           />
                           <CommandList>
-                            <CommandEmpty>No instructors found.</CommandEmpty>
+                            <CommandEmpty>Không tìm thấy giảng viên.</CommandEmpty>
                             <CommandGroup>
                               {users.map(u => (
                                 <CommandItem
@@ -533,7 +535,7 @@ export default function CoursesPage() {
 
               {/* Price */}
               <div className="space-y-1.5">
-                <Label className="font-semibold">Price</Label>
+                <Label className="font-semibold">Giá</Label>
                 <div className="relative">
                   <Input
                     type="number"
@@ -548,7 +550,7 @@ export default function CoursesPage() {
                     VNĐ
                   </span>
                 </div>
-                {form.price === 0 && <p className="text-xs text-muted-foreground">This course will be free</p>}
+                {form.price === 0 && <p className="text-xs text-muted-foreground">Khóa học này sẽ miễn phí</p>}
               </div>
             </div>
           </div>
@@ -556,18 +558,18 @@ export default function CoursesPage() {
           {/* Footer */}
           <DialogFooter className="px-6 py-4 shadow-md border-0 border-t-0 bg-muted/10 flex flex-row justify-end gap-3">
             <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={saving}>
-              Cancel
+              Hủy
             </Button>
             <Button onClick={handleSave} disabled={saving}>
               {saving ? (
                 <span className="flex items-center gap-2">
                   <span className="h-4 w-4 -2 -current/30 shadow-md border-0 border-t-0-current rounded-full animate-spin" />
-                  Saving…
+                  Đang lưu...
                 </span>
               ) : editing ? (
-                'Update Course'
+                'Cập nhật khóa học'
               ) : (
-                'Create Course'
+                'Tạo khóa học'
               )}
             </Button>
           </DialogFooter>
@@ -577,16 +579,16 @@ export default function CoursesPage() {
       <AlertDialog open={!!deleteId} onOpenChange={open => !open && setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete course?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogTitle>Xóa khóa học?</AlertDialogTitle>
+            <AlertDialogDescription>Hành động này không thể hoàn tác.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDelete}
             >
-              Delete
+              Xóa
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

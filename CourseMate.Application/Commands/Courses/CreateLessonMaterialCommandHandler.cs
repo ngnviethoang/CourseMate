@@ -37,7 +37,7 @@ internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandle
         string fileExtension = Path.GetExtension(request.FileName);
         if (!_allowedImageExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
         {
-            throw new BusinessException(ErrorMessages.InvalidFileType);
+            throw new BusinessException(ErrorCode.InvalidFileType, "Invalid file type. This file type is not allowed.");
         }
 
         await EnsureAuthorCourseAsync(request.LessonId, ct);

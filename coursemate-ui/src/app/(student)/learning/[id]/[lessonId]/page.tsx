@@ -105,7 +105,7 @@ function VideoPlayer({ content }: { content: VideoContent }) {
         <PlayCircle className="h-16 w-16 text-white/50 group-hover:text-white group-hover:scale-110 transition-all cursor-pointer" />
         <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
           <p className="font-medium">{content.title}</p>
-          <p className="text-xs text-white/70">Video placeholder — actual player integrated here</p>
+          <p className="text-xs text-white/70">Khu vực phát video sẽ hiển thị tại đây</p>
         </div>
       </div>
 
@@ -113,7 +113,7 @@ function VideoPlayer({ content }: { content: VideoContent }) {
         <div className="md:col-span-2 space-y-4">
           <h3 className="text-xl font-bold flex items-center gap-2">
             <div className="h-8 w-1 bg-primary rounded-full" />
-            Video Transcript
+            Bản ghi nội dung video
           </h3>
           <div className="space-y-3">
             {content.segments.map((seg, i) => (
@@ -136,7 +136,7 @@ function VideoPlayer({ content }: { content: VideoContent }) {
         <div className="space-y-4">
           <h3 className="text-lg font-bold flex items-center gap-2">
             <div className="h-6 w-1 bg-blue-500 rounded-full" />
-            Key Moments
+            Mốc nội dung chính
           </h3>
           <div className="rounded-xl bg-card shadow-md border-0/50 overflow-hidden">
             {content.timestamps.map((ts, i) => (
@@ -168,14 +168,14 @@ function EmptyContent({ lesson, id, router }: { lesson: any; id: string; router:
         )}
       </div>
       <div className="space-y-2">
-        <h3 className="text-xl font-bold">Content Coming Soon</h3>
+        <h3 className="text-xl font-bold">Nội dung sẽ sớm có</h3>
         <p className="text-muted-foreground max-w-sm">
-          We&apos;re currently preparing the {lesson.lessonType?.toString().toLowerCase()} material for this lesson.
-          Please check back later!
+          Chúng tôi đang chuẩn bị nội dung {lesson.lessonType?.toString().toLowerCase()} cho bài học này. Vui lòng quay
+          lại sau.
         </p>
       </div>
       <Button variant="secondary" onClick={() => router.push(`/courses/${id}`)}>
-        Explore Syllabus
+        Xem giáo trình
       </Button>
     </div>
   )
@@ -245,7 +245,7 @@ function SlideView({ fileUrl, title }: { fileUrl: string; title: string }) {
         <div className="absolute top-4 right-4">
           <Button variant="secondary" size="sm" asChild className="gap-2 shadow-lg">
             <a href={fileUrl} target="_blank" rel="noopener noreferrer">
-              <Download className="h-4 w-4" /> Download Slide
+              <Download className="h-4 w-4" /> Tải slide
             </a>
           </Button>
         </div>
@@ -274,7 +274,7 @@ function CodingExercise({ exerciseId, lessonId }: { exerciseId: string; lessonId
         const res = await exerciseService.getStudentExerciseById(exerciseId)
         setExercise(mapToExerciseData(res))
       } catch (e) {
-        toast.error('Failed to load exercise')
+        toast.error('Không thể tải bài tập.')
       } finally {
         setLoading(false)
       }
@@ -299,7 +299,7 @@ function CodingExercise({ exerciseId, lessonId }: { exerciseId: string; lessonId
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     )
-  if (!exercise) return <div className="text-center p-12 text-muted-foreground">Exercise not found</div>
+  if (!exercise) return <div className="text-center p-12 text-muted-foreground">Không tìm thấy bài tập.</div>
 
   return (
     <div className="h-[750px] rounded-2xl overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -483,7 +483,7 @@ function CodingExerciseOld({ content }: { content: CodingContent }) {
         <div className="rounded-2xl bg-card p-6 shadow-md border-0 flex-1 overflow-y-auto">
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
             <div className="h-6 w-1 bg-purple-500 rounded-full" />
-            Problem Statement
+            Đề bài
           </h2>
           <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground leading-relaxed">
             {content.problem_statement}
@@ -493,7 +493,7 @@ function CodingExerciseOld({ content }: { content: CodingContent }) {
         <div className="rounded-2xl bg-card p-6 shadow-md border-0 overflow-hidden">
           <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
             <div className="h-4 w-1 bg-amber-500 rounded-full" />
-            Example Test Cases
+            Bộ kiểm thử mẫu
           </h3>
           <div className="space-y-3">
             {content.test_cases
@@ -502,11 +502,11 @@ function CodingExerciseOld({ content }: { content: CodingContent }) {
                 <div key={i} className="group rounded-xl bg-muted/50 p-3 font-mono text-xs relative overflow-hidden">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <span className="text-blue-600 block mb-1 font-bold">INPUT</span>
+                      <span className="text-blue-600 block mb-1 font-bold">ĐẦU VÀO</span>
                       <code className="text-foreground/80">{tc.input}</code>
                     </div>
                     <div>
-                      <span className="text-emerald-600 block mb-1 font-bold">EXPECTED</span>
+                      <span className="text-emerald-600 block mb-1 font-bold">KẾT QUẢ MONG ĐỢI</span>
                       <code className="text-foreground/80">{tc.output}</code>
                     </div>
                   </div>
@@ -537,13 +537,13 @@ function CodingExerciseOld({ content }: { content: CodingContent }) {
           />
           <div className="p-4 shadow-md border-0 border-t-0 -white/10 bg-white/5 flex gap-3">
             <Button size="sm" variant="ghost" className="text-white/60 hover:text-white hover:bg-white/10 -white/10">
-              Run Code
+              Chạy code
             </Button>
             <Button
               size="sm"
               className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
             >
-              Submit Solution
+              Nộp lời giải
             </Button>
           </div>
         </div>
@@ -565,10 +565,10 @@ function QuizInteractionOld({ content }: { content: QuizContent }) {
         <div className="h-16 w-16 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600 mb-2">
           <HelpCircle className="h-8 w-8" />
         </div>
-        <h2 className="text-3xl font-bold">Knowledge Check</h2>
-        <p className="text-muted-foreground">Test your understanding of the current topic with this brief quiz.</p>
+        <h2 className="text-3xl font-bold">Kiểm tra kiến thức</h2>
+        <p className="text-muted-foreground">Kiểm tra mức độ hiểu bài với bài trắc nghiệm ngắn này.</p>
         <Badge variant="outline" className="mt-2">
-          {content.questions.length} Questions • 70% to Pass
+          {content.questions.length} câu hỏi • Cần 70% để đạt
         </Badge>
       </div>
 
@@ -624,20 +624,18 @@ function QuizInteractionOld({ content }: { content: QuizContent }) {
             disabled={Object.keys(answers).length < content.questions.length}
             onClick={() => setSubmitted(true)}
           >
-            Complete Quiz
+            Hoàn thành bài kiểm tra
           </Button>
         ) : (
           <div className="text-center space-y-6">
             <div
               className={`p-8 rounded-3xl -4 ${pass ? '-emerald-500 bg-emerald-50 dark:bg-emerald-950/20' : '-red-500 bg-red-50 dark:bg-red-950/20'}`}
             >
-              <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-1">Your Result</p>
+              <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-1">Kết quả của bạn</p>
               <h3 className={`text-5xl font-black mb-2 ${pass ? 'text-emerald-600' : 'text-red-600'}`}>
                 {Math.round((correctCount / content.questions.length) * 100)}%
               </h3>
-              <p className="font-semibold">
-                {pass ? '🎉 Excellent! You PASSED.' : '💪 Keep practicing. You can do it!'}
-              </p>
+              <p className="font-semibold">{pass ? 'Tuyệt vời! Bạn đã đạt.' : 'Hãy tiếp tục luyện tập và thử lại!'}</p>
             </div>
             <Button
               variant="outline"
@@ -647,7 +645,7 @@ function QuizInteractionOld({ content }: { content: QuizContent }) {
                 setSubmitted(false)
               }}
             >
-              Retry Quiz
+              Làm lại bài kiểm tra
             </Button>
           </div>
         )}
@@ -698,7 +696,7 @@ export default function StudentLearningPage() {
         }
       } catch (err) {
         console.error(err)
-        toast.error('Failed to load lesson content.')
+        toast.error('Không thể tải nội dung bài học.')
       } finally {
         setLoading(false)
       }
@@ -729,9 +727,7 @@ export default function StudentLearningPage() {
       <div className="flex h-[60vh] items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-10 w-10 animate-spin text-primary" />
-          <p className="text-sm font-medium text-muted-foreground animate-pulse">
-            Preparing your learning environment...
-          </p>
+          <p className="text-sm font-medium text-muted-foreground animate-pulse">Đang chuẩn bị không gian học tập...</p>
         </div>
       </div>
     )
@@ -743,11 +739,9 @@ export default function StudentLearningPage() {
         <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center text-muted-foreground mb-2">
           <HelpCircle className="h-8 w-8" />
         </div>
-        <h2 className="text-2xl font-bold">Lesson Not Found</h2>
-        <p className="text-muted-foreground max-w-xs">
-          This lesson might have been moved or removed from the syllabus.
-        </p>
-        <Button onClick={() => router.push(`/courses/${id}`)}>Return to Course</Button>
+        <h2 className="text-2xl font-bold">Không tìm thấy bài học</h2>
+        <p className="text-muted-foreground max-w-xs">Bài học này có thể đã được di chuyển hoặc xóa khỏi giáo trình.</p>
+        <Button onClick={() => router.push(`/courses/${id}`)}>Quay lại khóa học</Button>
       </div>
     )
   }
@@ -762,7 +756,7 @@ export default function StudentLearningPage() {
               <Sparkles className="h-3 w-3" /> Học thử
             </Badge>
             <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-widest px-2 opacity-70">
-              {lesson.lessonType || 'LESSON'}
+              {lesson.lessonType || 'BÀI HỌC'}
             </Badge>
           </div>
           <h1 className="text-3xl font-black tracking-tight">{lesson.title}</h1>
@@ -774,14 +768,14 @@ export default function StudentLearningPage() {
             onClick={() => prevLessonId && router.push(`/learning/${id}/${prevLessonId}`)}
             className="rounded-full px-5 h-11"
           >
-            <ChevronLeft className="h-4 w-4 mr-2" /> Previous
+            <ChevronLeft className="h-4 w-4 mr-2" /> Bài trước
           </Button>
           <Button
             disabled={!nextLessonId}
             onClick={() => nextLessonId && router.push(`/learning/${id}/${nextLessonId}`)}
             className="rounded-full px-8 h-11 shadow-lg shadow-primary/20"
           >
-            Next Lesson <ChevronRight className="h-4 w-4 ml-2" />
+            Bài tiếp theo <ChevronRight className="h-4 w-4 ml-2" />
           </Button>
         </div>
       </div>

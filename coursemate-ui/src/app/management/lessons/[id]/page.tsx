@@ -53,22 +53,22 @@ const TYPE_META: Record<LessonType, { icon: React.ReactNode; label: string; colo
   },
   [LessonType.Reading]: {
     icon: <BookOpen className="h-4 w-4" />,
-    label: 'Reading',
+    label: 'Bài đọc',
     color: 'bg-green-100 text-green-700 border-green-200'
   },
   [LessonType.Coding]: {
     icon: <Code2 className="h-4 w-4" />,
-    label: 'Coding',
+    label: 'Lập trình',
     color: 'bg-orange-100 text-orange-700 border-orange-200'
   },
   [LessonType.Quiz]: {
     icon: <FileQuestion className="h-4 w-4" />,
-    label: 'Quiz',
+    label: 'Trắc nghiệm',
     color: 'bg-purple-100 text-purple-700 border-purple-200'
   },
   [LessonType.Slide]: {
     icon: <Presentation className="h-4 w-4" />,
-    label: 'Slide',
+    label: 'Trình chiếu',
     color: 'bg-pink-100 text-pink-700 border-pink-200'
   }
 }
@@ -84,10 +84,10 @@ function ReadingContentSection({ lessonId, initialContent }: { lessonId: string;
     setSaving(true)
     try {
       await lessonService.upsertReading(lessonId, { content })
-      toast.success('Reading content saved.')
+      toast.success('Đã lưu nội dung bài đọc.')
       setIsEditing(false)
     } catch {
-      toast.error('Failed to save reading content.')
+      toast.error('Không thể lưu nội dung bài đọc.')
     } finally {
       setSaving(false)
     }
@@ -97,7 +97,7 @@ function ReadingContentSection({ lessonId, initialContent }: { lessonId: string;
     <div className="rounded-xl bg-card p-6 shadow-md border-0 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-green-600" /> Reading Content
+          <BookOpen className="h-5 w-5 text-green-600" /> Nội dung bài đọc
         </h2>
         <div className="flex items-center gap-2">
           {isEditing ? (
@@ -111,16 +111,16 @@ function ReadingContentSection({ lessonId, initialContent }: { lessonId: string;
                 }}
                 disabled={saving}
               >
-                Cancel
+                Hủy
               </Button>
               <Button onClick={handleSave} disabled={saving} size="sm" className="gap-2">
                 {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
-                {saving ? 'Saving...' : 'Save Changes'}
+                {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
               </Button>
             </>
           ) : (
             <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="gap-2">
-              <Edit className="h-3.5 w-3.5" /> Edit Content
+              <Edit className="h-3.5 w-3.5" /> Chỉnh sửa nội dung
             </Button>
           )}
         </div>
@@ -130,16 +130,18 @@ function ReadingContentSection({ lessonId, initialContent }: { lessonId: string;
         <>
           <Textarea
             className="min-h-[400px] font-mono text-sm"
-            placeholder="Write your reading content in Markdown..."
+            placeholder="Viết nội dung bài đọc bằng Markdown..."
             value={content}
             onChange={e => setContent(e.target.value)}
           />
-          <p className="text-xs text-muted-foreground">Supports Markdown formatting.</p>
+          <p className="text-xs text-muted-foreground">Hỗ trợ định dạng Markdown.</p>
         </>
       ) : (
         <div className="min-h-[200px] rounded-lg bg-muted/20 p-6 prose prose-sm dark:prose-invert max-w-none border-0 -dashed bg-muted/30 shadow-inner">
           {content || (
-            <span className="text-muted-foreground italic">No content yet. Click edit to add reading material.</span>
+            <span className="text-muted-foreground italic">
+              Chưa có nội dung. Bấm chỉnh sửa để thêm tài liệu bài đọc.
+            </span>
           )}
         </div>
       )}
@@ -213,16 +215,16 @@ function CodingContentSection({
 
   async function handleSave() {
     if (!selectedId) {
-      toast.error('Please select an exercise.')
+      toast.error('Vui lòng chọn bài tập.')
       return
     }
     setSaving(true)
     try {
       await lessonService.upsertCoding(lessonId, { exerciseId: selectedId })
-      toast.success('Exercise linked successfully.')
+      toast.success('Đã liên kết bài tập thành công.')
       setIsEditing(false)
     } catch {
-      toast.error('Failed to link exercise.')
+      toast.error('Không thể liên kết bài tập.')
     } finally {
       setSaving(false)
     }
@@ -240,7 +242,7 @@ function CodingContentSection({
     <div className="rounded-xl bg-card p-6 shadow-md border-0 space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold flex items-center gap-2">
-          <Code2 className="h-5 w-5 text-orange-600" /> Coding Exercise
+          <Code2 className="h-5 w-5 text-orange-600" /> Bài tập lập trình
         </h2>
         <div className="flex items-center gap-2">
           {isEditing ? (
@@ -256,16 +258,16 @@ function CodingContentSection({
                 }}
                 disabled={saving}
               >
-                Cancel
+                Hủy
               </Button>
               <Button onClick={handleSave} disabled={saving || !selectedId} size="sm" className="gap-2">
                 {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
-                {saving ? 'Saving...' : 'Save Changes'}
+                {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
               </Button>
             </>
           ) : (
             <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="gap-2">
-              <Edit className="h-3.5 w-3.5" /> Change Exercise
+              <Edit className="h-3.5 w-3.5" /> Đổi bài tập
             </Button>
           )}
         </div>
@@ -276,10 +278,10 @@ function CodingContentSection({
         {isEditing && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Search & Select Exercise</Label>
+              <Label>Tìm và chọn bài tập</Label>
               <div className="relative">
                 <Input
-                  placeholder="Type to search exercises..."
+                  placeholder="Nhập để tìm bài tập..."
                   value={search}
                   onChange={e => {
                     setSearch(e.target.value)
@@ -289,7 +291,7 @@ function CodingContentSection({
                 />
                 {searching && (
                   <div className="absolute right-3 top-2.5 flex items-center gap-2">
-                    <span className="text-[10px] text-muted-foreground animate-pulse">Searching...</span>
+                    <span className="text-[10px] text-muted-foreground animate-pulse">Đang tìm...</span>
                     <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                   </div>
                 )}
@@ -298,7 +300,7 @@ function CodingContentSection({
               {showResults && (
                 <div className="rounded-lg bg-popover shadow-md overflow-hidden max-h-72 flex flex-col z-10 relative">
                   <div className="p-2 shadow-md border-0 border-b-0 bg-muted/30 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-                    {search ? `Search results for "${search}"` : 'Available exercises'}
+                    {search ? `Kết quả tìm kiếm cho "${search}"` : 'Danh sách bài tập'}
                   </div>
                   <div className="overflow-y-auto">
                     {exercises.length > 0 ? (
@@ -327,7 +329,7 @@ function CodingContentSection({
                       ))
                     ) : (
                       <div className="p-8 text-center text-sm text-muted-foreground">
-                        {searching ? 'Loading exercises...' : 'No exercises found.'}
+                        {searching ? 'Đang tải bài tập...' : 'Không tìm thấy bài tập.'}
                       </div>
                     )}
                   </div>
@@ -339,7 +341,7 @@ function CodingContentSection({
               <div className="flex items-center gap-3 rounded-lg -orange-200 bg-orange-50 dark:bg-orange-950/20 px-4 py-3">
                 <CheckCircle2 className="h-4 w-4 text-orange-600 shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-muted-foreground mb-0.5">Selected exercise</p>
+                  <p className="text-xs text-muted-foreground mb-0.5">Bài tập đã chọn</p>
                   <p className="text-sm font-medium truncate">{selectedTitle || selectedId}</p>
                 </div>
               </div>
@@ -349,11 +351,11 @@ function CodingContentSection({
 
         {/* Right/Full: Preview Detail */}
         <div className="space-y-4">
-          <Label>{isEditing ? 'Exercise Preview' : 'Linked Exercise Details'}</Label>
+          <Label>{isEditing ? 'Xem trước bài tập' : 'Chi tiết bài tập đã liên kết'}</Label>
           {loadingDetail ? (
             <div className="h-[300px] rounded-lg border-0 -dashed bg-muted/30 shadow-inner flex flex-col items-center justify-center text-muted-foreground gap-2">
               <Loader2 className="h-6 w-6 animate-spin" />
-              <span className="text-xs">Loading detail...</span>
+              <span className="text-xs">Đang tải chi tiết...</span>
             </div>
           ) : exerciseDetail ? (
             <div
@@ -367,13 +369,13 @@ function CodingContentSection({
                   </Badge>
                   <span className="text-[10px] text-muted-foreground">{exerciseDetail.category}</span>
                   <span className="text-[10px] text-muted-foreground ml-auto">
-                    {exerciseDetail.testCases?.length || 0} Test Cases
+                    {exerciseDetail.testCases?.length || 0} bộ kiểm thử
                   </span>
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 <div className="space-y-1.5">
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Description</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Mô tả</p>
                   <div className="text-xs prose prose-sm dark:prose-invert max-w-none">
                     {exerciseDetail.description}
                   </div>
@@ -382,7 +384,7 @@ function CodingContentSection({
                 {exerciseDetail.defaultCodes && exerciseDetail.defaultCodes.length > 0 && (
                   <div className="space-y-1.5">
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                      Starter Code ({exerciseDetail.defaultCodes[0].language})
+                      Mã khởi tạo ({exerciseDetail.defaultCodes[0].language})
                     </p>
                     <pre className="p-3 rounded-md bg-zinc-950 text-zinc-100 text-[10px] font-mono overflow-x-auto">
                       {exerciseDetail.defaultCodes[0].starterCode}
@@ -396,7 +398,7 @@ function CodingContentSection({
                   target="_blank"
                   className="text-[10px] text-primary hover:underline font-medium"
                 >
-                  Manage Full Exercise Details
+                  Quản lý chi tiết đầy đủ của bài tập
                 </Link>
               </div>
             </div>
@@ -405,8 +407,8 @@ function CodingContentSection({
               <Code2 className="h-8 w-8 mb-2 opacity-20" />
               <p className="text-xs">
                 {isEditing
-                  ? 'Select an exercise from the left to see a preview.'
-                  : 'No exercise linked yet. Click "Change Exercise" to link one.'}
+                  ? 'Chọn một bài tập ở bên trái để xem trước.'
+                  : 'Chưa liên kết bài tập. Bấm "Đổi bài tập" để liên kết.'}
               </p>
             </div>
           )}
@@ -437,20 +439,20 @@ function QuizContentSection({
 
   async function handleSave() {
     if (questions.length === 0) {
-      toast.error('Please add at least one question.')
+      toast.error('Vui lòng thêm ít nhất một câu hỏi.')
       return
     }
     for (const q of questions) {
       if (!q.text.trim()) {
-        toast.error('Question text cannot be empty.')
+        toast.error('Nội dung câu hỏi không được để trống.')
         return
       }
       if (q.answers.length < 2) {
-        toast.error(`Question "${q.text}" needs at least 2 answers.`)
+        toast.error(`Câu hỏi "${q.text}" cần ít nhất 2 đáp án.`)
         return
       }
       if (!q.answers.some(a => a.isCorrect)) {
-        toast.error(`Question "${q.text}" needs at least one correct answer.`)
+        toast.error(`Câu hỏi "${q.text}" cần ít nhất một đáp án đúng.`)
         return
       }
     }
@@ -458,10 +460,10 @@ function QuizContentSection({
     setSaving(true)
     try {
       await lessonService.upsertQuiz(lessonId, { description, passingScore, questions })
-      toast.success('Quiz saved successfully.')
+      toast.success('Đã lưu bài trắc nghiệm thành công.')
       setIsEditing(false)
     } catch {
-      toast.error('Failed to save quiz.')
+      toast.error('Không thể lưu bài trắc nghiệm.')
     } finally {
       setSaving(false)
     }
@@ -512,7 +514,7 @@ function QuizContentSection({
   const removeAnswer = (qIdx: number, aIdx: number) => {
     const q = questions[qIdx]
     if (q.answers.length <= 2) {
-      toast.error('Minimum 2 answers required.')
+      toast.error('Mỗi câu hỏi cần tối thiểu 2 đáp án.')
       return
     }
     const nextAnswers = q.answers.filter((_, i) => i !== aIdx).map((a, i) => ({ ...a, position: i }))
@@ -523,7 +525,7 @@ function QuizContentSection({
     <div className="rounded-xl bg-card p-6 shadow-md border-0 space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold flex items-center gap-2">
-          <FileQuestion className="h-5 w-5 text-purple-600" /> Quiz Management
+          <FileQuestion className="h-5 w-5 text-purple-600" /> Quản lý trắc nghiệm
         </h2>
         <div className="flex items-center gap-2">
           {isEditing ? (
@@ -539,16 +541,16 @@ function QuizContentSection({
                 }}
                 disabled={saving}
               >
-                Cancel
+                Hủy
               </Button>
               <Button onClick={handleSave} disabled={saving} size="sm" className="gap-2">
                 {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
-                {saving ? 'Saving...' : 'Save Quiz'}
+                {saving ? 'Đang lưu...' : 'Lưu trắc nghiệm'}
               </Button>
             </>
           ) : (
             <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="gap-2">
-              <Edit className="h-3.5 w-3.5" /> Edit Quiz
+              <Edit className="h-3.5 w-3.5" /> Chỉnh sửa trắc nghiệm
             </Button>
           )}
         </div>
@@ -559,16 +561,16 @@ function QuizContentSection({
           {/* Settings Area */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 rounded-lg bg-muted/20 border-0 -dashed bg-muted/30 shadow-inner">
             <div className="md:col-span-2 space-y-1.5">
-              <Label>Quiz Description</Label>
+              <Label>Mô tả bài trắc nghiệm</Label>
               <Textarea
-                placeholder="Intro for students..."
+                placeholder="Giới thiệu ngắn cho học viên..."
                 value={description}
                 onChange={e => setDescription(e.target.value)}
                 rows={2}
               />
             </div>
             <div className="space-y-1.5">
-              <Label>Passing Score (%)</Label>
+              <Label>Điểm đạt (%)</Label>
               <Input type="number" value={passingScore} onChange={e => setPassingScore(Number(e.target.value))} />
             </div>
           </div>
@@ -579,7 +581,7 @@ function QuizContentSection({
               <div key={qIdx} className="relative group rounded-xl bg-card shadow-md border-0 overflow-hidden">
                 <div className="bg-muted/50 px-4 py-2 shadow-md border-0 border-b-0 flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Question {qIdx + 1}
+                    Câu hỏi {qIdx + 1}
                   </span>
                   <Button
                     variant="ghost"
@@ -587,20 +589,20 @@ function QuizContentSection({
                     className="h-7 text-destructive hover:text-destructive hover:bg-destructive/10"
                     onClick={() => removeQuestion(qIdx)}
                   >
-                    Remove
+                    Xóa
                   </Button>
                 </div>
                 <div className="p-4 space-y-4">
                   <div className="space-y-1.5">
-                    <Label className="text-xs">Question Text</Label>
+                    <Label className="text-xs">Nội dung câu hỏi</Label>
                     <Input
-                      placeholder="e.g. What is the capital of France?"
+                      placeholder="Ví dụ: Thủ đô của Việt Nam là gì?"
                       value={q.text}
                       onChange={e => updateQuestion(qIdx, { text: e.target.value })}
                     />
                   </div>
                   <div className="space-y-3">
-                    <Label className="text-xs">Answers (Mark the correct one)</Label>
+                    <Label className="text-xs">Đáp án (đánh dấu đáp án đúng)</Label>
                     <div className="grid grid-cols-1 gap-2">
                       {q.answers.map((a, aIdx) => (
                         <div key={aIdx} className="flex items-center gap-2">
@@ -612,7 +614,7 @@ function QuizContentSection({
                           </button>
                           <Input
                             className="h-9 text-sm"
-                            placeholder={`Answer ${aIdx + 1}`}
+                            placeholder={`Đáp án ${aIdx + 1}`}
                             value={a.text}
                             onChange={e => updateAnswer(qIdx, aIdx, { text: e.target.value })}
                           />
@@ -633,7 +635,7 @@ function QuizContentSection({
                       className="h-8 text-xs text-primary"
                       onClick={() => addAnswer(qIdx)}
                     >
-                      + Add Answer Option
+                      + Thêm lựa chọn đáp án
                     </Button>
                   </div>
                 </div>
@@ -649,8 +651,8 @@ function QuizContentSection({
                 <FileQuestion className="h-5 w-5" />
               </div>
               <div className="text-center">
-                <p className="text-sm font-medium">Add New Question</p>
-                <p className="text-xs text-muted-foreground">Click to add a multiple choice question to this quiz</p>
+                <p className="text-sm font-medium">Thêm câu hỏi mới</p>
+                <p className="text-xs text-muted-foreground">Bấm để thêm câu hỏi trắc nghiệm nhiều lựa chọn</p>
               </div>
             </Button>
           </div>
@@ -659,18 +661,18 @@ function QuizContentSection({
         <div className="space-y-6">
           <div className="flex flex-wrap gap-6 p-5 rounded-xl bg-muted/20 border-0 -dashed bg-muted/30 shadow-inner">
             <div className="flex-1 min-w-[200px] space-y-1">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Quiz Description</p>
-              <p className="text-sm">{description || 'No description provided.'}</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Mô tả trắc nghiệm</p>
+              <p className="text-sm">{description || 'Chưa có mô tả.'}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Passing Score</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Điểm đạt</p>
               <Badge variant="secondary" className="text-sm px-3">
                 {passingScore}%
               </Badge>
             </div>
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Questions</p>
-              <p className="text-sm font-semibold">{questions.length} items</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Số câu hỏi</p>
+              <p className="text-sm font-semibold">{questions.length} câu</p>
             </div>
           </div>
 
@@ -695,7 +697,7 @@ function QuizContentSection({
             ))}
             {questions.length === 0 && (
               <div className="text-center py-12 text-muted-foreground border-0 -dashed bg-muted/30 shadow-inner rounded-lg">
-                <p className="text-sm italic">No questions added yet.</p>
+                <p className="text-sm italic">Chưa có câu hỏi nào.</p>
               </div>
             )}
           </div>
@@ -715,7 +717,7 @@ function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; i
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold flex items-center gap-2">
           <Presentation className="h-6 w-6 text-pink-600" />
-          Slide Management
+          Quản lý slide
         </h2>
         <div className="flex bg-muted/50 p-1 rounded-lg">
           <Button
@@ -734,7 +736,7 @@ function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; i
             onClick={() => setActiveTab('upload')}
           >
             <UploadCloud className="h-4 w-4 text-blue-600" />
-            Direct Upload
+            Tải lên trực tiếp
           </Button>
         </div>
       </div>
@@ -745,7 +747,7 @@ function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; i
         <div className="rounded-xl bg-card p-6 shadow-md border-0 space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold flex items-center gap-2">
-              <FileText className="h-5 w-5 text-blue-600" /> Upload Existing Slide
+              <FileText className="h-5 w-5 text-blue-600" /> Tải lên slide có sẵn
             </h3>
           </div>
 
@@ -753,7 +755,7 @@ function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; i
             {initialFileUrl ? (
               <div className="max-w-2xl bg-muted/20 rounded-lg p-5 border-0 -dashed bg-muted/30 shadow-inner space-y-3">
                 <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                  Current Slide Resource
+                  Tài nguyên slide hiện tại
                 </p>
                 <div className="flex items-center gap-4">
                   <div className="h-16 w-16 bg-pink-500/10 rounded flex items-center justify-center shrink-0 -pink-200">
@@ -768,9 +770,9 @@ function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; i
                         rel="noreferrer"
                         className="text-xs text-primary hover:underline font-medium"
                       >
-                        View Document
+                        Xem tài liệu
                       </a>
-                      <span className="text-muted-foreground text-[10px]">Public Link</span>
+                      <span className="text-muted-foreground text-[10px]">Liên kết công khai</span>
                     </div>
                   </div>
                 </div>
@@ -779,13 +781,13 @@ function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; i
 
             <div className="flex flex-col items-center justify-center -2 -dashed rounded-xl p-12 bg-muted/20 hover:bg-muted/30 transition-colors cursor-pointer">
               <UploadCloud className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="font-semibold text-sm text-center">Select your slide file</h3>
+              <h3 className="font-semibold text-sm text-center">Chọn tệp slide</h3>
               <p className="text-xs text-muted-foreground mb-6 text-center max-w-xs">
-                Upload a PDF, PPTX, or DOCX directly. Students will see this as the primary lesson content.
+                Tải trực tiếp PDF, PPTX hoặc DOCX. Học viên sẽ thấy đây là nội dung chính của bài học.
               </p>
               <Input type="file" className="max-w-sm" accept=".pdf,.pptx,.ppt,.docx,.doc" />
               <Button className="mt-4 gap-2">
-                <UploadCloud className="h-4 w-4" /> Upload Document
+                <UploadCloud className="h-4 w-4" /> Tải tài liệu lên
               </Button>
             </div>
           </div>
@@ -844,7 +846,7 @@ export default function LessonDetailPage() {
           }
         }
       } catch {
-        toast.error('Lesson not found.')
+        toast.error('Không tìm thấy bài học.')
       } finally {
         setLoading(false)
       }
@@ -856,12 +858,12 @@ export default function LessonDetailPage() {
     setSaving(true)
     try {
       await lessonService.update(id, form)
-      toast.success('Lesson updated successfully.')
+      toast.success('Đã cập nhật bài học thành công.')
       const [updated, updatedDetail] = await Promise.all([lessonService.getById(id), lessonService.getDetail(id)])
       setLesson(updated)
       setDetail(updatedDetail)
     } catch {
-      toast.error('Failed to update lesson.')
+      toast.error('Không thể cập nhật bài học.')
     } finally {
       setSaving(false)
       setEditDialogOpen(false)
@@ -877,7 +879,7 @@ export default function LessonDetailPage() {
   }
 
   if (!lesson) {
-    return <div className="text-center py-16 text-muted-foreground">Lesson not found.</div>
+    return <div className="text-center py-16 text-muted-foreground">Không tìm thấy bài học.</div>
   }
 
   const numericMap: Record<number, LessonType> = {
@@ -908,17 +910,17 @@ export default function LessonDetailPage() {
               href={`/management/courses/${lesson.courseId}`}
               className="text-sm font-medium text-primary hover:underline"
             >
-              {course ? course.title : lesson.courseName || 'Course'}
+              {course ? course.title : lesson.courseName || 'Khóa học'}
             </Link>
             <span className="text-muted-foreground text-sm">/</span>
             <Link
               href={`/management/chapters/${lesson.chapterId}`}
               className="text-sm font-medium text-primary hover:underline"
             >
-              {chapter ? chapter.title : lesson.chapterName || 'Chapter'}
+              {chapter ? chapter.title : lesson.chapterName || 'Chương'}
             </Link>
             <span className="text-muted-foreground text-sm">/</span>
-            <span className="text-sm text-muted-foreground">Lesson {lesson.position}</span>
+            <span className="text-sm text-muted-foreground">Bài học {lesson.position}</span>
           </div>
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-3 min-w-0">
@@ -928,7 +930,7 @@ export default function LessonDetailPage() {
               </Badge>
             </div>
             <Button variant="outline" size="sm" onClick={() => setEditDialogOpen(true)} className="gap-2 shrink-0">
-              <Edit className="h-4 w-4" /> Edit Info
+              <Edit className="h-4 w-4" /> Sửa thông tin
             </Button>
           </div>
         </div>
@@ -938,26 +940,26 @@ export default function LessonDetailPage() {
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit Lesson Information</DialogTitle>
+            <DialogTitle>Chỉnh sửa thông tin bài học</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-1.5">
-              <Label>Title</Label>
+              <Label>Tiêu đề</Label>
               <Input value={form.title} onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))} />
             </div>
             <div className="space-y-1.5">
-              <Label>Type</Label>
+              <Label>Loại bài học</Label>
               <Select
                 value={form.lessonType}
                 onValueChange={v => setForm(prev => ({ ...prev, lessonType: v as LessonType }))}
               >
                 <SelectTrigger>
-                  <SelectValue>{form.lessonType}</SelectValue>
+                  <SelectValue>{TYPE_META[form.lessonType]?.label ?? form.lessonType}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {Object.values(LessonType).map(t => (
                     <SelectItem key={t} value={t}>
-                      {t}
+                      {TYPE_META[t]?.label ?? t}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -966,11 +968,11 @@ export default function LessonDetailPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-              Cancel
+              Hủy
             </Button>
             <Button onClick={handleSave} disabled={saving} className="gap-2">
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {saving ? 'Saving...' : 'Save Changes'}
+              {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
             </Button>
           </DialogFooter>
         </DialogContent>

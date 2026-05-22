@@ -43,7 +43,7 @@ internal sealed class DisqualifyStudentCommandHandler : AbstractCommandHandler<D
 
         if (registration == null)
         {
-            throw new BusinessException("Student is not registered for this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "Student is not registered for this contest.");
         }
 
         registration.IsDisqualified = true;

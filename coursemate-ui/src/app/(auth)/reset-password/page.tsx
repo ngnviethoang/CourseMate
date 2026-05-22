@@ -179,7 +179,7 @@ export default function ResetPasswordPage() {
         </Suspense>
 
         <p className="text-center text-xs text-muted-foreground/60 mt-8">
-          &copy; {new Date().getFullYear()} CourseMate. All rights reserved.
+          &copy; {new Date().getFullYear()} CourseMate. Bảo lưu mọi quyền.
         </p>
       </div>
     </div>

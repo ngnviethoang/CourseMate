@@ -284,14 +284,14 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
           <div className="flex-1">
             <h1 className="text-lg font-bold flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
-              Anti-Cheat Monitor
+              Giám sát chống gian lận
             </h1>
             <p className="text-xs text-neutral-500">{data?.contestTitle}</p>
           </div>
           <Button onClick={fetchData} variant="ghost" className="text-neutral-400 hover:text-white gap-2">
             <RefreshCw className="h-4 w-4" /> Làm mới
           </Button>
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Real-time connected" />
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Đang kết nối thời gian thực" />
         </div>
       </header>
 
@@ -468,7 +468,7 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
                                 {(v.ipAddress || v.deviceFingerprint) && (
                                   <p className="text-[10px] text-neutral-500 mt-1 flex items-center gap-3">
                                     {v.ipAddress && <span>IP: {v.ipAddress}</span>}
-                                    {v.deviceFingerprint && <span>Dev: {v.deviceFingerprint}</span>}
+                                    {v.deviceFingerprint && <span>Thiết bị: {v.deviceFingerprint}</span>}
                                   </p>
                                 )}
                               </div>
@@ -487,7 +487,7 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
                 {dqConfirm === student.studentId && (
                   <div className="px-5 pb-5 shadow-md border-0 border-t-0 -red-500/10">
                     <div className="mt-4 p-4 rounded-xl bg-red-500/5 -red-500/10 space-y-3">
-                      <p className="text-xs font-bold text-red-400">Loại sinh viên: {student.studentName}</p>
+                      <p className="text-xs font-bold text-red-400">Loại thí sinh: {student.studentName}</p>
                       <input
                         type="text"
                         placeholder="Nhập lý do loại..."
