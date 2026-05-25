@@ -22,6 +22,8 @@ internal sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOr
 
     public override async Task<PagedDto<OrderDto>> Handle(GetListOrdersQuery request, CancellationToken ct)
     {
+        bool isFilterGuid = Guid.TryParse(request.Filter, out var filterId);
+
         IQueryable<OrderDto> query =
             from order in DbContext.Orders
             join student in DbContext.Users on order.StudentId equals student.Id
@@ -42,8 +44,8 @@ internal sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOr
             .WhereIf(IsInRole(Roles.Student), x => x.StudentId == CurrentUserId)
             .WhereIf(IsInRole(Roles.Instructor), x => DbContext.OrderItems
                 .Any(oi => oi.OrderId == x.Id && DbContext.Courses.Any(c => c.Id == oi.CourseId && c.InstructorId == CurrentUserId)))
-            .WhereIf(request.Id.HasValue, x => x.Id == request.Id)
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x =>
+            .WhereIf(isFilterGuid, x => x.Id == filterId)
+            .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x =>
                 EF.Functions.ILike(x.Title, $"%{request.Filter}%") ||
                 (x.StudentName != null && EF.Functions.ILike(x.StudentName, $"%{request.Filter}%")) ||
                 (x.StudentEmail != null && EF.Functions.ILike(x.StudentEmail, $"%{request.Filter}%")));

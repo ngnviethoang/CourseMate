@@ -1,6 +1,5 @@
 import { api } from './api-client'
 import { ExerciseExampleDto } from './types'
-import { isGuid } from './utils'
 
 interface PagedDto<T> {
   items: T[]
@@ -88,7 +87,6 @@ export interface LeaderboardEntryDto {
 
 export const contestService = {
   getList: (params: {
-    id?: string
     filter?: string
     status?: 'Draft' | 'Upcoming' | 'Ongoing' | 'Ended'
     sorting?: string
@@ -96,8 +94,6 @@ export const contestService = {
     pageSize?: number
   }) => {
     const searchParams = new URLSearchParams()
-    const id = params.id?.trim()
-    if (isGuid(id)) searchParams.set('id', id?.toString() || '')
     if (params.filter) searchParams.set('filter', params.filter)
     if (params.status) searchParams.set('status', params.status)
     if (params.sorting) searchParams.set('sorting', params.sorting)

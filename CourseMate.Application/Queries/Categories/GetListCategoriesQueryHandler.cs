@@ -23,9 +23,11 @@ internal sealed class GetListCategoryQueryHandler : AbstractQueryHandler<GetList
 
     public override async Task<PagedDto<CategoryDto>> Handle(GetListCategoriesQuery request, CancellationToken ct)
     {
+        bool isFilterGuid = Guid.TryParse(request.Filter, out var filterId);
+
         IQueryable<Category> query = DbContext.Categories
-            .WhereIf(request.Id.HasValue, x => x.Id == request.Id)
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Name, $"%{request.Filter}%"))
+            .WhereIf(isFilterGuid, x => x.Id == filterId)
+            .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Name, $"%{request.Filter}%"))
             .WhereIf(request.HasCourse == true, x => DbContext.Courses.Any(c => c.CategoryId == x.Id))
             .WhereIf(request.HasCourse == false, x => !DbContext.Courses.Any(c => c.CategoryId == x.Id));
 

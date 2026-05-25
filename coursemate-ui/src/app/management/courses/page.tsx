@@ -76,7 +76,6 @@ export default function CoursesPage() {
   const router = useRouter()
   const [items, setItems] = useState<CourseDto[]>([])
   const [loading, setLoading] = useState(true)
-  const [idFilter, setIdFilter] = useState('')
   const [filter, setFilter] = useState('')
   const [categoryFilterId, setCategoryFilterId] = useState('')
   const [sorting, setSorting] = useState('creationTime_desc')
@@ -122,7 +121,6 @@ export default function CoursesPage() {
     setLoading(true)
     try {
       const res = await courseService.list({
-        id: idFilter.trim() || undefined,
         filter,
         pageSize,
         pageIndex,
@@ -134,11 +132,11 @@ export default function CoursesPage() {
     } finally {
       setLoading(false)
     }
-  }, [idFilter, filter, categoryFilterId, sorting, pageIndex])
+  }, [filter, categoryFilterId, sorting, pageIndex])
 
   useEffect(() => {
     setPageIndex(0)
-  }, [idFilter, filter, categoryFilterId, sorting])
+  }, [filter, categoryFilterId, sorting])
 
   useEffect(() => {
     const t = setTimeout(load, 300)
@@ -285,12 +283,6 @@ export default function CoursesPage() {
             onChange={e => setFilter(e.target.value)}
           />
         </div>
-        <Input
-          className="h-12 min-w-[220px] max-w-md font-mono"
-          placeholder="Filter theo ID..."
-          value={idFilter}
-          onChange={e => setIdFilter(e.target.value)}
-        />
         <select
           value={categoryFilterId}
           onChange={e => setCategoryFilterId(e.target.value)}

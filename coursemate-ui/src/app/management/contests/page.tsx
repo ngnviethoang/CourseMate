@@ -7,7 +7,6 @@ import { toast } from 'sonner'
 import { Plus, Search, Trophy, Pencil, Loader2, ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { contestService, ContestDto } from '@/lib/contest-service'
-import { isGuid } from '@/lib/utils'
 import {
   Dialog,
   DialogContent,
@@ -45,7 +44,6 @@ export default function ContestsManagementPage() {
   const router = useRouter()
   const [data, setData] = useState<PagedDto<ContestDto> | null>(null)
   const [loading, setLoading] = useState(true)
-  const [idFilter, setIdFilter] = useState('')
   const [filter, setFilter] = useState('')
   const [status, setStatus] = useState('')
   const [page, setPage] = useState(1)
@@ -69,7 +67,6 @@ export default function ContestsManagementPage() {
     setLoading(true)
     try {
       const result = await contestService.getList({
-        ...(isGuid(idFilter) && { id: idFilter.trim() }),
         pageIndex: page,
         pageSize,
         ...(filter && { filter }),
@@ -81,7 +78,7 @@ export default function ContestsManagementPage() {
     } finally {
       setLoading(false)
     }
-  }, [page, idFilter, filter, status])
+  }, [page, filter, status])
 
   useEffect(() => {
     fetchData()
@@ -209,16 +206,6 @@ export default function ContestsManagementPage() {
             className="w-full pl-9 pr-4 py-2 text-sm -input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
-        <input
-          type="text"
-          placeholder="Filter theo ID..."
-          value={idFilter}
-          onChange={e => {
-            setIdFilter(e.target.value)
-            setPage(1)
-          }}
-          className="w-full max-w-sm px-3 py-2 text-sm font-mono -input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-        />
         <select
           value={status}
           onChange={e => {

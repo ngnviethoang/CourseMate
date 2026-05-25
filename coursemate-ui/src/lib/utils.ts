@@ -23,8 +23,3 @@ export function formatDate(iso: string | undefined | null): string {
     minute: '2-digit'
   }).format(new Date(iso))
 }
-
-export function isGuid(value: string | undefined | null): boolean {
-  if (!value) return false
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value.trim())
-}

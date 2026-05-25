@@ -24,6 +24,8 @@ internal sealed class GetListExercisesQueryHandler : AbstractQueryHandler<GetLis
 
     public override async Task<PagedDto<ExerciseDto>> Handle(GetListExercisesQuery request, CancellationToken ct)
     {
+        bool isFilterGuid = Guid.TryParse(request.Filter, out var filterId);
+
         IQueryable<ExerciseDto> query =
             from exercise in DbContext.Exercises
             join user in DbContext.Users on exercise.CreatorId equals user.Id
@@ -45,8 +47,8 @@ internal sealed class GetListExercisesQueryHandler : AbstractQueryHandler<GetLis
 
         query = query
             .WhereIf(IsInRole(Roles.Instructor), x => x.CreatedById == CurrentUserId)
-            .WhereIf(request.Id.HasValue, x => x.Id == request.Id)
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
+            .WhereIf(isFilterGuid, x => x.Id == filterId)
+            .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
             .WhereIf(!string.IsNullOrWhiteSpace(request.Difficulty), x => x.Difficulty == request.Difficulty)
             .WhereIf(!string.IsNullOrWhiteSpace(request.Category), x => EF.Functions.ILike(x.Category, $"%{request.Category}%"));
 

@@ -8,7 +8,7 @@ import { Plus, Search, Filter, Pencil, Trash2, Loader2, Code2, ChevronLeft, Chev
 import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api-client'
 import { exerciseService } from '@/lib/exercise-service'
-import { formatDate, isGuid } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 import {
   Dialog,
   DialogContent,
@@ -51,7 +51,6 @@ export default function ExercisesManagementPage() {
   const [data, setData] = useState<PagedDto<ExerciseDto> | null>(null)
   const [loading, setLoading] = useState(true)
   const [deletingId, setDeletingId] = useState<string | null>(null)
-  const [idFilter, setIdFilter] = useState('')
   const [filter, setFilter] = useState('')
   const [difficulty, setDifficulty] = useState('')
   const [page, setPage] = useState(1)
@@ -78,7 +77,6 @@ export default function ExercisesManagementPage() {
       const params = new URLSearchParams({
         pageIndex: String(page),
         pageSize: String(pageSize),
-        ...(isGuid(idFilter) && { id: idFilter.trim() }),
         ...(filter && { filter }),
         ...(difficulty && { difficulty })
       })
@@ -89,7 +87,7 @@ export default function ExercisesManagementPage() {
     } finally {
       setLoading(false)
     }
-  }, [page, idFilter, filter, difficulty])
+  }, [page, filter, difficulty])
 
   useEffect(() => {
     fetchData()
@@ -250,16 +248,6 @@ export default function ExercisesManagementPage() {
             className="w-full pl-9 pr-4 py-2 text-sm -input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
-        <input
-          type="text"
-          placeholder="Filter theo ID..."
-          value={idFilter}
-          onChange={e => {
-            setIdFilter(e.target.value)
-            setPage(1)
-          }}
-          className="w-full max-w-sm px-3 py-2 text-sm font-mono -input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-        />
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-muted-foreground" />
           <select

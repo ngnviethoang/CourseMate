@@ -10,7 +10,6 @@ import type {
 
 export const exerciseService = {
   getList: (params: {
-    id?: string
     pageIndex?: number
     pageSize?: number
     filter?: string

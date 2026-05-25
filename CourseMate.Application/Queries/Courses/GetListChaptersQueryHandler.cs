@@ -32,6 +32,8 @@ internal sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetList
             await EnsureEnrollmentAsync(request.CourseId.Value);
         }
 
+        bool isFilterGuid = Guid.TryParse(request.Filter, out var filterId);
+
         IQueryable<ChapterDto> query =
             from chapter in DbContext.Chapters
             join course in DbContext.Courses on chapter.CourseId equals course.Id
@@ -50,8 +52,8 @@ internal sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetList
             };
 
         query = query
-            .WhereIf(request.Id.HasValue, x => x.Id == request.Id)
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
+            .WhereIf(isFilterGuid, x => x.Id == filterId)
+            .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
 
         query = request.Sorting switch
         {

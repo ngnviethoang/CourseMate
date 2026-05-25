@@ -23,7 +23,6 @@ import { formatDate } from '@/lib/utils'
 export default function PendingInstructorsPage() {
   const [items, setItems] = useState<UserDto[]>([])
   const [loading, setLoading] = useState(true)
-  const [idFilter, setIdFilter] = useState('')
   const [filter, setFilter] = useState('')
   const [sorting, setSorting] = useState('')
   const [approveId, setApproveId] = useState<string | null>(null)
@@ -128,12 +127,6 @@ export default function PendingInstructorsPage() {
             onChange={e => setFilter(e.target.value)}
           />
         </div>
-        <Input
-          className="max-w-sm min-w-[220px] font-mono"
-          placeholder="Filter theo ID..."
-          value={idFilter}
-          onChange={e => setIdFilter(e.target.value)}
-        />
       </div>
 
       <DataTable columns={columns} data={items} loading={loading} sorting={sorting} onSort={setSorting} />

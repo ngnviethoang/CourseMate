@@ -48,7 +48,6 @@ const emptyUpdate: UpdateUserRequest = { userName: '', email: '', phoneNumber: '
 export default function UsersPage() {
   const [items, setItems] = useState<UserDto[]>([])
   const [loading, setLoading] = useState(true)
-  const [idFilter, setIdFilter] = useState('')
   const [filter, setFilter] = useState('')
   const [sorting, setSorting] = useState('creationTime_desc')
   const [pageIndex, setPageIndex] = useState(0)
@@ -65,7 +64,6 @@ export default function UsersPage() {
     setLoading(true)
     try {
       const res = await userService.list({
-        id: idFilter.trim() || undefined,
         filter,
         pageIndex,
         pageSize,
@@ -76,11 +74,11 @@ export default function UsersPage() {
     } finally {
       setLoading(false)
     }
-  }, [idFilter, filter, pageIndex, pageSize, sorting])
+  }, [filter, pageIndex, pageSize, sorting])
 
   useEffect(() => {
     setPageIndex(0)
-  }, [idFilter, filter, sorting])
+  }, [filter, sorting])
 
   useEffect(() => {
     const t = setTimeout(load, 300)
@@ -145,12 +143,6 @@ export default function UsersPage() {
             onChange={e => setFilter(e.target.value)}
           />
         </div>
-        <Input
-          className="max-w-sm min-w-[220px] font-mono"
-          placeholder="Filter theo ID..."
-          value={idFilter}
-          onChange={e => setIdFilter(e.target.value)}
-        />
       </div>
 
       <DataTable

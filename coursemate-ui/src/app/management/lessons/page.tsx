@@ -66,7 +66,6 @@ export default function LessonsPage() {
   const [courseOptions, setCourseOptions] = useState<CourseDto[]>([])
   const [chapterOptions, setChapterOptions] = useState<ChapterDto[]>([])
   const [loading, setLoading] = useState(true)
-  const [idFilter, setIdFilter] = useState('')
   const [filter, setFilter] = useState('')
   const [courseFilterId, setCourseFilterId] = useState('')
   const [chapterFilterId, setChapterFilterId] = useState('')
@@ -84,7 +83,6 @@ export default function LessonsPage() {
     setLoading(true)
     try {
       const res = await lessonService.list({
-        id: idFilter.trim() || undefined,
         filter,
         pageSize,
         pageIndex,
@@ -97,7 +95,7 @@ export default function LessonsPage() {
     } finally {
       setLoading(false)
     }
-  }, [idFilter, filter, courseFilterId, chapterFilterId, sorting, pageIndex])
+  }, [filter, courseFilterId, chapterFilterId, sorting, pageIndex])
 
   useEffect(() => {
     courseService
@@ -115,7 +113,7 @@ export default function LessonsPage() {
 
   useEffect(() => {
     setPageIndex(0)
-  }, [idFilter, filter, courseFilterId, chapterFilterId, sorting])
+  }, [filter, courseFilterId, chapterFilterId, sorting])
 
   useEffect(() => {
     const t = setTimeout(load, 300)
@@ -188,12 +186,6 @@ export default function LessonsPage() {
             onChange={e => setFilter(e.target.value)}
           />
         </div>
-        <Input
-          className="max-w-sm min-w-[220px] font-mono"
-          placeholder="Filter theo ID..."
-          value={idFilter}
-          onChange={e => setIdFilter(e.target.value)}
-        />
         <select
           value={courseFilterId}
           onChange={e => {

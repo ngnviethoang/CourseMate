@@ -24,6 +24,8 @@ internal sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetList
 
     public override async Task<PagedDto<ContestDto>> Handle(GetListContestsQuery request, CancellationToken ct)
     {
+        bool isFilterGuid = Guid.TryParse(request.Filter, out var filterId);
+
         IQueryable<ContestDto> query =
             from contest in DbContext.Contests
             join user in DbContext.Users on contest.CreatorId equals user.Id
@@ -51,8 +53,8 @@ internal sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetList
         query = query
             .WhereIf(IsInRole(Roles.Instructor), x => x.CreatorId == CurrentUserId)
             .WhereIf(IsInRole(Roles.Student), x => x.Status != ContestStatus.Draft)
-            .WhereIf(request.Id.HasValue, x => x.Id == request.Id)
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
+            .WhereIf(isFilterGuid, x => x.Id == filterId)
+            .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
             .WhereIf(request.Status.HasValue, x => x.Status == request.Status);
 
         query = request.Sorting switch

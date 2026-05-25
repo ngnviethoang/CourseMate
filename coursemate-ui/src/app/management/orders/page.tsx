@@ -68,7 +68,6 @@ export default function OrdersPage() {
   const router = useRouter()
   const [items, setItems] = useState<OrderDto[]>([])
   const [loading, setLoading] = useState(true)
-  const [idFilter, setIdFilter] = useState('')
   const [filter, setFilter] = useState('')
   const [sorting, setSorting] = useState('creationTime_desc')
   const [pageIndex, setPageIndex] = useState(0)
@@ -90,17 +89,17 @@ export default function OrdersPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await orderService.list({ id: idFilter.trim() || undefined, filter, pageIndex, pageSize, sorting })
+      const res = await orderService.list({ filter, pageIndex, pageSize, sorting })
       setItems(res.items)
       setTotalCount(res.totalCount)
     } finally {
       setLoading(false)
     }
-  }, [idFilter, filter, sorting, pageIndex])
+  }, [filter, sorting, pageIndex])
 
   useEffect(() => {
     setPageIndex(0)
-  }, [idFilter, filter, sorting])
+  }, [filter, sorting])
 
   useEffect(() => {
     const t = setTimeout(load, 300)
@@ -171,12 +170,6 @@ export default function OrdersPage() {
             }}
           />
         </div>
-        <Input
-          className="h-12 min-w-[220px] max-w-md font-mono"
-          placeholder="Filter theo ID..."
-          value={idFilter}
-          onChange={e => setIdFilter(e.target.value)}
-        />
       </div>
 
       <DataTable

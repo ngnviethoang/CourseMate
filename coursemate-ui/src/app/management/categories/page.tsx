@@ -57,7 +57,6 @@ const emptyForm: CreateCategoryRequest = { name: '', description: '', isActive: 
 export default function CategoriesPage() {
   const [items, setItems] = useState<CategoryDto[]>([])
   const [loading, setLoading] = useState(true)
-  const [idFilter, setIdFilter] = useState('')
   const [filter, setFilter] = useState('')
   const [hasCourseFilter, setHasCourseFilter] = useState<'all' | 'has' | 'none'>('has')
   const [sorting, setSorting] = useState('creationTime')
@@ -75,7 +74,6 @@ export default function CategoriesPage() {
     try {
       const hasCourse = hasCourseFilter === 'all' ? undefined : hasCourseFilter === 'has'
       const res = await categoryService.list({
-        id: idFilter.trim() || undefined,
         filter,
         pageIndex,
         pageSize,
@@ -87,12 +85,12 @@ export default function CategoriesPage() {
     } finally {
       setLoading(false)
     }
-  }, [idFilter, filter, hasCourseFilter, pageIndex, pageSize, sorting])
+  }, [filter, hasCourseFilter, pageIndex, pageSize, sorting])
 
   // Reset về trang đầu khi filter hoặc sorting thay đổi
   useEffect(() => {
     setPageIndex(0)
-  }, [idFilter, filter, hasCourseFilter, sorting])
+  }, [filter, hasCourseFilter, sorting])
 
   useEffect(() => {
     const t = setTimeout(load, 300)
@@ -158,12 +156,6 @@ export default function CategoriesPage() {
             onChange={e => setFilter(e.target.value)}
           />
         </div>
-        <Input
-          className="max-w-sm min-w-[220px] font-mono"
-          placeholder="Filter theo ID..."
-          value={idFilter}
-          onChange={e => setIdFilter(e.target.value)}
-        />
         <Select value={hasCourseFilter} onValueChange={val => setHasCourseFilter(val as 'all' | 'has' | 'none')}>
           <SelectTrigger className="w-[220px]">
             <SelectValue placeholder="Lọc theo khóa học" />
