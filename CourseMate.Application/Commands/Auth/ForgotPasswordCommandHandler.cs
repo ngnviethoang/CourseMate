@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.BackgroundJobs;
-using CourseMate.Contracts.Constants;
 using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -8,14 +7,14 @@ using Microsoft.Extensions.Configuration;
 
 namespace CourseMate.Application.Commands.Auth;
 
-public class ForgotPasswordCommand : IRequest<int>
+public class ForgotPasswordCommand : IRequest<Unit>
 {
     [Required]
     [EmailAddress]
     public string Email { get; set; } = string.Empty;
 }
 
-internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordCommand, int>
+internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordCommand, Unit>
 {
     private readonly IConfiguration _configuration;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
@@ -28,14 +27,14 @@ internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPassw
         _configuration = configuration;
     }
 
-    public async Task<int> Handle(ForgotPasswordCommand request, CancellationToken ct)
+    public async Task<Unit> Handle(ForgotPasswordCommand request, CancellationToken ct)
     {
         IdentityUser<Guid>? user = await _userManager.FindByEmailAsync(request.Email);
 
         // Always return success to avoid user enumeration attacks
         if (user == null || !await _userManager.IsEmailConfirmedAsync(user))
         {
-            return Codes.Success;
+            return Unit.Value;
         }
 
         string token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -46,7 +45,7 @@ internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPassw
 
         string htmlBody = await RenderResetPasswordTemplate(user.UserName ?? request.Email, resetUrl);
         BackgroundJob.Enqueue<EmailSenderJob>(job => job.Execute(request.Email, "Đặt lại mật khẩu CourseMate", htmlBody));
-        return Codes.Success;
+        return Unit.Value;
     }
 
     private static async Task<string> RenderResetPasswordTemplate(string userName, string resetUrl)

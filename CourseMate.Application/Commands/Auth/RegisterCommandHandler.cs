@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace CourseMate.Application.Commands.Auth;
 
-public class RegisterCommand : IRequest<int>
+public class RegisterCommand : IRequest<Unit>
 {
     [EmailAddress]
     public string Email { get; set; } = string.Empty;
@@ -27,7 +27,7 @@ public class RegisterCommand : IRequest<int>
     public string Role { get; set; } = string.Empty;
 }
 
-internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, int>
+internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, Unit>
 {
     private readonly IConfiguration _configuration;
     private readonly IUserEmailStore<IdentityUser<Guid>> _emailStore;
@@ -48,7 +48,7 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
         _configuration = configuration;
     }
 
-    public async Task<int> Handle(RegisterCommand request, CancellationToken ct)
+    public async Task<Unit> Handle(RegisterCommand request, CancellationToken ct)
     {
         string role = request.Role.Trim();
 
@@ -78,7 +78,7 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
 
         string htmlBody = await RenderVerifyEmailTemplate(request.UserName, verifyUrl);
         BackgroundJob.Enqueue<EmailSenderJob>(job => job.Execute(request.Email, "Xác thực tài khoản CourseMate", htmlBody));
-        return Codes.Success;
+        return Unit.Value;
     }
 
     private static async Task<string> RenderVerifyEmailTemplate(string userName, string verifyUrl)

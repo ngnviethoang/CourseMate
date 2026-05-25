@@ -1,5 +1,4 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.Constants;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
@@ -8,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Courses;
 
-public class CreateOrUpdateLessonQuizCommand : IRequest<int>
+public class CreateOrUpdateLessonQuizCommand : IRequest<Unit>
 {
     public Guid LessonId { get; set; }
 
@@ -34,14 +33,14 @@ public class CreateOrUpdateLessonQuizCommand : IRequest<int>
     }
 }
 
-internal sealed class CreateOrUpdateLessonQuizCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonQuizCommand, int>
+internal sealed class CreateOrUpdateLessonQuizCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonQuizCommand, Unit>
 {
     public CreateOrUpdateLessonQuizCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
     {
     }
 
-    public override async Task<int> Handle(CreateOrUpdateLessonQuizCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(CreateOrUpdateLessonQuizCommand request, CancellationToken ct)
     {
         await EnsureAuthorCourseAsync(request.LessonId, ct);
 
@@ -73,7 +72,7 @@ internal sealed class CreateOrUpdateLessonQuizCommandHandler : AbstractCommandHa
 
             await DbContext.LessonQuizQuestions.AddAsync(question, ct);
         }
-        
-        return Codes.Success;
+
+        return Unit.Value;
     }
 }

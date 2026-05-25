@@ -18,9 +18,9 @@ using PaymentTransaction = CourseMate.Persistent.Entities.PaymentTransaction;
 
 namespace CourseMate.Application.Commands.Payments;
 
-public class IpnUrlCallbackCommand : Webhook, IRequest<int>;
+public class IpnUrlCallbackCommand : Webhook, IRequest<Unit>;
 
-internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnUrlCallbackCommand, int>
+internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnUrlCallbackCommand, Unit>
 {
     private readonly ILogger<IpnUrlCallbackCommandHandler> _logger;
     private readonly PayOsOptions _payOsOptions;
@@ -35,7 +35,7 @@ internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnU
         _payOsOptions = options.Value;
     }
 
-    public override async Task<int> Handle(IpnUrlCallbackCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(IpnUrlCallbackCommand request, CancellationToken ct)
     {
         PayOSClient client = new(new PayOSOptions
         {
@@ -54,7 +54,7 @@ internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnU
 
             if (webhookData is { OrderCode: 123, Description: "VQRIO123", AccountNumber: "12345678" })
             {
-                return Codes.Success;
+                return Unit.Value;
             }
 
             #endregion
@@ -67,7 +67,7 @@ internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnU
             if (paymentTransaction is null)
             {
                 _logger.LogWarning("No pending payment transaction found for orderCode={OrderCode}", orderCode);
-                return Codes.Fail;
+                return Unit.Value;
             }
 
             paymentTransaction.RawResponse = JsonConvert.SerializeObject(request);
@@ -75,7 +75,7 @@ internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnU
             if (order is null)
             {
                 _logger.LogWarning("No order found for PaymentTransactionId={TransactionId}", paymentTransaction.Id);
-                return Codes.Fail;
+                return Unit.Value;
             }
 
             _logger.LogInformation("Found order: {OrderId}, Status={Status}, TotalAmount={Amount}", order.Id, order.Status, order.TotalAmount);
@@ -95,7 +95,7 @@ internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnU
                 _logger.LogInformation("Webhook processed successfully for orderCode={OrderCode}", orderCode);
             }
 
-            return Codes.Success;
+            return Unit.Value;
         }
         catch (PayOSException ex)
         {

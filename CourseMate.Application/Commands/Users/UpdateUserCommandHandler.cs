@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Users;
 
-public class UpdateUserCommand : IRequest<int>
+public class UpdateUserCommand : IRequest<Unit>
 {
     public Guid Id { get; set; }
 
@@ -19,7 +19,7 @@ public class UpdateUserCommand : IRequest<int>
     public string PhoneNumber { get; set; } = string.Empty;
 }
 
-internal sealed class UpdateUserAbstractCommandHandler : AbstractCommandHandler<UpdateUserCommand, int>
+internal sealed class UpdateUserAbstractCommandHandler : AbstractCommandHandler<UpdateUserCommand, Unit>
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
@@ -31,7 +31,7 @@ internal sealed class UpdateUserAbstractCommandHandler : AbstractCommandHandler<
         _userManager = userManager;
     }
 
-    public override async Task<int> Handle(UpdateUserCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(UpdateUserCommand request, CancellationToken ct)
     {
         IdentityUser<Guid>? user = await _userManager.FindByIdAsync(request.Id.ToString());
 
@@ -52,6 +52,6 @@ internal sealed class UpdateUserAbstractCommandHandler : AbstractCommandHandler<
             throw new BusinessException(ErrorCode.Unknown, errors);
         }
 
-        return Codes.Success;
+        return Unit.Value;
     }
 }

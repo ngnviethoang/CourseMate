@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Auth;
 
-public class UpdateProfileCommand : IRequest<int>
+public class UpdateProfileCommand : IRequest<Unit>
 {
     [EmailAddress]
     public string? Email { get; set; }
@@ -19,7 +19,7 @@ public class UpdateProfileCommand : IRequest<int>
     public string? UserName { get; set; }
 }
 
-internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfileCommand, int>
+internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfileCommand, Unit>
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
@@ -32,7 +32,7 @@ internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfil
         _userManager = userManager;
     }
 
-    public override async Task<int> Handle(UpdateProfileCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(UpdateProfileCommand request, CancellationToken ct)
     {
         IdentityUser<Guid>? user = await _userManager.FindByIdAsync(CurrentUserId.ToString());
 
@@ -63,7 +63,7 @@ internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfil
         IdentityResult result = await _userManager.UpdateAsync(user);
         if (result.Succeeded)
         {
-            return Codes.Success;
+            return Unit.Value;
         }
 
         string errors = string.Join(", ", result.Errors.Select(e => e.Description));

@@ -1,5 +1,4 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
@@ -9,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Categories;
 
-public class UpdateCategoryCommand : IRequest<int>
+public class UpdateCategoryCommand : IRequest<Unit>
 {
     public Guid Id { get; set; }
 
@@ -20,7 +19,7 @@ public class UpdateCategoryCommand : IRequest<int>
     public bool IsActive { get; set; }
 }
 
-internal sealed class UpdateCategoryAbstractCommandHandler : AbstractCommandHandler<UpdateCategoryCommand, int>
+internal sealed class UpdateCategoryAbstractCommandHandler : AbstractCommandHandler<UpdateCategoryCommand, Unit>
 {
     public UpdateCategoryAbstractCommandHandler(
         CourseMateDbContext dbContext,
@@ -28,7 +27,7 @@ internal sealed class UpdateCategoryAbstractCommandHandler : AbstractCommandHand
     {
     }
 
-    public override async Task<int> Handle(UpdateCategoryCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(UpdateCategoryCommand request, CancellationToken ct)
     {
         Category? category = await DbContext.Categories.FirstOrDefaultAsync(x => x.Id == request.Id, ct);
 
@@ -42,6 +41,6 @@ internal sealed class UpdateCategoryAbstractCommandHandler : AbstractCommandHand
         category.IsActive = request.IsActive;
 
         DbContext.Update(category);
-        return Codes.Success;
+        return Unit.Value;
     }
 }

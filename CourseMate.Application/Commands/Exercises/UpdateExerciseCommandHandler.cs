@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Exercises;
 
-public class UpdateExerciseCommand : IRequest<int>
+public class UpdateExerciseCommand : IRequest<Unit>
 {
     public Guid Id { get; set; }
 
@@ -78,14 +78,14 @@ public class UpdateExerciseCommand : IRequest<int>
     }
 }
 
-internal sealed class UpdateExerciseCommandHandler : AbstractCommandHandler<UpdateExerciseCommand, int>
+internal sealed class UpdateExerciseCommandHandler : AbstractCommandHandler<UpdateExerciseCommand, Unit>
 {
     public UpdateExerciseCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
     {
     }
 
-    public override async Task<int> Handle(UpdateExerciseCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(UpdateExerciseCommand request, CancellationToken ct)
     {
         Exercise? exercise = await DbContext.Exercises
             .WhereIf(IsInRole(Roles.Instructor), x => x.CreatorId == CurrentUserId)
@@ -141,6 +141,6 @@ internal sealed class UpdateExerciseCommandHandler : AbstractCommandHandler<Upda
                 x.StarterCode));
         await DbContext.ExerciseDefaultCodes.AddRangeAsync(exerciseDefaultCodes, ct);
 
-        return Codes.Success;
+        return Unit.Value;
     }
 }

@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace CourseMate.Application.Commands.Files;
 
-public class UploadVideoChunkCommand : IRequest<int>
+public class UploadVideoChunkCommand : IRequest<Unit>
 {
     public Guid FileId { get; set; }
 
@@ -23,7 +23,7 @@ public class UploadVideoChunkCommand : IRequest<int>
     public byte[] Content { get; set; } = [];
 }
 
-internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<UploadVideoChunkCommand, int>
+internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<UploadVideoChunkCommand, Unit>
 {
     private readonly IEnumerable<string> _allowedImageExtensions = [".mp4"];
     private readonly StorageOptions _storageOptions;
@@ -37,7 +37,7 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
         _storageOptions = storageOptions.Value;
     }
 
-    public override async Task<int> Handle(UploadVideoChunkCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(UploadVideoChunkCommand request, CancellationToken ct)
     {
         if (!_allowedImageExtensions.Contains(Path.GetExtension(request.FileName), StringComparer.InvariantCultureIgnoreCase))
         {
@@ -81,6 +81,6 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
         await DbContext.FileChunks.AddAsync(fileChunk, ct);
         fileEntry.UploadedChunks += 1;
         DbContext.FileEntries.Update(fileEntry);
-        return Codes.Success;
+        return Unit.Value;
     }
 }

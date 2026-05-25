@@ -1,5 +1,4 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.Constants;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using CourseMate.Persistent.ExtensionMethods;
@@ -9,12 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Orders;
 
-public class DeleteCartCommand : IRequest<int>
+public class DeleteCartCommand : IRequest<Unit>
 {
     public Guid CartItemId { get; init; }
 }
 
-internal sealed class DeleteCartCommandHandler : AbstractCommandHandler<DeleteCartCommand, int>
+internal sealed class DeleteCartCommandHandler : AbstractCommandHandler<DeleteCartCommand, Unit>
 {
     public DeleteCartCommandHandler(
         CourseMateDbContext dbContext,
@@ -22,23 +21,23 @@ internal sealed class DeleteCartCommandHandler : AbstractCommandHandler<DeleteCa
     {
     }
 
-    public override async Task<int> Handle(DeleteCartCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(DeleteCartCommand request, CancellationToken ct)
     {
         Guid studentId = CurrentUserId;
 
         Cart? cart = await DbContext.Carts.FirstOrDefaultAsync(c => c.StudentId == studentId, ct);
         if (cart == null)
         {
-            return Codes.Success;
+            return Unit.Value;
         }
 
         CartItem? cartItem = await DbContext.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cart.Id && ci.Id == request.CartItemId, ct);
         if (cartItem == null)
         {
-            return Codes.Success;
+            return Unit.Value;
         }
 
         await DbContext.CartItems.RemoveByIdAsync(request.CartItemId, ct);
-        return Codes.Success;
+        return Unit.Value;
     }
 }

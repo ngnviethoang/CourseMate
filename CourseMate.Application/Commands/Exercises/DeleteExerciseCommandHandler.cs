@@ -9,19 +9,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Exercises;
 
-public class DeleteExerciseCommand : IRequest<int>
+public class DeleteExerciseCommand : IRequest<Unit>
 {
     public Guid Id { get; set; }
 }
 
-internal sealed class DeleteExerciseCommandHandler : AbstractCommandHandler<DeleteExerciseCommand, int>
+internal sealed class DeleteExerciseCommandHandler : AbstractCommandHandler<DeleteExerciseCommand, Unit>
 {
     public DeleteExerciseCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
     {
     }
 
-    public override async Task<int> Handle(DeleteExerciseCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(DeleteExerciseCommand request, CancellationToken ct)
     {
         Exercise? exercise = await DbContext.Exercises
             .WhereIf(IsInRole(Roles.Instructor), x => x.CreatorId == CurrentUserId)
@@ -33,6 +33,6 @@ internal sealed class DeleteExerciseCommandHandler : AbstractCommandHandler<Dele
         }
 
         DbContext.Exercises.Remove(exercise);
-        return Codes.Success;
+        return Unit.Value;
     }
 }

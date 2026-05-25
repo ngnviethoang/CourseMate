@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Auth;
 
-public class VerifyEmailCommand : IRequest<int>
+public class VerifyEmailCommand : IRequest<Unit>
 {
     [Required]
     public Guid UserId { get; set; }
@@ -15,7 +15,7 @@ public class VerifyEmailCommand : IRequest<int>
     public string Token { get; set; } = string.Empty;
 }
 
-internal sealed class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, int>
+internal sealed class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Unit>
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
@@ -24,7 +24,7 @@ internal sealed class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCom
         _userManager = userManager;
     }
 
-    public async Task<int> Handle(VerifyEmailCommand request, CancellationToken ct)
+    public async Task<Unit> Handle(VerifyEmailCommand request, CancellationToken ct)
     {
         IdentityUser<Guid>? user = await _userManager.FindByIdAsync(request.UserId.ToString());
         if (user == null)
@@ -38,6 +38,6 @@ internal sealed class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCom
             throw new BusinessException(ErrorCode.Unknown, result.Errors.FirstOrDefault()?.Description ?? string.Empty);
         }
 
-        return Codes.Success;
+        return Unit.Value;
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts;
-using CourseMate.Contracts.Constants;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
@@ -10,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Courses;
 
-public class CreateOrUpdateLessonVideoCommand : IRequest<int>
+public class CreateOrUpdateLessonVideoCommand : IRequest<Unit>
 {
     public Guid LessonId { get; set; }
 
@@ -18,14 +17,14 @@ public class CreateOrUpdateLessonVideoCommand : IRequest<int>
     public string VideoUrl { get; set; } = string.Empty;
 }
 
-internal sealed class CreateOrUpdateLessonVideoCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonVideoCommand, int>
+internal sealed class CreateOrUpdateLessonVideoCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonVideoCommand, Unit>
 {
     public CreateOrUpdateLessonVideoCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
     {
     }
 
-    public override async Task<int> Handle(CreateOrUpdateLessonVideoCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(CreateOrUpdateLessonVideoCommand request, CancellationToken ct)
     {
         await EnsureAuthorCourseAsync(request.LessonId, ct);
         LessonVideo? existing = await DbContext.LessonVideos.FirstOrDefaultAsync(v => v.LessonId == request.LessonId, ct);
@@ -38,6 +37,6 @@ internal sealed class CreateOrUpdateLessonVideoCommandHandler : AbstractCommandH
             existing.VideoUrl = request.VideoUrl;
         }
 
-        return Codes.Success;
+        return Unit.Value;
     }
 }

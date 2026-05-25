@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Users;
 
-public class DeleteUserCommand : IRequest<int>
+public class DeleteUserCommand : IRequest<Unit>
 {
     public Guid Id { get; set; }
 }
 
-internal sealed class DeleteUserAbstractCommandHandler : AbstractCommandHandler<DeleteUserCommand, int>
+internal sealed class DeleteUserAbstractCommandHandler : AbstractCommandHandler<DeleteUserCommand, Unit>
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
@@ -25,12 +25,12 @@ internal sealed class DeleteUserAbstractCommandHandler : AbstractCommandHandler<
         _userManager = userManager;
     }
 
-    public override async Task<int> Handle(DeleteUserCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(DeleteUserCommand request, CancellationToken ct)
     {
         IdentityUser<Guid>? user = await _userManager.FindByIdAsync(request.Id.ToString());
         if (user == null)
         {
-            return Codes.Success;
+            return Unit.Value;
         }
 
         IdentityResult result = await _userManager.DeleteAsync(user);
@@ -40,6 +40,6 @@ internal sealed class DeleteUserAbstractCommandHandler : AbstractCommandHandler<
             throw new BusinessException(ErrorCode.Unknown, errors);
         }
 
-        return Codes.Success;
+        return Unit.Value;
     }
 }

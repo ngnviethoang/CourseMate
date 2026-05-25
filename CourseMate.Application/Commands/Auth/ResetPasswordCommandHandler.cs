@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Auth;
 
-public class ResetPasswordCommand : IRequest<int>
+public class ResetPasswordCommand : IRequest<Unit>
 {
     [Required]
     [EmailAddress]
@@ -20,7 +20,7 @@ public class ResetPasswordCommand : IRequest<int>
     public string NewPassword { get; set; } = string.Empty;
 }
 
-internal sealed class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, int>
+internal sealed class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, Unit>
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
@@ -29,7 +29,7 @@ internal sealed class ResetPasswordCommandHandler : IRequestHandler<ResetPasswor
         _userManager = userManager;
     }
 
-    public async Task<int> Handle(ResetPasswordCommand request, CancellationToken ct)
+    public async Task<Unit> Handle(ResetPasswordCommand request, CancellationToken ct)
     {
         IdentityUser<Guid>? user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
@@ -43,6 +43,6 @@ internal sealed class ResetPasswordCommandHandler : IRequestHandler<ResetPasswor
             throw new BusinessException(ErrorCode.Unknown, result.Errors.FirstOrDefault()?.Description ?? string.Empty);
         }
 
-        return Codes.Success;
+        return Unit.Value;
     }
 }
