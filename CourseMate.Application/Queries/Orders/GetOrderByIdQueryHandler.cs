@@ -45,12 +45,22 @@ internal sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderBy
                 Price = item.Price
             }).ToListAsync(ct);
 
+        var student = await DbContext.Users
+            .Where(x => x.Id == order.StudentId)
+            .Select(x => new { x.UserName, x.Email })
+            .FirstOrDefaultAsync(ct);
+
         return new OrderDto
         {
             Id = order.Id,
+            Title = order.Description,
             StudentId = order.StudentId,
+            StudentName = student?.UserName,
+            StudentEmail = student?.Email,
             TotalAmount = order.TotalAmount,
             Status = order.Status,
+            CreationTime = order.CreationTime,
+            LastModificationTime = order.LastModificationTime,
             Items = items
         };
     }

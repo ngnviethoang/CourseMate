@@ -4,8 +4,11 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
+using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using Hangfire;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
@@ -28,28 +31,30 @@ public class RegisterCommand : IRequest<Unit>
     public RegisterRole Role { get; set; }
 }
 
-internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, Unit>
+internal sealed class RegisterCommandHandler : AbstractCommandHandler<RegisterCommand, Unit>
 {
     private readonly IConfiguration _configuration;
-    private readonly IUserEmailStore<IdentityUser<Guid>> _emailStore;
+    private readonly IUserEmailStore<User> _emailStore;
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
-    private readonly IUserStore<IdentityUser<Guid>> _userStore;
+    private readonly UserManager<User> _userManager;
+    private readonly IUserStore<User> _userStore;
 
     public RegisterCommandHandler(
-        UserManager<IdentityUser<Guid>> userManager,
-        IUserStore<IdentityUser<Guid>> userStore,
+        CourseMateDbContext courseMateDbContext,
+        IHttpContextAccessor httpContextAccessor,
+        UserManager<User> userManager,
+        IUserStore<User> userStore,
         RoleManager<IdentityRole<Guid>> roleManager,
-        IConfiguration configuration)
+        IConfiguration configuration) : base(courseMateDbContext, httpContextAccessor)
     {
         _userManager = userManager;
         _userStore = userStore;
         _roleManager = roleManager;
-        _emailStore = (IUserEmailStore<IdentityUser<Guid>>)userStore;
+        _emailStore = (IUserEmailStore<User>)userStore;
         _configuration = configuration;
     }
 
-    public async Task<Unit> Handle(RegisterCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(RegisterCommand request, CancellationToken ct)
     {
         string role = request.Role.ToString();
 
@@ -59,7 +64,7 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
             throw new BusinessException(ErrorCode.RoleNotExists, string.Format("{0} role does not exist.", role));
         }
 
-        IdentityUser<Guid>? existingUser = await _userManager.FindByEmailAsync(request.Email);
+        User? existingUser = await _userManager.FindByEmailAsync(request.Email);
         if (existingUser != null)
         {
             IList<string> existingRoles = await _userManager.GetRolesAsync(existingUser);
@@ -72,7 +77,7 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
             throw new BusinessException(ErrorCode.RoleNotAllowed, "This email is already registered.");
         }
 
-        IdentityUser<Guid> user = new(request.UserName);
+        User user = new(request.UserName);
         await _userStore.SetUserNameAsync(user, request.UserName, CancellationToken.None);
         await _emailStore.SetEmailAsync(user, request.Email, CancellationToken.None);
 

@@ -87,6 +87,7 @@ export interface AdminOrderItemDto {
 
 export interface AdminOrderDto {
   id: string
+  title: string
   studentId: string
   studentName: string
   studentEmail: string
@@ -94,6 +95,7 @@ export interface AdminOrderDto {
   status: string
   itemsCount: number
   creationTime: string
+  lastModificationTime?: string
   items: AdminOrderItemDto[]
 }
 
@@ -271,6 +273,8 @@ export interface UserDto {
   userName?: string
   email?: string
   phoneNumber?: string
+  creationTime: string
+  lastModificationTime?: string
 }
 
 export interface CreateUserRequest {
@@ -382,9 +386,14 @@ export interface OrderItemDto {
 
 export interface OrderDto {
   id: string
+  title: string
   studentId: string
+  studentName?: string
+  studentEmail?: string
   totalAmount: number
   status: string
+  creationTime: string
+  lastModificationTime?: string
   items: OrderItemDto[]
 }
 

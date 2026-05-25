@@ -1,8 +1,11 @@
 using System.ComponentModel.DataAnnotations;
-using CourseMate.Application.Shared;
 using CourseMate.Application.BackgroundJobs;
+using CourseMate.Application.Shared;
+using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using Hangfire;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
@@ -15,22 +18,25 @@ public class ForgotPasswordCommand : IRequest<Unit>
     public string Email { get; set; } = string.Empty;
 }
 
-internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordCommand, Unit>
+internal sealed class ForgotPasswordCommandHandler : AbstractCommandHandler<ForgotPasswordCommand, Unit>
 {
     private readonly IConfiguration _configuration;
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
+    private readonly UserManager<User> _userManager;
 
     public ForgotPasswordCommandHandler(
-        UserManager<IdentityUser<Guid>> userManager,
-        IConfiguration configuration)
+        CourseMateDbContext courseMateDbContext,
+        IHttpContextAccessor httpContextAccessor,
+        UserManager<User> userManager,
+        IConfiguration configuration
+    ) : base(courseMateDbContext, httpContextAccessor)
     {
         _userManager = userManager;
         _configuration = configuration;
     }
 
-    public async Task<Unit> Handle(ForgotPasswordCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(ForgotPasswordCommand request, CancellationToken ct)
     {
-        IdentityUser<Guid>? user = await _userManager.FindByEmailAsync(request.Email);
+        User? user = await _userManager.FindByEmailAsync(request.Email);
 
         // Always return success to avoid user enumeration attacks
         if (user == null || !await _userManager.IsEmailConfirmedAsync(user))

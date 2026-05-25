@@ -58,6 +58,7 @@ export default function OrderDetailPage() {
 
   const statusInfo = STATUS_MAP[order.status] || STATUS_MAP['Draft']
   const StatusIcon = statusInfo.icon
+  const itemCount = order.items?.length ?? 0
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
@@ -169,9 +170,7 @@ export default function OrderDetailPage() {
                 <Package className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="text-xs text-muted-foreground uppercase font-semibold">Số lượng mục</p>
-                  <p className="text-sm">
-                    {order.itemsCount} {order.itemsCount === 1 ? 'mục' : 'mục'}
-                  </p>
+                  <p className="text-sm">{itemCount} mục</p>
                 </div>
               </div>
               <div className="mt-4 pt-4 shadow-md border-0 border-t-0 border-transparent">

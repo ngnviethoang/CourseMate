@@ -8,7 +8,19 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { GraduationCap, ArrowRight, Loader2, Lock, User, Mail, BookOpen, Briefcase, Info, Eye, EyeOff } from 'lucide-react'
+import {
+  GraduationCap,
+  ArrowRight,
+  Loader2,
+  Lock,
+  User,
+  Mail,
+  BookOpen,
+  Briefcase,
+  Info,
+  Eye,
+  EyeOff
+} from 'lucide-react'
 import { authService } from '@/lib/auth-service'
 import { toast } from 'sonner'
 import { RegisterCommand, RegisterRole } from '@/lib/types'
@@ -89,21 +101,21 @@ export default function RegisterPage() {
           <CardContent className="space-y-5">
             <Tabs value={role} className="w-full" onValueChange={val => setRole(val as RegisterRole)}>
               <TabsList className="grid h-11 w-full grid-cols-2 items-stretch overflow-hidden rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800/70">
-                    <TabsTrigger
-                      value={RegisterRole.Student}
-                      className="h-full rounded-lg px-3 text-xs font-semibold data-[state=active]:shadow-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:outline-none"
-                    >
-                      <BookOpen className="mr-2 h-4 w-4" />
-                      Học viên
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value={RegisterRole.Instructor}
-                      className="h-full rounded-lg px-3 text-xs font-semibold data-[state=active]:shadow-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:outline-none"
-                    >
-                      <Briefcase className="mr-2 h-4 w-4" />
-                      Giảng viên
-                    </TabsTrigger>
-                  </TabsList>
+                <TabsTrigger
+                  value={RegisterRole.Student}
+                  className="h-full rounded-lg px-3 text-xs font-semibold data-[state=active]:shadow-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:outline-none"
+                >
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  Học viên
+                </TabsTrigger>
+                <TabsTrigger
+                  value={RegisterRole.Instructor}
+                  className="h-full rounded-lg px-3 text-xs font-semibold data-[state=active]:shadow-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:outline-none"
+                >
+                  <Briefcase className="mr-2 h-4 w-4" />
+                  Giảng viên
+                </TabsTrigger>
+              </TabsList>
 
               <form onSubmit={handleSubmit} className="mt-4 space-y-4" noValidate>
                 <div className="space-y-2">
@@ -164,9 +176,7 @@ export default function RegisterPage() {
                 {role === RegisterRole.Instructor && (
                   <div className="flex items-start gap-2 rounded-lg border border-zinc-200/70 bg-zinc-50/70 p-3 text-xs text-muted-foreground dark:border-zinc-700/70 dark:bg-zinc-900/40">
                     <Info className="h-4 w-4 shrink-0 text-primary" />
-                    <p>
-                      Tài khoản giảng viên cần được quản trị viên phê duyệt trước khi có thể tạo khóa học.
-                    </p>
+                    <p>Tài khoản giảng viên cần được quản trị viên phê duyệt trước khi có thể tạo khóa học.</p>
                   </div>
                 )}
 

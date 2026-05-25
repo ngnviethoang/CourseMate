@@ -11,24 +11,24 @@ public class NotificationService(
     IHubContext<NotificationHub> hubContext,
     CourseMateDbContext dbContext) : INotificationService
 {
-    public async Task SendNotificationToUserAsync(NotificationDto notificationDto, CancellationToken cancellationToken = default)
+    public async Task SendNotificationToUserAsync(NotificationDto notificationDto, CancellationToken ct = default)
     {
         await hubContext.Clients.User(notificationDto.ReceiverId.ToString())
-            .SendAsync("ReceiveNotification", notificationDto, cancellationToken);
+            .SendAsync("ReceiveNotification", notificationDto, ct);
     }
 
-    public async Task NotifyDocumentProcessedAsync(NotificationDto notificationDto, CancellationToken cancellationToken = default)
+    public async Task NotifyDocumentProcessedAsync(NotificationDto notificationDto, CancellationToken ct = default)
     {
         await hubContext.Clients.User(notificationDto.ReceiverId.ToString())
-            .SendAsync("DocumentProcessed", notificationDto, cancellationToken);
+            .SendAsync("DocumentProcessed", notificationDto, ct);
     }
 
-    public async Task<NotificationDto> CreateAndSendAsync(Guid receiverId, string title, string message, CancellationToken cancellationToken = default)
+    public async Task<NotificationDto> CreateAndSendAsync(Guid receiverId, string title, string message, CancellationToken ct = default)
     {
         // 1. Persist to database
         Notification notification = new(Guid.NewGuid(), receiverId, title, message, false);
-        await dbContext.Notifications.AddAsync(notification, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.Notifications.AddAsync(notification, ct);
+        await dbContext.SaveChangesAsync(ct);
 
         // 2. Build DTO
         NotificationDto dto = new()
@@ -43,7 +43,7 @@ public class NotificationService(
 
         // 3. Push via SignalR
         await hubContext.Clients.User(receiverId.ToString())
-            .SendAsync("ReceiveNotification", dto, cancellationToken);
+            .SendAsync("ReceiveNotification", dto, ct);
 
         return dto;
     }

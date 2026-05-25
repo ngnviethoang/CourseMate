@@ -1,8 +1,16 @@
 import { api } from './api-client'
-import type { ExerciseDto, ExerciseDetailDto, CreateExerciseRequest, UpdateExerciseRequest, PagedDto } from './types'
+import type {
+  ExerciseDto,
+  ExerciseDetailDto,
+  CreateExerciseRequest,
+  UpdateExerciseRequest,
+  PagedDto,
+  ResultIdDto
+} from './types'
 
 export const exerciseService = {
   getList: (params: {
+    id?: string
     pageIndex?: number
     pageSize?: number
     filter?: string
@@ -15,18 +23,19 @@ export const exerciseService = {
 
   getStudentExerciseById: (id: string) => api.get<ExerciseDetailDto>(`/api/exercises/${id}/student`),
 
-  getSubmissions: (id: string) => api.get<any[]>(`/api/exercises/${id}/submissions`),
+  getSubmissions: (id: string) => api.get<unknown[]>(`/api/exercises/${id}/submissions`),
 
-  create: (data: CreateExerciseRequest) => api.post<string>('/api/exercises', data),
+  create: (data: CreateExerciseRequest) => api.post<ResultIdDto>('/api/exercises', data),
 
   update: (data: UpdateExerciseRequest) => api.put(`/api/exercises/${data.id}`, data),
 
   delete: (id: string) => api.delete(`/api/exercises/${id}`),
 
   // Test Cases
-  addTestCase: (exerciseId: string, data: any) => api.post<any>(`/api/exercises/${exerciseId}/test-cases`, data),
+  addTestCase: (exerciseId: string, data: unknown) =>
+    api.post<unknown>(`/api/exercises/${exerciseId}/test-cases`, data),
 
-  updateTestCase: (exerciseId: string, tcId: string, data: any) =>
+  updateTestCase: (exerciseId: string, tcId: string, data: unknown) =>
     api.put(`/api/exercises/${exerciseId}/test-cases/${tcId}`, data),
 
   deleteTestCase: (exerciseId: string, tcId: string) => api.delete(`/api/exercises/${exerciseId}/test-cases/${tcId}`),
@@ -36,5 +45,6 @@ export const exerciseService = {
     api.post(`/api/exercises/${exerciseId}/default-codes`, data),
 
   // Submissions
-  submitExercise: (exerciseId: string, data: any) => api.post<any>(`/api/exercises/${exerciseId}/submissions`, data)
+  submitExercise: (exerciseId: string, data: unknown) =>
+    api.post<unknown>(`/api/exercises/${exerciseId}/submissions`, data)
 }

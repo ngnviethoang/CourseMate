@@ -4,6 +4,7 @@ using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -30,12 +31,12 @@ public class CreateUserCommand : IRequest<ResultIdDto>
 internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUserCommand, ResultIdDto>
 {
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
+    private readonly UserManager<User> _userManager;
 
     public CreateUserCommandHandler(
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor,
-        UserManager<IdentityUser<Guid>> userManager,
+        UserManager<User> userManager,
         RoleManager<IdentityRole<Guid>> roleManager
     ) : base(dbContext, httpContextAccessor)
     {
@@ -51,7 +52,7 @@ internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUs
             throw new BusinessException(ErrorCode.RoleNotExists, string.Format("{0} role does not exist.", request.Role));
         }
 
-        IdentityUser<Guid> user = new()
+        User user = new()
         {
             UserName = request.UserName,
             Email = request.Email,

@@ -44,6 +44,7 @@ internal sealed class GetContestByIdQueryHandler : AbstractQueryHandler<GetConte
                 CreatorId = contest.CreatorId,
                 CreatorName = user.UserName,
                 CreationTime = contest.CreationTime,
+                LastModificationTime = contest.LastModificationTime,
                 ExerciseCount = DbContext.ContestExercises.Count(x => x.ContestId == contest.Id),
                 ParticipantCount = DbContext.ContestRegistrations.Count(x => x.ContestId == contest.Id),
                 IsRegistered = DbContext.ContestRegistrations.Any(x => x.ContestId == contest.Id && x.StudentId == CurrentUserId)

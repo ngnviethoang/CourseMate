@@ -31,7 +31,8 @@ import { Switch } from '@/components/ui/switch'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 const columns: Column<CourseDto>[] = [
-  { key: 'title', header: 'Tiêu đề', sortKey: 'title' },
+  { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
+  { key: 'title', header: 'Title', sortKey: 'title' },
   { key: 'categoryName', header: 'Danh mục' },
   { key: 'instructorName', header: 'Giảng viên' },
   {
@@ -47,10 +48,15 @@ const columns: Column<CourseDto>[] = [
       <Badge variant={row.isPublished ? 'default' : 'secondary'}>{row.isPublished ? 'Đã xuất bản' : 'Bản nháp'}</Badge>
     )
   },
-  { key: 'creationTime', header: 'Ngày tạo', sortKey: 'creationTime', render: row => formatDate(row.creationTime) },
+  {
+    key: 'creationTime',
+    header: 'Creation Time',
+    sortKey: 'creationTime',
+    render: row => formatDate(row.creationTime)
+  },
   {
     key: 'lastModificationTime',
-    header: 'Cập nhật',
+    header: 'Last Modification Time',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }
@@ -70,7 +76,9 @@ export default function CoursesPage() {
   const router = useRouter()
   const [items, setItems] = useState<CourseDto[]>([])
   const [loading, setLoading] = useState(true)
+  const [idFilter, setIdFilter] = useState('')
   const [filter, setFilter] = useState('')
+  const [categoryFilterId, setCategoryFilterId] = useState('')
   const [sorting, setSorting] = useState('creationTime_desc')
   const [pageIndex, setPageIndex] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
@@ -100,19 +108,37 @@ export default function CoursesPage() {
     setCurrentUserId(getUserId())
   }, [])
 
+  useEffect(() => {
+    categoryService
+      .list({ pageSize: 100, sorting: 'name', hasCourse: true })
+      .then(res => setCategories(res.items))
+      .catch(() => setCategories([]))
+  }, [])
+
   const isAdmin = userRole.includes('Admin')
   const isInstructor = userRole.includes('Instructor') && !isAdmin
 
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await courseService.list({ filter, pageSize, pageIndex, sorting })
+      const res = await courseService.list({
+        id: idFilter.trim() || undefined,
+        filter,
+        pageSize,
+        pageIndex,
+        sorting,
+        categoryId: categoryFilterId || undefined
+      })
       setItems(res.items)
       setTotalCount(res.totalCount)
     } finally {
       setLoading(false)
     }
-  }, [filter, sorting, pageIndex])
+  }, [idFilter, filter, categoryFilterId, sorting, pageIndex])
+
+  useEffect(() => {
+    setPageIndex(0)
+  }, [idFilter, filter, categoryFilterId, sorting])
 
   useEffect(() => {
     const t = setTimeout(load, 300)
@@ -249,8 +275,8 @@ export default function CoursesPage() {
         </Button>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-md">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 min-w-[220px] max-w-md">
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
           <Input
             className="pl-11 h-12 text-base rounded-xl -muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all"
@@ -259,26 +285,42 @@ export default function CoursesPage() {
             onChange={e => setFilter(e.target.value)}
           />
         </div>
+        <Input
+          className="h-12 min-w-[220px] max-w-md font-mono"
+          placeholder="Filter theo ID..."
+          value={idFilter}
+          onChange={e => setIdFilter(e.target.value)}
+        />
+        <select
+          value={categoryFilterId}
+          onChange={e => setCategoryFilterId(e.target.value)}
+          className="h-12 min-w-[220px] rounded-xl -input bg-background px-3 text-sm focus:outline-none"
+        >
+          <option value="">Tất cả danh mục</option>
+          {categories.map(category => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
       </div>
 
-      <div className="rounded-2xl bg-card shadow-md border-0 shadow-xl shadow-foreground/5 overflow-hidden">
-        <DataTable
-          columns={columns.filter(c => isAdmin || c.key !== 'instructorName')}
-          data={items}
-          loading={loading}
-          sorting={sorting}
-          onSort={setSorting}
-          onView={row => router.push(`/management/courses/${row.id}`)}
-          onEdit={openEdit}
-          onDelete={setDeleteId}
-          pagination={{
-            pageIndex,
-            pageSize,
-            totalCount,
-            onPageChange: setPageIndex
-          }}
-        />
-      </div>
+      <DataTable
+        columns={columns.filter(c => isAdmin || c.key !== 'instructorName')}
+        data={items}
+        loading={loading}
+        sorting={sorting}
+        onSort={setSorting}
+        onView={row => router.push(`/management/courses/${row.id}`)}
+        onEdit={openEdit}
+        onDelete={setDeleteId}
+        pagination={{
+          pageIndex,
+          pageSize,
+          totalCount,
+          onPageChange: setPageIndex
+        }}
+      />
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-4xl p-0 gap-0 overflow-hidden rounded-2xl shadow-2xl">

@@ -45,6 +45,7 @@ internal sealed class GetListExercisesQueryHandler : AbstractQueryHandler<GetLis
 
         query = query
             .WhereIf(IsInRole(Roles.Instructor), x => x.CreatedById == CurrentUserId)
+            .WhereIf(request.Id.HasValue, x => x.Id == request.Id)
             .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
             .WhereIf(!string.IsNullOrWhiteSpace(request.Difficulty), x => x.Difficulty == request.Difficulty)
             .WhereIf(!string.IsNullOrWhiteSpace(request.Category), x => EF.Functions.ILike(x.Category, $"%{request.Category}%"));

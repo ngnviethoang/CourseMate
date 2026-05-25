@@ -5,6 +5,7 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
@@ -25,12 +26,12 @@ internal sealed class GoogleCallbackCommandHandler : AbstractCommandHandler<Goog
 {
     private const string Provider = "Google";
     private readonly IConfiguration _configuration;
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
+    private readonly UserManager<User> _userManager;
 
     public GoogleCallbackCommandHandler(
         CourseMateDbContext courseMateDbContext,
         IHttpContextAccessor httpContextAccessor,
-        UserManager<IdentityUser<Guid>> userManager,
+        UserManager<User> userManager,
         IConfiguration configuration
     ) : base(courseMateDbContext, httpContextAccessor)
     {
@@ -59,10 +60,10 @@ internal sealed class GoogleCallbackCommandHandler : AbstractCommandHandler<Goog
             AuthenticationProperties = auth.Properties
         };
 
-        IdentityUser<Guid>? user = await _userManager.FindByEmailAsync(email);
+        User? user = await _userManager.FindByEmailAsync(email);
         if (user == null)
         {
-            user = new IdentityUser<Guid>
+            user = new User
             {
                 Id = Guid.NewGuid(),
                 UserName = email,
@@ -88,7 +89,7 @@ internal sealed class GoogleCallbackCommandHandler : AbstractCommandHandler<Goog
             errors.AddRange(addRoleResult.Errors);
         }
 
-        IdentityUser<Guid>? existingLoginUser = await _userManager.FindByLoginAsync(Provider, nameIdentifier);
+        User? existingLoginUser = await _userManager.FindByLoginAsync(Provider, nameIdentifier);
         if (existingLoginUser == null)
         {
             IdentityResult addLoginResult = await _userManager.AddLoginAsync(user, info);

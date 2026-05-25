@@ -1,8 +1,10 @@
 import { api } from './api-client'
 import { PagedDto, CategoryDto, CreateCategoryRequest, UpdateCategoryRequest, ResultIdDto } from './types'
+import { isGuid } from './utils'
 
 export const categoryService = {
   list: async (params?: {
+    id?: string
     filter?: string
     hasCourse?: boolean
     pageIndex?: number
@@ -10,8 +12,10 @@ export const categoryService = {
     sorting?: string
   }) => {
     const qs = new URLSearchParams()
+    const id = params?.id?.trim()
+    if (isGuid(id)) qs.set('id', id)
     if (params?.filter) qs.set('filter', params.filter)
-    if (params?.hasCourse) qs.set('hasCourse', String(params.hasCourse))
+    if (params?.hasCourse != null) qs.set('hasCourse', String(params.hasCourse))
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
     if (params?.sorting) qs.set('sorting', params.sorting)

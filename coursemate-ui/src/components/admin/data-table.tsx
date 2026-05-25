@@ -64,35 +64,35 @@ export function DataTable<T extends { id: string }>({
   }
 
   return (
-    <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
+    <div className="rounded-xl bg-card shadow-md border-0 overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted/50 hover:bg-muted/50">
+          <TableRow className="bg-muted/40 hover:bg-muted/40">
             {columns.map(col => (
               <TableHead
                 key={String(col.key)}
-                className={col.sortKey && onSort ? 'cursor-pointer select-none hover:text-primary' : ''}
+                className={`px-4 py-3 font-medium text-muted-foreground ${
+                  col.sortKey && onSort ? 'cursor-pointer select-none hover:text-foreground' : ''
+                }`}
                 onClick={() => col.sortKey && handleSort(col.sortKey)}
               >
-                <span className="inline-flex items-center font-semibold text-xs uppercase tracking-wide">
+                <span className="inline-flex items-center">
                   {col.header}
                   {col.sortKey && onSort && <SortIcon sortKey={col.sortKey} />}
                 </span>
               </TableHead>
             ))}
             {hasActions && (
-              <TableHead className="w-24 text-right">
-                <span className="font-semibold text-xs uppercase tracking-wide">Thao tác</span>
-              </TableHead>
+              <TableHead className="w-24 px-4 py-3 text-right font-medium text-muted-foreground">Thao tác</TableHead>
             )}
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody className="divide-y divide-border/60 [&_tr]:border-b-0">
           {data.length === 0 ? (
             <TableRow>
               <TableCell
                 colSpan={columns.length + (hasActions ? 1 : 0)}
-                className="h-24 text-center text-muted-foreground text-sm"
+                className="px-4 py-16 text-center text-sm text-muted-foreground"
               >
                 Không có dữ liệu.
               </TableCell>
@@ -105,12 +105,12 @@ export function DataTable<T extends { id: string }>({
                 onClick={() => onView?.(row)}
               >
                 {columns.map(col => (
-                  <TableCell key={String(col.key)} className="text-sm">
+                  <TableCell key={String(col.key)} className="px-4 py-3 text-sm">
                     {col.render ? col.render(row) : String((row as Record<string, unknown>)[col.key as string] ?? '')}
                   </TableCell>
                 ))}
                 {hasActions && (
-                  <TableCell className="text-right">
+                  <TableCell className="px-4 py-3 text-right">
                     <div className="flex justify-end gap-1">
                       {onEdit && (
                         <button
@@ -118,9 +118,9 @@ export function DataTable<T extends { id: string }>({
                             e.stopPropagation()
                             onEdit(row)
                           }}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                          className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
                         >
-                          <Pencil className="h-4 w-4" />
+                          <Pencil className="h-3.5 w-3.5" />
                         </button>
                       )}
                       {onDelete && (
@@ -129,9 +129,9 @@ export function DataTable<T extends { id: string }>({
                             e.stopPropagation()
                             onDelete(row.id)
                           }}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                          className="inline-flex h-7 w-7 items-center justify-center rounded-md text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       )}
                     </div>

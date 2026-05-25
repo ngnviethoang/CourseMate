@@ -28,7 +28,9 @@ internal sealed class GetUserByIdQueryHandler : AbstractQueryHandler<GetUserById
                 Id = x.Id,
                 UserName = x.UserName,
                 Email = x.Email,
-                PhoneNumber = x.PhoneNumber
+                PhoneNumber = x.PhoneNumber,
+                CreationTime = x.CreationTime,
+                LastModificationTime = x.LastModificationTime
             })
             .FirstOrDefaultAsync(ct);
 

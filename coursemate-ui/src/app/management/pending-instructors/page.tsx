@@ -18,10 +18,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
+import { formatDate } from '@/lib/utils'
 
 export default function PendingInstructorsPage() {
   const [items, setItems] = useState<UserDto[]>([])
   const [loading, setLoading] = useState(true)
+  const [idFilter, setIdFilter] = useState('')
   const [filter, setFilter] = useState('')
   const [sorting, setSorting] = useState('')
   const [approveId, setApproveId] = useState<string | null>(null)
@@ -69,11 +71,18 @@ export default function PendingInstructorsPage() {
   }
 
   const columns: Column<UserDto>[] = [
-    { key: 'userName', header: 'Tên đăng nhập' },
+    { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
+    { key: 'userName', header: 'Title', render: row => row.userName ?? row.email ?? '—' },
     { key: 'email', header: 'Email' },
     { key: 'phoneNumber', header: 'Số điện thoại' },
+    { key: 'creationTime', header: 'Creation Time', render: row => formatDate(row.creationTime) },
     {
-      key: 'id',
+      key: 'lastModificationTime',
+      header: 'Last Modification Time',
+      render: row => formatDate(row.lastModificationTime)
+    },
+    {
+      key: 'actions',
       header: 'Thao tác',
       render: row => (
         <div className="flex items-center gap-2">
@@ -109,13 +118,21 @@ export default function PendingInstructorsPage() {
         </div>
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative max-w-sm flex-1 min-w-[220px]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="pl-9"
+            placeholder="Tìm giảng viên chờ duyệt..."
+            value={filter}
+            onChange={e => setFilter(e.target.value)}
+          />
+        </div>
         <Input
-          className="pl-9"
-          placeholder="Tìm giảng viên chờ duyệt..."
-          value={filter}
-          onChange={e => setFilter(e.target.value)}
+          className="max-w-sm min-w-[220px] font-mono"
+          placeholder="Filter theo ID..."
+          value={idFilter}
+          onChange={e => setIdFilter(e.target.value)}
         />
       </div>
 

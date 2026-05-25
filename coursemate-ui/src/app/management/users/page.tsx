@@ -21,11 +21,25 @@ import {
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 import { Label } from '@/components/ui/label'
+import { formatDate } from '@/lib/utils'
 
 const columns: Column<UserDto>[] = [
-  { key: 'userName', header: 'Tên đăng nhập' },
+  { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
+  { key: 'userName', header: 'Title', sortKey: 'userName', render: row => row.userName ?? row.email ?? '—' },
   { key: 'email', header: 'Email' },
-  { key: 'phoneNumber', header: 'Số điện thoại' }
+  { key: 'phoneNumber', header: 'Số điện thoại' },
+  {
+    key: 'creationTime',
+    header: 'Creation Time',
+    sortKey: 'creationTime',
+    render: row => formatDate(row.creationTime)
+  },
+  {
+    key: 'lastModificationTime',
+    header: 'Last Modification Time',
+    sortKey: 'lastModificationTime',
+    render: row => formatDate(row.lastModificationTime)
+  }
 ]
 
 const emptyCreate: CreateUserRequest = { userName: '', email: '', phoneNumber: '', password: '', role: 'Student' }
@@ -34,8 +48,12 @@ const emptyUpdate: UpdateUserRequest = { userName: '', email: '', phoneNumber: '
 export default function UsersPage() {
   const [items, setItems] = useState<UserDto[]>([])
   const [loading, setLoading] = useState(true)
+  const [idFilter, setIdFilter] = useState('')
   const [filter, setFilter] = useState('')
-  const [sorting, setSorting] = useState('')
+  const [sorting, setSorting] = useState('creationTime_desc')
+  const [pageIndex, setPageIndex] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
+  const pageSize = 10
   const [dialogOpen, setDialogOpen] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [editing, setEditing] = useState<UserDto | null>(null)
@@ -46,12 +64,23 @@ export default function UsersPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await userService.list({ filter, pageSize: 10, sorting })
+      const res = await userService.list({
+        id: idFilter.trim() || undefined,
+        filter,
+        pageIndex,
+        pageSize,
+        sorting
+      })
       setItems(res.items)
+      setTotalCount(res.totalCount)
     } finally {
       setLoading(false)
     }
-  }, [filter, sorting])
+  }, [idFilter, filter, pageIndex, pageSize, sorting])
+
+  useEffect(() => {
+    setPageIndex(0)
+  }, [idFilter, filter, sorting])
 
   useEffect(() => {
     const t = setTimeout(load, 300)
@@ -106,13 +135,21 @@ export default function UsersPage() {
         </Button>
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative max-w-sm flex-1 min-w-[220px]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="pl-9"
+            placeholder="Tìm người dùng..."
+            value={filter}
+            onChange={e => setFilter(e.target.value)}
+          />
+        </div>
         <Input
-          className="pl-9"
-          placeholder="Tìm người dùng..."
-          value={filter}
-          onChange={e => setFilter(e.target.value)}
+          className="max-w-sm min-w-[220px] font-mono"
+          placeholder="Filter theo ID..."
+          value={idFilter}
+          onChange={e => setIdFilter(e.target.value)}
         />
       </div>
 
@@ -124,6 +161,12 @@ export default function UsersPage() {
         onSort={setSorting}
         onEdit={openEdit}
         onDelete={setDeleteId}
+        pagination={{
+          pageIndex,
+          pageSize,
+          totalCount,
+          onPageChange: setPageIndex
+        }}
       />
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

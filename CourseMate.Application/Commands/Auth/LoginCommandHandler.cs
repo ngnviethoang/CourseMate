@@ -3,7 +3,10 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Exceptions;
+using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
@@ -20,31 +23,28 @@ public class LoginCommand : IRequest<LoginResponse>
     public string Password { get; set; } = string.Empty;
 }
 
-internal sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponse>
+internal sealed class LoginCommandHandler : AbstractCommandHandler<LoginCommand, LoginResponse>
 {
     private readonly IConfiguration _configuration;
-    private readonly SignInManager<IdentityUser<Guid>> _signInManager;
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;
 
     public LoginCommandHandler(
-        SignInManager<IdentityUser<Guid>> signInManager,
+        CourseMateDbContext courseMateDbContext,
+        IHttpContextAccessor httpContextAccessor,
+        SignInManager<User> signInManager,
         IConfiguration configuration,
-        UserManager<IdentityUser<Guid>> userManager)
+        UserManager<User> userManager) : base(courseMateDbContext, httpContextAccessor)
     {
         _signInManager = signInManager;
         _configuration = configuration;
         _userManager = userManager;
     }
 
-    public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken ct)
+    public override async Task<LoginResponse> Handle(LoginCommand request, CancellationToken ct)
     {
         // Allow login by username OR email
-        IdentityUser<Guid>? user = await _userManager.FindByNameAsync(request.UserName);
-        if (user == null)
-        {
-            user = await _userManager.FindByEmailAsync(request.UserName);
-        }
-
+        User? user = await _userManager.FindByNameAsync(request.UserName) ?? await _userManager.FindByEmailAsync(request.UserName);
         if (user == null)
         {
             throw new BusinessException(ErrorCode.InvalidUsernameOrPassword, "Invalid username or password.");

@@ -3,6 +3,7 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts;
 using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -21,10 +22,10 @@ public class GoogleSignInCommand : IRequest<AuthenticationProperties>
 
 internal sealed class StartGoogleSignInCommandHandler : AbstractCommandHandler<GoogleSignInCommand, AuthenticationProperties>
 {
-    private readonly SignInManager<IdentityUser<Guid>> _signInManager;
+    private readonly SignInManager<User> _signInManager;
 
     public StartGoogleSignInCommandHandler(
-        SignInManager<IdentityUser<Guid>> signInManager,
+        SignInManager<User> signInManager,
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {

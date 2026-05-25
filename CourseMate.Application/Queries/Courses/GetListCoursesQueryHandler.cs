@@ -52,6 +52,7 @@ internal sealed class GetListCoursesQueryHandler
 
         query = query
             .Where(x => x.IsPublished || isAdmin || (isInstructor && x.InstructorId == userId))
+            .WhereIf(request.Id.HasValue, x => x.Id == request.Id)
             .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
             .WhereIf(request.CategoryId.HasValue, x => x.CategoryId == request.CategoryId);
 

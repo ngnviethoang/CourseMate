@@ -43,6 +43,7 @@ internal sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetList
                 CreatorId = contest.CreatorId,
                 CreatorName = user.UserName,
                 CreationTime = contest.CreationTime,
+                LastModificationTime = contest.LastModificationTime,
                 ExerciseCount = DbContext.ContestExercises.Count(x => x.ContestId == contest.Id),
                 ParticipantCount = DbContext.ContestRegistrations.Count(x => x.ContestId == contest.Id)
             };
@@ -50,6 +51,7 @@ internal sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetList
         query = query
             .WhereIf(IsInRole(Roles.Instructor), x => x.CreatorId == CurrentUserId)
             .WhereIf(IsInRole(Roles.Student), x => x.Status != ContestStatus.Draft)
+            .WhereIf(request.Id.HasValue, x => x.Id == request.Id)
             .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
             .WhereIf(request.Status.HasValue, x => x.Status == request.Status);
 
@@ -59,6 +61,7 @@ internal sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetList
             "title_desc" => query.OrderByDescending(x => x.Title),
             "startTime" => query.OrderBy(x => x.StartTime),
             "startTime_desc" => query.OrderByDescending(x => x.StartTime),
+            "lastModificationTime_desc" => query.OrderByDescending(x => x.LastModificationTime),
             _ => query.OrderByDescending(x => x.CreationTime)
         };
 

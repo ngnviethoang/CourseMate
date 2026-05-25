@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Persistent;
 
-public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
+public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     private const string SoftDeletionFilter = "SoftDeletionFilter";
 

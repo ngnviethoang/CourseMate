@@ -47,7 +47,9 @@ internal sealed class GetMyCoursesQueryHandler : AbstractQueryHandler<GetMyCours
                 LastModificationTime = course.LastModificationTime
             };
 
-        query = query.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
+        query = query
+            .WhereIf(request.Id.HasValue, x => x.Id == request.Id)
+            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
         query = request.Sorting switch
         {
             "title" => query.OrderBy(x => x.Title),

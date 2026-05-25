@@ -1,7 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
+using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Auth;
@@ -15,18 +19,22 @@ public class VerifyEmailCommand : IRequest<Unit>
     public string Token { get; set; } = string.Empty;
 }
 
-internal sealed class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Unit>
+internal sealed class VerifyEmailCommandHandler : AbstractCommandHandler<VerifyEmailCommand, Unit>
 {
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
+    private readonly UserManager<User> _userManager;
 
-    public VerifyEmailCommandHandler(UserManager<IdentityUser<Guid>> userManager)
+    public VerifyEmailCommandHandler(
+        CourseMateDbContext courseMateDbContext,
+        IHttpContextAccessor httpContextAccessor,
+        UserManager<User> userManager
+    ) : base(courseMateDbContext, httpContextAccessor)
     {
         _userManager = userManager;
     }
 
-    public async Task<Unit> Handle(VerifyEmailCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(VerifyEmailCommand request, CancellationToken ct)
     {
-        IdentityUser<Guid>? user = await _userManager.FindByIdAsync(request.UserId.ToString());
+        User? user = await _userManager.FindByIdAsync(request.UserId.ToString());
         if (user == null)
         {
             throw new EntityNotFoundException(nameof(user), request.UserId);

@@ -17,6 +17,8 @@ public abstract class GetListQuery<T> : IRequest<PagedDto<T>> where T : class
     [MaxLength(100)]
     public string? Filter { get; set; }
 
+    public Guid? Id { get; set; }
+
     public DateTime? From { get; set; }
 
     public DateTime? To { get; set; }

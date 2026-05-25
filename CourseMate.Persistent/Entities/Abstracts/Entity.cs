@@ -2,7 +2,7 @@
 
 namespace CourseMate.Persistent.Entities.Abstracts;
 
-public abstract class Entity : IAuditable, ISoftDelete
+public abstract class Entity : IAuditable, ISoftDelete, IMayHaveUser
 {
     protected Entity(Guid id)
     {
@@ -14,11 +14,11 @@ public abstract class Entity : IAuditable, ISoftDelete
     [Timestamp]
     public uint RowVersion { get; set; }
 
-    public Guid? UserId { get; set; }
-
     public DateTimeOffset CreationTime { get; set; }
 
     public DateTimeOffset? LastModificationTime { get; set; }
+
+    public Guid? UserId { get; set; }
 
     public bool IsDeleted { get; set; }
 }

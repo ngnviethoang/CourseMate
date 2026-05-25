@@ -4,22 +4,11 @@ import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import {
-  Plus,
-  Search,
-  Filter,
-  Pencil,
-  Trash2,
-  Eye,
-  Loader2,
-  Code2,
-  CheckCircle2,
-  ChevronLeft,
-  ChevronRight
-} from 'lucide-react'
+import { Plus, Search, Filter, Pencil, Trash2, Loader2, Code2, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api-client'
 import { exerciseService } from '@/lib/exercise-service'
+import { formatDate, isGuid } from '@/lib/utils'
 import {
   Dialog,
   DialogContent,
@@ -39,6 +28,7 @@ interface ExerciseDto {
   createdByName?: string
   testCaseCount: number
   creationTime: string
+  lastModificationTime?: string
 }
 
 interface PagedDto<T> {
@@ -61,6 +51,7 @@ export default function ExercisesManagementPage() {
   const [data, setData] = useState<PagedDto<ExerciseDto> | null>(null)
   const [loading, setLoading] = useState(true)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [idFilter, setIdFilter] = useState('')
   const [filter, setFilter] = useState('')
   const [difficulty, setDifficulty] = useState('')
   const [page, setPage] = useState(1)
@@ -87,6 +78,7 @@ export default function ExercisesManagementPage() {
       const params = new URLSearchParams({
         pageIndex: String(page),
         pageSize: String(pageSize),
+        ...(isGuid(idFilter) && { id: idFilter.trim() }),
         ...(filter && { filter }),
         ...(difficulty && { difficulty })
       })
@@ -97,7 +89,7 @@ export default function ExercisesManagementPage() {
     } finally {
       setLoading(false)
     }
-  }, [page, filter, difficulty])
+  }, [page, idFilter, filter, difficulty])
 
   useEffect(() => {
     fetchData()
@@ -121,10 +113,10 @@ export default function ExercisesManagementPage() {
         testCases: [],
         defaultCodes: []
       }
-      const res = (await exerciseService.create(payload)) as any
+      const res = await exerciseService.create(payload)
       toast.success('Đã tạo bài tập! Tiếp tục thêm chi tiết.')
       setOpenNewModal(false)
-      router.push(`/management/exercises/${res.id || res}`)
+      router.push(`/management/exercises/${res.id}`)
     } catch {
       toast.error('Tạo bài tập thất bại')
     } finally {
@@ -258,6 +250,16 @@ export default function ExercisesManagementPage() {
             className="w-full pl-9 pr-4 py-2 text-sm -input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
+        <input
+          type="text"
+          placeholder="Filter theo ID..."
+          value={idFilter}
+          onChange={e => {
+            setIdFilter(e.target.value)
+            setPage(1)
+          }}
+          className="w-full max-w-sm px-3 py-2 text-sm font-mono -input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+        />
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-muted-foreground" />
           <select
@@ -277,22 +279,24 @@ export default function ExercisesManagementPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-xl bg-card shadow-md border-0 overflow-hidden shadow-md border-0">
+      <div className="rounded-xl bg-card shadow-md border-0 overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="shadow-md border-0 border-b-0 bg-muted/40">
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground w-8">#</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Tiêu đề</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Danh mục</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground">ID</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Title</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Độ khó</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Danh mục</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">
-                Bộ kiểm thử
+                Creation Time
               </th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden xl:table-cell">Người tạo</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden xl:table-cell">
+                Last Modification Time
+              </th>
               <th className="text-right px-4 py-3 font-medium text-muted-foreground">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-">
+          <tbody className="divide-y divide-border/60">
             {loading ? (
               <tr>
                 <td colSpan={7} className="py-16 text-center">
@@ -309,31 +313,28 @@ export default function ExercisesManagementPage() {
                 </td>
               </tr>
             ) : (
-              data?.items.map((ex, idx) => (
+              data?.items.map(ex => (
                 <tr key={ex.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="px-4 py-3 text-muted-foreground text-xs">{(page - 1) * pageSize + idx + 1}</td>
+                  <td className="px-4 py-3 text-xs font-mono text-muted-foreground">{ex.id}</td>
                   <td className="px-4 py-3">
                     <p className="font-medium line-clamp-1">{ex.title}</p>
                     <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 hidden sm:block">
                       {ex.description}
                     </p>
                   </td>
-                  <td className="px-4 py-3 hidden md:table-cell">
-                    <span className="text-xs bg-muted px-2 py-0.5 rounded-md">{ex.category}</span>
-                  </td>
                   <td className="px-4 py-3">
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${DIFF_STYLE[ex.difficulty]}`}>
                       {DIFF_LABEL[ex.difficulty] ?? ex.difficulty}
                     </span>
                   </td>
-                  <td className="px-4 py-3 hidden lg:table-cell">
-                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <CheckCircle2 className="h-3 w-3" />
-                      {ex.testCaseCount} bộ kiểm thử
-                    </span>
+                  <td className="px-4 py-3 hidden md:table-cell">
+                    <span className="text-xs bg-muted px-2 py-0.5 rounded-md">{ex.category}</span>
+                  </td>
+                  <td className="px-4 py-3 hidden lg:table-cell text-xs text-muted-foreground">
+                    {formatDate(ex.creationTime)}
                   </td>
                   <td className="px-4 py-3 hidden xl:table-cell text-xs text-muted-foreground">
-                    {ex.createdByName ?? '—'}
+                    {formatDate(ex.lastModificationTime)}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">

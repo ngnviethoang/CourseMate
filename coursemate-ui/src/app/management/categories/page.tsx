@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,7 +26,8 @@ import { Switch } from '@/components/ui/switch'
 import { formatDate } from '@/lib/utils'
 
 const columns: Column<CategoryDto>[] = [
-  { key: 'name', header: 'Tên', sortKey: 'name' },
+  { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
+  { key: 'name', header: 'Title', sortKey: 'name' },
   { key: 'description', header: 'Mô tả' },
   {
     key: 'isActive',
@@ -36,10 +38,15 @@ const columns: Column<CategoryDto>[] = [
       </Badge>
     )
   },
-  { key: 'creationTime', header: 'Ngày tạo', sortKey: 'creationTime', render: row => formatDate(row.creationTime) },
+  {
+    key: 'creationTime',
+    header: 'Creation Time',
+    sortKey: 'creationTime',
+    render: row => formatDate(row.creationTime)
+  },
   {
     key: 'lastModificationTime',
-    header: 'Cập nhật',
+    header: 'Last Modification Time',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }
@@ -50,7 +57,9 @@ const emptyForm: CreateCategoryRequest = { name: '', description: '', isActive: 
 export default function CategoriesPage() {
   const [items, setItems] = useState<CategoryDto[]>([])
   const [loading, setLoading] = useState(true)
+  const [idFilter, setIdFilter] = useState('')
   const [filter, setFilter] = useState('')
+  const [hasCourseFilter, setHasCourseFilter] = useState<'all' | 'has' | 'none'>('has')
   const [sorting, setSorting] = useState('creationTime')
   const [pageIndex, setPageIndex] = useState(0)
   const [pageSize] = useState(10)
@@ -64,18 +73,26 @@ export default function CategoriesPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await categoryService.list({ filter, pageIndex, pageSize, sorting, hasCourse: true })
+      const hasCourse = hasCourseFilter === 'all' ? undefined : hasCourseFilter === 'has'
+      const res = await categoryService.list({
+        id: idFilter.trim() || undefined,
+        filter,
+        pageIndex,
+        pageSize,
+        sorting,
+        hasCourse
+      })
       setItems(res.items)
       setTotalCount(res.totalCount)
     } finally {
       setLoading(false)
     }
-  }, [filter, pageIndex, pageSize, sorting])
+  }, [idFilter, filter, hasCourseFilter, pageIndex, pageSize, sorting])
 
   // Reset về trang đầu khi filter hoặc sorting thay đổi
   useEffect(() => {
     setPageIndex(0)
-  }, [filter, sorting])
+  }, [idFilter, filter, hasCourseFilter, sorting])
 
   useEffect(() => {
     const t = setTimeout(load, 300)
@@ -131,14 +148,32 @@ export default function CategoriesPage() {
         </Button>
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative max-w-sm flex-1 min-w-[220px]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="pl-9"
+            placeholder="Tìm danh mục..."
+            value={filter}
+            onChange={e => setFilter(e.target.value)}
+          />
+        </div>
         <Input
-          className="pl-9"
-          placeholder="Tìm danh mục..."
-          value={filter}
-          onChange={e => setFilter(e.target.value)}
+          className="max-w-sm min-w-[220px] font-mono"
+          placeholder="Filter theo ID..."
+          value={idFilter}
+          onChange={e => setIdFilter(e.target.value)}
         />
+        <Select value={hasCourseFilter} onValueChange={val => setHasCourseFilter(val as 'all' | 'has' | 'none')}>
+          <SelectTrigger className="w-[220px]">
+            <SelectValue placeholder="Lọc theo khóa học" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tất cả danh mục</SelectItem>
+            <SelectItem value="has">Có khóa học</SelectItem>
+            <SelectItem value="none">Chưa có khóa học</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <DataTable

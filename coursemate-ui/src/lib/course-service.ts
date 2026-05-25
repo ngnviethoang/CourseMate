@@ -1,5 +1,6 @@
 import { api } from './api-client'
 import { getUserId } from './auth-token.util'
+import { isGuid } from './utils'
 import {
   PagedDto,
   CourseDto,
@@ -26,6 +27,7 @@ import {
 export const courseService = {
   // ─── Course ──────────────────────────────────────────────────────────────────
   list: async (params?: {
+    id?: string
     filter?: string
     pageIndex?: number
     pageSize?: number
@@ -33,6 +35,8 @@ export const courseService = {
     categoryId?: string
   }) => {
     const qs = new URLSearchParams()
+    const id = params?.id?.trim()
+    if (isGuid(id)) qs.set('id', id)
     if (params?.filter) qs.set('filter', params.filter)
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
@@ -64,6 +68,7 @@ export const courseService = {
 
   // ─── Chapter ─────────────────────────────────────────────────────────────────
   listChapters: async (params?: {
+    id?: string
     filter?: string
     pageIndex?: number
     pageSize?: number
@@ -71,6 +76,8 @@ export const courseService = {
     courseId?: string
   }) => {
     const qs = new URLSearchParams()
+    const id = params?.id?.trim()
+    if (isGuid(id)) qs.set('id', id)
     if (params?.filter) qs.set('filter', params.filter)
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
@@ -87,17 +94,22 @@ export const courseService = {
 
   // ─── Lesson ──────────────────────────────────────────────────────────────────
   listLessons: async (params?: {
+    id?: string
     filter?: string
     pageIndex?: number
     pageSize?: number
     sorting?: string
+    courseId?: string
     chapterId?: string
   }) => {
     const qs = new URLSearchParams()
+    const id = params?.id?.trim()
+    if (isGuid(id)) qs.set('id', id)
     if (params?.filter) qs.set('filter', params.filter)
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
     if (params?.sorting) qs.set('sorting', params.sorting)
+    if (params?.courseId) qs.set('courseId', params.courseId)
     if (params?.chapterId) qs.set('chapterId', params.chapterId)
 
     const res = await api.get<PagedDto<LessonDto>>(`/api/lessons?${qs}`)

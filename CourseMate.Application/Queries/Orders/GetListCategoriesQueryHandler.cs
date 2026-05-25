@@ -3,6 +3,7 @@ using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
+using CourseMate.Persistent.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,7 +20,9 @@ internal sealed class GetListCategoriesQueryHandler : AbstractQueryHandler<GetLi
 
     public override async Task<PagedDto<CategoryDto>> Handle(GetListCategoriesQuery request, CancellationToken ct)
     {
-        IQueryable<Category> query = DbContext.Categories.AsQueryable();
+        IQueryable<Category> query = DbContext.Categories
+            .WhereIf(request.Id.HasValue, x => x.Id == request.Id)
+            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Name, $"%{request.Filter}%"));
 
         int total = await query.CountAsync(ct);
 

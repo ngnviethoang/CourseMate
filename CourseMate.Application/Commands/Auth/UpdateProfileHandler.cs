@@ -3,6 +3,7 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -21,12 +22,12 @@ public class UpdateProfileCommand : IRequest<Unit>
 
 internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfileCommand, Unit>
 {
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
+    private readonly UserManager<User> _userManager;
 
     public UpdateProfileHandler(
         CourseMateDbContext courseMateDbContext,
         IHttpContextAccessor httpContextAccessor,
-        UserManager<IdentityUser<Guid>> userManager
+        UserManager<User> userManager
     ) : base(courseMateDbContext, httpContextAccessor)
     {
         _userManager = userManager;
@@ -34,7 +35,7 @@ internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfil
 
     public override async Task<Unit> Handle(UpdateProfileCommand request, CancellationToken ct)
     {
-        IdentityUser<Guid>? user = await _userManager.FindByIdAsync(CurrentUserId.ToString());
+        User? user = await _userManager.FindByIdAsync(CurrentUserId.ToString());
 
         if (user == null)
         {
