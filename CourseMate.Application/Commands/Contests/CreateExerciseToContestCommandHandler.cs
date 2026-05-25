@@ -72,7 +72,7 @@ internal sealed class CreateExerciseToContestCommandHandler : AbstractCommandHan
         );
 
         await DbContext.ContestExercises.AddAsync(contestExercise, ct);
-        await DbContext.SaveChangesAsync(ct);
+
         return new ResultIdDto { Id = contestExercise.Id };
     }
 }

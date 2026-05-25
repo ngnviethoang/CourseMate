@@ -73,8 +73,7 @@ internal sealed class CreateOrUpdateLessonQuizCommandHandler : AbstractCommandHa
 
             await DbContext.LessonQuizQuestions.AddAsync(question, ct);
         }
-
-        await DbContext.SaveChangesAsync(ct);
+        
         return Codes.Success;
     }
 }

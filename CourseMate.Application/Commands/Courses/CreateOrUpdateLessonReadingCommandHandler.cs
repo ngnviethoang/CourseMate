@@ -37,8 +37,6 @@ internal sealed class CreateOrUpdateLessonReadingCommandHandler : AbstractComman
         {
             existing.Content = request.Content;
         }
-
-        await DbContext.SaveChangesAsync(ct);
         return Codes.Success;
     }
 }

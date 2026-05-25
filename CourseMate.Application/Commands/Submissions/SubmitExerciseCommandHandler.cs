@@ -43,8 +43,6 @@ public class SubmitExerciseCommandHandler : IRequestHandler<SubmitExerciseComman
         );
 
         await _dbContext.ExerciseSubmissions.AddAsync(submission, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
         return new ResultIdDto { Id = submission.Id };
     }
 }

@@ -124,7 +124,6 @@ internal sealed class CreateExerciseCommandHandler : AbstractCommandHandler<Crea
                 x.StarterCode));
         await DbContext.ExerciseDefaultCodes.AddRangeAsync(exerciseDefaultCodes, ct);
 
-        await DbContext.SaveChangesAsync(ct);
         return new ResultIdDto { Id = exercise.Id };
     }
 }

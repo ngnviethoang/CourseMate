@@ -38,7 +38,6 @@ internal sealed class CreateOrUpdateLessonVideoCommandHandler : AbstractCommandH
             existing.VideoUrl = request.VideoUrl;
         }
 
-        await DbContext.SaveChangesAsync(ct);
         return Codes.Success;
     }
 }

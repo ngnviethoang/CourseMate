@@ -48,7 +48,6 @@ internal sealed class CreateContestCommandHandler : AbstractCommandHandler<Creat
         );
 
         await DbContext.Contests.AddAsync(contest, ct);
-        await DbContext.SaveChangesAsync(ct);
 
         return new ResultIdDto { Id = contest.Id };
     }

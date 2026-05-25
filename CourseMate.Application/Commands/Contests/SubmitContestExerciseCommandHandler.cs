@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.DTOs.Exercises;
 using CourseMate.Contracts.Enums;
@@ -88,7 +89,6 @@ internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandl
         // So we can just find the max score in the query. IsFinal is just an optimization.
 
         await DbContext.ContestSubmissions.AddAsync(submission, ct);
-        await DbContext.SaveChangesAsync(ct);
 
         return new ResultIdDto { Id = submission.Id };
     }

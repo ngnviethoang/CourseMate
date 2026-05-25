@@ -41,8 +41,7 @@ internal sealed class CreateOrUpdateLessonCodingCommandHandler : AbstractCommand
         {
             existing.ExerciseId = request.ExerciseId;
         }
-
-        await DbContext.SaveChangesAsync(ct);
+        
         return Codes.Success;
     }
 }
