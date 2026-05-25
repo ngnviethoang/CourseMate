@@ -22,7 +22,7 @@ internal sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOr
 
     public override async Task<PagedDto<OrderDto>> Handle(GetListOrdersQuery request, CancellationToken ct)
     {
-        bool isFilterGuid = Guid.TryParse(request.Filter, out var filterId);
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
 
         IQueryable<OrderDto> query =
             from order in DbContext.Orders

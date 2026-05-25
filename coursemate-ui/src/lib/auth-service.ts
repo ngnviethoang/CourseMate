@@ -25,7 +25,10 @@ export const authService = {
 
   register: (body: RegisterCommand): Promise<void> => api.post<void>(`${BASE}/register`, body),
 
-  verifyEmail: (body: VerifyEmailRequest): Promise<void> => api.post<void>(`${BASE}/verify-email`, body),
+  verifyEmail: ({ userId, token }: VerifyEmailRequest): Promise<void> => {
+    const params = new URLSearchParams({ userId, token })
+    return api.get<void>(`${BASE}/verify-email?${params.toString()}`)
+  },
 
   forgotPassword: (body: ForgotPasswordRequest): Promise<void> => api.post<void>(`${BASE}/forgot-password`, body),
 

@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,8 +26,7 @@ import { formatDate } from '@/lib/utils'
 
 const columns: Column<CategoryDto>[] = [
   { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
-  { key: 'name', header: 'Title', sortKey: 'name' },
-  { key: 'description', header: 'Mô tả' },
+  { key: 'name', header: 'Tiêu đề', sortKey: 'name' },
   {
     key: 'isActive',
     header: 'Trạng thái',
@@ -40,13 +38,13 @@ const columns: Column<CategoryDto>[] = [
   },
   {
     key: 'creationTime',
-    header: 'Creation Time',
+    header: 'Ngày tạo',
     sortKey: 'creationTime',
     render: row => formatDate(row.creationTime)
   },
   {
     key: 'lastModificationTime',
-    header: 'Last Modification Time',
+    header: 'Cập nhật lần cuối',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }
@@ -58,7 +56,6 @@ export default function CategoriesPage() {
   const [items, setItems] = useState<CategoryDto[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')
-  const [hasCourseFilter, setHasCourseFilter] = useState<'all' | 'has' | 'none'>('has')
   const [sorting, setSorting] = useState('creationTime')
   const [pageIndex, setPageIndex] = useState(0)
   const [pageSize] = useState(10)
@@ -72,25 +69,23 @@ export default function CategoriesPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const hasCourse = hasCourseFilter === 'all' ? undefined : hasCourseFilter === 'has'
       const res = await categoryService.list({
         filter,
         pageIndex,
         pageSize,
-        sorting,
-        hasCourse
+        sorting
       })
       setItems(res.items)
       setTotalCount(res.totalCount)
     } finally {
       setLoading(false)
     }
-  }, [filter, hasCourseFilter, pageIndex, pageSize, sorting])
+  }, [filter, pageIndex, pageSize, sorting])
 
   // Reset về trang đầu khi filter hoặc sorting thay đổi
   useEffect(() => {
     setPageIndex(0)
-  }, [filter, hasCourseFilter, sorting])
+  }, [filter, sorting])
 
   useEffect(() => {
     const t = setTimeout(load, 300)
@@ -156,16 +151,6 @@ export default function CategoriesPage() {
             onChange={e => setFilter(e.target.value)}
           />
         </div>
-        <Select value={hasCourseFilter} onValueChange={val => setHasCourseFilter(val as 'all' | 'has' | 'none')}>
-          <SelectTrigger className="w-[220px]">
-            <SelectValue placeholder="Lọc theo khóa học" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Tất cả danh mục</SelectItem>
-            <SelectItem value="has">Có khóa học</SelectItem>
-            <SelectItem value="none">Chưa có khóa học</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
       <DataTable

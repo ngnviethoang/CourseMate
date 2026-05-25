@@ -14,7 +14,6 @@ import {
   Presentation,
   CheckCircle2,
   UploadCloud,
-  FileText,
   Sparkles
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -710,7 +709,8 @@ function QuizContentSection({
 // ─── Slide Content Section ────────────────────────────────────────────────────
 
 function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; initialFileUrl?: string }) {
-  const [activeTab, setActiveTab] = useState<'ai' | 'upload'>(initialFileUrl ? 'upload' : 'ai')
+  const uploadUnavailableMessage =
+    'Tải slide trực tiếp đang tạm thời chưa khả dụng vì backend chưa hỗ trợ API cập nhật slide cho bài học.'
 
   return (
     <div className="space-y-6">
@@ -720,20 +720,15 @@ function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; i
           Quản lý slide
         </h2>
         <div className="flex bg-muted/50 p-1 rounded-lg">
-          <Button
-            variant={activeTab === 'ai' ? 'secondary' : 'ghost'}
-            size="sm"
-            className="gap-2"
-            onClick={() => setActiveTab('ai')}
-          >
+          <Button variant="secondary" size="sm" className="gap-2">
             <Sparkles className="h-4 w-4 text-purple-600" />
             Hỗ trợ soạn thảo
           </Button>
           <Button
-            variant={activeTab === 'upload' ? 'secondary' : 'ghost'}
+            variant="ghost"
             size="sm"
-            className="gap-2"
-            onClick={() => setActiveTab('upload')}
+            className="gap-2 text-muted-foreground"
+            onClick={() => toast.info(uploadUnavailableMessage)}
           >
             <UploadCloud className="h-4 w-4 text-blue-600" />
             Tải lên trực tiếp
@@ -741,58 +736,22 @@ function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; i
         </div>
       </div>
 
-      {activeTab === 'ai' ? (
-        <AiMaterialSection lessonId={lessonId} />
-      ) : (
-        <div className="rounded-xl bg-card p-6 shadow-md border-0 space-y-6">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold flex items-center gap-2">
-              <FileText className="h-5 w-5 text-blue-600" /> Tải lên slide có sẵn
-            </h3>
-          </div>
+      <div className="rounded-xl border border-dashed bg-muted/20 p-4 text-sm text-muted-foreground">
+        <p className="font-medium text-foreground">Tải lên trực tiếp đang tạm khóa</p>
+        <p className="mt-1">{uploadUnavailableMessage}</p>
+        {initialFileUrl ? (
+          <a
+            href={initialFileUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-2 inline-block text-primary hover:underline"
+          >
+            Xem slide hiện tại
+          </a>
+        ) : null}
+      </div>
 
-          <div className="space-y-6">
-            {initialFileUrl ? (
-              <div className="max-w-2xl bg-muted/20 rounded-lg p-5 border-0 -dashed bg-muted/30 shadow-inner space-y-3">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                  Tài nguyên slide hiện tại
-                </p>
-                <div className="flex items-center gap-4">
-                  <div className="h-16 w-16 bg-pink-500/10 rounded flex items-center justify-center shrink-0 -pink-200">
-                    <Presentation className="h-8 w-8 text-pink-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{initialFileUrl}</p>
-                    <div className="flex items-center gap-3 mt-1">
-                      <a
-                        href={initialFileUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-xs text-primary hover:underline font-medium"
-                      >
-                        Xem tài liệu
-                      </a>
-                      <span className="text-muted-foreground text-[10px]">Liên kết công khai</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : null}
-
-            <div className="flex flex-col items-center justify-center -2 -dashed rounded-xl p-12 bg-muted/20 hover:bg-muted/30 transition-colors cursor-pointer">
-              <UploadCloud className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="font-semibold text-sm text-center">Chọn tệp slide</h3>
-              <p className="text-xs text-muted-foreground mb-6 text-center max-w-xs">
-                Tải trực tiếp PDF, PPTX hoặc DOCX. Học viên sẽ thấy đây là nội dung chính của bài học.
-              </p>
-              <Input type="file" className="max-w-sm" accept=".pdf,.pptx,.ppt,.docx,.doc" />
-              <Button className="mt-4 gap-2">
-                <UploadCloud className="h-4 w-4" /> Tải tài liệu lên
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AiMaterialSection lessonId={lessonId} />
     </div>
   )
 }

@@ -228,14 +228,12 @@ export default function ContestsManagementPage() {
           <thead>
             <tr className="shadow-md border-0 border-b-0 bg-muted/40">
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">ID</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Title</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Tiêu đề</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Trạng thái</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Thời gian</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">
-                Creation Time
-              </th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Ngày tạo</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden xl:table-cell">
-                Last Modification Time
+                Cập nhật lần cuối
               </th>
               <th className="text-right px-4 py-3 font-medium text-muted-foreground">Thao tác</th>
             </tr>

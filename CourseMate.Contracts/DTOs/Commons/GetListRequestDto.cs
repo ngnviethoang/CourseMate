@@ -8,8 +8,8 @@ public abstract class GetListQuery<T> : IRequest<PagedDto<T>> where T : class
     [MaxLength(1024)]
     public string? Sorting { get; set; }
 
-    [Range(1, 25)]
-    public int PageSize { get; set; } = 10;
+    [Range(1, 100)]
+    public int PageSize { get; set; } = 25;
 
     [Range(1, int.MaxValue)]
     public int PageIndex { get; set; } = 1;

@@ -24,7 +24,7 @@ internal sealed class GetListExercisesQueryHandler : AbstractQueryHandler<GetLis
 
     public override async Task<PagedDto<ExerciseDto>> Handle(GetListExercisesQuery request, CancellationToken ct)
     {
-        bool isFilterGuid = Guid.TryParse(request.Filter, out var filterId);
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
 
         IQueryable<ExerciseDto> query =
             from exercise in DbContext.Exercises

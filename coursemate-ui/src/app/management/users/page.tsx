@@ -25,18 +25,18 @@ import { formatDate } from '@/lib/utils'
 
 const columns: Column<UserDto>[] = [
   { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
-  { key: 'userName', header: 'Title', sortKey: 'userName', render: row => row.userName ?? row.email ?? '—' },
+  { key: 'userName', header: 'Tên người dùng', sortKey: 'userName', render: row => row.userName ?? row.email ?? '—' },
   { key: 'email', header: 'Email' },
   { key: 'phoneNumber', header: 'Số điện thoại' },
   {
     key: 'creationTime',
-    header: 'Creation Time',
+    header: 'Ngày tạo',
     sortKey: 'creationTime',
     render: row => formatDate(row.creationTime)
   },
   {
     key: 'lastModificationTime',
-    header: 'Last Modification Time',
+    header: 'Cập nhật lần cuối',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }

@@ -32,7 +32,7 @@ export const exerciseService = {
 
   // Test Cases
   addTestCase: (exerciseId: string, data: unknown) =>
-    api.post<unknown>(`/api/exercises/${exerciseId}/test-cases`, data),
+    api.post<ResultIdDto>(`/api/exercises/${exerciseId}/test-cases`, data),
 
   updateTestCase: (exerciseId: string, tcId: string, data: unknown) =>
     api.put(`/api/exercises/${exerciseId}/test-cases/${tcId}`, data),
@@ -45,5 +45,5 @@ export const exerciseService = {
 
   // Submissions
   submitExercise: (exerciseId: string, data: unknown) =>
-    api.post<unknown>(`/api/exercises/${exerciseId}/submissions`, data)
+    api.post<ResultIdDto>(`/api/exercises/${exerciseId}/submissions`, data)
 }

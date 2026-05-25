@@ -104,6 +104,10 @@ export interface UpdateOrderRequest {
   status: string
 }
 
+export interface CreateOrderRequest {
+  cartItemIds: string[]
+}
+
 // ─── Course ───────────────────────────────────────────────────────────────────
 
 export interface CourseDto {
@@ -260,10 +264,6 @@ export interface UpsertLessonQuizRequest {
   description: string
   passingScore: number
   questions: QuizQuestionDto[]
-}
-
-export interface UpsertLessonSlideRequest {
-  fileUrl: string
 }
 
 // ─── User ─────────────────────────────────────────────────────────────────────

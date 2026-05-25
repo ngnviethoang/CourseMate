@@ -20,7 +20,7 @@ internal sealed class GetListCategoriesQueryHandler : AbstractQueryHandler<GetLi
 
     public override async Task<PagedDto<CategoryDto>> Handle(GetListCategoriesQuery request, CancellationToken ct)
     {
-        bool isFilterGuid = Guid.TryParse(request.Filter, out var filterId);
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
 
         IQueryable<Category> query = DbContext.Categories
             .WhereIf(isFilterGuid, x => x.Id == filterId)

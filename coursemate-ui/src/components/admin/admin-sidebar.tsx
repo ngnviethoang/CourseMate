@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import {
   LayoutGrid,
   BookOpen,
@@ -33,7 +34,14 @@ const navItems = [
   { href: '/management/exercises', label: 'Bài tập', icon: Code2, roles: ['Admin', 'Instructor'] },
   { href: '/management/contests', label: 'Cuộc thi', icon: Trophy, roles: ['Admin', 'Instructor'] },
   { href: '/management/users', label: 'Người dùng', icon: Users, roles: ['Admin'] },
-  { href: '/management/pending-instructors', label: 'Duyệt giảng viên', icon: UserCheck, roles: ['Admin'] },
+  {
+    href: '/management/pending-instructors',
+    label: 'Duyệt giảng viên',
+    icon: UserCheck,
+    roles: ['Admin'],
+    disabled: true,
+    disabledReason: 'Tính năng tạm thời chưa khả dụng vì backend chưa hỗ trợ API duyệt giảng viên.'
+  },
   { href: '/management/orders', label: 'Đơn hàng', icon: ShoppingCart, roles: ['Admin', 'Instructor'] }
 ]
 
@@ -84,21 +92,36 @@ export function AdminSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-0.5 px-2">
-              {filteredItems.map(({ href, label, icon: Icon }) => {
-                const active = pathname === href
+              {filteredItems.map(({ href, label, icon: Icon, disabled, disabledReason }) => {
+                const isDisabled = Boolean(disabled)
+                const active = !isDisabled && pathname === href
                 return (
                   <SidebarMenuItem key={href}>
                     <button
-                      onClick={() => router.push(href)}
+                      onClick={() => {
+                        if (isDisabled) {
+                          toast.info(disabledReason ?? 'Tính năng này chưa khả dụng.')
+                          return
+                        }
+                        router.push(href)
+                      }}
+                      aria-disabled={isDisabled}
                       className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-150
                         ${
                           active
                             ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/30 font-medium'
-                            : 'text-foreground/70 hover:bg-primary/10 hover:text-primary'
+                            : isDisabled
+                              ? 'cursor-not-allowed text-foreground/40'
+                              : 'text-foreground/70 hover:bg-primary/10 hover:text-primary'
                         }`}
                     >
                       <Icon className="size-4 shrink-0" />
                       <span>{label}</span>
+                      {isDisabled && (
+                        <span className="ml-auto rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                          Soon
+                        </span>
+                      )}
                       {active && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary-foreground/70" />}
                     </button>
                   </SidebarMenuItem>

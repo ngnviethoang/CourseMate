@@ -29,7 +29,7 @@ const LESSON_TYPES: LessonType[] = Object.values(LessonType)
 
 const columns: Column<LessonDto>[] = [
   { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
-  { key: 'title', header: 'Title', sortKey: 'title' },
+  { key: 'title', header: 'Tiêu đề', sortKey: 'title' },
   { key: 'chapterName', header: 'Chương' },
   { key: 'courseName', header: 'Khóa học' },
   {
@@ -40,13 +40,13 @@ const columns: Column<LessonDto>[] = [
   { key: 'position', header: 'Vị trí', sortKey: 'position' },
   {
     key: 'creationTime',
-    header: 'Creation Time',
+    header: 'Ngày tạo',
     sortKey: 'creationTime',
     render: row => formatDate(row.creationTime)
   },
   {
     key: 'lastModificationTime',
-    header: 'Last Modification Time',
+    header: 'Cập nhật lần cuối',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }

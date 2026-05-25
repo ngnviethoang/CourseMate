@@ -1,5 +1,5 @@
 import { api } from './api-client'
-import { ExerciseExampleDto } from './types'
+import { ExerciseExampleDto, ResultIdDto } from './types'
 
 interface PagedDto<T> {
   items: T[]
@@ -86,13 +86,7 @@ export interface LeaderboardEntryDto {
 }
 
 export const contestService = {
-  getList: (params: {
-    filter?: string
-    status?: 'Draft' | 'Upcoming' | 'Ongoing' | 'Ended'
-    sorting?: string
-    pageIndex?: number
-    pageSize?: number
-  }) => {
+  getList: (params: { filter?: string; status?: string; sorting?: string; pageIndex?: number; pageSize?: number }) => {
     const searchParams = new URLSearchParams()
     if (params.filter) searchParams.set('filter', params.filter)
     if (params.status) searchParams.set('status', params.status)
@@ -102,9 +96,12 @@ export const contestService = {
     return api.get<PagedDto<ContestDto>>(`/api/contests?${searchParams}`)
   },
   getById: (id: string) => api.get<ContestDto>(`/api/contests/${id}`),
-  create: (data: unknown) => api.post<unknown>('/api/contests', data),
-  update: (id: string, data: unknown) => api.put(`/api/contests/${id}`, data),
-  addExercise: (id: string, data: unknown) => api.post(`/api/contests/${id}/exercises`, data),
+  create: (data: unknown) => api.post<ResultIdDto>('/api/contests', data),
+  update: (id: string, data: unknown) => api.put<void>(`/api/contests/${id}`, data),
+  addExercise: (id: string, data: unknown) => api.post<ResultIdDto>(`/api/contests/${id}/exercises`, data),
+  getExercises: (id: string) => api.get<ContestExerciseDto[]>(`/api/contests/${id}/exercises`),
+  removeExercise: (contestId: string, contestExerciseId: string) =>
+    api.delete<void>(`/api/contests/${contestId}/exercises/${contestExerciseId}`),
 
   // Student APIs
   register: (id: string) => api.post(`/api/contests/${id}/register`, {}),
@@ -116,7 +113,7 @@ export const contestService = {
   getLeaderboard: (id: string) => api.get<ContestLeaderboardDto>(`/api/contests/${id}/leaderboard`),
 
   // Anti-Cheat APIs
-  getViolations: (id: string) => api.get<unknown>(`/api/contests/${id}/violations`),
+  getViolations: (id: string) => api.get<any>(`/api/contests/${id}/violations`),
   disqualifyStudent: (id: string, studentId: string, reason: string) =>
     api.post(`/api/contests/${id}/disqualify/${studentId}`, { reason }),
   reinstateStudent: (id: string, studentId: string) => api.post(`/api/contests/${id}/reinstate/${studentId}`, {})

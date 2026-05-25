@@ -32,7 +32,7 @@ internal sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetList
             await EnsureEnrollmentAsync(request.CourseId.Value);
         }
 
-        bool isFilterGuid = Guid.TryParse(request.Filter, out var filterId);
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
 
         IQueryable<ChapterDto> query =
             from chapter in DbContext.Chapters

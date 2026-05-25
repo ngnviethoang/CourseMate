@@ -38,7 +38,7 @@ internal sealed class GetListCoursesQueryHandler : AbstractQueryHandler<GetListC
                 LastModificationTime = course.LastModificationTime
             };
 
-        bool isFilterGuid = Guid.TryParse(request.Filter, out var filterId);
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
         query = query.WhereIf(isFilterGuid, x => x.Id == filterId)
             .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
 

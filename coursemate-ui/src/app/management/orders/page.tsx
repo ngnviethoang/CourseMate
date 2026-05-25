@@ -30,7 +30,7 @@ const columns: Column<OrderDto>[] = [
     header: 'ID',
     render: row => <span className="text-xs font-mono">{row.id}</span>
   },
-  { key: 'title', header: 'Title' },
+  { key: 'title', header: 'Tiêu đề' },
   {
     key: 'studentName',
     header: 'Học viên',
@@ -52,13 +52,13 @@ const columns: Column<OrderDto>[] = [
   },
   {
     key: 'creationTime',
-    header: 'Creation Time',
+    header: 'Ngày tạo',
     sortKey: 'creationTime',
     render: row => formatDate(row.creationTime)
   },
   {
     key: 'lastModificationTime',
-    header: 'Last Modification Time',
+    header: 'Cập nhật lần cuối',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }
@@ -118,7 +118,7 @@ export default function OrdersPage() {
 
   async function handleCreateDraft() {
     try {
-      const result = await orderService.create()
+      const result = await orderService.create({ cartItemIds: [] })
       toast.success('Đã tạo đơn hàng mới.')
       router.push(`/management/orders/${result.id}`)
     } catch {
@@ -136,6 +136,24 @@ export default function OrdersPage() {
       load()
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handleDelete(orderId: string) {
+    if (!isAdmin) return
+    if (!confirm('Bạn có chắc chắn muốn xóa đơn hàng này?')) return
+
+    const isLastItemOnPage = items.length === 1 && pageIndex > 0
+    try {
+      await orderService.delete(orderId)
+      toast.success('Đã xóa đơn hàng.')
+      if (isLastItemOnPage) {
+        setPageIndex(prev => prev - 1)
+      } else {
+        load()
+      }
+    } catch {
+      toast.error('Không thể xóa đơn hàng.')
     }
   }
 
@@ -180,6 +198,7 @@ export default function OrdersPage() {
         onSort={setSorting}
         onView={handleView}
         onEdit={isAdmin ? handleEdit : undefined}
+        onDelete={isAdmin ? handleDelete : undefined}
         pagination={{
           pageIndex,
           pageSize,

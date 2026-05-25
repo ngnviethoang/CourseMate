@@ -25,18 +25,18 @@ import { formatDate } from '@/lib/utils'
 
 const columns: Column<ChapterDto>[] = [
   { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
-  { key: 'title', header: 'Title', sortKey: 'title' },
+  { key: 'title', header: 'Tiêu đề', sortKey: 'title' },
   { key: 'courseName', header: 'Khóa học' },
   { key: 'position', header: 'Vị trí', sortKey: 'position' },
   {
     key: 'creationTime',
-    header: 'Creation Time',
+    header: 'Ngày tạo',
     sortKey: 'creationTime',
     render: row => formatDate(row.creationTime)
   },
   {
     key: 'lastModificationTime',
-    header: 'Last Modification Time',
+    header: 'Cập nhật lần cuối',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }

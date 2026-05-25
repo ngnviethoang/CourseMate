@@ -34,7 +34,7 @@ internal sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListL
             await EnsureEnrollmentAsync(request.CourseId.Value);
         }
 
-        bool isFilterGuid = Guid.TryParse(request.Filter, out var filterId);
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
 
         IQueryable<LessonDto> query = from lesson in DbContext.Lessons
             join chapter in DbContext.Chapters on lesson.ChapterId equals chapter.Id

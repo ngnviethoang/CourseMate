@@ -24,7 +24,7 @@ internal sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetList
 
     public override async Task<PagedDto<ContestDto>> Handle(GetListContestsQuery request, CancellationToken ct)
     {
-        bool isFilterGuid = Guid.TryParse(request.Filter, out var filterId);
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
 
         IQueryable<ContestDto> query =
             from contest in DbContext.Contests

@@ -9,7 +9,7 @@ import { courseService } from '@/lib/course-service'
 import { categoryService } from '@/lib/category-service'
 import { userService } from '@/lib/user-service'
 import { getRole, getUserId } from '@/lib/auth-token.util'
-import { api } from '@/lib/api-client'
+import { fileService } from '@/lib/file-service'
 import type { CategoryDto, CourseDto, CreateCourseRequest, UserDto } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
@@ -32,7 +32,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 const columns: Column<CourseDto>[] = [
   { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
-  { key: 'title', header: 'Title', sortKey: 'title' },
+  { key: 'title', header: 'Tiêu đề', sortKey: 'title' },
   { key: 'categoryName', header: 'Danh mục' },
   { key: 'instructorName', header: 'Giảng viên' },
   {
@@ -50,13 +50,13 @@ const columns: Column<CourseDto>[] = [
   },
   {
     key: 'creationTime',
-    header: 'Creation Time',
+    header: 'Ngày tạo',
     sortKey: 'creationTime',
     render: row => formatDate(row.creationTime)
   },
   {
     key: 'lastModificationTime',
-    header: 'Last Modification Time',
+    header: 'Cập nhật lần cuối',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }
@@ -217,9 +217,11 @@ export default function CoursesPage() {
   async function handleImageFile(file: File) {
     setUploadingImage(true)
     try {
-      const formData = new FormData()
-      formData.append('request', file)
-      const result = await api.post<{ fileId: string; fileUrl: string }>('/api/files/images', formData)
+      const result = await fileService.uploadFile(file)
+      if (!result.fileUrl) {
+        toast.error('Upload thành công nhưng chưa nhận được liên kết ảnh.')
+        return
+      }
       f('imageUrl', result.fileUrl)
       toast.success('Tải ảnh lên thành công!')
     } catch {
@@ -265,11 +267,8 @@ export default function CoursesPage() {
             {isAdmin ? 'Quản lý toàn bộ khóa học trên nền tảng' : 'Quản lý khóa học và nội dung của bạn'}
           </p>
         </div>
-        <Button
-          onClick={openCreate}
-          className="gap-2 h-12 px-6 text-base shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
-        >
-          <Plus className="h-5 w-5" /> Tạo khóa học
+        <Button onClick={openCreate} className="gap-2">
+          <Plus className="h-4 w-4" /> Tạo khóa học
         </Button>
       </div>
 

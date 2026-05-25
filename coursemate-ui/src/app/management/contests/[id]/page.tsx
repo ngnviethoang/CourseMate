@@ -56,13 +56,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
     try {
       const data = await contestService.getById(id)
       setContest(data)
-      // Fetch exercises for this contest
-      // Note: Backend might return exercises in ContestDto or separate API.
-      // Based on my implementation of GetContestByIdQuery, it doesn't return exercises.
-      // I should add a query for Contest Exercises or implement it in Workspace.
-      // For now let's assume we fetch them separately or update the DTO.
-      // Actually I'll implement a quick fetch here.
-      const exRes = await api.get<ContestExerciseDto[]>(`/api/contests/${id}/exercises`)
+      const exRes = await contestService.getExercises(id)
       setExercises(exRes || [])
     } catch {
       toast.error('Không thể tải thông tin cuộc thi')
@@ -117,7 +111,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
   const removeExercise = async (ceId: string) => {
     if (!confirm('Xoá bài tập này khỏi cuộc thi?')) return
     try {
-      await api.delete(`/api/contests/${id}/exercises/${ceId}`)
+      await contestService.removeExercise(id, ceId)
       toast.success('Đã xoá bài tập')
       fetchContest()
     } catch {
