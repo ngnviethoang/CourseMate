@@ -49,10 +49,12 @@ internal sealed class GetListCoursesQueryHandler
         bool isAdmin = IsInRole(Roles.Admin);
         bool isInstructor = IsInRole(Roles.Instructor);
         Guid userId = CurrentUserId;
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
 
         query = query
             .Where(x => x.IsPublished || isAdmin || (isInstructor && x.InstructorId == userId))
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
+            .WhereIf(isFilterGuid, x => x.Id == filterId)
+            .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
             .WhereIf(request.CategoryId.HasValue, x => x.CategoryId == request.CategoryId);
 
         query = request.Sorting switch

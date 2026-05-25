@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
@@ -32,8 +33,6 @@ internal sealed class DeleteExerciseFromContestCommandHandler : AbstractCommandH
         }
 
         DbContext.ContestExercises.Remove(ce);
-        await DbContext.SaveChangesAsync(ct);
-
         return Unit.Value;
     }
 }

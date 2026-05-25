@@ -1,5 +1,4 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
@@ -10,12 +9,12 @@ using Microsoft.Extensions.Options;
 
 namespace CourseMate.Application.Commands.Files;
 
-public class DeleteFileCommand : IRequest<int>
+public class DeleteFileCommand : IRequest<Unit>
 {
     public Guid FileId { get; set; }
 }
 
-internal sealed class DeleteFileCommandHandler : AbstractCommandHandler<DeleteFileCommand, int>
+internal sealed class DeleteFileCommandHandler : AbstractCommandHandler<DeleteFileCommand, Unit>
 {
     private readonly StorageOptions _storageOptions;
 
@@ -29,13 +28,13 @@ internal sealed class DeleteFileCommandHandler : AbstractCommandHandler<DeleteFi
         _storageOptions = storageOptions.Value;
     }
 
-    public override async Task<int> Handle(DeleteFileCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(DeleteFileCommand request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
         FileEntry? fileEntry = await DbContext.FileEntries.FirstOrDefaultAsync(f => f.Id == request.FileId && f.UserId == userId, ct);
         if (fileEntry == null)
         {
-            return Codes.Success;
+            return Unit.Value;
         }
 
         DbContext.FileEntries.Remove(fileEntry);
@@ -58,6 +57,6 @@ internal sealed class DeleteFileCommandHandler : AbstractCommandHandler<DeleteFi
             }
         }
 
-        return Codes.Success;
+        return Unit.Value;
     }
 }

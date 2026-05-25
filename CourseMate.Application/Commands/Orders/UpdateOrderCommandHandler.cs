@@ -1,5 +1,4 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
@@ -10,14 +9,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Orders;
 
-public class UpdateOrderCommand : IRequest<int>
+public class UpdateOrderCommand : IRequest<Unit>
 {
     public Guid Id { get; init; }
 
     public OrderStatus Status { get; init; }
 }
 
-internal sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateOrderCommand, int>
+internal sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateOrderCommand, Unit>
 {
     public UpdateOrderCommandHandler(
         CourseMateDbContext dbContext,
@@ -25,7 +24,7 @@ internal sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateO
     {
     }
 
-    public override async Task<int> Handle(UpdateOrderCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(UpdateOrderCommand request, CancellationToken ct)
     {
         Order? order = await DbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == CurrentUserId, ct);
         if (order == null)
@@ -34,6 +33,6 @@ internal sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateO
         }
 
         order.Status = request.Status;
-        return Codes.Success;
+        return Unit.Value;
     }
 }

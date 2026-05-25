@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
@@ -37,8 +38,6 @@ internal sealed class FinishContestCommandHandler : AbstractCommandHandler<Finis
         }
 
         registration.SubmitTime = DateTimeOffset.UtcNow;
-        await DbContext.SaveChangesAsync(ct);
-
         return new ResultIdDto { Id = registration.Id };
     }
 }

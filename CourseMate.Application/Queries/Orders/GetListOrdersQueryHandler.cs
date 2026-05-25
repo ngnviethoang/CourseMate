@@ -22,21 +22,48 @@ internal sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOr
 
     public override async Task<PagedDto<OrderDto>> Handle(GetListOrdersQuery request, CancellationToken ct)
     {
-        IQueryable<OrderDto> query = DbContext.Orders
-            .WhereIf(IsInRole(Roles.Student), o => o.StudentId == CurrentUserId)
-            .WhereIf(IsInRole(Roles.Instructor), o => DbContext.OrderItems.Any(oi => oi.OrderId == o.Id && DbContext.Courses.Any(c => c.Id == oi.CourseId && c.InstructorId == CurrentUserId)))
-            .Select(o => new OrderDto
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
+
+        IQueryable<OrderDto> query =
+            from order in DbContext.Orders
+            join student in DbContext.Users on order.StudentId equals student.Id
+            select new OrderDto
             {
-                Id = o.Id,
-                StudentId = o.StudentId,
-                TotalAmount = o.TotalAmount,
-                Status = o.Status
-            });
+                Id = order.Id,
+                Title = order.Description,
+                StudentId = order.StudentId,
+                StudentName = student.UserName,
+                StudentEmail = student.Email,
+                TotalAmount = order.TotalAmount,
+                Status = order.Status,
+                CreationTime = order.CreationTime,
+                LastModificationTime = order.LastModificationTime
+            };
+
+        query = query
+            .WhereIf(IsInRole(Roles.Student), x => x.StudentId == CurrentUserId)
+            .WhereIf(IsInRole(Roles.Instructor), x => DbContext.OrderItems
+                .Any(oi => oi.OrderId == x.Id && DbContext.Courses.Any(c => c.Id == oi.CourseId && c.InstructorId == CurrentUserId)))
+            .WhereIf(isFilterGuid, x => x.Id == filterId)
+            .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x =>
+                EF.Functions.ILike(x.Title, $"%{request.Filter}%") ||
+                (x.StudentName != null && EF.Functions.ILike(x.StudentName, $"%{request.Filter}%")) ||
+                (x.StudentEmail != null && EF.Functions.ILike(x.StudentEmail, $"%{request.Filter}%")));
+
+        query = request.Sorting switch
+        {
+            "title" => query.OrderBy(x => x.Title),
+            "title_desc" => query.OrderByDescending(x => x.Title),
+            "creationTime" => query.OrderBy(x => x.CreationTime),
+            "creationTime_desc" => query.OrderByDescending(x => x.CreationTime),
+            "lastModificationTime" => query.OrderBy(x => x.LastModificationTime),
+            "lastModificationTime_desc" => query.OrderByDescending(x => x.LastModificationTime),
+            _ => query.OrderByDescending(x => x.CreationTime)
+        };
 
         int totalCount = await query.CountAsync(ct);
 
         List<OrderDto> orders = await query
-            .OrderBy(o => o.Id)
             .Paged(request.PageIndex, request.PageSize)
             .ToListAsync(ct);
 

@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict X18t6H4w1hFsSBOEzTeayBCEk1ejqeT9gptGNPx5tlfCxNAYbslNAkMDQ8c8Jwv
+\restrict T8abgkwPNkpqLumKL6VFhZWpKa4MYsZNacefvxm68AdnOHr9dKN6F9QdJjdJ6TG
 
 -- Dumped from database version 16.13 (Debian 16.13-1.pgdg13+1)
 -- Dumped by pg_dump version 16.13 (Debian 16.13-1.pgdg13+1)
@@ -427,6 +427,26 @@ ALTER SEQUENCE hangfire.state_id_seq OWNED BY hangfire.state.id;
 
 
 --
+-- Name: AntiCheatViolations; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."AntiCheatViolations" (
+    "Id" uuid NOT NULL,
+    "ContestId" uuid NOT NULL,
+    "StudentId" uuid NOT NULL,
+    "ViolationType" integer NOT NULL,
+    "Details" character varying(32768) NOT NULL,
+    "OccurredAt" timestamp with time zone NOT NULL,
+    "UserId" uuid,
+    "CreationTime" timestamp with time zone NOT NULL,
+    "LastModificationTime" timestamp with time zone,
+    "IsDeleted" boolean NOT NULL
+);
+
+
+ALTER TABLE public."AntiCheatViolations" OWNER TO postgres;
+
+--
 -- Name: AspNetRoleClaims; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -555,7 +575,10 @@ CREATE TABLE public."AspNetUsers" (
     "TwoFactorEnabled" boolean NOT NULL,
     "LockoutEnd" timestamp with time zone,
     "LockoutEnabled" boolean NOT NULL,
-    "AccessFailedCount" integer NOT NULL
+    "AccessFailedCount" integer NOT NULL,
+    "CreationTime" timestamp with time zone DEFAULT '-infinity'::timestamp with time zone NOT NULL,
+    "IsDeleted" boolean DEFAULT false NOT NULL,
+    "LastModificationTime" timestamp with time zone
 );
 
 
@@ -664,7 +687,10 @@ CREATE TABLE public."ContestRegistrations" (
     "UserId" uuid,
     "CreationTime" timestamp with time zone NOT NULL,
     "LastModificationTime" timestamp with time zone,
-    "IsDeleted" boolean NOT NULL
+    "IsDeleted" boolean NOT NULL,
+    "DisqualifiedAt" timestamp with time zone,
+    "DisqualifiedReason" character varying(32768) DEFAULT ''::character varying NOT NULL,
+    "ViolationCount" integer DEFAULT 0 NOT NULL
 );
 
 
@@ -714,7 +740,8 @@ CREATE TABLE public."Contests" (
     "UserId" uuid,
     "CreationTime" timestamp with time zone NOT NULL,
     "LastModificationTime" timestamp with time zone,
-    "IsDeleted" boolean NOT NULL
+    "IsDeleted" boolean NOT NULL,
+    "MaxViolations" integer DEFAULT 0 NOT NULL
 );
 
 
@@ -869,7 +896,7 @@ CREATE TABLE public."FileChunks" (
     "Id" uuid NOT NULL,
     "FileEntryId" uuid NOT NULL,
     "ChunkIndex" integer NOT NULL,
-    "ChunkPath" character varying(1024) NOT NULL,
+    "ChunkLocation" character varying(1024) NOT NULL,
     "ChunkSize" bigint NOT NULL,
     "IsUploaded" boolean NOT NULL,
     "UserId" uuid,
@@ -889,8 +916,7 @@ CREATE TABLE public."FileEntries" (
     "Id" uuid NOT NULL,
     "FileName" character varying(1024) NOT NULL,
     "FileSize" double precision NOT NULL,
-    "FilePath" character varying(1024) NOT NULL,
-    "TempDirPath" character varying(1024) NOT NULL,
+    "FileLocation" character varying(1024) NOT NULL,
     "Status" integer NOT NULL,
     "TotalChunks" integer NOT NULL,
     "UploadedChunks" integer NOT NULL,
@@ -1363,7 +1389,7 @@ COPY hangfire.schema (version) FROM stdin;
 --
 
 COPY hangfire.server (id, data, lastheartbeat, updatecount) FROM stdin;
-desktop-k8hlp07:2844:653f189d-0977-40ec-9a00-5da7af80ab88	{"Queues": ["default"], "StartedAt": "2026-05-07T15:09:13.4087455Z", "WorkerCount": 20}	2026-05-07 15:17:13.984671+00	0
+laptop-km4uhqhf:20576:971b37ab-9208-4552-86ae-4471bdf6b2c0	{"Queues": ["default"], "StartedAt": "2026-05-25T09:34:20.2785204Z", "WorkerCount": 20}	2026-05-25 09:34:50.634296+00	0
 \.
 
 
@@ -1380,6 +1406,14 @@ COPY hangfire.set (id, key, score, value, expireat, updatecount) FROM stdin;
 --
 
 COPY hangfire.state (id, jobid, name, reason, createdat, data, updatecount) FROM stdin;
+\.
+
+
+--
+-- Data for Name: AntiCheatViolations; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."AntiCheatViolations" ("Id", "ContestId", "StudentId", "ViolationType", "Details", "OccurredAt", "UserId", "CreationTime", "LastModificationTime", "IsDeleted") FROM stdin;
 \.
 
 
@@ -1446,15 +1480,15 @@ COPY public."AspNetUserTokens" ("UserId", "LoginProvider", "Name", "Value") FROM
 -- Data for Name: AspNetUsers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."AspNetUsers" ("Id", "UserName", "NormalizedUserName", "Email", "NormalizedEmail", "EmailConfirmed", "PasswordHash", "SecurityStamp", "ConcurrencyStamp", "PhoneNumber", "PhoneNumberConfirmed", "TwoFactorEnabled", "LockoutEnd", "LockoutEnabled", "AccessFailedCount") FROM stdin;
-019ddd8c-f426-7111-910a-6cb2e5c6a751	admin	ADMIN	admin@example.com	ADMIN@EXAMPLE.COM	t	AQAAAAIAAYagAAAAEEurpVw9O7P5Zdaj4ZYQfzOYRMw0+u1/dpgkfXZIQm3k+chZBofgmmQpCgyv++pgCg==	WAWEHN6HYMHT2HRHSOD62BKRKBK2UBRC	c58a3fc6-4f6b-484b-92e7-f08045d80024	\N	f	f	\N	t	0
-019ddd8c-f4fa-7bde-85b5-838e03cde051	manager	MANAGER	manager@example.com	MANAGER@EXAMPLE.COM	t	AQAAAAIAAYagAAAAECaF56EvDFbemgisT4hSJbOz4rqHFdGFPx5RoxIplLE9zX2YvZRYyQysG/zJFgSzmg==	4AO2GXNI3LDIGRNWCRLSZOQYKR4NH4FC	9bbf4557-20a5-497a-ac8c-ec4d7e9af35c	\N	f	f	\N	t	0
-019ddd8c-f558-7386-a796-18c878996313	instructor1	INSTRUCTOR1	instructor1@example.com	INSTRUCTOR1@EXAMPLE.COM	t	AQAAAAIAAYagAAAAECLEQG4R0lvdiQBVtSZHn/7HzUaa6nxckzrTEI5vRwx5YOnOU3l/hOlTmoEyyRat2w==	SQCSJXFSKXUB3QHMSFKD43HJFV4DHS7L	deceffae-c057-4718-b303-a8ae3b5301e3	\N	f	f	\N	t	0
-019ddd8c-f5b5-756c-b9a4-759ab4ffa4cf	instructor2	INSTRUCTOR2	instructor2@example.com	INSTRUCTOR2@EXAMPLE.COM	t	AQAAAAIAAYagAAAAEM2OpN79n/LUE50XqZ0ClOBvajhvhHrrrBQnMagJRStWuVyTVpYFJElIvksXiWHQ6Q==	ELTWCHJVMM56QZK7KFAUGTX4OKOJNSSE	618d7b9a-7863-49df-bd2a-6dec54276444	\N	f	f	\N	t	0
-019ddd8c-f603-72ac-a914-255b7bfd9e64	instructor3	INSTRUCTOR3	instructor3@example.com	INSTRUCTOR3@EXAMPLE.COM	t	AQAAAAIAAYagAAAAEPmCzlIKwseI3PcRHPxsdFGAsV7GVG6DSig445hirDxlMC7sSZgdEA30WCykUS+5Hg==	F3X624PI2QYP2JZXHIN6GI2KEV4J6MKM	6ffaa219-b558-4604-89a5-cd404da49119	\N	f	f	\N	t	0
-019ddd8c-f65a-7ad2-a4fa-1a6f00d0d1cb	student1	STUDENT1	student1@example.com	STUDENT1@EXAMPLE.COM	t	AQAAAAIAAYagAAAAELT5HrApghXkZWrUR9s96l77q86a+qc6WHJXp+5L8RaUAHSGCubUW+pHCOk7RRRQEA==	AQ2ACDW4WXI2VPWDEJ5NNCZPFF7PZFCA	a7c33d9d-6dec-414c-bde6-3165e418f750	\N	f	f	\N	t	0
-019ddd8c-f6e1-7511-94bd-0a10582186a3	student2	STUDENT2	student2@example.com	STUDENT2@EXAMPLE.COM	t	AQAAAAIAAYagAAAAENUQpKP13GLVFbjCzauO/9LOS0t/e9QV0S6DzTMPrHASZHxaUwIMhGAUCDNHixBgVg==	HCF3OGSPWI5O3SKBWNHTTAAKPOBPQ5HL	caab734a-dfed-403b-81c9-e40559cb4997	\N	f	f	\N	t	0
-019ddd8c-f773-7d46-9bf6-03a520cda5da	student3	STUDENT3	student3@example.com	STUDENT3@EXAMPLE.COM	t	AQAAAAIAAYagAAAAEEMicP44dHmYYPnEbZqR/vSiZ9vitVpv49w9awB74983wHoqicZXD1xW2NGK723I0A==	3NV43Z7PGAHBNI5LPLOXXPOZFB7YA752	b37678ab-96fc-4fcd-91bf-13b14447ecc7	\N	f	f	\N	t	0
+COPY public."AspNetUsers" ("Id", "UserName", "NormalizedUserName", "Email", "NormalizedEmail", "EmailConfirmed", "PasswordHash", "SecurityStamp", "ConcurrencyStamp", "PhoneNumber", "PhoneNumberConfirmed", "TwoFactorEnabled", "LockoutEnd", "LockoutEnabled", "AccessFailedCount", "CreationTime", "IsDeleted", "LastModificationTime") FROM stdin;
+019ddd8c-f426-7111-910a-6cb2e5c6a751	admin	ADMIN	admin@example.com	ADMIN@EXAMPLE.COM	t	AQAAAAIAAYagAAAAEEurpVw9O7P5Zdaj4ZYQfzOYRMw0+u1/dpgkfXZIQm3k+chZBofgmmQpCgyv++pgCg==	WAWEHN6HYMHT2HRHSOD62BKRKBK2UBRC	c58a3fc6-4f6b-484b-92e7-f08045d80024	\N	f	f	\N	t	0	-infinity	f	\N
+019ddd8c-f4fa-7bde-85b5-838e03cde051	manager	MANAGER	manager@example.com	MANAGER@EXAMPLE.COM	t	AQAAAAIAAYagAAAAECaF56EvDFbemgisT4hSJbOz4rqHFdGFPx5RoxIplLE9zX2YvZRYyQysG/zJFgSzmg==	4AO2GXNI3LDIGRNWCRLSZOQYKR4NH4FC	9bbf4557-20a5-497a-ac8c-ec4d7e9af35c	\N	f	f	\N	t	0	-infinity	f	\N
+019ddd8c-f558-7386-a796-18c878996313	instructor1	INSTRUCTOR1	instructor1@example.com	INSTRUCTOR1@EXAMPLE.COM	t	AQAAAAIAAYagAAAAECLEQG4R0lvdiQBVtSZHn/7HzUaa6nxckzrTEI5vRwx5YOnOU3l/hOlTmoEyyRat2w==	SQCSJXFSKXUB3QHMSFKD43HJFV4DHS7L	deceffae-c057-4718-b303-a8ae3b5301e3	\N	f	f	\N	t	0	-infinity	f	\N
+019ddd8c-f5b5-756c-b9a4-759ab4ffa4cf	instructor2	INSTRUCTOR2	instructor2@example.com	INSTRUCTOR2@EXAMPLE.COM	t	AQAAAAIAAYagAAAAEM2OpN79n/LUE50XqZ0ClOBvajhvhHrrrBQnMagJRStWuVyTVpYFJElIvksXiWHQ6Q==	ELTWCHJVMM56QZK7KFAUGTX4OKOJNSSE	618d7b9a-7863-49df-bd2a-6dec54276444	\N	f	f	\N	t	0	-infinity	f	\N
+019ddd8c-f603-72ac-a914-255b7bfd9e64	instructor3	INSTRUCTOR3	instructor3@example.com	INSTRUCTOR3@EXAMPLE.COM	t	AQAAAAIAAYagAAAAEPmCzlIKwseI3PcRHPxsdFGAsV7GVG6DSig445hirDxlMC7sSZgdEA30WCykUS+5Hg==	F3X624PI2QYP2JZXHIN6GI2KEV4J6MKM	6ffaa219-b558-4604-89a5-cd404da49119	\N	f	f	\N	t	0	-infinity	f	\N
+019ddd8c-f65a-7ad2-a4fa-1a6f00d0d1cb	student1	STUDENT1	student1@example.com	STUDENT1@EXAMPLE.COM	t	AQAAAAIAAYagAAAAELT5HrApghXkZWrUR9s96l77q86a+qc6WHJXp+5L8RaUAHSGCubUW+pHCOk7RRRQEA==	AQ2ACDW4WXI2VPWDEJ5NNCZPFF7PZFCA	a7c33d9d-6dec-414c-bde6-3165e418f750	\N	f	f	\N	t	0	-infinity	f	\N
+019ddd8c-f6e1-7511-94bd-0a10582186a3	student2	STUDENT2	student2@example.com	STUDENT2@EXAMPLE.COM	t	AQAAAAIAAYagAAAAENUQpKP13GLVFbjCzauO/9LOS0t/e9QV0S6DzTMPrHASZHxaUwIMhGAUCDNHixBgVg==	HCF3OGSPWI5O3SKBWNHTTAAKPOBPQ5HL	caab734a-dfed-403b-81c9-e40559cb4997	\N	f	f	\N	t	0	-infinity	f	\N
+019ddd8c-f773-7d46-9bf6-03a520cda5da	student3	STUDENT3	student3@example.com	STUDENT3@EXAMPLE.COM	t	AQAAAAIAAYagAAAAEEMicP44dHmYYPnEbZqR/vSiZ9vitVpv49w9awB74983wHoqicZXD1xW2NGK723I0A==	3NV43Z7PGAHBNI5LPLOXXPOZFB7YA752	b37678ab-96fc-4fcd-91bf-13b14447ecc7	\N	f	f	\N	t	0	-infinity	f	\N
 \.
 
 
@@ -1621,7 +1655,7 @@ COPY public."ContestExercises" ("Id", "ContestId", "ExerciseId", "ScoreWeight", 
 -- Data for Name: ContestRegistrations; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."ContestRegistrations" ("Id", "ContestId", "StudentId", "RegistrationTime", "JoinTime", "SubmitTime", "IsDisqualified", "UserId", "CreationTime", "LastModificationTime", "IsDeleted") FROM stdin;
+COPY public."ContestRegistrations" ("Id", "ContestId", "StudentId", "RegistrationTime", "JoinTime", "SubmitTime", "IsDisqualified", "UserId", "CreationTime", "LastModificationTime", "IsDeleted", "DisqualifiedAt", "DisqualifiedReason", "ViolationCount") FROM stdin;
 \.
 
 
@@ -1637,7 +1671,7 @@ COPY public."ContestSubmissions" ("Id", "ContestId", "ExerciseId", "StudentId", 
 -- Data for Name: Contests; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Contests" ("Id", "Title", "Description", "Status", "StartTime", "EndTime", "DurationInMinutes", "AllowedLanguages", "MemoryLimit", "TimeLimit", "AntiCheatLevel", "CreatorId", "UserId", "CreationTime", "LastModificationTime", "IsDeleted") FROM stdin;
+COPY public."Contests" ("Id", "Title", "Description", "Status", "StartTime", "EndTime", "DurationInMinutes", "AllowedLanguages", "MemoryLimit", "TimeLimit", "AntiCheatLevel", "CreatorId", "UserId", "CreationTime", "LastModificationTime", "IsDeleted", "MaxViolations") FROM stdin;
 \.
 
 
@@ -1740,7 +1774,7 @@ COPY public."Exercises" ("Id", "Title", "Description", "Difficulty", "Category",
 -- Data for Name: FileChunks; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."FileChunks" ("Id", "FileEntryId", "ChunkIndex", "ChunkPath", "ChunkSize", "IsUploaded", "UserId", "CreationTime", "LastModificationTime", "IsDeleted") FROM stdin;
+COPY public."FileChunks" ("Id", "FileEntryId", "ChunkIndex", "ChunkLocation", "ChunkSize", "IsUploaded", "UserId", "CreationTime", "LastModificationTime", "IsDeleted") FROM stdin;
 \.
 
 
@@ -1748,46 +1782,46 @@ COPY public."FileChunks" ("Id", "FileEntryId", "ChunkIndex", "ChunkPath", "Chunk
 -- Data for Name: FileEntries; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."FileEntries" ("Id", "FileName", "FileSize", "FilePath", "TempDirPath", "Status", "TotalChunks", "UploadedChunks", "CompletedAt", "FileType", "UserId", "CreationTime", "LastModificationTime", "IsDeleted") FROM stdin;
-0d54acad-f2fc-48e4-b428-7ec6ea30a3a8	0d54acad-f2fc-48e4-b428-7ec6ea30a3a8.png	102919	public\\0d54acad-f2fc-48e4-b428-7ec6ea30a3a8.png		2	0	0	2026-05-07 14:57:58.159283+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-0f7e6b72-1553-4910-863b-6806115a5502	0f7e6b72-1553-4910-863b-6806115a5502.png	144399	public\\0f7e6b72-1553-4910-863b-6806115a5502.png		2	0	0	2026-05-07 14:57:58.573085+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-102e8f40-aa03-4834-81ef-6a735da57a4e	102e8f40-aa03-4834-81ef-6a735da57a4e.png	253806	public\\102e8f40-aa03-4834-81ef-6a735da57a4e.png		2	0	0	2026-05-07 14:57:58.123739+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-107349db-edd5-4da5-b785-5d991b0dfeb3	107349db-edd5-4da5-b785-5d991b0dfeb3.png	82905	public\\107349db-edd5-4da5-b785-5d991b0dfeb3.png		2	0	0	2026-05-07 14:57:58.833802+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-17dccc01-2c38-43c6-86c5-0836fea35adb	17dccc01-2c38-43c6-86c5-0836fea35adb.jpg	68652	public\\17dccc01-2c38-43c6-86c5-0836fea35adb.jpg		2	0	0	2026-05-07 14:57:58.750254+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-220486a3-e4a2-4187-a07c-ec759f3ee7da	220486a3-e4a2-4187-a07c-ec759f3ee7da.png	224823	public\\220486a3-e4a2-4187-a07c-ec759f3ee7da.png		2	0	0	2026-05-07 14:57:58.794359+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-220a8cf1-3bdd-496d-9cc2-76aae8243a7e	220a8cf1-3bdd-496d-9cc2-76aae8243a7e.png	216153	public\\220a8cf1-3bdd-496d-9cc2-76aae8243a7e.png		2	0	0	2026-05-07 14:57:59.189508+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-2614a6f0-bcce-456a-b7d0-eed74feac4b4	2614a6f0-bcce-456a-b7d0-eed74feac4b4.png	281099	public\\2614a6f0-bcce-456a-b7d0-eed74feac4b4.png		2	0	0	2026-05-07 14:57:58.374582+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-2f08efa2-b778-453d-8ddb-aa193c1e8cb9	2f08efa2-b778-453d-8ddb-aa193c1e8cb9.png	146448	public\\2f08efa2-b778-453d-8ddb-aa193c1e8cb9.png		2	0	0	2026-05-07 14:57:59.401776+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-36662c9d-b23d-4113-86de-5fde7eb38502	36662c9d-b23d-4113-86de-5fde7eb38502.png	295582	public\\36662c9d-b23d-4113-86de-5fde7eb38502.png		2	0	0	2026-05-07 14:57:58.324566+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-37b754c0-6f0d-463f-831f-df6b38f9d7dc	37b754c0-6f0d-463f-831f-df6b38f9d7dc.png	274600	public\\37b754c0-6f0d-463f-831f-df6b38f9d7dc.png		2	0	0	2026-05-07 14:57:58.259255+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-38676548-14a7-4f13-a660-c3715c5cc21e	38676548-14a7-4f13-a660-c3715c5cc21e.png	257650	public\\38676548-14a7-4f13-a660-c3715c5cc21e.png		2	0	0	2026-05-07 14:57:57.68933+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-3938c72f-fb6f-43c4-9e3a-5f0cc28f495c	3938c72f-fb6f-43c4-9e3a-5f0cc28f495c.png	261973	public\\3938c72f-fb6f-43c4-9e3a-5f0cc28f495c.png		2	0	0	2026-05-07 14:57:57.963278+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-4626cc6c-60e2-4b5b-b85c-ce1856dd21f6	4626cc6c-60e2-4b5b-b85c-ce1856dd21f6.png	305566	public\\4626cc6c-60e2-4b5b-b85c-ce1856dd21f6.png		2	0	0	2026-05-07 14:57:59.358338+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-4c26fa1e-d7b9-4d34-8522-2ff981cb81ca	4c26fa1e-d7b9-4d34-8522-2ff981cb81ca.png	182966	public\\4c26fa1e-d7b9-4d34-8522-2ff981cb81ca.png		2	0	0	2026-05-07 14:57:59.230784+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-4fafbc40-6d32-4b74-916c-8cdbb59a277c	4fafbc40-6d32-4b74-916c-8cdbb59a277c.jpg	287851	public\\4fafbc40-6d32-4b74-916c-8cdbb59a277c.jpg		2	0	0	2026-05-07 14:57:59.137961+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-58f2dd1f-49f0-4d31-8617-2ce0d64d8b67	58f2dd1f-49f0-4d31-8617-2ce0d64d8b67.png	122613	public\\58f2dd1f-49f0-4d31-8617-2ce0d64d8b67.png		2	0	0	2026-05-07 14:57:58.000084+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-6413a84b-3132-4ae5-93f5-854dccc93398	6413a84b-3132-4ae5-93f5-854dccc93398.jpg	87817	public\\6413a84b-3132-4ae5-93f5-854dccc93398.jpg		2	0	0	2026-05-07 14:57:58.606661+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-74f3a66f-93e5-4cc1-b162-eb4cdb5b856d	74f3a66f-93e5-4cc1-b162-eb4cdb5b856d.png	242860	public\\74f3a66f-93e5-4cc1-b162-eb4cdb5b856d.png		2	0	0	2026-05-07 14:57:58.963372+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-7aae509c-b9c5-4fa4-8dea-3048bceff53c	7aae509c-b9c5-4fa4-8dea-3048bceff53c.png	354705	public\\7aae509c-b9c5-4fa4-8dea-3048bceff53c.png		2	0	0	2026-05-07 14:57:57.442024+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-812f555c-ebf4-4db6-abfa-e8274b86778b	812f555c-ebf4-4db6-abfa-e8274b86778b.png	215842	public\\812f555c-ebf4-4db6-abfa-e8274b86778b.png		2	0	0	2026-05-07 14:57:58.420444+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-824751d2-9552-4e43-a77c-ee5019e7b05a	824751d2-9552-4e43-a77c-ee5019e7b05a.jpg	153690	public\\824751d2-9552-4e43-a77c-ee5019e7b05a.jpg		2	0	0	2026-05-07 14:57:57.734716+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-84ff6c2d-36b0-4ab7-b68f-838630ad04f6	84ff6c2d-36b0-4ab7-b68f-838630ad04f6.png	52292	public\\84ff6c2d-36b0-4ab7-b68f-838630ad04f6.png		2	0	0	2026-05-07 14:57:58.993192+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-90302e29-5284-43f6-8607-e2f2ffcfb888	90302e29-5284-43f6-8607-e2f2ffcfb888.png	307656	public\\90302e29-5284-43f6-8607-e2f2ffcfb888.png		2	0	0	2026-05-07 14:57:59.46705+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-9513d3dc-9467-4c02-af27-fc0977575f03	9513d3dc-9467-4c02-af27-fc0977575f03.jpg	73432	public\\9513d3dc-9467-4c02-af27-fc0977575f03.jpg		2	0	0	2026-05-07 14:57:58.910826+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-9869e6da-f8b5-4385-bf5c-d79eeca54f69	9869e6da-f8b5-4385-bf5c-d79eeca54f69.png	54789	public\\9869e6da-f8b5-4385-bf5c-d79eeca54f69.png		2	0	0	2026-05-07 14:57:57.914189+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-a0b25773-a5c6-49f1-a624-ceb19de597d3	a0b25773-a5c6-49f1-a624-ceb19de597d3.png	208641	public\\a0b25773-a5c6-49f1-a624-ceb19de597d3.png		2	0	0	2026-05-07 14:57:58.205099+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-a2c82164-7fd7-4322-b7de-5c56ae6eef14	a2c82164-7fd7-4322-b7de-5c56ae6eef14.png	205355	public\\a2c82164-7fd7-4322-b7de-5c56ae6eef14.png		2	0	0	2026-05-07 14:57:57.488217+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-adceaf50-5cd8-4b6a-9504-d02c6e6845fa	adceaf50-5cd8-4b6a-9504-d02c6e6845fa.png	280110	public\\adceaf50-5cd8-4b6a-9504-d02c6e6845fa.png		2	0	0	2026-05-07 14:57:59.284793+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-b64fb7c9-1679-40d1-a6e3-00cd35bb20a3	b64fb7c9-1679-40d1-a6e3-00cd35bb20a3.png	220740	public\\b64fb7c9-1679-40d1-a6e3-00cd35bb20a3.png		2	0	0	2026-05-07 14:57:59.034429+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-b89fc18f-c663-48ac-95e9-cb49fd66005e	b89fc18f-c663-48ac-95e9-cb49fd66005e.png	273588	public\\b89fc18f-c663-48ac-95e9-cb49fd66005e.png		2	0	0	2026-05-07 14:57:58.709539+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-bb52f86b-198c-4d4c-994a-0df7b92edf43	bb52f86b-198c-4d4c-994a-0df7b92edf43.png	137991	public\\bb52f86b-198c-4d4c-994a-0df7b92edf43.png		2	0	0	2026-05-07 14:57:57.533659+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-e0a5b6bc-c25b-44b8-86dc-f06ef3744064	e0a5b6bc-c25b-44b8-86dc-f06ef3744064.png	314968	public\\e0a5b6bc-c25b-44b8-86dc-f06ef3744064.png		2	0	0	2026-05-07 14:57:58.075378+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-e6e300e9-716b-4463-a5bf-0fdbd22795f1	e6e300e9-716b-4463-a5bf-0fdbd22795f1.png	266693	public\\e6e300e9-716b-4463-a5bf-0fdbd22795f1.png		2	0	0	2026-05-07 14:57:59.091294+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-f106fadf-c661-4ed4-8d14-f073595f48c9	f106fadf-c661-4ed4-8d14-f073595f48c9.png	206040	public\\f106fadf-c661-4ed4-8d14-f073595f48c9.png		2	0	0	2026-05-07 14:57:57.595118+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-f8fdac5e-932b-49ec-9f30-5baea1349e6c	f8fdac5e-932b-49ec-9f30-5baea1349e6c.jpg	129588	public\\f8fdac5e-932b-49ec-9f30-5baea1349e6c.jpg		2	0	0	2026-05-07 14:57:58.879771+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-fc61f9c7-2740-4ed1-89e3-b7b5ba868177	fc61f9c7-2740-4ed1-89e3-b7b5ba868177.jpg	77602	public\\fc61f9c7-2740-4ed1-89e3-b7b5ba868177.jpg		2	0	0	2026-05-07 14:57:58.644841+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-fe260b41-5370-4430-8c7e-587369dd573a	fe260b41-5370-4430-8c7e-587369dd573a.png	384365	public\\fe260b41-5370-4430-8c7e-587369dd573a.png		2	0	0	2026-05-07 14:57:57.312953+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
-ff2d50c5-12ce-43c1-b4ef-351ba0a61cec	ff2d50c5-12ce-43c1-b4ef-351ba0a61cec.png	711403	public\\ff2d50c5-12ce-43c1-b4ef-351ba0a61cec.png		2	0	0	2026-05-07 14:57:57.875517+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-07 15:09:21.707943+00	f
+COPY public."FileEntries" ("Id", "FileName", "FileSize", "FileLocation", "Status", "TotalChunks", "UploadedChunks", "CompletedAt", "FileType", "UserId", "CreationTime", "LastModificationTime", "IsDeleted") FROM stdin;
+37b754c0-6f0d-463f-831f-df6b38f9d7dc	37b754c0-6f0d-463f-831f-df6b38f9d7dc.png	274600	public\\37b754c0-6f0d-463f-831f-df6b38f9d7dc.png	2	0	0	2026-05-07 14:57:58.259255+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.589805+00	f
+9513d3dc-9467-4c02-af27-fc0977575f03	9513d3dc-9467-4c02-af27-fc0977575f03.jpg	73432	public\\9513d3dc-9467-4c02-af27-fc0977575f03.jpg	2	0	0	2026-05-07 14:57:58.910826+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.746773+00	f
+220486a3-e4a2-4187-a07c-ec759f3ee7da	220486a3-e4a2-4187-a07c-ec759f3ee7da.png	224823	public\\220486a3-e4a2-4187-a07c-ec759f3ee7da.png	2	0	0	2026-05-07 14:57:58.794359+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.694114+00	f
+7aae509c-b9c5-4fa4-8dea-3048bceff53c	7aae509c-b9c5-4fa4-8dea-3048bceff53c.png	354705	public\\7aae509c-b9c5-4fa4-8dea-3048bceff53c.png	2	0	0	2026-05-07 14:57:57.442024+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:50.986688+00	f
+b89fc18f-c663-48ac-95e9-cb49fd66005e	b89fc18f-c663-48ac-95e9-cb49fd66005e.png	273588	public\\b89fc18f-c663-48ac-95e9-cb49fd66005e.png	2	0	0	2026-05-07 14:57:58.709539+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.237347+00	f
+a0b25773-a5c6-49f1-a624-ceb19de597d3	a0b25773-a5c6-49f1-a624-ceb19de597d3.png	208641	public\\a0b25773-a5c6-49f1-a624-ceb19de597d3.png	2	0	0	2026-05-07 14:57:58.205099+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.144856+00	f
+2614a6f0-bcce-456a-b7d0-eed74feac4b4	2614a6f0-bcce-456a-b7d0-eed74feac4b4.png	281099	public\\2614a6f0-bcce-456a-b7d0-eed74feac4b4.png	2	0	0	2026-05-07 14:57:58.374582+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.167084+00	f
+812f555c-ebf4-4db6-abfa-e8274b86778b	812f555c-ebf4-4db6-abfa-e8274b86778b.png	215842	public\\812f555c-ebf4-4db6-abfa-e8274b86778b.png	2	0	0	2026-05-07 14:57:58.420444+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.186293+00	f
+0f7e6b72-1553-4910-863b-6806115a5502	0f7e6b72-1553-4910-863b-6806115a5502.png	144399	public\\0f7e6b72-1553-4910-863b-6806115a5502.png	2	0	0	2026-05-07 14:57:58.573085+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.216498+00	f
+74f3a66f-93e5-4cc1-b162-eb4cdb5b856d	74f3a66f-93e5-4cc1-b162-eb4cdb5b856d.png	242860	public\\74f3a66f-93e5-4cc1-b162-eb4cdb5b856d.png	2	0	0	2026-05-07 14:57:58.963372+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.25449+00	f
+84ff6c2d-36b0-4ab7-b68f-838630ad04f6	84ff6c2d-36b0-4ab7-b68f-838630ad04f6.png	52292	public\\84ff6c2d-36b0-4ab7-b68f-838630ad04f6.png	2	0	0	2026-05-07 14:57:58.993192+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.27322+00	f
+b64fb7c9-1679-40d1-a6e3-00cd35bb20a3	b64fb7c9-1679-40d1-a6e3-00cd35bb20a3.png	220740	public\\b64fb7c9-1679-40d1-a6e3-00cd35bb20a3.png	2	0	0	2026-05-07 14:57:59.034429+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.306357+00	f
+a2c82164-7fd7-4322-b7de-5c56ae6eef14	a2c82164-7fd7-4322-b7de-5c56ae6eef14.png	205355	public\\a2c82164-7fd7-4322-b7de-5c56ae6eef14.png	2	0	0	2026-05-07 14:57:57.488217+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.325348+00	f
+bb52f86b-198c-4d4c-994a-0df7b92edf43	bb52f86b-198c-4d4c-994a-0df7b92edf43.png	137991	public\\bb52f86b-198c-4d4c-994a-0df7b92edf43.png	2	0	0	2026-05-07 14:57:57.533659+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.339311+00	f
+38676548-14a7-4f13-a660-c3715c5cc21e	38676548-14a7-4f13-a660-c3715c5cc21e.png	257650	public\\38676548-14a7-4f13-a660-c3715c5cc21e.png	2	0	0	2026-05-07 14:57:57.68933+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.35385+00	f
+e6e300e9-716b-4463-a5bf-0fdbd22795f1	e6e300e9-716b-4463-a5bf-0fdbd22795f1.png	266693	public\\e6e300e9-716b-4463-a5bf-0fdbd22795f1.png	2	0	0	2026-05-07 14:57:59.091294+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.390188+00	f
+220a8cf1-3bdd-496d-9cc2-76aae8243a7e	220a8cf1-3bdd-496d-9cc2-76aae8243a7e.png	216153	public\\220a8cf1-3bdd-496d-9cc2-76aae8243a7e.png	2	0	0	2026-05-07 14:57:59.189508+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.412978+00	f
+4c26fa1e-d7b9-4d34-8522-2ff981cb81ca	4c26fa1e-d7b9-4d34-8522-2ff981cb81ca.png	182966	public\\4c26fa1e-d7b9-4d34-8522-2ff981cb81ca.png	2	0	0	2026-05-07 14:57:59.230784+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.427114+00	f
+2f08efa2-b778-453d-8ddb-aa193c1e8cb9	2f08efa2-b778-453d-8ddb-aa193c1e8cb9.png	146448	public\\2f08efa2-b778-453d-8ddb-aa193c1e8cb9.png	2	0	0	2026-05-07 14:57:59.401776+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.441303+00	f
+fe260b41-5370-4430-8c7e-587369dd573a	fe260b41-5370-4430-8c7e-587369dd573a.png	384365	public\\fe260b41-5370-4430-8c7e-587369dd573a.png	2	0	0	2026-05-07 14:57:57.312953+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.45826+00	f
+f106fadf-c661-4ed4-8d14-f073595f48c9	f106fadf-c661-4ed4-8d14-f073595f48c9.png	206040	public\\f106fadf-c661-4ed4-8d14-f073595f48c9.png	2	0	0	2026-05-07 14:57:57.595118+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.476499+00	f
+824751d2-9552-4e43-a77c-ee5019e7b05a	824751d2-9552-4e43-a77c-ee5019e7b05a.jpg	153690	public\\824751d2-9552-4e43-a77c-ee5019e7b05a.jpg	2	0	0	2026-05-07 14:57:57.734716+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.491215+00	f
+9869e6da-f8b5-4385-bf5c-d79eeca54f69	9869e6da-f8b5-4385-bf5c-d79eeca54f69.png	54789	public\\9869e6da-f8b5-4385-bf5c-d79eeca54f69.png	2	0	0	2026-05-07 14:57:57.914189+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.506748+00	f
+3938c72f-fb6f-43c4-9e3a-5f0cc28f495c	3938c72f-fb6f-43c4-9e3a-5f0cc28f495c.png	261973	public\\3938c72f-fb6f-43c4-9e3a-5f0cc28f495c.png	2	0	0	2026-05-07 14:57:57.963278+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.520941+00	f
+58f2dd1f-49f0-4d31-8617-2ce0d64d8b67	58f2dd1f-49f0-4d31-8617-2ce0d64d8b67.png	122613	public\\58f2dd1f-49f0-4d31-8617-2ce0d64d8b67.png	2	0	0	2026-05-07 14:57:58.000084+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.534919+00	f
+e0a5b6bc-c25b-44b8-86dc-f06ef3744064	e0a5b6bc-c25b-44b8-86dc-f06ef3744064.png	314968	public\\e0a5b6bc-c25b-44b8-86dc-f06ef3744064.png	2	0	0	2026-05-07 14:57:58.075378+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.554181+00	f
+102e8f40-aa03-4834-81ef-6a735da57a4e	102e8f40-aa03-4834-81ef-6a735da57a4e.png	253806	public\\102e8f40-aa03-4834-81ef-6a735da57a4e.png	2	0	0	2026-05-07 14:57:58.123739+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.571031+00	f
+36662c9d-b23d-4113-86de-5fde7eb38502	36662c9d-b23d-4113-86de-5fde7eb38502.png	295582	public\\36662c9d-b23d-4113-86de-5fde7eb38502.png	2	0	0	2026-05-07 14:57:58.324566+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.611817+00	f
+fc61f9c7-2740-4ed1-89e3-b7b5ba868177	fc61f9c7-2740-4ed1-89e3-b7b5ba868177.jpg	77602	public\\fc61f9c7-2740-4ed1-89e3-b7b5ba868177.jpg	2	0	0	2026-05-07 14:57:58.644841+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.660132+00	f
+17dccc01-2c38-43c6-86c5-0836fea35adb	17dccc01-2c38-43c6-86c5-0836fea35adb.jpg	68652	public\\17dccc01-2c38-43c6-86c5-0836fea35adb.jpg	2	0	0	2026-05-07 14:57:58.750254+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.67882+00	f
+107349db-edd5-4da5-b785-5d991b0dfeb3	107349db-edd5-4da5-b785-5d991b0dfeb3.png	82905	public\\107349db-edd5-4da5-b785-5d991b0dfeb3.png	2	0	0	2026-05-07 14:57:58.833802+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.731065+00	f
+4fafbc40-6d32-4b74-916c-8cdbb59a277c	4fafbc40-6d32-4b74-916c-8cdbb59a277c.jpg	287851	public\\4fafbc40-6d32-4b74-916c-8cdbb59a277c.jpg	2	0	0	2026-05-07 14:57:59.137961+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.760703+00	f
+adceaf50-5cd8-4b6a-9504-d02c6e6845fa	adceaf50-5cd8-4b6a-9504-d02c6e6845fa.png	280110	public\\adceaf50-5cd8-4b6a-9504-d02c6e6845fa.png	2	0	0	2026-05-07 14:57:59.284793+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.777498+00	f
+4626cc6c-60e2-4b5b-b85c-ce1856dd21f6	4626cc6c-60e2-4b5b-b85c-ce1856dd21f6.png	305566	public\\4626cc6c-60e2-4b5b-b85c-ce1856dd21f6.png	2	0	0	2026-05-07 14:57:59.358338+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.796046+00	f
+90302e29-5284-43f6-8607-e2f2ffcfb888	90302e29-5284-43f6-8607-e2f2ffcfb888.png	307656	public\\90302e29-5284-43f6-8607-e2f2ffcfb888.png	2	0	0	2026-05-07 14:57:59.46705+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.813952+00	f
+f8fdac5e-932b-49ec-9f30-5baea1349e6c	f8fdac5e-932b-49ec-9f30-5baea1349e6c.jpg	129588	public\\f8fdac5e-932b-49ec-9f30-5baea1349e6c.jpg	2	0	0	2026-05-07 14:57:58.879771+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.83114+00	f
+0d54acad-f2fc-48e4-b428-7ec6ea30a3a8	0d54acad-f2fc-48e4-b428-7ec6ea30a3a8.png	102919	public\\0d54acad-f2fc-48e4-b428-7ec6ea30a3a8.png	2	0	0	2026-05-07 14:57:58.159283+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.12394+00	f
+ff2d50c5-12ce-43c1-b4ef-351ba0a61cec	ff2d50c5-12ce-43c1-b4ef-351ba0a61cec.png	711403	public\\ff2d50c5-12ce-43c1-b4ef-351ba0a61cec.png	2	0	0	2026-05-07 14:57:57.875517+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.37056+00	f
+6413a84b-3132-4ae5-93f5-854dccc93398	6413a84b-3132-4ae5-93f5-854dccc93398.jpg	87817	public\\6413a84b-3132-4ae5-93f5-854dccc93398.jpg	2	0	0	2026-05-07 14:57:58.606661+00	1	\N	2026-05-07 14:57:59.509232+00	2026-05-08 07:42:51.64188+00	f
 \.
 
 
@@ -2390,6 +2424,9 @@ COPY public."__EFMigrationsHistory" ("MigrationId", "ProductVersion") FROM stdin
 20260501070803_AddExerciseSubmissionTables	10.0.5
 20260501073554_AddLessonQuizTables	10.0.5
 20260507141016_AddContestAndRenameTempDirColumn	10.0.5
+20260508073952_RenameFilePathToFileLocationColumn	10.0.5
+20260515065735_AddAntiCheatViolationTable	10.0.5
+20260525091520_AddAuditColumnsForAspNetUsers	10.0.5
 \.
 
 
@@ -2590,6 +2627,14 @@ ALTER TABLE ONLY hangfire.set
 
 ALTER TABLE ONLY hangfire.state
     ADD CONSTRAINT state_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: AntiCheatViolations PK_AntiCheatViolations; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."AntiCheatViolations"
+    ADD CONSTRAINT "PK_AntiCheatViolations" PRIMARY KEY ("Id");
 
 
 --
@@ -3026,6 +3071,20 @@ CREATE INDEX "EmailIndex" ON public."AspNetUsers" USING btree ("NormalizedEmail"
 
 
 --
+-- Name: IX_AntiCheatViolations_ContestId_StudentId; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "IX_AntiCheatViolations_ContestId_StudentId" ON public."AntiCheatViolations" USING btree ("ContestId", "StudentId");
+
+
+--
+-- Name: IX_AntiCheatViolations_StudentId; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "IX_AntiCheatViolations_StudentId" ON public."AntiCheatViolations" USING btree ("StudentId");
+
+
+--
 -- Name: IX_AspNetRoleClaims_RoleId; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -3382,6 +3441,22 @@ ALTER TABLE ONLY hangfire.jobparameter
 
 ALTER TABLE ONLY hangfire.state
     ADD CONSTRAINT state_jobid_fkey FOREIGN KEY (jobid) REFERENCES hangfire.job(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: AntiCheatViolations FK_AntiCheatViolations_AspNetUsers_StudentId; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."AntiCheatViolations"
+    ADD CONSTRAINT "FK_AntiCheatViolations_AspNetUsers_StudentId" FOREIGN KEY ("StudentId") REFERENCES public."AspNetUsers"("Id") ON DELETE CASCADE;
+
+
+--
+-- Name: AntiCheatViolations FK_AntiCheatViolations_Contests_ContestId; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."AntiCheatViolations"
+    ADD CONSTRAINT "FK_AntiCheatViolations_Contests_ContestId" FOREIGN KEY ("ContestId") REFERENCES public."Contests"("Id") ON DELETE CASCADE;
 
 
 --
@@ -3780,5 +3855,5 @@ ALTER TABLE ONLY public."UserLessonProgresses"
 -- PostgreSQL database dump complete
 --
 
-\unrestrict X18t6H4w1hFsSBOEzTeayBCEk1ejqeT9gptGNPx5tlfCxNAYbslNAkMDQ8c8Jwv
+\unrestrict T8abgkwPNkpqLumKL6VFhZWpKa4MYsZNacefvxm68AdnOHr9dKN6F9QdJjdJ6TG
 

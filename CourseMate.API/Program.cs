@@ -7,6 +7,7 @@ using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -90,10 +91,11 @@ try
             options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         });
 
-    builder.Services.AddIdentityCore<IdentityUser<Guid>>()
+    builder.Services.AddIdentityCore<User>()
         .AddSignInManager()
         .AddRoles<IdentityRole<Guid>>()
-        .AddEntityFrameworkStores<CourseMateDbContext>();
+        .AddEntityFrameworkStores<CourseMateDbContext>()
+        .AddDefaultTokenProviders();
     builder.Services.Configure<IdentityOptions>(options => { options.User.RequireUniqueEmail = true; });
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate")!);
@@ -165,7 +167,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseMiddleware<HttpLoggingMiddleware>();
-    // app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
+    // app.MapGroup("/api/auth").MapIdentityApi<User>();
     app.MapControllers();
     app.MapHub<NotificationHub>("/hubs/notification").RequireCors("SignalRHubs");
     app.MapHub<ContestHub>("/hubs/contest").RequireCors("SignalRHubs");

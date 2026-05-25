@@ -100,8 +100,8 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult> GoogleCallbackAsync([FromQuery] string redirectUrl)
     {
-        await _mediator.Send(new GoogleCallbackCommand());
-        return Redirect(redirectUrl);
+        string callbackRedirectUrl = await _mediator.Send(new GoogleCallbackCommand { RedirectUrl = redirectUrl });
+        return Redirect(callbackRedirectUrl);
     }
 
     #endregion

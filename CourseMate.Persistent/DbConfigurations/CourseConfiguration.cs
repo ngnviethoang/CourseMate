@@ -1,5 +1,4 @@
 using CourseMate.Persistent.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,6 +13,6 @@ public class CourseConfiguration : IEntityTypeConfiguration<Course>
         builder.Property(i => i.Description).HasColumnType("citext");
         builder.Property(i => i.ImageUrl).HasColumnType("citext");
         builder.HasOne<Category>().WithMany().HasForeignKey(i => i.CategoryId);
-        builder.HasOne<IdentityUser<Guid>>().WithMany().HasForeignKey(i => i.InstructorId);
+        builder.HasOne<User>().WithMany().HasForeignKey(i => i.InstructorId);
     }
 }

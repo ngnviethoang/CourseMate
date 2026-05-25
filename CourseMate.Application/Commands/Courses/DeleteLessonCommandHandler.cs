@@ -8,12 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Courses;
 
-public class DeleteLessonCommand : IRequest<int>
+public class DeleteLessonCommand : IRequest<Unit>
 {
     public Guid Id { get; set; }
 }
 
-internal sealed class DeleteLessonCommandHandler : AbstractCommandHandler<DeleteChapterCommand, int>
+internal sealed class DeleteLessonCommandHandler : AbstractCommandHandler<DeleteChapterCommand, Unit>
 {
     public DeleteLessonCommandHandler(
         CourseMateDbContext dbContext,
@@ -21,7 +21,7 @@ internal sealed class DeleteLessonCommandHandler : AbstractCommandHandler<Delete
     {
     }
 
-    public override async Task<int> Handle(DeleteChapterCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(DeleteChapterCommand request, CancellationToken ct)
     {
         bool canDelete = await (
                 from lesson in DbContext.Lessons
@@ -39,6 +39,6 @@ internal sealed class DeleteLessonCommandHandler : AbstractCommandHandler<Delete
         }
 
         await DbContext.Lessons.RemoveByIdAsync(request.Id, ct);
-        return Codes.Success;
+        return Unit.Value;
     }
 }

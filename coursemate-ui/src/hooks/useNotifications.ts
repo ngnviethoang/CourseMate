@@ -90,16 +90,18 @@ export function useNotifications(): UseNotificationsResult {
 
   // Set up SignalR connection
   useEffect(() => {
-    const token = getAccessToken()
-    if (!token) return
+    if (!userId) return
 
     const connection = new HubConnectionBuilder()
-      .withUrl(`${BASE_URL}/hubs/notification?access_token=${token}`)
+      .withUrl(`${BASE_URL}/hubs/notification`, {
+        accessTokenFactory: () => getAccessToken() ?? ''
+      })
       .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
       .configureLogging(LogLevel.Warning)
       .build()
 
     connectionRef.current = connection
+    let isCancelled = false
 
     connection.on('ReceiveNotification', (notification: NotificationDto) => {
       // Prepend to list
@@ -114,12 +116,27 @@ export function useNotifications(): UseNotificationsResult {
       })
     })
 
-    connection.start().catch(err => console.error('Failed to connect to NotificationHub:', err))
+    const startConnection = async () => {
+      try {
+        await connection.start()
+      } catch (err) {
+        if (!isCancelled) {
+          console.error('Failed to connect to NotificationHub:', err)
+        }
+      }
+    }
+
+    void startConnection()
 
     return () => {
-      connection.stop().catch(() => {})
+      isCancelled = true
+      connection.off('ReceiveNotification')
+      if (connectionRef.current === connection) {
+        connectionRef.current = null
+      }
+      void connection.stop().catch(() => {})
     }
-  }, [])
+  }, [userId])
 
   // Fetch on mount
   useEffect(() => {

@@ -54,8 +54,6 @@ internal sealed class UpdateLessonProgressCommandHandler : AbstractCommandHandle
             }
         }
 
-        await DbContext.SaveChangesAsync(ct);
-
         return new ResultIdDto { Id = progress.Id };
     }
 }

@@ -34,6 +34,8 @@ internal sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListL
             await EnsureEnrollmentAsync(request.CourseId.Value);
         }
 
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
+
         IQueryable<LessonDto> query = from lesson in DbContext.Lessons
             join chapter in DbContext.Chapters on lesson.ChapterId equals chapter.Id
             join course in DbContext.Courses on lesson.CourseId equals course.Id
@@ -55,7 +57,9 @@ internal sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListL
                 LastModificationTime = lesson.LastModificationTime
             };
 
-        query = query.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
+        query = query
+            .WhereIf(isFilterGuid, x => x.Id == filterId)
+            .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
 
         query = request.Sorting switch
         {

@@ -50,8 +50,6 @@ internal sealed class DisqualifyStudentCommandHandler : AbstractCommandHandler<D
         registration.DisqualifiedAt = DateTimeOffset.UtcNow;
         registration.DisqualifiedReason = $"Manual: {request.Reason}";
 
-        await DbContext.SaveChangesAsync(ct);
-
         return new ResultIdDto { Id = registration.Id };
     }
 }

@@ -4,8 +4,8 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
-import { chapterService } from '@/lib/course-service'
-import type { ChapterDto, CreateChapterRequest } from '@/lib/types'
+import { chapterService, courseService } from '@/lib/course-service'
+import type { ChapterDto, CourseDto, CreateChapterRequest } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,13 +24,19 @@ import { Label } from '@/components/ui/label'
 import { formatDate } from '@/lib/utils'
 
 const columns: Column<ChapterDto>[] = [
+  { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
   { key: 'title', header: 'Tiêu đề', sortKey: 'title' },
   { key: 'courseName', header: 'Khóa học' },
   { key: 'position', header: 'Vị trí', sortKey: 'position' },
-  { key: 'creationTime', header: 'Ngày tạo', sortKey: 'creationTime', render: row => formatDate(row.creationTime) },
+  {
+    key: 'creationTime',
+    header: 'Ngày tạo',
+    sortKey: 'creationTime',
+    render: row => formatDate(row.creationTime)
+  },
   {
     key: 'lastModificationTime',
-    header: 'Cập nhật',
+    header: 'Cập nhật lần cuối',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }
@@ -41,8 +47,10 @@ const emptyForm: CreateChapterRequest = { courseId: '', title: '', position: 0 }
 export default function ChaptersPage() {
   const router = useRouter()
   const [items, setItems] = useState<ChapterDto[]>([])
+  const [courseOptions, setCourseOptions] = useState<CourseDto[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')
+  const [courseFilterId, setCourseFilterId] = useState('')
   const [sorting, setSorting] = useState('creationTime_desc')
   const [pageIndex, setPageIndex] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
@@ -56,13 +64,30 @@ export default function ChaptersPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await chapterService.list({ filter, pageSize, pageIndex, sorting })
+      const res = await chapterService.list({
+        filter,
+        pageSize,
+        pageIndex,
+        sorting,
+        courseId: courseFilterId || undefined
+      })
       setItems(res.items)
       setTotalCount(res.totalCount)
     } finally {
       setLoading(false)
     }
-  }, [filter, sorting, pageIndex])
+  }, [filter, courseFilterId, sorting, pageIndex])
+
+  useEffect(() => {
+    courseService
+      .list({ pageSize: 100, sorting: 'title' })
+      .then(res => setCourseOptions(res.items))
+      .catch(() => setCourseOptions([]))
+  }, [])
+
+  useEffect(() => {
+    setPageIndex(0)
+  }, [filter, courseFilterId, sorting])
 
   useEffect(() => {
     const t = setTimeout(load, 300)
@@ -119,9 +144,28 @@ export default function ChaptersPage() {
         </Button>
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input className="pl-9" placeholder="Tìm chương..." value={filter} onChange={e => setFilter(e.target.value)} />
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative max-w-sm flex-1 min-w-[220px]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="pl-9"
+            placeholder="Tìm chương..."
+            value={filter}
+            onChange={e => setFilter(e.target.value)}
+          />
+        </div>
+        <select
+          value={courseFilterId}
+          onChange={e => setCourseFilterId(e.target.value)}
+          className="h-10 min-w-[220px] rounded-md -input bg-background px-3 text-sm focus:outline-none"
+        >
+          <option value="">Tất cả khóa học</option>
+          {courseOptions.map(course => (
+            <option key={course.id} value={course.id}>
+              {course.title}
+            </option>
+          ))}
+        </select>
       </div>
 
       <DataTable

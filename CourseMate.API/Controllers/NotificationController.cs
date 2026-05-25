@@ -30,8 +30,8 @@ public class NotificationController : ControllerBase
     [HttpGet("unread-count")]
     public async Task<ActionResult> GetUnreadCount()
     {
-        int count = await _mediator.Send(new GetUnreadCountQuery());
-        return Ok(new { count });
+        GetUnreadCountResponse result = await _mediator.Send(new GetUnreadCountQuery());
+        return Ok(result);
     }
 
     [HttpPut("{id:guid}/read")]
@@ -44,7 +44,7 @@ public class NotificationController : ControllerBase
     [HttpPut("read-all")]
     public async Task<ActionResult> MarkAllAsRead()
     {
-        int count = await _mediator.Send(new MarkAllNotificationsReadCommand());
-        return Ok(new { count });
+        MarkAllNotificationsReadResponse result = await _mediator.Send(new MarkAllNotificationsReadCommand());
+        return Ok(result);
     }
 }

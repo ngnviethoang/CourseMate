@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
@@ -61,7 +62,6 @@ internal sealed class RegisterForContestCommandHandler : AbstractCommandHandler<
         );
 
         await DbContext.ContestRegistrations.AddAsync(registration, ct);
-        await DbContext.SaveChangesAsync(ct);
 
         return new ResultIdDto { Id = registration.Id };
     }

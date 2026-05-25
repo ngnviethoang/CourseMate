@@ -1,5 +1,4 @@
 using CourseMate.Persistent.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,7 +9,7 @@ internal sealed class UserLessonProgressConfiguration : IEntityTypeConfiguration
     public void Configure(EntityTypeBuilder<UserLessonProgress> builder)
     {
         builder.ToTable("UserLessonProgresses");
-        builder.HasOne<IdentityUser<Guid>>().WithMany().HasForeignKey(x => x.StudentId);
+        builder.HasOne<User>().WithMany().HasForeignKey(x => x.StudentId);
         builder.HasOne<Lesson>().WithMany().HasForeignKey(x => x.LessonId);
     }
 }

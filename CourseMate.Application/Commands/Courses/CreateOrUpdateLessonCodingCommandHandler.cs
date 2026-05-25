@@ -1,5 +1,4 @@
 ﻿using CourseMate.Application.Shared;
-using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
@@ -9,21 +8,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Courses;
 
-public class CreateOrUpdateLessonCodingCommand : IRequest<int>
+public class CreateOrUpdateLessonCodingCommand : IRequest<Unit>
 {
     public Guid LessonId { get; set; }
 
     public Guid ExerciseId { get; set; }
 }
 
-internal sealed class CreateOrUpdateLessonCodingCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonCodingCommand, int>
+internal sealed class CreateOrUpdateLessonCodingCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonCodingCommand, Unit>
 {
     public CreateOrUpdateLessonCodingCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
     {
     }
 
-    public override async Task<int> Handle(CreateOrUpdateLessonCodingCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(CreateOrUpdateLessonCodingCommand request, CancellationToken ct)
     {
         await EnsureAuthorCourseAsync(request.LessonId, ct);
         bool exerciseExists = await DbContext.Exercises.AnyAsync(e => e.Id == request.ExerciseId, ct);
@@ -42,7 +41,6 @@ internal sealed class CreateOrUpdateLessonCodingCommandHandler : AbstractCommand
             existing.ExerciseId = request.ExerciseId;
         }
 
-        await DbContext.SaveChangesAsync(ct);
-        return Codes.Success;
+        return Unit.Value;
     }
 }

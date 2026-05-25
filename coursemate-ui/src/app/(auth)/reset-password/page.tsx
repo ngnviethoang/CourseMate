@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { GraduationCap, ArrowRight, Loader2, Lock, Eye, EyeOff, CheckCircle2 } from 'lucide-react'
+import { GraduationCap, ArrowRight, Loader2, Lock, Eye, EyeOff, CheckCircle2, XCircle } from 'lucide-react'
 import { authService } from '@/lib/auth-service'
 import { toast } from 'sonner'
 
@@ -21,6 +21,7 @@ function ResetPasswordForm() {
   const [done, setDone] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
+  const hasValidLink = Boolean(email && token)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -59,10 +60,17 @@ function ResetPasswordForm() {
   }
 
   return (
-    <Card className="shadow-2xl shadow-black/5 dark:shadow-black/20 bg-background/60 backdrop-blur-xl">
-      <CardHeader className="space-y-1 pb-4">
-        <CardTitle className="text-xl font-semibold">Đặt lại mật khẩu</CardTitle>
-        <CardDescription className="text-sm">Nhập mật khẩu mới cho tài khoản của bạn.</CardDescription>
+    <Card className="border-zinc-200/70 bg-background/80 shadow-2xl shadow-zinc-900/10 backdrop-blur-xl dark:border-zinc-800/80 dark:shadow-black/30">
+      <CardHeader className="space-y-4 pb-3">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-1 ring-primary/20">
+          <GraduationCap className="h-7 w-7" />
+        </div>
+        <div className="space-y-1 text-center">
+          <CardTitle className="text-2xl font-bold tracking-tight">Thiết lập mật khẩu mới</CardTitle>
+          <CardDescription className="text-sm text-muted-foreground">
+            Nhập mật khẩu mới để hoàn tất quá trình đặt lại.
+          </CardDescription>
+        </div>
       </CardHeader>
       <CardContent>
         {done ? (
@@ -72,7 +80,27 @@ function ResetPasswordForm() {
             </div>
             <div className="space-y-2">
               <p className="font-semibold text-foreground">Đặt lại mật khẩu thành công!</p>
-              <p className="text-sm text-muted-foreground">Đang chuyển hướng về trang đăng nhập...</p>
+              <p className="text-sm text-muted-foreground">Bạn sẽ được chuyển về trang đăng nhập trong giây lát.</p>
+            </div>
+          </div>
+        ) : !hasValidLink ? (
+          <div className="flex flex-col items-center gap-4 py-6 text-center animate-in fade-in duration-500">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
+              <XCircle className="h-8 w-8 text-red-500 dark:text-red-400" />
+            </div>
+            <div className="space-y-2">
+              <p className="font-semibold text-foreground">Liên kết không hợp lệ</p>
+              <p className="text-sm text-muted-foreground">
+                Liên kết đặt lại mật khẩu đã sai hoặc thiếu thông tin. Vui lòng yêu cầu lại.
+              </p>
+            </div>
+            <div className="flex w-full gap-3 pt-1">
+              <Button asChild variant="outline" className="w-1/2">
+                <Link href="/login">Đăng nhập</Link>
+              </Button>
+              <Button asChild className="w-1/2">
+                <Link href="/forgot-password">Yêu cầu lại</Link>
+              </Button>
             </div>
           </div>
         ) : (
@@ -87,13 +115,13 @@ function ResetPasswordForm() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   autoComplete="new-password"
-                  className="pl-9 pr-10 bg-background/50 focus-visible:ring-primary/30 transition-shadow"
+                  className="h-11 border-zinc-200/70 bg-background/70 pl-9 pr-10 transition focus-visible:ring-primary/35 dark:border-zinc-700/70"
                   disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-muted-foreground hover:text-foreground focus:outline-none"
+                  className="absolute right-3 top-3 text-muted-foreground transition hover:text-foreground focus:outline-none"
                   aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -110,13 +138,13 @@ function ResetPasswordForm() {
                   type={showConfirm ? 'text' : 'password'}
                   placeholder="••••••••"
                   autoComplete="new-password"
-                  className="pl-9 pr-10 bg-background/50 focus-visible:ring-primary/30 transition-shadow"
+                  className="h-11 border-zinc-200/70 bg-background/70 pl-9 pr-10 transition focus-visible:ring-primary/35 dark:border-zinc-700/70"
                   disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirm(!showConfirm)}
-                  className="absolute right-3 top-3 text-muted-foreground hover:text-foreground focus:outline-none"
+                  className="absolute right-3 top-3 text-muted-foreground transition hover:text-foreground focus:outline-none"
                   aria-label={showConfirm ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                 >
                   {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -124,13 +152,16 @@ function ResetPasswordForm() {
               </div>
             </div>
 
+            <p className="rounded-lg border border-zinc-200/70 bg-zinc-50/70 px-3 py-2 text-xs text-muted-foreground dark:border-zinc-700/70 dark:bg-zinc-900/40">
+              Mật khẩu nên có ít nhất 6 ký tự và kết hợp chữ, số để tăng bảo mật.
+            </p>
+
             <Button
               type="submit"
               id="btn-reset-password"
-              className="w-full h-11 relative group overflow-hidden mt-6"
+              className="h-11 w-full font-semibold shadow-lg shadow-primary/25"
               disabled={isLoading}
             >
-              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] transition-all" />
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
@@ -142,7 +173,7 @@ function ResetPasswordForm() {
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              <Link href="/login" className="font-medium text-primary hover:underline">
+              <Link href="/login" className="font-semibold text-primary hover:underline">
                 Quay lại đăng nhập
               </Link>
             </p>
@@ -155,32 +186,15 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-4 relative overflow-hidden font-sans">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/10 blur-[100px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/10 blur-[100px] rounded-full pointer-events-none" />
+    <div className="relative min-h-screen overflow-hidden bg-zinc-100 p-4 font-sans dark:bg-zinc-950">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(14,165,233,0.18),transparent_36%),radial-gradient(circle_at_90%_0%,rgba(56,189,248,0.14),transparent_30%),radial-gradient(circle_at_50%_85%,rgba(245,158,11,0.12),transparent_36%)]" />
+      <div className="absolute -left-20 top-20 h-64 w-64 rounded-full border border-sky-300/40 bg-sky-200/20 blur-3xl dark:border-sky-700/30 dark:bg-sky-900/10" />
+      <div className="absolute -right-24 bottom-16 h-72 w-72 rounded-full border border-amber-300/30 bg-amber-200/20 blur-3xl dark:border-amber-700/20 dark:bg-amber-900/10" />
 
-      <div className="w-full max-w-md relative z-10 animate-in fade-in zoom-in-95 duration-500">
-        <div className="flex flex-col items-center mb-8 gap-3">
-          <Link
-            href="/"
-            className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/30 ring-1 ring-primary/20"
-          >
-            <GraduationCap className="h-7 w-7" />
-          </Link>
-          <div className="text-center space-y-1">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">CourseMate</h1>
-            <p className="text-sm text-muted-foreground font-medium">Thiết lập mật khẩu mới</p>
-          </div>
-        </div>
-
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-2rem)] w-full max-w-lg items-center">
         <Suspense fallback={<div className="text-center text-muted-foreground">Đang tải...</div>}>
           <ResetPasswordForm />
         </Suspense>
-
-        <p className="text-center text-xs text-muted-foreground/60 mt-8">
-          &copy; {new Date().getFullYear()} CourseMate. Bảo lưu mọi quyền.
-        </p>
       </div>
     </div>
   )

@@ -18,16 +18,20 @@ export interface LoginCommand {
   password: string
 }
 
+export enum RegisterRole {
+  Student = 'Student',
+  Instructor = 'Instructor'
+}
+
 export interface RegisterCommand {
   userName: string
   email: string
   password: string
-  role: 'Student' | 'Instructor'
+  role: RegisterRole
 }
 
 export interface LoginResponse {
   accessToken: string
-  roles: string[]
 }
 
 export interface VerifyEmailRequest {
@@ -83,6 +87,7 @@ export interface AdminOrderItemDto {
 
 export interface AdminOrderDto {
   id: string
+  title: string
   studentId: string
   studentName: string
   studentEmail: string
@@ -90,12 +95,17 @@ export interface AdminOrderDto {
   status: string
   itemsCount: number
   creationTime: string
+  lastModificationTime?: string
   items: AdminOrderItemDto[]
 }
 
 export interface UpdateOrderRequest {
   id: string
   status: string
+}
+
+export interface CreateOrderRequest {
+  cartItemIds: string[]
 }
 
 // ─── Course ───────────────────────────────────────────────────────────────────
@@ -256,10 +266,6 @@ export interface UpsertLessonQuizRequest {
   questions: QuizQuestionDto[]
 }
 
-export interface UpsertLessonSlideRequest {
-  fileUrl: string
-}
-
 // ─── User ─────────────────────────────────────────────────────────────────────
 
 export interface UserDto {
@@ -267,6 +273,8 @@ export interface UserDto {
   userName?: string
   email?: string
   phoneNumber?: string
+  creationTime: string
+  lastModificationTime?: string
 }
 
 export interface CreateUserRequest {
@@ -378,9 +386,14 @@ export interface OrderItemDto {
 
 export interface OrderDto {
   id: string
+  title: string
   studentId: string
+  studentName?: string
+  studentEmail?: string
   totalAmount: number
   status: string
+  creationTime: string
+  lastModificationTime?: string
   items: OrderItemDto[]
 }
 

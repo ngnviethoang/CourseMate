@@ -1,12 +1,16 @@
 using System.ComponentModel.DataAnnotations;
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
+using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Auth;
 
-public class ResetPasswordCommand : IRequest<int>
+public class ResetPasswordCommand : IRequest<Unit>
 {
     [Required]
     [EmailAddress]
@@ -20,18 +24,19 @@ public class ResetPasswordCommand : IRequest<int>
     public string NewPassword { get; set; } = string.Empty;
 }
 
-internal sealed class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, int>
+internal sealed class ResetPasswordCommandHandler : AbstractCommandHandler<ResetPasswordCommand, Unit>
 {
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
+    private readonly UserManager<User> _userManager;
 
-    public ResetPasswordCommandHandler(UserManager<IdentityUser<Guid>> userManager)
+    public ResetPasswordCommandHandler(CourseMateDbContext courseMateDbContext,
+        IHttpContextAccessor httpContextAccessor, UserManager<User> userManager) : base(courseMateDbContext, httpContextAccessor)
     {
         _userManager = userManager;
     }
 
-    public async Task<int> Handle(ResetPasswordCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(ResetPasswordCommand request, CancellationToken ct)
     {
-        IdentityUser<Guid>? user = await _userManager.FindByEmailAsync(request.Email);
+        User? user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
         {
             throw new BusinessException(ErrorCode.UserNotFound, "Account not found.");
@@ -43,6 +48,6 @@ internal sealed class ResetPasswordCommandHandler : IRequestHandler<ResetPasswor
             throw new BusinessException(ErrorCode.Unknown, result.Errors.FirstOrDefault()?.Description ?? string.Empty);
         }
 
-        return Codes.Success;
+        return Unit.Value;
     }
 }

@@ -54,8 +54,6 @@ internal sealed class ReinstateStudentCommandHandler : AbstractCommandHandler<Re
         registration.DisqualifiedAt = null;
         registration.DisqualifiedReason = string.Empty;
 
-        await DbContext.SaveChangesAsync(ct);
-
         return new ResultIdDto { Id = registration.Id };
     }
 }

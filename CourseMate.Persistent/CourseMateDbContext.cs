@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace CourseMate.Persistent;
 
-public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
+public sealed class CourseMateDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     private const string SoftDeletionFilter = "SoftDeletionFilter";
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -105,11 +105,21 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
                 {
                     case EntityState.Added:
                         auditable.CreationTime = now;
-                        auditable.UserId = userId;
                         break;
+
                     case EntityState.Modified:
                         auditable.LastModificationTime = now;
-                        auditable.UserId = userId;
+                        break;
+                }
+            }
+
+            if (entry.Entity is IMayHaveUser mayHaveUser)
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                    case EntityState.Modified:
+                        mayHaveUser.UserId = userId;
                         break;
                 }
             }

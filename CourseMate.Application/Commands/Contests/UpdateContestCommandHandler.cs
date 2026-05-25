@@ -60,8 +60,6 @@ internal sealed class UpdateContestCommandHandler : AbstractCommandHandler<Updat
         contest.AntiCheatLevel = request.AntiCheatLevel;
         contest.MaxViolations = request.MaxViolations;
 
-        await DbContext.SaveChangesAsync(ct);
-
         return new ResultIdDto { Id = contest.Id };
     }
 }

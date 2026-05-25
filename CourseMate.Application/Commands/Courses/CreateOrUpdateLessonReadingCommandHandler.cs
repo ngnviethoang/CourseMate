@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts;
-using CourseMate.Contracts.Constants;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
@@ -10,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Courses;
 
-public class CreateOrUpdateLessonReadingCommand : IRequest<int>
+public class CreateOrUpdateLessonReadingCommand : IRequest<Unit>
 {
     public Guid LessonId { get; set; }
 
@@ -18,14 +17,14 @@ public class CreateOrUpdateLessonReadingCommand : IRequest<int>
     public string Content { get; set; } = string.Empty;
 }
 
-internal sealed class CreateOrUpdateLessonReadingCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonReadingCommand, int>
+internal sealed class CreateOrUpdateLessonReadingCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonReadingCommand, Unit>
 {
     public CreateOrUpdateLessonReadingCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
     {
     }
 
-    public override async Task<int> Handle(CreateOrUpdateLessonReadingCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(CreateOrUpdateLessonReadingCommand request, CancellationToken ct)
     {
         await EnsureAuthorCourseAsync(request.LessonId, ct);
         LessonReading? existing = await DbContext.LessonReadings.FirstOrDefaultAsync(r => r.LessonId == request.LessonId, ct);
@@ -38,7 +37,6 @@ internal sealed class CreateOrUpdateLessonReadingCommandHandler : AbstractComman
             existing.Content = request.Content;
         }
 
-        await DbContext.SaveChangesAsync(ct);
-        return Codes.Success;
+        return Unit.Value;
     }
 }

@@ -1,41 +1,47 @@
 using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.BackgroundJobs;
-using CourseMate.Contracts.Constants;
+using CourseMate.Application.Shared;
+using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using Hangfire;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
 namespace CourseMate.Application.Commands.Auth;
 
-public class ForgotPasswordCommand : IRequest<int>
+public class ForgotPasswordCommand : IRequest<Unit>
 {
     [Required]
     [EmailAddress]
     public string Email { get; set; } = string.Empty;
 }
 
-internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordCommand, int>
+internal sealed class ForgotPasswordCommandHandler : AbstractCommandHandler<ForgotPasswordCommand, Unit>
 {
     private readonly IConfiguration _configuration;
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
+    private readonly UserManager<User> _userManager;
 
     public ForgotPasswordCommandHandler(
-        UserManager<IdentityUser<Guid>> userManager,
-        IConfiguration configuration)
+        CourseMateDbContext courseMateDbContext,
+        IHttpContextAccessor httpContextAccessor,
+        UserManager<User> userManager,
+        IConfiguration configuration
+    ) : base(courseMateDbContext, httpContextAccessor)
     {
         _userManager = userManager;
         _configuration = configuration;
     }
 
-    public async Task<int> Handle(ForgotPasswordCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(ForgotPasswordCommand request, CancellationToken ct)
     {
-        IdentityUser<Guid>? user = await _userManager.FindByEmailAsync(request.Email);
+        User? user = await _userManager.FindByEmailAsync(request.Email);
 
         // Always return success to avoid user enumeration attacks
         if (user == null || !await _userManager.IsEmailConfirmedAsync(user))
         {
-            return Codes.Success;
+            return Unit.Value;
         }
 
         string token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -46,12 +52,12 @@ internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPassw
 
         string htmlBody = await RenderResetPasswordTemplate(user.UserName ?? request.Email, resetUrl);
         BackgroundJob.Enqueue<EmailSenderJob>(job => job.Execute(request.Email, "Đặt lại mật khẩu CourseMate", htmlBody));
-        return Codes.Success;
+        return Unit.Value;
     }
 
     private static async Task<string> RenderResetPasswordTemplate(string userName, string resetUrl)
     {
-        string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "ResetPassword.html");
+        string templatePath = Util.ResolveEmailTemplatePath("ResetPassword.html");
         string html = await File.ReadAllTextAsync(templatePath);
         return html
             .Replace("{{userName}}", userName)

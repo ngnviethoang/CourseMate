@@ -1,4 +1,12 @@
 import { api } from './api-client'
+import { ExerciseExampleDto, ResultIdDto } from './types'
+
+interface PagedDto<T> {
+  items: T[]
+  totalCount: number
+  pageIndex: number
+  pageSize: number
+}
 
 export interface ContestDto {
   id: string
@@ -16,6 +24,7 @@ export interface ContestDto {
   creatorId: string
   creatorName?: string
   creationTime: string
+  lastModificationTime?: string
   exerciseCount: number
   participantCount: number
   isRegistered?: boolean
@@ -46,7 +55,7 @@ export interface ContestExerciseDto {
   order: number
   bestScore?: number
   isPassed: boolean
-  examples: any[]
+  examples: ExerciseExampleDto[]
   constraints: string[]
   hints: string[]
   defaultCodes: { language: string; starterCode: string }[]
@@ -77,20 +86,28 @@ export interface LeaderboardEntryDto {
 }
 
 export const contestService = {
-  getList: (params: any) => {
-    const searchParams = new URLSearchParams(params)
-    return api.get<any>(`/api/contests?${searchParams}`)
+  getList: (params: { filter?: string; status?: string; sorting?: string; pageIndex?: number; pageSize?: number }) => {
+    const searchParams = new URLSearchParams()
+    if (params.filter) searchParams.set('filter', params.filter)
+    if (params.status) searchParams.set('status', params.status)
+    if (params.sorting) searchParams.set('sorting', params.sorting)
+    if (params.pageIndex != null) searchParams.set('pageIndex', String(params.pageIndex))
+    if (params.pageSize != null) searchParams.set('pageSize', String(params.pageSize))
+    return api.get<PagedDto<ContestDto>>(`/api/contests?${searchParams}`)
   },
   getById: (id: string) => api.get<ContestDto>(`/api/contests/${id}`),
-  create: (data: any) => api.post<any>('/api/contests', data),
-  update: (id: string, data: any) => api.put(`/api/contests/${id}`, data),
-  addExercise: (id: string, data: any) => api.post(`/api/contests/${id}/exercises`, data),
+  create: (data: unknown) => api.post<ResultIdDto>('/api/contests', data),
+  update: (id: string, data: unknown) => api.put<void>(`/api/contests/${id}`, data),
+  addExercise: (id: string, data: unknown) => api.post<ResultIdDto>(`/api/contests/${id}/exercises`, data),
+  getExercises: (id: string) => api.get<ContestExerciseDto[]>(`/api/contests/${id}/exercises`),
+  removeExercise: (contestId: string, contestExerciseId: string) =>
+    api.delete<void>(`/api/contests/${contestId}/exercises/${contestExerciseId}`),
 
   // Student APIs
   register: (id: string) => api.post(`/api/contests/${id}/register`, {}),
   checkIn: (id: string) => api.post(`/api/contests/${id}/check-in`, {}),
   getWorkspace: (id: string) => api.get<ContestWorkspaceDto>(`/api/contests/${id}/workspace`),
-  submitExercise: (id: string, exerciseId: string, payload: any) =>
+  submitExercise: (id: string, exerciseId: string, payload: unknown) =>
     api.post(`/api/contests/${id}/exercises/${exerciseId}/submit`, payload),
   finish: (id: string) => api.post(`/api/contests/${id}/finish`, {}),
   getLeaderboard: (id: string) => api.get<ContestLeaderboardDto>(`/api/contests/${id}/leaderboard`),

@@ -25,8 +25,8 @@ import { Switch } from '@/components/ui/switch'
 import { formatDate } from '@/lib/utils'
 
 const columns: Column<CategoryDto>[] = [
-  { key: 'name', header: 'Tên', sortKey: 'name' },
-  { key: 'description', header: 'Mô tả' },
+  { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
+  { key: 'name', header: 'Tiêu đề', sortKey: 'name' },
   {
     key: 'isActive',
     header: 'Trạng thái',
@@ -36,10 +36,15 @@ const columns: Column<CategoryDto>[] = [
       </Badge>
     )
   },
-  { key: 'creationTime', header: 'Ngày tạo', sortKey: 'creationTime', render: row => formatDate(row.creationTime) },
+  {
+    key: 'creationTime',
+    header: 'Ngày tạo',
+    sortKey: 'creationTime',
+    render: row => formatDate(row.creationTime)
+  },
   {
     key: 'lastModificationTime',
-    header: 'Cập nhật',
+    header: 'Cập nhật lần cuối',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }
@@ -64,7 +69,12 @@ export default function CategoriesPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await categoryService.list({ filter, pageIndex, pageSize, sorting, hasCourse: true })
+      const res = await categoryService.list({
+        filter,
+        pageIndex,
+        pageSize,
+        sorting
+      })
       setItems(res.items)
       setTotalCount(res.totalCount)
     } finally {
@@ -131,14 +141,16 @@ export default function CategoriesPage() {
         </Button>
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          className="pl-9"
-          placeholder="Tìm danh mục..."
-          value={filter}
-          onChange={e => setFilter(e.target.value)}
-        />
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative max-w-sm flex-1 min-w-[220px]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="pl-9"
+            placeholder="Tìm danh mục..."
+            value={filter}
+            onChange={e => setFilter(e.target.value)}
+          />
+        </div>
       </div>
 
       <DataTable

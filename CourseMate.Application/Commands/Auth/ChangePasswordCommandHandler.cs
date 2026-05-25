@@ -2,35 +2,36 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Auth;
 
-public class ChangePasswordCommand : IRequest<int>
+public class ChangePasswordCommand : IRequest<Unit>
 {
     public string NewPassword { get; set; } = string.Empty;
 
     public string OldPassword { get; set; } = string.Empty;
 }
 
-internal sealed class ChangePasswordCommandHandler : AbstractCommandHandler<ChangePasswordCommand, int>
+internal sealed class ChangePasswordCommandHandler : AbstractCommandHandler<ChangePasswordCommand, Unit>
 {
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
+    private readonly UserManager<User> _userManager;
 
     public ChangePasswordCommandHandler(
         CourseMateDbContext courseMateDbContext,
         IHttpContextAccessor httpContextAccessor,
-        UserManager<IdentityUser<Guid>> userManager
+        UserManager<User> userManager
     ) : base(courseMateDbContext, httpContextAccessor)
     {
         _userManager = userManager;
     }
 
-    public override async Task<int> Handle(ChangePasswordCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(ChangePasswordCommand request, CancellationToken ct)
     {
-        IdentityUser<Guid>? user = await _userManager.FindByIdAsync(CurrentUserId.ToString());
+        User? user = await _userManager.FindByIdAsync(CurrentUserId.ToString());
         if (user == null)
         {
             throw new EntityNotFoundException(nameof(IdentityUser), CurrentUserId);
@@ -42,6 +43,6 @@ internal sealed class ChangePasswordCommandHandler : AbstractCommandHandler<Chan
             throw new BusinessException(ErrorCode.Unknown, changePasswordResult.Errors.FirstOrDefault()?.Description ?? string.Empty);
         }
 
-        return Codes.Success;
+        return Unit.Value;
     }
 }

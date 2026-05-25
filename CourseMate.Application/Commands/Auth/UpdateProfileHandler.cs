@@ -3,13 +3,14 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace CourseMate.Application.Commands.Auth;
 
-public class UpdateProfileCommand : IRequest<int>
+public class UpdateProfileCommand : IRequest<Unit>
 {
     [EmailAddress]
     public string? Email { get; set; }
@@ -19,22 +20,22 @@ public class UpdateProfileCommand : IRequest<int>
     public string? UserName { get; set; }
 }
 
-internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfileCommand, int>
+internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfileCommand, Unit>
 {
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
+    private readonly UserManager<User> _userManager;
 
     public UpdateProfileHandler(
         CourseMateDbContext courseMateDbContext,
         IHttpContextAccessor httpContextAccessor,
-        UserManager<IdentityUser<Guid>> userManager
+        UserManager<User> userManager
     ) : base(courseMateDbContext, httpContextAccessor)
     {
         _userManager = userManager;
     }
 
-    public override async Task<int> Handle(UpdateProfileCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(UpdateProfileCommand request, CancellationToken ct)
     {
-        IdentityUser<Guid>? user = await _userManager.FindByIdAsync(CurrentUserId.ToString());
+        User? user = await _userManager.FindByIdAsync(CurrentUserId.ToString());
 
         if (user == null)
         {
@@ -63,7 +64,7 @@ internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfil
         IdentityResult result = await _userManager.UpdateAsync(user);
         if (result.Succeeded)
         {
-            return Codes.Success;
+            return Unit.Value;
         }
 
         string errors = string.Join(", ", result.Errors.Select(e => e.Description));

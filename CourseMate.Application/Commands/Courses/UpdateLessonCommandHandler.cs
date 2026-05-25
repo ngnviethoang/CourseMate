@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Courses;
 
-public class UpdateLessonCommand : IRequest<int>
+public class UpdateLessonCommand : IRequest<Unit>
 {
     public Guid Id { get; set; }
 
@@ -30,7 +30,7 @@ public class UpdateLessonCommand : IRequest<int>
     public int Position { get; set; }
 }
 
-internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<UpdateLessonCommand, int>
+internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<UpdateLessonCommand, Unit>
 {
     public UpdateLessonCommandHandler(
         CourseMateDbContext dbContext,
@@ -38,7 +38,7 @@ internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<Update
     {
     }
 
-    public override async Task<int> Handle(UpdateLessonCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(UpdateLessonCommand request, CancellationToken ct)
     {
         bool isExistedCourse = IsInRole(Roles.Admin) || await DbContext.Courses
             .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == CurrentUserId)
@@ -111,6 +111,6 @@ internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<Update
         lesson.Position = finalPosition;
 
         DbContext.Update(lesson);
-        return Codes.Success;
+        return Unit.Value;
     }
 }

@@ -64,84 +64,86 @@ export function DataTable<T extends { id: string }>({
   }
 
   return (
-    <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
-      <Table>
-        <TableHeader>
-          <TableRow className="bg-muted/50 hover:bg-muted/50">
-            {columns.map(col => (
-              <TableHead
-                key={String(col.key)}
-                className={col.sortKey && onSort ? 'cursor-pointer select-none hover:text-primary' : ''}
-                onClick={() => col.sortKey && handleSort(col.sortKey)}
-              >
-                <span className="inline-flex items-center font-semibold text-xs uppercase tracking-wide">
-                  {col.header}
-                  {col.sortKey && onSort && <SortIcon sortKey={col.sortKey} />}
-                </span>
-              </TableHead>
-            ))}
-            {hasActions && (
-              <TableHead className="w-24 text-right">
-                <span className="font-semibold text-xs uppercase tracking-wide">Thao tác</span>
-              </TableHead>
-            )}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.length === 0 ? (
-            <TableRow>
-              <TableCell
-                colSpan={columns.length + (hasActions ? 1 : 0)}
-                className="h-24 text-center text-muted-foreground text-sm"
-              >
-                Không có dữ liệu.
-              </TableCell>
+    <div className="overflow-hidden rounded-xl bg-card shadow-md border-0">
+      <div className="max-h-[65vh] overflow-auto">
+        <Table className="min-w-[980px]">
+          <TableHeader className="[&_tr]:border-b-0">
+            <TableRow className="bg-muted/40 hover:bg-muted/40">
+              {columns.map(col => (
+                <TableHead
+                  key={String(col.key)}
+                  className={`px-4 py-3 font-medium text-muted-foreground ${
+                    col.sortKey && onSort ? 'cursor-pointer select-none hover:text-foreground' : ''
+                  }`}
+                  onClick={() => col.sortKey && handleSort(col.sortKey)}
+                >
+                  <span className="inline-flex items-center">
+                    {col.header}
+                    {col.sortKey && onSort && <SortIcon sortKey={col.sortKey} />}
+                  </span>
+                </TableHead>
+              ))}
+              {hasActions && (
+                <TableHead className="w-24 px-4 py-3 text-right font-medium text-muted-foreground">Thao tác</TableHead>
+              )}
             </TableRow>
-          ) : (
-            data.map(row => (
-              <TableRow
-                key={row.id}
-                className={`hover:bg-muted/30 transition-colors ${onView ? 'cursor-pointer' : ''}`}
-                onClick={() => onView?.(row)}
-              >
-                {columns.map(col => (
-                  <TableCell key={String(col.key)} className="text-sm">
-                    {col.render ? col.render(row) : String((row as Record<string, unknown>)[col.key as string] ?? '')}
-                  </TableCell>
-                ))}
-                {hasActions && (
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-1">
-                      {onEdit && (
-                        <button
-                          onClick={e => {
-                            e.stopPropagation()
-                            onEdit(row)
-                          }}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                      )}
-                      {onDelete && (
-                        <button
-                          onClick={e => {
-                            e.stopPropagation()
-                            onDelete(row.id)
-                          }}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
-                  </TableCell>
-                )}
+          </TableHeader>
+          <TableBody className="divide-y divide-border/60 [&_tr]:border-b-0">
+            {data.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length + (hasActions ? 1 : 0)}
+                  className="px-4 py-16 text-center text-sm text-muted-foreground"
+                >
+                  Không có dữ liệu.
+                </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+            ) : (
+              data.map(row => (
+                <TableRow
+                  key={row.id}
+                  className={`hover:bg-muted/30 transition-colors ${onView ? 'cursor-pointer' : ''}`}
+                  onClick={() => onView?.(row)}
+                >
+                  {columns.map(col => (
+                    <TableCell key={String(col.key)} className="px-4 py-3 text-sm">
+                      {col.render ? col.render(row) : String((row as Record<string, unknown>)[col.key as string] ?? '')}
+                    </TableCell>
+                  ))}
+                  {hasActions && (
+                    <TableCell className="px-4 py-3 text-right">
+                      <div className="flex justify-end gap-1">
+                        {onEdit && (
+                          <button
+                            onClick={e => {
+                              e.stopPropagation()
+                              onEdit(row)
+                            }}
+                            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                        {onDelete && (
+                          <button
+                            onClick={e => {
+                              e.stopPropagation()
+                              onDelete(row.id)
+                            }}
+                            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
       {pagination && (
         <Pagination
           pageIndex={pagination.pageIndex}

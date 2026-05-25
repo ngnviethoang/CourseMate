@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.AntiCheat;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
@@ -106,8 +107,6 @@ internal sealed class ReportViolationCommandHandler : AbstractCommandHandler<Rep
             registration.DisqualifiedAt = DateTimeOffset.UtcNow;
             registration.DisqualifiedReason = $"Auto: Exceeded violation threshold ({registration.ViolationCount}/{contest.MaxViolations})";
         }
-
-        await DbContext.SaveChangesAsync(ct);
 
         return new ViolationResultDto
         {

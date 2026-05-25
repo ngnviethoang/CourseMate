@@ -4,20 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import {
-  Plus,
-  Search,
-  Trophy,
-  Pencil,
-  Trash2,
-  Loader2,
-  Users,
-  Layout,
-  ChevronLeft,
-  ChevronRight,
-  Calendar,
-  Clock
-} from 'lucide-react'
+import { Plus, Search, Trophy, Pencil, Loader2, ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { contestService, ContestDto } from '@/lib/contest-service'
 import {
@@ -236,35 +223,38 @@ export default function ContestsManagementPage() {
         </select>
       </div>
 
-      <div className="rounded-xl bg-card shadow-md border-0 overflow-hidden shadow-md border-0">
+      <div className="rounded-xl bg-card shadow-md border-0 overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="shadow-md border-0 border-b-0 bg-muted/40">
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground w-8">#</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Cuộc thi</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground">ID</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Tiêu đề</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Trạng thái</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Thời gian</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Thống kê</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Ngày tạo</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden xl:table-cell">
+                Cập nhật lần cuối
+              </th>
               <th className="text-right px-4 py-3 font-medium text-muted-foreground">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-">
+          <tbody className="divide-y divide-border/60">
             {loading ? (
               <tr>
-                <td colSpan={6} className="py-16 text-center">
+                <td colSpan={7} className="py-16 text-center">
                   <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
                 </td>
               </tr>
             ) : data?.items.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-16 text-center text-muted-foreground">
+                <td colSpan={7} className="py-16 text-center text-muted-foreground">
                   Không có cuộc thi nào.
                 </td>
               </tr>
             ) : (
-              data?.items.map((c, idx) => (
+              data?.items.map(c => (
                 <tr key={c.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="px-4 py-3 text-muted-foreground text-xs">{(page - 1) * pageSize + idx + 1}</td>
+                  <td className="px-4 py-3 text-xs font-mono text-muted-foreground">{c.id}</td>
                   <td className="px-4 py-3">
                     <p className="font-medium line-clamp-1">{c.title}</p>
                     <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-2">
@@ -293,15 +283,13 @@ export default function ContestsManagementPage() {
                       <span className="text-muted-foreground text-xs">— Chưa đặt —</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 hidden lg:table-cell">
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Layout className="h-3 w-3" /> {c.exerciseCount} bài
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Users className="h-3 w-3" /> {c.participantCount} thí sinh
-                      </span>
-                    </div>
+                  <td className="px-4 py-3 hidden lg:table-cell text-xs text-muted-foreground">
+                    {format(new Date(c.creationTime), 'dd/MM/yyyy HH:mm', { locale: vi })}
+                  </td>
+                  <td className="px-4 py-3 hidden xl:table-cell text-xs text-muted-foreground">
+                    {c.lastModificationTime
+                      ? format(new Date(c.lastModificationTime), 'dd/MM/yyyy HH:mm', { locale: vi })
+                      : '—'}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Button size="icon" variant="ghost" className="h-8 w-8" asChild>

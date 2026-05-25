@@ -1,5 +1,4 @@
 using CourseMate.Persistent.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,6 +11,6 @@ internal sealed class ContestSubmissionConfiguration : IEntityTypeConfiguration<
         builder.ToTable("ContestSubmissions");
         builder.HasOne<Contest>().WithMany().HasForeignKey(i => i.ContestId);
         builder.HasOne<Exercise>().WithMany().HasForeignKey(i => i.ExerciseId);
-        builder.HasOne<IdentityUser<Guid>>().WithMany().HasForeignKey(i => i.StudentId);
+        builder.HasOne<User>().WithMany().HasForeignKey(i => i.StudentId);
     }
 }

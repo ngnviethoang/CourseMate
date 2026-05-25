@@ -12,7 +12,7 @@ public static class DbSeeder
     {
         using IServiceScope scope = services.CreateScope();
         RoleManager<IdentityRole<Guid>> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-        UserManager<IdentityUser<Guid>> userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser<Guid>>>();
+        UserManager<User> userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
         CourseMateDbContext dbContext = scope.ServiceProvider.GetRequiredService<CourseMateDbContext>();
 
         IReadOnlyList<string> roles = [Roles.Admin, Roles.Instructor, Roles.Student];
@@ -35,7 +35,7 @@ public static class DbSeeder
         List<Guid> instructorIds = [];
         foreach (KeyValuePair<string, string> userRole in userRoleDict)
         {
-            IdentityUser<Guid> user = new() { UserName = userRole.Key, Email = $"{userRole.Key}@example.com", EmailConfirmed = true };
+            User user = new() { UserName = userRole.Key, Email = $"{userRole.Key}@example.com", EmailConfirmed = true };
             await userManager.CreateAsync(user, "User@123");
             await userManager.AddToRoleAsync(user, userRole.Value);
             if (string.Equals(Roles.Instructor, userRole.Value))
