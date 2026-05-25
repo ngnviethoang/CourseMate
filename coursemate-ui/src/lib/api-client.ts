@@ -9,9 +9,16 @@ interface ProblemDetails {
   status?: number
   detail?: string
   instance?: string
+  errorCode?: string
+  errorCodeValue?: number
+  [key: string]: unknown
 }
 
 import { getAccessToken } from '@/lib/auth-token.util'
+import { BUSINESS_ERROR_MESSAGE_MAP } from '@/lib/business-error-messages'
+
+const resolveProblemMessage = (problem: ProblemDetails, fallback: string): string =>
+  (problem.errorCode && BUSINESS_ERROR_MESSAGE_MAP[problem.errorCode]) ?? problem.detail ?? problem.title ?? fallback
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL
@@ -36,13 +43,13 @@ axiosInstance.interceptors.response.use(
     const problem: ProblemDetails = error.response?.data || {}
     const status = error.response?.status
     if (status === 403) {
-      toast.error(problem.detail ?? 'Truy cập bị từ chối.')
+      toast.error(resolveProblemMessage(problem, 'Truy cập bị từ chối.'))
     } else if (status === 422 || status === 400) {
-      toast.error(problem.detail ?? problem.title ?? 'Lỗi xác thực dữ liệu.')
+      toast.error(resolveProblemMessage(problem, 'Lỗi xác thực dữ liệu.'))
     } else if (status === 404) {
-      toast.error(problem.detail ?? 'Không tìm thấy tài nguyên.')
+      toast.error(resolveProblemMessage(problem, 'Không tìm thấy tài nguyên.'))
     } else if (status && status >= 500) {
-      toast.error(problem.detail ?? 'Đã xảy ra lỗi máy chủ. Vui lòng thử lại.')
+      toast.error(resolveProblemMessage(problem, 'Đã xảy ra lỗi máy chủ. Vui lòng thử lại.'))
     }
 
     return Promise.reject(problem)
