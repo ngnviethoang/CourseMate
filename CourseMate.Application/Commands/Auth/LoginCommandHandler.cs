@@ -1,14 +1,11 @@
 using System.ComponentModel.DataAnnotations;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace CourseMate.Application.Commands.Auth;
 
@@ -78,40 +75,15 @@ internal sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginR
 
         IList<string> roles = await _userManager.GetRolesAsync(user);
 
-        // For single-role users, embed the role in the token directly
-        // For multi-role users, return roles list so the client can prompt role selection
-        string accessToken = GenerateJwtToken(user, roles.Count == 1 ? roles : []);
+        string accessToken = Util.GenerateJwtToken(
+            _configuration,
+            user.Id,
+            user.UserName ?? string.Empty,
+            user.Email ?? string.Empty,
+            roles);
         return new LoginResponse
         {
-            AccessToken = accessToken,
-            Roles = roles.ToList()
+            AccessToken = accessToken
         };
-    }
-
-    private string GenerateJwtToken(IdentityUser<Guid> user, IEnumerable<string> roles)
-    {
-        ICollection<Claim> claims =
-        [
-            new(ClaimTypes.Name, user.UserName ?? string.Empty),
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Email, user.Email ?? string.Empty)
-        ];
-
-        foreach (string role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
-
-        SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
-        SigningCredentials credentials = new(key, SecurityAlgorithms.HmacSha256);
-
-        JwtSecurityToken token = new(
-            _configuration["Jwt:Issuer"],
-            _configuration["Jwt:Audience"],
-            claims,
-            expires: DateTime.Now.AddMinutes(_configuration.GetValue<int>("Jwt:ExpiryMinutes")),
-            signingCredentials: credentials);
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

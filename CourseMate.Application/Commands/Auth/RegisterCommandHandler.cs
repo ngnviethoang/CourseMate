@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.BackgroundJobs;
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using Hangfire;
 using MediatR;
@@ -23,8 +25,7 @@ public class RegisterCommand : IRequest<Unit>
     public string UserName { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(32)]
-    public string Role { get; set; } = string.Empty;
+    public RegisterRole Role { get; set; }
 }
 
 internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, Unit>
@@ -50,12 +51,25 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
 
     public async Task<Unit> Handle(RegisterCommand request, CancellationToken ct)
     {
-        string role = request.Role.Trim();
+        string role = request.Role.ToString();
 
         // FIX: throw when role does NOT exist (was inverted before)
         if (!await _roleManager.RoleExistsAsync(role))
         {
             throw new BusinessException(ErrorCode.RoleNotExists, string.Format("{0} role does not exist.", role));
+        }
+
+        IdentityUser<Guid>? existingUser = await _userManager.FindByEmailAsync(request.Email);
+        if (existingUser != null)
+        {
+            IList<string> existingRoles = await _userManager.GetRolesAsync(existingUser);
+            bool hasDifferentRole = existingRoles.Any(r => !string.Equals(r, role, StringComparison.OrdinalIgnoreCase));
+            if (hasDifferentRole)
+            {
+                throw new BusinessException(ErrorCode.RoleNotAllowed, "This email is already registered with another role.");
+            }
+
+            throw new BusinessException(ErrorCode.RoleNotAllowed, "This email is already registered.");
         }
 
         IdentityUser<Guid> user = new(request.UserName);
@@ -83,7 +97,7 @@ internal sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, 
 
     private static async Task<string> RenderVerifyEmailTemplate(string userName, string verifyUrl)
     {
-        string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "VerifyEmail.html");
+        string templatePath = Util.ResolveEmailTemplatePath("VerifyEmail.html");
         string html = await File.ReadAllTextAsync(templatePath);
         return html
             .Replace("{{userName}}", userName)

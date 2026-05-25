@@ -18,16 +18,20 @@ export interface LoginCommand {
   password: string
 }
 
+export enum RegisterRole {
+  Student = 'Student',
+  Instructor = 'Instructor'
+}
+
 export interface RegisterCommand {
   userName: string
   email: string
   password: string
-  role: 'Student' | 'Instructor'
+  role: RegisterRole
 }
 
 export interface LoginResponse {
   accessToken: string
-  roles: string[]
 }
 
 export interface VerifyEmailRequest {

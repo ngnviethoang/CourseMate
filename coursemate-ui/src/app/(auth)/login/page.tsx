@@ -7,17 +7,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { GraduationCap, ArrowRight, Loader2, Lock, User, Eye, EyeOff } from 'lucide-react'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { GraduationCap, ArrowRight, Loader2, Lock, User, Eye, EyeOff, BookOpen, Briefcase } from 'lucide-react'
 import { authService } from '@/lib/auth-service'
 import { toast } from 'sonner'
 import { Roles } from '@/lib/consts'
-import { decodeJwt, saveToken } from '@/lib/auth-token.util'
+import { getRoles, saveToken } from '@/lib/auth-token.util'
+import { RegisterRole } from '@/lib/types'
 
 export default function LoginPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [role, setRole] = useState<RegisterRole>(RegisterRole.Student)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -38,25 +41,12 @@ export default function LoginPage() {
     try {
       const res = await authService.login({ userName, password })
       if (res?.accessToken) {
-        const roles = res.roles ?? []
-
-        // Multi-role: save the no-role token and go to select-role
-        if (roles.length > 1) {
-          saveToken(res.accessToken)
-          router.push('/select-role')
-          return
-        }
-
-        // Single role: token already has the role embedded
         saveToken(res.accessToken)
-        const payload = decodeJwt(res.accessToken)
-        const role = payload.role as string
+        const roles = getRoles(res.accessToken)
 
         toast.success('Đăng nhập thành công.')
 
-        if (role === Roles.Student) {
-          router.push('/')
-        } else if (role === Roles.Admin || role === Roles.Instructor) {
+        if (roles.includes(Roles.Admin) || roles.includes(Roles.Instructor)) {
           router.push('/management')
         } else {
           router.push('/')
@@ -73,35 +63,30 @@ export default function LoginPage() {
 
   const handleGoogleLogin = () => {
     setIsGoogleLoading(true)
-    window.location.assign(authService.getGoogleSignInUrl(window.location.origin))
+    const googleCallbackUrl = `${window.location.origin}/google-callback`
+    window.location.assign(authService.getGoogleSignInUrl(googleCallbackUrl, role))
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-4 relative overflow-hidden font-sans">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/10 blur-[100px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/10 blur-[100px] rounded-full pointer-events-none" />
+    <div className="relative min-h-screen overflow-hidden bg-zinc-100 p-4 font-sans dark:bg-zinc-950">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(14,165,233,0.18),transparent_36%),radial-gradient(circle_at_90%_0%,rgba(56,189,248,0.14),transparent_30%),radial-gradient(circle_at_50%_85%,rgba(245,158,11,0.12),transparent_36%)]" />
+      <div className="absolute -left-20 top-20 h-64 w-64 rounded-full border border-sky-300/40 bg-sky-200/20 blur-3xl dark:border-sky-700/30 dark:bg-sky-900/10" />
+      <div className="absolute -right-24 bottom-16 h-72 w-72 rounded-full border border-amber-300/30 bg-amber-200/20 blur-3xl dark:border-amber-700/20 dark:bg-amber-900/10" />
 
-      <div className="w-full max-w-md relative z-10 animate-in fade-in zoom-in-95 duration-500">
-        <div className="flex flex-col items-center mb-8 gap-3">
-          <Link
-            href="/"
-            className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/30 ring-1 ring-primary/20"
-          >
-            <GraduationCap className="h-7 w-7" />
-          </Link>
-          <div className="text-center space-y-1">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">CourseMate</h1>
-            <p className="text-sm text-muted-foreground font-medium">Đăng nhập vào tài khoản của bạn</p>
-          </div>
-        </div>
-
-        <Card className="shadow-2xl shadow-black/5 dark:shadow-black/20 bg-background/60 backdrop-blur-xl">
-          <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-xl font-semibold">Đăng nhập</CardTitle>
-            <CardDescription className="text-sm">Nhập thông tin đăng nhập để tiếp tục.</CardDescription>
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-2rem)] w-full max-w-lg items-center">
+        <Card className="w-full border-zinc-200/70 bg-background/80 shadow-2xl shadow-zinc-900/10 backdrop-blur-xl dark:border-zinc-800/80 dark:shadow-black/30">
+          <CardHeader className="space-y-4 pb-3">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-1 ring-primary/20">
+              <GraduationCap className="h-7 w-7" />
+            </div>
+            <div className="space-y-1 text-center">
+              <CardTitle className="text-2xl font-bold tracking-tight">Đăng nhập CourseMate</CardTitle>
+              <CardDescription className="text-sm text-muted-foreground">
+                Tiếp tục hành trình học tập hoặc giảng dạy của bạn.
+              </CardDescription>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-5">
             <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               <div className="space-y-2">
                 <Label htmlFor="userName">Tên đăng nhập hoặc email</Label>
@@ -112,15 +97,16 @@ export default function LoginPage() {
                     name="userName"
                     placeholder="Tên đăng nhập hoặc email"
                     autoComplete="username"
-                    className="pl-9 bg-background/50 focus-visible:ring-primary/30 transition-shadow"
+                    className="h-11 border-zinc-200/70 bg-background/70 pl-9 transition focus-visible:ring-primary/35 dark:border-zinc-700/70"
                     disabled={isLoading || isGoogleLoading}
                   />
                 </div>
               </div>
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Mật khẩu</Label>
-                  <Link href="/forgot-password" className="text-xs text-primary hover:underline" tabIndex={-1}>
+                  <Link href="/forgot-password" className="text-xs font-medium text-primary hover:underline" tabIndex={-1}>
                     Quên mật khẩu?
                   </Link>
                 </div>
@@ -132,13 +118,13 @@ export default function LoginPage() {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     autoComplete="current-password"
-                    className="pl-9 pr-10 bg-background/50 focus-visible:ring-primary/30 transition-shadow"
+                    className="h-11 border-zinc-200/70 bg-background/70 pl-9 pr-10 transition focus-visible:ring-primary/35 dark:border-zinc-700/70"
                     disabled={isLoading || isGoogleLoading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-muted-foreground hover:text-foreground focus:outline-none"
+                    className="absolute right-3 top-3 text-muted-foreground transition hover:text-foreground focus:outline-none"
                     aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                     disabled={isLoading || isGoogleLoading}
                   >
@@ -146,18 +132,51 @@ export default function LoginPage() {
                   </button>
                 </div>
               </div>
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background/60 px-2 text-muted-foreground">Hoặc</span>
-                </div>
+
+              <Button
+                type="submit"
+                id="btn-login"
+                className="h-11 w-full font-semibold shadow-lg shadow-primary/25"
+                disabled={isLoading || isGoogleLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    Đăng nhập
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </>
+                )}
+              </Button>
+            </form>
+
+            <div className="space-y-3 rounded-2xl border border-zinc-200/70 bg-zinc-50/70 p-3 dark:border-zinc-700/70 dark:bg-zinc-900/40">
+              <div className="space-y-2">
+                <Label>Vai trò khi đăng nhập Google</Label>
+                <Tabs value={role} className="w-full" onValueChange={val => setRole(val as RegisterRole)}>
+                  <TabsList className="grid h-auto w-full grid-cols-2 rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800/70">
+                    <TabsTrigger
+                      value={RegisterRole.Student}
+                      className="rounded-lg py-2 text-xs font-semibold data-[state=active]:shadow-sm"
+                    >
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      Học viên
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value={RegisterRole.Instructor}
+                      className="rounded-lg py-2 text-xs font-semibold data-[state=active]:shadow-sm"
+                    >
+                      <Briefcase className="mr-2 h-4 w-4" />
+                      Giảng viên
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
               </div>
+
               <Button
                 type="button"
                 variant="outline"
-                className="w-full h-11 mt-4 bg-background/80"
+                className="h-11 w-full border-zinc-200/80 bg-background/90 font-semibold hover:bg-zinc-100/80 dark:border-zinc-700/80 dark:hover:bg-zinc-800/80"
                 onClick={handleGoogleLogin}
                 disabled={isLoading || isGoogleLoading}
               >
@@ -185,36 +204,16 @@ export default function LoginPage() {
                 )}
                 Tiếp tục với Google
               </Button>
-              <Button
-                type="submit"
-                id="btn-login"
-                className="w-full h-11 relative group overflow-hidden mt-6"
-                disabled={isLoading || isGoogleLoading}
-              >
-                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] transition-all" />
-                {isLoading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    Đăng nhập
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </>
-                )}
-              </Button>
-            </form>
+            </div>
 
-            <p className="mt-4 text-center text-sm text-muted-foreground">
+            <p className="text-center text-sm text-muted-foreground">
               Chưa có tài khoản?{' '}
-              <Link href="/register" className="font-medium text-primary hover:underline">
+              <Link href="/register" className="font-semibold text-primary hover:underline">
                 Đăng ký ngay
               </Link>
             </p>
           </CardContent>
         </Card>
-
-        <p className="text-center text-xs text-muted-foreground/60 mt-8">
-          &copy; {new Date().getFullYear()} CourseMate. Bảo lưu mọi quyền.
-        </p>
       </div>
     </div>
   )

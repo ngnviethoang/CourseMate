@@ -93,7 +93,8 @@ try
     builder.Services.AddIdentityCore<IdentityUser<Guid>>()
         .AddSignInManager()
         .AddRoles<IdentityRole<Guid>>()
-        .AddEntityFrameworkStores<CourseMateDbContext>();
+        .AddEntityFrameworkStores<CourseMateDbContext>()
+        .AddDefaultTokenProviders();
     builder.Services.Configure<IdentityOptions>(options => { options.User.RequireUniqueEmail = true; });
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate")!);

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using CourseMate.Application.Shared;
 using CourseMate.Application.BackgroundJobs;
 using Hangfire;
 using MediatR;
@@ -50,7 +51,7 @@ internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPassw
 
     private static async Task<string> RenderResetPasswordTemplate(string userName, string resetUrl)
     {
-        string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "ResetPassword.html");
+        string templatePath = Util.ResolveEmailTemplatePath("ResetPassword.html");
         string html = await File.ReadAllTextAsync(templatePath);
         return html
             .Replace("{{userName}}", userName)
