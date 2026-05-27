@@ -147,6 +147,9 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     needs: ai_review
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
       - name: Checkout source
@@ -158,14 +161,44 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Run tests
-        run: dotnet test ${{ env.TEST_PROJECT }} -c Release --logger "trx;LogFileName=test-results.trx" -p:NuGetAudit=false
+        run: dotnet test ${{ env.TEST_PROJECT }} -c Release --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --results-directory ./TestResults -p:NuGetAudit=false
+
+      - name: Code coverage summary
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: TestResults/**/coverage.cobertura.xml
+          badge: true
+          format: markdown
+          output: both
+          hide_complexity: true
+          indicators: true
+
+      - name: Add coverage to workflow summary
+        if: always()
+        shell: bash
+        run: |
+          if [ -f "code-coverage-results.md" ]; then
+            cat code-coverage-results.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Code coverage summary file not found." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Add coverage PR comment
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: true
+          path: code-coverage-results.md
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: backend-unit-test-results
-          path: "**/test-results.trx"
+          path: |
+            **/test-results.trx
+            TestResults/**/coverage.cobertura.xml
+            code-coverage-results.md
           if-no-files-found: ignore
 
   docker_build_push:
