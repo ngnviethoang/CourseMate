@@ -13,7 +13,7 @@ public class GetContestLeaderboardQuery : IRequest<ContestLeaderboardDto>
     public Guid ContestId { get; set; }
 }
 
-internal sealed class GetContestLeaderboardQueryHandler : AbstractQueryHandler<GetContestLeaderboardQuery, ContestLeaderboardDto?>
+public sealed class GetContestLeaderboardQueryHandler : AbstractQueryHandler<GetContestLeaderboardQuery, ContestLeaderboardDto?>
 {
     public GetContestLeaderboardQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

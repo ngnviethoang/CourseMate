@@ -18,7 +18,7 @@ public class UpdateTestCaseCommand : IRequest<Unit>
     public int Order { get; set; }
 }
 
-internal sealed class UpdateTestCaseCommandHandler : AbstractCommandHandler<UpdateTestCaseCommand, Unit>
+public sealed class UpdateTestCaseCommandHandler : AbstractCommandHandler<UpdateTestCaseCommand, Unit>
 {
     public UpdateTestCaseCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

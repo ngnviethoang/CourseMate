@@ -1,4 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.Shared;
+using CourseMate.Contracts;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
@@ -12,14 +14,18 @@ public class UpdateCategoryCommand : IRequest<Unit>
 {
     public Guid Id { get; set; }
 
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    [Required]
     public string Name { get; set; } = string.Empty;
 
+    [MaxLength(CourseMateConsts.DescriptionMaxLength)]
+    [Required]
     public string Description { get; set; } = string.Empty;
 
     public bool IsActive { get; set; }
 }
 
-internal sealed class UpdateCategoryAbstractCommandHandler : AbstractCommandHandler<UpdateCategoryCommand, Unit>
+public sealed class UpdateCategoryAbstractCommandHandler : AbstractCommandHandler<UpdateCategoryCommand, Unit>
 {
     public UpdateCategoryAbstractCommandHandler(
         CourseMateDbContext dbContext,
@@ -30,7 +36,6 @@ internal sealed class UpdateCategoryAbstractCommandHandler : AbstractCommandHand
     public override async Task<Unit> Handle(UpdateCategoryCommand request, CancellationToken ct)
     {
         Category? category = await DbContext.Categories.FirstOrDefaultAsync(x => x.Id == request.Id, ct);
-
         if (category == null)
         {
             throw new EntityNotFoundException(nameof(Category), request.Id);

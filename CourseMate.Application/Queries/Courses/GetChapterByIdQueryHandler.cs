@@ -14,7 +14,7 @@ public class GetChapterByIdQuery : IRequest<ChapterDto?>
     public Guid Id { get; set; }
 }
 
-internal sealed class GetChapterByIdQueryHandler : AbstractQueryHandler<GetChapterByIdQuery, ChapterDto?>
+public sealed class GetChapterByIdQueryHandler : AbstractQueryHandler<GetChapterByIdQuery, ChapterDto?>
 {
     public GetChapterByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

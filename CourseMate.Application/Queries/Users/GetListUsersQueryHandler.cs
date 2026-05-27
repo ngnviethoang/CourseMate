@@ -11,7 +11,7 @@ namespace CourseMate.Application.Queries.Users;
 
 public class GetListUsersQuery : GetListQuery<UserDto>;
 
-internal sealed class GetListUsersQueryHandler : AbstractQueryHandler<GetListUsersQuery, PagedDto<UserDto>>
+public sealed class GetListUsersQueryHandler : AbstractQueryHandler<GetListUsersQuery, PagedDto<UserDto>>
 {
     public GetListUsersQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

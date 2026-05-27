@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CourseMate.Persistent.DbConfigurations;
 
-internal sealed class ContestSubmissionConfiguration : IEntityTypeConfiguration<ContestSubmission>
+public sealed class ContestSubmissionConfiguration : IEntityTypeConfiguration<ContestSubmission>
 {
     public void Configure(EntityTypeBuilder<ContestSubmission> builder)
     {

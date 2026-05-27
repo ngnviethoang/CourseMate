@@ -1,21 +1,21 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Search, Upload, Link2, ChevronsUpDown, Check } from 'lucide-react'
+import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
-import { formatCurrency, cn, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDate } from '@/lib/utils'
 import { courseService } from '@/lib/course-service'
-import { categoryService } from '@/lib/category-service'
-import { userService } from '@/lib/user-service'
+import { lookupService } from '@/lib/lookup-service'
 import { getRole, getUserId } from '@/lib/auth-token.util'
 import { fileService } from '@/lib/file-service'
-import type { CategoryDto, CourseDto, CreateCourseRequest, UserDto } from '@/lib/types'
+import type { CourseDto, CreateCourseRequest, LookupItemDto } from '@/lib/types'
+import { CourseFormDialog } from '@/components/admin/course-form-dialog'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,10 +26,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+
 const columns: Column<CourseDto>[] = [
   { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
   { key: 'title', header: 'Tiêu đề', sortKey: 'title' },
@@ -87,19 +84,12 @@ export default function CoursesPage() {
   const [editing, setEditing] = useState<CourseDto | null>(null)
   const [form, setForm] = useState<CreateCourseRequest>(emptyForm)
   const [saving, setSaving] = useState(false)
-  const [categories, setCategories] = useState<CategoryDto[]>([])
-  const [users, setUsers] = useState<UserDto[]>([])
+  const [categoryLookups, setCategoryLookups] = useState<LookupItemDto[]>([])
+  const [instructorLookups, setInstructorLookups] = useState<LookupItemDto[]>([])
   const [loadingDropdowns, setLoadingDropdowns] = useState(false)
   const [userRole, setUserRole] = useState<string[]>([])
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
-  const [categoryOpen, setCategoryOpen] = useState(false)
-  const [instructorOpen, setInstructorOpen] = useState(false)
-  const [selectedCategoryName, setSelectedCategoryName] = useState('')
-  const [selectedInstructorName, setSelectedInstructorName] = useState('')
-  const [categorySearch, setCategorySearch] = useState('')
-  const [instructorSearch, setInstructorSearch] = useState('')
   const [uploadingImage, setUploadingImage] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const role = getRole()
@@ -107,15 +97,20 @@ export default function CoursesPage() {
     setCurrentUserId(getUserId())
   }, [])
 
-  useEffect(() => {
-    categoryService
-      .list({ pageSize: 100, sorting: 'name', hasCourse: true })
-      .then(res => setCategories(res.items))
-      .catch(() => setCategories([]))
-  }, [])
-
   const isAdmin = userRole.includes('Admin')
   const isInstructor = userRole.includes('Instructor') && !isAdmin
+  const categoryItems: Array<{ label: string; value: string | null }> = [
+    { label: 'Tất cả danh mục', value: null },
+    ...categoryLookups.map(category => ({ value: category.id, label: category.value }))
+  ]
+  const courseCategoryItems: Array<{ label: string; value: string | null }> = [
+    { label: 'Chọn danh mục', value: null },
+    ...categoryLookups.map(category => ({ value: category.id, label: category.value }))
+  ]
+  const instructorItems: Array<{ label: string; value: string | null }> = [
+    { label: 'Chọn giảng viên', value: null },
+    ...instructorLookups.map(instructor => ({ value: instructor.id, label: instructor.value }))
+  ]
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -143,54 +138,40 @@ export default function CoursesPage() {
     return () => clearTimeout(t)
   }, [load])
 
-  // Debounced server-side category search
-  useEffect(() => {
-    if (!categoryOpen) return
-    const t = setTimeout(async () => {
-      const res = await categoryService.list({ filter: categorySearch, pageSize: 25, sorting: 'name', hasCourse: true })
-      setCategories(res.items)
-    }, 300)
-    return () => clearTimeout(t)
-  }, [categorySearch, categoryOpen])
+  function handlePageChange(nextPageIndex: number) {
+    if (nextPageIndex === pageIndex) return
+    setLoading(true)
+    setPageIndex(nextPageIndex)
+  }
 
-  // Debounced server-side instructor search
-  useEffect(() => {
-    if (!instructorOpen || !isAdmin) return
-    const t = setTimeout(async () => {
-      const res = await userService.list({ filter: instructorSearch, pageSize: 25, sorting: 'userName' })
-      setUsers(res.items)
-    }, 300)
-    return () => clearTimeout(t)
-  }, [instructorSearch, instructorOpen, isAdmin])
+  function handleCategoryFilterChange(value: string | null) {
+    const nextCategoryFilterId = value ?? ''
+    if (nextCategoryFilterId === categoryFilterId) return
+    setLoading(true)
+    setCategoryFilterId(nextCategoryFilterId)
+  }
 
   async function loadDropdowns() {
     setLoadingDropdowns(true)
     try {
-      const promises: Promise<unknown>[] = [
-        categoryService
-          .list({ filter: '', pageSize: 25, sorting: 'name', hasCourse: true })
-          .then(res => setCategories(res.items))
-      ]
-
-      if (isAdmin) {
-        promises.push(
-          userService.list({ filter: '', pageSize: 25, sorting: 'userName' }).then(res => setUsers(res.items))
-        )
-      }
-
-      await Promise.all(promises)
+      const [categories, instructors] = await Promise.all([
+        lookupService.getCategoryLookups(),
+        lookupService.getUserLookups(['Instructor', 'Admin'])
+      ])
+      setCategoryLookups(categories)
+      setInstructorLookups(instructors)
     } finally {
       setLoadingDropdowns(false)
     }
   }
 
+  useEffect(() => {
+    loadDropdowns()
+  }, [])
+
   async function openCreate() {
     setEditing(null)
     setForm({ ...emptyForm, instructorId: isInstructor ? (currentUserId ?? '') : '' })
-    setSelectedCategoryName('')
-    setSelectedInstructorName('')
-    setCategorySearch('')
-    setInstructorSearch('')
     await loadDropdowns()
     setDialogOpen(true)
   }
@@ -206,10 +187,6 @@ export default function CoursesPage() {
       categoryId: row.categoryId,
       instructorId: row.instructorId
     })
-    setSelectedCategoryName(row.categoryName ?? '')
-    setSelectedInstructorName(row.instructorName ?? '')
-    setCategorySearch('')
-    setInstructorSearch('')
     await loadDropdowns()
     setDialogOpen(true)
   }
@@ -259,11 +236,11 @@ export default function CoursesPage() {
   const f = (field: keyof CreateCourseRequest, value: unknown) => setForm(prev => ({ ...prev, [field]: value }))
 
   return (
-    <div className="space-y-8 max-w-[1600px] mx-auto pb-10">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight">{isAdmin ? 'Tất cả khóa học' : 'Khóa học của tôi'}</h1>
-          <p className="text-lg text-muted-foreground mt-2">
+          <h1 className="text-2xl font-semibold">{isAdmin ? 'Tất cả khóa học' : 'Khóa học của tôi'}</h1>
+          <p className="text-sm text-muted-foreground">
             {isAdmin ? 'Quản lý toàn bộ khóa học trên nền tảng' : 'Quản lý khóa học và nội dung của bạn'}
           </p>
         </div>
@@ -273,27 +250,29 @@ export default function CoursesPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[220px] max-w-md">
-          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+        <div className="relative max-w-sm flex-1 min-w-[220px]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            className="pl-11 h-12 text-base rounded-xl -muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all"
+            className="pl-9"
             placeholder="Tìm khóa học theo tên hoặc danh mục..."
             value={filter}
             onChange={e => setFilter(e.target.value)}
           />
         </div>
-        <select
-          value={categoryFilterId}
-          onChange={e => setCategoryFilterId(e.target.value)}
-          className="h-12 min-w-[220px] rounded-xl -input bg-background px-3 text-sm focus:outline-none"
-        >
-          <option value="">Tất cả danh mục</option>
-          {categories.map(category => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
+        <Select items={categoryItems} value={categoryFilterId || null} onValueChange={handleCategoryFilterChange}>
+          <SelectTrigger className="h-10 min-w-[220px]">
+            <SelectValue placeholder="Tất cả danh mục" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {categoryItems.map(item => (
+                <SelectItem key={item.value ?? 'all-categories'} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
 
       <DataTable
@@ -309,305 +288,25 @@ export default function CoursesPage() {
           pageIndex,
           pageSize,
           totalCount,
-          onPageChange: setPageIndex
+          onPageChange: handlePageChange
         }}
       />
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-4xl p-0 gap-0 overflow-hidden rounded-2xl shadow-2xl">
-          {/* Header */}
-          <DialogHeader className="px-6 py-5 shadow-md border-0 border-b-0">
-            <DialogTitle className="text-xl font-bold">
-              {editing ? 'Chỉnh sửa khóa học' : 'Tạo khóa học mới'}
-            </DialogTitle>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              {editing ? 'Cập nhật thông tin khóa học bên dưới' : 'Điền thông tin để xuất bản khóa học mới'}
-            </p>
-          </DialogHeader>
-
-          {/* Body */}
-          <div className="grid grid-cols-1 md:grid-cols-5 max-h-[72vh] overflow-y-auto custom-scrollbar">
-            {/* Left — Thumbnail & Status */}
-            <div className="md:col-span-2 p-6 bg-muted/20 -r flex flex-col gap-5">
-              {/* Click-to-upload image area */}
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={() => !uploadingImage && fileInputRef.current?.click()}
-                onKeyDown={e => e.key === 'Enter' && !uploadingImage && fileInputRef.current?.click()}
-                className={cn(
-                  'relative aspect-video rounded-xl overflow-hidden bg-muted border-2 transition-all',
-                  uploadingImage
-                    ? 'border-primary/40 cursor-wait'
-                    : 'border-dashed border-muted-foreground/20 hover:border-primary/40 hover:bg-muted/60 cursor-pointer'
-                )}
-              >
-                {/* Image or placeholder */}
-                {form.imageUrl && (
-                  <img
-                    src={form.imageUrl}
-                    alt="Ảnh xem trước"
-                    className="w-full h-full object-cover"
-                    onError={e => {
-                      ;(e.target as HTMLImageElement).style.display = 'none'
-                    }}
-                  />
-                )}
-
-                {/* Overlay */}
-                <div
-                  className={cn(
-                    'absolute inset-0 flex flex-col items-center justify-center gap-1.5 transition-all',
-                    uploadingImage
-                      ? 'bg-background/70'
-                      : form.imageUrl
-                        ? 'opacity-0 hover:opacity-100 bg-black/50 text-white'
-                        : 'text-muted-foreground'
-                  )}
-                >
-                  {uploadingImage ? (
-                    <>
-                      <div className="h-7 w-7 -2 -primary/30 shadow-md border-0 border-t-0-primary rounded-full animate-spin" />
-                      <p className="text-xs font-medium text-foreground">Đang tải lên...</p>
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="h-7 w-7 opacity-70" />
-                      <p className="text-xs font-semibold">{form.imageUrl ? 'Bấm để thay đổi' : 'Bấm để tải lên'}</p>
-                      {!form.imageUrl && <p className="text-xs opacity-50">JPG, PNG, WebP, GIF</p>}
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {/* Hidden file picker */}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={e => {
-                  const file = e.target.files?.[0]
-                  if (file) handleImageFile(file)
-                  e.target.value = ''
-                }}
-              />
-
-              {/* URL input — secondary option */}
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Link2 className="h-3 w-3" />
-                  Hoặc dán URL ảnh
-                </Label>
-                <Input
-                  className="text-sm h-9"
-                  placeholder="https://images.unsplash.com/…"
-                  value={form.imageUrl}
-                  onChange={e => f('imageUrl', e.target.value)}
-                />
-              </div>
-
-              {/* Publish toggle */}
-              <div
-                className={cn(
-                  'rounded-xl border-2 p-4 transition-all duration-300 cursor-pointer select-none',
-                  form.isPublished ? 'border-primary/30 bg-primary/5' : 'border-transparent bg-muted/20'
-                )}
-                onClick={() => f('isPublished', !form.isPublished)}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className={cn('font-semibold text-sm', form.isPublished ? 'text-primary' : '')}>
-                      {form.isPublished ? 'Đã xuất bản' : 'Bản nháp'}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {form.isPublished ? 'Hiển thị cho học viên' : 'Ẩn với học viên'}
-                    </p>
-                  </div>
-                  <Switch
-                    checked={form.isPublished}
-                    onCheckedChange={v => f('isPublished', v)}
-                    onClick={e => e.stopPropagation()}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Right — Form Fields */}
-            <div className="md:col-span-3 p-6 space-y-5">
-              {/* Title */}
-              <div className="space-y-1.5">
-                <Label className="font-semibold">
-                  Tiêu đề <span className="text-destructive text-xs">*</span>
-                </Label>
-                <Input
-                  placeholder="VD: Khóa học phát triển web toàn diện 2026"
-                  value={form.title}
-                  onChange={e => f('title', e.target.value)}
-                />
-              </div>
-
-              {/* Description */}
-              <div className="space-y-1.5">
-                <Label className="font-semibold">Mô tả</Label>
-                <textarea
-                  className="w-full rounded-lg -input bg-transparent px-3 py-2 text-sm shadow-md border-0 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring min-h-[110px] resize-none custom-scrollbar"
-                  placeholder="Học viên sẽ học được gì trong khóa học này?"
-                  value={form.description}
-                  onChange={e => f('description', e.target.value)}
-                />
-              </div>
-
-              {/* Category + Instructor */}
-              <div className={cn('grid gap-4', isAdmin ? 'grid-cols-2' : 'grid-cols-1')}>
-                <div className="space-y-1.5">
-                  <Label className="font-semibold">Danh mục</Label>
-                  <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
-                    <PopoverTrigger
-                      role="combobox"
-                      disabled={loadingDropdowns}
-                      className="h-9 w-full flex items-center justify-between gap-2 rounded-lg -input bg-transparent px-3 text-sm hover:bg-muted/40 transition-all disabled:opacity-50"
-                    >
-                      {selectedCategoryName ? (
-                        <span>{selectedCategoryName}</span>
-                      ) : (
-                        <span className="text-muted-foreground">
-                          {loadingDropdowns ? 'Đang tải...' : 'Chọn danh mục'}
-                        </span>
-                      )}
-                      <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 opacity-50" />
-                    </PopoverTrigger>
-                    <PopoverContent style={{ width: 'var(--anchor-width)' }} className="p-0">
-                      <Command shouldFilter={false}>
-                        <CommandInput
-                          placeholder="Tìm danh mục..."
-                          value={categorySearch}
-                          onValueChange={setCategorySearch}
-                        />
-                        <CommandList>
-                          <CommandEmpty>Không tìm thấy danh mục.</CommandEmpty>
-                          <CommandGroup>
-                            {categories.map(c => (
-                              <CommandItem
-                                key={c.id}
-                                value={c.id}
-                                onSelect={() => {
-                                  f('categoryId', c.id)
-                                  setSelectedCategoryName(c.name)
-                                  setCategoryOpen(false)
-                                }}
-                              >
-                                <Check
-                                  className={cn('mr-2 h-4 w-4', form.categoryId === c.id ? 'opacity-100' : 'opacity-0')}
-                                />
-                                {c.name}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-
-                {isAdmin && (
-                  <div className="space-y-1.5">
-                    <Label className="font-semibold">Giảng viên</Label>
-                    <Popover open={instructorOpen} onOpenChange={setInstructorOpen}>
-                      <PopoverTrigger
-                        role="combobox"
-                        disabled={loadingDropdowns}
-                        className="h-9 w-full flex items-center justify-between gap-2 rounded-lg -input bg-transparent px-3 text-sm hover:bg-muted/40 transition-all disabled:opacity-50"
-                      >
-                        {selectedInstructorName ? (
-                          <span>{selectedInstructorName}</span>
-                        ) : (
-                          <span className="text-muted-foreground">
-                            {loadingDropdowns ? 'Đang tải...' : 'Chọn giảng viên'}
-                          </span>
-                        )}
-                        <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 opacity-50" />
-                      </PopoverTrigger>
-                      <PopoverContent style={{ width: 'var(--anchor-width)' }} className="p-0">
-                        <Command shouldFilter={false}>
-                          <CommandInput
-                            placeholder="Tìm giảng viên..."
-                            value={instructorSearch}
-                            onValueChange={setInstructorSearch}
-                          />
-                          <CommandList>
-                            <CommandEmpty>Không tìm thấy giảng viên.</CommandEmpty>
-                            <CommandGroup>
-                              {users.map(u => (
-                                <CommandItem
-                                  key={u.id}
-                                  value={u.id}
-                                  onSelect={() => {
-                                    f('instructorId', u.id)
-                                    setSelectedInstructorName(u.userName ?? u.email ?? '')
-                                    setInstructorOpen(false)
-                                  }}
-                                >
-                                  <Check
-                                    className={cn(
-                                      'mr-2 h-4 w-4',
-                                      form.instructorId === u.id ? 'opacity-100' : 'opacity-0'
-                                    )}
-                                  />
-                                  {u.userName ?? u.email}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                )}
-              </div>
-
-              {/* Price */}
-              <div className="space-y-1.5">
-                <Label className="font-semibold">Giá</Label>
-                <div className="relative">
-                  <Input
-                    type="number"
-                    min={0}
-                    step={1000}
-                    placeholder="0"
-                    value={form.price}
-                    onChange={e => f('price', Number(e.target.value))}
-                    className="pr-14"
-                  />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">
-                    VNĐ
-                  </span>
-                </div>
-                {form.price === 0 && <p className="text-xs text-muted-foreground">Khóa học này sẽ miễn phí</p>}
-              </div>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <DialogFooter className="px-6 py-4 shadow-md border-0 border-t-0 bg-muted/10 flex flex-row justify-end gap-3">
-            <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={saving}>
-              Hủy
-            </Button>
-            <Button onClick={handleSave} disabled={saving}>
-              {saving ? (
-                <span className="flex items-center gap-2">
-                  <span className="h-4 w-4 -2 -current/30 shadow-md border-0 border-t-0-current rounded-full animate-spin" />
-                  Đang lưu...
-                </span>
-              ) : editing ? (
-                'Cập nhật khóa học'
-              ) : (
-                'Tạo khóa học'
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <CourseFormDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        isEditing={Boolean(editing)}
+        form={form}
+        isAdmin={isAdmin}
+        loadingDropdowns={loadingDropdowns}
+        uploadingImage={uploadingImage}
+        saving={saving}
+        categoryItems={courseCategoryItems}
+        instructorItems={instructorItems}
+        onFieldChange={f}
+        onUploadImage={handleImageFile}
+        onSave={handleSave}
+      />
 
       <AlertDialog open={!!deleteId} onOpenChange={open => !open && setDeleteId(null)}>
         <AlertDialogContent>

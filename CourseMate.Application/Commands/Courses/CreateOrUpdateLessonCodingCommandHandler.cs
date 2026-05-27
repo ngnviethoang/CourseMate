@@ -15,7 +15,7 @@ public class CreateOrUpdateLessonCodingCommand : IRequest<Unit>
     public Guid ExerciseId { get; set; }
 }
 
-internal sealed class CreateOrUpdateLessonCodingCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonCodingCommand, Unit>
+public sealed class CreateOrUpdateLessonCodingCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonCodingCommand, Unit>
 {
     public CreateOrUpdateLessonCodingCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

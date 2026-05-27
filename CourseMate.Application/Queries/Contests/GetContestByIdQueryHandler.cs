@@ -14,7 +14,7 @@ public class GetContestByIdQuery : IRequest<ContestDto?>
     public Guid Id { get; set; }
 }
 
-internal sealed class GetContestByIdQueryHandler : AbstractQueryHandler<GetContestByIdQuery, ContestDto?>
+public sealed class GetContestByIdQueryHandler : AbstractQueryHandler<GetContestByIdQuery, ContestDto?>
 {
     public GetContestByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

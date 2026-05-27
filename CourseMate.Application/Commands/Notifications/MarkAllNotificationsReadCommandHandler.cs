@@ -10,7 +10,7 @@ namespace CourseMate.Application.Commands.Notifications;
 
 public class MarkAllNotificationsReadCommand : IRequest<MarkAllNotificationsReadResponse>;
 
-internal sealed class MarkAllNotificationsReadCommandHandler : AbstractCommandHandler<MarkAllNotificationsReadCommand, MarkAllNotificationsReadResponse>
+public sealed class MarkAllNotificationsReadCommandHandler : AbstractCommandHandler<MarkAllNotificationsReadCommand, MarkAllNotificationsReadResponse>
 {
     public MarkAllNotificationsReadCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

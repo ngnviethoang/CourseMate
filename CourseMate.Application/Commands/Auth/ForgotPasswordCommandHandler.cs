@@ -18,7 +18,7 @@ public class ForgotPasswordCommand : IRequest<Unit>
     public string Email { get; set; } = string.Empty;
 }
 
-internal sealed class ForgotPasswordCommandHandler : AbstractCommandHandler<ForgotPasswordCommand, Unit>
+public sealed class ForgotPasswordCommandHandler : AbstractCommandHandler<ForgotPasswordCommand, Unit>
 {
     private readonly IConfiguration _configuration;
     private readonly UserManager<User> _userManager;

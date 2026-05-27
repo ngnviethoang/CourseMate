@@ -19,7 +19,7 @@ public class SubmitContestExerciseCommand : IRequest<ResultIdDto>
     public SubmitExerciseRequest Payload { get; set; }
 }
 
-internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandler<SubmitContestExerciseCommand, ResultIdDto>
+public sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandler<SubmitContestExerciseCommand, ResultIdDto>
 {
     public SubmitContestExerciseCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

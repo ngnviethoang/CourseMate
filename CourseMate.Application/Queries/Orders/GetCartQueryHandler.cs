@@ -14,7 +14,7 @@ public class GetCartQuery : IRequest<CartDto?>
     public Guid StudentId { get; set; }
 }
 
-internal sealed class GetCartQueryHandler : AbstractQueryHandler<GetCartQuery, CartDto?>
+public sealed class GetCartQueryHandler : AbstractQueryHandler<GetCartQuery, CartDto?>
 {
     public GetCartQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

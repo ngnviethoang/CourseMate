@@ -4,13 +4,13 @@ using MediatR;
 
 namespace CourseMate.Application.Events;
 
-internal sealed record LessonMaterialCreatedEvent(
+public sealed record LessonMaterialCreatedEvent(
     Guid LessonMaterialId,
     Guid FileEntryId,
     Guid LessonId
 ) : INotification;
 
-internal sealed class LessonMaterialCreatedEventHandler : INotificationHandler<LessonMaterialCreatedEvent>
+public sealed class LessonMaterialCreatedEventHandler : INotificationHandler<LessonMaterialCreatedEvent>
 {
     public Task Handle(LessonMaterialCreatedEvent notification, CancellationToken ct)
     {

@@ -11,7 +11,7 @@ public class DeleteTestCaseCommand : IRequest<Unit>
     public Guid Id { get; set; }
 }
 
-internal sealed class DeleteTestCaseCommandHandler : AbstractCommandHandler<DeleteTestCaseCommand, Unit>
+public sealed class DeleteTestCaseCommandHandler : AbstractCommandHandler<DeleteTestCaseCommand, Unit>
 {
     public DeleteTestCaseCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

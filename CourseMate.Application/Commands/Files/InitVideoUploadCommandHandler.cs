@@ -12,7 +12,7 @@ namespace CourseMate.Application.Commands.Files;
 
 public class InitVideoUploadCommand : IRequest<InitVideoUploadResponse>;
 
-internal sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<InitVideoUploadCommand, InitVideoUploadResponse>
+public sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<InitVideoUploadCommand, InitVideoUploadResponse>
 {
     private readonly StorageOptions _storageOptions;
 

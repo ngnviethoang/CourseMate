@@ -16,7 +16,7 @@ public class CheckInContestCommand : IRequest<ResultIdDto>
     public Guid ContestId { get; set; }
 }
 
-internal sealed class CheckInContestCommandHandler : AbstractCommandHandler<CheckInContestCommand, ResultIdDto>
+public sealed class CheckInContestCommandHandler : AbstractCommandHandler<CheckInContestCommand, ResultIdDto>
 {
     public CheckInContestCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

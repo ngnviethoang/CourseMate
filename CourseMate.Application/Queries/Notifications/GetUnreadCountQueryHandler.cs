@@ -9,7 +9,7 @@ namespace CourseMate.Application.Queries.Notifications;
 
 public class GetUnreadCountQuery : IRequest<GetUnreadCountResponse>;
 
-internal sealed class GetUnreadCountQueryHandler : AbstractQueryHandler<GetUnreadCountQuery, GetUnreadCountResponse>
+public sealed class GetUnreadCountQueryHandler : AbstractQueryHandler<GetUnreadCountQuery, GetUnreadCountResponse>
 {
     public GetUnreadCountQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

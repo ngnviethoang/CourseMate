@@ -17,9 +17,11 @@ public class UpdateCourseCommand : IRequest<Unit>
     public Guid Id { get; set; }
 
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    [Required]
     public string Title { get; set; } = string.Empty;
 
     [MaxLength(CourseMateConsts.DescriptionMaxLength)]
+    [Required]
     public string Description { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
@@ -33,7 +35,7 @@ public class UpdateCourseCommand : IRequest<Unit>
     public Guid CategoryId { get; set; }
 }
 
-internal sealed class UpdateCourseCommandHandler : AbstractCommandHandler<UpdateCourseCommand, Unit>
+public sealed class UpdateCourseCommandHandler : AbstractCommandHandler<UpdateCourseCommand, Unit>
 {
     public UpdateCourseCommandHandler(
         CourseMateDbContext dbContext,
@@ -50,6 +52,8 @@ internal sealed class UpdateCourseCommandHandler : AbstractCommandHandler<Update
         {
             throw new EntityNotFoundException(nameof(Course), request.Id);
         }
+
+        await DbContext.Categories.EnsureExistsAsync(request.CategoryId, ct);
 
         course.Title = request.Title;
         course.Description = request.Description;

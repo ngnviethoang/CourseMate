@@ -19,7 +19,7 @@ public class UploadFileCommand : IRequest<FileUploadResponse>
     public byte[] Content { get; set; } = [];
 }
 
-internal sealed class UploadFileCommandHandler : AbstractCommandHandler<UploadFileCommand, FileUploadResponse>
+public sealed class UploadFileCommandHandler : AbstractCommandHandler<UploadFileCommand, FileUploadResponse>
 {
     private static readonly IReadOnlyDictionary<FileType, HashSet<string>> AllowedExtensions = new Dictionary<FileType, HashSet<string>>
     {

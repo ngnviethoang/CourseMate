@@ -15,7 +15,7 @@ public class FakeIpnUrlCallbackCommand : IRequest<Unit>
     public Guid PaymentTransactionId { get; set; }
 }
 
-internal sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<FakeIpnUrlCallbackCommand, Unit>
+public sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<FakeIpnUrlCallbackCommand, Unit>
 {
     public FakeIpnUrlCallbackCommandHandler(
         CourseMateDbContext dbContext,

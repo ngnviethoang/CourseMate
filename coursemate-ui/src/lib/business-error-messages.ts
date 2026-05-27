@@ -18,6 +18,7 @@ export const BUSINESS_ERROR_MESSAGE_MAP: Record<string, string> = {
   EmptyOrder: 'Đơn hàng không có sản phẩm.',
   CourseAlreadyInCart: 'Khóa học đã có trong giỏ hàng.',
   CourseAlreadyEnrolled: 'Bạn đã ghi danh khóa học này.',
+  CategoryHasCourses: 'Danh mục đang được sử dụng bởi một hoặc nhiều khóa học.',
   ExerciseAlreadyAddedToContest: 'Bài tập đã có trong cuộc thi.',
   DuplicateExerciseOrder: 'Thứ tự bài tập trong cuộc thi bị trùng.',
   UserNotFound: 'Không tìm thấy tài khoản.',

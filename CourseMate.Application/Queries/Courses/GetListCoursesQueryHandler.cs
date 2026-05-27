@@ -14,7 +14,7 @@ public class GetListCoursesQuery : GetListQuery<CourseDto>
     public Guid? CategoryId { get; set; }
 }
 
-internal sealed class GetListCoursesQueryHandler
+public sealed class GetListCoursesQueryHandler
     : AbstractQueryHandler<GetListCoursesQuery, PagedDto<CourseDto>>
 {
     public GetListCoursesQueryHandler(

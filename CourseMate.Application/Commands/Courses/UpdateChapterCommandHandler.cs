@@ -25,7 +25,7 @@ public class UpdateChapterCommand : IRequest<Unit>
     public int Position { get; set; }
 }
 
-internal sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandler<UpdateChapterCommand, Unit>
+public sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandler<UpdateChapterCommand, Unit>
 {
     public UpdateChapterAbstractCommandHandler(
         CourseMateDbContext dbContext,

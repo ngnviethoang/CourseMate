@@ -14,7 +14,7 @@ public class GetListChaptersQuery : GetListQuery<ChapterDto>
     public Guid? CourseId { get; set; }
 }
 
-internal sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetListChaptersQuery, PagedDto<ChapterDto>>
+public sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetListChaptersQuery, PagedDto<ChapterDto>>
 {
     public GetListChaptersQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

@@ -14,7 +14,7 @@ public class GetVideoFilePathQuery : IRequest<VideoFilePathDto?>
     public Guid FileId { get; set; }
 }
 
-internal sealed class GetVideoFilePathQueryHandler : AbstractQueryHandler<GetVideoFilePathQuery, VideoFilePathDto?>
+public sealed class GetVideoFilePathQueryHandler : AbstractQueryHandler<GetVideoFilePathQuery, VideoFilePathDto?>
 {
     public GetVideoFilePathQueryHandler(
         CourseMateReadOnlyDbContext dbContext,

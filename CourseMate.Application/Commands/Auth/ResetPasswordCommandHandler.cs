@@ -24,7 +24,7 @@ public class ResetPasswordCommand : IRequest<Unit>
     public string NewPassword { get; set; } = string.Empty;
 }
 
-internal sealed class ResetPasswordCommandHandler : AbstractCommandHandler<ResetPasswordCommand, Unit>
+public sealed class ResetPasswordCommandHandler : AbstractCommandHandler<ResetPasswordCommand, Unit>
 {
     private readonly UserManager<User> _userManager;
 

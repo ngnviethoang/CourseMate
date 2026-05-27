@@ -10,7 +10,7 @@ namespace CourseMate.Application.Queries.Dashboards;
 
 public class GetDashboardDataQuery : IRequest<DashboardDto>;
 
-internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDashboardDataQuery, DashboardDto>
+public sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDashboardDataQuery, DashboardDto>
 {
     public GetDashboardDataQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

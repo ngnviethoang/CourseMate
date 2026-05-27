@@ -13,7 +13,7 @@ public class DeleteCartCommand : IRequest<Unit>
     public Guid CartItemId { get; init; }
 }
 
-internal sealed class DeleteCartCommandHandler : AbstractCommandHandler<DeleteCartCommand, Unit>
+public sealed class DeleteCartCommandHandler : AbstractCommandHandler<DeleteCartCommand, Unit>
 {
     public DeleteCartCommandHandler(
         CourseMateDbContext dbContext,

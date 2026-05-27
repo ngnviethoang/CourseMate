@@ -14,7 +14,7 @@ public class DeleteFileCommand : IRequest<Unit>
     public Guid FileId { get; set; }
 }
 
-internal sealed class DeleteFileCommandHandler : AbstractCommandHandler<DeleteFileCommand, Unit>
+public sealed class DeleteFileCommandHandler : AbstractCommandHandler<DeleteFileCommand, Unit>
 {
     private readonly StorageOptions _storageOptions;
 

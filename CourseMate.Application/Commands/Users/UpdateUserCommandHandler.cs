@@ -20,7 +20,7 @@ public class UpdateUserCommand : IRequest<Unit>
     public string PhoneNumber { get; set; } = string.Empty;
 }
 
-internal sealed class UpdateUserAbstractCommandHandler : AbstractCommandHandler<UpdateUserCommand, Unit>
+public sealed class UpdateUserAbstractCommandHandler : AbstractCommandHandler<UpdateUserCommand, Unit>
 {
     private readonly UserManager<User> _userManager;
 

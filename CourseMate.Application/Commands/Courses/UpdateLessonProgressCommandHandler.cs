@@ -15,7 +15,7 @@ public class UpdateLessonProgressCommand : IRequest<ResultIdDto>
     public double Score { get; set; }
 }
 
-internal sealed class UpdateLessonProgressCommandHandler : AbstractCommandHandler<UpdateLessonProgressCommand, ResultIdDto>
+public sealed class UpdateLessonProgressCommandHandler : AbstractCommandHandler<UpdateLessonProgressCommand, ResultIdDto>
 {
     public UpdateLessonProgressCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

@@ -11,6 +11,11 @@ export interface ResultIdDto {
   id: string
 }
 
+export interface LookupItemDto {
+  id: string
+  value: string
+}
+
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 
 export interface LoginCommand {
@@ -60,6 +65,7 @@ export interface CategoryDto {
   name: string
   description: string
   isActive: boolean
+  courseCount: number
   creationTime: string
   lastModificationTime?: string
 }

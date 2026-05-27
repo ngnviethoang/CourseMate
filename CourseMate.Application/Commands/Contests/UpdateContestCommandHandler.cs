@@ -27,7 +27,7 @@ public class UpdateContestCommand : IRequest<ResultIdDto>
     public int MaxViolations { get; set; } = 5;
 }
 
-internal sealed class UpdateContestCommandHandler : AbstractCommandHandler<UpdateContestCommand, ResultIdDto>
+public sealed class UpdateContestCommandHandler : AbstractCommandHandler<UpdateContestCommand, ResultIdDto>
 {
     public UpdateContestCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

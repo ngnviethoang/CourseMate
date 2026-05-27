@@ -13,7 +13,7 @@ public class GetContestViolationsQuery : IRequest<ContestViolationsDto?>
     public Guid ContestId { get; set; }
 }
 
-internal sealed class GetContestViolationsQueryHandler : AbstractQueryHandler<GetContestViolationsQuery, ContestViolationsDto?>
+public sealed class GetContestViolationsQueryHandler : AbstractQueryHandler<GetContestViolationsQuery, ContestViolationsDto?>
 {
     public GetContestViolationsQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

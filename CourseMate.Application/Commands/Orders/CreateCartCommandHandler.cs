@@ -18,7 +18,7 @@ public class CreateCartCommand : IRequest<ResultIdDto>
     public Guid StudentId { get; init; }
 }
 
-internal sealed class CreateCartCommandHandler : AbstractCommandHandler<CreateCartCommand, ResultIdDto>
+public sealed class CreateCartCommandHandler : AbstractCommandHandler<CreateCartCommand, ResultIdDto>
 {
     public CreateCartCommandHandler(
         CourseMateDbContext dbContext,

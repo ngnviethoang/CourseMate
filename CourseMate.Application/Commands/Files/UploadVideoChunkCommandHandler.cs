@@ -23,7 +23,7 @@ public class UploadVideoChunkCommand : IRequest<Unit>
     public byte[] Content { get; set; } = [];
 }
 
-internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<UploadVideoChunkCommand, Unit>
+public sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<UploadVideoChunkCommand, Unit>
 {
     private readonly IEnumerable<string> _allowedImageExtensions = [".mp4"];
     private readonly StorageOptions _storageOptions;

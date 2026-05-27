@@ -19,7 +19,7 @@ public class ReportViolationCommand : IRequest<ViolationResultDto>
     public DateTimeOffset Timestamp { get; set; }
 }
 
-internal sealed class ReportViolationCommandHandler : AbstractCommandHandler<ReportViolationCommand, ViolationResultDto>
+public sealed class ReportViolationCommandHandler : AbstractCommandHandler<ReportViolationCommand, ViolationResultDto>
 {
     public ReportViolationCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

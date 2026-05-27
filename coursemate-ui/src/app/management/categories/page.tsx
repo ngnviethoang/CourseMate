@@ -5,11 +5,11 @@ import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import { categoryService } from '@/lib/category-service'
 import type { CategoryDto, CreateCategoryRequest } from '@/lib/types'
+import { CategoryFormDialog } from '@/components/admin/category-form-dialog'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,13 +20,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 import { formatDate } from '@/lib/utils'
 
 const columns: Column<CategoryDto>[] = [
   { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
   { key: 'name', header: 'Tiêu đề', sortKey: 'name' },
+  {
+    key: 'courseCount',
+    header: 'Số khóa học',
+    sortKey: 'courseCount',
+    render: row => row.courseCount
+  },
   {
     key: 'isActive',
     header: 'Trạng thái',
@@ -91,6 +95,12 @@ export default function CategoriesPage() {
     const t = setTimeout(load, 300)
     return () => clearTimeout(t)
   }, [load])
+
+  function handlePageChange(nextPageIndex: number) {
+    if (nextPageIndex === pageIndex) return
+    setLoading(true)
+    setPageIndex(nextPageIndex)
+  }
 
   function openCreate() {
     setEditing(null)
@@ -165,48 +175,19 @@ export default function CategoriesPage() {
           pageIndex,
           pageSize,
           totalCount,
-          onPageChange: setPageIndex
+          onPageChange: handlePageChange
         }}
       />
 
-      {/* Edit / Create Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editing ? 'Chỉnh sửa danh mục' : 'Tạo danh mục mới'}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="space-y-1">
-              <Label htmlFor="cat-name">Tên</Label>
-              <Input id="cat-name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="cat-desc">Mô tả</Label>
-              <Input
-                id="cat-desc"
-                value={form.description}
-                onChange={e => setForm({ ...form, description: e.target.value })}
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <Switch
-                id="cat-active"
-                checked={form.isActive}
-                onCheckedChange={v => setForm({ ...form, isActive: v })}
-              />
-              <Label htmlFor="cat-active">Đang hoạt động</Label>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Hủy
-            </Button>
-            <Button onClick={handleSave} disabled={saving}>
-              {saving ? 'Đang lưu...' : 'Lưu'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <CategoryFormDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        isEditing={Boolean(editing)}
+        form={form}
+        onFormChange={setForm}
+        saving={saving}
+        onSave={handleSave}
+      />
 
       {/* Delete Confirmation */}
       <AlertDialog open={!!deleteId} onOpenChange={open => !open && setDeleteId(null)}>

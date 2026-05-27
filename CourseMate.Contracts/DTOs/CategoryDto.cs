@@ -10,6 +10,8 @@ public class CategoryDto
 
     public bool IsActive { get; set; }
 
+    public int CourseCount { get; set; }
+
     public DateTimeOffset CreationTime { get; set; }
 
     public DateTimeOffset? LastModificationTime { get; set; }

@@ -15,7 +15,7 @@ public class GetListContestsQuery : GetListQuery<ContestDto>
     public ContestStatus? Status { get; set; }
 }
 
-internal sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetListContestsQuery, PagedDto<ContestDto>>
+public sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetListContestsQuery, PagedDto<ContestDto>>
 {
     public GetListContestsQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

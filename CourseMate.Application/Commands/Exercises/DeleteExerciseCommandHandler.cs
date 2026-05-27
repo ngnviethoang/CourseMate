@@ -14,7 +14,7 @@ public class DeleteExerciseCommand : IRequest<Unit>
     public Guid Id { get; set; }
 }
 
-internal sealed class DeleteExerciseCommandHandler : AbstractCommandHandler<DeleteExerciseCommand, Unit>
+public sealed class DeleteExerciseCommandHandler : AbstractCommandHandler<DeleteExerciseCommand, Unit>
 {
     public DeleteExerciseCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

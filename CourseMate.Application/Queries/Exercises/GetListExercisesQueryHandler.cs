@@ -15,7 +15,7 @@ public class GetListExercisesQuery : GetListQuery<ExerciseDto>
     public string? Category { get; set; }
 }
 
-internal sealed class GetListExercisesQueryHandler : AbstractQueryHandler<GetListExercisesQuery, PagedDto<ExerciseDto>>
+public sealed class GetListExercisesQueryHandler : AbstractQueryHandler<GetListExercisesQuery, PagedDto<ExerciseDto>>
 {
     public GetListExercisesQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

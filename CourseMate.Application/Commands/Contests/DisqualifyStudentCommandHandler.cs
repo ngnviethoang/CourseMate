@@ -17,7 +17,7 @@ public class DisqualifyStudentCommand : IRequest<ResultIdDto>
     public string Reason { get; set; } = string.Empty;
 }
 
-internal sealed class DisqualifyStudentCommandHandler : AbstractCommandHandler<DisqualifyStudentCommand, ResultIdDto>
+public sealed class DisqualifyStudentCommandHandler : AbstractCommandHandler<DisqualifyStudentCommand, ResultIdDto>
 {
     public DisqualifyStudentCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
