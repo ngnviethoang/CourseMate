@@ -20,7 +20,7 @@ public class CreateCategoryCommand : IRequest<ResultIdDto>
     public bool IsActive { get; set; }
 }
 
-internal sealed class CreateCategoryCommandHandler : AbstractCommandHandler<CreateCategoryCommand, ResultIdDto>
+public sealed class CreateCategoryCommandHandler : AbstractCommandHandler<CreateCategoryCommand, ResultIdDto>
 {
     public CreateCategoryCommandHandler(
         CourseMateDbContext dbContext,

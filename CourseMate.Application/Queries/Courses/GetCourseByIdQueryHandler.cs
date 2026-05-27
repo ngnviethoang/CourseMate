@@ -13,7 +13,7 @@ public class GetCourseByIdQuery : IRequest<CourseDetailDto?>
     public Guid Id { get; set; }
 }
 
-internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourseByIdQuery, CourseDetailDto?>
+public sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourseByIdQuery, CourseDetailDto?>
 {
     public GetCourseByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

@@ -31,7 +31,7 @@ public class RegisterCommand : IRequest<Unit>
     public RegisterRole Role { get; set; }
 }
 
-internal sealed class RegisterCommandHandler : AbstractCommandHandler<RegisterCommand, Unit>
+public sealed class RegisterCommandHandler : AbstractCommandHandler<RegisterCommand, Unit>
 {
     private readonly IConfiguration _configuration;
     private readonly IUserEmailStore<User> _emailStore;

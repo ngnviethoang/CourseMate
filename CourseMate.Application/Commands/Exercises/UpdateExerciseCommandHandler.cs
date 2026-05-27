@@ -78,7 +78,7 @@ public class UpdateExerciseCommand : IRequest<Unit>
     }
 }
 
-internal sealed class UpdateExerciseCommandHandler : AbstractCommandHandler<UpdateExerciseCommand, Unit>
+public sealed class UpdateExerciseCommandHandler : AbstractCommandHandler<UpdateExerciseCommand, Unit>
 {
     public UpdateExerciseCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

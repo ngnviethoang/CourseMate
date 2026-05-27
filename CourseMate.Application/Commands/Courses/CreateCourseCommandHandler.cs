@@ -29,7 +29,7 @@ public class CreateCourseCommand : IRequest<ResultIdDto>
     public Guid CategoryId { get; set; }
 }
 
-internal sealed class CreateCourseCommandHandler : AbstractCommandHandler<CreateCourseCommand, ResultIdDto>
+public sealed class CreateCourseCommandHandler : AbstractCommandHandler<CreateCourseCommand, ResultIdDto>
 {
     public CreateCourseCommandHandler(
         CourseMateDbContext dbContext,

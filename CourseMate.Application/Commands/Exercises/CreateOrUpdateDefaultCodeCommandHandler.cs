@@ -15,7 +15,7 @@ public class CreateOrUpdateDefaultCodeCommand : IRequest<Unit>
     public string StarterCode { get; set; } = string.Empty;
 }
 
-internal sealed class CreateOrUpdateDefaultCodeCommandHandler : AbstractCommandHandler<CreateOrUpdateDefaultCodeCommand, Unit>
+public sealed class CreateOrUpdateDefaultCodeCommandHandler : AbstractCommandHandler<CreateOrUpdateDefaultCodeCommand, Unit>
 {
     public CreateOrUpdateDefaultCodeCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

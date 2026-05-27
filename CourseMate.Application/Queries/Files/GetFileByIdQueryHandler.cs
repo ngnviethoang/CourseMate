@@ -16,7 +16,7 @@ public class GetFileByIdQuery : IRequest<FileContentResponse?>
     public Guid FileId { get; set; }
 }
 
-internal sealed class GetFileByIdQueryHandler : AbstractQueryHandler<GetFileByIdQuery, FileContentResponse?>
+public sealed class GetFileByIdQueryHandler : AbstractQueryHandler<GetFileByIdQuery, FileContentResponse?>
 {
     private readonly StorageOptions _storageOptions;
 

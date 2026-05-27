@@ -16,7 +16,7 @@ public class GetOutlineQuery : IRequest<OutlineDto?>
     public Guid LessonId { get; set; }
 }
 
-internal sealed class GetOutlineQueryHandler : AbstractQueryHandler<GetOutlineQuery, OutlineDto?>
+public sealed class GetOutlineQueryHandler : AbstractQueryHandler<GetOutlineQuery, OutlineDto?>
 {
     private readonly ILogger<GetOutlineQueryHandler> _logger;
 

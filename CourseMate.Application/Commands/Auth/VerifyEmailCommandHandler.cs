@@ -19,7 +19,7 @@ public class VerifyEmailCommand : IRequest<Unit>
     public string Token { get; set; } = string.Empty;
 }
 
-internal sealed class VerifyEmailCommandHandler : AbstractCommandHandler<VerifyEmailCommand, Unit>
+public sealed class VerifyEmailCommandHandler : AbstractCommandHandler<VerifyEmailCommand, Unit>
 {
     private readonly UserManager<User> _userManager;
 

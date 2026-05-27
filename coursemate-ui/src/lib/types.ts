@@ -60,6 +60,7 @@ export interface CategoryDto {
   name: string
   description: string
   isActive: boolean
+  courseCount: number
   creationTime: string
   lastModificationTime?: string
 }

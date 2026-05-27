@@ -17,7 +17,7 @@ public class CreateOrUpdateLessonReadingCommand : IRequest<Unit>
     public string Content { get; set; } = string.Empty;
 }
 
-internal sealed class CreateOrUpdateLessonReadingCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonReadingCommand, Unit>
+public sealed class CreateOrUpdateLessonReadingCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonReadingCommand, Unit>
 {
     public CreateOrUpdateLessonReadingCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

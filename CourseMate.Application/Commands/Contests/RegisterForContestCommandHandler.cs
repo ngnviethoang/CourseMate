@@ -16,7 +16,7 @@ public class RegisterForContestCommand : IRequest<ResultIdDto>
     public Guid ContestId { get; set; }
 }
 
-internal sealed class RegisterForContestCommandHandler : AbstractCommandHandler<RegisterForContestCommand, ResultIdDto>
+public sealed class RegisterForContestCommandHandler : AbstractCommandHandler<RegisterForContestCommand, ResultIdDto>
 {
     public RegisterForContestCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

@@ -33,7 +33,7 @@ public class CreateOrUpdateLessonQuizCommand : IRequest<Unit>
     }
 }
 
-internal sealed class CreateOrUpdateLessonQuizCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonQuizCommand, Unit>
+public sealed class CreateOrUpdateLessonQuizCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonQuizCommand, Unit>
 {
     public CreateOrUpdateLessonQuizCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

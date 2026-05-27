@@ -24,7 +24,7 @@ public class CreatePaymentUrlCommand : IRequest<CreatePaymentUrlResponse>
     public Guid OrderId { get; set; }
 }
 
-internal sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<CreatePaymentUrlCommand, CreatePaymentUrlResponse>
+public sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<CreatePaymentUrlCommand, CreatePaymentUrlResponse>
 {
     private readonly ILogger<CreatePaymentUrlCommandHandler> _logger;
     private readonly PayOsOptions _payOsOptions;

@@ -14,7 +14,7 @@ public class GetVideoUploadStatusQuery : IRequest<VideoUploadStatusDto?>
     public Guid FileId { get; set; }
 }
 
-internal sealed class GetVideoUploadStatusQueryHandler : AbstractQueryHandler<GetVideoUploadStatusQuery, VideoUploadStatusDto?>
+public sealed class GetVideoUploadStatusQueryHandler : AbstractQueryHandler<GetVideoUploadStatusQuery, VideoUploadStatusDto?>
 {
     public GetVideoUploadStatusQueryHandler(
         CourseMateReadOnlyDbContext dbContext,

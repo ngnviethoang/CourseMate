@@ -25,7 +25,7 @@ public class CreateExerciseToContestCommand : IRequest<ResultIdDto>
     public int Order { get; set; }
 }
 
-internal sealed class CreateExerciseToContestCommandHandler : AbstractCommandHandler<CreateExerciseToContestCommand, ResultIdDto>
+public sealed class CreateExerciseToContestCommandHandler : AbstractCommandHandler<CreateExerciseToContestCommand, ResultIdDto>
 {
     public CreateExerciseToContestCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

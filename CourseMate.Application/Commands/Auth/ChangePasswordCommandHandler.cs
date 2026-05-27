@@ -16,7 +16,7 @@ public class ChangePasswordCommand : IRequest<Unit>
     public string OldPassword { get; set; } = string.Empty;
 }
 
-internal sealed class ChangePasswordCommandHandler : AbstractCommandHandler<ChangePasswordCommand, Unit>
+public sealed class ChangePasswordCommandHandler : AbstractCommandHandler<ChangePasswordCommand, Unit>
 {
     private readonly UserManager<User> _userManager;
 

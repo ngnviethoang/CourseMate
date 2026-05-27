@@ -10,7 +10,7 @@ namespace CourseMate.Application.Queries.Orders;
 
 public class GetListCoursesQuery : GetListQuery<CourseDto>;
 
-internal sealed class GetListCoursesQueryHandler : AbstractQueryHandler<GetListCoursesQuery, PagedDto<CourseDto>>
+public sealed class GetListCoursesQueryHandler : AbstractQueryHandler<GetListCoursesQuery, PagedDto<CourseDto>>
 {
     public GetListCoursesQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

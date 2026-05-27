@@ -14,7 +14,7 @@ public class GetLessonByIdQuery : IRequest<LessonDto?>
     public Guid Id { get; set; }
 }
 
-internal sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLessonByIdQuery, LessonDto?>
+public sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLessonByIdQuery, LessonDto?>
 {
     public GetLessonByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

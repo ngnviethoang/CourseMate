@@ -16,7 +16,7 @@ public class CreateOrderCommand : IRequest<ResultIdDto>
     public IEnumerable<Guid> CartItemIds { get; set; } = [];
 }
 
-internal sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateOrderCommand, ResultIdDto>
+public sealed class CreateOrderCommandHandler : AbstractCommandHandler<CreateOrderCommand, ResultIdDto>
 {
     public CreateOrderCommandHandler(
         CourseMateDbContext dbContext,

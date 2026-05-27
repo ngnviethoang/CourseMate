@@ -28,7 +28,7 @@ public class CreateUserCommand : IRequest<ResultIdDto>
     public string Role { get; set; } = string.Empty;
 }
 
-internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUserCommand, ResultIdDto>
+public sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUserCommand, ResultIdDto>
 {
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly UserManager<User> _userManager;

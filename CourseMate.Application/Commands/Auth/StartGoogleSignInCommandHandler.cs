@@ -20,7 +20,7 @@ public class GoogleSignInCommand : IRequest<AuthenticationProperties>
     public RegisterRole Role { get; set; }
 }
 
-internal sealed class StartGoogleSignInCommandHandler : AbstractCommandHandler<GoogleSignInCommand, AuthenticationProperties>
+public sealed class StartGoogleSignInCommandHandler : AbstractCommandHandler<GoogleSignInCommand, AuthenticationProperties>
 {
     private readonly SignInManager<User> _signInManager;
 

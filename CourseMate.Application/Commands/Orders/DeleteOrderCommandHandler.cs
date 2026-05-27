@@ -12,7 +12,7 @@ public class DeleteOrderCommand : IRequest<Unit>
     public Guid Id { get; init; }
 }
 
-internal sealed class DeleteOrderCommandHandler : AbstractCommandHandler<DeleteOrderCommand, Unit>
+public sealed class DeleteOrderCommandHandler : AbstractCommandHandler<DeleteOrderCommand, Unit>
 {
     public DeleteOrderCommandHandler(
         CourseMateDbContext dbContext,

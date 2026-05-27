@@ -23,7 +23,7 @@ public class LoginCommand : IRequest<LoginResponse>
     public string Password { get; set; } = string.Empty;
 }
 
-internal sealed class LoginCommandHandler : AbstractCommandHandler<LoginCommand, LoginResponse>
+public sealed class LoginCommandHandler : AbstractCommandHandler<LoginCommand, LoginResponse>
 {
     private readonly IConfiguration _configuration;
     private readonly SignInManager<User> _signInManager;

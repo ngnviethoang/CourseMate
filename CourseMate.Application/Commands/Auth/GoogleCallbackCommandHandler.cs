@@ -22,7 +22,7 @@ public class GoogleCallbackCommand : IRequest<string>
     public string RedirectUrl { get; set; } = string.Empty;
 }
 
-internal sealed class GoogleCallbackCommandHandler : AbstractCommandHandler<GoogleCallbackCommand, string>
+public sealed class GoogleCallbackCommandHandler : AbstractCommandHandler<GoogleCallbackCommand, string>
 {
     private const string Provider = "Google";
     private readonly IConfiguration _configuration;

@@ -20,7 +20,7 @@ namespace CourseMate.Application.Commands.Payments;
 
 public class IpnUrlCallbackCommand : Webhook, IRequest<Unit>;
 
-internal sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnUrlCallbackCommand, Unit>
+public sealed class IpnUrlCallbackCommandHandler : AbstractCommandHandler<IpnUrlCallbackCommand, Unit>
 {
     private readonly ILogger<IpnUrlCallbackCommandHandler> _logger;
     private readonly PayOsOptions _payOsOptions;

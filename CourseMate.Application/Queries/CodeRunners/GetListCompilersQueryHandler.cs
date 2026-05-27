@@ -9,7 +9,7 @@ namespace CourseMate.Application.Queries.CodeRunners;
 
 public class GetListCompilersQuery : IRequest<IEnumerable<CompilerInfo>>;
 
-internal sealed class GetListCompilersQueryHandler : AbstractQueryHandler<GetListCompilersQuery, IEnumerable<CompilerInfo>>
+public sealed class GetListCompilersQueryHandler : AbstractQueryHandler<GetListCompilersQuery, IEnumerable<CompilerInfo>>
 {
     private readonly ICodeRunnerService _codeRunnerService;
 

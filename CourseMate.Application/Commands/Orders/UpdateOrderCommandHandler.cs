@@ -16,7 +16,7 @@ public class UpdateOrderCommand : IRequest<Unit>
     public OrderStatus Status { get; init; }
 }
 
-internal sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateOrderCommand, Unit>
+public sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateOrderCommand, Unit>
 {
     public UpdateOrderCommandHandler(
         CourseMateDbContext dbContext,

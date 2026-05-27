@@ -20,7 +20,7 @@ public class UpdateProfileCommand : IRequest<Unit>
     public string? UserName { get; set; }
 }
 
-internal sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfileCommand, Unit>
+public sealed class UpdateProfileHandler : AbstractCommandHandler<UpdateProfileCommand, Unit>
 {
     private readonly UserManager<User> _userManager;
 

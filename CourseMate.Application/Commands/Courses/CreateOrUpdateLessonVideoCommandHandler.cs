@@ -17,7 +17,7 @@ public class CreateOrUpdateLessonVideoCommand : IRequest<Unit>
     public string VideoUrl { get; set; } = string.Empty;
 }
 
-internal sealed class CreateOrUpdateLessonVideoCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonVideoCommand, Unit>
+public sealed class CreateOrUpdateLessonVideoCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonVideoCommand, Unit>
 {
     public CreateOrUpdateLessonVideoCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

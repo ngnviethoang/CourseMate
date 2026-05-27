@@ -17,7 +17,7 @@ public class GetRecommendedCoursesQuery : IRequest<PagedDto<CourseDto>>
     public int PageSize { get; set; } = 10;
 }
 
-internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<GetRecommendedCoursesQuery, PagedDto<CourseDto>>
+public sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<GetRecommendedCoursesQuery, PagedDto<CourseDto>>
 {
     public GetRecommendedCoursesQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

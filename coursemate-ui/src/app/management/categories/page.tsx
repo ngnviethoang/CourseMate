@@ -8,6 +8,7 @@ import type { CategoryDto, CreateCategoryRequest } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import {
@@ -27,6 +28,12 @@ import { formatDate } from '@/lib/utils'
 const columns: Column<CategoryDto>[] = [
   { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
   { key: 'name', header: 'Tiêu đề', sortKey: 'name' },
+  {
+    key: 'courseCount',
+    header: 'Số khóa học',
+    sortKey: 'courseCount',
+    render: row => row.courseCount
+  },
   {
     key: 'isActive',
     header: 'Trạng thái',
@@ -91,6 +98,12 @@ export default function CategoriesPage() {
     const t = setTimeout(load, 300)
     return () => clearTimeout(t)
   }, [load])
+
+  function handlePageChange(nextPageIndex: number) {
+    if (nextPageIndex === pageIndex) return
+    setLoading(true)
+    setPageIndex(nextPageIndex)
+  }
 
   function openCreate() {
     setEditing(null)
@@ -165,7 +178,7 @@ export default function CategoriesPage() {
           pageIndex,
           pageSize,
           totalCount,
-          onPageChange: setPageIndex
+          onPageChange: handlePageChange
         }}
       />
 
@@ -182,8 +195,9 @@ export default function CategoriesPage() {
             </div>
             <div className="space-y-1">
               <Label htmlFor="cat-desc">Mô tả</Label>
-              <Input
+              <Textarea
                 id="cat-desc"
+                className="min-h-24 max-h-48 resize-y overflow-y-auto"
                 value={form.description}
                 onChange={e => setForm({ ...form, description: e.target.value })}
               />

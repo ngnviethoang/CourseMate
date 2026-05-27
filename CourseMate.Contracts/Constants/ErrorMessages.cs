@@ -21,6 +21,7 @@ public enum ErrorCode
     EmptyOrder,
     CourseAlreadyInCart,
     CourseAlreadyEnrolled,
+    CategoryHasCourses,
     ExerciseAlreadyAddedToContest,
     DuplicateExerciseOrder,
     UserNotFound,

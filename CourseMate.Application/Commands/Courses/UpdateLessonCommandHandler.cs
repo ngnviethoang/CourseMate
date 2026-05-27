@@ -30,7 +30,7 @@ public class UpdateLessonCommand : IRequest<Unit>
     public int Position { get; set; }
 }
 
-internal sealed class UpdateLessonCommandHandler : AbstractCommandHandler<UpdateLessonCommand, Unit>
+public sealed class UpdateLessonCommandHandler : AbstractCommandHandler<UpdateLessonCommand, Unit>
 {
     public UpdateLessonCommandHandler(
         CourseMateDbContext dbContext,

@@ -14,7 +14,7 @@ public class GetOrderByIdQuery : IRequest<OrderDto?>
     public Guid Id { get; init; }
 }
 
-internal sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderByIdQuery, OrderDto?>
+public sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderByIdQuery, OrderDto?>
 {
     public GetOrderByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

@@ -16,7 +16,7 @@ public class ReinstateStudentCommand : IRequest<ResultIdDto>
     public Guid StudentId { get; set; }
 }
 
-internal sealed class ReinstateStudentCommandHandler : AbstractCommandHandler<ReinstateStudentCommand, ResultIdDto>
+public sealed class ReinstateStudentCommandHandler : AbstractCommandHandler<ReinstateStudentCommand, ResultIdDto>
 {
     public ReinstateStudentCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

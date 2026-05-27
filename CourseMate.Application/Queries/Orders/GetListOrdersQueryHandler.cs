@@ -13,7 +13,7 @@ public class GetListOrdersQuery : GetListQuery<OrderDto>
 {
 }
 
-internal sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOrdersQuery, PagedDto<OrderDto>>
+public sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOrdersQuery, PagedDto<OrderDto>>
 {
     public GetListOrdersQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

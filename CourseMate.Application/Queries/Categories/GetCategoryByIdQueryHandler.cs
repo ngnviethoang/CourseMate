@@ -12,7 +12,7 @@ public class GetCategoryByIdQuery : IRequest<CategoryDto?>
     public Guid Id { get; set; }
 }
 
-internal sealed class GetCategoryByIdQueryHandler : AbstractQueryHandler<GetCategoryByIdQuery, CategoryDto?>
+public sealed class GetCategoryByIdQueryHandler : AbstractQueryHandler<GetCategoryByIdQuery, CategoryDto?>
 {
     public GetCategoryByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

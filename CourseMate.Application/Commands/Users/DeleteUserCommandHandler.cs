@@ -14,7 +14,7 @@ public class DeleteUserCommand : IRequest<Unit>
     public Guid Id { get; set; }
 }
 
-internal sealed class DeleteUserAbstractCommandHandler : AbstractCommandHandler<DeleteUserCommand, Unit>
+public sealed class DeleteUserAbstractCommandHandler : AbstractCommandHandler<DeleteUserCommand, Unit>
 {
     private readonly UserManager<User> _userManager;
 

@@ -24,7 +24,7 @@ public class CreateChapterCommand : IRequest<ResultIdDto>
     public int Position { get; set; }
 }
 
-internal sealed class CreateChapterCommandHandler : AbstractCommandHandler<CreateChapterCommand, ResultIdDto>
+public sealed class CreateChapterCommandHandler : AbstractCommandHandler<CreateChapterCommand, ResultIdDto>
 {
     public CreateChapterCommandHandler(CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)

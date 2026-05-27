@@ -20,7 +20,7 @@ public class CompletedVideoUploadCommand : IRequest<FileUploadResponse>
 }
 
 // TODO Refactor to background job
-internal sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler<CompletedVideoUploadCommand, FileUploadResponse>
+public sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler<CompletedVideoUploadCommand, FileUploadResponse>
 {
     private readonly StorageOptions _storageOptions;
 

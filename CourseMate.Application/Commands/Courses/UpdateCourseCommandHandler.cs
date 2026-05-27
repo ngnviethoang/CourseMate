@@ -33,7 +33,7 @@ public class UpdateCourseCommand : IRequest<Unit>
     public Guid CategoryId { get; set; }
 }
 
-internal sealed class UpdateCourseCommandHandler : AbstractCommandHandler<UpdateCourseCommand, Unit>
+public sealed class UpdateCourseCommandHandler : AbstractCommandHandler<UpdateCourseCommand, Unit>
 {
     public UpdateCourseCommandHandler(
         CourseMateDbContext dbContext,

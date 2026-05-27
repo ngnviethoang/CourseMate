@@ -10,7 +10,7 @@ namespace CourseMate.Application.Queries.Auth;
 
 public class GetProfileQuery : IRequest<ProfileDto>;
 
-internal sealed class GetProfileQueryHandler : AbstractQueryHandler<GetProfileQuery, ProfileDto?>
+public sealed class GetProfileQueryHandler : AbstractQueryHandler<GetProfileQuery, ProfileDto?>
 {
     public GetProfileQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

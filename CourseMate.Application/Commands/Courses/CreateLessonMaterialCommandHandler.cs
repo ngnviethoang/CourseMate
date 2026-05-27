@@ -20,7 +20,7 @@ public class CreateLessonMaterialCommand : IRequest<ProcessingStatusDto>
     public byte[] Content { get; set; } = [];
 }
 
-internal sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandler<CreateLessonMaterialCommand, ProcessingStatusDto>
+public sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandler<CreateLessonMaterialCommand, ProcessingStatusDto>
 {
     private readonly IEnumerable<string> _allowedImageExtensions = [".doc", ".docx"];
     private readonly IMediator _mediator;
