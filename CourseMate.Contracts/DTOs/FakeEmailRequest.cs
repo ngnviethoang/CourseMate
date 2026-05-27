@@ -5,7 +5,7 @@ namespace CourseMate.Contracts.DTOs;
 public class FakeEmailRequest
 {
     [Required]
-    [EmailAddress]
+    [EmailAddress] [SensitiveData]
     [MaxLength(254)]
     public string ToEmail { get; set; } = string.Empty;
 

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Attributes;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
@@ -14,6 +15,7 @@ public class ResetPasswordCommand : IRequest<Unit>
 {
     [Required]
     [EmailAddress]
+    [SensitiveData]
     public string Email { get; set; } = string.Empty;
 
     [Required]
