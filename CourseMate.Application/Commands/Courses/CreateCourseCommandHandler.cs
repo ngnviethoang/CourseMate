@@ -13,9 +13,11 @@ namespace CourseMate.Application.Commands.Courses;
 public class CreateCourseCommand : IRequest<ResultIdDto>
 {
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    [Required]
     public string Title { get; set; } = string.Empty;
 
     [MaxLength(CourseMateConsts.DescriptionMaxLength)]
+    [Required]
     public string Description { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]

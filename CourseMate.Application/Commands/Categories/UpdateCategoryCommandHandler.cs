@@ -15,9 +15,11 @@ public class UpdateCategoryCommand : IRequest<Unit>
     public Guid Id { get; set; }
 
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    [Required]
     public string Name { get; set; } = string.Empty;
 
     [MaxLength(CourseMateConsts.DescriptionMaxLength)]
+    [Required]
     public string Description { get; set; } = string.Empty;
 
     public bool IsActive { get; set; }

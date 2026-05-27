@@ -133,21 +133,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider className="overflow-x-hidden">
       <AdminSidebar />
-      <main className="flex-1 flex flex-col min-h-screen bg-muted/20">
-        <header className="flex h-20 items-center gap-4 shadow-md border-0 border-b-0 bg-background/95 backdrop-blur px-8 shadow-md border-0 transition-all">
+      <main className="flex min-h-screen min-w-0 flex-1 flex-col overflow-x-hidden bg-muted/20">
+        <header className="flex h-20 min-w-0 items-center gap-4 bg-background/95 px-8 shadow-md backdrop-blur transition-all">
           <SidebarTrigger className="h-10 w-10 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all" />
           <div className="h-6 w-px bg-" />
-          <span className="text-lg font-bold tracking-tight text-foreground">
+          <span className="truncate text-lg font-bold tracking-tight text-foreground">
             {user?.role === 'Instructor' ? 'Hệ thống Giảng viên' : 'Hệ thống Quản trị'}
           </span>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex shrink-0 items-center gap-2">
             <NotificationDropdown />
             <UserDropdown user={user} mounted={mounted} onLogout={handleLogout} />
           </div>
         </header>
-        <div className="flex-1 p-10 space-y-10 max-w-[1700px] mx-auto w-full">{children}</div>
+        <div className="mx-auto w-full max-w-[1700px] min-w-0 flex-1 space-y-10 overflow-x-hidden p-10">{children}</div>
       </main>
     </SidebarProvider>
   )

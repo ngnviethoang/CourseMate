@@ -11,6 +11,11 @@ export interface ResultIdDto {
   id: string
 }
 
+export interface LookupItemDto {
+  id: string
+  value: string
+}
+
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 
 export interface LoginCommand {
