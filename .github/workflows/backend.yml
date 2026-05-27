@@ -1,0 +1,222 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/backend.yml"
+      - "CourseMate.API/**"
+      - "CourseMate.Application/**"
+      - "CourseMate.Application.Tests/**"
+      - "CourseMate.Contracts/**"
+      - "CourseMate.Persistent/**"
+      - "CourseMate.slnx"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/backend.yml"
+      - "CourseMate.API/**"
+      - "CourseMate.Application/**"
+      - "CourseMate.Application.Tests/**"
+      - "CourseMate.Contracts/**"
+      - "CourseMate.Persistent/**"
+      - "CourseMate.slnx"
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: "10.0.x"
+  SOLUTION_FILE: "CourseMate.slnx"
+  TEST_PROJECT: "CourseMate.Application.Tests/CourseMate.Application.Tests.csproj"
+  REGISTRY: "ghcr.io"
+  IMAGE_NAME: "coursemate-api"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore ${{ env.SOLUTION_FILE }} -p:NuGetAudit=false
+
+      - name: Build
+        run: dotnet build ${{ env.SOLUTION_FILE }} -c Release --no-restore -p:NuGetAudit=false
+
+  ai_review:
+    name: AI Bot Review
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: read
+      models: read
+      pull-requests: write
+
+    steps:
+      - name: Skip review on non-PR event
+        if: github.event_name != 'pull_request'
+        run: echo "Skip AI review because event is not pull_request."
+
+      - name: Checkout source
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create review prompt from PR diff
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+          git diff --no-color --unified=0 "${BASE_SHA}" "${HEAD_SHA}" > pr.diff
+          head -c 50000 pr.diff > pr.diff.trimmed
+
+          cat > ai-review.prompt.txt <<'EOF'
+          You are a strict backend code reviewer for a .NET application.
+          Review the diff and return concise markdown with:
+          1) Critical Issues
+          2) Risks / Regressions
+          3) Suggested Fixes
+          If there are no critical issues, say: "No critical issues found."
+
+          Diff:
+          EOF
+
+          cat pr.diff.trimmed >> ai-review.prompt.txt
+
+      - name: Run GitHub AI inference
+        if: github.event_name == 'pull_request'
+        id: ai
+        uses: actions/ai-inference@v1
+        continue-on-error: true
+        with:
+          model: openai/gpt-4o
+          prompt-file: ./ai-review.prompt.txt
+
+      - name: Post AI review comment to PR
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
+        uses: actions/github-script@v7
+        env:
+          AI_REVIEW: ${{ steps.ai.outputs.response }}
+        with:
+          script: |
+            const marker = '<!-- ai-review-bot -->';
+            const aiBody = (process.env.AI_REVIEW || 'AI review unavailable.').trim();
+            const body = `${marker}\n## AI Bot Review\n\n${aiBody}`;
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number
+            });
+
+            const existing = comments.find(c => c.user?.type === 'Bot' && c.body?.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body
+              });
+            }
+
+  unit_tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: ai_review
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Run tests
+        run: dotnet test ${{ env.TEST_PROJECT }} -c Release --logger "trx;LogFileName=test-results.trx" -p:NuGetAudit=false
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-unit-test-results
+          path: "**/test-results.trx"
+          if-no-files-found: ignore
+
+  docker_build_push:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    needs: unit_tests
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha
+            type=raw,value=latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: CourseMate.API/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    name: Deploy (placeholder)
+    runs-on: ubuntu-latest
+    needs: docker_build_push
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy TODO
+        run: |
+          echo "Docker image pushed successfully."
+          echo "TODO: implement deployment step when backend server is ready."
