@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using CourseMate.Contracts.Attributes;
 
 namespace CourseMate.Contracts.DTOs;
 
 public class FakeEmailRequest
 {
     [Required]
-    [EmailAddress] [SensitiveData]
+    [EmailAddress] 
+    [SensitiveData]
     [MaxLength(254)]
     public string ToEmail { get; set; } = string.Empty;
 
