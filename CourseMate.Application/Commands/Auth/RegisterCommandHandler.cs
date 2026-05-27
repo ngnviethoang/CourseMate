@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.BackgroundJobs;
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Attributes;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
@@ -16,7 +17,9 @@ namespace CourseMate.Application.Commands.Auth;
 
 public class RegisterCommand : IRequest<Unit>
 {
+    [Required]
     [EmailAddress]
+    [SensitiveData]
     public string Email { get; set; } = string.Empty;
 
     [Required]

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Attributes;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Exceptions;
@@ -20,6 +21,7 @@ public class LoginCommand : IRequest<LoginResponse>
 
     [Required]
     [MaxLength(128)]
+    [SensitiveData]
     public string Password { get; set; } = string.Empty;
 }
 
