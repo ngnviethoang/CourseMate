@@ -25,21 +25,31 @@ public sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLessonBy
     {
         Guid studentId = CurrentUserId;
 
-        LessonDetailDto? lesson = await DbContext.Lessons
+        LessonItem? lessonItem = await DbContext.Lessons
             .Where(l => l.Id == request.Id)
-            .Select(l => new LessonDetailDto
-            {
-                Id = l.Id,
-                Title = l.Title,
-                LessonType = l.LessonType,
-                Position = l.Position
-            })
+            .Select(l => new LessonItem(l.Id, l.ChapterId, l.Title, l.LessonType, l.Position))
             .FirstOrDefaultAsync(ct);
 
-        if (lesson == null)
+        if (lessonItem == null)
         {
             return null;
         }
+
+        List<Guid> lessonOrder = await DbContext.Lessons
+            .Where(x => x.ChapterId == lessonItem.ChapterId)
+            .OrderBy(x => x.Position)
+            .Select(x => x.Id)
+            .ToListAsync(ct);
+
+        int sortOrder = lessonOrder.FindIndex(x => x == lessonItem.Id) + 1;
+        LessonDetailDto lesson = new()
+        {
+            Id = lessonItem.Id,
+            Title = lessonItem.Title,
+            LessonType = lessonItem.LessonType,
+            Position = lessonItem.PositionKey,
+            SortOrder = sortOrder < 1 ? 1 : sortOrder
+        };
 
         UserLessonProgress? progress = await DbContext.UserLessonProgresses
             .FirstOrDefaultAsync(p => p.StudentId == studentId && p.LessonId == request.Id, ct);
@@ -126,4 +136,6 @@ public sealed class GetLessonByIdQueryHandler : AbstractQueryHandler<GetLessonBy
                 .ToList();
         }
     }
+
+    private sealed record LessonItem(Guid Id, Guid ChapterId, string Title, LessonType LessonType, string PositionKey);
 }

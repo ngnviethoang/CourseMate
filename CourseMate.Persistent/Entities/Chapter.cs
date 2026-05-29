@@ -6,7 +6,7 @@ namespace CourseMate.Persistent.Entities;
 
 public class Chapter : Entity
 {
-    public Chapter(Guid id, Guid courseId, string title, int position) : base(id)
+    public Chapter(Guid id, Guid courseId, string title, string position) : base(id)
     {
         CourseId = courseId;
         Title = title;
@@ -18,5 +18,6 @@ public class Chapter : Entity
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
     public string Title { get; set; }
 
-    public int Position { get; set; }
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    public string Position { get; set; }
 }

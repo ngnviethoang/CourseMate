@@ -11,7 +11,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace CourseMate.Application.Commands.Courses;
+namespace CourseMate.Application.Commands.Lessons;
 
 public class CreateLessonMaterialCommand : IRequest<ProcessingStatusDto>
 {

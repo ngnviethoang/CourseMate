@@ -7,7 +7,7 @@ namespace CourseMate.Persistent.Entities;
 
 public class Lesson : Entity
 {
-    public Lesson(Guid id, Guid chapterId, Guid courseId, string title, LessonType lessonType, int position) : base(id)
+    public Lesson(Guid id, Guid chapterId, Guid courseId, string title, LessonType lessonType, string position) : base(id)
     {
         ChapterId = chapterId;
         CourseId = courseId;
@@ -25,5 +25,6 @@ public class Lesson : Entity
 
     public LessonType LessonType { get; set; }
 
-    public int Position { get; set; }
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    public string Position { get; set; }
 }

@@ -7,21 +7,23 @@ using CourseMate.Persistent.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseMate.Application.Queries.Courses;
+namespace CourseMate.Application.Queries.Lessons;
 
-public class GetListChaptersQuery : GetListQuery<ChapterDto>
+public class GetListLessonsQuery : GetListQuery<LessonDto>
 {
     public Guid? CourseId { get; set; }
+
+    public Guid? ChapterId { get; set; }
 }
 
-public sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetListChaptersQuery, PagedDto<ChapterDto>>
+public sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListLessonsQuery, PagedDto<LessonDto>>
 {
-    public GetListChaptersQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+    public GetListLessonsQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
     {
     }
 
-    public override async Task<PagedDto<ChapterDto>> Handle(GetListChaptersQuery request, CancellationToken ct)
+    public override async Task<PagedDto<LessonDto>> Handle(GetListLessonsQuery request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
         bool isAdmin = IsInRole(Roles.Admin);
@@ -34,21 +36,25 @@ public sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetListCh
 
         bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
 
-        IQueryable<ChapterDto> query =
-            from chapter in DbContext.Chapters
-            join course in DbContext.Courses on chapter.CourseId equals course.Id
-            where (request.CourseId == null || course.Id == request.CourseId)
+        IQueryable<LessonDto> query = from lesson in DbContext.Lessons
+            join chapter in DbContext.Chapters on lesson.ChapterId equals chapter.Id
+            join course in DbContext.Courses on lesson.CourseId equals course.Id
+            where (request.CourseId == null || lesson.CourseId == request.CourseId)
+                  && (request.ChapterId == null || lesson.ChapterId == request.ChapterId)
                   && (course.IsPublished || isAdmin || (isInstructor && course.InstructorId == userId))
-            select new ChapterDto
+            select new LessonDto
             {
-                Id = chapter.Id,
-                CourseId = chapter.CourseId,
-                CourseName = course.Title,
-                Title = chapter.Title,
-                Position = chapter.Position,
+                Id = lesson.Id,
+                ChapterId = lesson.ChapterId,
+                ChapterName = chapter.Title,
+                CourseId = lesson.CourseId,
                 InstructorId = course.InstructorId,
-                CreationTime = chapter.CreationTime,
-                LastModificationTime = chapter.LastModificationTime
+                CourseName = course.Title,
+                Title = lesson.Title,
+                LessonType = lesson.LessonType,
+                Position = lesson.Position,
+                CreationTime = lesson.CreationTime,
+                LastModificationTime = lesson.LastModificationTime
             };
 
         query = query
@@ -68,13 +74,19 @@ public sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetListCh
 
         int total = await query.CountAsync(ct);
 
-        List<ChapterDto> chapters = await query
+        List<LessonDto> lessons = await query
             .Paged(request.PageIndex, request.PageSize)
             .ToListAsync(ct);
 
-        return new PagedDto<ChapterDto>
+        int start = (request.PageIndex - 1) * request.PageSize;
+        for (int index = 0; index < lessons.Count; index++)
         {
-            Items = chapters,
+            lessons[index].SortOrder = start + index + 1;
+        }
+
+        return new PagedDto<LessonDto>
+        {
+            Items = lessons,
             PageIndex = request.PageIndex,
             PageSize = request.PageSize,
             TotalCount = total

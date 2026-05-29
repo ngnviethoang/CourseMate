@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseMate.Application.Queries.Courses;
+namespace CourseMate.Application.Queries.Chapters;
 
 public class GetChapterByIdQuery : IRequest<ChapterDto?>
 {
@@ -35,15 +35,26 @@ public sealed class GetChapterByIdQueryHandler : AbstractQueryHandler<GetChapter
                 Position = chapter.Position
             };
 
-        ChapterDto? result = await query
+        ChapterDto? chapterItem = await query
             .WhereIf(IsInRole(Roles.Instructor), chapter => chapter.Id == request.Id)
             .FirstOrDefaultAsync(ct);
 
-        if (result != null)
+        if (chapterItem == null)
         {
-            await EnsureEnrollmentAsync(result.CourseId);
+            return null;
         }
 
-        return result;
+        await EnsureEnrollmentAsync(chapterItem.CourseId);
+
+        List<Guid> chapterOrder = await DbContext.Chapters
+            .Where(x => x.CourseId == chapterItem.CourseId)
+            .OrderBy(x => x.Position)
+            .Select(x => x.Id)
+            .ToListAsync(ct);
+
+        int sortOrder = chapterOrder.FindIndex(x => x == chapterItem.Id) + 1;
+
+        chapterItem.SortOrder = sortOrder < 1 ? 1 : sortOrder;
+        return chapterItem;
     }
 }

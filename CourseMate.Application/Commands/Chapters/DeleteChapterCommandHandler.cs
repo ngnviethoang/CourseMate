@@ -6,16 +6,16 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseMate.Application.Commands.Courses;
+namespace CourseMate.Application.Commands.Chapters;
 
-public class DeleteLessonCommand : IRequest<Unit>
+public class DeleteChapterCommand : IRequest<Unit>
 {
     public Guid Id { get; set; }
 }
 
-public sealed class DeleteLessonCommandHandler : AbstractCommandHandler<DeleteChapterCommand, Unit>
+public sealed class DeleteChapterAbstractCommandHandler : AbstractCommandHandler<DeleteChapterCommand, Unit>
 {
-    public DeleteLessonCommandHandler(
+    public DeleteChapterAbstractCommandHandler(
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {
@@ -23,14 +23,15 @@ public sealed class DeleteLessonCommandHandler : AbstractCommandHandler<DeleteCh
 
     public override async Task<Unit> Handle(DeleteChapterCommand request, CancellationToken ct)
     {
+        Guid userId = CurrentUserId;
         bool canDelete = await (
-                from lesson in DbContext.Lessons
+                from chapter in DbContext.Chapters
                 join course in DbContext.Courses
-                    on lesson.CourseId equals course.Id
-                where lesson.Id == request.Id
-                select new { lesson, course }
+                    on chapter.CourseId equals course.Id
+                where chapter.Id == request.Id
+                select new { chapter, course }
             )
-            .WhereIf(IsInRole(Roles.Instructor), x => x.course.InstructorId == CurrentUserId)
+            .WhereIf(IsInRole(Roles.Instructor), x => x.course.InstructorId == userId)
             .AnyAsync(ct);
 
         if (!canDelete)
@@ -38,7 +39,7 @@ public sealed class DeleteLessonCommandHandler : AbstractCommandHandler<DeleteCh
             throw new UnauthorizedAccessException();
         }
 
-        await DbContext.Lessons.RemoveByIdAsync(request.Id, ct);
+        await DbContext.Chapters.RemoveByIdAsync(request.Id, ct);
         return Unit.Value;
     }
 }
