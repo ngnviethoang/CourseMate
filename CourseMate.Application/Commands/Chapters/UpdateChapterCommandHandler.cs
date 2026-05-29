@@ -10,7 +10,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseMate.Application.Commands.Courses;
+namespace CourseMate.Application.Commands.Chapters;
 
 public class UpdateChapterCommand : IRequest<Unit>
 {

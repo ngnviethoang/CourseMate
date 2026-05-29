@@ -12,7 +12,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseMate.Application.Commands.Courses;
+namespace CourseMate.Application.Commands.Lessons;
 
 public class CreateLessonCommand : IRequest<ResultIdDto>
 {

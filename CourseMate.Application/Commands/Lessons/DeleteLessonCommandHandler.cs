@@ -1,3 +1,4 @@
+using CourseMate.Application.Commands.Chapters;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Persistent;
@@ -6,16 +7,16 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseMate.Application.Commands.Courses;
+namespace CourseMate.Application.Commands.Lessons;
 
-public class DeleteChapterCommand : IRequest<Unit>
+public class DeleteLessonCommand : IRequest<Unit>
 {
     public Guid Id { get; set; }
 }
 
-public sealed class DeleteChapterAbstractCommandHandler : AbstractCommandHandler<DeleteChapterCommand, Unit>
+public sealed class DeleteLessonCommandHandler : AbstractCommandHandler<DeleteChapterCommand, Unit>
 {
-    public DeleteChapterAbstractCommandHandler(
+    public DeleteLessonCommandHandler(
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {
@@ -23,15 +24,14 @@ public sealed class DeleteChapterAbstractCommandHandler : AbstractCommandHandler
 
     public override async Task<Unit> Handle(DeleteChapterCommand request, CancellationToken ct)
     {
-        Guid userId = CurrentUserId;
         bool canDelete = await (
-                from chapter in DbContext.Chapters
+                from lesson in DbContext.Lessons
                 join course in DbContext.Courses
-                    on chapter.CourseId equals course.Id
-                where chapter.Id == request.Id
-                select new { chapter, course }
+                    on lesson.CourseId equals course.Id
+                where lesson.Id == request.Id
+                select new { lesson, course }
             )
-            .WhereIf(IsInRole(Roles.Instructor), x => x.course.InstructorId == userId)
+            .WhereIf(IsInRole(Roles.Instructor), x => x.course.InstructorId == CurrentUserId)
             .AnyAsync(ct);
 
         if (!canDelete)
@@ -39,7 +39,7 @@ public sealed class DeleteChapterAbstractCommandHandler : AbstractCommandHandler
             throw new UnauthorizedAccessException();
         }
 
-        await DbContext.Chapters.RemoveByIdAsync(request.Id, ct);
+        await DbContext.Lessons.RemoveByIdAsync(request.Id, ct);
         return Unit.Value;
     }
 }

@@ -11,13 +11,14 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseMate.Application.Commands.Courses;
+namespace CourseMate.Application.Commands.Chapters;
 
 public class CreateChapterCommand : IRequest<ResultIdDto>
 {
     public Guid CourseId { get; set; }
 
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    [Required]
     public string Title { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
