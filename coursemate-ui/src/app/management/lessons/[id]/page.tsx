@@ -775,7 +775,7 @@ export default function LessonDetailPage() {
     courseId: '',
     title: '',
     lessonType: LessonType.Video,
-    position: 0
+    sortOrder: 1
   })
 
   useEffect(() => {
@@ -790,7 +790,7 @@ export default function LessonDetailPage() {
           courseId: l?.courseId || '',
           title: l?.title || '',
           lessonType: l?.lessonType || LessonType.Video,
-          position: l?.position || 0
+          sortOrder: l?.sortOrder || 1
         })
         if (l?.chapterId) {
           try {
@@ -879,7 +879,7 @@ export default function LessonDetailPage() {
               {chapter ? chapter.title : lesson.chapterName || 'Chương'}
             </Link>
             <span className="text-muted-foreground text-sm">/</span>
-            <span className="text-sm text-muted-foreground">Bài học {lesson.position}</span>
+            <span className="text-sm text-muted-foreground">Bài học {lesson.sortOrder}</span>
           </div>
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-3 min-w-0">

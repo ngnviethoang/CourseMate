@@ -27,7 +27,7 @@ const columns: Column<ChapterDto>[] = [
   { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
   { key: 'title', header: 'Tiêu đề', sortKey: 'title' },
   { key: 'courseName', header: 'Khóa học' },
-  { key: 'position', header: 'Vị trí', sortKey: 'position' },
+  { key: 'sortOrder', header: 'Thứ tự', sortKey: 'position', render: row => row.sortOrder },
   {
     key: 'creationTime',
     header: 'Ngày tạo',
@@ -42,7 +42,7 @@ const columns: Column<ChapterDto>[] = [
   }
 ]
 
-const emptyForm: CreateChapterRequest = { courseId: '', title: '', position: 0 }
+const emptyForm: CreateChapterRequest = { courseId: '', title: '', sortOrder: 1 }
 
 export default function ChaptersPage() {
   const router = useRouter()
@@ -96,13 +96,27 @@ export default function ChaptersPage() {
 
   function openCreate() {
     setEditing(null)
-    setForm(emptyForm)
+    setForm({ courseId: courseFilterId, title: '', sortOrder: totalCount + 1 })
     setDialogOpen(true)
   }
-  function openEdit(row: ChapterDto) {
+  async function openEdit(row: ChapterDto) {
     setEditing(row)
-    setForm({ courseId: row.courseId, title: row.title, position: row.position })
-    setDialogOpen(true)
+    try {
+      const detail = await chapterService.getById(row.id)
+      setForm({
+        courseId: row.courseId,
+        title: row.title,
+        sortOrder: detail?.sortOrder ?? row.sortOrder
+      })
+    } catch {
+      setForm({
+        courseId: row.courseId,
+        title: row.title,
+        sortOrder: row.sortOrder
+      })
+    } finally {
+      setDialogOpen(true)
+    }
   }
 
   async function handleSave() {
@@ -198,6 +212,15 @@ export default function ChaptersPage() {
             <div className="space-y-1">
               <Label>Tiêu đề</Label>
               <Input value={form.title} onChange={e => f('title', e.target.value)} />
+            </div>
+            <div className="space-y-1">
+              <Label>Thứ tự</Label>
+              <Input
+                type="number"
+                min={1}
+                value={form.sortOrder}
+                onChange={e => f('sortOrder', Number(e.target.value))}
+              />
             </div>
           </div>
           <DialogFooter>

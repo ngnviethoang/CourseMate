@@ -37,7 +37,7 @@ const columns: Column<LessonDto>[] = [
     header: 'Loại',
     render: row => <Badge variant="outline">{row.lessonType}</Badge>
   },
-  { key: 'position', header: 'Vị trí', sortKey: 'position' },
+  { key: 'sortOrder', header: 'Thứ tự', sortKey: 'position', render: row => row.sortOrder },
   {
     key: 'creationTime',
     header: 'Ngày tạo',
@@ -57,7 +57,7 @@ const emptyForm: CreateLessonRequest = {
   courseId: '',
   title: '',
   lessonType: LessonType.Video,
-  position: 1
+  sortOrder: 1
 }
 
 export default function LessonsPage() {
@@ -122,19 +122,37 @@ export default function LessonsPage() {
 
   function openCreate() {
     setEditing(null)
-    setForm(emptyForm)
-    setDialogOpen(true)
-  }
-  function openEdit(row: LessonDto) {
-    setEditing(row)
     setForm({
-      chapterId: row.chapterId,
-      courseId: row.courseId,
-      title: row.title,
-      lessonType: row.lessonType,
-      position: row.position
+      chapterId: chapterFilterId,
+      courseId: courseFilterId,
+      title: '',
+      lessonType: LessonType.Video,
+      sortOrder: chapterFilterId ? totalCount + 1 : 1
     })
     setDialogOpen(true)
+  }
+  async function openEdit(row: LessonDto) {
+    setEditing(row)
+    try {
+      const detail = await lessonService.getById(row.id)
+      setForm({
+        chapterId: row.chapterId,
+        courseId: row.courseId,
+        title: row.title,
+        lessonType: row.lessonType,
+        sortOrder: detail?.sortOrder ?? row.sortOrder
+      })
+    } catch {
+      setForm({
+        chapterId: row.chapterId,
+        courseId: row.courseId,
+        title: row.title,
+        lessonType: row.lessonType,
+        sortOrder: row.sortOrder
+      })
+    } finally {
+      setDialogOpen(true)
+    }
   }
 
   async function handleSave() {
@@ -266,12 +284,12 @@ export default function LessonsPage() {
               </Select>
             </div>
             <div className="space-y-1">
-              <Label>Vị trí</Label>
+              <Label>Thứ tự</Label>
               <Input
                 type="number"
                 min={1}
-                value={form.position}
-                onChange={e => f('position', Number(e.target.value))}
+                value={form.sortOrder}
+                onChange={e => f('sortOrder', Number(e.target.value))}
               />
             </div>
           </div>

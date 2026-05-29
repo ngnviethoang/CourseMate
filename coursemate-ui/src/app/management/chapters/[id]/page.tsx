@@ -74,7 +74,7 @@ const emptyLessonForm = (courseId: string, chapterId: string): CreateLessonReque
   chapterId,
   title: '',
   lessonType: LessonType.Video,
-  position: 0
+  sortOrder: 1
 })
 
 // ─── Main Component ────────────────────────────────────────────────────────────
@@ -142,7 +142,7 @@ export default function ChapterDetailPage() {
   // ─── Handlers ──────────────────────────────────────────────────────────────
 
   function openAddLesson() {
-    setLessonForm(emptyLessonForm(chapter?.courseId || '', id))
+    setLessonForm({ ...emptyLessonForm(chapter?.courseId || '', id), sortOrder: totalCount + 1 })
     setLessonDialog(true)
   }
 
@@ -212,7 +212,7 @@ export default function ChapterDetailPage() {
               {course ? course.title : chapter.courseName || 'Khóa học'}
             </Link>
             <span className="text-muted-foreground text-sm">/</span>
-            <span className="text-sm text-muted-foreground">Chương {chapter.position}</span>
+            <span className="text-sm text-muted-foreground">Chương {chapter.sortOrder}</span>
           </div>
           <h1 className="text-2xl font-semibold truncate">{chapter.title}</h1>
         </div>
@@ -228,7 +228,7 @@ export default function ChapterDetailPage() {
           </div>
           <div>
             <span className="text-sm text-muted-foreground">Vị trí</span>
-            <p className="font-medium">{chapter.position}</p>
+            <p className="font-medium">{chapter.sortOrder}</p>
           </div>
         </div>
       </div>
@@ -264,7 +264,7 @@ export default function ChapterDetailPage() {
                 className="flex items-center gap-3 px-4 py-3 rounded-xl bg-card shadow-md border-0 hover:-primary/30 transition-colors group cursor-pointer select-none"
               >
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                  <span className="text-xs font-medium">{lesson.position}</span>
+                  <span className="text-xs font-medium">{lesson.sortOrder}</span>
                 </div>
                 <span className="text-base">{LESSON_TYPE_ICON[lesson.lessonType]}</span>
                 <span className="flex-1 font-medium">{lesson.title}</span>

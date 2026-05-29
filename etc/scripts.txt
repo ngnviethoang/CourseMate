@@ -18,4 +18,4 @@ ollama pull llama3
 
 pg_dump -U postgres -h localhost -d CourseMateV2 > dump-CourseMateV2-202605291500.sql
 
-codex load coursemate-ui/.agent, CourseMate.API/.agent in current context
+codex load coursemate-ui/.agents, CourseMate.API/.agents in current context

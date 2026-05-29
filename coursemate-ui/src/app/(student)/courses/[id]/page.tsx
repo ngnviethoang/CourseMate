@@ -189,7 +189,7 @@ export default function CourseDetailPage() {
                 <AccordionTrigger className="hover:no-underline font-semibold text-lg">
                   <div className="flex justify-between items-center w-full pr-4">
                     <span>
-                      {chapter.position}. {chapter.title}
+                      {chapter.sortOrder}. {chapter.title}
                     </span>
                     <Badge variant="secondary" className="font-normal text-xs">
                       {chapter.lessons.length} bài học
@@ -215,7 +215,7 @@ export default function CourseDetailPage() {
                               <CheckCircle2 className="h-5 w-5 text-emerald-500" />
                             )}
                             <span className="font-medium text-sm">
-                              {chapter.position}.{lesson.position} - {lesson.title}
+                              {chapter.sortOrder}.{lesson.sortOrder} - {lesson.title}
                             </span>
                           </div>
 

@@ -1,7 +1,8 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
-using CourseMate.Persistent.ExtensionMethods;
+using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,9 @@ public class DeleteChapterCommand : IRequest<Unit>
     public Guid Id { get; set; }
 }
 
-public sealed class DeleteChapterAbstractCommandHandler : AbstractCommandHandler<DeleteChapterCommand, Unit>
+public sealed class DeleteChapterCommandHandler : AbstractCommandHandler<DeleteChapterCommand, Unit>
 {
-    public DeleteChapterAbstractCommandHandler(
+    public DeleteChapterCommandHandler(
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {
@@ -23,23 +24,30 @@ public sealed class DeleteChapterAbstractCommandHandler : AbstractCommandHandler
 
     public override async Task<Unit> Handle(DeleteChapterCommand request, CancellationToken ct)
     {
-        Guid userId = CurrentUserId;
-        bool canDelete = await (
+        ChapterWithInstructor? item = await (
                 from chapter in DbContext.Chapters
-                join course in DbContext.Courses
-                    on chapter.CourseId equals course.Id
+                join course in DbContext.Courses on chapter.CourseId equals course.Id
                 where chapter.Id == request.Id
-                select new { chapter, course }
+                select new ChapterWithInstructor(chapter, course.InstructorId)
             )
-            .WhereIf(IsInRole(Roles.Instructor), x => x.course.InstructorId == userId)
-            .AnyAsync(ct);
+            .FirstOrDefaultAsync(ct);
 
+        if (item == null)
+        {
+            throw new EntityNotFoundException(nameof(Chapter), request.Id);
+        }
+
+        bool isAdmin = IsInRole(Roles.Admin);
+        bool isInstructor = IsInRole(Roles.Instructor);
+        bool canDelete = isAdmin || (isInstructor && item.InstructorId == CurrentUserId);
         if (!canDelete)
         {
             throw new UnauthorizedAccessException();
         }
 
-        await DbContext.Chapters.RemoveByIdAsync(request.Id, ct);
+        DbContext.Chapters.Remove(item.Chapter);
         return Unit.Value;
     }
+
+    private sealed record ChapterWithInstructor(Chapter Chapter, Guid InstructorId);
 }
