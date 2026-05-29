@@ -1,7 +1,9 @@
 using CourseMate.Application.Commands.Chapters;
 using CourseMate.Application.Commands.Courses;
 using CourseMate.Application.Commands.Lessons;
+using CourseMate.Application.Queries.Chapters;
 using CourseMate.Application.Queries.Courses;
+using CourseMate.Application.Queries.Lessons;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;

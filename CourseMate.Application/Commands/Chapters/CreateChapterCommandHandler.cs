@@ -4,6 +4,7 @@ using CourseMate.Contracts;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Exceptions;
+using CourseMate.Contracts.Shared;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using CourseMate.Persistent.ExtensionMethods;
@@ -21,8 +22,8 @@ public class CreateChapterCommand : IRequest<ResultIdDto>
     [Required]
     public string Title { get; set; } = string.Empty;
 
-    [Range(0, int.MaxValue)]
-    public int Position { get; set; }
+    [Range(1, int.MaxValue)]
+    public int SortOrder { get; set; }
 }
 
 public sealed class CreateChapterCommandHandler : AbstractCommandHandler<CreateChapterCommand, ResultIdDto>
@@ -34,42 +35,34 @@ public sealed class CreateChapterCommandHandler : AbstractCommandHandler<CreateC
 
     public override async Task<ResultIdDto> Handle(CreateChapterCommand request, CancellationToken ct)
     {
+        await DbContext.Courses.EnsureExistsAsync(request.CourseId, ct);
         Guid userId = CurrentUserId;
-        bool isExistedCourse = IsInRole(Roles.Admin) || await DbContext.Courses
-            .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == userId)
-            .AnyAsync(i => i.Id == request.CourseId, ct);
-        if (!isExistedCourse)
+        bool isAdmin = IsInRole(Roles.Admin);
+        bool canManageCourse = isAdmin || (IsInRole(Roles.Instructor) && await DbContext.Courses
+            .AnyAsync(i => i.Id == request.CourseId && i.InstructorId == userId, ct));
+        if (!canManageCourse)
         {
             throw new UnauthorizedAccessException();
         }
 
-
-        if (request.Position != 0)
-        {
-            bool isDuplicate = await DbContext.Chapters.AnyAsync(x => x.CourseId == request.CourseId && x.Position == request.Position, ct);
-            if (isDuplicate)
-            {
-                throw new BusinessException(ErrorCode.DuplicatePosition, "Duplicate position.");
-            }
-        }
-
-        int nextPosition = (await DbContext.Chapters
+        List<string> siblingPositions = await DbContext.Chapters
             .Where(x => x.CourseId == request.CourseId)
-            .MaxAsync(x => (int?)x.Position, ct) ?? 0) + 1;
+            .OrderBy(x => x.Position)
+            .Select(x => x.Position)
+            .ToListAsync(ct);
 
-        int finalPosition = request.Position == 0 ? nextPosition : request.Position;
-
-        if (finalPosition > nextPosition)
+        int maxAllowedSortOrder = siblingPositions.Count + 1;
+        if (request.SortOrder < 1 || request.SortOrder > maxAllowedSortOrder)
         {
-            throw new BusinessException(ErrorCode.PositionOutOfRange, string.Format("Position must be 0 or equal to next position '{0}'.", nextPosition));
+            throw new BusinessException(ErrorCode.PositionOutOfRange, $"SortOrder must be between 1 and '{maxAllowedSortOrder}'");
         }
 
-        Chapter chapter = new(
-            Guid.NewGuid(),
-            request.CourseId,
-            request.Title,
-            finalPosition
-        );
+        int insertIndex = request.SortOrder - 1;
+        string? previous = insertIndex > 0 ? siblingPositions[insertIndex - 1] : null;
+        string? next = insertIndex < siblingPositions.Count ? siblingPositions[insertIndex] : null;
+        string position = StringFractionalIndexing.GenerateBetween(previous, next);
+
+        Chapter chapter = new(Guid.NewGuid(), request.CourseId, request.Title, position);
 
         await DbContext.AddAsync(chapter, ct);
         return new ResultIdDto { Id = chapter.Id };

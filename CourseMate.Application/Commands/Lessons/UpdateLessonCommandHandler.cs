@@ -4,6 +4,7 @@ using CourseMate.Contracts;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
+using CourseMate.Contracts.Shared;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using CourseMate.Persistent.ExtensionMethods;
@@ -22,12 +23,13 @@ public class UpdateLessonCommand : IRequest<Unit>
     public Guid CourseId { get; set; }
 
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    [Required]
     public string Title { get; set; } = string.Empty;
 
     public LessonType LessonType { get; set; }
 
-    [Range(0, int.MaxValue)]
-    public int Position { get; set; }
+    [Range(1, int.MaxValue)]
+    public int SortOrder { get; set; }
 }
 
 public sealed class UpdateLessonCommandHandler : AbstractCommandHandler<UpdateLessonCommand, Unit>
@@ -40,75 +42,57 @@ public sealed class UpdateLessonCommandHandler : AbstractCommandHandler<UpdateLe
 
     public override async Task<Unit> Handle(UpdateLessonCommand request, CancellationToken ct)
     {
-        bool isExistedCourse = IsInRole(Roles.Admin) || await DbContext.Courses
-            .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == CurrentUserId)
-            .AnyAsync(i => i.Id == request.CourseId, ct);
-        if (!isExistedCourse)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
-        Lesson? lesson = await DbContext.Lessons.FirstOrDefaultAsync(x => x.Id == request.Id &&
-                                                                          x.ChapterId == request.ChapterId &&
-                                                                          x.CourseId == request.CourseId, ct);
+        await DbContext.Courses.EnsureExistsAsync(request.CourseId, ct);
+        await DbContext.Chapters.EnsureExistsAsync(request.ChapterId, ct);
+        Lesson? lesson = await DbContext.Lessons.FirstOrDefaultAsync(x => x.Id == request.Id, ct);
         if (lesson == null)
         {
             throw new EntityNotFoundException(nameof(Lesson), request.Id);
         }
 
-        if (request.Position != 0)
+        Guid userId = CurrentUserId;
+        bool isAdmin = IsInRole(Roles.Admin);
+        bool canManageCourse = isAdmin || (IsInRole(Roles.Instructor) && await DbContext.Courses
+            .AnyAsync(i => i.Id == request.CourseId && i.InstructorId == userId, ct));
+        if (!canManageCourse)
         {
-            bool isDuplicate = await DbContext.Lessons.AnyAsync(x => x.ChapterId == request.ChapterId && x.Position == request.Position && x.Id != request.Id, ct);
-            if (isDuplicate)
-            {
-                throw new BusinessException(ErrorCode.DuplicatePosition, "Duplicate position.");
-            }
+            throw new UnauthorizedAccessException();
         }
 
-        int nextPosition = (await DbContext.Lessons
-            .Where(x => x.ChapterId == request.ChapterId)
-            .MaxAsync(x => (int?)x.Position, ct) ?? 0) + 1;
+        List<string> siblingPositions = await DbContext.Lessons
+            .Where(x => x.ChapterId == request.ChapterId && x.Id != request.Id)
+            .OrderBy(x => x.Position)
+            .Select(x => x.Position)
+            .ToListAsync(ct);
 
-        int finalPosition = request.Position == 0 ? lesson.Position == 0 ? nextPosition : lesson.Position : request.Position;
-
-        if (finalPosition > nextPosition)
+        int maxAllowedSortOrder = siblingPositions.Count + 1;
+        if (request.SortOrder < 1 || request.SortOrder > maxAllowedSortOrder)
         {
-            throw new BusinessException(ErrorCode.PositionOutOfRange, string.Format("Position must be 0 or equal to next position '{0}'.", nextPosition));
+            throw new BusinessException(ErrorCode.PositionOutOfRange, $"SortOrder must be between 1 and '{maxAllowedSortOrder}'");
         }
+
+        int insertIndex = request.SortOrder - 1;
+        string? previous = insertIndex > 0 ? siblingPositions[insertIndex - 1] : null;
+        string? next = insertIndex < siblingPositions.Count ? siblingPositions[insertIndex] : null;
+        string position = StringFractionalIndexing.GenerateBetween(previous, next);
 
         if (lesson.LessonType != request.LessonType)
         {
-            // If type changed, clear all related content records to avoid "ghost" data
             List<LessonVideo> videos = await DbContext.LessonVideos.Where(x => x.LessonId == request.Id).ToListAsync(ct);
-            if (videos.Any())
-            {
-                DbContext.LessonVideos.RemoveRange(videos);
-            }
-
+            DbContext.LessonVideos.RemoveRange(videos);
             List<LessonReading> readings = await DbContext.LessonReadings.Where(x => x.LessonId == request.Id).ToListAsync(ct);
-            if (readings.Any())
-            {
-                DbContext.LessonReadings.RemoveRange(readings);
-            }
-
+            DbContext.LessonReadings.RemoveRange(readings);
             List<LessonCoding> codings = await DbContext.LessonCodings.Where(x => x.LessonId == request.Id).ToListAsync(ct);
-            if (codings.Any())
-            {
-                DbContext.LessonCodings.RemoveRange(codings);
-            }
-
+            DbContext.LessonCodings.RemoveRange(codings);
             List<LessonQuiz> quizzes = await DbContext.LessonQuizzes.Where(x => x.LessonId == request.Id).ToListAsync(ct);
-            if (quizzes.Any())
-            {
-                DbContext.LessonQuizzes.RemoveRange(quizzes);
-            }
+            DbContext.LessonQuizzes.RemoveRange(quizzes);
         }
 
         lesson.ChapterId = request.ChapterId;
         lesson.CourseId = request.CourseId;
         lesson.Title = request.Title;
         lesson.LessonType = request.LessonType;
-        lesson.Position = finalPosition;
+        lesson.Position = position;
 
         DbContext.Update(lesson);
         return Unit.Value;

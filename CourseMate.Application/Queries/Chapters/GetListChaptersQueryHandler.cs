@@ -7,23 +7,21 @@ using CourseMate.Persistent.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseMate.Application.Queries.Courses;
+namespace CourseMate.Application.Queries.Chapters;
 
-public class GetListLessonsQuery : GetListQuery<LessonDto>
+public class GetListChaptersQuery : GetListQuery<ChapterDto>
 {
     public Guid? CourseId { get; set; }
-
-    public Guid? ChapterId { get; set; }
 }
 
-public sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListLessonsQuery, PagedDto<LessonDto>>
+public sealed class GetListChaptersQueryHandler : AbstractQueryHandler<GetListChaptersQuery, PagedDto<ChapterDto>>
 {
-    public GetListLessonsQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+    public GetListChaptersQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
     {
     }
 
-    public override async Task<PagedDto<LessonDto>> Handle(GetListLessonsQuery request, CancellationToken ct)
+    public override async Task<PagedDto<ChapterDto>> Handle(GetListChaptersQuery request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
         bool isAdmin = IsInRole(Roles.Admin);
@@ -36,25 +34,21 @@ public sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListLes
 
         bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
 
-        IQueryable<LessonDto> query = from lesson in DbContext.Lessons
-            join chapter in DbContext.Chapters on lesson.ChapterId equals chapter.Id
-            join course in DbContext.Courses on lesson.CourseId equals course.Id
-            where (request.CourseId == null || lesson.CourseId == request.CourseId)
-                  && (request.ChapterId == null || lesson.ChapterId == request.ChapterId)
-                  && (course.IsPublished || isAdmin || (isInstructor && course.InstructorId == userId))
-            select new LessonDto
+        IQueryable<ChapterDto> query =
+            from chapter in DbContext.Chapters
+            join course in DbContext.Courses on chapter.CourseId equals course.Id
+            where request.CourseId == null || course.Id == request.CourseId
+            where course.IsPublished || isAdmin || (isInstructor && course.InstructorId == userId)
+            select new ChapterDto
             {
-                Id = lesson.Id,
-                ChapterId = lesson.ChapterId,
-                ChapterName = chapter.Title,
-                CourseId = lesson.CourseId,
+                Id = chapter.Id,
+                CourseId = chapter.CourseId,
                 InstructorId = course.InstructorId,
                 CourseName = course.Title,
-                Title = lesson.Title,
-                LessonType = lesson.LessonType,
-                Position = lesson.Position,
-                CreationTime = lesson.CreationTime,
-                LastModificationTime = lesson.LastModificationTime
+                Title = chapter.Title,
+                Position = chapter.Position,
+                CreationTime = chapter.CreationTime,
+                LastModificationTime = chapter.LastModificationTime
             };
 
         query = query
@@ -74,13 +68,19 @@ public sealed class GetListLessonsQueryHandler : AbstractQueryHandler<GetListLes
 
         int total = await query.CountAsync(ct);
 
-        List<LessonDto> lessons = await query
+        List<ChapterDto> chapters = await query
             .Paged(request.PageIndex, request.PageSize)
             .ToListAsync(ct);
 
-        return new PagedDto<LessonDto>
+        int start = (request.PageIndex - 1) * request.PageSize;
+        for (int index = 0; index < chapters.Count; index++)
         {
-            Items = lessons,
+            chapters[index].SortOrder = start + index + 1;
+        }
+
+        return new PagedDto<ChapterDto>
+        {
+            Items = chapters,
             PageIndex = request.PageIndex,
             PageSize = request.PageSize,
             TotalCount = total

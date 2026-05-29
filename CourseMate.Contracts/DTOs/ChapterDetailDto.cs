@@ -6,7 +6,9 @@ public class ChapterDetailDto
 
     public string Title { get; set; } = string.Empty;
 
-    public int Position { get; set; }
+    public string Position { get; set; } = string.Empty;
+
+    public int SortOrder { get; set; }
 
     public List<LessonDetailDto> Lessons { get; set; } = [];
 }

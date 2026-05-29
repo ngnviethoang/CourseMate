@@ -3,6 +3,7 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
+using CourseMate.Contracts.Shared;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using CourseMate.Persistent.ExtensionMethods;
@@ -19,10 +20,11 @@ public class UpdateChapterCommand : IRequest<Unit>
     public Guid CourseId { get; set; }
 
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    [Required]
     public string Title { get; set; } = string.Empty;
 
-    [Range(0, int.MaxValue)]
-    public int Position { get; set; }
+    [Range(1, int.MaxValue)]
+    public int SortOrder { get; set; }
 }
 
 public sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandler<UpdateChapterCommand, Unit>
@@ -35,43 +37,42 @@ public sealed class UpdateChapterAbstractCommandHandler : AbstractCommandHandler
 
     public override async Task<Unit> Handle(UpdateChapterCommand request, CancellationToken ct)
     {
-        bool isExistedCourse = await DbContext.Courses
-            .WhereIf(IsInRole(Roles.Instructor), i => i.InstructorId == CurrentUserId)
-            .AnyAsync(i => i.Id == request.CourseId, ct);
-        if (!isExistedCourse)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
+        await DbContext.Courses.EnsureExistsAsync(request.CourseId, ct);
         Chapter? chapter = await DbContext.Chapters.FirstOrDefaultAsync(x => x.Id == request.Id, ct);
         if (chapter == null)
         {
             throw new EntityNotFoundException(nameof(Chapter), request.Id);
         }
 
-        if (request.Position != 0)
+        Guid userId = CurrentUserId;
+        bool isAdmin = IsInRole(Roles.Admin);
+        bool canManageCourse = isAdmin || (IsInRole(Roles.Instructor) && await DbContext.Courses
+            .AnyAsync(i => i.Id == request.CourseId && i.InstructorId == userId, ct));
+        if (!canManageCourse)
         {
-            bool isDuplicate = await DbContext.Chapters.AnyAsync(x => x.CourseId == request.CourseId && x.Position == request.Position && x.Id != request.Id, ct);
-            if (isDuplicate)
-            {
-                throw new BusinessException(ErrorCode.DuplicatePosition, "Duplicate position.");
-            }
+            throw new UnauthorizedAccessException();
         }
 
-        int nextPosition = (await DbContext.Chapters
-            .Where(x => x.CourseId == request.CourseId)
-            .MaxAsync(x => (int?)x.Position, ct) ?? 0) + 1;
+        List<string> siblingPositions = await DbContext.Chapters
+            .Where(x => x.CourseId == request.CourseId && x.Id != request.Id)
+            .OrderBy(x => x.Position)
+            .Select(x => x.Position)
+            .ToListAsync(ct);
 
-        int finalPosition = request.Position == 0 ? chapter.Position == 0 ? nextPosition : chapter.Position : request.Position;
-
-        if (finalPosition > nextPosition)
+        int maxAllowedSortOrder = siblingPositions.Count + 1;
+        if (request.SortOrder < 1 || request.SortOrder > maxAllowedSortOrder)
         {
-            throw new BusinessException(ErrorCode.PositionOutOfRange, string.Format("Position must be 0 or equal to next position '{0}'.", nextPosition));
+            throw new BusinessException(ErrorCode.PositionOutOfRange, $"SortOrder must be between 1 and '{maxAllowedSortOrder}'");
         }
+
+        int insertIndex = request.SortOrder - 1;
+        string? previous = insertIndex > 0 ? siblingPositions[insertIndex - 1] : null;
+        string? next = insertIndex < siblingPositions.Count ? siblingPositions[insertIndex] : null;
+        string position = StringFractionalIndexing.GenerateBetween(previous, next);
 
         chapter.CourseId = request.CourseId;
         chapter.Title = request.Title;
-        chapter.Position = finalPosition;
+        chapter.Position = position;
 
         DbContext.Update(chapter);
         return Unit.Value;
