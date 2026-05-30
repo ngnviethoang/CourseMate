@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace CourseMate.Application.Commands.Files;
 
@@ -20,6 +21,7 @@ public class UploadVideoChunkCommand : IRequest<Unit>
 
     public int ChunkIndex { get; set; }
 
+    [JsonIgnore]
     public byte[] Content { get; set; } = [];
 }
 
@@ -75,7 +77,7 @@ public sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Uplo
             Guid.NewGuid(),
             fileEntry.Id,
             request.ChunkIndex,
-            chunkFilePath.Replace(_storageOptions.TempPath, string.Empty),
+            Util.NormalizeRelativePath(_storageOptions.TempPath, chunkFilePath),
             request.Content.LongLength,
             true);
         await DbContext.FileChunks.AddAsync(fileChunk, ct);

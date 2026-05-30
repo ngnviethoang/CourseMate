@@ -26,6 +26,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { formatDate } from '@/lib/utils'
 
 const LESSON_TYPES: LessonType[] = Object.values(LessonType)
+const LESSON_TYPE_LABELS: Record<LessonType, string> = {
+  [LessonType.Video]: 'Video',
+  [LessonType.Reading]: 'Bài đọc',
+  [LessonType.Coding]: 'Lập trình',
+  [LessonType.Quiz]: 'Trắc nghiệm',
+  [LessonType.Slide]: 'Trình chiếu'
+}
 
 const columns: Column<LessonDto>[] = [
   { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
@@ -35,9 +42,9 @@ const columns: Column<LessonDto>[] = [
   {
     key: 'lessonType',
     header: 'Loại',
-    render: row => <Badge variant="outline">{row.lessonType}</Badge>
+    render: row => <Badge variant="outline">{LESSON_TYPE_LABELS[row.lessonType] ?? row.lessonType}</Badge>
   },
-  { key: 'position', header: 'Vị trí', sortKey: 'position' },
+  { key: 'sortOrder', header: 'Thứ tự', sortKey: 'position', render: row => row.sortOrder },
   {
     key: 'creationTime',
     header: 'Ngày tạo',
@@ -57,7 +64,7 @@ const emptyForm: CreateLessonRequest = {
   courseId: '',
   title: '',
   lessonType: LessonType.Video,
-  position: 1
+  sortOrder: 1
 }
 
 export default function LessonsPage() {
@@ -122,19 +129,37 @@ export default function LessonsPage() {
 
   function openCreate() {
     setEditing(null)
-    setForm(emptyForm)
-    setDialogOpen(true)
-  }
-  function openEdit(row: LessonDto) {
-    setEditing(row)
     setForm({
-      chapterId: row.chapterId,
-      courseId: row.courseId,
-      title: row.title,
-      lessonType: row.lessonType,
-      position: row.position
+      chapterId: chapterFilterId,
+      courseId: courseFilterId,
+      title: '',
+      lessonType: LessonType.Video,
+      sortOrder: chapterFilterId ? totalCount + 1 : 1
     })
     setDialogOpen(true)
+  }
+  async function openEdit(row: LessonDto) {
+    setEditing(row)
+    try {
+      const detail = await lessonService.getById(row.id)
+      setForm({
+        chapterId: row.chapterId,
+        courseId: row.courseId,
+        title: row.title,
+        lessonType: row.lessonType,
+        sortOrder: detail?.sortOrder ?? row.sortOrder
+      })
+    } catch {
+      setForm({
+        chapterId: row.chapterId,
+        courseId: row.courseId,
+        title: row.title,
+        lessonType: row.lessonType,
+        sortOrder: row.sortOrder
+      })
+    } finally {
+      setDialogOpen(true)
+    }
   }
 
   async function handleSave() {
@@ -254,24 +279,24 @@ export default function LessonsPage() {
               <Label>Loại</Label>
               <Select value={form.lessonType} onValueChange={v => f('lessonType', v as LessonType)}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue>{LESSON_TYPE_LABELS[form.lessonType] ?? form.lessonType}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {LESSON_TYPES.map(t => (
                     <SelectItem key={t} value={t}>
-                      {t}
+                      {LESSON_TYPE_LABELS[t] ?? t}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1">
-              <Label>Vị trí</Label>
+              <Label>Thứ tự</Label>
               <Input
                 type="number"
                 min={1}
-                value={form.position}
-                onChange={e => f('position', Number(e.target.value))}
+                value={form.sortOrder}
+                onChange={e => f('sortOrder', Number(e.target.value))}
               />
             </div>
           </div>

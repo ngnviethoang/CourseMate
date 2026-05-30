@@ -25,23 +25,21 @@ public class NotificationService(
 
     public async Task<NotificationDto> CreateAndSendAsync(Guid receiverId, string title, string message, CancellationToken ct = default)
     {
-        // 1. Persist to database
         Notification notification = new(Guid.NewGuid(), receiverId, title, message, false);
         await dbContext.Notifications.AddAsync(notification, ct);
         await dbContext.SaveChangesAsync(ct);
 
-        // 2. Build DTO
         NotificationDto dto = new()
         {
             Id = notification.Id,
             ReceiverId = receiverId,
+            LessonId = null,
             Title = title,
             Message = message,
             IsRead = false,
             CreationTime = notification.CreationTime
         };
 
-        // 3. Push via SignalR
         await hubContext.Clients.User(receiverId.ToString())
             .SendAsync("ReceiveNotification", dto, ct);
 

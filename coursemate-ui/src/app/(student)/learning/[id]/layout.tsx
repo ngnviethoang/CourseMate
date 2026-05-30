@@ -80,7 +80,7 @@ export default function LearningLayout({ children }: { children: React.ReactNode
               <AccordionItem key={chapter.id} value={chapter.id} className="-none">
                 <AccordionTrigger className="hover:no-underline hover:bg-muted/50 px-3 py-2 rounded-lg py-3 text-sm font-semibold transition-all">
                   <div className="flex items-center gap-2 text-left">
-                    <span className="text-xs text-muted-foreground font-mono">Ch {chapter.position}</span>
+                    <span className="text-xs text-muted-foreground font-mono">Ch {chapter.sortOrder}</span>
                     <span className="line-clamp-1">{chapter.title}</span>
                   </div>
                 </AccordionTrigger>

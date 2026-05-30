@@ -162,7 +162,8 @@ export interface ChapterDto {
   courseId: string
   courseName: string
   title: string
-  position: number
+  position: string
+  sortOrder: number
   creationTime: string
   lastModificationTime?: string
 }
@@ -170,13 +171,13 @@ export interface ChapterDto {
 export interface CreateChapterRequest {
   courseId: string
   title: string
-  position: number
+  sortOrder: number
 }
 
 export interface UpdateChapterRequest {
   courseId: string
   title: string
-  position: number
+  sortOrder: number
 }
 
 // ─── Lesson ───────────────────────────────────────────────────────────────────
@@ -197,7 +198,8 @@ export interface LessonDto {
   courseName: string
   title: string
   lessonType: LessonType
-  position: number
+  position: string
+  sortOrder: number
   creationTime: string
   lastModificationTime?: string
 }
@@ -207,7 +209,7 @@ export interface CreateLessonRequest {
   courseId: string
   title: string
   lessonType: LessonType
-  position: number
+  sortOrder: number
 }
 
 export interface UpdateLessonRequest {
@@ -215,7 +217,7 @@ export interface UpdateLessonRequest {
   courseId: string
   title: string
   lessonType: LessonType
-  position: number
+  sortOrder: number
 }
 
 export interface QuizAnswerDto {
@@ -236,7 +238,8 @@ export interface LessonDetailDto {
   id: string
   title: string
   lessonType: LessonType
-  position: number
+  position: string
+  sortOrder: number
   isCompleted: boolean
   score?: number
   // Video
@@ -331,7 +334,8 @@ export interface StudentLessonDetailDto {
   id: string
   title: string
   lessonType: LessonType
-  position: number
+  position: string
+  sortOrder: number
   isCompleted: boolean
   score?: number
   videoUrl?: string
@@ -347,7 +351,8 @@ export interface StudentLessonDetailDto {
 export interface StudentChapterDetailDto {
   id: string
   title: string
-  position: number
+  position: string
+  sortOrder: number
   lessons: StudentLessonDetailDto[]
 }
 
@@ -465,7 +470,7 @@ export interface LectureOutline {
 
 export interface OutlineDto {
   lessonId: string
-  lessonMaterialId: string
+  lessonMaterialId?: string
   lectureOutline: LectureOutline
 }
 

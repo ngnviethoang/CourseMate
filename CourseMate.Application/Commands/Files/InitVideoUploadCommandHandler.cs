@@ -31,12 +31,12 @@ public sealed class InitVideoUploadCommandHandler : AbstractCommandHandler<InitV
         Util.CreateDirectoryIfNotExist(userDir);
         Guid fileId = Guid.NewGuid();
         string fileName = $"{fileId}.mp4";
-        string fileLocation = Path.Combine(userDir, fileId.ToString());
+        string fileLocation = Path.Combine(userDir, fileName);
         FileEntry fileEntry = new(
             fileId,
             fileName,
             0,
-            fileLocation.Replace(_storageOptions.RootPath, string.Empty),
+            Util.NormalizeRelativePath(_storageOptions.RootPath, fileLocation),
             FileStatus.Uploading,
             0,
             0,

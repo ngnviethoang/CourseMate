@@ -1,15 +1,17 @@
 'use client'
 
 import React, { useState } from 'react'
-import { UploadCloud, CheckCircle2, AlertCircle, Loader2, Video, Edit } from 'lucide-react'
+import { createPlayer } from '@videojs/react'
+import { MinimalVideoSkin, Video as VideoJsVideo, videoFeatures } from '@videojs/react/video'
+import { UploadCloud, AlertCircle, Loader2, Video, Edit } from 'lucide-react'
 import { toast } from 'sonner'
 import { fileService } from '@/lib/file-service'
 import { lessonService } from '@/lib/course-service'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { Badge } from '@/components/ui/badge'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Player = createPlayer({ features: videoFeatures })
+
 export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: string; initialVideoUrl?: string }) {
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
@@ -18,9 +20,42 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
   const [videoUrl, setVideoUrl] = useState(initialVideoUrl ?? '')
   const [isEditing, setIsEditing] = useState(!initialVideoUrl)
 
+  const hasVideoTrack = async (targetFile: File): Promise<boolean> => {
+    const objectUrl = URL.createObjectURL(targetFile)
+    try {
+      const result = await new Promise<boolean>(resolve => {
+        const preview = document.createElement('video')
+        preview.preload = 'metadata'
+        preview.muted = true
+        preview.src = objectUrl
+
+        const timeout = window.setTimeout(() => resolve(false), 5000)
+        preview.onloadedmetadata = () => {
+          window.clearTimeout(timeout)
+          resolve(preview.videoWidth > 0 && preview.videoHeight > 0)
+        }
+        preview.onerror = () => {
+          window.clearTimeout(timeout)
+          resolve(false)
+        }
+      })
+      return result
+    } finally {
+      URL.revokeObjectURL(objectUrl)
+    }
+  }
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0])
+      const nextFile = e.target.files[0]
+      const isMp4 = nextFile.name.toLowerCase().endsWith('.mp4')
+      if (!isMp4) {
+        toast.error('Chỉ hỗ trợ định dạng .mp4 để đảm bảo phát hình ảnh ổn định.')
+        e.target.value = ''
+        return
+      }
+
+      setFile(nextFile)
       setStatus('idle')
       setProgress(0)
     }
@@ -34,6 +69,13 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
     setProgress(0)
 
     try {
+      const fileContainsVideo = await hasVideoTrack(file)
+      if (!fileContainsVideo) {
+        setStatus('error')
+        toast.error('Video không có track hình ảnh hợp lệ hoặc codec không được trình duyệt hỗ trợ.')
+        return
+      }
+
       // Step 1: Init
       const { fileId } = await fileService.initVideoUpload(file.name, file.size)
 
@@ -54,8 +96,11 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
 
       // Step 3: Complete
       const { fileUrl } = await fileService.completeVideoUpload(fileId, maxTotalTrunks)
+      if (!fileUrl) {
+        throw new Error('Upload completed but fileUrl is empty.')
+      }
 
-      // Step 4: Link video to lesson
+      // Step 4: Link video to lesson immediately after upload completed
       await lessonService.upsertVideo(lessonId, { videoUrl: fileUrl })
 
       setVideoUrl(fileUrl)
@@ -99,7 +144,7 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
 
             <input
               type="file"
-              accept="video/*"
+              accept=".mp4,video/mp4"
               onChange={handleFileChange}
               className="block w-full max-w-sm text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
               disabled={uploading}
@@ -134,42 +179,27 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
           )}
         </div>
       ) : (
-        <div className="max-w-2xl bg-muted/20 rounded-lg p-5 border-0 -dashed bg-muted/30 shadow-inner space-y-3">
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Nguồn video</p>
+        <>
           {videoUrl ? (
-            <div className="flex items-center gap-4">
-              <div className="h-16 w-28 bg-zinc-950 rounded flex items-center justify-center shrink-0 -zinc-800">
-                <Video className="h-6 w-6 text-zinc-500" />
+            <div className="space-y-3">
+              <div className="relative w-[951px] h-[535px] max-w-full mx-auto overflow-hidden rounded-xl bg-transparent">
+                <Player.Provider key={videoUrl}>
+                  <MinimalVideoSkin className="w-full h-full rounded-xl">
+                    <VideoJsVideo
+                      src={videoUrl}
+                      playsInline
+                      controlsList="nodownload noremoteplayback"
+                      className="w-full h-full object-contain"
+                    />
+                  </MinimalVideoSkin>
+                </Player.Provider>
               </div>
-              <div className="flex-1 min-w-0 space-y-3">
-                <div className="relative aspect-video w-full max-w-sm bg-zinc-950 rounded-lg overflow-hidden -zinc-800 group shadow-lg">
-                  <video src={videoUrl} className="w-full h-full object-contain" controls={false} />
-                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <a
-                      href={videoUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="bg-white text-black hover:bg-zinc-200 px-4 py-2 rounded-full text-xs font-bold transform translate-y-2 group-hover:translate-y-0 transition-all"
-                    >
-                      Xem trước video
-                    </a>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <p className="text-[10px] font-mono text-muted-foreground truncate max-w-[250px] bg-muted px-2 py-1 rounded">
-                    {videoUrl}
-                  </p>
-                  <span className="flex items-center gap-1.5 text-[10px] font-bold text-green-500">
-                    <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
-                    SẴN SÀNG
-                  </span>
-                </div>
-              </div>
+              <p className="text-xs text-muted-foreground">Video đã liên kết với bài học và sẵn sàng phát.</p>
             </div>
           ) : (
             <p className="text-sm italic text-muted-foreground">Chưa có video nào được tải lên.</p>
           )}
-        </div>
+        </>
       )}
     </div>
   )

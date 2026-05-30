@@ -46,6 +46,7 @@ public sealed class GetOutlineQueryHandler : AbstractQueryHandler<GetOutlineQuer
         }
 
         LessonMaterial? lessonMaterial = await DbContext.LessonMaterials
+            .Where(l => l.LessonId == request.LessonId)
             .OrderByDescending(l => l.CreationTime)
             .FirstOrDefaultAsync(ct);
         if (lessonMaterial == null)
