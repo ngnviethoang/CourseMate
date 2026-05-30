@@ -470,8 +470,22 @@ export interface LectureOutline {
 
 export interface OutlineDto {
   lessonId: string
-  lessonMaterialId: string
+  lessonMaterialId?: string
   lectureOutline: LectureOutline
+}
+
+export enum LessonOutlineMaterialState {
+  GeneratingEmbedding = 0,
+  GeneratingOutline = 1,
+  Completed = 2,
+  Failed = 3
+}
+
+export interface LessonOutlineStatusDto {
+  lessonId: string
+  lessonMaterialId?: string
+  status?: LessonOutlineMaterialState
+  isReady: boolean
 }
 
 export interface ProcessingStatusDto {

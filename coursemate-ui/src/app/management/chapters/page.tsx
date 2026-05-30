@@ -190,7 +190,7 @@ export default function ChaptersPage() {
         onSort={setSorting}
         onEdit={openEdit}
         onDelete={setDeleteId}
-        onView={row => router.push(`/management/chapters/${row.id}`)}
+        onView={row => router.push(`/management/courses/${row.courseId}`)}
         pagination={{
           pageIndex,
           pageSize,

@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using CourseMate.Application.Services.AIServices;
+using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
@@ -89,6 +90,17 @@ public class ProcessFileEmbeddingJob
             fileEntry.TotalChunks = chunkCount;
             fileEntry.UploadedChunks = chunkCount;
             _dbContext.FileEntries.Update(fileEntry);
+
+            LessonMaterial? lessonMaterial = await _dbContext.LessonMaterials
+                .Where(lm => lm.DocumentFileId == fileId)
+                .OrderByDescending(lm => lm.CreationTime)
+                .FirstOrDefaultAsync(ct);
+            if (lessonMaterial != null)
+            {
+                lessonMaterial.Status = LessonMaterialState.GeneratingOutline;
+                _dbContext.LessonMaterials.Update(lessonMaterial);
+            }
+
             await _dbContext.SaveChangesAsync(ct);
             _logger.LogInformation("Successfully processed file {FileId} with {ChunkCount} embeddings.", fileId, chunkCount);
         }

@@ -1,5 +1,5 @@
 import { api } from './api-client'
-import type { OutlineDto, ProcessingStatusDto, UpdateOutlineRequest } from './types'
+import type { LessonOutlineStatusDto, OutlineDto, ProcessingStatusDto, UpdateOutlineRequest } from './types'
 
 export const lessonMaterialService = {
   /**
@@ -18,6 +18,14 @@ export const lessonMaterialService = {
    */
   getOutline: (lessonId: string): Promise<OutlineDto | null> => {
     return api.get<OutlineDto>(`/api/lessons/${lessonId}/outline`)
+  },
+
+  /**
+   * GET /api/lessons/{lessonId}/outline-status
+   * Retrieve processing status so client can poll cheaply and fetch outline only when ready
+   */
+  getOutlineStatus: (lessonId: string): Promise<LessonOutlineStatusDto> => {
+    return api.get<LessonOutlineStatusDto>(`/api/lessons/${lessonId}/outline-status`)
   },
 
   /**

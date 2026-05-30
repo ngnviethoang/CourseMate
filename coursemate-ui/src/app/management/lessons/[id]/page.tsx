@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 import {
   ArrowLeft,
   Loader2,
@@ -13,19 +14,25 @@ import {
   FileQuestion,
   Presentation,
   CheckCircle2,
+  FileText,
+  RefreshCw,
   UploadCloud,
   Sparkles
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { lessonService, chapterService, courseService } from '@/lib/course-service'
+import { lessonMaterialService } from '@/lib/lesson-material-service'
 import { exerciseService } from '@/lib/exercise-service'
+import { getAccessToken } from '@/lib/auth-token.util'
 import {
   LessonDto,
   ChapterDto,
   CourseDto,
-  UpdateLessonRequest,
   LessonType,
   LessonDetailDto,
+  LectureOutline,
+  LessonOutlineMaterialState,
+  OutlineDto,
   ExerciseDto,
   ExerciseDetailDto,
   QuizQuestionDto,
@@ -36,13 +43,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import Link from 'next/link'
 import { VideoUploadSection } from './video-upload'
 import { AiMaterialSection } from './ai-material-section'
 
 // ─── Lesson Type Icon & Color ─────────────────────────────────────────────────
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
 
 const TYPE_META: Record<LessonType, { icon: React.ReactNode; label: string; color: string }> = {
   [LessonType.Video]: {
@@ -72,12 +78,481 @@ const TYPE_META: Record<LessonType, { icon: React.ReactNode; label: string; colo
   }
 }
 
+function normalizeLessonType(value: unknown): LessonType {
+  if (typeof value === 'string') {
+    if (Object.values(LessonType).includes(value as LessonType)) {
+      return value as LessonType
+    }
+
+    const asNumber = Number(value)
+    if (!Number.isNaN(asNumber)) {
+      value = asNumber
+    }
+  }
+
+  if (typeof value === 'number') {
+    const zeroBasedMap: Record<number, LessonType> = {
+      0: LessonType.Video,
+      1: LessonType.Reading,
+      2: LessonType.Coding,
+      3: LessonType.Quiz
+    }
+    return zeroBasedMap[value] ?? LessonType.Video
+  }
+
+  return LessonType.Video
+}
+
+function normalizeText(input?: string | null): string {
+  return (input ?? '').replace(/\s+/g, ' ').trim()
+}
+
+function uniqueNonEmpty(values: string[]): string[] {
+  const seen = new Set<string>()
+  const normalized: string[] = []
+  for (const value of values) {
+    const item = normalizeText(value)
+    if (!item || seen.has(item.toLowerCase())) continue
+    seen.add(item.toLowerCase())
+    normalized.push(item)
+  }
+  return normalized
+}
+
+function buildReadingContentFromOutline(outline: LectureOutline): string {
+  const lines: string[] = []
+  const lessonTitle = normalizeText(outline.lessonTitle)
+  if (lessonTitle) {
+    lines.push(`# ${lessonTitle}`, '')
+  }
+
+  const slides = outline.slides ?? []
+  slides.forEach((slide, index) => {
+    const slideTitle = normalizeText(slide.title) || `Phần ${index + 1}`
+    lines.push(`## ${slideTitle}`)
+
+    const bullets = uniqueNonEmpty(slide.bullets ?? [])
+    if (bullets.length > 0) {
+      bullets.forEach(bullet => lines.push(`- ${bullet}`))
+    } else {
+      lines.push('- (Nội dung đang được cập nhật)')
+    }
+
+    const relatedLinks = uniqueNonEmpty(slide.relatedLinks ?? [])
+    if (relatedLinks.length > 0) {
+      lines.push('', 'Tài liệu tham khảo:')
+      relatedLinks.forEach(link => lines.push(`- ${link}`))
+    }
+    lines.push('')
+  })
+
+  const courseLinks = uniqueNonEmpty(outline.relatedLinks ?? [])
+  if (courseLinks.length > 0) {
+    lines.push('## Tài liệu liên quan')
+    courseLinks.forEach(link => lines.push(`- ${link}`))
+    lines.push('')
+  }
+
+  return lines.join('\n').trim()
+}
+
+function buildQuizDraftFromOutline(outline: LectureOutline): {
+  description: string
+  questions: QuizQuestionDto[]
+} {
+  const slides = outline.slides ?? []
+  const allBullets = uniqueNonEmpty(slides.flatMap(slide => slide.bullets ?? []))
+  const fallbackWrongAnswers = [
+    'Nội dung này không xuất hiện trong tài liệu.',
+    'Nhận định này không được đề cập trong phần tương ứng.',
+    'Thông tin này trái với ý chính của tài liệu.',
+    'Đây là chi tiết không có trong tài liệu nguồn.'
+  ]
+
+  const questions = slides
+    .slice(0, 10)
+    .map((slide, index): QuizQuestionDto | null => {
+      const slideTitle = normalizeText(slide.title) || `Phần ${index + 1}`
+      const slideBullets = uniqueNonEmpty(slide.bullets ?? [])
+      const correctAnswer = slideBullets[0] || `Ý chính của phần "${slideTitle}".`
+
+      const wrongAnswerPool = uniqueNonEmpty([
+        ...slideBullets.slice(1),
+        ...allBullets.filter(item => item !== correctAnswer && !slideBullets.includes(item)),
+        ...fallbackWrongAnswers
+      ])
+
+      const wrongAnswers = wrongAnswerPool.filter(item => item !== correctAnswer).slice(0, 3)
+      const answerTexts = [correctAnswer, ...wrongAnswers]
+
+      if (answerTexts.length < 2) return null
+
+      const answers: QuizAnswerDto[] = answerTexts.map((text, answerIndex) => ({
+        text,
+        isCorrect: answerIndex === 0,
+        position: answerIndex
+      }))
+
+      return {
+        text: `Ý nào sau đây thuộc nội dung phần "${slideTitle}"?`,
+        position: index,
+        answers
+      }
+    })
+    .filter((question): question is QuizQuestionDto => question !== null)
+
+  if (questions.length === 0 && allBullets.length > 0) {
+    const [firstBullet, ...restBullets] = allBullets
+    const wrongAnswers = uniqueNonEmpty([...restBullets, ...fallbackWrongAnswers])
+      .filter(item => item !== firstBullet)
+      .slice(0, 3)
+    const fallbackAnswers = [firstBullet, ...wrongAnswers].slice(0, 4)
+    if (fallbackAnswers.length >= 2) {
+      questions.push({
+        text: 'Ý nào sau đây xuất hiện trong tài liệu đã tải lên?',
+        position: 0,
+        answers: fallbackAnswers.map((answer, index) => ({
+          text: answer,
+          isCorrect: index === 0,
+          position: index
+        }))
+      })
+    }
+  }
+
+  const lessonTitle = normalizeText(outline.lessonTitle)
+  const topTitles = uniqueNonEmpty(slides.map(slide => slide.title)).slice(0, 3)
+  const description = [
+    lessonTitle
+      ? `Bài trắc nghiệm được tạo từ tài liệu "${lessonTitle}".`
+      : 'Bài trắc nghiệm được tạo từ tài liệu đã tải lên.',
+    topTitles.length > 0 ? `Nội dung trọng tâm: ${topTitles.join(', ')}.` : ''
+  ]
+    .filter(Boolean)
+    .join('\n')
+
+  return { description, questions }
+}
+
+type DocxAssistState = 'idle' | 'uploading' | 'processing' | 'ready' | 'error'
+
+function DocxAssistPanel({
+  lessonId,
+  title,
+  hint,
+  applyLabel,
+  onApplyOutline
+}: {
+  lessonId: string
+  title: string
+  hint: string
+  applyLabel: string
+  onApplyOutline: (outline: LectureOutline) => void
+}) {
+  const [state, setState] = useState<DocxAssistState>('idle')
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [outline, setOutline] = useState<OutlineDto | null>(null)
+  const [attempt, setAttempt] = useState(0)
+  const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isActiveRef = useRef(true)
+  const notificationConnectionRef = useRef<HubConnection | null>(null)
+
+  const hasReadyOutline = useCallback((result: OutlineDto | null | undefined) => {
+    return (result?.lectureOutline?.slides?.length ?? 0) > 0
+  }, [])
+
+  const loadOutline = useCallback(async () => {
+    const result = await lessonMaterialService.getOutline(lessonId)
+    if (hasReadyOutline(result)) {
+      setOutline(result)
+      setState('ready')
+      return true
+    }
+    return false
+  }, [hasReadyOutline, lessonId])
+
+  const clearPollTimer = useCallback(() => {
+    if (pollTimeoutRef.current) {
+      clearTimeout(pollTimeoutRef.current)
+      pollTimeoutRef.current = null
+    }
+  }, [])
+
+  const pollOutlineStatus = useCallback(
+    async (maxRound = 40) => {
+      for (let round = 0; round < maxRound; round += 1) {
+        if (!isActiveRef.current) return
+        setAttempt(round + 1)
+
+        try {
+          const status = await lessonMaterialService.getOutlineStatus(lessonId)
+          if (status.isReady || status.status === LessonOutlineMaterialState.Completed) {
+            const loaded = await loadOutline()
+            if (loaded) {
+              toast.success('Đã tạo dữ liệu gợi ý từ tài liệu.')
+              return
+            }
+          }
+
+          if (status.status === LessonOutlineMaterialState.Failed) {
+            setState('error')
+            toast.error('Tạo outline thất bại. Vui lòng thử lại với tài liệu khác.')
+            return
+          }
+        } catch {
+          // Ignore and continue polling.
+        }
+
+        const delayMs = round < 3 ? 2000 : round < 8 ? 5000 : 10000
+        await new Promise<void>(resolve => {
+          pollTimeoutRef.current = setTimeout(() => resolve(), delayMs)
+        })
+      }
+
+      if (isActiveRef.current) {
+        setState('error')
+        toast.error('Hệ thống xử lý quá lâu. Vui lòng thử lại với file khác.')
+      }
+    },
+    [lessonId, loadOutline]
+  )
+
+  useEffect(() => {
+    isActiveRef.current = true
+    let canceled = false
+
+    const loadExistingOutline = async () => {
+      try {
+        const status = await lessonMaterialService.getOutlineStatus(lessonId)
+        if (canceled) return
+
+        if (status.isReady || status.status === LessonOutlineMaterialState.Completed) {
+          await loadOutline()
+          return
+        }
+
+        if (
+          status.status === LessonOutlineMaterialState.GeneratingEmbedding ||
+          status.status === LessonOutlineMaterialState.GeneratingOutline
+        ) {
+          setState('processing')
+          void pollOutlineStatus(20)
+        }
+      } catch {
+        // Ignore.
+      }
+    }
+
+    void loadExistingOutline()
+    return () => {
+      isActiveRef.current = false
+      canceled = true
+      clearPollTimer()
+    }
+  }, [clearPollTimer, lessonId, loadOutline, pollOutlineStatus])
+
+  useEffect(() => {
+    if (!API_BASE_URL) return
+
+    const connection = new HubConnectionBuilder()
+      .withUrl(`${API_BASE_URL}/hubs/notification`, {
+        accessTokenFactory: () => getAccessToken() ?? ''
+      })
+      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
+      .configureLogging(LogLevel.Warning)
+      .build()
+
+    notificationConnectionRef.current = connection
+
+    connection.on('DocumentProcessed', (notification: { lessonId?: string; message?: string }) => {
+      if (notification?.lessonId && notification.lessonId !== lessonId) return
+
+      const loweredMessage = (notification?.message ?? '').toLowerCase()
+      if (loweredMessage.includes('thất bại') || loweredMessage.includes('failed')) {
+        setState('error')
+        toast.error('Tạo outline thất bại. Vui lòng thử lại với tài liệu khác.')
+        return
+      }
+
+      void loadOutline().then(isReady => {
+        if (isReady) {
+          toast.success('Outline đã sẵn sàng, đã đồng bộ dữ liệu mới nhất.')
+        }
+      })
+    })
+
+    const startConnection = async () => {
+      try {
+        await connection.start()
+      } catch {
+        // Keep polling fallback if realtime is unavailable.
+      }
+    }
+    void startConnection()
+
+    return () => {
+      connection.off('DocumentProcessed')
+      if (notificationConnectionRef.current === connection) {
+        notificationConnectionRef.current = null
+      }
+      void connection.stop().catch(() => {})
+    }
+  }, [lessonId, loadOutline])
+
+  const handleFileChange = (file: File | null) => {
+    if (!file) return
+    const ext = file.name.split('.').pop()?.toLowerCase()
+    if (!['doc', 'docx'].includes(ext ?? '')) {
+      toast.error('Chỉ hỗ trợ file .doc hoặc .docx.')
+      return
+    }
+    setSelectedFile(file)
+    setState('idle')
+  }
+
+  const handleStart = async () => {
+    if (!selectedFile) {
+      toast.error('Vui lòng chọn file DOCX trước.')
+      return
+    }
+
+    clearPollTimer()
+    setState('uploading')
+    setAttempt(0)
+
+    try {
+      await lessonMaterialService.uploadMaterial(lessonId, selectedFile)
+      setState('processing')
+      toast.info('Đã tải file. Hệ thống đang phân tích nội dung...')
+      void pollOutlineStatus(20)
+    } catch {
+      setState('error')
+      toast.error('Không thể tải tài liệu lên hệ thống.')
+    }
+  }
+
+  const handleRefresh = async () => {
+    try {
+      const status = await lessonMaterialService.getOutlineStatus(lessonId)
+      if (status.isReady || status.status === LessonOutlineMaterialState.Completed) {
+        await loadOutline()
+        toast.success('Dữ liệu AI đã sẵn sàng.')
+      } else if (status.status === LessonOutlineMaterialState.Failed) {
+        setState('error')
+        toast.error('Tạo outline thất bại. Vui lòng thử tài liệu khác.')
+      } else {
+        toast.info('Hệ thống vẫn đang xử lý, vui lòng đợi thêm.')
+      }
+    } catch {
+      toast.error('Không thể tải dữ liệu AI.')
+    }
+  }
+
+  const handleApply = () => {
+    if (!outline?.lectureOutline) {
+      toast.error('Chưa có dữ liệu để áp dụng.')
+      return
+    }
+    onApplyOutline(outline.lectureOutline)
+  }
+
+  const slideCount = outline?.lectureOutline?.slides?.length ?? 0
+
+  return (
+    <div className="rounded-xl border bg-muted/20 p-4 space-y-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-sm font-semibold flex items-center gap-2">
+            <FileText className="h-4 w-4 text-primary" />
+            {title}
+          </p>
+          <p className="text-xs text-muted-foreground">{hint}</p>
+        </div>
+        {state === 'processing' && (
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            Đang xử lý ({attempt}/40)
+          </span>
+        )}
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-[1fr_auto]">
+        <Input
+          type="file"
+          accept=".doc,.docx"
+          onChange={e => {
+            handleFileChange(e.target.files?.[0] ?? null)
+            e.target.value = ''
+          }}
+        />
+        <Button
+          type="button"
+          onClick={handleStart}
+          disabled={!selectedFile || state === 'uploading' || state === 'processing'}
+          className="gap-2"
+        >
+          {(state === 'uploading' || state === 'processing') && <Loader2 className="h-4 w-4 animate-spin" />}
+          {state === 'uploading' ? 'Đang tải...' : state === 'processing' ? 'Đang phân tích...' : 'Phân tích tài liệu'}
+        </Button>
+      </div>
+
+      {selectedFile && (
+        <p className="text-xs text-muted-foreground">
+          Đã chọn: <span className="font-medium text-foreground">{selectedFile.name}</span>
+        </p>
+      )}
+
+      {state === 'error' && (
+        <p className="text-xs text-destructive">Xử lý tài liệu chưa thành công, vui lòng thử lại với file DOCX khác.</p>
+      )}
+
+      {slideCount > 0 && outline && (
+        <div className="rounded-lg border bg-background p-3 space-y-3">
+          <div className="space-y-1">
+            <p className="text-xs font-semibold">
+              Kết quả AI: {outline.lectureOutline.lessonTitle || 'Tài liệu chưa có tiêu đề'}
+            </p>
+            <p className="text-xs text-muted-foreground">{slideCount} mục nội dung đã được trích xuất.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {outline.lectureOutline.slides.slice(0, 4).map((slide, index) => (
+              <Badge key={`${slide.title}-${index}`} variant="secondary" className="text-[10px]">
+                {slide.title || `Phần ${index + 1}`}
+              </Badge>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" size="sm" className="gap-2" onClick={handleApply}>
+              {applyLabel}
+            </Button>
+            <Button type="button" variant="outline" size="sm" className="gap-2" onClick={handleRefresh}>
+              <RefreshCw className="h-3.5 w-3.5" />
+              Làm mới kết quả
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Reading Content Section ──────────────────────────────────────────────────
 
 function ReadingContentSection({ lessonId, initialContent }: { lessonId: string; initialContent?: string }) {
   const [content, setContent] = useState(initialContent ?? '')
   const [isEditing, setIsEditing] = useState(!initialContent)
   const [saving, setSaving] = useState(false)
+
+  const applyOutlineToReading = useCallback((outline: LectureOutline) => {
+    const generatedContent = buildReadingContentFromOutline(outline)
+    if (!generatedContent) {
+      toast.error('Không thể tạo nội dung bài đọc từ tài liệu này.')
+      return
+    }
+    setContent(generatedContent)
+    setIsEditing(true)
+    toast.success('Đã áp dụng nội dung AI vào khung bài đọc. Vui lòng rà soát trước khi lưu.')
+  }, [])
 
   async function handleSave() {
     setSaving(true)
@@ -124,6 +599,14 @@ function ReadingContentSection({ lessonId, initialContent }: { lessonId: string;
           )}
         </div>
       </div>
+
+      <DocxAssistPanel
+        lessonId={lessonId}
+        title="Gợi ý nội dung bài đọc từ DOCX"
+        hint="Tải file .doc/.docx, hệ thống sẽ phân tích và tạo bản nháp nội dung cho bài đọc."
+        applyLabel="Áp dụng vào bài đọc"
+        onApplyOutline={applyOutlineToReading}
+      />
 
       {isEditing ? (
         <>
@@ -436,6 +919,19 @@ function QuizContentSection({
   const [isEditing, setIsEditing] = useState(!initialDescription)
   const [saving, setSaving] = useState(false)
 
+  const applyOutlineToQuiz = useCallback((outline: LectureOutline) => {
+    const draft = buildQuizDraftFromOutline(outline)
+    if (draft.questions.length === 0) {
+      toast.error('Tài liệu chưa đủ dữ liệu để tạo câu hỏi trắc nghiệm nháp.')
+      return
+    }
+
+    setDescription(draft.description)
+    setQuestions(draft.questions)
+    setIsEditing(true)
+    toast.success('Đã tạo bộ câu hỏi nháp từ tài liệu. Bạn có thể chỉnh sửa trước khi lưu.')
+  }, [])
+
   async function handleSave() {
     if (questions.length === 0) {
       toast.error('Vui lòng thêm ít nhất một câu hỏi.')
@@ -554,6 +1050,14 @@ function QuizContentSection({
           )}
         </div>
       </div>
+
+      <DocxAssistPanel
+        lessonId={lessonId}
+        title="Gợi ý trắc nghiệm từ DOCX"
+        hint="Tải file .doc/.docx, hệ thống sẽ tạo mô tả và bộ câu hỏi trắc nghiệm nháp."
+        applyLabel="Áp dụng vào trắc nghiệm"
+        onApplyOutline={applyOutlineToQuiz}
+      />
 
       {isEditing ? (
         <div className="space-y-8">
@@ -767,16 +1271,6 @@ export default function LessonDetailPage() {
   const [chapter, setChapter] = useState<ChapterDto | null>(null)
   const [course, setCourse] = useState<CourseDto | null>(null)
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [editDialogOpen, setEditDialogOpen] = useState(false)
-
-  const [form, setForm] = useState<UpdateLessonRequest>({
-    chapterId: '',
-    courseId: '',
-    title: '',
-    lessonType: LessonType.Video,
-    sortOrder: 1
-  })
 
   useEffect(() => {
     const fetchLesson = async () => {
@@ -785,25 +1279,12 @@ export default function LessonDetailPage() {
         const [l, d] = await Promise.all([lessonService.getById(id), lessonService.getDetail(id)])
         setLesson(l)
         setDetail(d)
-        setForm({
-          chapterId: l?.chapterId || '',
-          courseId: l?.courseId || '',
-          title: l?.title || '',
-          lessonType: l?.lessonType || LessonType.Video,
-          sortOrder: l?.sortOrder || 1
-        })
-        if (l?.chapterId) {
-          try {
-            const ch = await chapterService.getById(l.chapterId)
-            setChapter(ch)
-            if (ch?.courseId) {
-              const c = await courseService.getById(ch.courseId)
-              setCourse(c)
-            }
-          } catch (e) {
-            console.error(e)
-          }
-        }
+        const [ch, c] = await Promise.all([
+          l?.chapterId ? chapterService.getById(l.chapterId).catch(() => null) : Promise.resolve(null),
+          l?.courseId ? courseService.getById(l.courseId).catch(() => null) : Promise.resolve(null)
+        ])
+        setChapter(ch)
+        setCourse(c)
       } catch {
         toast.error('Không tìm thấy bài học.')
       } finally {
@@ -812,22 +1293,6 @@ export default function LessonDetailPage() {
     }
     fetchLesson()
   }, [id])
-
-  async function handleSave() {
-    setSaving(true)
-    try {
-      await lessonService.update(id, form)
-      toast.success('Đã cập nhật bài học thành công.')
-      const [updated, updatedDetail] = await Promise.all([lessonService.getById(id), lessonService.getDetail(id)])
-      setLesson(updated)
-      setDetail(updatedDetail)
-    } catch {
-      toast.error('Không thể cập nhật bài học.')
-    } finally {
-      setSaving(false)
-      setEditDialogOpen(false)
-    }
-  }
 
   if (loading) {
     return (
@@ -841,24 +1306,15 @@ export default function LessonDetailPage() {
     return <div className="text-center py-16 text-muted-foreground">Không tìm thấy bài học.</div>
   }
 
-  const numericMap: Record<number, LessonType> = {
-    1: LessonType.Video,
-    2: LessonType.Reading,
-    3: LessonType.Coding,
-    4: LessonType.Quiz,
-    5: LessonType.Slide
-  }
-  const typeMeta =
-    TYPE_META[lesson.lessonType] ||
-    TYPE_META[numericMap[lesson.lessonType as unknown as number]] ||
-    TYPE_META[LessonType.Video]
+  const normalizedLessonType = normalizeLessonType(lesson.lessonType)
+  const typeMeta = TYPE_META[normalizedLessonType]
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-start gap-4">
         <button
-          onClick={() => router.push(`/management/chapters/${lesson.chapterId}`)}
+          onClick={() => router.push(`/management/courses/${lesson.courseId}`)}
           className="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-lg hover:bg-muted transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -872,12 +1328,9 @@ export default function LessonDetailPage() {
               {course ? course.title : lesson.courseName || 'Khóa học'}
             </Link>
             <span className="text-muted-foreground text-sm">/</span>
-            <Link
-              href={`/management/chapters/${lesson.chapterId}`}
-              className="text-sm font-medium text-primary hover:underline"
-            >
+            <span className="text-sm font-medium text-muted-foreground">
               {chapter ? chapter.title : lesson.chapterName || 'Chương'}
-            </Link>
+            </span>
             <span className="text-muted-foreground text-sm">/</span>
             <span className="text-sm text-muted-foreground">Bài học {lesson.sortOrder}</span>
           </div>
@@ -888,65 +1341,20 @@ export default function LessonDetailPage() {
                 {typeMeta.icon} {typeMeta.label}
               </Badge>
             </div>
-            <Button variant="outline" size="sm" onClick={() => setEditDialogOpen(true)} className="gap-2 shrink-0">
-              <Edit className="h-4 w-4" /> Sửa thông tin
-            </Button>
           </div>
         </div>
       </div>
 
-      {/* Edit Dialog */}
-      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Chỉnh sửa thông tin bài học</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-1.5">
-              <Label>Tiêu đề</Label>
-              <Input value={form.title} onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))} />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Loại bài học</Label>
-              <Select
-                value={form.lessonType}
-                onValueChange={v => setForm(prev => ({ ...prev, lessonType: v as LessonType }))}
-              >
-                <SelectTrigger>
-                  <SelectValue>{TYPE_META[form.lessonType]?.label ?? form.lessonType}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(LessonType).map(t => (
-                    <SelectItem key={t} value={t}>
-                      {TYPE_META[t]?.label ?? t}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-              Hủy
-            </Button>
-            <Button onClick={handleSave} disabled={saving} className="gap-2">
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       {/* Type-specific Content Section */}
-      {lesson.lessonType === LessonType.Video && (
+      {normalizedLessonType === LessonType.Video && (
         <VideoUploadSection lessonId={id} initialVideoUrl={detail?.videoUrl} />
       )}
 
-      {lesson.lessonType === LessonType.Reading && (
+      {normalizedLessonType === LessonType.Reading && (
         <ReadingContentSection lessonId={id} initialContent={detail?.readingContent} />
       )}
 
-      {lesson.lessonType === LessonType.Coding && (
+      {normalizedLessonType === LessonType.Coding && (
         <CodingContentSection
           lessonId={id}
           initialExerciseId={detail?.exerciseId}
@@ -954,7 +1362,7 @@ export default function LessonDetailPage() {
         />
       )}
 
-      {lesson.lessonType === LessonType.Quiz && (
+      {normalizedLessonType === LessonType.Quiz && (
         <QuizContentSection
           lessonId={id}
           initialDescription={detail?.quizDescription}
@@ -963,7 +1371,7 @@ export default function LessonDetailPage() {
         />
       )}
 
-      {lesson.lessonType === LessonType.Slide && (
+      {normalizedLessonType === LessonType.Slide && (
         <SlideContentSection lessonId={id} initialFileUrl={detail?.slideFileUrl} />
       )}
     </div>

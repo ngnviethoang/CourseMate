@@ -262,6 +262,17 @@ public class CourseController : ControllerBase
     }
 
     /// <summary>
+    ///     Retrieve outline processing status for the lesson
+    /// </summary>
+    [HttpGet("lessons/{lessonId:guid}/outline-status")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> GetOutlineStatusAsync(Guid lessonId)
+    {
+        LessonOutlineStatusDto result = await _mediator.Send(new GetLessonOutlineStatusQuery { LessonId = lessonId });
+        return Ok(result);
+    }
+
+    /// <summary>
     ///     Update the lesson outline after user modifications
     /// </summary>
     [HttpPut("lessons/{lessonId:guid}/outline")]

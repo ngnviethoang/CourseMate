@@ -3,5 +3,7 @@
 public enum LessonMaterialState
 {
     GeneratingEmbedding,
-    GeneratingOutline
+    GeneratingOutline,
+    Completed,
+    Failed
 }
