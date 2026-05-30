@@ -31,7 +31,6 @@ import {
   LessonType,
   LessonDetailDto,
   LectureOutline,
-  LessonOutlineMaterialState,
   OutlineDto,
   ExerciseDto,
   ExerciseDetailDto,
@@ -252,9 +251,6 @@ function DocxAssistPanel({
   const [state, setState] = useState<DocxAssistState>('idle')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [outline, setOutline] = useState<OutlineDto | null>(null)
-  const [attempt, setAttempt] = useState(0)
-  const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const isActiveRef = useRef(true)
   const notificationConnectionRef = useRef<HubConnection | null>(null)
 
   const hasReadyOutline = useCallback((result: OutlineDto | null | undefined) => {
@@ -271,73 +267,13 @@ function DocxAssistPanel({
     return false
   }, [hasReadyOutline, lessonId])
 
-  const clearPollTimer = useCallback(() => {
-    if (pollTimeoutRef.current) {
-      clearTimeout(pollTimeoutRef.current)
-      pollTimeoutRef.current = null
-    }
-  }, [])
-
-  const pollOutlineStatus = useCallback(
-    async (maxRound = 40) => {
-      for (let round = 0; round < maxRound; round += 1) {
-        if (!isActiveRef.current) return
-        setAttempt(round + 1)
-
-        try {
-          const status = await lessonMaterialService.getOutlineStatus(lessonId)
-          if (status.isReady || status.status === LessonOutlineMaterialState.Completed) {
-            const loaded = await loadOutline()
-            if (loaded) {
-              toast.success('Đã tạo dữ liệu gợi ý từ tài liệu.')
-              return
-            }
-          }
-
-          if (status.status === LessonOutlineMaterialState.Failed) {
-            setState('error')
-            toast.error('Tạo outline thất bại. Vui lòng thử lại với tài liệu khác.')
-            return
-          }
-        } catch {
-          // Ignore and continue polling.
-        }
-
-        const delayMs = round < 3 ? 2000 : round < 8 ? 5000 : 10000
-        await new Promise<void>(resolve => {
-          pollTimeoutRef.current = setTimeout(() => resolve(), delayMs)
-        })
-      }
-
-      if (isActiveRef.current) {
-        setState('error')
-        toast.error('Hệ thống xử lý quá lâu. Vui lòng thử lại với file khác.')
-      }
-    },
-    [lessonId, loadOutline]
-  )
-
   useEffect(() => {
-    isActiveRef.current = true
     let canceled = false
 
     const loadExistingOutline = async () => {
       try {
-        const status = await lessonMaterialService.getOutlineStatus(lessonId)
         if (canceled) return
-
-        if (status.isReady || status.status === LessonOutlineMaterialState.Completed) {
-          await loadOutline()
-          return
-        }
-
-        if (
-          status.status === LessonOutlineMaterialState.GeneratingEmbedding ||
-          status.status === LessonOutlineMaterialState.GeneratingOutline
-        ) {
-          setState('processing')
-          void pollOutlineStatus(20)
-        }
+        await loadOutline()
       } catch {
         // Ignore.
       }
@@ -345,11 +281,9 @@ function DocxAssistPanel({
 
     void loadExistingOutline()
     return () => {
-      isActiveRef.current = false
       canceled = true
-      clearPollTimer()
     }
-  }, [clearPollTimer, lessonId, loadOutline, pollOutlineStatus])
+  }, [loadOutline])
 
   useEffect(() => {
     if (!API_BASE_URL) return
@@ -385,7 +319,7 @@ function DocxAssistPanel({
       try {
         await connection.start()
       } catch {
-        // Keep polling fallback if realtime is unavailable.
+        // Keep manual refresh available if realtime is unavailable.
       }
     }
     void startConnection()
@@ -416,15 +350,12 @@ function DocxAssistPanel({
       return
     }
 
-    clearPollTimer()
     setState('uploading')
-    setAttempt(0)
 
     try {
       await lessonMaterialService.uploadMaterial(lessonId, selectedFile)
       setState('processing')
       toast.info('Đã tải file. Hệ thống đang phân tích nội dung...')
-      void pollOutlineStatus(20)
     } catch {
       setState('error')
       toast.error('Không thể tải tài liệu lên hệ thống.')
@@ -433,13 +364,9 @@ function DocxAssistPanel({
 
   const handleRefresh = async () => {
     try {
-      const status = await lessonMaterialService.getOutlineStatus(lessonId)
-      if (status.isReady || status.status === LessonOutlineMaterialState.Completed) {
-        await loadOutline()
+      const loaded = await loadOutline()
+      if (loaded) {
         toast.success('Dữ liệu AI đã sẵn sàng.')
-      } else if (status.status === LessonOutlineMaterialState.Failed) {
-        setState('error')
-        toast.error('Tạo outline thất bại. Vui lòng thử tài liệu khác.')
       } else {
         toast.info('Hệ thống vẫn đang xử lý, vui lòng đợi thêm.')
       }
@@ -471,7 +398,7 @@ function DocxAssistPanel({
         {state === 'processing' && (
           <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            Đang xử lý ({attempt}/40)
+            Đang xử lý, chờ backend gửi thông báo...
           </span>
         )}
       </div>

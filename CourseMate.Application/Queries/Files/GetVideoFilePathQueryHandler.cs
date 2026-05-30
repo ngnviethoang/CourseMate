@@ -1,11 +1,13 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Enums;
+using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace CourseMate.Application.Queries.Files;
 
@@ -16,10 +18,14 @@ public class GetVideoFilePathQuery : IRequest<VideoFilePathDto?>
 
 public sealed class GetVideoFilePathQueryHandler : AbstractQueryHandler<GetVideoFilePathQuery, VideoFilePathDto?>
 {
+    private readonly StorageOptions _storageOptions;
+
     public GetVideoFilePathQueryHandler(
+        IOptions<StorageOptions> storageOptions,
         CourseMateReadOnlyDbContext dbContext,
         IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {
+        _storageOptions = storageOptions.Value;
     }
 
     public override async Task<VideoFilePathDto?> Handle(GetVideoFilePathQuery request, CancellationToken ct)
@@ -36,7 +42,7 @@ public sealed class GetVideoFilePathQueryHandler : AbstractQueryHandler<GetVideo
 
         return new VideoFilePathDto
         {
-            FilePath = fileEntry.FileLocation,
+            FilePath = Path.Combine(_storageOptions.RootPath, fileEntry.FileLocation),
             FileName = fileEntry.FileName
         };
     }

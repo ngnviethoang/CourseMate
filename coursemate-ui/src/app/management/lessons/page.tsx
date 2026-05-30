@@ -26,6 +26,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { formatDate } from '@/lib/utils'
 
 const LESSON_TYPES: LessonType[] = Object.values(LessonType)
+const LESSON_TYPE_LABELS: Record<LessonType, string> = {
+  [LessonType.Video]: 'Video',
+  [LessonType.Reading]: 'Bài đọc',
+  [LessonType.Coding]: 'Lập trình',
+  [LessonType.Quiz]: 'Trắc nghiệm',
+  [LessonType.Slide]: 'Trình chiếu'
+}
 
 const columns: Column<LessonDto>[] = [
   { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
@@ -35,7 +42,7 @@ const columns: Column<LessonDto>[] = [
   {
     key: 'lessonType',
     header: 'Loại',
-    render: row => <Badge variant="outline">{row.lessonType}</Badge>
+    render: row => <Badge variant="outline">{LESSON_TYPE_LABELS[row.lessonType] ?? row.lessonType}</Badge>
   },
   { key: 'sortOrder', header: 'Thứ tự', sortKey: 'position', render: row => row.sortOrder },
   {
@@ -272,12 +279,12 @@ export default function LessonsPage() {
               <Label>Loại</Label>
               <Select value={form.lessonType} onValueChange={v => f('lessonType', v as LessonType)}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue>{LESSON_TYPE_LABELS[form.lessonType] ?? form.lessonType}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {LESSON_TYPES.map(t => (
                     <SelectItem key={t} value={t}>
-                      {t}
+                      {LESSON_TYPE_LABELS[t] ?? t}
                     </SelectItem>
                   ))}
                 </SelectContent>

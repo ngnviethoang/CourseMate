@@ -106,4 +106,20 @@ public static class Util
 
         throw new FileNotFoundException($"Email template '{templateFileName}' was not found at path '{templatePath}'.");
     }
+
+    public static string NormalizeRelativePath(string rootPath, string physicalPath)
+    {
+        if (string.IsNullOrWhiteSpace(rootPath))
+        {
+            throw new ArgumentException("Root path is required.", nameof(rootPath));
+        }
+
+        if (string.IsNullOrWhiteSpace(physicalPath))
+        {
+            return string.Empty;
+        }
+
+        string relativePath = Path.GetRelativePath(rootPath, physicalPath);
+        return relativePath.Replace('\\', '/').TrimStart('/');
+    }
 }

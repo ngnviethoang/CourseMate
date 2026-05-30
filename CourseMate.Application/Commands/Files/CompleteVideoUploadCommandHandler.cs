@@ -58,29 +58,29 @@ public sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler<C
 
         foreach (FileChunk fileTrunk in fileTrunks)
         {
-            if (!File.Exists(Path.Combine(_storageOptions.RootPath, fileTrunk.ChunkLocation)))
+            if (!File.Exists(Path.Combine(_storageOptions.TempPath, fileTrunk.ChunkLocation)))
             {
-                throw new BusinessException(ErrorCode.ChunkFileMissing, string.Format("Chunk {0} for upload '{1}' is missing.", fileTrunk.ChunkIndex, fileEntry.Id));
+                throw new BusinessException(ErrorCode.ChunkFileMissing, $"Chunk {fileTrunk.ChunkIndex} for upload '{fileEntry.Id}' is missing.");
             }
         }
 
         try
         {
             string filePath = Path.Combine(_storageOptions.RootPath, fileEntry.FileLocation);
-            Util.CreateDirectoryIfNotExist(filePath);
             await using (FileStream outputStream = new(filePath, FileMode.CreateNew, FileAccess.Write))
             {
                 foreach (FileChunk fileTrunk in fileTrunks)
                 {
-                    byte[] chunkData = await File.ReadAllBytesAsync(Path.Combine(_storageOptions.RootPath, fileTrunk.ChunkLocation), ct);
+                    byte[] chunkData = await File.ReadAllBytesAsync(Path.Combine(_storageOptions.TempPath, fileTrunk.ChunkLocation), ct);
                     await outputStream.WriteAsync(chunkData, ct);
-                    Directory.Delete(Path.Combine(_storageOptions.TempPath, fileTrunk.ChunkLocation), true);
+                    File.Delete(Path.Combine(_storageOptions.TempPath, fileTrunk.ChunkLocation));
                 }
             }
 
             fileEntry.Status = FileStatus.Completed;
             fileEntry.CompletedAt = DateTimeOffset.UtcNow;
             fileEntry.TotalChunks = fileTrunks.Count;
+            fileEntry.FileSize = fileTrunks.Sum(f => f.ChunkSize);
         }
         catch (OperationCanceledException)
         {

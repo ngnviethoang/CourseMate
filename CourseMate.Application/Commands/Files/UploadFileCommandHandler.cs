@@ -9,6 +9,7 @@ using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace CourseMate.Application.Commands.Files;
 
@@ -16,6 +17,8 @@ public class UploadFileCommand : IRequest<FileUploadResponse>
 {
     public string FileName { get; set; } = string.Empty;
     public string ContentType { get; set; } = string.Empty;
+
+    [JsonIgnore]
     public byte[] Content { get; set; } = [];
 }
 
@@ -55,7 +58,7 @@ public sealed class UploadFileCommandHandler : AbstractCommandHandler<UploadFile
             fileId,
             fileName,
             request.Content.Length,
-            physicalPath.Replace(_storageOptions.RootPath, string.Empty),
+            Util.NormalizeRelativePath(_storageOptions.RootPath, physicalPath),
             FileStatus.Completed,
             1,
             1,

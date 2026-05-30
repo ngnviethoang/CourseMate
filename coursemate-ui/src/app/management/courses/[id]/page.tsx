@@ -47,12 +47,7 @@ import {
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 
-const LESSON_TYPES: LessonType[] = [
-  LessonType.Video,
-  LessonType.Reading,
-  LessonType.Coding,
-  LessonType.Quiz
-]
+const LESSON_TYPES: LessonType[] = [LessonType.Video, LessonType.Reading, LessonType.Coding, LessonType.Quiz]
 
 const LESSON_TYPE_META: Record<LessonType, { label: string; icon: React.ReactNode }> = {
   [LessonType.Video]: { label: 'Video', icon: <Video className="h-3.5 w-3.5" /> },
@@ -443,8 +438,7 @@ export default function CourseDetailPage() {
     }
 
     const siblingCount = lessonsByChapter[form.chapterId]?.length ?? 0
-    const maxSortOrder =
-      siblingCount + (editingLesson && editingLesson.chapterId === form.chapterId ? 0 : 1)
+    const maxSortOrder = siblingCount + (editingLesson && editingLesson.chapterId === form.chapterId ? 0 : 1)
     if (!Number.isInteger(form.sortOrder)) {
       errors.sortOrder = 'Thứ tự phải là số nguyên.'
     } else if (form.sortOrder < 1 || form.sortOrder > Math.max(maxSortOrder, 1)) {
@@ -771,7 +765,9 @@ export default function CourseDetailPage() {
             <div className="space-y-1.5">
               <Label>Chương</Label>
               <Input value={lessonChapterDisplayName} readOnly className="bg-muted/40" />
-              <p className="text-xs text-muted-foreground">Chương được cố định theo ngữ cảnh, không thể thay đổi tại đây.</p>
+              <p className="text-xs text-muted-foreground">
+                Chương được cố định theo ngữ cảnh, không thể thay đổi tại đây.
+              </p>
               {lessonErrors.chapterId && <p className="text-xs text-destructive">{lessonErrors.chapterId}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -782,18 +778,23 @@ export default function CourseDetailPage() {
                   onValueChange={lessonType => updateLessonForm('lessonType', lessonType as LessonType)}
                 >
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue>
+                      <span className="inline-flex items-center gap-2">
+                        {LESSON_TYPE_META[lessonForm.lessonType].icon}
+                        {LESSON_TYPE_META[lessonForm.lessonType].label}
+                      </span>
+                    </SelectValue>
                   </SelectTrigger>
-                    <SelectContent>
-                      {LESSON_TYPES.map(type => (
-                        <SelectItem key={type} value={type}>
-                          <span className="inline-flex items-center gap-2">
-                            {LESSON_TYPE_META[type].icon}
-                            {LESSON_TYPE_META[type].label}
-                          </span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
+                  <SelectContent>
+                    {LESSON_TYPES.map(type => (
+                      <SelectItem key={type} value={type}>
+                        <span className="inline-flex items-center gap-2">
+                          {LESSON_TYPE_META[type].icon}
+                          {LESSON_TYPE_META[type].label}
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
               </div>
               <div className="space-y-1.5">

@@ -151,6 +151,7 @@ public class GenerateOutlineJob
                     },
                     ct);
             }
+
             throw;
         }
     }
