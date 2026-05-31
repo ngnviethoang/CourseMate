@@ -1,14 +1,21 @@
 import { api } from './api-client'
 import type { OutlineDto, ProcessingStatusDto, UpdateOutlineRequest } from './types'
 
+export type LessonMaterialPromptType = 'BulletSlide' | 'Reading'
+
 export const lessonMaterialService = {
   /**
    * POST /api/lessons/{lessonId}/materials
    * Upload Word/PDF file → triggers AI processing (embedding + outline generation)
    */
-  uploadMaterial: async (lessonId: string, file: File): Promise<ProcessingStatusDto> => {
+  uploadMaterial: async (
+    lessonId: string,
+    file: File,
+    promptType: LessonMaterialPromptType = 'BulletSlide'
+  ): Promise<ProcessingStatusDto> => {
     const formData = new FormData()
     formData.append('request', file)
+    formData.append('promptType', promptType)
     return api.post<ProcessingStatusDto>(`/api/lessons/${lessonId}/materials`, formData)
   },
 

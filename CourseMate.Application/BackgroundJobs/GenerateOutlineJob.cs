@@ -35,7 +35,7 @@ public class GenerateOutlineJob
     }
 
     [AutomaticRetry(Attempts = 0)]
-    public async Task ExecuteAsync(Guid lessonMaterialId, CancellationToken ct)
+    public async Task ExecuteAsync(Guid lessonMaterialId, LessonMaterialPromptType promptType, CancellationToken ct)
     {
         LessonMaterial? lessonMaterial = await _dbContext.LessonMaterials.FirstOrDefaultAsync(lm => lm.Id == lessonMaterialId, ct);
         if (lessonMaterial == null)
@@ -82,7 +82,7 @@ public class GenerateOutlineJob
             string externalContext = await _aiService.SearchAsync(docContext, ct);
 
             // 6. Generate outline
-            string outline = await _aiService.GenerateContentAsync(externalContext, ct);
+            string outline = await _aiService.GenerateContentAsync(externalContext, promptType, ct);
             outline = outline.Replace("```json", "").Replace("```", "").Trim();
             try
             {

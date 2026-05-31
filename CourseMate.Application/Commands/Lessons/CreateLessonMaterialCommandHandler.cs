@@ -18,6 +18,7 @@ public class CreateLessonMaterialCommand : IRequest<ProcessingStatusDto>
     public Guid LessonId { get; set; }
     public string FileName { get; set; } = string.Empty;
     public byte[] Content { get; set; } = [];
+    public LessonMaterialPromptType PromptType { get; set; } = LessonMaterialPromptType.BulletSlide;
 }
 
 public sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandler<CreateLessonMaterialCommand, ProcessingStatusDto>
@@ -53,7 +54,7 @@ public sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandler<
         FileEntry fileEntry = new(fileEntryId,
             fileName,
             request.Content.LongLength,
-            filePath.Replace(_storageOptions.RootPath, string.Empty),
+            Util.NormalizeRelativePath(_storageOptions.RootPath, filePath),
             FileStatus.Processing,
             0,
             0, DateTimeOffset.UtcNow,
@@ -62,7 +63,7 @@ public sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandler<
         DbContext.FileEntries.Add(fileEntry);
         LessonMaterial material = new(Guid.NewGuid(), request.LessonId, fileEntry.Id, LessonMaterialState.GeneratingEmbedding, string.Empty);
         DbContext.LessonMaterials.Add(material);
-        await _mediator.Publish(new LessonMaterialCreatedEvent(material.Id, fileEntryId, material.LessonId), ct);
+        await _mediator.Publish(new LessonMaterialCreatedEvent(material.Id, fileEntryId, material.LessonId, request.PromptType), ct);
         return new ProcessingStatusDto
         {
             LessonMaterialId = fileEntryId,

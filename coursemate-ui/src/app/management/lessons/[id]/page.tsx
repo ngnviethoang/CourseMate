@@ -21,7 +21,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { lessonService, chapterService, courseService } from '@/lib/course-service'
-import { lessonMaterialService } from '@/lib/lesson-material-service'
+import { lessonMaterialService, type LessonMaterialPromptType } from '@/lib/lesson-material-service'
 import { exerciseService } from '@/lib/exercise-service'
 import { getAccessToken } from '@/lib/auth-token.util'
 import {
@@ -240,13 +240,15 @@ function DocxAssistPanel({
   title,
   hint,
   applyLabel,
-  onApplyOutline
+  onApplyOutline,
+  promptType = 'BulletSlide'
 }: {
   lessonId: string
   title: string
   hint: string
   applyLabel: string
   onApplyOutline: (outline: LectureOutline) => void
+  promptType?: LessonMaterialPromptType
 }) {
   const [state, setState] = useState<DocxAssistState>('idle')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -353,7 +355,7 @@ function DocxAssistPanel({
     setState('uploading')
 
     try {
-      await lessonMaterialService.uploadMaterial(lessonId, selectedFile)
+      await lessonMaterialService.uploadMaterial(lessonId, selectedFile, promptType)
       setState('processing')
       toast.info('Đã tải file. Hệ thống đang phân tích nội dung...')
     } catch {
@@ -533,6 +535,7 @@ function ReadingContentSection({ lessonId, initialContent }: { lessonId: string;
         hint="Tải file .doc/.docx, hệ thống sẽ phân tích và tạo bản nháp nội dung cho bài đọc."
         applyLabel="Áp dụng vào bài đọc"
         onApplyOutline={applyOutlineToReading}
+        promptType="Reading"
       />
 
       {isEditing ? (
@@ -984,6 +987,7 @@ function QuizContentSection({
         hint="Tải file .doc/.docx, hệ thống sẽ tạo mô tả và bộ câu hỏi trắc nghiệm nháp."
         applyLabel="Áp dụng vào trắc nghiệm"
         onApplyOutline={applyOutlineToQuiz}
+        promptType="BulletSlide"
       />
 
       {isEditing ? (
@@ -1198,9 +1202,11 @@ export default function LessonDetailPage() {
   const [chapter, setChapter] = useState<ChapterDto | null>(null)
   const [course, setCourse] = useState<CourseDto | null>(null)
   const [loading, setLoading] = useState(true)
+  const [showVideoSlideAssist, setShowVideoSlideAssist] = useState(false)
 
   useEffect(() => {
     const fetchLesson = async () => {
+      setShowVideoSlideAssist(false)
       setLoading(true)
       try {
         const [l, d] = await Promise.all([lessonService.getById(id), lessonService.getDetail(id)])
@@ -1274,7 +1280,29 @@ export default function LessonDetailPage() {
 
       {/* Type-specific Content Section */}
       {normalizedLessonType === LessonType.Video && (
-        <VideoUploadSection lessonId={id} initialVideoUrl={detail?.videoUrl} />
+        <div className="space-y-6">
+          <VideoUploadSection lessonId={id} initialVideoUrl={detail?.videoUrl} />
+          <div className="rounded-xl bg-card p-6 shadow-md border-0 space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-semibold">Generate slide content</h2>
+                <p className="text-sm text-muted-foreground">
+                  Tải tài liệu DOC/DOCX để AI tạo bullet ý chính cho slide từ nội dung bài video.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant={showVideoSlideAssist ? 'secondary' : 'default'}
+                className="gap-2"
+                onClick={() => setShowVideoSlideAssist(prev => !prev)}
+              >
+                <Sparkles className="h-4 w-4" />
+                {showVideoSlideAssist ? 'Ẩn công cụ' : 'Generate slide content'}
+              </Button>
+            </div>
+            {showVideoSlideAssist && <AiMaterialSection lessonId={id} />}
+          </div>
+        </div>
       )}
 
       {normalizedLessonType === LessonType.Reading && (

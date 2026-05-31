@@ -33,6 +33,8 @@ public class UpdateCourseCommand : IRequest<Unit>
     public bool IsPublished { get; set; }
 
     public Guid CategoryId { get; set; }
+
+    public Guid? InstructorId { get; set; }
 }
 
 public sealed class UpdateCourseCommandHandler : AbstractCommandHandler<UpdateCourseCommand, Unit>
@@ -61,6 +63,10 @@ public sealed class UpdateCourseCommandHandler : AbstractCommandHandler<UpdateCo
         course.ImageUrl = request.ImageUrl;
         course.IsPublished = request.IsPublished;
         course.CategoryId = request.CategoryId;
+        if (IsInRole(Roles.Admin) && request.InstructorId.HasValue)
+        {
+            course.InstructorId = request.InstructorId.Value;
+        }
 
         DbContext.Update(course);
         return Unit.Value;

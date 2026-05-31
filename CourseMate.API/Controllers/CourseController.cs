@@ -7,6 +7,7 @@ using CourseMate.Application.Queries.Lessons;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
+using CourseMate.Contracts.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -244,7 +245,8 @@ public class CourseController : ControllerBase
         {
             LessonId = lessonId,
             FileName = request.FileName,
-            Content = stream.ToArray()
+            Content = stream.ToArray(),
+            PromptType = LessonMaterialPromptType.BulletSlide
         });
 
         return Ok(result);

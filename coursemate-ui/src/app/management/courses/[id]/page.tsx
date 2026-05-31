@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, type DragEvent } from 'react'
+import { useEffect, useState, useCallback, useRef, type DragEvent } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import {
   ArrowLeft,
@@ -14,11 +14,13 @@ import {
   Video,
   BookOpen,
   Code2,
-  FileQuestion
+  FileQuestion,
+  Sparkles
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 import { courseService, chapterService, lessonService } from '@/lib/course-service'
+import { lessonMaterialService } from '@/lib/lesson-material-service'
 import { Pagination } from '@/components/admin/pagination'
 import { LessonType } from '@/lib/types'
 import type {
@@ -139,6 +141,9 @@ export default function CourseDetailPage() {
   const [reorderingLesson, setReorderingLesson] = useState(false)
 
   const [showFullDesc, setShowFullDesc] = useState(false)
+  const slideAssistInputRef = useRef<HTMLInputElement>(null)
+  const [slideAssistLessonId, setSlideAssistLessonId] = useState<string | null>(null)
+  const [slideAssistUploadingLessonId, setSlideAssistUploadingLessonId] = useState<string | null>(null)
 
   const loadCourse = useCallback(async () => {
     setCourseLoading(true)
@@ -447,6 +452,36 @@ export default function CourseDetailPage() {
     return errors
   }
 
+  function openSlideAssistUpload(lessonId: string) {
+    setSlideAssistLessonId(lessonId)
+    slideAssistInputRef.current?.click()
+  }
+
+  async function handleSlideAssistFileSelect(file: File | null) {
+    const targetLessonId = slideAssistLessonId
+    if (!targetLessonId || !file) {
+      return
+    }
+
+    const ext = file.name.split('.').pop()?.toLowerCase()
+    if (!['doc', 'docx'].includes(ext ?? '')) {
+      toast.error('Chỉ hỗ trợ file .doc hoặc .docx.')
+      return
+    }
+
+    setSlideAssistUploadingLessonId(targetLessonId)
+    try {
+      await lessonMaterialService.uploadMaterial(targetLessonId, file, 'BulletSlide')
+      toast.success('Đã gửi tài liệu tạo content slide. Đang chuyển tới trang bài học...')
+      router.push(`/management/lessons/${targetLessonId}`)
+    } catch {
+      toast.error('Không thể tạo content slide từ tài liệu đã chọn.')
+    } finally {
+      setSlideAssistUploadingLessonId(null)
+      setSlideAssistLessonId(null)
+    }
+  }
+
   if (courseLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
@@ -665,6 +700,21 @@ export default function CourseDetailPage() {
                                 {typeMeta.label}
                               </Button>
                               <div className="flex gap-1" onClick={e => e.stopPropagation()}>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 gap-1 px-2 text-[11px]"
+                                  onClick={() => openSlideAssistUpload(lesson.id)}
+                                  disabled={slideAssistUploadingLessonId === lesson.id}
+                                >
+                                  {slideAssistUploadingLessonId === lesson.id ? (
+                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                  ) : (
+                                    <Sparkles className="h-3 w-3" />
+                                  )}
+                                  {slideAssistUploadingLessonId === lesson.id ? 'Đang tải...' : 'Content slide'}
+                                </Button>
                                 <button
                                   onClick={() => openEditLesson(lesson)}
                                   className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-background text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
@@ -699,6 +749,18 @@ export default function CourseDetailPage() {
           </div>
         )}
       </div>
+
+      <input
+        ref={slideAssistInputRef}
+        type="file"
+        accept=".doc,.docx"
+        className="hidden"
+        onChange={e => {
+          const file = e.target.files?.[0] ?? null
+          void handleSlideAssistFileSelect(file)
+          e.target.value = ''
+        }}
+      />
 
       <Dialog open={chapterDialog} onOpenChange={setChapterDialog}>
         <DialogContent className="sm:max-w-lg">

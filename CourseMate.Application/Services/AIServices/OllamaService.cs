@@ -1,4 +1,5 @@
-﻿using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Contracts.Options;
 using Microsoft.Extensions.AI;
@@ -69,9 +70,11 @@ public class OllamaService : IAiService
         }
     }
 
-    public async Task<string> GenerateContentAsync(string input, CancellationToken ct)
+    public async Task<string> GenerateContentAsync(string input, LessonMaterialPromptType promptType, CancellationToken ct)
     {
-        string prompt = PromptBuilder.BuildLectureOutlinePrompt(input);
+        string prompt = promptType == LessonMaterialPromptType.Reading
+            ? PromptBuilder.BuildReadingLessonOutlinePrompt(input)
+            : PromptBuilder.BuildLectureOutlinePrompt(input);
 
         try
         {
