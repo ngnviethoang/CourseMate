@@ -510,7 +510,7 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
     if (!selectedFile) return
     setUploadState('uploading')
     try {
-      const result = await lessonMaterialService.uploadMaterial(lessonId, selectedFile)
+      const result = await lessonMaterialService.uploadMaterial(lessonId, selectedFile, 'BulletSlide')
       setMaterialId(result.lessonMaterialId)
       setUploadState('processing')
       toast.info('File đã tải lên! Hệ thống đang bắt đầu phân tích nội dung...')

@@ -88,4 +88,41 @@ public static class PromptBuilder
                   {{{researchInput}}}
                   """;
     }
+
+    public static string BuildReadingLessonOutlinePrompt(string researchInput)
+    {
+        return $$$"""
+                  You are an experienced instructor writing content for a Reading lesson.
+                  Use the source input to generate a structured lesson plan that can be transformed into a final reading article.
+
+                  Output format: Return ONLY valid JSON. Do not wrap in markdown. Do not include explanation.
+                  JSON schema:
+                    {{
+                      "lessonTitle": "string",
+                      "relatedLinks": ["string"],
+                      "slides": [
+                        {{
+                          "slideNumber": 1,
+                          "title": "string",
+                          "bullets": ["string"],
+                          "relatedLinks": ["string"]
+                        }}
+                      ]
+                    }}
+
+                  Requirements:
+                    - Keep the same JSON shape above.
+                    - "slides" represent reading sections (not presentation slides).
+                    - Generate 6 to 10 sections.
+                    - Each section must include 3 to 5 bullets.
+                    - Each bullet should be a complete explanatory sentence (teaching-friendly, concise).
+                    - Prioritize definitions, key mechanisms, examples, and practical takeaways.
+                    - Avoid repetition and filler text.
+                    - If a point is uncertain, append "[Need verification]".
+                    - Include relevant links when possible; if unavailable, return [].
+
+                  Input:
+                  {{{researchInput}}}
+                  """;
+    }
 }

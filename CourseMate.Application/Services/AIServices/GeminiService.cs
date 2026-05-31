@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Contracts.Options;
 using Google;
@@ -63,9 +64,11 @@ public class GeminiService : IAiService
         return await GenerateWithFallbackAsync(prompt, config, GeminiModels.V25Flash, GeminiModels.V25FlashLite, ct);
     }
 
-    public async Task<string> GenerateContentAsync(string input, CancellationToken ct)
+    public async Task<string> GenerateContentAsync(string input, LessonMaterialPromptType promptType, CancellationToken ct)
     {
-        string prompt = PromptBuilder.BuildLectureOutlinePrompt(input);
+        string prompt = promptType == LessonMaterialPromptType.Reading
+            ? PromptBuilder.BuildReadingLessonOutlinePrompt(input)
+            : PromptBuilder.BuildLectureOutlinePrompt(input);
 
         GenerateContentConfig config = new()
         {
