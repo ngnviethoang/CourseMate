@@ -90,9 +90,11 @@ export default function CheckoutPage() {
   const [orderId, setOrderId] = useState<string | null>(null)
 
   useEffect(() => {
+    let active = true
     const fetchCartAndCreateOrder = async () => {
       try {
         const res = await orderService.getCart()
+        if (!active) return
         if (!res || res.items.length === 0) {
           router.replace('/cart')
           return
@@ -102,14 +104,18 @@ export default function CheckoutPage() {
         // Step 1: Tạo luôn order khi vào trang checkout
         const cartItemIds = res.items.map(item => item.id)
         const orderRes = await orderService.create(cartItemIds)
+        if (!active) return
         setOrderId(orderRes.id)
       } catch {
-        router.replace('/cart')
+        if (active) router.replace('/cart')
       } finally {
-        setLoading(false)
+        if (active) setLoading(false)
       }
     }
     fetchCartAndCreateOrder()
+    return () => {
+      active = false
+    }
   }, [router])
 
   const handlePlaceOrder = async () => {
