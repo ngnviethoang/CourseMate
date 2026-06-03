@@ -72,6 +72,7 @@ public sealed class GetOutlineQueryHandler : AbstractQueryHandler<GetOutlineQuer
         return new OutlineDto
         {
             LessonId = request.LessonId,
+            LessonMaterialId = lessonMaterial.Id,
             LectureOutline = parsedOutline ?? new LectureOutline()
         };
     }

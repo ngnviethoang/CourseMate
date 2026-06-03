@@ -38,21 +38,46 @@ public class OnlineCompilerService : ICodeRunnerService
         request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
         try
         {
-            _logger.LogInformation("HTTP {Method} {Url} | Payload: {Payload}", request.Method, uri, payload);
+            _logger.LogInformation(
+                "Calling OnlineCompiler run API. Method={Method}, Url={Url}, Compiler={Compiler}, CodeLength={CodeLength}, InputLength={InputLength}",
+                request.Method,
+                uri,
+                compiler,
+                code.Length,
+                input.Length);
             using HttpResponseMessage response = await _httpClient.SendAsync(request, ct);
             string content = await response.Content.ReadAsStringAsync(ct);
-            _logger.LogInformation("HTTP {Method} {Url} | Status: {StatusCode} | Response: {Response}", request.Method, uri, (int)response.StatusCode, content);
+            _logger.LogInformation(
+                "OnlineCompiler run API completed. Method={Method}, Url={Url}, StatusCode={StatusCode}, ResponseLength={ResponseLength}",
+                request.Method,
+                uri,
+                (int)response.StatusCode,
+                content.Length);
             response.EnsureSuccessStatusCode();
             RunCodeResponse result = JsonConvert.DeserializeObject<RunCodeResponse>(content) ?? new RunCodeResponse();
+            _logger.LogInformation(
+                "OnlineCompiler run result parsed. Compiler={Compiler}, Status={Status}, ExitCode={ExitCode}, OutputLength={OutputLength}, ErrorLength={ErrorLength}",
+                compiler,
+                result.Status,
+                result.ExitCode,
+                result.Output?.Length ?? 0,
+                result.Error?.Length ?? 0);
             return result;
         }
         catch (HttpRequestException ex)
         {
+            _logger.LogError(ex, "OnlineCompiler run API failed. Method={Method}, Url={Url}, Compiler={Compiler}", request.Method, uri, compiler);
             throw new BusinessException(ErrorCode.Unknown, $"HTTP error when calling OnlineCompiler API: {ex.Message}", ex);
         }
         catch (JsonException ex)
         {
+            _logger.LogError(ex, "OnlineCompiler run response parse failed. Url={Url}, Compiler={Compiler}", uri, compiler);
             throw new BusinessException(ErrorCode.Unknown, $"JSON parse error when reading OnlineCompiler response: {ex.Message}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "OnlineCompiler run failed unexpectedly. Url={Url}, Compiler={Compiler}", uri, compiler);
+            throw new BusinessException(ErrorCode.Unknown, $"Unexpected error when calling OnlineCompiler API: {ex.Message}", ex);
         }
     }
 
@@ -61,21 +86,34 @@ public class OnlineCompilerService : ICodeRunnerService
         Uri uri = new($"{_onlineCompilerOptions.Url.TrimEnd('/')}/api/compilers/");
         try
         {
-            _logger.LogInformation("HTTP {Method} {Url}", HttpMethod.Get, uri);
+            _logger.LogInformation("Calling OnlineCompiler compilers API. Method={Method}, Url={Url}", HttpMethod.Get, uri);
             using HttpResponseMessage response = await _httpClient.GetAsync(uri, ct);
-            response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync(ct);
-            _logger.LogInformation("HTTP {Method} {Url} | Status: {StatusCode} | Response: {Response}", HttpMethod.Get, uri, (int)response.StatusCode, content);
+            _logger.LogInformation(
+                "OnlineCompiler compilers API completed. Method={Method}, Url={Url}, StatusCode={StatusCode}, ResponseLength={ResponseLength}",
+                HttpMethod.Get,
+                uri,
+                (int)response.StatusCode,
+                content.Length);
+            response.EnsureSuccessStatusCode();
             OnlineCompilerResponse onlineCompilerResponse = JsonConvert.DeserializeObject<OnlineCompilerResponse>(content) ?? new OnlineCompilerResponse();
-            return onlineCompilerResponse.Compilers;
+            _logger.LogInformation("OnlineCompiler compilers parsed. CompilerCount={CompilerCount}", onlineCompilerResponse.Compilers?.Count() ?? 0);
+            return onlineCompilerResponse.Compilers ?? [];
         }
         catch (HttpRequestException ex)
         {
+            _logger.LogError(ex, "OnlineCompiler compilers API failed. Url={Url}", uri);
             throw new BusinessException(ErrorCode.Unknown, $"HTTP error when calling OnlineCompiler API: {ex.Message}", ex);
         }
         catch (JsonException ex)
         {
+            _logger.LogError(ex, "OnlineCompiler compilers response parse failed. Url={Url}", uri);
             throw new BusinessException(ErrorCode.Unknown, $"JSON parse error when reading OnlineCompiler response: {ex.Message}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "OnlineCompiler compilers request failed unexpectedly. Url={Url}", uri);
+            throw new BusinessException(ErrorCode.Unknown, $"Unexpected error when calling OnlineCompiler API: {ex.Message}", ex);
         }
     }
 }

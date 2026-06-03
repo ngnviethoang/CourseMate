@@ -16,7 +16,7 @@ public class SubmitContestExerciseCommand : IRequest<ResultIdDto>
 {
     public Guid ContestId { get; set; }
     public Guid ExerciseId { get; set; }
-    public SubmitExerciseRequest Payload { get; set; }
+    public SubmitExerciseRequest Payload { get; set; } = new();
 }
 
 public sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandler<SubmitContestExerciseCommand, ResultIdDto>

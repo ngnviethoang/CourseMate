@@ -13,7 +13,7 @@ namespace CourseMate.Application.Commands.Submissions;
 public class SubmitExerciseCommand : IRequest<ResultIdDto>
 {
     public Guid ExerciseId { get; set; }
-    public SubmitExerciseRequest Payload { get; set; }
+    public SubmitExerciseRequest Payload { get; set; } = new();
 }
 
 public class SubmitExerciseCommandHandler : AbstractCommandHandler<SubmitExerciseCommand, ResultIdDto>

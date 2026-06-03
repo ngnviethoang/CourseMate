@@ -1,24 +1,39 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 import { createPlayer } from '@videojs/react'
 import { MinimalVideoSkin, Video as VideoJsVideo, videoFeatures } from '@videojs/react/video'
 import { UploadCloud, AlertCircle, Loader2, Video, Edit } from 'lucide-react'
 import { toast } from 'sonner'
+import { getAccessToken } from '@/lib/auth-token.util'
 import { fileService } from '@/lib/file-service'
-import { lessonService } from '@/lib/course-service'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 
 const Player = createPlayer({ features: videoFeatures })
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
+
+type VideoProcessedNotification = {
+  fileId?: string
+  FileId?: string
+  fileUrl?: string
+  FileUrl?: string
+  success?: boolean
+  Success?: boolean
+  message?: string
+  Message?: string
+}
 
 export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: string; initialVideoUrl?: string }) {
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
-  const [status, setStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle')
+  const [status, setStatus] = useState<'idle' | 'uploading' | 'processing' | 'success' | 'error'>('idle')
   const [videoUrl, setVideoUrl] = useState(initialVideoUrl ?? '')
   const [isEditing, setIsEditing] = useState(!initialVideoUrl)
+  const [autoPlayVideo, setAutoPlayVideo] = useState(false)
+  const currentUploadIdRef = useRef<string | null>(null)
 
   const hasVideoTrack = async (targetFile: File): Promise<boolean> => {
     const objectUrl = URL.createObjectURL(targetFile)
@@ -58,8 +73,55 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
       setFile(nextFile)
       setStatus('idle')
       setProgress(0)
+      setAutoPlayVideo(false)
     }
   }
+
+  useEffect(() => {
+    if (!API_BASE_URL) return
+
+    const connection = new HubConnectionBuilder()
+      .withUrl(`${API_BASE_URL}/hubs/notification`, {
+        accessTokenFactory: () => getAccessToken() ?? ''
+      })
+      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
+      .configureLogging(LogLevel.Warning)
+      .build()
+
+    connection.on('VideoProcessed', (notification: VideoProcessedNotification) => {
+      const fileId = notification.fileId ?? notification.FileId
+      if (!fileId || fileId !== currentUploadIdRef.current) return
+
+      const success = notification.success ?? notification.Success ?? false
+      const message = notification.message ?? notification.Message
+
+      if (!success) {
+        setStatus('error')
+        setUploading(false)
+        currentUploadIdRef.current = null
+        toast.error(message || 'Ghép video thất bại. Vui lòng thử lại.')
+        return
+      }
+
+      const nextVideoUrl = notification.fileUrl ?? notification.FileUrl ?? ''
+      setVideoUrl(nextVideoUrl)
+      setStatus('success')
+      setUploading(false)
+      setIsEditing(false)
+      setFile(null)
+      setProgress(100)
+      setAutoPlayVideo(true)
+      currentUploadIdRef.current = null
+      toast.success(message || 'Video đã sẵn sàng.')
+    })
+
+    void connection.start().catch(() => {})
+
+    return () => {
+      connection.off('VideoProcessed')
+      void connection.stop().catch(() => {})
+    }
+  }, [])
 
   const handleUpload = async () => {
     if (!file) return
@@ -72,12 +134,14 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
       const fileContainsVideo = await hasVideoTrack(file)
       if (!fileContainsVideo) {
         setStatus('error')
+        setUploading(false)
         toast.error('Video không có track hình ảnh hợp lệ hoặc codec không được trình duyệt hỗ trợ.')
         return
       }
 
       // Step 1: Init
       const { fileId } = await fileService.initVideoUpload(file.name, file.size)
+      currentUploadIdRef.current = fileId
 
       // Calculate chunks in frontend (e.g., 5MB per chunk)
       const CHUNK_SIZE = 5 * 1024 * 1024
@@ -95,24 +159,16 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
       }
 
       // Step 3: Complete
-      const { fileUrl } = await fileService.completeVideoUpload(fileId, maxTotalTrunks)
-      if (!fileUrl) {
-        throw new Error('Upload completed but fileUrl is empty.')
-      }
-
-      // Step 4: Link video to lesson immediately after upload completed
-      await lessonService.upsertVideo(lessonId, { videoUrl: fileUrl })
-
-      setVideoUrl(fileUrl)
-      setStatus('success')
-      setIsEditing(false)
-      toast.success('Tải video lên và lưu thành công!')
+      await fileService.completeVideoUpload(fileId, maxTotalTrunks, lessonId)
+      setStatus('processing')
+      setUploading(false)
+      toast.info('Video đã tải xong. Hệ thống đang ghép file và sẽ tự cập nhật khi hoàn tất.')
     } catch (error) {
       console.error(error)
       setStatus('error')
-      toast.error('Không thể tải video lên. Vui lòng thử lại.')
-    } finally {
+      currentUploadIdRef.current = null
       setUploading(false)
+      toast.error('Không thể tải video lên. Vui lòng thử lại.')
     }
   }
 
@@ -158,10 +214,12 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
                 <span className="text-muted-foreground">{(file.size / (1024 * 1024)).toFixed(2)} MB</span>
               </div>
 
-              {status === 'uploading' && (
+              {(status === 'uploading' || status === 'processing') && (
                 <div className="space-y-1.5">
                   <Progress value={progress} className="h-2" />
-                  <p className="text-xs text-right text-muted-foreground">{progress}%</p>
+                  <p className="text-xs text-right text-muted-foreground">
+                    {status === 'processing' ? 'Đang ghép video...' : `${progress}%`}
+                  </p>
                 </div>
               )}
 
@@ -171,9 +229,16 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
                 </div>
               )}
 
-              <Button onClick={handleUpload} disabled={uploading} className="w-full gap-2">
+              {status === 'processing' && (
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Hệ thống đang ghép video nền và sẽ cập nhật tự động.
+                </div>
+              )}
+
+              <Button onClick={handleUpload} disabled={uploading || status === 'processing'} className="w-full gap-2">
                 {uploading && <Loader2 className="h-4 w-4 animate-spin" />}
-                {uploading ? 'Đang tải lên...' : 'Bắt đầu tải lên'}
+                {uploading ? 'Đang tải lên...' : status === 'processing' ? 'Đang ghép video...' : 'Bắt đầu tải lên'}
               </Button>
             </div>
           )}
@@ -187,6 +252,7 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
                   <MinimalVideoSkin className="w-full h-full rounded-xl">
                     <VideoJsVideo
                       src={videoUrl}
+                      autoPlay={autoPlayVideo}
                       playsInline
                       controlsList="nodownload noremoteplayback"
                       className="w-full h-full object-contain"

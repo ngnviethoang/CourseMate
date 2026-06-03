@@ -39,7 +39,12 @@ public class EmailSenderJob
             HtmlBody = htmlBody
         }.ToMessageBody();
 
-        _logger.LogInformation("Sending email to {To}", toEmail);
+        _logger.LogInformation(
+            "Sending email. To={To}, SubjectLength={SubjectLength}, Host={Host}, Port={Port}",
+            toEmail,
+            mimeMessage.Subject.Length,
+            _smtpOptions.Host,
+            _smtpOptions.Port);
         try
         {
             using SmtpClient client = new();

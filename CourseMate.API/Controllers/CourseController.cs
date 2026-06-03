@@ -1,6 +1,7 @@
 using CourseMate.Application.Commands.Chapters;
 using CourseMate.Application.Commands.Courses;
 using CourseMate.Application.Commands.Lessons;
+using CourseMate.Application.Events;
 using CourseMate.Application.Queries.Chapters;
 using CourseMate.Application.Queries.Courses;
 using CourseMate.Application.Queries.Lessons;
@@ -228,11 +229,12 @@ public class CourseController : ControllerBase
     #region AI Process Document APIs
 
     /// <summary>
-    ///     Upload a Word/PDF file for the lesson and trigger AI processing (parse + outline generation)
+    ///     Upload a lesson source file and trigger AI processing to generate a slide-oriented outline
+    ///     using <see cref="LessonMaterialPromptType.BulletSlide" />.
     /// </summary>
-    [HttpPost("lessons/{lessonId:guid}/materials")]
+    [HttpPost("lessons/{lessonId:guid}/materials/bullet-slide")]
     // [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> CreateLessonMaterialAsync(Guid lessonId, IFormFile request)
+    public async Task<ActionResult> CreateLessonBulletSlideMaterialAsync(Guid lessonId, IFormFile request)
     {
         if (request.Length == 0)
         {
@@ -248,6 +250,36 @@ public class CourseController : ControllerBase
             Content = stream.ToArray(),
             PromptType = LessonMaterialPromptType.BulletSlide
         });
+
+        await _mediator.Publish(new LessonMaterialCreatedEvent(result.LessonMaterialId, result.LessonId, LessonMaterialPromptType.BulletSlide));
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    ///     Upload a lesson source file and trigger AI processing to generate a reading-oriented outline
+    ///     using <see cref="LessonMaterialPromptType.Reading" />.
+    /// </summary>
+    [HttpPost("lessons/{lessonId:guid}/materials/reading-outline")]
+    // [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> CreateLessonReadingOutlineMaterialAsync(Guid lessonId, IFormFile request)
+    {
+        if (request.Length == 0)
+        {
+            return BadRequest();
+        }
+
+        using MemoryStream stream = new();
+        await request.CopyToAsync(stream);
+        ProcessingStatusDto result = await _mediator.Send(new CreateLessonMaterialCommand
+        {
+            LessonId = lessonId,
+            FileName = request.FileName,
+            Content = stream.ToArray(),
+            PromptType = LessonMaterialPromptType.Reading
+        });
+
+        await _mediator.Publish(new LessonMaterialCreatedEvent(result.LessonMaterialId, result.LessonId, LessonMaterialPromptType.Reading));
 
         return Ok(result);
     }

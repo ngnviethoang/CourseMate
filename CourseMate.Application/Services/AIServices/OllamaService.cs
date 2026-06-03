@@ -53,19 +53,31 @@ public class OllamaService : IAiService
         try
         {
             IChatClient chatClient = _ollamaApiClient;
-            _logger.LogInformation("Calling Ollama API");
+            _logger.LogInformation(
+                "Starting Ollama search generation. InputLength={InputLength}, PromptLength={PromptLength}, Model={ModelId}",
+                input.Length,
+                prompt.Length,
+                OllamaModels.Llama3);
             ChatResponse response = await chatClient.GetResponseAsync(prompt, new ChatOptions
             {
                 ModelId = OllamaModels.Llama3,
                 Temperature = 0.0f,
                 MaxOutputTokens = 1024
             }, ct);
-            _logger.LogInformation("Ollama API completed");
-            return response.Text;
+            _logger.LogInformation(
+                "Ollama search generation completed. Model={ModelId}, ResponseLength={ResponseLength}",
+                OllamaModels.Llama3,
+                response.Text?.Length ?? 0);
+            return response.Text ?? string.Empty;
         }
         catch (OllamaException ex)
         {
-            _logger.LogError(ex, "Ollama research request failed");
+            _logger.LogError(ex, "Ollama search generation failed. Model={ModelId}", OllamaModels.Llama3);
+            throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ollama search generation failed unexpectedly. Model={ModelId}", OllamaModels.Llama3);
             throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex);
         }
     }
@@ -79,20 +91,34 @@ public class OllamaService : IAiService
         try
         {
             IChatClient chatClient = _ollamaApiClient;
-            _logger.LogInformation("Calling Ollama API");
+            _logger.LogInformation(
+                "Starting Ollama content generation. PromptType={PromptType}, InputLength={InputLength}, PromptLength={PromptLength}, Model={ModelId}",
+                promptType,
+                input.Length,
+                prompt.Length,
+                OllamaModels.Llama3);
             ChatResponse response = await chatClient.GetResponseAsync(prompt, new ChatOptions
             {
                 ModelId = OllamaModels.Llama3,
                 Temperature = 0.2f,
                 MaxOutputTokens = 4096
             }, ct);
-            _logger.LogInformation("Ollama API completed");
-            return response.Text;
+            _logger.LogInformation(
+                "Ollama content generation completed. PromptType={PromptType}, Model={ModelId}, ResponseLength={ResponseLength}",
+                promptType,
+                OllamaModels.Llama3,
+                response.Text?.Length ?? 0);
+            return response.Text ?? string.Empty;
         }
 
+        catch (OllamaException ex)
+        {
+            _logger.LogError(ex, "Ollama content generation failed. PromptType={PromptType}, Model={ModelId}", promptType, OllamaModels.Llama3);
+            throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex);
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Ollama lecture outline request failed");
+            _logger.LogError(ex, "Ollama content generation failed unexpectedly. PromptType={PromptType}, Model={ModelId}", promptType, OllamaModels.Llama3);
             throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex);
         }
     }

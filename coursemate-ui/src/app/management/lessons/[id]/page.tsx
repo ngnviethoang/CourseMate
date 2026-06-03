@@ -49,6 +49,13 @@ import { AiMaterialSection } from './ai-material-section'
 // ─── Lesson Type Icon & Color ─────────────────────────────────────────────────
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
 
+type DocumentProcessedNotification = {
+  lessonId?: string
+  LessonId?: string
+  message?: string
+  Message?: string
+}
+
 const TYPE_META: Record<LessonType, { icon: React.ReactNode; label: string; color: string }> = {
   [LessonType.Video]: {
     icon: <Video className="h-4 w-4" />,
@@ -300,10 +307,11 @@ function DocxAssistPanel({
 
     notificationConnectionRef.current = connection
 
-    connection.on('DocumentProcessed', (notification: { lessonId?: string; message?: string }) => {
-      if (notification?.lessonId && notification.lessonId !== lessonId) return
+    connection.on('DocumentProcessed', (notification: DocumentProcessedNotification) => {
+      const notificationLessonId = notification?.lessonId ?? notification?.LessonId
+      if (notificationLessonId && notificationLessonId !== lessonId) return
 
-      const loweredMessage = (notification?.message ?? '').toLowerCase()
+      const loweredMessage = (notification?.message ?? notification?.Message ?? '').toLowerCase()
       if (loweredMessage.includes('thất bại') || loweredMessage.includes('failed')) {
         setState('error')
         toast.error('Tạo outline thất bại. Vui lòng thử lại với tài liệu khác.')
@@ -1285,7 +1293,7 @@ export default function LessonDetailPage() {
           <div className="rounded-xl bg-card p-6 shadow-md border-0 space-y-4">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-semibold">Generate slide content</h2>
+                <h2 className="text-lg font-semibold">Tạo nội dung slide</h2>
                 <p className="text-sm text-muted-foreground">
                   Tải tài liệu DOC/DOCX để AI tạo bullet ý chính cho slide từ nội dung bài video.
                 </p>
@@ -1297,7 +1305,7 @@ export default function LessonDetailPage() {
                 onClick={() => setShowVideoSlideAssist(prev => !prev)}
               >
                 <Sparkles className="h-4 w-4" />
-                {showVideoSlideAssist ? 'Ẩn công cụ' : 'Generate slide content'}
+                {showVideoSlideAssist ? 'Ẩn công cụ' : 'Tạo nội dung slide'}
               </Button>
             </div>
             {showVideoSlideAssist && <AiMaterialSection lessonId={id} />}
