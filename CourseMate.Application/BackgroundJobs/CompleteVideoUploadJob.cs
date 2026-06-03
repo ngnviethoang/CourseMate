@@ -1,5 +1,6 @@
 using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Contracts.Options;
@@ -32,16 +33,22 @@ public class CompleteVideoUploadJob
     }
 
     [AutomaticRetry(Attempts = 0)]
-    public async Task ExecuteAsync(Guid fileId, Guid userId, Guid? lessonId, CancellationToken ct)
+    public async Task ExecuteAsync(Guid fileId, Guid userId, Guid? lessonId, string baseUrl, CancellationToken ct)
     {
         FileEntry? fileEntry = await _dbContext.FileEntries.FirstOrDefaultAsync(
             f => f.Id == fileId && f.Status == FileStatus.Uploading, ct);
         if (fileEntry == null)
         {
+            _logger.LogWarning("Video upload file entry not found or not uploading. FileId={FileId}, UserId={UserId}", fileId, userId);
             return;
         }
 
-        _logger.LogInformation("Start merging video chunks for file {FileId}", fileId);
+        _logger.LogInformation(
+            "Start merging video chunks. FileId={FileId}, UserId={UserId}, LessonId={LessonId}, BaseUrl={BaseUrl}",
+            fileId,
+            userId,
+            lessonId,
+            baseUrl);
 
         try
         {
@@ -49,6 +56,7 @@ public class CompleteVideoUploadJob
                 .Where(f => f.FileEntryId == fileEntry.Id)
                 .OrderBy(f => f.ChunkIndex)
                 .ToListAsync(ct);
+            _logger.LogInformation("Loaded video chunks. FileId={FileId}, ChunkCount={ChunkCount}", fileId, fileChunks.Count);
 
             foreach (FileChunk chunk in fileChunks)
             {
@@ -77,38 +85,51 @@ public class CompleteVideoUploadJob
             fileEntry.FileSize = fileChunks.Sum(f => f.ChunkSize);
             await _dbContext.SaveChangesAsync(ct);
 
-            string videoUrl = $"/api/files/videos/stream/{fileEntry.Id}";
+            string videoUrl = $"{baseUrl}/api/files/videos/stream/{fileEntry.Id}";
 
             if (lessonId.HasValue)
             {
-                LessonVideo? existing = await _dbContext.LessonVideos
-                    .FirstOrDefaultAsync(v => v.LessonId == lessonId.Value, ct);
+                LessonVideo? existing = await _dbContext.LessonVideos.FirstOrDefaultAsync(v => v.LessonId == lessonId.Value, ct);
                 if (existing != null)
                 {
                     existing.VideoUrl = videoUrl;
                 }
                 else
                 {
-                    await _dbContext.LessonVideos.AddAsync(
-                        new LessonVideo(Guid.NewGuid(), lessonId.Value, videoUrl), ct);
+                    await _dbContext.LessonVideos.AddAsync(new LessonVideo(Guid.NewGuid(), lessonId.Value, videoUrl), ct);
                 }
 
                 await _dbContext.SaveChangesAsync(ct);
+                _logger.LogInformation("Linked processed video to lesson. FileId={FileId}, LessonId={LessonId}, VideoUrl={VideoUrl}", fileId, lessonId.Value, videoUrl);
             }
 
-            _logger.LogInformation("Finished merging video for file {FileId}", fileId);
+            _logger.LogInformation("Finished merging video. FileId={FileId}, VideoUrl={VideoUrl}", fileId, videoUrl);
 
-            await _notificationService.NotifyVideoProcessedAsync(
-                userId, fileId, videoUrl, true, "Video đã sẵn sàng.", ct);
+            await _notificationService.NotifyVideoProcessedAsync(new VideoProcessedNotificationDto
+                {
+                    UserId = userId,
+                    FileId = fileId, FileUrl = videoUrl,
+                    Success = true,
+                    Message = "Video đã sẵn sàng."
+                },
+                ct);
+            _logger.LogInformation("Sent video processed success notification. FileId={FileId}, UserId={UserId}", fileId, userId);
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Video merge failed. FileId={FileId}, UserId={UserId}, LessonId={LessonId}", fileId, userId, lessonId);
             fileEntry.Status = FileStatus.Failed;
             await _dbContext.SaveChangesAsync(ct);
-
-            await _notificationService.NotifyVideoProcessedAsync(
-                userId, fileId, string.Empty, false, "Ghép video thất bại.", ct);
-
+            await _notificationService.NotifyVideoProcessedAsync(new VideoProcessedNotificationDto
+                {
+                    UserId = userId,
+                    FileId = fileId,
+                    FileUrl = string.Empty,
+                    Success = false,
+                    Message = "Ghép video thất bại."
+                },
+                ct);
+            _logger.LogInformation("Sent video processed failure notification. FileId={FileId}, UserId={UserId}", fileId, userId);
             throw;
         }
     }

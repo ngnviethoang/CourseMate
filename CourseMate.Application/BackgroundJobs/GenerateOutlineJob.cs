@@ -40,10 +40,16 @@ public class GenerateOutlineJob
         LessonMaterial? lessonMaterial = await _dbContext.LessonMaterials.FirstOrDefaultAsync(lm => lm.Id == lessonMaterialId, ct);
         if (lessonMaterial == null)
         {
+            _logger.LogWarning("Lesson material not found when generating outline. LessonMaterialId={LessonMaterialId}", lessonMaterialId);
             return;
         }
 
-        _logger.LogInformation("Start generate outline for lesson {lessonMaterialId}", lessonMaterial.LessonId);
+        _logger.LogInformation(
+            "Start generate outline. LessonMaterialId={LessonMaterialId}, LessonId={LessonId}, PromptType={PromptType}, DocumentFileId={DocumentFileId}",
+            lessonMaterialId,
+            lessonMaterial.LessonId,
+            promptType,
+            lessonMaterial.DocumentFileId);
 
         try
         {
@@ -60,6 +66,10 @@ public class GenerateOutlineJob
                 .ToListAsync(ct);
             if (fileChunkIds.Count == 0)
             {
+                _logger.LogWarning(
+                    "No ranked embedding chunks found. Falling back to all chunks. LessonMaterialId={LessonMaterialId}, DocumentFileId={DocumentFileId}",
+                    lessonMaterialId,
+                    lessonMaterial.DocumentFileId);
                 fileChunkIds = await _dbContext.FileEntryEmbeddings
                     .Where(x => x.FileEntryId == lessonMaterial.DocumentFileId)
                     .Select(x => x.FileChunkId)
@@ -77,9 +87,18 @@ public class GenerateOutlineJob
             }
 
             string docContext = string.Join("\n\n---\n\n", chunks);
+            _logger.LogInformation(
+                "Prepared outline context. LessonMaterialId={LessonMaterialId}, ChunkCount={ChunkCount}, ContextLength={ContextLength}",
+                lessonMaterialId,
+                chunks.Count,
+                docContext.Length);
 
             // 4. External research (LLM simulate search)
             string externalContext = await _aiService.SearchAsync(docContext, ct);
+            _logger.LogInformation(
+                "External research completed. LessonMaterialId={LessonMaterialId}, ExternalContextLength={ExternalContextLength}",
+                lessonMaterialId,
+                externalContext.Length);
 
             // 6. Generate outline
             string outline = await _aiService.GenerateContentAsync(externalContext, promptType, ct);
@@ -103,7 +122,11 @@ public class GenerateOutlineJob
             lessonMaterial.Status = LessonMaterialState.Completed;
             _dbContext.LessonMaterials.Update(lessonMaterial);
             await _dbContext.SaveChangesAsync(ct);
-            _logger.LogInformation("Finished generate outline for lesson {LessonId}", lessonMaterial.LessonId);
+            _logger.LogInformation(
+                "Finished generate outline. LessonMaterialId={LessonMaterialId}, LessonId={LessonId}, OutlineLength={OutlineLength}",
+                lessonMaterialId,
+                lessonMaterial.LessonId,
+                outline.Length);
 
 
             await _notificationService.NotifyDocumentProcessedAsync(
@@ -118,9 +141,11 @@ public class GenerateOutlineJob
                     CreationTime = DateTimeOffset.UtcNow
                 },
                 ct);
+            _logger.LogInformation("Sent outline completion notification. LessonMaterialId={LessonMaterialId}, LessonId={LessonId}", lessonMaterialId, lessonMaterial.LessonId);
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Generate outline failed. LessonMaterialId={LessonMaterialId}, LessonId={LessonId}", lessonMaterialId, lessonMaterial.LessonId);
             lessonMaterial.Status = LessonMaterialState.Failed;
             _dbContext.LessonMaterials.Update(lessonMaterial);
             await _dbContext.SaveChangesAsync(ct);

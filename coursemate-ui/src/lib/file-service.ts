@@ -35,8 +35,8 @@ export const fileService = {
     return api.post<void>(`/api/files/videos/${fileId}/chunks/${chunkIndex}`, formData)
   },
 
-  async completeVideoUpload(fileId: string, totalChunks: number) {
-    return api.post<{ fileUrl: string }>('/api/files/videos/completed', { fileId, totalChunks })
+  async completeVideoUpload(fileId: string, totalChunks: number, lessonId?: string) {
+    return api.post<{ fileUrl: string }>('/api/files/videos/completed', { fileId, totalChunks, lessonId })
   },
 
   async getVideoUploadStatus(fileId: string) {

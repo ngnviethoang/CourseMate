@@ -33,6 +33,13 @@ import type { LectureOutline, LectureSlide, OutlineDto } from '@/lib/types'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
 
+type DocumentProcessedNotification = {
+  lessonId?: string
+  LessonId?: string
+  message?: string
+  Message?: string
+}
+
 // ─── Types ───────────────────────────────────────────────────────────────────
 type UploadState = 'idle' | 'uploading' | 'processing' | 'done' | 'error'
 
@@ -215,19 +222,19 @@ function SlidePreviewer({ slides }: { slides: LectureSlide[] }) {
   return (
     <div className="space-y-6">
       <div className="relative group">
-        <div className="overflow-hidden rounded-2xl bg-zinc-950 shadow-2xl" ref={emblaRef}>
+        <div className="overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-zinc-200" ref={emblaRef}>
           <div className="flex">
             {slides.map((slide, i) => (
               <div key={i} className="flex-[0_0_100%] min-w-0 relative aspect-[16/9] p-12 flex flex-col">
                 <div className="relative z-10 flex-1 flex flex-col">
                   <div className="mb-8">
-                    <Badge variant="outline" className="text-zinc-500 -zinc-800 mb-4">
+                    <Badge variant="outline" className="mb-4 border-zinc-300 text-zinc-600">
                       Slide {slide.slideNumber}/{slides.length}
                     </Badge>
-                    <h2 className="text-4xl font-extrabold text-white tracking-tight leading-tight">
+                    <h2 className="text-4xl font-extrabold tracking-tight leading-tight text-zinc-950">
                       {slide.title || 'Slide chưa có tiêu đề'}
                     </h2>
-                    <div className="h-1.5 w-24 bg-primary rounded-full mt-4" />
+                    <div className="mt-4 h-1 w-24 rounded-full bg-zinc-900" />
                   </div>
 
                   <div className="flex-1 space-y-4">
@@ -237,18 +244,18 @@ function SlidePreviewer({ slides }: { slides: LectureSlide[] }) {
                         className="flex items-start gap-4 animate-in fade-in slide-in-from-left-4 duration-500"
                         style={{ animationDelay: `${bi * 100}ms` }}
                       >
-                        <div className="mt-2.5 h-2 w-2 shrink-0 rounded-full bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
-                        <p className="text-xl text-zinc-300 font-medium leading-relaxed">{bullet}</p>
+                        <div className="mt-2.5 h-2.5 w-2.5 shrink-0 rounded-full bg-zinc-900" />
+                        <p className="text-xl font-medium leading-relaxed text-zinc-800">{bullet}</p>
                       </div>
                     ))}
                   </div>
 
                   {slide.relatedLinks?.length > 0 && (
-                    <div className="mt-8 pt-6 shadow-md border-0 border-t-0 -zinc-800 flex items-center gap-3">
+                    <div className="mt-8 flex items-center gap-3 border-t border-zinc-200 pt-6">
                       <Link2 className="h-4 w-4 text-zinc-500" />
                       <div className="flex gap-4">
                         {slide.relatedLinks.map((link, li) => (
-                          <span key={li} className="text-xs text-zinc-500 truncate max-w-[200px]">
+                          <span key={li} className="max-w-[200px] truncate text-xs text-zinc-500">
                             {link}
                           </span>
                         ))}
@@ -266,7 +273,7 @@ function SlidePreviewer({ slides }: { slides: LectureSlide[] }) {
           type="button"
           variant="outline"
           size="icon"
-          className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 -white/20 text-white hover:bg-white/20 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-40 disabled:hover:bg-white/10"
+          className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full border-zinc-200 bg-white text-zinc-900 shadow-sm opacity-0 transition-opacity hover:bg-zinc-50 group-hover:opacity-100 disabled:opacity-40 disabled:hover:bg-white"
           onClick={() => emblaApi?.scrollPrev()}
           disabled={!canScrollPrev}
         >
@@ -276,7 +283,7 @@ function SlidePreviewer({ slides }: { slides: LectureSlide[] }) {
           type="button"
           variant="outline"
           size="icon"
-          className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 -white/20 text-white hover:bg-white/20 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-40 disabled:hover:bg-white/10"
+          className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full border-zinc-200 bg-white text-zinc-900 shadow-sm opacity-0 transition-opacity hover:bg-zinc-50 group-hover:opacity-100 disabled:opacity-40 disabled:hover:bg-white"
           onClick={() => emblaApi?.scrollNext()}
           disabled={!canScrollNext}
         >
@@ -297,6 +304,111 @@ function SlidePreviewer({ slides }: { slides: LectureSlide[] }) {
       </div>
     </div>
   )
+}
+
+async function downloadOutlineAsPptx(outline: LectureOutline) {
+  const { default: PptxGenJS } = await import('pptxgenjs')
+
+  const pptx = new PptxGenJS()
+  pptx.layout = 'LAYOUT_WIDE'
+  pptx.author = 'CourseMate'
+  pptx.company = 'CourseMate'
+  pptx.subject = outline.lessonTitle || 'Lecture Outline'
+  pptx.title = outline.lessonTitle || 'Lecture Outline'
+  pptx.lang = 'vi-VN'
+  pptx.theme = {
+    headFontFace: 'Arial',
+    bodyFontFace: 'Arial',
+    lang: 'vi-VN'
+  }
+
+  const titleSlide = pptx.addSlide()
+  titleSlide.background = { color: 'FFFFFF' }
+  titleSlide.addText(outline.lessonTitle || 'Bài giảng', {
+    x: 0.75,
+    y: 1.1,
+    w: 11.2,
+    h: 0.8,
+    fontFace: 'Arial',
+    fontSize: 24,
+    bold: true,
+    color: '111111',
+    align: 'left'
+  })
+  titleSlide.addShape('line', {
+    x: 0.75,
+    y: 2.05,
+    w: 2.2,
+    h: 0,
+    line: { color: '111111', width: 1.5 }
+  })
+  ;(outline.slides ?? []).forEach((slideContent, index) => {
+    const slide = pptx.addSlide()
+    slide.background = { color: 'FFFFFF' }
+    slide.addText(`Slide ${slideContent.slideNumber || index + 1}`, {
+      x: 0.75,
+      y: 0.45,
+      w: 2,
+      h: 0.3,
+      fontFace: 'Arial',
+      fontSize: 10,
+      color: '666666',
+      bold: true
+    })
+    slide.addText(slideContent.title || `Phần ${index + 1}`, {
+      x: 0.75,
+      y: 0.9,
+      w: 11.1,
+      h: 0.7,
+      fontFace: 'Arial',
+      fontSize: 22,
+      bold: true,
+      color: '111111'
+    })
+    slide.addShape('line', {
+      x: 0.75,
+      y: 1.7,
+      w: 2,
+      h: 0,
+      line: { color: '111111', width: 1.25 }
+    })
+
+    slide.addText(
+      (slideContent.bullets ?? []).map(bullet => ({
+        text: `• ${bullet || 'Nội dung đang cập nhật'}`,
+        options: {
+          breakLine: true,
+          color: '222222'
+        }
+      })),
+      {
+        x: 1,
+        y: 2.1,
+        w: 10.4,
+        h: 3.9,
+        fontFace: 'Arial',
+        fontSize: 19,
+        margin: 0,
+        valign: 'top'
+      }
+    )
+
+    const links = (slideContent.relatedLinks ?? []).filter(Boolean)
+    if (links.length > 0) {
+      slide.addText(`Tài liệu liên quan: ${links.join('   ')}`, {
+        x: 0.9,
+        y: 6.35,
+        w: 10.6,
+        h: 0.45,
+        fontFace: 'Arial',
+        fontSize: 9,
+        color: '666666'
+      })
+    }
+  })
+
+  const fileName = `${(outline.lessonTitle || 'slide-outline').trim().replace(/[\\/:*?"<>|]+/g, '-')}.pptx`
+  await pptx.writeFile({ fileName })
 }
 
 // ─── Outline Editor ────────────────────────────────────────────────────────────
@@ -338,6 +450,15 @@ function OutlineEditor({
     }
   }
 
+  const handleDownloadPptx = async () => {
+    try {
+      await downloadOutlineAsPptx(draft)
+      toast.success('Đã tạo file PPTX từ dàn ý hiện tại.')
+    } catch {
+      toast.error('Không thể tạo file PPTX.')
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Control Header */}
@@ -364,12 +485,10 @@ function OutlineEditor({
         </div>
 
         <div className="flex items-center gap-3">
-          <a href="/templates/slide-content-template-dark.pptx" download="slide-content-template-dark.pptx">
-            <Button type="button" variant="outline" size="sm" className="gap-2">
-              <Download className="h-4 w-4" />
-              Tải template slide
-            </Button>
-          </a>
+          <Button type="button" variant="outline" size="sm" className="gap-2" onClick={handleDownloadPptx}>
+            <Download className="h-4 w-4" />
+            Tải slide
+          </Button>
           {view === 'edit' && (
             <Button
               type="button"
@@ -490,10 +609,11 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
 
     notificationConnectionRef.current = connection
 
-    connection.on('DocumentProcessed', (notification: { lessonId?: string; message?: string }) => {
-      if (notification?.lessonId && notification.lessonId !== lessonId) return
+    connection.on('DocumentProcessed', (notification: DocumentProcessedNotification) => {
+      const notificationLessonId = notification?.lessonId ?? notification?.LessonId
+      if (notificationLessonId && notificationLessonId !== lessonId) return
 
-      const loweredMessage = (notification?.message ?? '').toLowerCase()
+      const loweredMessage = (notification?.message ?? notification?.Message ?? '').toLowerCase()
       if (loweredMessage.includes('thất bại') || loweredMessage.includes('failed')) {
         setUploadState('error')
         toast.error('Tạo dàn ý thất bại. Vui lòng thử lại với tài liệu khác.')

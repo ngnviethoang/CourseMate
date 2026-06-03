@@ -23,6 +23,12 @@ public class NotificationService(
             .SendAsync("DocumentProcessed", notificationDto, ct);
     }
 
+    public async Task NotifyVideoProcessedAsync(VideoProcessedNotificationDto notificationDto, CancellationToken ct = default)
+    {
+        await hubContext.Clients.User(notificationDto.UserId.ToString())
+            .SendAsync("VideoProcessed", notificationDto, ct);
+    }
+
     public async Task<NotificationDto> CreateAndSendAsync(Guid receiverId, string title, string message, CancellationToken ct = default)
     {
         Notification notification = new(Guid.NewGuid(), receiverId, title, message, false);

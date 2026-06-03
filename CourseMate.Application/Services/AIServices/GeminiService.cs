@@ -61,6 +61,13 @@ public class GeminiService : IAiService
             Tools = [new Tool { GoogleSearch = new GoogleSearch() }]
         };
 
+        _logger.LogInformation(
+            "Starting Gemini search generation. InputLength={InputLength}, PromptLength={PromptLength}, PrimaryModel={PrimaryModel}, FallbackModel={FallbackModel}",
+            input.Length,
+            prompt.Length,
+            GeminiModels.V25Flash,
+            GeminiModels.V25FlashLite);
+
         return await GenerateWithFallbackAsync(prompt, config, GeminiModels.V25Flash, GeminiModels.V25FlashLite, ct);
     }
 
@@ -82,6 +89,14 @@ public class GeminiService : IAiService
             }
         };
 
+        _logger.LogInformation(
+            "Starting Gemini content generation. PromptType={PromptType}, InputLength={InputLength}, PromptLength={PromptLength}, PrimaryModel={PrimaryModel}, FallbackModel={FallbackModel}",
+            promptType,
+            input.Length,
+            prompt.Length,
+            GeminiModels.V25Flash,
+            GeminiModels.V25FlashLite);
+
         return await GenerateWithFallbackAsync(prompt, config, GeminiModels.V25Flash, GeminiModels.V25FlashLite, ct);
     }
 
@@ -94,9 +109,11 @@ public class GeminiService : IAiService
         string result = await TryGenerateTextAsync(primaryModel, prompt, config, false, ct);
         if (string.IsNullOrWhiteSpace(result))
         {
+            _logger.LogWarning("Primary Gemini model returned empty response. Falling back to {FallbackModel}", fallbackModel);
             result = await TryGenerateTextAsync(fallbackModel, prompt, config, true, ct);
         }
 
+        _logger.LogInformation("Gemini generation finished. ResultLength={ResultLength}", result.Length);
         return result;
     }
 
@@ -112,6 +129,16 @@ public class GeminiService : IAiService
         catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Forbidden)
         {
             _logger.LogWarning(ex, "Gemini model {Model} returned 403 Forbidden", model);
+            return isThrow ? throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex) : string.Empty;
+        }
+        catch (GoogleApiException ex)
+        {
+            _logger.LogError(ex, "Gemini API failed with model {Model}. StatusCode={StatusCode}", model, ex.HttpStatusCode);
+            return isThrow ? throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex) : string.Empty;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Gemini API failed unexpectedly with model {Model}", model);
             return isThrow ? throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex) : string.Empty;
         }
     }

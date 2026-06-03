@@ -49,6 +49,13 @@ import { AiMaterialSection } from './ai-material-section'
 // ─── Lesson Type Icon & Color ─────────────────────────────────────────────────
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
 
+type DocumentProcessedNotification = {
+  lessonId?: string
+  LessonId?: string
+  message?: string
+  Message?: string
+}
+
 const TYPE_META: Record<LessonType, { icon: React.ReactNode; label: string; color: string }> = {
   [LessonType.Video]: {
     icon: <Video className="h-4 w-4" />,
@@ -300,10 +307,11 @@ function DocxAssistPanel({
 
     notificationConnectionRef.current = connection
 
-    connection.on('DocumentProcessed', (notification: { lessonId?: string; message?: string }) => {
-      if (notification?.lessonId && notification.lessonId !== lessonId) return
+    connection.on('DocumentProcessed', (notification: DocumentProcessedNotification) => {
+      const notificationLessonId = notification?.lessonId ?? notification?.LessonId
+      if (notificationLessonId && notificationLessonId !== lessonId) return
 
-      const loweredMessage = (notification?.message ?? '').toLowerCase()
+      const loweredMessage = (notification?.message ?? notification?.Message ?? '').toLowerCase()
       if (loweredMessage.includes('thất bại') || loweredMessage.includes('failed')) {
         setState('error')
         toast.error('Tạo outline thất bại. Vui lòng thử lại với tài liệu khác.')

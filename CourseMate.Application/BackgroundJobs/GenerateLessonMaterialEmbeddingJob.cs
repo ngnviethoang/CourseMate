@@ -78,6 +78,7 @@ public class GenerateLessonMaterialEmbeddingJob
         {
             _logger.LogInformation("Reading file content for: {FileName} (FileID: {FileId})", fileEntry.FileName, lessonMaterialId);
             string content = ReadWordText(physicalFilePath);
+            _logger.LogInformation("Read source content. LessonMaterialId={LessonMaterialId}, ContentLength={ContentLength}", lessonMaterialId, content.Length);
             IEnumerable<Chunk> chunks = ChunkSentences(content);
             int chunkCount = 1;
             foreach (Chunk chunk in chunks)
@@ -130,6 +131,7 @@ public class GenerateLessonMaterialEmbeddingJob
 
         if (!lessonMaterial.UserId.HasValue)
         {
+            _logger.LogWarning("Skip failure notification because lesson material has no user. LessonMaterialId={LessonMaterialId}", lessonMaterial.Id);
             return;
         }
 
@@ -145,6 +147,7 @@ public class GenerateLessonMaterialEmbeddingJob
                 CreationTime = DateTimeOffset.UtcNow
             },
             ct);
+        _logger.LogInformation("Sent embedding failure notification. LessonMaterialId={LessonMaterialId}, LessonId={LessonId}", lessonMaterial.Id, lessonMaterial.LessonId);
     }
 
     private static string ReadWordText(string filePath)
