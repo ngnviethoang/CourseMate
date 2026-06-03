@@ -1,10 +1,10 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using CourseMate.Application.Services.AIServices;
+using CourseMate.Application.Services.FileStorageServices;
 using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Enums;
-using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using DocumentFormat.OpenXml.Packaging;
@@ -12,7 +12,6 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Pgvector;
 
 namespace CourseMate.Application.BackgroundJobs;
@@ -21,13 +20,13 @@ public class GenerateLessonMaterialEmbeddingJob
 {
     private readonly IAiService _aIService;
     private readonly CourseMateDbContext _dbContext;
+    private readonly IFileStorageManager _fileStorageManager;
     private readonly ILogger<GenerateLessonMaterialEmbeddingJob> _logger;
     private readonly INotificationService _notificationService;
-    private readonly StorageOptions _storageOptions;
 
     public GenerateLessonMaterialEmbeddingJob(
         CourseMateDbContext dbContext,
-        IOptions<StorageOptions> storageOptions,
+        IFileStorageManager fileStorageManager,
         ILogger<GenerateLessonMaterialEmbeddingJob> logger,
         IAiService aIService,
         INotificationService notificationService)
@@ -35,8 +34,8 @@ public class GenerateLessonMaterialEmbeddingJob
         _dbContext = dbContext;
         _logger = logger;
         _aIService = aIService;
+        _fileStorageManager = fileStorageManager;
         _notificationService = notificationService;
-        _storageOptions = storageOptions.Value;
     }
 
     [AutomaticRetry(Attempts = 0)]
@@ -58,12 +57,12 @@ public class GenerateLessonMaterialEmbeddingJob
             throw new InvalidOperationException($"File entry not found for lesson material {lessonMaterialId}.");
         }
 
-        string physicalFilePath = Path.Combine(_storageOptions.RootPath, fileEntry.FileLocation);
-        if (!File.Exists(physicalFilePath))
+        StorageFileEntry sourceFile = StorageFileEntry.FromFileEntry(fileEntry);
+        if (!await _fileStorageManager.ExistsAsync(sourceFile, ct))
         {
             _logger.LogWarning("File does not exist at path: {FilePath} for file ID: {FileId}", fileEntry.FileLocation, lessonMaterialId);
             await MarkFailedAndNotifyAsync(lessonMaterial, "Tệp tài liệu nguồn không còn tồn tại.", ct);
-            throw new FileNotFoundException("Source file for lesson material was not found.", physicalFilePath);
+            throw new FileNotFoundException("Source file for lesson material was not found.", fileEntry.FileLocation);
         }
 
         string fileExtension = Path.GetExtension(fileEntry.FileName).ToLowerInvariant();
@@ -77,7 +76,8 @@ public class GenerateLessonMaterialEmbeddingJob
         try
         {
             _logger.LogInformation("Reading file content for: {FileName} (FileID: {FileId})", fileEntry.FileName, lessonMaterialId);
-            string content = ReadWordText(physicalFilePath);
+            await using Stream sourceStream = await _fileStorageManager.ReadAsync(sourceFile, ct);
+            string content = ReadWordText(sourceStream);
             _logger.LogInformation("Read source content. LessonMaterialId={LessonMaterialId}, ContentLength={ContentLength}", lessonMaterialId, content.Length);
             IEnumerable<Chunk> chunks = ChunkSentences(content);
             int chunkCount = 1;
@@ -85,10 +85,10 @@ public class GenerateLessonMaterialEmbeddingJob
             {
                 _logger.LogDebug("Generating embedding for chunk {ChunkIndex} of file {FileId}", chunkCount, lessonMaterialId);
                 string chunkFileName = $"{fileEntry.Id}_chunk{chunkCount}.txt";
-                string chunkFilePath = Path.Combine(_storageOptions.TempPath, chunkFileName);
-                await using FileStream stream = new(chunkFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-                await stream.WriteAsync(Encoding.UTF8.GetBytes(chunk.Content), ct);
-                FileChunk fileChunk = new(Guid.NewGuid(), fileEntry.Id, chunkCount, chunkFilePath, chunk.Content.Length, true);
+                string chunkFileLocation = Path.Combine("temp", chunkFileName);
+                FileChunk fileChunk = new(Guid.NewGuid(), fileEntry.Id, chunkCount, chunkFileLocation, chunk.Content.Length, true);
+                await using MemoryStream stream = new(Encoding.UTF8.GetBytes(chunk.Content));
+                await _fileStorageManager.CreateAsync(StorageFileEntry.FromFileChunk(fileChunk), stream, ct);
                 await _dbContext.FileChunks.AddAsync(fileChunk, ct);
 
                 ReadOnlyMemory<float> embedding = await _aIService.GenerateVectorAsync(chunk.Content, ct);
@@ -150,9 +150,14 @@ public class GenerateLessonMaterialEmbeddingJob
         _logger.LogInformation("Sent embedding failure notification. LessonMaterialId={LessonMaterialId}, LessonId={LessonId}", lessonMaterial.Id, lessonMaterial.LessonId);
     }
 
-    private static string ReadWordText(string filePath)
+    private static string ReadWordText(Stream stream)
     {
-        using WordprocessingDocument doc = WordprocessingDocument.Open(filePath, false);
+        if (stream.CanSeek)
+        {
+            stream.Position = 0;
+        }
+
+        using WordprocessingDocument doc = WordprocessingDocument.Open(stream, false);
         Body? body = doc.MainDocumentPart?.Document?.Body;
 
         if (body == null)

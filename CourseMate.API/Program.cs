@@ -3,6 +3,7 @@ using CourseMate.API.Hubs;
 using CourseMate.API.Middlewares;
 using CourseMate.API.Services;
 using CourseMate.Application;
+using CourseMate.Application.Services.FileStorageServices;
 using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Options;
@@ -101,6 +102,7 @@ try
     builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate")!);
     builder.Services.AddHangfireServer();
     builder.Services.AddSignalR();
+    builder.Services.AddTransient<IFileStorageManager, LocalFileStorageManager>();
     builder.Services.AddTransient<INotificationService, NotificationService>();
     builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {

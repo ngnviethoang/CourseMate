@@ -1,3 +1,4 @@
+using CourseMate.Application.Services.FileStorageServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
@@ -30,14 +31,17 @@ public sealed class UploadFileCommandHandler : AbstractCommandHandler<UploadFile
         [FileType.Document] = [".pdf", ".pptx", ".ppt", ".docx", ".doc", ".txt", ".md"]
     };
 
+    private readonly IFileStorageManager _fileStorageManager;
     private readonly StorageOptions _storageOptions;
 
     public UploadFileCommandHandler(
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor,
+        IFileStorageManager fileStorageManager,
         IOptions<StorageOptions> storageOptions)
         : base(dbContext, httpContextAccessor)
     {
+        _fileStorageManager = fileStorageManager;
         _storageOptions = storageOptions.Value;
     }
 
@@ -48,22 +52,21 @@ public sealed class UploadFileCommandHandler : AbstractCommandHandler<UploadFile
         string extension = GetValidExtension(request.FileName);
         FileType fileType = GetFileType(extension);
 
-        Directory.CreateDirectory(_storageOptions.PublicPath);
-
         Guid fileId = Guid.NewGuid();
         string fileName = $"{fileId}{extension}";
-        string physicalPath = Path.Combine(_storageOptions.PublicPath, fileName);
-        await File.WriteAllBytesAsync(physicalPath, request.Content, ct);
+        string fileLocation = Path.Combine("public", fileName);
         FileEntry fileEntry = new(
             fileId,
             fileName,
             request.Content.Length,
-            Util.NormalizeRelativePath(_storageOptions.RootPath, physicalPath),
+            fileLocation,
             FileStatus.Completed,
             1,
             1,
             DateTimeOffset.UtcNow,
             fileType);
+        await using MemoryStream stream = new(request.Content);
+        await _fileStorageManager.CreateAsync(StorageFileEntry.FromFileEntry(fileEntry), stream, ct);
 
         await DbContext.FileEntries.AddAsync(fileEntry, ct);
 
