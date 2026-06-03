@@ -100,7 +100,8 @@ export default function CheckoutPage() {
         setCart(res)
 
         // Step 1: Tạo luôn order khi vào trang checkout
-        const orderRes = await orderService.create()
+        const cartItemIds = res.items.map(item => item.id)
+        const orderRes = await orderService.create(cartItemIds)
         setOrderId(orderRes.id)
       } catch {
         router.replace('/cart')

@@ -168,6 +168,13 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
               </span>
             </Link>
           )}
+          <Link
+            href={`/management/contests/${id}/violations`}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-600 hover:bg-amber-500/20 transition-colors text-sm font-semibold"
+          >
+            <Shield className="h-4 w-4" />
+            Đối soát vi phạm
+          </Link>
           <Button onClick={handleUpdate} disabled={saving} className="gap-2">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             Lưu thay đổi
@@ -313,6 +320,28 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                 ))
               )}
             </div>
+          </section>
+
+          {/* Violations Link Card */}
+          <section className="bg-gradient-to-br from-amber-50 to-red-50 dark:from-amber-900/10 dark:to-red-900/10 border border-amber-200/60 dark:border-amber-800/30 rounded-xl p-6 space-y-4">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                <Shield className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-base">Quản lý vi phạm</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Xem toàn bộ lịch sử vi phạm, xét duyệt và xử lý các trường hợp gian lận trong cuộc thi này.
+                </p>
+              </div>
+            </div>
+            <Link
+              href={`/management/contests/${id}/violations`}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold transition-colors w-full justify-center"
+            >
+              <Shield className="h-4 w-4" />
+              Mở trang đối soát vi phạm
+            </Link>
           </section>
         </div>
 

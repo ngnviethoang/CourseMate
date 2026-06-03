@@ -23,38 +23,17 @@ import {
   Undo2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { contestService } from '@/lib/contest-service'
+import {
+  contestService,
+  ContestViolationsDto,
+  StudentViolationSummaryDto,
+  ViolationEntryDto
+} from '@/lib/contest-service'
 import { getAccessToken } from '@/lib/auth-token.util'
 import { ViolationType } from '@/hooks/useAntiCheat'
 import { toast } from 'sonner'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
-
-interface ViolationEntry {
-  id: string
-  violationType: ViolationType | string
-  details?: string
-  occurredAt: string
-  ipAddress?: string
-  userAgent?: string
-  deviceFingerprint?: string
-}
-
-interface StudentViolation {
-  studentId: string
-  studentName: string
-  violationCount: number
-  isDisqualified: boolean
-  disqualifiedAt?: string
-  disqualifiedReason?: string
-  violations: ViolationEntry[]
-}
-
-interface ContestViolations {
-  contestId: string
-  contestTitle: string
-  students: StudentViolation[]
-}
 
 const VIOLATION_LABELS: Record<string, { label: string; color: string }> = {
   [ViolationType.TabSwitch]: { label: 'Chuyển tab', color: 'text-amber-400' },
@@ -65,7 +44,7 @@ const VIOLATION_LABELS: Record<string, { label: string; color: string }> = {
   [ViolationType.ScreenResize]: { label: 'Thay đổi kích thước', color: 'text-purple-400' }
 }
 
-function getStatusColor(student: StudentViolation) {
+function getStatusColor(student: StudentViolationSummaryDto) {
   if (student.isDisqualified) return 'bg-neutral-800 border-neutral-600'
   if (student.violationCount >= 5) return 'bg-red-500/5 border-red-500/20'
   if (student.violationCount >= 3) return 'bg-orange-500/5 border-orange-500/20'
@@ -73,7 +52,7 @@ function getStatusColor(student: StudentViolation) {
   return 'bg-emerald-500/5 border-emerald-500/20'
 }
 
-function getStatusIcon(student: StudentViolation) {
+function getStatusIcon(student: StudentViolationSummaryDto) {
   if (student.isDisqualified) return <ShieldX className="h-5 w-5 text-neutral-500" />
   if (student.violationCount >= 5) return <ShieldAlert className="h-5 w-5 text-red-500" />
   if (student.violationCount >= 1) return <AlertTriangle className="h-5 w-5 text-amber-500" />
@@ -87,12 +66,13 @@ function formatTime(dateString: string) {
 export default function ContestMonitorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
-  const [data, setData] = useState<ContestViolations | null>(null)
+  const [data, setData] = useState<ContestViolationsDto | null>(null)
   const [loading, setLoading] = useState(true)
   const [expandedStudent, setExpandedStudent] = useState<string | null>(null)
   const [dqReason, setDqReason] = useState('')
   const [dqConfirm, setDqConfirm] = useState<string | null>(null) // studentId being DQ'd
   const connectionRef = useRef<HubConnection | null>(null)
+  const [connectionState, setConnectionState] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
 
   const fetchData = useCallback(async () => {
     try {
@@ -121,6 +101,10 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
       .build()
 
     connectionRef.current = connection
+
+    connection.onreconnecting(() => setConnectionState('connecting'))
+    connection.onreconnected(() => setConnectionState('connected'))
+    connection.onclose(() => setConnectionState('disconnected'))
 
     connection.on('StudentViolation', (event: any) => {
       setData(prev => {
@@ -166,9 +150,18 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
         return { ...prev, students }
       })
 
-      toast.warning(`${event.studentName}: ${event.violationType} (${event.violationCount}/${event.maxViolations})`, {
-        duration: 3000
-      })
+      // Normalize violationType: BE may send integer (before JsonStringEnumConverter fix) or string
+      const VIOLATION_TYPE_NAMES = ['TabSwitch','WindowBlur','CopyPaste','RightClick','DevToolsOpen','ScreenResize','MultipleMonitors','ExternalPaste']
+      const normalizedType = typeof event.violationType === 'number'
+        ? (VIOLATION_TYPE_NAMES[event.violationType] ?? String(event.violationType))
+        : String(event.violationType)
+
+      const label = VIOLATION_LABELS[normalizedType]?.label ?? normalizedType
+
+      toast.warning(
+        `🚨 ${event.studentName}: ${label} (${event.violationCount}/${event.maxViolations})`,
+        { duration: 5000 }
+      )
     })
 
     connection.on('StudentDisqualified', (event: any) => {
@@ -198,8 +191,14 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
 
     connection
       .start()
-      .then(() => connection.invoke('JoinContestMonitor', id))
-      .catch(err => console.error('Failed to connect monitor:', err))
+      .then(() => {
+        setConnectionState('connected')
+        return connection.invoke('JoinContestMonitor', id)
+      })
+      .catch(err => {
+        setConnectionState('disconnected')
+        console.error('Failed to connect monitor:', err)
+      })
 
     return () => {
       connection.stop().catch(() => {})
@@ -291,7 +290,24 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
           <Button onClick={fetchData} variant="ghost" className="text-neutral-400 hover:text-white gap-2">
             <RefreshCw className="h-4 w-4" /> Làm mới
           </Button>
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Đang kết nối thời gian thực" />
+          <div className={`flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full border ${
+            connectionState === 'connected'
+              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+              : connectionState === 'connecting'
+              ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+              : 'bg-red-500/10 border-red-500/20 text-red-400'
+          }`}>
+            <span className={`w-2 h-2 rounded-full ${
+              connectionState === 'connected'
+                ? 'bg-emerald-500 animate-pulse'
+                : connectionState === 'connecting'
+                ? 'bg-amber-500 animate-pulse'
+                : 'bg-red-500'
+            }`} />
+            {connectionState === 'connected' ? 'Realtime · Đang kết nối'
+              : connectionState === 'connecting' ? 'Đang kết nối lại...'
+              : 'Mất kết nối'}
+          </div>
         </div>
       </header>
 

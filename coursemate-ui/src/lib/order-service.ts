@@ -15,8 +15,8 @@ export const orderService = {
   },
   getById: (id: string) => api.get<OrderDto | null>(`/api/orders/${id}`),
   update: (id: string, body: UpdateOrderRequest) => api.put<void>(`/api/orders/${id}`, body),
-  create: async (): Promise<ResultIdDto> => {
-    return api.post<ResultIdDto>('/api/orders')
+  create: async (cartItemIds: string[]): Promise<ResultIdDto> => {
+    return api.post<ResultIdDto>('/api/orders', { cartItemIds })
   },
 
   // Cart

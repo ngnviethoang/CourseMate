@@ -15,6 +15,8 @@ public class DisqualifyStudentCommand : IRequest<ResultIdDto>
     public Guid ContestId { get; set; }
     public Guid StudentId { get; set; }
     public string Reason { get; set; } = string.Empty;
+    /// <summary>Explicitly provided caller ID for Hub invocations (HttpContext is null for SignalR).</summary>
+    public Guid CallerUserId { get; set; }
 }
 
 internal sealed class DisqualifyStudentCommandHandler : AbstractCommandHandler<DisqualifyStudentCommand, ResultIdDto>
@@ -32,8 +34,11 @@ internal sealed class DisqualifyStudentCommandHandler : AbstractCommandHandler<D
             throw new EntityNotFoundException(nameof(Contest), request.ContestId);
         }
 
+        // Use explicitly provided caller ID if set (Hub), otherwise fall back to HttpContext (REST API).
+        Guid callerId = request.CallerUserId != Guid.Empty ? request.CallerUserId : CurrentUserId;
+
         // Only contest creator or admin can disqualify
-        if (contest.CreatorId != CurrentUserId && !IsInRole(Roles.Admin))
+        if (contest.CreatorId != callerId && !IsInRole(Roles.Admin))
         {
             throw new UnauthorizedAccessException("You are not authorized to disqualify students in this contest.");
         }

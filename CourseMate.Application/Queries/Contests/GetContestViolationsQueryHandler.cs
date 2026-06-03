@@ -11,6 +11,12 @@ namespace CourseMate.Application.Queries.Contests;
 public class GetContestViolationsQuery : IRequest<ContestViolationsDto?>
 {
     public Guid ContestId { get; set; }
+
+    /// <summary>
+    ///     When true, returns all registered students (not just those with violations).
+    ///     Used by the instructor monitor page.
+    /// </summary>
+    public bool IncludeAll { get; set; } = false;
 }
 
 internal sealed class GetContestViolationsQueryHandler : AbstractQueryHandler<GetContestViolationsQuery, ContestViolationsDto?>
@@ -53,25 +59,32 @@ internal sealed class GetContestViolationsQueryHandler : AbstractQueryHandler<Ge
             .GroupBy(v => v.StudentId)
             .ToDictionary(g => g.Key, g => g.ToList());
 
-        List<StudentViolationSummaryDto> students = registrations.Select(r => new StudentViolationSummaryDto
-            {
-                StudentId = r.StudentId,
-                StudentName = userDict.GetValueOrDefault(r.StudentId) ?? "Unknown",
-                ViolationCount = r.ViolationCount,
-                IsDisqualified = r.IsDisqualified,
-                DisqualifiedAt = r.DisqualifiedAt,
-                DisqualifiedReason = r.DisqualifiedReason,
-                Violations = violationsByStudent.TryGetValue(r.StudentId, out List<AntiCheatViolation>? studentViolations)
-                    ? studentViolations.Select(v => new ViolationEntryDto
-                    {
-                        Id = v.Id,
-                        ViolationType = v.ViolationType,
-                        Details = v.Details,
-                        OccurredAt = v.OccurredAt
-                    }).ToList()
-                    : []
-            })
-            .Where(s => s.ViolationCount > 0 || s.IsDisqualified)
+        IEnumerable<StudentViolationSummaryDto> query = registrations.Select(r => new StudentViolationSummaryDto
+        {
+            StudentId = r.StudentId,
+            StudentName = userDict.GetValueOrDefault(r.StudentId) ?? "Unknown",
+            ViolationCount = r.ViolationCount,
+            IsDisqualified = r.IsDisqualified,
+            DisqualifiedAt = r.DisqualifiedAt,
+            DisqualifiedReason = r.DisqualifiedReason,
+            Violations = violationsByStudent.TryGetValue(r.StudentId, out List<AntiCheatViolation>? studentViolations)
+                ? studentViolations.Select(v => new ViolationEntryDto
+                {
+                    Id = v.Id,
+                    ViolationType = v.ViolationType,
+                    Details = v.Details,
+                    OccurredAt = v.OccurredAt
+                }).ToList()
+                : []
+        });
+
+        // When IncludeAll is false, only return students with violations or disqualified
+        if (!request.IncludeAll)
+        {
+            query = query.Where(s => s.ViolationCount > 0 || s.IsDisqualified);
+        }
+
+        List<StudentViolationSummaryDto> students = query
             .OrderByDescending(s => s.ViolationCount)
             .ToList();
 
