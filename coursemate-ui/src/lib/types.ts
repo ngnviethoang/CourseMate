@@ -470,7 +470,7 @@ export interface LectureOutline {
 
 export interface OutlineDto {
   lessonId: string
-  lessonMaterialId?: string
+  lessonMaterialId: string
   lectureOutline: LectureOutline
 }
 

@@ -1,6 +1,7 @@
 using CourseMate.Application.Commands.Chapters;
 using CourseMate.Application.Commands.Courses;
 using CourseMate.Application.Commands.Lessons;
+using CourseMate.Application.Events;
 using CourseMate.Application.Queries.Chapters;
 using CourseMate.Application.Queries.Courses;
 using CourseMate.Application.Queries.Lessons;
@@ -248,6 +249,8 @@ public class CourseController : ControllerBase
             Content = stream.ToArray(),
             PromptType = LessonMaterialPromptType.BulletSlide
         });
+
+        await _mediator.Publish(new LessonMaterialCreatedEvent(result.LessonMaterialId, result.LessonId, LessonMaterialPromptType.BulletSlide));
 
         return Ok(result);
     }

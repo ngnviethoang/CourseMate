@@ -105,30 +105,19 @@ public class GenerateOutlineJob
             await _dbContext.SaveChangesAsync(ct);
             _logger.LogInformation("Finished generate outline for lesson {LessonId}", lessonMaterial.LessonId);
 
-            if (lessonMaterial.UserId.HasValue)
-            {
-                await _notificationService.CreateAndSendAsync(
-                    lessonMaterial.UserId.Value,
-                    "Tạo outline thành công",
-                    "Outline cho bài giảng đã được tạo xong.",
-                    ct);
-            }
 
-            if (lessonMaterial.UserId.HasValue)
-            {
-                await _notificationService.NotifyDocumentProcessedAsync(
-                    new NotificationDto
-                    {
-                        Id = Guid.NewGuid(),
-                        ReceiverId = lessonMaterial.UserId.Value,
-                        LessonId = lessonMaterial.LessonId,
-                        Title = "Document processed",
-                        Message = "Outline đã sẵn sàng.",
-                        IsRead = false,
-                        CreationTime = DateTimeOffset.UtcNow
-                    },
-                    ct);
-            }
+            await _notificationService.NotifyDocumentProcessedAsync(
+                new NotificationDto
+                {
+                    Id = Guid.NewGuid(),
+                    ReceiverId = lessonMaterial.UserId ?? Guid.Empty,
+                    LessonId = lessonMaterial.LessonId,
+                    Title = "Document processed",
+                    Message = "Outline đã sẵn sàng.",
+                    IsRead = false,
+                    CreationTime = DateTimeOffset.UtcNow
+                },
+                ct);
         }
         catch
         {
@@ -136,22 +125,18 @@ public class GenerateOutlineJob
             _dbContext.LessonMaterials.Update(lessonMaterial);
             await _dbContext.SaveChangesAsync(ct);
 
-            if (lessonMaterial.UserId.HasValue)
-            {
-                await _notificationService.NotifyDocumentProcessedAsync(
-                    new NotificationDto
-                    {
-                        Id = Guid.NewGuid(),
-                        ReceiverId = lessonMaterial.UserId.Value,
-                        LessonId = lessonMaterial.LessonId,
-                        Title = "Document processed",
-                        Message = "Outline tạo thất bại.",
-                        IsRead = false,
-                        CreationTime = DateTimeOffset.UtcNow
-                    },
-                    ct);
-            }
-
+            await _notificationService.NotifyDocumentProcessedAsync(
+                new NotificationDto
+                {
+                    Id = Guid.NewGuid(),
+                    ReceiverId = lessonMaterial.UserId ?? Guid.Empty,
+                    LessonId = lessonMaterial.LessonId,
+                    Title = "Document processed",
+                    Message = "Outline tạo thất bại.",
+                    IsRead = false,
+                    CreationTime = DateTimeOffset.UtcNow
+                },
+                ct);
             throw;
         }
     }

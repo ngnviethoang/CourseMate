@@ -1,21 +1,18 @@
 using System.Diagnostics;
-using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization.Metadata;
-using CourseMate.Contracts.Attributes;
+using CourseMate.Contracts.Json;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace CourseMate.Application.Behaviors;
 
 public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
 {
-    private const string MaskedValue = "***";
     private const int SlowRequestThresholdMs = 5000;
 
-    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    private static readonly JsonSerializerSettings _jsonSerializerSettings = new()
     {
-        TypeInfoResolver = new SensitiveDataMaskingResolver()
+        ContractResolver = new SensitiveDataMaskingContractResolver("***")
     };
 
     private readonly ILogger<LoggingBehavior<TRequest, TResponse>> _logger;
@@ -47,49 +44,13 @@ public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
         return response;
     }
 
-    protected virtual string FilterSensitiveInformationOnRequest(TRequest request)
+    private static string FilterSensitiveInformationOnRequest(TRequest request)
     {
-        return JsonSerializer.Serialize(request, JsonSerializerOptions);
+        return JsonConvert.SerializeObject(request, _jsonSerializerSettings);
     }
 
-    protected virtual string FilterSensitiveInformationOnResponse(TResponse response)
+    private string FilterSensitiveInformationOnResponse(TResponse response)
     {
-        return JsonSerializer.Serialize(response, JsonSerializerOptions);
-    }
-
-    private sealed class SensitiveDataMaskingResolver : DefaultJsonTypeInfoResolver
-    {
-        public SensitiveDataMaskingResolver()
-        {
-            Modifiers.Add(MaskSensitiveStringProperties);
-        }
-
-        private static void MaskSensitiveStringProperties(JsonTypeInfo jsonTypeInfo)
-        {
-            if (jsonTypeInfo.Kind != JsonTypeInfoKind.Object)
-            {
-                return;
-            }
-
-            foreach (JsonPropertyInfo property in jsonTypeInfo.Properties)
-            {
-                if (property.PropertyType != typeof(string))
-                {
-                    continue;
-                }
-
-                if (property.AttributeProvider is not PropertyInfo propertyInfo)
-                {
-                    continue;
-                }
-
-                if (propertyInfo.GetCustomAttribute<SensitiveDataAttribute>() == null)
-                {
-                    continue;
-                }
-
-                property.Get = _ => MaskedValue;
-            }
-        }
+        return JsonConvert.SerializeObject(response, _jsonSerializerSettings);
     }
 }

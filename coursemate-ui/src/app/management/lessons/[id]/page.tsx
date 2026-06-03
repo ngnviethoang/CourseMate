@@ -1285,7 +1285,7 @@ export default function LessonDetailPage() {
           <div className="rounded-xl bg-card p-6 shadow-md border-0 space-y-4">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-semibold">Generate slide content</h2>
+                <h2 className="text-lg font-semibold">Tạo nội dung slide</h2>
                 <p className="text-sm text-muted-foreground">
                   Tải tài liệu DOC/DOCX để AI tạo bullet ý chính cho slide từ nội dung bài video.
                 </p>
@@ -1297,7 +1297,7 @@ export default function LessonDetailPage() {
                 onClick={() => setShowVideoSlideAssist(prev => !prev)}
               >
                 <Sparkles className="h-4 w-4" />
-                {showVideoSlideAssist ? 'Ẩn công cụ' : 'Generate slide content'}
+                {showVideoSlideAssist ? 'Ẩn công cụ' : 'Tạo nội dung slide'}
               </Button>
             </div>
             {showVideoSlideAssist && <AiMaterialSection lessonId={id} />}

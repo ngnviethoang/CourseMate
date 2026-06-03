@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 import {
   Upload,
   Loader2,
@@ -10,6 +11,7 @@ import {
   ChevronDown,
   ChevronUp,
   Save,
+  Download,
   Link2,
   Pencil,
   Check,
@@ -18,7 +20,6 @@ import {
   Layout,
   ChevronLeft,
   ChevronRight,
-  Maximize2,
   Plus
 } from 'lucide-react'
 import useEmblaCarousel from 'embla-carousel-react'
@@ -26,22 +27,26 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { getAccessToken } from '@/lib/auth-token.util'
 import { lessonMaterialService } from '@/lib/lesson-material-service'
 import type { LectureOutline, LectureSlide, OutlineDto } from '@/lib/types'
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type UploadState = 'idle' | 'uploading' | 'processing' | 'done' | 'error'
 
+const PROCESSING_PARTICLES = [
+  { top: '12%', left: '18%', duration: '1.2s' },
+  { top: '24%', left: '76%', duration: '1.8s' },
+  { top: '42%', left: '58%', duration: '1.4s' },
+  { top: '61%', left: '22%', duration: '2s' },
+  { top: '73%', left: '68%', duration: '1.6s' },
+  { top: '86%', left: '44%', duration: '1.3s' }
+] as const
+
 // ─── Editable Slide ───────────────────────────────────────────────────────────
-function EditableSlide({
-  slide,
-  index,
-  onChange
-}: {
-  slide: LectureSlide
-  index: number
-  onChange: (updated: LectureSlide) => void
-}) {
+function EditableSlide({ slide, onChange }: { slide: LectureSlide; onChange: (updated: LectureSlide) => void }) {
   const [expanded, setExpanded] = useState(true)
   const [editingTitle, setEditingTitle] = useState(false)
   const [titleDraft, setTitleDraft] = useState(slide.title)
@@ -155,14 +160,14 @@ function EditableSlide({
               className="text-xs font-semibold text-primary hover:text-primary/80 flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-primary/5 transition-colors"
             >
               <Plus className="h-3.5 w-3.5" />
-              Add Bullet Point
+              Thêm gạch đầu dòng
             </button>
           </div>
 
           {slide.relatedLinks?.length > 0 && (
             <div className="pt-4 shadow-md border-0 border-t-0 -dashed space-y-2">
               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-                <Link2 className="h-3 w-3" /> Related Context
+                <Link2 className="h-3 w-3" /> Tài liệu liên quan
               </p>
               <div className="flex flex-wrap gap-2">
                 {slide.relatedLinks.map((link, li) => (
@@ -187,20 +192,25 @@ function EditableSlide({
 function SlidePreviewer({ slides }: { slides: LectureSlide[] }) {
   const [emblaRef, emblaApi] = useEmblaCarousel()
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [canScrollPrev, setCanScrollPrev] = useState(false)
+  const [canScrollNext, setCanScrollNext] = useState(slides.length > 1)
 
-  const onSelect = useCallback(() => {
+  const syncNavigationState = useCallback(() => {
     if (!emblaApi) return
     setSelectedIndex(emblaApi.selectedScrollSnap())
+    setCanScrollPrev(emblaApi.canScrollPrev())
+    setCanScrollNext(emblaApi.canScrollNext())
   }, [emblaApi])
 
   useEffect(() => {
     if (!emblaApi) return
-    onSelect()
-    emblaApi.on('select', onSelect)
+    emblaApi.on('select', syncNavigationState)
+    emblaApi.on('reInit', syncNavigationState)
     return () => {
-      emblaApi.off('select', onSelect)
+      emblaApi.off('select', syncNavigationState)
+      emblaApi.off('reInit', syncNavigationState)
     }
-  }, [emblaApi, onSelect])
+  }, [emblaApi, syncNavigationState])
 
   return (
     <div className="space-y-6">
@@ -253,18 +263,22 @@ function SlidePreviewer({ slides }: { slides: LectureSlide[] }) {
 
         {/* Navigation Buttons */}
         <Button
+          type="button"
           variant="outline"
           size="icon"
-          className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 -white/20 text-white hover:bg-white/20 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 -white/20 text-white hover:bg-white/20 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-40 disabled:hover:bg-white/10"
           onClick={() => emblaApi?.scrollPrev()}
+          disabled={!canScrollPrev}
         >
           <ChevronLeft className="h-6 w-6" />
         </Button>
         <Button
+          type="button"
           variant="outline"
           size="icon"
-          className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 -white/20 text-white hover:bg-white/20 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 -white/20 text-white hover:bg-white/20 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-40 disabled:hover:bg-white/10"
           onClick={() => emblaApi?.scrollNext()}
+          disabled={!canScrollNext}
         >
           <ChevronRight className="h-6 w-6" />
         </Button>
@@ -274,6 +288,7 @@ function SlidePreviewer({ slides }: { slides: LectureSlide[] }) {
       <div className="flex flex-wrap justify-center gap-2">
         {slides.map((_, i) => (
           <button
+            type="button"
             key={i}
             onClick={() => emblaApi?.scrollTo(i)}
             className={`h-1.5 transition-all rounded-full ${selectedIndex === i ? 'w-8 bg-primary' : 'w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50'}`}
@@ -335,7 +350,7 @@ function OutlineEditor({
             onClick={() => setView('edit')}
           >
             <Layout className="h-4 w-4" />
-            Designer
+            Soạn thảo
           </Button>
           <Button
             variant={view === 'preview' ? 'secondary' : 'ghost'}
@@ -349,8 +364,15 @@ function OutlineEditor({
         </div>
 
         <div className="flex items-center gap-3">
+          <a href="/templates/slide-content-template-dark.pptx" download="slide-content-template-dark.pptx">
+            <Button type="button" variant="outline" size="sm" className="gap-2">
+              <Download className="h-4 w-4" />
+              Tải template slide
+            </Button>
+          </a>
           {view === 'edit' && (
             <Button
+              type="button"
               onClick={handleSave}
               disabled={saving}
               size="sm"
@@ -396,12 +418,7 @@ function OutlineEditor({
           {/* Slides List */}
           <div className="space-y-4">
             {draft.slides.map((slide, i) => (
-              <EditableSlide
-                key={slide.slideNumber}
-                slide={slide}
-                index={i}
-                onChange={updated => updateSlide(i, updated)}
-              />
+              <EditableSlide key={slide.slideNumber} slide={slide} onChange={updated => updateSlide(i, updated)} />
             ))}
           </div>
 
@@ -439,82 +456,87 @@ function OutlineEditor({
 // ─── Main Component ────────────────────────────────────────────────────────────
 export function AiMaterialSection({ lessonId }: { lessonId: string }) {
   const fileRef = useRef<HTMLInputElement>(null)
+  const notificationConnectionRef = useRef<HubConnection | null>(null)
   const [uploadState, setUploadState] = useState<UploadState>('idle')
   const [outline, setOutline] = useState<OutlineDto | null>(null)
-  const [materialId, setMaterialId] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [pollingCount, setPollingCount] = useState(0)
 
-  // Poll for outline after upload
-  const pollOutline = useCallback(async (lessonId: string, attempts = 0, maxAttempts = 40) => {
-    if (attempts >= maxAttempts) {
-      setUploadState('error')
-      toast.error('Quá trình hỗ trợ làm bài giảng đã quá thời gian. Vui lòng thử lại.')
-      return
-    }
-    try {
-      const result = await lessonMaterialService.getOutline(lessonId)
-      const hasSlides = result?.lectureOutline?.slides?.length || 0 > 0
-      if (hasSlides) {
-        setOutline(result)
-        setUploadState('done')
-        toast.success('Dàn ý bài giảng đã sẵn sàng! 🎉')
-        return
-      }
-    } catch {
-      // Ignore errors while polling — outline may not be ready yet
-    }
-    setPollingCount(attempts + 1)
-    setTimeout(() => pollOutline(lessonId, attempts + 1, maxAttempts), 3000)
+  const hasSlides = useCallback((result: OutlineDto | null | undefined) => {
+    return (result?.lectureOutline?.slides?.length ?? 0) > 0
   }, [])
 
-  // ── On mount: check if AI is already running or done for this lesson ──────
-  // This handles the case where file was uploaded from the chapter modal
-  // and user was redirected here — we resume the correct state automatically.
+  const loadOutline = useCallback(async () => {
+    const result = await lessonMaterialService.getOutline(lessonId)
+
+    if (hasSlides(result)) {
+      setOutline(result)
+      setUploadState('done')
+      return true
+    }
+
+    return false
+  }, [hasSlides, lessonId])
+
   useEffect(() => {
-    if (!lessonId) return
-    let cancelled = false
+    if (!API_BASE_URL) return
 
-    const checkExistingOutline = async () => {
+    const connection = new HubConnectionBuilder()
+      .withUrl(`${API_BASE_URL}/hubs/notification`, {
+        accessTokenFactory: () => getAccessToken() ?? ''
+      })
+      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
+      .configureLogging(LogLevel.Warning)
+      .build()
+
+    notificationConnectionRef.current = connection
+
+    connection.on('DocumentProcessed', (notification: { lessonId?: string; message?: string }) => {
+      if (notification?.lessonId && notification.lessonId !== lessonId) return
+
+      const loweredMessage = (notification?.message ?? '').toLowerCase()
+      if (loweredMessage.includes('thất bại') || loweredMessage.includes('failed')) {
+        setUploadState('error')
+        toast.error('Tạo dàn ý thất bại. Vui lòng thử lại với tài liệu khác.')
+        return
+      }
+
+      void loadOutline()
+        .then(loaded => {
+          if (loaded) {
+            setSelectedFile(null)
+            toast.success('Dàn ý bài giảng đã sẵn sàng.')
+          }
+        })
+        .catch(() => {
+          toast.error('Không thể đồng bộ dàn ý mới nhất.')
+        })
+    })
+
+    const startConnection = async () => {
       try {
-        const result = await lessonMaterialService.getOutline(lessonId)
-        if (cancelled) return
-
-        const hasSlides = result?.lectureOutline?.slides?.length || 0 > 0
-        const hasMaterial = result?.lessonMaterialId
-
-        if (hasSlides) {
-          // AI already finished → show editor immediately
-          setOutline(result)
-          setMaterialId(result?.lessonMaterialId ?? '')
-          setUploadState('done')
-        } else if (hasMaterial) {
-          // Material exists but AI still processing → resume polling
-          setMaterialId(result.lessonMaterialId)
-          setUploadState('processing')
-          pollOutline(lessonId)
-        }
-        // else: no material yet → stay idle (show drop zone)
+        await connection.start()
       } catch {
-        // API returned empty / error → lesson has no material yet, stay idle
+        // Keep manual refresh available if realtime is unavailable.
       }
     }
+    void startConnection()
 
-    checkExistingOutline()
     return () => {
-      cancelled = true
+      connection.off('DocumentProcessed')
+      if (notificationConnectionRef.current === connection) {
+        notificationConnectionRef.current = null
+      }
+      void connection.stop().catch(() => {})
     }
-  }, [lessonId, pollOutline])
+  }, [lessonId, loadOutline])
 
   const startGeneration = async () => {
     if (!selectedFile) return
     setUploadState('uploading')
     try {
-      const result = await lessonMaterialService.uploadMaterial(lessonId, selectedFile, 'BulletSlide')
-      setMaterialId(result.lessonMaterialId)
+      await lessonMaterialService.uploadMaterial(lessonId, selectedFile, 'BulletSlide')
       setUploadState('processing')
-      toast.info('File đã tải lên! Hệ thống đang bắt đầu phân tích nội dung...')
-      pollOutline(lessonId)
+      toast.info('File đã tải lên. Hệ thống sẽ tự đồng bộ khi xử lý xong.')
     } catch {
       setUploadState('error')
       toast.error('Tải tệp lên thất bại. Vui lòng thử lại.')
@@ -545,25 +567,16 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
         setOutline(result)
         setUploadState('done')
         toast.success('Dàn ý đã được tải!')
+      } else if (result?.lessonMaterialId) {
+        setUploadState('processing')
+        toast.info('Tài liệu đang được xử lý. Hệ thống sẽ cập nhật khi hoàn tất.')
       } else {
-        toast.info('Hệ thống vẫn đang xử lý. Vui lòng chờ trong giây lát.')
+        toast.info('Chưa có dữ liệu slide được tạo cho bài học này.')
       }
     } catch {
       toast.error('Không thể tải dàn ý.')
     }
   }
-
-  const [particles, setParticles] = useState<{ top: string; left: string; duration: string }[]>([])
-
-  useEffect(() => {
-    setParticles(
-      [...Array(6)].map(() => ({
-        top: `${Math.random() * 100}%`,
-        left: `${Math.random() * 100}%`,
-        duration: `${1 + Math.random() * 2}s`
-      }))
-    )
-  }, [])
 
   return (
     <div className="rounded-xl bg-card shadow-md border-0 shadow-md border-0 overflow-hidden">
@@ -578,14 +591,13 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
             <p className="text-xs text-muted-foreground">Tải file Word/PDF để tự động tạo dàn ý bài học</p>
           </div>
         </div>
-        {uploadState === 'processing' && (
-          <button
-            onClick={handleManualRefresh}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <RefreshCw className="h-3.5 w-3.5" /> Refresh
-          </button>
-        )}
+        <button
+          onClick={handleManualRefresh}
+          className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <RefreshCw className="h-3.5 w-3.5" />
+          {uploadState === 'processing' ? 'Kiểm tra lại' : 'Tải dữ liệu AI'}
+        </button>
       </div>
 
       <div className="p-6">
@@ -613,7 +625,7 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
                 </div>
                 {uploadState === 'error' && (
                   <Badge variant="destructive" className="mt-2">
-                    Something went wrong. Try again.
+                    Có lỗi xảy ra. Vui lòng thử lại.
                   </Badge>
                 )}
               </div>
@@ -634,7 +646,7 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
                           {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                         </Badge>
                         <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">
-                          Ready to process
+                          Sẵn sàng xử lý
                         </span>
                       </div>
                     </div>
@@ -706,7 +718,7 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
                 <Sparkles className="h-14 w-14 text-white animate-pulse" />
                 {/* Floating particles */}
                 <div className="absolute inset-0 overflow-hidden">
-                  {particles.map((p, i) => (
+                  {PROCESSING_PARTICLES.map((p, i) => (
                     <div
                       key={i}
                       className="absolute h-1 w-1 bg-white rounded-full opacity-40 animate-ping"
@@ -737,7 +749,7 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
                   ))}
                 </div>
                 <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-[0.3em]">
-                  Attempt {pollingCount}
+                  Đang chờ cập nhật realtime
                 </span>
               </div>
             </div>

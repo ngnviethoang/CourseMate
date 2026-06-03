@@ -1,6 +1,8 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using CourseMate.Application.Services.AIServices;
+using CourseMate.Application.Services.NotificationServices;
+using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
@@ -15,57 +17,72 @@ using Pgvector;
 
 namespace CourseMate.Application.BackgroundJobs;
 
-public class ProcessFileEmbeddingJob
+public class GenerateLessonMaterialEmbeddingJob
 {
     private readonly IAiService _aIService;
     private readonly CourseMateDbContext _dbContext;
-    private readonly ILogger<ProcessFileEmbeddingJob> _logger;
+    private readonly ILogger<GenerateLessonMaterialEmbeddingJob> _logger;
+    private readonly INotificationService _notificationService;
     private readonly StorageOptions _storageOptions;
 
-    public ProcessFileEmbeddingJob(
+    public GenerateLessonMaterialEmbeddingJob(
         CourseMateDbContext dbContext,
         IOptions<StorageOptions> storageOptions,
-        ILogger<ProcessFileEmbeddingJob> logger,
-        IAiService aIService)
+        ILogger<GenerateLessonMaterialEmbeddingJob> logger,
+        IAiService aIService,
+        INotificationService notificationService)
     {
         _dbContext = dbContext;
         _logger = logger;
         _aIService = aIService;
+        _notificationService = notificationService;
         _storageOptions = storageOptions.Value;
     }
 
     [AutomaticRetry(Attempts = 0)]
-    public async Task ExecuteAsync(Guid fileId, CancellationToken ct)
+    public async Task ExecuteAsync(Guid lessonMaterialId, CancellationToken ct)
     {
-        _logger.LogInformation("Starting ProcessFileEmbeddingJob for file ID: {FileId}", fileId);
-        FileEntry? fileEntry = await _dbContext.FileEntries.FirstOrDefaultAsync(i => i.Id == fileId, ct);
-        if (fileEntry == null)
+        _logger.LogInformation("Starting GenerateLessonMaterialEmbeddingJob for lesson material ID: {LessonMaterialId}", lessonMaterialId);
+        LessonMaterial? lessonMaterial = await _dbContext.LessonMaterials.FirstOrDefaultAsync(i => i.Id == lessonMaterialId, ct);
+        if (lessonMaterial == null)
         {
-            _logger.LogWarning("File entry not found for ID: {FileId}", fileId);
+            _logger.LogWarning("Lesson material not found for ID: {LessonMaterialId}", lessonMaterialId);
             return;
         }
 
-        if (!File.Exists(Path.Combine(_storageOptions.RootPath, fileEntry.FileLocation)))
+        FileEntry? fileEntry = await _dbContext.FileEntries.FirstOrDefaultAsync(i => i.Id == lessonMaterial.DocumentFileId, ct);
+        if (fileEntry == null)
         {
-            _logger.LogWarning("File does not exist at path: {FilePath} for file ID: {FileId}", fileEntry.FileLocation, fileId);
-            return;
+            _logger.LogWarning("File entry not found for lesson material ID: {LessonMaterialId}, file ID: {FileId}", lessonMaterialId, lessonMaterial.DocumentFileId);
+            await MarkFailedAndNotifyAsync(lessonMaterial, "Không tìm thấy tài liệu nguồn để tạo slide.", ct);
+            throw new InvalidOperationException($"File entry not found for lesson material {lessonMaterialId}.");
+        }
+
+        string physicalFilePath = Path.Combine(_storageOptions.RootPath, fileEntry.FileLocation);
+        if (!File.Exists(physicalFilePath))
+        {
+            _logger.LogWarning("File does not exist at path: {FilePath} for file ID: {FileId}", fileEntry.FileLocation, lessonMaterialId);
+            await MarkFailedAndNotifyAsync(lessonMaterial, "Tệp tài liệu nguồn không còn tồn tại.", ct);
+            throw new FileNotFoundException("Source file for lesson material was not found.", physicalFilePath);
         }
 
         string fileExtension = Path.GetExtension(fileEntry.FileName).ToLowerInvariant();
-        if (fileExtension is ".doc" or ".docx" or ".pdf" or ".txt")
+        if (fileExtension is not ".doc" and not ".docx" and not ".pdf" and not ".txt")
         {
-            _logger.LogInformation("Reading file content for: {FileName} (FileID: {FileId})", fileEntry.FileName, fileId);
-            // NOTE: ReadAllTextAsync may not work properly for binary files like .pdf/.docx without a library.
-            // This seems to be the current implementation, logging it clearly.
-            string content = ReadWordText(fileEntry.FileLocation);
+            _logger.LogWarning("Unsupported file type {FileExtension} for lesson material ID: {LessonMaterialId}", fileExtension, lessonMaterialId);
+            await MarkFailedAndNotifyAsync(lessonMaterial, "Định dạng tài liệu chưa được hỗ trợ để tạo slide.", ct);
+            throw new InvalidOperationException($"Unsupported file type {fileExtension} for lesson material {lessonMaterialId}.");
+        }
 
+        try
+        {
+            _logger.LogInformation("Reading file content for: {FileName} (FileID: {FileId})", fileEntry.FileName, lessonMaterialId);
+            string content = ReadWordText(physicalFilePath);
             IEnumerable<Chunk> chunks = ChunkSentences(content);
             int chunkCount = 1;
-            string tempDir = Path.Combine(_storageOptions.TempPath, fileEntry.FileLocation);
-
             foreach (Chunk chunk in chunks)
             {
-                _logger.LogDebug("Generating embedding for chunk {ChunkIndex} of file {FileId}", chunkCount, fileId);
+                _logger.LogDebug("Generating embedding for chunk {ChunkIndex} of file {FileId}", chunkCount, lessonMaterialId);
                 string chunkFileName = $"{fileEntry.Id}_chunk{chunkCount}.txt";
                 string chunkFilePath = Path.Combine(_storageOptions.TempPath, chunkFileName);
                 await using FileStream stream = new(chunkFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
@@ -91,19 +108,43 @@ public class ProcessFileEmbeddingJob
             fileEntry.UploadedChunks = chunkCount;
             _dbContext.FileEntries.Update(fileEntry);
 
-            LessonMaterial? lessonMaterial = await _dbContext.LessonMaterials
-                .Where(lm => lm.DocumentFileId == fileId)
-                .OrderByDescending(lm => lm.CreationTime)
-                .FirstOrDefaultAsync(ct);
-            if (lessonMaterial != null)
-            {
-                lessonMaterial.Status = LessonMaterialState.GeneratingOutline;
-                _dbContext.LessonMaterials.Update(lessonMaterial);
-            }
+            lessonMaterial.Status = LessonMaterialState.GeneratingOutline;
+            _dbContext.LessonMaterials.Update(lessonMaterial);
 
             await _dbContext.SaveChangesAsync(ct);
-            _logger.LogInformation("Successfully processed file {FileId} with {ChunkCount} embeddings.", fileId, chunkCount);
+            _logger.LogInformation("Successfully processed file {FileId} with {ChunkCount} embeddings.", lessonMaterialId, chunkCount);
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to generate embeddings for lesson material ID: {LessonMaterialId}", lessonMaterialId);
+            await MarkFailedAndNotifyAsync(lessonMaterial, "Tạo dữ liệu phân tích cho slide thất bại.", ct);
+            throw;
+        }
+    }
+
+    private async Task MarkFailedAndNotifyAsync(LessonMaterial lessonMaterial, string message, CancellationToken ct)
+    {
+        lessonMaterial.Status = LessonMaterialState.Failed;
+        _dbContext.LessonMaterials.Update(lessonMaterial);
+        await _dbContext.SaveChangesAsync(ct);
+
+        if (!lessonMaterial.UserId.HasValue)
+        {
+            return;
+        }
+
+        await _notificationService.NotifyDocumentProcessedAsync(
+            new NotificationDto
+            {
+                Id = Guid.NewGuid(),
+                ReceiverId = lessonMaterial.UserId.Value,
+                LessonId = lessonMaterial.LessonId,
+                Title = "Document processed",
+                Message = message,
+                IsRead = false,
+                CreationTime = DateTimeOffset.UtcNow
+            },
+            ct);
     }
 
     private static string ReadWordText(string filePath)

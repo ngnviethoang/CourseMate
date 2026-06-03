@@ -1,4 +1,3 @@
-using CourseMate.Application.Events;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
@@ -10,6 +9,7 @@ using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace CourseMate.Application.Commands.Lessons;
 
@@ -17,7 +17,10 @@ public class CreateLessonMaterialCommand : IRequest<ProcessingStatusDto>
 {
     public Guid LessonId { get; set; }
     public string FileName { get; set; } = string.Empty;
+
+    [JsonIgnore]
     public byte[] Content { get; set; } = [];
+
     public LessonMaterialPromptType PromptType { get; set; } = LessonMaterialPromptType.BulletSlide;
 }
 
@@ -61,12 +64,11 @@ public sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandler<
             FileType.Document);
 
         DbContext.FileEntries.Add(fileEntry);
-        LessonMaterial material = new(Guid.NewGuid(), request.LessonId, fileEntry.Id, LessonMaterialState.GeneratingEmbedding, string.Empty);
-        DbContext.LessonMaterials.Add(material);
-        await _mediator.Publish(new LessonMaterialCreatedEvent(material.Id, fileEntryId, material.LessonId, request.PromptType), ct);
+        LessonMaterial lessonMaterial = new(Guid.NewGuid(), request.LessonId, fileEntry.Id, LessonMaterialState.GeneratingEmbedding, string.Empty);
+        DbContext.LessonMaterials.Add(lessonMaterial);
         return new ProcessingStatusDto
         {
-            LessonMaterialId = fileEntryId,
+            LessonMaterialId = lessonMaterial.Id,
             LessonId = request.LessonId
         };
     }
