@@ -102,7 +102,6 @@ try
     builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate")!);
     builder.Services.AddHangfireServer();
     builder.Services.AddSignalR();
-    builder.Services.AddTransient<IFileStorageManager, LocalFileStorageManager>();
     builder.Services.AddTransient<INotificationService, NotificationService>();
     builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
