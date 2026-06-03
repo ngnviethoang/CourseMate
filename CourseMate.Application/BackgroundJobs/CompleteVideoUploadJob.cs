@@ -1,3 +1,4 @@
+using CourseMate.Application.Services.FileStorageServices;
 using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
@@ -16,17 +17,20 @@ namespace CourseMate.Application.BackgroundJobs;
 public class CompleteVideoUploadJob
 {
     private readonly CourseMateDbContext _dbContext;
+    private readonly IFileStorageManager _fileStorageManager;
     private readonly ILogger<CompleteVideoUploadJob> _logger;
     private readonly INotificationService _notificationService;
     private readonly StorageOptions _storageOptions;
 
     public CompleteVideoUploadJob(
         CourseMateDbContext dbContext,
+        IFileStorageManager fileStorageManager,
         ILogger<CompleteVideoUploadJob> logger,
         INotificationService notificationService,
         IOptions<StorageOptions> storageOptions)
     {
         _dbContext = dbContext;
+        _fileStorageManager = fileStorageManager;
         _logger = logger;
         _notificationService = notificationService;
         _storageOptions = storageOptions.Value;
@@ -60,7 +64,7 @@ public class CompleteVideoUploadJob
 
             foreach (FileChunk chunk in fileChunks)
             {
-                if (!File.Exists(Path.Combine(_storageOptions.TempPath, chunk.ChunkLocation)))
+                if (!await _fileStorageManager.ExistsAsync(StorageFileEntry.FromFileChunk(chunk), ct))
                 {
                     throw new BusinessException(ErrorCode.ChunkFileMissing,
                         $"Chunk {chunk.ChunkIndex} for upload '{fileEntry.Id}' is missing.");
@@ -68,14 +72,19 @@ public class CompleteVideoUploadJob
             }
 
             string filePath = Path.Combine(_storageOptions.RootPath, fileEntry.FileLocation);
+            string? folder = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrWhiteSpace(folder) && !Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+
             await using (FileStream outputStream = new(filePath, FileMode.CreateNew, FileAccess.Write))
             {
                 foreach (FileChunk chunk in fileChunks)
                 {
-                    byte[] chunkData = await File.ReadAllBytesAsync(
-                        Path.Combine(_storageOptions.TempPath, chunk.ChunkLocation), ct);
-                    await outputStream.WriteAsync(chunkData, ct);
-                    File.Delete(Path.Combine(_storageOptions.TempPath, chunk.ChunkLocation));
+                    await using Stream chunkStream = await _fileStorageManager.ReadAsync(StorageFileEntry.FromFileChunk(chunk), ct);
+                    await chunkStream.CopyToAsync(outputStream, ct);
+                    await _fileStorageManager.DeleteAsync(StorageFileEntry.FromFileChunk(chunk), ct);
                 }
             }
 

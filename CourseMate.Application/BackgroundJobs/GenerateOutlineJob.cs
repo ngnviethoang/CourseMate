@@ -1,4 +1,5 @@
 using CourseMate.Application.Services.AIServices;
+using CourseMate.Application.Services.FileStorageServices;
 using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
@@ -19,6 +20,7 @@ public class GenerateOutlineJob
 {
     private readonly IAiService _aiService;
     private readonly CourseMateDbContext _dbContext;
+    private readonly IFileStorageManager _fileStorageManager;
     private readonly ILogger<GenerateOutlineJob> _logger;
     private readonly INotificationService _notificationService;
 
@@ -26,11 +28,13 @@ public class GenerateOutlineJob
         CourseMateDbContext dbContext,
         ILogger<GenerateOutlineJob> logger,
         IAiService aiService,
+        IFileStorageManager fileStorageManager,
         INotificationService notificationService)
     {
         _dbContext = dbContext;
         _logger = logger;
         _aiService = aiService;
+        _fileStorageManager = fileStorageManager;
         _notificationService = notificationService;
     }
 
@@ -83,7 +87,9 @@ public class GenerateOutlineJob
             List<string> chunks = [];
             foreach (FileChunk fileChunk in fileChunks)
             {
-                chunks.Add(await File.ReadAllTextAsync(fileChunk.ChunkLocation, ct));
+                await using Stream stream = await _fileStorageManager.ReadAsync(StorageFileEntry.FromFileChunk(fileChunk), ct);
+                using StreamReader reader = new(stream);
+                chunks.Add(await reader.ReadToEndAsync(ct));
             }
 
             string docContext = string.Join("\n\n---\n\n", chunks);

@@ -1,3 +1,4 @@
+using CourseMate.Application.Services.FileStorageServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Enums;
@@ -28,14 +29,17 @@ public class UploadVideoChunkCommand : IRequest<Unit>
 public sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<UploadVideoChunkCommand, Unit>
 {
     private readonly IEnumerable<string> _allowedImageExtensions = [".mp4"];
+    private readonly IFileStorageManager _fileStorageManager;
     private readonly StorageOptions _storageOptions;
 
     public UploadVideoChunkCommandHandler(
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor,
+        IFileStorageManager fileStorageManager,
         IOptions<StorageOptions> storageOptions)
         : base(dbContext, httpContextAccessor)
     {
+        _fileStorageManager = fileStorageManager;
         _storageOptions = storageOptions.Value;
     }
 
@@ -64,20 +68,26 @@ public sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Uplo
         }
 
         string chunkFileName = $"{fileEntry.Id}_chunk_{request.ChunkIndex}.dat";
-        string chunkFilePath = Path.Combine(_storageOptions.TempPath, chunkFileName);
-        if (File.Exists(chunkFilePath))
+        string chunkFileLocation = Path.Combine("temp", chunkFileName);
+        StorageFileEntry storageChunk = new()
         {
-            File.Delete(chunkFilePath);
+            Id = Guid.NewGuid(),
+            FileName = chunkFileName,
+            FileLocation = chunkFileLocation
+        };
+        if (await _fileStorageManager.ExistsAsync(storageChunk, ct))
+        {
+            await _fileStorageManager.DeleteAsync(storageChunk, ct);
         }
 
-        await using FileStream stream = new(chunkFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-        await stream.WriteAsync(request.Content, ct);
+        await using MemoryStream stream = new(request.Content);
+        await _fileStorageManager.CreateAsync(storageChunk, stream, ct);
 
         FileChunk fileChunk = new(
-            Guid.NewGuid(),
+            storageChunk.Id,
             fileEntry.Id,
             request.ChunkIndex,
-            Util.NormalizeRelativePath(_storageOptions.TempPath, chunkFilePath),
+            chunkFileLocation,
             request.Content.LongLength,
             true);
         await DbContext.FileChunks.AddAsync(fileChunk, ct);

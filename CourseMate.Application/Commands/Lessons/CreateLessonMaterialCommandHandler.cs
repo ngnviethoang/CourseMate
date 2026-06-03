@@ -1,14 +1,13 @@
+using CourseMate.Application.Services.FileStorageServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
-using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace CourseMate.Application.Commands.Lessons;
@@ -27,13 +26,13 @@ public class CreateLessonMaterialCommand : IRequest<ProcessingStatusDto>
 public sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandler<CreateLessonMaterialCommand, ProcessingStatusDto>
 {
     private readonly IEnumerable<string> _allowedImageExtensions = [".doc", ".docx"];
+    private readonly IFileStorageManager _fileStorageManager;
     private readonly IMediator _mediator;
-    private readonly StorageOptions _storageOptions;
 
-    public CreateLessonMaterialCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor, IOptions<StorageOptions> storageOptions, IMediator mediator) : base(dbContext, httpContextAccessor)
+    public CreateLessonMaterialCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor, IFileStorageManager fileStorageManager, IMediator mediator) : base(dbContext, httpContextAccessor)
     {
+        _fileStorageManager = fileStorageManager;
         _mediator = mediator;
-        _storageOptions = storageOptions.Value;
     }
 
     public override async Task<ProcessingStatusDto> Handle(CreateLessonMaterialCommand request, CancellationToken ct)
@@ -46,22 +45,18 @@ public sealed class CreateLessonMaterialCommandHandler : AbstractCommandHandler<
 
         await EnsureAuthorCourseAsync(request.LessonId, ct);
         Guid userId = CurrentUserId;
-        string userDir = Path.Combine(_storageOptions.RootPath, userId.ToString());
-        Util.CreateDirectoryIfNotExist(userDir);
         Guid fileEntryId = Guid.NewGuid();
         string fileName = $"{fileEntryId}{fileExtension}";
-        string filePath = Path.Combine(userDir, fileName);
-        await using FileStream stream = new(filePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-        await stream.WriteAsync(request.Content, ct);
-
         FileEntry fileEntry = new(fileEntryId,
             fileName,
             request.Content.LongLength,
-            Util.NormalizeRelativePath(_storageOptions.RootPath, filePath),
+            Path.Combine(userId.ToString(), fileName),
             FileStatus.Processing,
             0,
             0, DateTimeOffset.UtcNow,
             FileType.Document);
+        await using MemoryStream stream = new(request.Content);
+        await _fileStorageManager.CreateAsync(StorageFileEntry.FromFileEntry(fileEntry), stream, ct);
 
         DbContext.FileEntries.Add(fileEntry);
         LessonMaterial lessonMaterial = new(Guid.NewGuid(), request.LessonId, fileEntry.Id, LessonMaterialState.GeneratingEmbedding, string.Empty);

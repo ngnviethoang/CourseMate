@@ -1,11 +1,10 @@
+using CourseMate.Application.Services.FileStorageServices;
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace CourseMate.Application.Commands.Files;
 
@@ -16,16 +15,16 @@ public class DeleteFileCommand : IRequest<Unit>
 
 public sealed class DeleteFileCommandHandler : AbstractCommandHandler<DeleteFileCommand, Unit>
 {
-    private readonly StorageOptions _storageOptions;
+    private readonly IFileStorageManager _fileStorageManager;
 
     public DeleteFileCommandHandler(
-        IOptions<StorageOptions> storageOptions,
+        IFileStorageManager fileStorageManager,
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor
     )
         : base(dbContext, httpContextAccessor)
     {
-        _storageOptions = storageOptions.Value;
+        _fileStorageManager = fileStorageManager;
     }
 
     public override async Task<Unit> Handle(DeleteFileCommand request, CancellationToken ct)
@@ -38,23 +37,14 @@ public sealed class DeleteFileCommandHandler : AbstractCommandHandler<DeleteFile
         }
 
         DbContext.FileEntries.Remove(fileEntry);
-
-        string filePath = Path.Combine(_storageOptions.RootPath, fileEntry.FileLocation);
-        if (File.Exists(filePath))
-        {
-            File.Delete(filePath);
-        }
+        await _fileStorageManager.DeleteAsync(StorageFileEntry.FromFileEntry(fileEntry), ct);
 
         List<FileChunk> fileChunks = await DbContext.FileChunks.Where(f => f.FileEntryId == fileEntry.Id).ToListAsync(ct);
         DbContext.FileChunks.RemoveRange(fileChunks);
 
         foreach (FileChunk fileChunk in fileChunks)
         {
-            string chunkPath = Path.Combine(_storageOptions.TempPath, fileChunk.ChunkLocation);
-            if (File.Exists(chunkPath))
-            {
-                File.Delete(chunkPath);
-            }
+            await _fileStorageManager.DeleteAsync(StorageFileEntry.FromFileChunk(fileChunk), ct);
         }
 
         return Unit.Value;
