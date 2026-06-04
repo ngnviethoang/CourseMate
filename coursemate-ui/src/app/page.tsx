@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { ContinueLearning } from '@/components/home/continue-learning'
 import { CategoryDropdown } from '@/components/home/category-dropdown'
 import { RecommendedCourses } from '@/components/home/recommended-courses'
@@ -8,6 +9,9 @@ import { buttonVariants } from '@/components/ui/button'
 import { StudentShell } from '@/components/home/student-shell'
 
 export default function Home() {
+  const searchParams = useSearchParams()
+  const queryParam = searchParams ? (searchParams.get('search') ?? '') : ''
+
   const [searchQuery, setSearchQuery] = useState('')
   const [localSearch, setLocalSearch] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -17,6 +21,10 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoggedIn(document.cookie.includes('accessToken='))
   }, [])
+
+  useEffect(() => {
+    setLocalSearch(queryParam)
+  }, [queryParam])
 
   // Debounced search
   useEffect(() => {

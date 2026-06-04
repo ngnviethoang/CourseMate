@@ -24,7 +24,7 @@ function getUserFromToken() {
   try {
     const token = getAccessToken()
     if (!token) return null
-    const payload = getDecodedToken(token)
+    const payload = getDecodedToken(token) as any
     if (!payload) return null
     const name: string =
       payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ??
@@ -60,12 +60,19 @@ export function StudentHeader({
 
   const [user, setUser] = useState<{ name: string; role: string } | null>(null)
   const [mounted, setMounted] = useState(false)
+  const [localSearchVal, setLocalSearchVal] = useState('')
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setUser(getUserFromToken())
     setMounted(true)
   }, [])
+
+  useEffect(() => {
+    if (searchValue !== undefined) {
+      setLocalSearchVal(searchValue)
+    }
+  }, [searchValue])
 
   const initials = mounted && user?.name ? user.name.slice(0, 2).toUpperCase() : 'U'
   const displayName = mounted && user?.name ? user.name : 'Người dùng'
@@ -76,86 +83,97 @@ export function StudentHeader({
     router.push('/login')
   }
 
-  const showSearch = pathname === '/' && typeof onSearchChange === 'function'
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (typeof onSearchChange !== 'function') {
+      router.push(`/?search=${encodeURIComponent(localSearchVal)}`)
+    }
+  }
+
+  const handleClear = () => {
+    setLocalSearchVal('')
+    if (typeof onClearSearch === 'function') {
+      onClearSearch()
+    } else {
+      router.push('/')
+    }
+  }
+
   const isMyCoursesActive = pathname === '/my-courses'
 
   return (
     <header className="sticky top-0 z-50 bg-background/90 shadow-[0_10px_28px_rgba(15,23,42,0.05)] backdrop-blur-xl supports-[backdrop-filter]:bg-background/70">
-      <div className="mx-auto flex h-[68px] max-w-7xl items-center gap-3 px-4">
-        <Link href="/" className="flex shrink-0 items-center gap-2 rounded-2xl px-1.5 py-1">
-          <CourseMateLogoIcon className="h-8 w-8 rounded-lg" />
-          <span className="text-[17px] font-bold tracking-tight text-foreground">CourseMate</span>
-        </Link>
+      <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between gap-3 px-4">
+        {/* Phần 1: Logo và Navigation Links */}
+        <div className="flex flex-1 items-center gap-6 min-w-0">
+          <Link href="/" className="flex shrink-0 items-center gap-2 rounded-2xl px-1.5 py-1">
+            <CourseMateLogoIcon className="h-8 w-8 rounded-lg" />
+            <span className="text-[17px] font-bold tracking-tight text-foreground">CourseMate</span>
+          </Link>
 
-        <nav className="hidden flex-1 items-center gap-1 md:flex">
-          {NAV_LINKS.map(({ href, label }) => {
-            const active = pathname === href
-            return (
+          <nav className="hidden items-center gap-1 md:flex shrink-0">
+            {NAV_LINKS.map(({ href, label }) => {
+              const active = pathname === href
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`rounded-xl px-3.5 py-2 text-sm font-medium transition-colors whitespace-nowrap ${
+                    active
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'
+                  }`}
+                >
+                  {label}
+                </Link>
+              )
+            })}
+          </nav>
+        </div>
+
+        {/* Phần 2: Thanh tìm kiếm */}
+        <div className="flex flex-1 justify-center min-w-0">
+          <form onSubmit={handleSearchSubmit} className="relative w-full max-w-[400px]">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Tìm khoá học, chủ đề, giảng viên…"
+              className="h-10 rounded-2xl border-transparent bg-muted/55 pl-9 pr-9 shadow-none transition-all focus-visible:bg-background focus-visible:ring-2 focus-visible:ring-primary/25"
+              value={localSearchVal}
+              onChange={event => {
+                const val = event.target.value
+                setLocalSearchVal(val)
+                if (typeof onSearchChange === 'function') {
+                  onSearchChange(val)
+                }
+              }}
+            />
+            {localSearchVal && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </form>
+        </div>
+
+        {/* Phần 3: User actions (Notify, Cart, Avatar, Đăng nhập) */}
+        <div className="flex flex-1 justify-end items-center gap-1.5">
+          {user ? (
+            <>
               <Link
-                key={href}
-                href={href}
-                className={`rounded-xl px-3.5 py-2 text-sm font-medium transition-colors ${
-                  active
+                href="/my-courses"
+                className={`hidden shrink-0 rounded-xl px-3.5 py-2 text-sm font-medium transition-colors md:inline-flex ${
+                  isMyCoursesActive
                     ? 'bg-primary/10 text-primary'
                     : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'
                 }`}
               >
-                {label}
+                Khoá học của tôi
               </Link>
-            )
-          })}
-        </nav>
 
-        {showSearch && (
-          <div className="flex min-w-0 flex-1 items-center gap-2.5">
-            <div className="relative min-w-0 flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Tìm khoá học, chủ đề, giảng viên…"
-                className="h-10 rounded-2xl border-transparent bg-muted/55 pl-9 pr-9 shadow-none transition-all focus-visible:bg-background focus-visible:ring-2 focus-visible:ring-primary/25"
-                value={searchValue ?? ''}
-                onChange={event => onSearchChange(event.target.value)}
-              />
-              {searchValue && (
-                <button
-                  type="button"
-                  onClick={onClearSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-
-            <Link
-              href="/my-courses"
-              className={`shrink-0 rounded-xl px-3.5 py-2 text-sm font-medium transition-colors ${
-                isMyCoursesActive
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'
-              }`}
-            >
-              Khoá học của tôi
-            </Link>
-          </div>
-        )}
-
-        {!showSearch && (
-          <Link
-            href="/my-courses"
-            className={`hidden shrink-0 rounded-xl px-3.5 py-2 text-sm font-medium transition-colors md:inline-flex ${
-              isMyCoursesActive
-                ? 'bg-primary/10 text-primary'
-                : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'
-            }`}
-          >
-            Khoá học của tôi
-          </Link>
-        )}
-
-        <div className="ml-auto flex shrink-0 items-center gap-1.5">
-          {user ? (
-            <>
               <NotificationDropdown />
 
               <Link

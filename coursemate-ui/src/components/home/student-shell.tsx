@@ -24,7 +24,7 @@ export function StudentShell({
   return (
     <div className="min-h-screen bg-background">
       <StudentHeader searchValue={searchValue} onSearchChange={onSearchChange} onClearSearch={onClearSearch} />
-      <main className={cn('mx-auto w-full max-w-7xl px-4 py-8', mainClassName)}>{children}</main>
+      <main className={cn('mx-auto w-full max-w-7xl px-4 py-4', mainClassName)}>{children}</main>
       <footer
         className={cn(
           'mt-10 border-t border-border/60 py-6 text-center text-xs text-muted-foreground',
