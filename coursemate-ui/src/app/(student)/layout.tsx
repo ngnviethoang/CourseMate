@@ -11,5 +11,5 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     return <div className="h-screen w-screen overflow-hidden bg-background">{children}</div>
   }
 
-  return <StudentShell mainClassName="py-8">{children}</StudentShell>
+  return <StudentShell mainClassName="py-4">{children}</StudentShell>
 }
