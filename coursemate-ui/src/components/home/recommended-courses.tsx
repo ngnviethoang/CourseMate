@@ -189,9 +189,15 @@ interface RecommendedCoursesProps {
   searchQuery?: string
   isLoggedIn?: boolean
   selectedCategoryId?: string
+  headerAction?: React.ReactNode
 }
 
-export function RecommendedCourses({ searchQuery, isLoggedIn, selectedCategoryId }: RecommendedCoursesProps) {
+export function RecommendedCourses({
+  searchQuery,
+  isLoggedIn,
+  selectedCategoryId,
+  headerAction
+}: RecommendedCoursesProps) {
   const [courses, setCourses] = useState<CourseDto[]>([])
   const [loading, setLoading] = useState(true)
   const [pageIndex, setPageIndex] = useState(1)
@@ -256,8 +262,7 @@ export function RecommendedCourses({ searchQuery, isLoggedIn, selectedCategoryId
 
   return (
     <section>
-      {/* Header */}
-      <div className="mb-6 flex items-end justify-between">
+      <div className="mb-5 flex items-end justify-between gap-4">
         <div>
           {isRecommended && (
             <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-primary">
@@ -268,6 +273,7 @@ export function RecommendedCourses({ searchQuery, isLoggedIn, selectedCategoryId
           <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
           <p className="mt-0.5 text-sm text-muted-foreground">{subtitle}</p>
         </div>
+        {headerAction && <div className="shrink-0">{headerAction}</div>}
       </div>
 
       {loading && courses.length === 0 ? (

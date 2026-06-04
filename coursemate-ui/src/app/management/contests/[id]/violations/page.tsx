@@ -26,23 +26,39 @@ import {
   Info
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import {
-  contestService,
-  ContestViolationsDto,
-  StudentViolationSummaryDto
-} from '@/lib/contest-service'
+import { contestService, ContestViolationsDto, StudentViolationSummaryDto } from '@/lib/contest-service'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { vi } from 'date-fns/locale'
 
 // ─── Violation type labels ────────────────────────────────────────────────────
 const VIOLATION_LABELS: Record<string, { label: string; color: string; bg: string }> = {
-  TabSwitch:    { label: 'Chuyển tab',          color: 'text-amber-700 dark:text-amber-400',  bg: 'bg-amber-100 dark:bg-amber-900/30' },
-  WindowBlur:   { label: 'Rời cửa sổ',          color: 'text-orange-700 dark:text-orange-400', bg: 'bg-orange-100 dark:bg-orange-900/30' },
-  CopyPaste:    { label: 'Sao chép / Dán',       color: 'text-red-700 dark:text-red-400',      bg: 'bg-red-100 dark:bg-red-900/30' },
-  RightClick:   { label: 'Chuột phải',           color: 'text-yellow-700 dark:text-yellow-400', bg: 'bg-yellow-100 dark:bg-yellow-900/30' },
-  DevToolsOpen: { label: 'Mở DevTools',          color: 'text-rose-700 dark:text-rose-400',    bg: 'bg-rose-100 dark:bg-rose-900/30' },
-  ScreenResize: { label: 'Thay đổi kích thước',  color: 'text-purple-700 dark:text-purple-400', bg: 'bg-purple-100 dark:bg-purple-900/30' }
+  TabSwitch: {
+    label: 'Chuyển tab',
+    color: 'text-amber-700 dark:text-amber-400',
+    bg: 'bg-amber-100 dark:bg-amber-900/30'
+  },
+  WindowBlur: {
+    label: 'Rời cửa sổ',
+    color: 'text-orange-700 dark:text-orange-400',
+    bg: 'bg-orange-100 dark:bg-orange-900/30'
+  },
+  CopyPaste: { label: 'Sao chép / Dán', color: 'text-red-700 dark:text-red-400', bg: 'bg-red-100 dark:bg-red-900/30' },
+  RightClick: {
+    label: 'Chuột phải',
+    color: 'text-yellow-700 dark:text-yellow-400',
+    bg: 'bg-yellow-100 dark:bg-yellow-900/30'
+  },
+  DevToolsOpen: {
+    label: 'Mở DevTools',
+    color: 'text-rose-700 dark:text-rose-400',
+    bg: 'bg-rose-100 dark:bg-rose-900/30'
+  },
+  ScreenResize: {
+    label: 'Thay đổi kích thước',
+    color: 'text-purple-700 dark:text-purple-400',
+    bg: 'bg-purple-100 dark:bg-purple-900/30'
+  }
 }
 
 function getViolationMeta(type: string) {
@@ -120,22 +136,24 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
   const filtered = students
     .filter(s => s.studentName.toLowerCase().includes(search.toLowerCase()))
     .filter(s => {
-      if (filter === 'violated')     return s.violationCount > 0 && !s.isDisqualified
+      if (filter === 'violated') return s.violationCount > 0 && !s.isDisqualified
       if (filter === 'disqualified') return s.isDisqualified
-      if (filter === 'clean')        return s.violationCount === 0
+      if (filter === 'clean') return s.violationCount === 0
       return true
     })
 
-  const totalViolations  = students.reduce((sum, s) => sum + s.violationCount, 0)
+  const totalViolations = students.reduce((sum, s) => sum + s.violationCount, 0)
   const disqualifiedCount = students.filter(s => s.isDisqualified).length
-  const violatedCount    = students.filter(s => s.violationCount > 0 && !s.isDisqualified).length
-  const cleanCount       = students.filter(s => s.violationCount === 0).length
+  const violatedCount = students.filter(s => s.violationCount > 0 && !s.isDisqualified).length
+  const cleanCount = students.filter(s => s.violationCount === 0).length
 
   // Most frequent violation types
   const typeCounts: Record<string, number> = {}
-  students.forEach(s => s.violations.forEach(v => {
-    typeCounts[v.violationType] = (typeCounts[v.violationType] || 0) + 1
-  }))
+  students.forEach(s =>
+    s.violations.forEach(v => {
+      typeCounts[v.violationType] = (typeCounts[v.violationType] || 0) + 1
+    })
+  )
   const topTypes = Object.entries(typeCounts)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 4)
@@ -220,11 +238,7 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
                 <Shield className="h-6 w-6 text-red-500" />
                 Đối soát vi phạm
               </h1>
-              {data && (
-                <span className="text-sm text-muted-foreground font-medium">
-                  — {data.contestTitle}
-                </span>
-              )}
+              {data && <span className="text-sm text-muted-foreground font-medium">— {data.contestTitle}</span>}
             </div>
             <p className="text-muted-foreground mt-0.5 text-sm">
               Kiểm tra, xét duyệt và xử lý các trường hợp vi phạm trong cuộc thi.
@@ -251,7 +265,7 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
         </div>
 
         {/* ── Stats row ── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 grid-cols-4 gap-4">
           {[
             {
               label: 'Tổng thí sinh',
@@ -282,7 +296,10 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
               bg: 'bg-purple-50 dark:bg-purple-900/20'
             }
           ].map(stat => (
-            <div key={stat.label} className="bg-card rounded-xl p-4 shadow-sm border border-border/50 flex items-center gap-4">
+            <div
+              key={stat.label}
+              className="bg-card rounded-xl p-4 shadow-sm border border-border/50 flex items-center gap-4"
+            >
               <div className={`${stat.bg} w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0`}>
                 <stat.icon className={`h-5 w-5 ${stat.color}`} />
               </div>
@@ -300,7 +317,7 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
               <Info className="h-3.5 w-3.5" /> Loại vi phạm phổ biến nhất
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 grid-cols-4 gap-3">
               {topTypes.map(([type, count]) => {
                 const meta = getViolationMeta(type)
                 return (
@@ -318,7 +335,7 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
       </div>
 
       {/* ── Filter & Search Bar ── */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
@@ -330,10 +347,10 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
         </div>
         <div className="flex gap-2 flex-wrap">
           {[
-            { key: 'all',           label: 'Tất cả',        count: students.length },
-            { key: 'violated',      label: 'Vi phạm',       count: violatedCount },
-            { key: 'disqualified',  label: 'Đã loại',       count: disqualifiedCount },
-            { key: 'clean',         label: 'Bình thường',   count: cleanCount }
+            { key: 'all', label: 'Tất cả', count: students.length },
+            { key: 'violated', label: 'Vi phạm', count: violatedCount },
+            { key: 'disqualified', label: 'Đã loại', count: disqualifiedCount },
+            { key: 'clean', label: 'Bình thường', count: cleanCount }
           ].map(f => (
             <button
               key={f.key}
@@ -345,7 +362,9 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
               }`}
             >
               {f.label}
-              <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded-full ${filter === f.key ? 'bg-white/20' : 'bg-muted'}`}>
+              <span
+                className={`text-[11px] font-bold px-1.5 py-0.5 rounded-full ${filter === f.key ? 'bg-white/20' : 'bg-muted'}`}
+              >
                 {f.count}
               </span>
             </button>
@@ -363,7 +382,7 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
         ) : (
           <div className="divide-y divide-border/50">
             {/* Table header */}
-            <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_1fr_auto] px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-muted-foreground bg-muted/30">
+            <div className="grid grid-cols-[2fr_1fr_1fr_1fr_auto] px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-muted-foreground bg-muted/30">
               <span>Thí sinh</span>
               <span>Trạng thái</span>
               <span>Số vi phạm</span>
@@ -374,17 +393,18 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
             {filtered.map(student => (
               <div key={student.studentId}>
                 {/* ── Row ── */}
-                <div className="px-6 py-4 grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 items-center hover:bg-muted/20 transition-colors">
+                <div className="px-6 py-4 grid grid-cols-1 grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 items-center hover:bg-muted/20 transition-colors">
                   {/* Name + expand toggle */}
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => setExpandedId(expandedId === student.studentId ? null : student.studentId)}
                       className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground"
                     >
-                      {expandedId === student.studentId
-                        ? <ChevronDown className="h-4 w-4" />
-                        : <ChevronRight className="h-4 w-4" />
-                      }
+                      {expandedId === student.studentId ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
                     </button>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center font-bold text-sm">
@@ -404,7 +424,9 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
 
                   {/* Violation count progress */}
                   <div className="flex items-center gap-2">
-                    <span className={`text-lg font-black ${student.violationCount >= 4 ? 'text-red-500' : student.violationCount >= 2 ? 'text-amber-500' : 'text-foreground'}`}>
+                    <span
+                      className={`text-lg font-black ${student.violationCount >= 4 ? 'text-red-500' : student.violationCount >= 2 ? 'text-amber-500' : 'text-foreground'}`}
+                    >
                       {student.violationCount}
                     </span>
                     <span className="text-xs text-muted-foreground">lỗi</span>
@@ -427,10 +449,11 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
                         disabled={actionLoading === student.studentId}
                         onClick={() => handleReinstate(student.studentId, student.studentName)}
                       >
-                        {actionLoading === student.studentId
-                          ? <Loader2 className="h-3 w-3 animate-spin" />
-                          : <RotateCcw className="h-3 w-3" />
-                        }
+                        {actionLoading === student.studentId ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <RotateCcw className="h-3 w-3" />
+                        )}
                         Phục hồi
                       </Button>
                     ) : (
@@ -491,12 +514,16 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
                               const meta = getViolationMeta(v.violationType)
                               return (
                                 <div key={v.id} className="relative">
-                                  <span className={`absolute -left-[21px] top-2 h-3 w-3 rounded-full ring-2 ring-background ${
-                                    idx === 0 ? 'bg-red-500' : 'bg-border'
-                                  }`} />
+                                  <span
+                                    className={`absolute -left-[21px] top-2 h-3 w-3 rounded-full ring-2 ring-background ${
+                                      idx === 0 ? 'bg-red-500' : 'bg-border'
+                                    }`}
+                                  />
                                   <div className="bg-background rounded-xl border border-border/50 p-4 space-y-2">
                                     <div className="flex items-start justify-between gap-3 flex-wrap">
-                                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${meta.bg} ${meta.color}`}>
+                                      <span
+                                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${meta.bg} ${meta.color}`}
+                                      >
                                         {meta.label}
                                       </span>
                                       <span className="text-xs text-muted-foreground font-mono flex items-center gap-1">
@@ -536,13 +563,16 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
               <div>
                 <h3 className="font-bold text-lg">Loại sinh viên</h3>
                 <p className="text-sm text-muted-foreground mt-0.5">
-                  Sinh viên <span className="font-semibold text-foreground">{dqModal.studentName}</span> sẽ bị loại khỏi cuộc thi.
+                  Sinh viên <span className="font-semibold text-foreground">{dqModal.studentName}</span> sẽ bị loại khỏi
+                  cuộc thi.
                 </p>
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Lý do loại <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium">
+                Lý do loại <span className="text-red-500">*</span>
+              </label>
               <textarea
                 value={dqReason}
                 onChange={e => setDqReason(e.target.value)}
@@ -556,7 +586,10 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
             <div className="flex justify-end gap-3">
               <Button
                 variant="outline"
-                onClick={() => { setDqModal(null); setDqReason('') }}
+                onClick={() => {
+                  setDqModal(null)
+                  setDqReason('')
+                }}
               >
                 Huỷ
               </Button>

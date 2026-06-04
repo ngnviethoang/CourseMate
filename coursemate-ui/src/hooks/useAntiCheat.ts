@@ -15,18 +15,18 @@ export enum ViolationType {
 // ─── Lockout config: applied when server confirms violation count ─────────────
 // These are UX-only deterrents. The authoritative DQ decision always comes from BE.
 const LOCKOUT_CONFIG: Record<number, { durationMs: number; reason: string }> = {
-  3: { durationMs: 60_000,  reason: 'Vi phạm lần 3: Màn hình thi bị khóa tạm thời 1 phút.' },
+  3: { durationMs: 60_000, reason: 'Vi phạm lần 3: Màn hình thi bị khóa tạm thời 1 phút.' },
   4: { durationMs: 180_000, reason: 'Vi phạm lần 4: Màn hình thi bị khóa tạm thời 3 phút.' }
 }
 
 // ─── Violation type → user-facing message ────────────────────────────────────
 const VIOLATION_MESSAGES: Partial<Record<ViolationType, string>> = {
-  [ViolationType.TabSwitch]:   '🚫 Cảnh báo: Vui lòng không chuyển tab hoặc rời khỏi màn hình thi!',
-  [ViolationType.WindowBlur]:  '🚫 Cảnh báo: Vui lòng không rời khỏi màn hình thi!',
-  [ViolationType.CopyPaste]:   '🚫 Không được phép dán (paste) nội dung trong khi thi!',
-  [ViolationType.RightClick]:  '🚫 Không được phép sử dụng chuột phải!',
-  [ViolationType.DevToolsOpen]:'🚫 CẢNH BÁO: Không được mở công cụ phát triển!',
-  [ViolationType.ScreenResize]:'🚫 CẢNH BÁO: Không được thay đổi kích thước cửa sổ!'
+  [ViolationType.TabSwitch]: '🚫 Cảnh báo: Vui lòng không chuyển tab hoặc rời khỏi màn hình thi!',
+  [ViolationType.WindowBlur]: '🚫 Cảnh báo: Vui lòng không rời khỏi màn hình thi!',
+  [ViolationType.CopyPaste]: '🚫 Không được phép dán (paste) nội dung trong khi thi!',
+  [ViolationType.RightClick]: '🚫 Không được phép sử dụng chuột phải!',
+  [ViolationType.DevToolsOpen]: '🚫 CẢNH BÁO: Không được mở công cụ phát triển!',
+  [ViolationType.ScreenResize]: '🚫 CẢNH BÁO: Không được thay đổi kích thước cửa sổ!'
 }
 
 interface ViolationWarning {
@@ -80,16 +80,20 @@ export function useAntiCheat({
   const [connectionState, setConnectionState] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
 
   // ── Refs ───────────────────────────────────────────────────────────────────
-  const connectionRef       = useRef<HubConnection | null>(null)
+  const connectionRef = useRef<HubConnection | null>(null)
   const lastViolationTimeRef = useRef<Record<string, number>>({})
-  const lockedUntilRef      = useRef<number | null>(null)   // for use inside callbacks
-  const isDisqualifiedRef   = useRef(false)
+  const lockedUntilRef = useRef<number | null>(null) // for use inside callbacks
+  const isDisqualifiedRef = useRef(false)
   const deviceFingerprintRef = useRef<string>('')
-  const userAgentRef        = useRef<string>('')
+  const userAgentRef = useRef<string>('')
 
   // Keep refs in sync with state
-  useEffect(() => { lockedUntilRef.current = lockedUntil }, [lockedUntil])
-  useEffect(() => { isDisqualifiedRef.current = isDisqualified }, [isDisqualified])
+  useEffect(() => {
+    lockedUntilRef.current = lockedUntil
+  }, [lockedUntil])
+  useEffect(() => {
+    isDisqualifiedRef.current = isDisqualified
+  }, [isDisqualified])
 
   // ── Reset when contestId changes ───────────────────────────────────────────
   useEffect(() => {
@@ -111,7 +115,9 @@ export function useAntiCheat({
           } else {
             localStorage.removeItem(`coursemate_lockout_${contestId}`)
           }
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
       }
     }
   }, [contestId, initialViolationCount])
@@ -265,7 +271,7 @@ export function useAntiCheat({
      */
     connection.on('ForceDisqualify', (data: ForceDisqualifyEvent) => {
       setIsDisqualified(true)
-      setLockedUntil(null)   // clear lockout — DQ overlay takes over
+      setLockedUntil(null) // clear lockout — DQ overlay takes over
       setLockoutReason('')
       localStorage.removeItem(`coursemate_lockout_${contestId}`)
       onDisqualified?.(data.reason)
@@ -291,7 +297,9 @@ export function useAntiCheat({
         console.error('[AntiCheat] SignalR connect failed:', err)
       })
 
-    return () => { connection.stop().catch(() => {}) }
+    return () => {
+      connection.stop().catch(() => {})
+    }
   }, [contestId, antiCheatLevel, onDisqualified, triggerLockoutIfNeeded])
 
   // ── Browser event monitors ─────────────────────────────────────────────────
@@ -322,13 +330,10 @@ export function useAntiCheat({
     let lastW = window.innerWidth
     let lastH = window.innerHeight
     const onResize = () => {
-      const dw = Math.abs(window.innerWidth  - lastW)
+      const dw = Math.abs(window.innerWidth - lastW)
       const dh = Math.abs(window.innerHeight - lastH)
       if (dw > 200 || dh > 200) {
-        reportViolation(
-          ViolationType.ScreenResize,
-          `${lastW}x${lastH} → ${window.innerWidth}x${window.innerHeight}`
-        )
+        reportViolation(ViolationType.ScreenResize, `${lastW}x${lastH} → ${window.innerWidth}x${window.innerHeight}`)
       }
       lastW = window.innerWidth
       lastH = window.innerHeight
@@ -337,7 +342,7 @@ export function useAntiCheat({
     // 6. DevTools detection by outer/inner dimension diff
     const DEV_TOOLS_THRESHOLD = 160
     const checkDevTools = () => {
-      const dw = window.outerWidth  - window.innerWidth
+      const dw = window.outerWidth - window.innerWidth
       const dh = window.outerHeight - window.innerHeight
       if (dw > DEV_TOOLS_THRESHOLD || dh > DEV_TOOLS_THRESHOLD) {
         reportViolation(ViolationType.DevToolsOpen, `diff w:${dw} h:${dh}`)
@@ -348,9 +353,7 @@ export function useAntiCheat({
     // 7. DevTools keyboard shortcuts
     const onKeydown = (e: KeyboardEvent) => {
       const isDevToolsShortcut =
-        e.key === 'F12' ||
-        (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) ||
-        (e.ctrlKey && e.key === 'u')
+        e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) || (e.ctrlKey && e.key === 'u')
       if (isDevToolsShortcut) {
         if (antiCheatLevel === 'Strict') e.preventDefault()
         reportViolation(ViolationType.DevToolsOpen, `Shortcut: ${e.key}`)

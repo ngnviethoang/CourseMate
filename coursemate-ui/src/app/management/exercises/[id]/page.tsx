@@ -356,8 +356,8 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
 
       {/* ─── Tab 1: Thông tin cơ bản ─── */}
       {activeTab === 'info' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-5">
+        <div className="grid grid-cols-1 grid-cols-3 gap-6">
+          <div className="col-span-2 space-y-5">
             <div className="space-y-1.5">
               <label className="text-sm font-medium">
                 Tiêu đề <span className="text-red-500">*</span>
@@ -720,7 +720,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <label className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
                       Đầu vào (stdin)

@@ -413,7 +413,7 @@ function DocxAssistPanel({
         )}
       </div>
 
-      <div className="grid gap-3 md:grid-cols-[1fr_auto]">
+      <div className="grid gap-3 grid-cols-[1fr_auto]">
         <Input
           type="file"
           accept=".doc,.docx"
@@ -693,7 +693,7 @@ function CodingContentSection({
         </div>
       </div>
 
-      <div className={`grid grid-cols-1 ${isEditing ? 'lg:grid-cols-2' : ''} gap-6`}>
+      <div className={`grid grid-cols-1 ${isEditing ? 'grid-cols-2' : ''} gap-6`}>
         {/* Left: Search and Selection (Only in Edit mode) */}
         {isEditing && (
           <div className="space-y-4">
@@ -1001,8 +1001,8 @@ function QuizContentSection({
       {isEditing ? (
         <div className="space-y-8">
           {/* Settings Area */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 rounded-lg bg-muted/20 border-0 -dashed bg-muted/30 shadow-inner">
-            <div className="md:col-span-2 space-y-1.5">
+          <div className="grid grid-cols-1 grid-cols-3 gap-6 p-4 rounded-lg bg-muted/20 border-0 -dashed bg-muted/30 shadow-inner">
+            <div className="col-span-2 space-y-1.5">
               <Label>Mô tả bài trắc nghiệm</Label>
               <Textarea
                 placeholder="Giới thiệu ngắn cho học viên..."
@@ -1124,7 +1124,7 @@ function QuizContentSection({
                 <p className="text-sm font-medium mb-3 flex items-start gap-2">
                   <span className="text-primary">Q{i + 1}.</span> {q.text}
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 ml-7">
+                <div className="grid grid-cols-1 grid-cols-2 gap-2 ml-7">
                   {q.answers.map((a, j) => (
                     <div
                       key={j}

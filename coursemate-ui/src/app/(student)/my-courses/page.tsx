@@ -48,8 +48,8 @@ export default function MyCoursesPage() {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <div className="shadow-md border-0 border-b-0 bg-muted/30">
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="mx-auto max-w-6xl px-4 py-8 px-6 px-8">
+          <div className="flex flex-col flex-row items-end justify-between gap-6">
             <div className="space-y-1">
               <h1 className="text-3xl font-black tracking-tight flex items-center gap-3">
                 <div className="h-10 w-10 bg-primary/10 rounded-2xl flex items-center justify-center">
@@ -60,7 +60,7 @@ export default function MyCoursesPage() {
               <p className="text-muted-foreground ml-13">Bạn đang sở hữu {courses.length} khoá học chất lượng</p>
             </div>
 
-            <form onSubmit={handleSearch} className="relative w-full md:w-80 group">
+            <form onSubmit={handleSearch} className="relative w-full w-80 group">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input
                 placeholder="Tìm khóa học của bạn..."
@@ -95,7 +95,7 @@ export default function MyCoursesPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl px-4 py-10 px-6 px-8">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <Loader2 className="h-10 w-10 animate-spin text-primary opacity-50" />
@@ -127,7 +127,7 @@ export default function MyCoursesPage() {
                   <div className="h-8 w-1 bg-primary rounded-full transition-all group-hover:h-full" />
                   Đang học tập
                 </h2>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-6 grid-cols-2 grid-cols-3">
                   {inProgress.map(course => (
                     <CourseCard key={course.id} course={course} />
                   ))}
@@ -142,7 +142,7 @@ export default function MyCoursesPage() {
                   <div className="h-8 w-1 bg-slate-400 rounded-full" />
                   Khóa học mới
                 </h2>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-6 grid-cols-2 grid-cols-3">
                   {notStarted.map(course => (
                     <CourseCard key={course.id} course={course} />
                   ))}
@@ -157,7 +157,7 @@ export default function MyCoursesPage() {
                   <div className="h-8 w-1 bg-emerald-500 rounded-full" />
                   Đã hoàn thành
                 </h2>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-6 grid-cols-2 grid-cols-3">
                   {completed.map(course => (
                     <CourseCard key={course.id} course={course} />
                   ))}

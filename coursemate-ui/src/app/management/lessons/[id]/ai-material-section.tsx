@@ -548,7 +548,7 @@ function OutlineEditor({
                 <Link2 className="h-4 w-4" />
                 Related Resources
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 grid-cols-2 gap-3">
                 {draft.relatedLinks.map((link, i) => (
                   <a
                     key={i}
@@ -780,9 +780,9 @@ export function AiMaterialSection({ lessonId }: { lessonId: string }) {
                     </Button>
                   </div>
 
-                  <div className="mt-8 pt-6 shadow-md border-0 border-t-0 -purple-100/50 dark:-purple-900/20 flex flex-col sm:flex-row items-center gap-4">
+                  <div className="mt-8 pt-6 shadow-md border-0 border-t-0 -purple-100/50 dark:-purple-900/20 flex flex-col flex-row items-center gap-4">
                     <Button
-                      className="w-full sm:w-auto px-8 h-12 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl shadow-md transition-all hover:scale-[1.02] active:scale-95 gap-3"
+                      className="w-full w-auto px-8 h-12 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl shadow-md transition-all hover:scale-[1.02] active:scale-95 gap-3"
                       onClick={startGeneration}
                     >
                       <Sparkles className="h-5 w-5" />

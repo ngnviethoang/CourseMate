@@ -156,7 +156,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
       })
     }, 1000)
     return () => clearInterval(interval)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [antiCheat.isDisqualified, disqualifiedReason])
 
   // Timer for lockout countdown
@@ -421,9 +421,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
 
           {/* Countdown */}
           <div className="space-y-3">
-            <p className="text-neutral-500 text-sm">
-              Tự động chuyển trang trong
-            </p>
+            <p className="text-neutral-500 text-sm">Tự động chuyển trang trong</p>
             <div className="text-6xl font-black font-mono text-red-400 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]">
               {dqCountdown ?? 5}
             </div>
@@ -764,7 +762,13 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                   </Button>
                   <Button
                     onClick={handleRun}
-                    disabled={running || submitting || !!antiCheat.isDisqualified || !!disqualifiedReason || (!!antiCheat.lockedUntil && antiCheat.lockedUntil > Date.now())}
+                    disabled={
+                      running ||
+                      submitting ||
+                      !!antiCheat.isDisqualified ||
+                      !!disqualifiedReason ||
+                      (!!antiCheat.lockedUntil && antiCheat.lockedUntil > Date.now())
+                    }
                     title={antiCheat.isDisqualified || disqualifiedReason ? 'Bạn đã bị loại' : undefined}
                     className="h-8 px-4 bg-white/5 hover:bg-white/10 text-neutral-200 text-[10px] font-black uppercase tracking-widest rounded-lg gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
@@ -773,7 +777,13 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                   </Button>
                   <Button
                     onClick={handleSubmit}
-                    disabled={running || submitting || !!antiCheat.isDisqualified || !!disqualifiedReason || (!!antiCheat.lockedUntil && antiCheat.lockedUntil > Date.now())}
+                    disabled={
+                      running ||
+                      submitting ||
+                      !!antiCheat.isDisqualified ||
+                      !!disqualifiedReason ||
+                      (!!antiCheat.lockedUntil && antiCheat.lockedUntil > Date.now())
+                    }
                     title={antiCheat.isDisqualified || disqualifiedReason ? 'Bạn đã bị loại' : undefined}
                     className="h-8 px-5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-lg gap-2 shadow-lg shadow-emerald-500/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-neutral-600 disabled:shadow-none"
                   >
@@ -830,7 +840,11 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                   renderLineHighlight: 'all',
                   lineNumbersMinChars: 3,
                   // Lock editor when student is DQ'd or locked out
-                  readOnly: !!(antiCheat.isDisqualified || disqualifiedReason || (antiCheat.lockedUntil && antiCheat.lockedUntil > Date.now()))
+                  readOnly: !!(
+                    antiCheat.isDisqualified ||
+                    disqualifiedReason ||
+                    (antiCheat.lockedUntil && antiCheat.lockedUntil > Date.now())
+                  )
                 }}
               />
             </div>
@@ -904,7 +918,7 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
 
                       {!res.isHidden ? (
                         <div className="space-y-4 font-mono text-xs">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 grid-cols-2 gap-4">
                             <div className="p-4 rounded-2xl bg-black/40 -white/5 space-y-2">
                               <p className="text-[10px] text-neutral-600 font-black uppercase tracking-widest">
                                 Kết quả mong đợi
@@ -971,17 +985,17 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                 : antiCheat.connectionState === 'connected'
                   ? 'bg-emerald-500 animate-pulse'
                   : antiCheat.connectionState === 'connecting'
-                  ? 'bg-amber-500 animate-pulse'
-                  : 'bg-red-500'
+                    ? 'bg-amber-500 animate-pulse'
+                    : 'bg-red-500'
             }`}
           />
           {arena?.antiCheatLevel === 'None'
             ? 'Giám sát tắt'
             : antiCheat.connectionState === 'connected'
-            ? 'Đã kết nối'
-            : antiCheat.connectionState === 'connecting'
-            ? 'Đang kết nối...'
-            : 'Mất kết nối!'}{' '}
+              ? 'Đã kết nối'
+              : antiCheat.connectionState === 'connecting'
+                ? 'Đang kết nối...'
+                : 'Mất kết nối!'}{' '}
           • CourseMate V2.0
         </div>
       </footer>

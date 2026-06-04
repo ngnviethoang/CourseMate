@@ -138,7 +138,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
     <div className="min-h-screen bg-background">
       {/* Header Section */}
       <div className="shadow-md border-0 border-b-0 bg-muted/30">
-        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl px-4 py-12 px-6 px-8">
           <Link
             href="/contests"
             className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors"
@@ -146,7 +146,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
             <ArrowLeft className="h-4 w-4" /> Quay lại danh sách
           </Link>
 
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+          <div className="flex flex-col flex-row items-end justify-between gap-8">
             <div className="flex-1 space-y-4">
               <div className="flex flex-wrap items-center gap-3">
                 <span
@@ -221,7 +221,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
       </div>
 
       {/* Content Tabs */}
-      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl px-4 py-10 px-6 px-8">
         <div className="flex gap-8 shadow-md border-0 border-b-0 mb-10 overflow-x-auto no-scrollbar">
           {[
             { id: 'overview', label: 'Tổng quan', icon: Layout },
@@ -241,9 +241,9 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 grid-cols-3 gap-12">
           {/* Main Content Area */}
-          <div className="lg:col-span-2">
+          <div className="col-span-2">
             {tab === 'overview' && (
               <div className="space-y-8">
                 <div className="prose prose-blue dark:prose-invert max-w-none">
@@ -382,7 +382,8 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                     <div>
                       <h3 className="text-2xl font-bold">Lịch sử vi phạm của bạn</h3>
                       <p className="text-muted-foreground mt-1">
-                        Tổng số lỗi đã ghi nhận: <span className="font-bold text-foreground">{myViolations?.violationCount || 0}</span>
+                        Tổng số lỗi đã ghi nhận:{' '}
+                        <span className="font-bold text-foreground">{myViolations?.violationCount || 0}</span>
                       </p>
                     </div>
                   </div>
@@ -390,13 +391,16 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                   {myViolations?.isDisqualified && (
                     <div className="p-4 rounded-2xl bg-red-50 -red-200 dark:bg-red-500/10 dark:-red-500/20 text-red-700 dark:text-red-400 font-medium">
                       <AlertTriangle className="h-5 w-5 inline mr-2" />
-                      Bạn đã bị loại khỏi cuộc thi này do vi phạm quy chế. Lý do: {myViolations.disqualifiedReason || 'Không rõ'}
+                      Bạn đã bị loại khỏi cuộc thi này do vi phạm quy chế. Lý do:{' '}
+                      {myViolations.disqualifiedReason || 'Không rõ'}
                     </div>
                   )}
 
                   <div className="space-y-4 mt-6">
                     {!myViolations || myViolations.violations.length === 0 ? (
-                      <p className="text-muted-foreground text-center py-10">Bạn chưa có vi phạm nào. Hãy tiếp tục phát huy!</p>
+                      <p className="text-muted-foreground text-center py-10">
+                        Bạn chưa có vi phạm nào. Hãy tiếp tục phát huy!
+                      </p>
                     ) : (
                       <div className="relative pl-6 border-0 border-l-2 -muted space-y-6">
                         {myViolations.violations.map(v => (

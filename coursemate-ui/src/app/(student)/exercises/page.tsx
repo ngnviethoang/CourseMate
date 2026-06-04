@@ -178,7 +178,7 @@ export default function ExercisesPage() {
       <div className="min-h-screen bg-background">
         {/* Header */}
         <div className="shadow-md border-0 border-b-0 bg-muted/30">
-          <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-5xl px-4 py-8 px-6 px-8">
             <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
               <Code2 className="h-6 w-6 text-primary" />
               Bài tập lập trình
@@ -213,7 +213,7 @@ export default function ExercisesPage() {
           </div>
         </div>
 
-        <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl px-4 py-6 px-6 px-8">
           {/* Filters */}
           <div className="flex flex-wrap gap-4 mb-6">
             <div className="flex items-center gap-1.5 flex-wrap">
@@ -276,14 +276,14 @@ export default function ExercisesPage() {
                   <p className="text-sm font-medium leading-snug group-hover:text-primary transition-colors line-clamp-1">
                     {ex.title}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1 hidden sm:block truncate">
+                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1 block truncate">
                     {ex.description.replace(/<[^>]*>?/gm, '')}
                   </p>
                 </div>
-                <span className="hidden md:block flex-shrink-0 rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                <span className="block flex-shrink-0 rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                   {ex.category}
                 </span>
-                <span className="hidden sm:block flex-shrink-0 text-xs text-muted-foreground w-14 text-right">
+                <span className="block flex-shrink-0 text-xs text-muted-foreground w-14 text-right">
                   {(ex as any).acceptRate || 0}%
                 </span>
                 <span

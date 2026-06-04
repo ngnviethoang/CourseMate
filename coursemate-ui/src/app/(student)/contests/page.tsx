@@ -50,7 +50,7 @@ export default function ContestsPage() {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <div className="shadow-md border-0 border-b-0 bg-muted/30">
-        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl px-4 py-12 px-6 px-8">
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
             <Trophy className="h-8 w-8 text-primary" />
             Đấu trường lập trình
@@ -87,7 +87,7 @@ export default function ContestsPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl px-4 py-8 px-6 px-8">
         {/* Filter tabs */}
         <div className="flex flex-wrap gap-2 mb-8">
           {(['All', 'Upcoming', 'Ongoing', 'Ended'] as const).map(tab => (
@@ -122,7 +122,7 @@ export default function ContestsPage() {
                 key={contest.id}
                 className={`group rounded-3xl bg-card p-6 shadow-md border-0 transition-all hover:shadow-lg hover:-primary/20 ${contest.status === 'Ended' ? 'opacity-75 grayscale-[0.5]' : ''}`}
               >
-                <div className="flex flex-col sm:flex-row sm:items-start gap-6">
+                <div className="flex flex-col flex-row items-start gap-6">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-3 flex-wrap">
                       <span
@@ -156,7 +156,7 @@ export default function ContestsPage() {
                     </div>
                   </div>
 
-                  <div className="flex-shrink-0 flex sm:flex-col justify-end gap-3">
+                  <div className="flex-shrink-0 flex flex-col justify-end gap-3">
                     <Button asChild className="rounded-2xl h-12 px-8 font-bold shadow-sm">
                       <Link href={`/contests/${contest.id}`}>
                         {contest.status === 'Ended' ? 'Xem kết quả' : 'Chi tiết'}

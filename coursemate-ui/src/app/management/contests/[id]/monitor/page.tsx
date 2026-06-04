@@ -151,17 +151,26 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
       })
 
       // Normalize violationType: BE may send integer (before JsonStringEnumConverter fix) or string
-      const VIOLATION_TYPE_NAMES = ['TabSwitch','WindowBlur','CopyPaste','RightClick','DevToolsOpen','ScreenResize','MultipleMonitors','ExternalPaste']
-      const normalizedType = typeof event.violationType === 'number'
-        ? (VIOLATION_TYPE_NAMES[event.violationType] ?? String(event.violationType))
-        : String(event.violationType)
+      const VIOLATION_TYPE_NAMES = [
+        'TabSwitch',
+        'WindowBlur',
+        'CopyPaste',
+        'RightClick',
+        'DevToolsOpen',
+        'ScreenResize',
+        'MultipleMonitors',
+        'ExternalPaste'
+      ]
+      const normalizedType =
+        typeof event.violationType === 'number'
+          ? (VIOLATION_TYPE_NAMES[event.violationType] ?? String(event.violationType))
+          : String(event.violationType)
 
       const label = VIOLATION_LABELS[normalizedType]?.label ?? normalizedType
 
-      toast.warning(
-        `🚨 ${event.studentName}: ${label} (${event.violationCount}/${event.maxViolations})`,
-        { duration: 5000 }
-      )
+      toast.warning(`🚨 ${event.studentName}: ${label} (${event.violationCount}/${event.maxViolations})`, {
+        duration: 5000
+      })
     })
 
     connection.on('StudentDisqualified', (event: any) => {
@@ -290,23 +299,29 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
           <Button onClick={fetchData} variant="ghost" className="text-neutral-400 hover:text-white gap-2">
             <RefreshCw className="h-4 w-4" /> Làm mới
           </Button>
-          <div className={`flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full border ${
-            connectionState === 'connected'
-              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-              : connectionState === 'connecting'
-              ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
-              : 'bg-red-500/10 border-red-500/20 text-red-400'
-          }`}>
-            <span className={`w-2 h-2 rounded-full ${
+          <div
+            className={`flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full border ${
               connectionState === 'connected'
-                ? 'bg-emerald-500 animate-pulse'
+                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
                 : connectionState === 'connecting'
-                ? 'bg-amber-500 animate-pulse'
-                : 'bg-red-500'
-            }`} />
-            {connectionState === 'connected' ? 'Realtime · Đang kết nối'
-              : connectionState === 'connecting' ? 'Đang kết nối lại...'
-              : 'Mất kết nối'}
+                  ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                  : 'bg-red-500/10 border-red-500/20 text-red-400'
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
+                connectionState === 'connected'
+                  ? 'bg-emerald-500 animate-pulse'
+                  : connectionState === 'connecting'
+                    ? 'bg-amber-500 animate-pulse'
+                    : 'bg-red-500'
+              }`}
+            />
+            {connectionState === 'connected'
+              ? 'Realtime · Đang kết nối'
+              : connectionState === 'connecting'
+                ? 'Đang kết nối lại...'
+                : 'Mất kết nối'}
           </div>
         </div>
       </header>

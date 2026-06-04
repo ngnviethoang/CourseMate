@@ -176,9 +176,9 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 grid-cols-3 gap-8">
         {/* Left Column: Settings */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="col-span-2 space-y-6">
           <section className="bg-card rounded-xl p-6 shadow-md border-0 space-y-6">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <Settings className="h-5 w-5 text-primary" /> Thông tin cơ bản
@@ -238,7 +238,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                     <Plus className="h-4 w-4 mr-2" /> Thêm bài tập
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[600px]">
+                <DialogContent className="max-w-[600px]">
                   <DialogHeader>
                     <DialogTitle>Thêm bài tập từ thư viện</DialogTitle>
                   </DialogHeader>

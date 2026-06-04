@@ -17,8 +17,8 @@ import { formatCurrency } from '@/lib/utils'
 
 function CartSkeleton() {
   return (
-    <div className="grid md:grid-cols-3 gap-8 animate-pulse">
-      <div className="md:col-span-2 space-y-4">
+    <div className="grid grid-cols-3 gap-8 animate-pulse">
+      <div className="col-span-2 space-y-4">
         {[1, 2].map(i => (
           <div key={i} className="flex gap-4 rounded-2xl bg-card p-4 shadow-md border-0">
             <div className="h-28 w-44 flex-shrink-0 rounded-xl bg-muted" />
@@ -30,7 +30,7 @@ function CartSkeleton() {
           </div>
         ))}
       </div>
-      <div className="md:col-span-1">
+      <div className="col-span-1">
         <div className="rounded-2xl bg-card p-6 shadow-md border-0 space-y-4">
           <div className="h-5 w-1/2 rounded bg-muted" />
           <div className="h-3 w-full rounded bg-muted" />
@@ -112,7 +112,7 @@ export default function CartPage() {
     <div className="min-h-screen bg-background">
       {/* Gradient header strip */}
       <div className="bg-gradient-to-br from-primary/8 via-background to-indigo-50 shadow-md border-0 border-b-0">
-        <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl px-4 py-10 px-6 px-8">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md">
               <ShoppingCart className="h-5 w-5" />
@@ -129,26 +129,26 @@ export default function CartPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl px-4 py-8 px-6 px-8">
         {loading ? (
           <CartSkeleton />
         ) : items.length === 0 ? (
           <EmptyCart />
         ) : (
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-3 gap-8">
             {/* ── Course list ── */}
-            <div className="md:col-span-2 space-y-4">
+            <div className="col-span-2 space-y-4">
               {items.map(item => (
                 <div
                   key={item.id}
-                  className="group flex flex-col sm:flex-row gap-4 rounded-2xl bg-card p-4 shadow-md border-0 shadow-xs transition-shadow hover:shadow-md"
+                  className="group flex flex-col flex-row gap-4 rounded-2xl bg-card p-4 shadow-md border-0 shadow-xs transition-shadow hover:shadow-md"
                 >
                   <Link href={`/courses/${item.courseId}`} className="flex-shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={item.courseImageUrl || `https://placehold.co/200x140/6366f1/ffffff?text=Khoá+học`}
                       alt={item.courseTitle}
-                      className="h-32 w-full sm:w-44 rounded-xl object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      className="h-32 w-full w-44 rounded-xl object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                       onError={e => {
                         ;(e.target as HTMLImageElement).src = 'https://placehold.co/200x140/6366f1/ffffff?text=Khoá+học'
                       }}
@@ -191,7 +191,7 @@ export default function CartPage() {
             </div>
 
             {/* ── Order Summary ── */}
-            <div className="md:col-span-1">
+            <div className="col-span-1">
               <div className="sticky top-20 rounded-2xl bg-card shadow-md border-0 shadow-md border-0 overflow-hidden">
                 {/* Summary header */}
                 <div className="bg-gradient-to-r from-primary/10 to-indigo-50 px-6 py-4 shadow-md border-0 border-b-0">
