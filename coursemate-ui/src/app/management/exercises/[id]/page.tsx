@@ -247,7 +247,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
       if (isNew) {
         const res = await exerciseService.create(form)
         toast.success('Tạo bài tập thành công! Bây giờ bạn có thể thêm bộ kiểm thử.')
-        router.push(`/management/exercises/${res}`)
+        router.push(`/management/exercises/${res.id}`)
       } else {
         await exerciseService.update({ ...form, id })
         toast.success('Cập nhật thành công!')
@@ -268,7 +268,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
         toast.success(`Đã cập nhật bộ kiểm thử #${idx + 1}`)
       } else {
         const res = await exerciseService.addTestCase(id as string, tc)
-        updateTestCase(idx, { id: res.id || res })
+        updateTestCase(idx, { id: res.id })
         toast.success(`Đã thêm bộ kiểm thử #${idx + 1}`)
       }
       toggleTestCaseEditMode(idx, false)

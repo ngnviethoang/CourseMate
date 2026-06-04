@@ -56,7 +56,7 @@ export default function LearningLayout({ children }: { children: React.ReactNode
 
       try {
         const response = await courseService.getById(id)
-        setCourse((response as StudentCourseDetailDto) || null)
+        setCourse((response as unknown as StudentCourseDetailDto) || null)
       } finally {
         setLoading(false)
       }

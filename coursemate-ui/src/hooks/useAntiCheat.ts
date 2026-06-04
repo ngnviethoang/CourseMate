@@ -68,7 +68,6 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
 export function useAntiCheat({
   contestId,
   antiCheatLevel,
-  maxViolations,
   initialViolationCount = 0,
   onDisqualified
 }: UseAntiCheatOptions): UseAntiCheatResult {
@@ -78,6 +77,7 @@ export function useAntiCheat({
   const [lockedUntil, setLockedUntil] = useState<number | null>(null)
   const [lockoutReason, setLockoutReason] = useState<string>('')
   const [connectionState, setConnectionState] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
+  const [connection, setConnection] = useState<HubConnection | null>(null)
 
   // ── Refs ───────────────────────────────────────────────────────────────────
   const connectionRef = useRef<HubConnection | null>(null)
@@ -232,6 +232,7 @@ export function useAntiCheat({
       .build()
 
     connectionRef.current = connection
+    setConnection(connection)
 
     // Track connection lifecycle for UI feedback
     connection.onreconnecting(() => setConnectionState('connecting'))
@@ -299,6 +300,7 @@ export function useAntiCheat({
 
     return () => {
       connection.stop().catch(() => {})
+      setConnection(null)
     }
   }, [contestId, antiCheatLevel, onDisqualified, triggerLockoutIfNeeded])
 
@@ -381,7 +383,7 @@ export function useAntiCheat({
   return {
     violationCount,
     isDisqualified,
-    connection: connectionRef.current,
+    connection,
     connectionState,
     lockedUntil,
     lockoutReason

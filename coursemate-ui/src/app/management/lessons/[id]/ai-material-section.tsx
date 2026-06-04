@@ -315,11 +315,9 @@ async function downloadOutlineAsPptx(outline: LectureOutline) {
   pptx.company = 'CourseMate'
   pptx.subject = outline.lessonTitle || 'Lecture Outline'
   pptx.title = outline.lessonTitle || 'Lecture Outline'
-  pptx.lang = 'vi-VN'
   pptx.theme = {
     headFontFace: 'Arial',
-    bodyFontFace: 'Arial',
-    lang: 'vi-VN'
+    bodyFontFace: 'Arial'
   }
 
   const titleSlide = pptx.addSlide()

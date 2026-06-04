@@ -24,7 +24,7 @@ function getUserFromToken() {
   try {
     const token = getAccessToken()
     if (!token) return null
-    const payload = getDecodedToken(token) as any
+    const payload = getDecodedToken(token) as Record<string, string | undefined>
     if (!payload) return null
     const name: string =
       payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ??
@@ -60,19 +60,19 @@ export function StudentHeader({
 
   const [user, setUser] = useState<{ name: string; role: string } | null>(null)
   const [mounted, setMounted] = useState(false)
-  const [localSearchVal, setLocalSearchVal] = useState('')
+  const [prevSearchValue, setPrevSearchValue] = useState(searchValue)
+  const [localSearchVal, setLocalSearchVal] = useState(searchValue || '')
+
+  if (searchValue !== prevSearchValue) {
+    setPrevSearchValue(searchValue)
+    setLocalSearchVal(searchValue || '')
+  }
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setUser(getUserFromToken())
     setMounted(true)
   }, [])
-
-  useEffect(() => {
-    if (searchValue !== undefined) {
-      setLocalSearchVal(searchValue)
-    }
-  }, [searchValue])
 
   const initials = mounted && user?.name ? user.name.slice(0, 2).toUpperCase() : 'U'
   const displayName = mounted && user?.name ? user.name : 'Người dùng'

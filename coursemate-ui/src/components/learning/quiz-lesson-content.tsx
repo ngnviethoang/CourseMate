@@ -159,7 +159,7 @@ export function QuizLessonContent({
                     key={answer.id}
                     type="button"
                     disabled={submitted}
-                    onClick={() => setAnswers(previous => ({ ...previous, [questionIndex]: answer.id }))}
+                    onClick={() => setAnswers(previous => ({ ...previous, [questionIndex]: answer.id ?? '' }))}
                     className={`group flex items-center gap-3 rounded-lg px-4 py-3 text-left transition-all ${buttonClass}`}
                   >
                     <div
