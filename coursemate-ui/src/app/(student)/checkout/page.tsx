@@ -64,14 +64,14 @@ const PAYMENT_METHODS = [
 
 function CheckoutSkeleton() {
   return (
-    <div className="grid md:grid-cols-5 gap-8 animate-pulse">
-      <div className="md:col-span-3 space-y-6">
+    <div className="grid grid-cols-5 gap-8 animate-pulse">
+      <div className="col-span-3 space-y-6">
         <div className="h-6 w-40 rounded bg-muted" />
         {[1, 2, 3, 4].map(i => (
           <div key={i} className="h-20 rounded-2xl bg-muted" />
         ))}
       </div>
-      <div className="md:col-span-2">
+      <div className="col-span-2">
         <div className="rounded-2xl bg-muted h-80" />
       </div>
     </div>
@@ -90,9 +90,11 @@ export default function CheckoutPage() {
   const [orderId, setOrderId] = useState<string | null>(null)
 
   useEffect(() => {
+    let active = true
     const fetchCartAndCreateOrder = async () => {
       try {
         const res = await orderService.getCart()
+        if (!active) return
         if (!res || res.items.length === 0) {
           router.replace('/cart')
           return
@@ -105,12 +107,15 @@ export default function CheckoutPage() {
         })
         setOrderId(orderRes.id)
       } catch {
-        router.replace('/cart')
+        if (active) router.replace('/cart')
       } finally {
-        setLoading(false)
+        if (active) setLoading(false)
       }
     }
     fetchCartAndCreateOrder()
+    return () => {
+      active = false
+    }
   }, [router])
 
   const handlePlaceOrder = async () => {
@@ -146,7 +151,7 @@ export default function CheckoutPage() {
     <div className="min-h-screen bg-background">
       {/* Header strip */}
       <div className="bg-gradient-to-br from-primary/8 via-background to-indigo-50 shadow-md border-0 border-b-0">
-        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl px-4 py-8 px-6 px-8">
           <Link
             href="/cart"
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
@@ -165,13 +170,13 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl px-4 py-8 px-6 px-8">
         {loading ? (
           <CheckoutSkeleton />
         ) : (
-          <div className="grid md:grid-cols-5 gap-8">
+          <div className="grid grid-cols-5 gap-8">
             {/* ── Left: Payment method selection ── */}
-            <div className="md:col-span-3 space-y-6">
+            <div className="col-span-3 space-y-6">
               <div>
                 <h2 className="text-lg font-bold">Chọn phương thức thanh toán</h2>
                 <p className="text-sm text-muted-foreground mt-0.5">Chọn hình thức thanh toán phù hợp với bạn</p>
@@ -228,7 +233,7 @@ export default function CheckoutPage() {
             </div>
 
             {/* ── Right: Order summary ── */}
-            <div className="md:col-span-2">
+            <div className="col-span-2">
               <div className="sticky top-20 rounded-2xl bg-card shadow-md border-0 shadow-md border-0 overflow-hidden">
                 <div className="bg-gradient-to-r from-primary/10 to-indigo-50 px-5 py-4 shadow-md border-0 border-b-0">
                   <h2 className="font-semibold">Tóm tắt đơn hàng</h2>

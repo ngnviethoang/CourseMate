@@ -247,7 +247,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
       if (isNew) {
         const res = await exerciseService.create(form)
         toast.success('Tạo bài tập thành công! Bây giờ bạn có thể thêm bộ kiểm thử.')
-        router.push(`/management/exercises/${res}`)
+        router.push(`/management/exercises/${res.id}`)
       } else {
         await exerciseService.update({ ...form, id })
         toast.success('Cập nhật thành công!')
@@ -268,7 +268,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
         toast.success(`Đã cập nhật bộ kiểm thử #${idx + 1}`)
       } else {
         const res = await exerciseService.addTestCase(id as string, tc)
-        updateTestCase(idx, { id: res.id || res })
+        updateTestCase(idx, { id: res.id })
         toast.success(`Đã thêm bộ kiểm thử #${idx + 1}`)
       }
       toggleTestCaseEditMode(idx, false)
@@ -356,8 +356,8 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
 
       {/* ─── Tab 1: Thông tin cơ bản ─── */}
       {activeTab === 'info' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-5">
+        <div className="grid grid-cols-1 grid-cols-3 gap-6">
+          <div className="col-span-2 space-y-5">
             <div className="space-y-1.5">
               <label className="text-sm font-medium">
                 Tiêu đề <span className="text-red-500">*</span>
@@ -720,7 +720,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <label className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
                       Đầu vào (stdin)

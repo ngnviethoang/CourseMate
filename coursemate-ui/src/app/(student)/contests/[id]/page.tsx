@@ -22,7 +22,7 @@ import {
   List
 } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { contestService, ContestDto, ContestLeaderboardDto } from '@/lib/contest-service'
+import { contestService, ContestDto, ContestLeaderboardDto, StudentViolationSummaryDto } from '@/lib/contest-service'
 import { format } from 'date-fns'
 import { vi } from 'date-fns/locale'
 import { toast } from 'sonner'
@@ -53,9 +53,10 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
 
   const [contest, setContest] = useState<ContestDto | null>(null)
   const [leaderboard, setLeaderboard] = useState<ContestLeaderboardDto | null>(null)
+  const [myViolations, setMyViolations] = useState<StudentViolationSummaryDto | null>(null)
   const [loading, setLoading] = useState(true)
   const [registering, setRegistering] = useState(false)
-  const [tab, setTab] = useState<'overview' | 'exercises' | 'leaderboard' | 'rules'>('overview')
+  const [tab, setTab] = useState<'overview' | 'exercises' | 'leaderboard' | 'rules' | 'violations'>('overview')
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -86,8 +87,10 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
   useEffect(() => {
     if (tab === 'leaderboard') {
       fetchLeaderboard()
+    } else if (tab === 'violations') {
+      contestService.getMyViolations(id).then(setMyViolations).catch(console.error)
     }
-  }, [tab, fetchLeaderboard])
+  }, [tab, fetchLeaderboard, id])
 
   const handleRegister = async () => {
     setRegistering(true)
@@ -135,7 +138,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
     <div className="min-h-screen bg-background">
       {/* Header Section */}
       <div className="shadow-md border-0 border-b-0 bg-muted/30">
-        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl px-4 py-12 px-6 px-8">
           <Link
             href="/contests"
             className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors"
@@ -143,7 +146,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
             <ArrowLeft className="h-4 w-4" /> Quay lại danh sách
           </Link>
 
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+          <div className="flex flex-col flex-row items-end justify-between gap-8">
             <div className="flex-1 space-y-4">
               <div className="flex flex-wrap items-center gap-3">
                 <span
@@ -218,13 +221,14 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
       </div>
 
       {/* Content Tabs */}
-      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl px-4 py-10 px-6 px-8">
         <div className="flex gap-8 shadow-md border-0 border-b-0 mb-10 overflow-x-auto no-scrollbar">
           {[
             { id: 'overview', label: 'Tổng quan', icon: Layout },
             { id: 'exercises', label: `Bài tập (${exercises.length})`, icon: List },
             { id: 'leaderboard', label: 'Bảng xếp hạng', icon: Trophy },
-            { id: 'rules', label: 'Thể lệ & Hướng dẫn', icon: CheckCircle2 }
+            { id: 'rules', label: 'Thể lệ & Hướng dẫn', icon: CheckCircle2 },
+            ...(contest.antiCheatLevel !== 'None' ? [{ id: 'violations', label: 'Lịch sử vi phạm', icon: Shield }] : [])
           ].map(t => (
             <button
               key={t.id}
@@ -237,9 +241,9 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 grid-cols-3 gap-12">
           {/* Main Content Area */}
-          <div className="lg:col-span-2">
+          <div className="col-span-2">
             {tab === 'overview' && (
               <div className="space-y-8">
                 <div className="prose prose-blue dark:prose-invert max-w-none">
@@ -364,6 +368,58 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                       <p className="text-sm font-medium leading-relaxed">{rule}</p>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {tab === 'violations' && (
+              <div className="space-y-6">
+                <div className="bg-card rounded-3xl p-8 shadow-md border-0 space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center -red-200">
+                      <Shield className="h-8 w-8 text-red-500" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold">Lịch sử vi phạm của bạn</h3>
+                      <p className="text-muted-foreground mt-1">
+                        Tổng số lỗi đã ghi nhận:{' '}
+                        <span className="font-bold text-foreground">{myViolations?.violationCount || 0}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {myViolations?.isDisqualified && (
+                    <div className="p-4 rounded-2xl bg-red-50 -red-200 dark:bg-red-500/10 dark:-red-500/20 text-red-700 dark:text-red-400 font-medium">
+                      <AlertTriangle className="h-5 w-5 inline mr-2" />
+                      Bạn đã bị loại khỏi cuộc thi này do vi phạm quy chế. Lý do:{' '}
+                      {myViolations.disqualifiedReason || 'Không rõ'}
+                    </div>
+                  )}
+
+                  <div className="space-y-4 mt-6">
+                    {!myViolations || myViolations.violations.length === 0 ? (
+                      <p className="text-muted-foreground text-center py-10">
+                        Bạn chưa có vi phạm nào. Hãy tiếp tục phát huy!
+                      </p>
+                    ) : (
+                      <div className="relative pl-6 border-0 border-l-2 -muted space-y-6">
+                        {myViolations.violations.map(v => (
+                          <div key={v.id} className="relative">
+                            <span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full bg-red-500 ring-4 ring-background" />
+                            <div className="bg-muted/30 rounded-2xl p-4">
+                              <div className="flex justify-between items-start mb-2">
+                                <span className="font-bold text-amber-600 dark:text-amber-500">{v.violationType}</span>
+                                <span className="text-xs text-muted-foreground">
+                                  {format(new Date(v.occurredAt), 'HH:mm:ss dd/MM/yyyy')}
+                                </span>
+                              </div>
+                              <p className="text-sm text-muted-foreground break-all">{v.details}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}

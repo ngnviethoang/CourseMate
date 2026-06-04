@@ -159,7 +159,7 @@ export default function OrdersPage() {
 
   return (
     <div className="space-y-10 max-w-[1600px] mx-auto pb-10">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="flex flex-col gap-4 flex-row items-end justify-between">
         <div className="flex flex-col gap-2">
           <h1 className="text-4xl font-bold tracking-tight">
             {isAdmin ? 'Tất cả đơn hàng' : 'Doanh thu khóa học của tôi'}

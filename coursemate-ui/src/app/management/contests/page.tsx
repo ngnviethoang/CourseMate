@@ -123,7 +123,7 @@ export default function ContestsManagementPage() {
               <Plus className="h-4 w-4 mr-2" /> Tạo cuộc thi
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="max-w-[500px]">
             <DialogHeader>
               <DialogTitle>Tạo cuộc thi mới</DialogTitle>
               <DialogDescription>
@@ -230,11 +230,9 @@ export default function ContestsManagementPage() {
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">ID</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Tiêu đề</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Trạng thái</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Thời gian</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Ngày tạo</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden xl:table-cell">
-                Cập nhật lần cuối
-              </th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground table-cell">Thời gian</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground table-cell">Ngày tạo</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground table-cell">Cập nhật lần cuối</th>
               <th className="text-right px-4 py-3 font-medium text-muted-foreground">Thao tác</th>
             </tr>
           </thead>
@@ -268,7 +266,7 @@ export default function ContestsManagementPage() {
                       {STATUS_LABEL[c.status]}
                     </span>
                   </td>
-                  <td className="px-4 py-3 hidden md:table-cell">
+                  <td className="px-4 py-3 table-cell">
                     {c.startTime ? (
                       <div className="text-xs space-y-0.5">
                         <p className="flex items-center gap-1">
@@ -283,10 +281,10 @@ export default function ContestsManagementPage() {
                       <span className="text-muted-foreground text-xs">— Chưa đặt —</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 hidden lg:table-cell text-xs text-muted-foreground">
+                  <td className="px-4 py-3 table-cell text-xs text-muted-foreground">
                     {format(new Date(c.creationTime), 'dd/MM/yyyy HH:mm', { locale: vi })}
                   </td>
-                  <td className="px-4 py-3 hidden xl:table-cell text-xs text-muted-foreground">
+                  <td className="px-4 py-3 table-cell text-xs text-muted-foreground">
                     {c.lastModificationTime
                       ? format(new Date(c.lastModificationTime), 'dd/MM/yyyy HH:mm', { locale: vi })
                       : '—'}

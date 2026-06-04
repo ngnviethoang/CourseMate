@@ -137,7 +137,34 @@ public class ContestController : ControllerBase
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
     public async Task<ActionResult> GetContestViolations(Guid id)
     {
-        ContestViolationsDto? result = await _mediator.Send(new GetContestViolationsQuery { ContestId = id });
+        ContestViolationsDto? result = await _mediator.Send(new GetContestViolationsQuery
+        {
+            ContestId = id,
+            IncludeAll = true  // Show all participants so instructor can see the full list
+        });
+        return Ok(result);
+    }
+
+    [HttpGet("{id:guid}/violations/{studentId:guid}")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> GetStudentViolations(Guid id, Guid studentId)
+    {
+        StudentViolationSummaryDto? result = await _mediator.Send(new GetStudentViolationsQuery
+        {
+            ContestId = id,
+            StudentId = studentId
+        });
+        return Ok(result);
+    }
+
+    [HttpGet("{id:guid}/my-violations")]
+    [Authorize]
+    public async Task<ActionResult> GetMyViolations(Guid id)
+    {
+        StudentViolationSummaryDto? result = await _mediator.Send(new GetMyContestViolationsQuery
+        {
+            ContestId = id
+        });
         return Ok(result);
     }
 

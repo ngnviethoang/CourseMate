@@ -61,7 +61,7 @@ function UserDropdown({
             {initials}
           </AvatarFallback>
         </Avatar>
-        <div className="hidden sm:flex flex-col items-start leading-none">
+        <div className="flex flex-col items-start leading-none">
           <span className="font-medium text-foreground" suppressHydrationWarning>
             {displayName}
           </span>

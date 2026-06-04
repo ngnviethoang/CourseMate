@@ -82,16 +82,16 @@ export default function StudentProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row items-center gap-6 pb-8 shadow-md border-0 border-b-0">
+      <div className="flex flex-col flex-row items-center gap-6 pb-8 shadow-md border-0 border-b-0">
         <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary -4 -background shadow-xl ring-1 ring-primary/20">
           <User className="h-12 w-12" />
         </div>
-        <div className="text-center md:text-left space-y-1">
+        <div className="text-center text-left space-y-1">
           <h1 className="text-3xl font-black tracking-tight">{user.userName}</h1>
-          <p className="text-muted-foreground font-medium flex items-center justify-center md:justify-start gap-2">
+          <p className="text-muted-foreground font-medium flex items-center justify-center justify-start gap-2">
             <Mail className="h-4 w-4" /> {user.email}
           </p>
-          <div className="flex items-center justify-center md:justify-start gap-2 mt-2">
+          <div className="flex items-center justify-center justify-start gap-2 mt-2">
             <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 -emerald-500/20 flex items-center gap-1">
               <CheckCircle2 className="h-3 w-3" /> Học viên đang hoạt động
             </span>
@@ -99,7 +99,7 @@ export default function StudentProfilePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 grid-cols-2 gap-8">
         {/* Account Details */}
         <Card className="-none shadow-xl bg-gradient-to-br from-card to-muted/30 overflow-hidden group">
           <CardHeader className="pb-2">
@@ -156,7 +156,7 @@ export default function StudentProfilePage() {
                   Đổi mật khẩu
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent className="max-w-[425px]">
                 <form onSubmit={handleChangePassword}>
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">

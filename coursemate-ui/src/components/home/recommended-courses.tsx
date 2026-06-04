@@ -4,16 +4,13 @@ import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { BookOpen, ChevronLeft, ChevronRight, Loader2, ShoppingCart, Star, Users, Zap } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-
 import { orderService } from '@/lib/order-service'
 import { courseService } from '@/lib/course-service'
 import { CourseDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
-
 import { useRouter } from 'next/navigation'
 
-// Dữ liệu đánh giá mô phỏng tạm thời
 function getReview(idx: number) {
   const ratings = [4.9, 4.8, 4.7, 4.6, 4.8, 4.5, 4.9, 4.7]
   const students = [18400, 12700, 24900, 9300, 15200, 8100, 21000, 11000]
@@ -189,9 +186,15 @@ interface RecommendedCoursesProps {
   searchQuery?: string
   isLoggedIn?: boolean
   selectedCategoryId?: string
+  headerAction?: React.ReactNode
 }
 
-export function RecommendedCourses({ searchQuery, isLoggedIn, selectedCategoryId }: RecommendedCoursesProps) {
+export function RecommendedCourses({
+  searchQuery,
+  isLoggedIn,
+  selectedCategoryId,
+  headerAction
+}: RecommendedCoursesProps) {
   const [courses, setCourses] = useState<CourseDto[]>([])
   const [loading, setLoading] = useState(true)
   const [pageIndex, setPageIndex] = useState(1)
@@ -256,18 +259,11 @@ export function RecommendedCourses({ searchQuery, isLoggedIn, selectedCategoryId
 
   return (
     <section>
-      {/* Header */}
-      <div className="mb-6 flex items-end justify-between">
+      <div className="mb-5 flex items-end justify-between gap-4">
         <div>
-          {isRecommended && (
-            <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-primary">
-              <Zap className="mr-1 inline h-3 w-3" />
-              Dành riêng cho bạn
-            </p>
-          )}
           <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
-          <p className="mt-0.5 text-sm text-muted-foreground">{subtitle}</p>
         </div>
+        {headerAction && <div className="shrink-0">{headerAction}</div>}
       </div>
 
       {loading && courses.length === 0 ? (

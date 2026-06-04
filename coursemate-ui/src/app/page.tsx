@@ -1,15 +1,17 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, X } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { StudentHeader } from '@/components/home/student-header'
-import { HeroSection } from '@/components/home/hero-section'
+import { useSearchParams } from 'next/navigation'
 import { ContinueLearning } from '@/components/home/continue-learning'
 import { CategoryDropdown } from '@/components/home/category-dropdown'
 import { RecommendedCourses } from '@/components/home/recommended-courses'
+import { buttonVariants } from '@/components/ui/button'
+import { StudentShell } from '@/components/home/student-shell'
 
 export default function Home() {
+  const searchParams = useSearchParams()
+  const queryParam = searchParams ? (searchParams.get('search') ?? '') : ''
+
   const [searchQuery, setSearchQuery] = useState('')
   const [localSearch, setLocalSearch] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -20,6 +22,10 @@ export default function Home() {
     setIsLoggedIn(document.cookie.includes('accessToken='))
   }, [])
 
+  useEffect(() => {
+    setLocalSearch(queryParam)
+  }, [queryParam])
+
   // Debounced search
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -28,49 +34,43 @@ export default function Home() {
     return () => clearTimeout(timer)
   }, [localSearch])
 
+  const hasSearch = searchQuery.trim().length > 0
+  const hasCategory = selectedCategoryId.length > 0
+  const hasActiveFilter = hasSearch || hasCategory
+
   return (
-    <div className="min-h-screen bg-background">
-      <StudentHeader />
-      <HeroSection />
+    <StudentShell
+      mainClassName="space-y-6 py-5"
+      footerClassName="mt-8"
+      searchValue={localSearch}
+      onSearchChange={setLocalSearch}
+      onClearSearch={() => setLocalSearch('')}
+    >
+      {!hasActiveFilter && isLoggedIn && <ContinueLearning />}
 
-      <main className="mx-auto max-w-7xl space-y-12 px-4 py-12 sm:px-6 lg:px-8">
-        {!searchQuery && isLoggedIn && <ContinueLearning />}
-
-        {/* Search + Category filter bar */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-          {/* Search input */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Tìm khoá học, chủ đề, giảng viên…"
-              className="h-11 rounded-xl border-transparent bg-card pl-10 pr-10 shadow-md border-0 transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:-primary/40"
-              value={localSearch}
-              onChange={e => setLocalSearch(e.target.value)}
-            />
-            {localSearch && (
+      <RecommendedCourses
+        searchQuery={searchQuery}
+        isLoggedIn={isLoggedIn}
+        selectedCategoryId={selectedCategoryId || undefined}
+        headerAction={
+          <div className="flex w-[320px] items-center gap-2">
+            <CategoryDropdown value={selectedCategoryId} onChange={setSelectedCategoryId} />
+            {hasActiveFilter && (
               <button
-                onClick={() => setLocalSearch('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+                type="button"
+                onClick={() => {
+                  setLocalSearch('')
+                  setSearchQuery('')
+                  setSelectedCategoryId('')
+                }}
+                className={buttonVariants({ variant: 'outline', className: 'shrink-0 rounded-xl px-3' })}
               >
-                <X className="h-4 w-4" />
+                Xoá lọc
               </button>
             )}
           </div>
-
-          {/* Category dropdown */}
-          <CategoryDropdown value={selectedCategoryId} onChange={setSelectedCategoryId} />
-        </div>
-
-        <RecommendedCourses
-          searchQuery={searchQuery}
-          isLoggedIn={isLoggedIn}
-          selectedCategoryId={selectedCategoryId || undefined}
-        />
-      </main>
-
-      <footer className="mt-16 shadow-md border-0 border-t-0 py-8 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} CourseMate. Bảo lưu mọi quyền.
-      </footer>
-    </div>
+        }
+      />
+    </StudentShell>
   )
 }

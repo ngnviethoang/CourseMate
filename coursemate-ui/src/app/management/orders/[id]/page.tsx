@@ -83,9 +83,9 @@ export default function OrderDetailPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 grid-cols-3 gap-6">
         {/* Left Column - Order Items */}
-        <div className="md:col-span-2 space-y-6">
+        <div className="col-span-2 space-y-6">
           <Card className="shadow-md border-0 border-transparent">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg">Sản phẩm trong đơn hàng</CardTitle>
@@ -97,9 +97,9 @@ export default function OrderDetailPage() {
                   {order.items.map(item => (
                     <div
                       key={item.id}
-                      className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg bg-muted/30 border-transparent"
+                      className="flex flex-col flex-row items-start items-center justify-between p-4 rounded-lg bg-muted/30 border-transparent"
                     >
-                      <div className="flex items-center gap-3 mb-2 sm:mb-0">
+                      <div className="flex items-center gap-3 mb-2 mb-0">
                         <div className="bg-primary/10 p-2 rounded-md">
                           <Package className="h-5 w-5 text-primary" />
                         </div>

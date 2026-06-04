@@ -32,11 +32,7 @@ public sealed class CompleteVideoUploadCommandHandler : AbstractCommandHandler<C
     public override async Task<FileUploadResponse> Handle(CompletedVideoUploadCommand request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
-        FileEntry? fileEntry = await DbContext.FileEntries.FirstOrDefaultAsync(f =>
-                f.Id == request.FileId &&
-                f.UserId == userId &&
-                f.Status == FileStatus.Uploading,
-            ct);
+        FileEntry? fileEntry = await DbContext.FileEntries.FirstOrDefaultAsync(f => f.Id == request.FileId && f.UserId == userId && f.Status == FileStatus.Uploading, ct);
         if (fileEntry == null)
         {
             throw new EntityNotFoundException(nameof(FileEntry), request.FileId);

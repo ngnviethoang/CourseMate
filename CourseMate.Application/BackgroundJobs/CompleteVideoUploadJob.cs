@@ -39,8 +39,7 @@ public class CompleteVideoUploadJob
     [AutomaticRetry(Attempts = 0)]
     public async Task ExecuteAsync(Guid fileId, Guid userId, Guid? lessonId, string baseUrl, CancellationToken ct)
     {
-        FileEntry? fileEntry = await _dbContext.FileEntries.FirstOrDefaultAsync(
-            f => f.Id == fileId && f.Status == FileStatus.Uploading, ct);
+        FileEntry? fileEntry = await _dbContext.FileEntries.FirstOrDefaultAsync(f => f.Id == fileId && f.Status == FileStatus.Uploading, ct);
         if (fileEntry == null)
         {
             _logger.LogWarning("Video upload file entry not found or not uploading. FileId={FileId}, UserId={UserId}", fileId, userId);
@@ -82,8 +81,8 @@ public class CompleteVideoUploadJob
             {
                 foreach (FileChunk chunk in fileChunks)
                 {
-                    await using Stream chunkStream = await _fileStorageManager.ReadAsync(StorageFileEntry.FromFileChunk(chunk), ct);
-                    await chunkStream.CopyToAsync(outputStream, ct);
+                    byte[] chunkBytes = await _fileStorageManager.ReadBytesAsync(StorageFileEntry.FromFileChunk(chunk), ct);
+                    await outputStream.WriteAsync(chunkBytes, ct);
                     await _fileStorageManager.DeleteAsync(StorageFileEntry.FromFileChunk(chunk), ct);
                 }
             }

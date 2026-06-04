@@ -53,6 +53,11 @@ public sealed class GetContestLeaderboardQueryHandler : AbstractQueryHandler<Get
             .Where(u => studentIds.Contains(u.Id))
             .ToDictionaryAsync(u => u.Id, u => u.UserName ?? "Unknown", ct);
 
+        // Fetch disqualification status from registrations
+        Dictionary<Guid, bool> disqualifiedDict = await DbContext.ContestRegistrations
+            .Where(r => r.ContestId == request.ContestId && studentIds.Contains(r.StudentId))
+            .ToDictionaryAsync(r => r.StudentId, r => r.IsDisqualified, ct);
+
         // 3. Process to find best scores per exercise per student
         List<LeaderboardEntryDto> entries = submissions
             .GroupBy(s => s.StudentId)
@@ -75,7 +80,8 @@ public sealed class GetContestLeaderboardQueryHandler : AbstractQueryHandler<Get
                     StudentName = userName,
                     TotalScore = bestScoresPerExercise.Sum(s => s.Score),
                     TotalRuntime = bestScoresPerExercise.Sum(s => s.TotalTime),
-                    LastSubmitTime = bestScoresPerExercise.Max(s => s.CreationTime)
+                    LastSubmitTime = bestScoresPerExercise.Max(s => s.CreationTime),
+                    IsDisqualified = disqualifiedDict.GetValueOrDefault(studentId, false)
                 };
             })
             .OrderByDescending(e => e.TotalScore)

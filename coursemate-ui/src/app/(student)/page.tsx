@@ -59,8 +59,8 @@ export default function CatalogPage() {
         <p className="text-muted-foreground mt-2">Tìm những khóa học phù hợp nhất với bạn.</p>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <div className="relative w-full sm:w-96">
+      <div className="flex flex-col flex-row gap-4 items-center justify-between">
+        <div className="relative w-full w-96">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
@@ -70,7 +70,7 @@ export default function CatalogPage() {
             onChange={e => setSearch(e.target.value)}
           />
         </div>
-        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+        <div className="flex flex-wrap gap-2 w-full w-auto">
           <Badge
             variant={selectedCategory === '' ? 'default' : 'outline'}
             className="cursor-pointer"
@@ -92,7 +92,7 @@ export default function CatalogPage() {
       </div>
 
       {loading ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-6 grid-cols-2 grid-cols-3 grid-cols-4">
           {[1, 2, 3, 4].map(i => (
             <Card key={i} className="animate-pulse h-72 bg-muted"></Card>
           ))}
@@ -100,7 +100,7 @@ export default function CatalogPage() {
       ) : filteredCourses.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">Không tìm thấy khóa học nào.</div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-6 grid-cols-2 grid-cols-3 grid-cols-4">
           {filteredCourses.map(course => (
             <Card
               key={course.id}

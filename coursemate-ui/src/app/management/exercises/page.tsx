@@ -156,7 +156,7 @@ export default function ExercisesManagementPage() {
               <Plus className="h-4 w-4 mr-2" /> Thêm bài tập
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="max-w-[500px]">
             <DialogHeader>
               <DialogTitle>Tạo bài tập mới</DialogTitle>
               <DialogDescription>Điền các thông tin cơ bản trước khi thêm bộ kiểm thử và mã mẫu.</DialogDescription>
@@ -274,11 +274,9 @@ export default function ExercisesManagementPage() {
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">ID</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Tiêu đề</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Độ khó</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Danh mục</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Ngày tạo</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden xl:table-cell">
-                Cập nhật lần cuối
-              </th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground table-cell">Danh mục</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground table-cell">Ngày tạo</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground table-cell">Cập nhật lần cuối</th>
               <th className="text-right px-4 py-3 font-medium text-muted-foreground">Thao tác</th>
             </tr>
           </thead>
@@ -304,22 +302,18 @@ export default function ExercisesManagementPage() {
                   <td className="px-4 py-3 text-xs font-mono text-muted-foreground">{ex.id}</td>
                   <td className="px-4 py-3">
                     <p className="font-medium line-clamp-1">{ex.title}</p>
-                    <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 hidden sm:block">
-                      {ex.description}
-                    </p>
+                    <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 block">{ex.description}</p>
                   </td>
                   <td className="px-4 py-3">
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${DIFF_STYLE[ex.difficulty]}`}>
                       {DIFF_LABEL[ex.difficulty] ?? ex.difficulty}
                     </span>
                   </td>
-                  <td className="px-4 py-3 hidden md:table-cell">
+                  <td className="px-4 py-3 table-cell">
                     <span className="text-xs bg-muted px-2 py-0.5 rounded-md">{ex.category}</span>
                   </td>
-                  <td className="px-4 py-3 hidden lg:table-cell text-xs text-muted-foreground">
-                    {formatDate(ex.creationTime)}
-                  </td>
-                  <td className="px-4 py-3 hidden xl:table-cell text-xs text-muted-foreground">
+                  <td className="px-4 py-3 table-cell text-xs text-muted-foreground">{formatDate(ex.creationTime)}</td>
+                  <td className="px-4 py-3 table-cell text-xs text-muted-foreground">
                     {formatDate(ex.lastModificationTime)}
                   </td>
                   <td className="px-4 py-3">

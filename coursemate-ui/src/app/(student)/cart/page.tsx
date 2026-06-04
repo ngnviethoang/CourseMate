@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
-import { ShoppingCart, Trash2, ArrowRight, BookOpen, Sparkles, Loader2, Tag } from 'lucide-react'
+import { ShoppingCart, Trash2, ArrowRight, BookOpen, Sparkles, Loader2, Tag, Trophy } from 'lucide-react'
 import { CartDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
@@ -17,25 +17,31 @@ import { formatCurrency } from '@/lib/utils'
 
 function CartSkeleton() {
   return (
-    <div className="grid md:grid-cols-3 gap-8 animate-pulse">
-      <div className="md:col-span-2 space-y-4">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-pulse mt-6">
+      <div className="lg:col-span-2 space-y-4">
         {[1, 2].map(i => (
-          <div key={i} className="flex gap-4 rounded-2xl bg-card p-4 shadow-md border-0">
-            <div className="h-28 w-44 flex-shrink-0 rounded-xl bg-muted" />
-            <div className="flex-1 space-y-3 py-1">
-              <div className="h-4 w-3/4 rounded bg-muted" />
-              <div className="h-3 w-1/2 rounded bg-muted" />
-              <div className="h-4 w-1/4 rounded bg-muted" />
+          <div
+            key={i}
+            className="flex flex-col sm:flex-row gap-4 rounded-[2rem] bg-card p-4 shadow-sm border border-border/50"
+          >
+            <div className="h-32 sm:w-48 flex-shrink-0 rounded-2xl bg-muted" />
+            <div className="flex-1 space-y-3 py-2">
+              <div className="h-5 w-3/4 rounded bg-muted" />
+              <div className="h-4 w-1/2 rounded bg-muted" />
+              <div className="h-6 w-1/4 rounded bg-muted mt-4" />
             </div>
           </div>
         ))}
       </div>
-      <div className="md:col-span-1">
-        <div className="rounded-2xl bg-card p-6 shadow-md border-0 space-y-4">
-          <div className="h-5 w-1/2 rounded bg-muted" />
-          <div className="h-3 w-full rounded bg-muted" />
-          <div className="h-3 w-full rounded bg-muted" />
-          <div className="h-10 w-full rounded-xl bg-muted" />
+      <div className="lg:col-span-1">
+        <div className="rounded-[2rem] bg-card p-6 shadow-sm border border-border/50 space-y-4">
+          <div className="h-6 w-1/2 rounded bg-muted" />
+          <Separator className="my-4" />
+          <div className="h-4 w-full rounded bg-muted" />
+          <div className="h-4 w-full rounded bg-muted" />
+          <Separator className="my-4" />
+          <div className="h-6 w-full rounded bg-muted" />
+          <div className="h-11 w-full rounded-xl bg-muted mt-4" />
         </div>
       </div>
     </div>
@@ -47,24 +53,25 @@ function CartSkeleton() {
 function EmptyCart() {
   const router = useRouter()
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center px-4">
-      <div className="relative">
-        <div className="flex h-28 w-28 items-center justify-center rounded-full bg-primary/10">
-          <ShoppingCart className="h-12 w-12 text-primary" />
-        </div>
-        <div className="absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-muted -2 -background text-xs font-bold">
-          0
+    <div className="flex flex-col items-center justify-center py-20 px-4 mt-6 bg-card border border-dashed rounded-[2rem] shadow-sm">
+      <div className="relative mb-6">
+        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-muted/50 text-muted-foreground">
+          <ShoppingCart className="h-10 w-10" />
         </div>
       </div>
-      <div>
-        <h2 className="text-2xl font-bold">Giỏ hàng trống</h2>
-        <p className="mt-2 text-muted-foreground max-w-sm">
-          Bạn chưa thêm khoá học nào vào giỏ hàng. Hãy khám phá hàng nghìn khoá học chất lượng!
+      <div className="text-center max-w-md space-y-3">
+        <h2 className="text-2xl font-bold text-foreground">Giỏ hàng trống</h2>
+        <p className="text-muted-foreground">
+          Bạn chưa thêm khoá học nào vào giỏ hàng. Hãy khám phá hàng nghìn khoá học chất lượng để nâng tầm kiến thức!
         </p>
       </div>
-      <Button size="lg" className="rounded-full gap-2 px-8" onClick={() => router.push('/')}>
-        <BookOpen className="h-4 w-4" />
-        Khám phá khoá học
+      <Button
+        size="lg"
+        className="mt-8 rounded-full h-14 px-8 text-base shadow-lg shadow-primary/25"
+        onClick={() => router.push('/')}
+      >
+        <BookOpen className="h-5 w-5 mr-2" />
+        Khám phá khoá học ngay
       </Button>
     </div>
   )
@@ -109,81 +116,98 @@ export default function CartPage() {
   const items = cart?.items ?? []
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Gradient header strip */}
-      <div className="bg-gradient-to-br from-primary/8 via-background to-indigo-50 shadow-md border-0 border-b-0">
-        <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md">
-              <ShoppingCart className="h-5 w-5" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">Giỏ hàng của tôi</h1>
-              {!loading && (
-                <p className="text-sm text-muted-foreground">
-                  {items.length > 0 ? `${items.length} khoá học đang chờ bạn` : 'Chưa có khoá học nào'}
-                </p>
-              )}
+    <div className="min-h-screen bg-background pb-20">
+      {/* Premium Header Container */}
+      <div className="mx-4 mt-6 rounded-[2rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background overflow-hidden shadow-sm">
+        {/* Decorative background elements */}
+        <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl" />
+
+        <div className="relative mx-auto max-w-7xl px-4 py-4 sm:px-5 lg:px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
+            <div className="space-y-1">
+              <h1 className="text-2xl md:text-3xl font-black tracking-tight flex items-center gap-3 text-foreground">
+                <div className="h-8 w-8 bg-primary/10 rounded-xl flex items-center justify-center shadow-inner border border-primary/20">
+                  <ShoppingCart className="h-4 w-4 text-primary" />
+                </div>
+                Giỏ hàng của tôi
+              </h1>
+              <p className="text-muted-foreground text-sm ml-[44px] max-w-xl">
+                {!loading &&
+                  (items.length > 0
+                    ? `Bạn có ${items.length} khoá học đang chờ thanh toán.`
+                    : 'Hãy bắt đầu hành trình bằng việc thêm khoá học yêu thích.')}
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-5 lg:px-6">
         {loading ? (
           <CartSkeleton />
         ) : items.length === 0 ? (
           <EmptyCart />
         ) : (
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
             {/* ── Course list ── */}
-            <div className="md:col-span-2 space-y-4">
+            <div className="lg:col-span-2 flex flex-col">
               {items.map(item => (
                 <div
                   key={item.id}
-                  className="group flex flex-col sm:flex-row gap-4 rounded-2xl bg-card p-4 shadow-md border-0 shadow-xs transition-shadow hover:shadow-md"
+                  className="group flex flex-col sm:flex-row gap-4 py-4 border-b border-border/40 last:border-0 transition-colors hover:bg-muted/20 px-2 sm:px-4 rounded-xl"
                 >
                   <Link href={`/courses/${item.courseId}`} className="flex-shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={item.courseImageUrl || `https://placehold.co/200x140/6366f1/ffffff?text=Khoá+học`}
                       alt={item.courseTitle}
-                      className="h-32 w-full sm:w-44 rounded-xl object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      className="h-32 sm:h-24 w-full sm:w-36 rounded-xl object-cover transition-transform duration-500 group-hover:scale-105"
                       onError={e => {
                         ;(e.target as HTMLImageElement).src = 'https://placehold.co/200x140/6366f1/ffffff?text=Khoá+học'
                       }}
                     />
                   </Link>
 
-                  <div className="flex flex-1 flex-col justify-between">
-                    <div>
-                      <Link href={`/courses/${item.courseId}`}>
-                        <h3 className="font-semibold leading-snug line-clamp-2 hover:text-primary transition-colors">
-                          {item.courseTitle}
-                        </h3>
-                      </Link>
-                      <p className="mt-1 text-sm text-muted-foreground">{item.instructorName}</p>
-                      <Badge variant="secondary" className="mt-2 text-xs gap-1">
-                        <Tag className="h-3 w-3" /> Khoá học trực tuyến
-                      </Badge>
-                    </div>
+                  <div className="flex flex-1 flex-col justify-between py-0.5">
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="flex-1">
+                        <Link href={`/courses/${item.courseId}`}>
+                          <h3 className="text-base font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                            {item.courseTitle}
+                          </h3>
+                        </Link>
+                        <p className="mt-1 text-sm font-medium text-muted-foreground flex items-center gap-2">
+                          <span className="flex h-5 items-center justify-center rounded-full bg-primary/10 text-[9px] font-bold text-primary px-2">
+                            Giảng viên
+                          </span>
+                          {item.instructorName}
+                        </p>
+                        <Badge
+                          variant="secondary"
+                          className="mt-2 text-[10px] font-bold uppercase tracking-wider bg-muted/50 border-none gap-1.5 px-2 py-1"
+                        >
+                          <Tag className="h-3 w-3" /> Khoá học trực tuyến
+                        </Badge>
+                      </div>
 
-                    <div className="mt-4 flex items-center justify-between">
-                      <span className="text-xl font-bold text-primary">{formatCurrency(item.price)}</span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-1.5 rounded-full"
-                        onClick={() => handleRemove(item.id)}
-                        disabled={removingId === item.id}
-                      >
-                        {removingId === item.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Trash2 className="h-4 w-4" />
-                        )}
-                        Xoá
-                      </Button>
+                      <div className="flex flex-col items-end gap-2">
+                        <span className="text-lg font-black text-primary">{formatCurrency(item.price)}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500 hover:text-red-600 hover:bg-red-500/10 gap-1.5 rounded-full transition-colors h-8"
+                          onClick={() => handleRemove(item.id)}
+                          disabled={removingId === item.id}
+                        >
+                          {removingId === item.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin text-red-600" />
+                          ) : (
+                            <Trash2 className="h-4 w-4" />
+                          )}
+                          <span className="text-xs font-bold">Xoá</span>
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -191,56 +215,55 @@ export default function CartPage() {
             </div>
 
             {/* ── Order Summary ── */}
-            <div className="md:col-span-1">
-              <div className="sticky top-20 rounded-2xl bg-card shadow-md border-0 shadow-md border-0 overflow-hidden">
+            <div className="lg:col-span-1">
+              <div className="sticky top-24 rounded-[2rem] bg-card shadow-sm border border-border/80 overflow-hidden flex flex-col">
                 {/* Summary header */}
-                <div className="bg-gradient-to-r from-primary/10 to-indigo-50 px-6 py-4 shadow-md border-0 border-b-0">
+                <div className="bg-gradient-to-r from-primary/10 to-indigo-50/50 px-5 py-4 border-b border-border/50">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-primary" />
-                    <h2 className="font-semibold">Tổng đơn hàng</h2>
+                    <h2 className="text-base font-bold text-foreground tracking-tight">Tổng đơn hàng</h2>
                   </div>
                 </div>
 
-                <div className="p-6 space-y-4">
+                <div className="p-5 space-y-4">
                   {/* Item breakdown */}
-                  <div className="space-y-2.5">
+                  <div className="space-y-2">
                     {items.map(item => (
-                      <div key={item.id} className="flex items-start justify-between gap-2 text-sm">
-                        <span className="text-muted-foreground line-clamp-2 flex-1 leading-snug">
+                      <div key={item.id} className="flex items-start justify-between gap-3 text-sm">
+                        <span className="text-muted-foreground line-clamp-2 flex-1 leading-snug font-medium">
                           {item.courseTitle}
                         </span>
-                        <span className="font-medium flex-shrink-0">{formatCurrency(item.price)}</span>
+                        <span className="font-bold flex-shrink-0 text-foreground">{formatCurrency(item.price)}</span>
                       </div>
                     ))}
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-border/60" />
 
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Tạm tính</span>
-                    <span className="font-medium">{formatCurrency(cart?.totalPrice ?? 0)}</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-muted-foreground">Tạm tính</span>
+                      <span className="font-bold">{formatCurrency(cart?.totalPrice ?? 0)}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-muted-foreground">Giảm giá</span>
+                      <span className="text-emerald-600 font-bold">-0%</span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Giảm giá</span>
-                    <span className="text-emerald-600 font-medium">{formatCurrency(0)}</span>
-                  </div>
 
-                  <Separator />
+                  <Separator className="bg-border/60" />
 
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-lg">Tổng cộng</span>
-                    <span className="text-xl font-bold text-primary">{formatCurrency(cart?.totalPrice ?? 0)}</span>
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="font-black text-base text-foreground">Tổng cộng</span>
+                    <span className="text-xl font-black text-primary">{formatCurrency(cart?.totalPrice ?? 0)}</span>
                   </div>
 
                   <Button
-                    className="w-full h-11 rounded-xl gap-2 text-base font-semibold shadow-sm mt-2"
+                    className="w-full h-10 rounded-lg gap-2 text-sm font-bold shadow-lg shadow-primary/25 hover:-translate-y-0.5 transition-all mt-2"
                     onClick={() => router.push('/checkout')}
                   >
                     Tiến hành thanh toán
                     <ArrowRight className="h-4 w-4" />
                   </Button>
-
-                  <p className="text-center text-xs text-muted-foreground">🔒 Thanh toán an toàn & bảo mật</p>
                 </div>
               </div>
             </div>

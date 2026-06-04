@@ -87,7 +87,7 @@ export default function ManagementPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 grid-cols-2 grid-cols-4">
         {stats.map((stat, i) => (
           <Card key={i} className="overflow-hidden shadow-md border-0 rounded-2xl transition-all hover:scale-[1.02]">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
@@ -109,9 +109,9 @@ export default function ManagementPage() {
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-7">
+      <div className="grid gap-6 grid-cols-7">
         {/* Revenue Chart */}
-        <Card className="lg:col-span-4 shadow-md border-0 rounded-2xl">
+        <Card className="col-span-4 shadow-md border-0 rounded-2xl">
           <CardHeader className="pb-0">
             <CardTitle className="text-2xl font-bold">Doanh thu theo tháng</CardTitle>
             <CardDescription className="text-base font-medium">Biểu đồ doanh thu 12 tháng gần nhất.</CardDescription>
@@ -158,7 +158,7 @@ export default function ManagementPage() {
 
         {/* Top Instructors (Admin only) or Placeholder for Instructor */}
         {profile?.roles.includes('Admin') ? (
-          <Card className="lg:col-span-3 shadow-md border-0 rounded-2xl overflow-hidden">
+          <Card className="col-span-3 shadow-md border-0 rounded-2xl overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between bg-primary text-primary-foreground py-6">
               <div>
                 <CardTitle className="text-xl font-bold">Cá nhân xuất sắc</CardTitle>
@@ -201,7 +201,7 @@ export default function ManagementPage() {
             </CardContent>
           </Card>
         ) : (
-          <Card className="lg:col-span-3">
+          <Card className="col-span-3">
             <CardHeader>
               <CardTitle>Mẹo tăng doanh thu</CardTitle>
               <CardDescription>Cách để khoá học của bạn tiếp cận nhiều học viên hơn.</CardDescription>
