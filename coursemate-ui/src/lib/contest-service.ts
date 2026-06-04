@@ -85,6 +85,37 @@ export interface LeaderboardEntryDto {
   isDisqualified: boolean
 }
 
+// ─── Anti-Cheat DTOs ────────────────────────────────────────────────────────
+
+export interface ViolationEntryDto {
+  id: string
+  violationType: string
+  details?: string
+  occurredAt: string
+  /** Populated for real-time SignalR events from the instructor monitor */
+  ipAddress?: string
+  userAgent?: string
+  deviceFingerprint?: string
+}
+
+export interface StudentViolationSummaryDto {
+  studentId: string
+  studentName: string
+  violationCount: number
+  isDisqualified: boolean
+  disqualifiedAt?: string
+  disqualifiedReason?: string
+  violations: ViolationEntryDto[]
+}
+
+export interface ContestViolationsDto {
+  contestId: string
+  contestTitle: string
+  students: StudentViolationSummaryDto[]
+}
+
+// ─── Service ─────────────────────────────────────────────────────────────────
+
 export const contestService = {
   getList: (params: { filter?: string; status?: string; sorting?: string; pageIndex?: number; pageSize?: number }) => {
     const searchParams = new URLSearchParams()
@@ -113,7 +144,13 @@ export const contestService = {
   getLeaderboard: (id: string) => api.get<ContestLeaderboardDto>(`/api/contests/${id}/leaderboard`),
 
   // Anti-Cheat APIs
-  getViolations: (id: string) => api.get<any>(`/api/contests/${id}/violations`),
+  getViolations: (id: string) => api.get<ContestViolationsDto>(`/api/contests/${id}/violations`),
+  async getStudentViolations(id: string, studentId: string): Promise<StudentViolationSummaryDto> {
+    return api.get(`/api/contests/${id}/violations/${studentId}`)
+  },
+  async getMyViolations(id: string): Promise<StudentViolationSummaryDto> {
+    return api.get(`/api/contests/${id}/my-violations`)
+  },
   disqualifyStudent: (id: string, studentId: string, reason: string) =>
     api.post(`/api/contests/${id}/disqualify/${studentId}`, { reason }),
   reinstateStudent: (id: string, studentId: string) => api.post(`/api/contests/${id}/reinstate/${studentId}`, {})

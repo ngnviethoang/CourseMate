@@ -136,6 +136,29 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
     onDisqualified: reason => setDisqualifiedReason(reason)
   })
 
+  // ── Auto-redirect countdown when disqualified ─────────────────────────────
+  const [dqCountdown, setDqCountdown] = useState<number | null>(null)
+
+  useEffect(() => {
+    const isDQ = antiCheat.isDisqualified || !!disqualifiedReason
+    if (!isDQ) return
+
+    // Start 5-second countdown then redirect
+    setDqCountdown(5)
+    const interval = setInterval(() => {
+      setDqCountdown(prev => {
+        if (prev === null || prev <= 1) {
+          clearInterval(interval)
+          router.push(`/contests/${id}`)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [antiCheat.isDisqualified, disqualifiedReason])
+
   // Timer for lockout countdown
   useEffect(() => {
     if (!antiCheat.lockedUntil) {
@@ -211,6 +234,17 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
   }
 
   const handleRun = async () => {
+    // Guard: disqualified students cannot run code
+    if (antiCheat.isDisqualified || disqualifiedReason) {
+      toast.error('Bạn đã bị loại khỏi cuộc thi — không thể chạy code.')
+      return
+    }
+    // Guard: locked-out students cannot run code
+    if (antiCheat.lockedUntil && antiCheat.lockedUntil > Date.now()) {
+      const secs = Math.ceil((antiCheat.lockedUntil - Date.now()) / 1000)
+      toast.error(`Màn hình bị khóa — vui lòng đợi ${secs}s trước khi chạy code.`)
+      return
+    }
     if (!selectedExercise || !selectedLang) return
     const code = getCode(selectedExercise.exerciseId, selectedLang.id)
     if (!code.trim()) return toast.error('Vui lòng nhập code')
@@ -276,6 +310,17 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
   }
 
   const handleSubmit = async () => {
+    // Guard: disqualified students cannot submit
+    if (antiCheat.isDisqualified || disqualifiedReason) {
+      toast.error('Bạn đã bị loại khỏi cuộc thi — không thể nộp bài.')
+      return
+    }
+    // Guard: locked-out students cannot submit
+    if (antiCheat.lockedUntil && antiCheat.lockedUntil > Date.now()) {
+      const secs = Math.ceil((antiCheat.lockedUntil - Date.now()) / 1000)
+      toast.error(`Màn hình bị khóa — vui lòng đợi ${secs}s trước khi nộp bài.`)
+      return
+    }
     if (!selectedExercise || !selectedLang) return
     const code = getCode(selectedExercise.exerciseId, selectedLang.id)
     if (!code.trim()) return toast.error('Vui lòng nhập code')
@@ -344,30 +389,52 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
 
   const myScore = arena?.exercises.reduce((sum, ex) => sum + (ex.bestScore || 0), 0) || 0
 
-  // Disqualification overlay
-  if (antiCheat.isDisqualified) {
+  // Disqualification overlay — with auto-redirect countdown
+  if (antiCheat.isDisqualified || disqualifiedReason) {
     return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0a0a0f]/95 backdrop-blur-xl">
-        <div className="max-w-lg w-full mx-4 text-center space-y-8">
-          <div className="w-24 h-24 mx-auto rounded-full bg-red-500/10 -2 -red-500/30 flex items-center justify-center">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0a0a0f]/98 backdrop-blur-xl">
+        {/* Animated red background */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+          <div className="w-[50rem] h-[50rem] bg-red-600 rounded-full blur-3xl animate-pulse" />
+        </div>
+
+        <div className="max-w-md w-full mx-4 text-center space-y-6 relative z-10">
+          {/* Icon */}
+          <div className="w-24 h-24 mx-auto rounded-full bg-red-500/10 border-2 border-red-500/30 flex items-center justify-center animate-pulse">
             <Ban className="h-12 w-12 text-red-500" />
           </div>
-          <div className="space-y-3">
+
+          {/* Title */}
+          <div className="space-y-2">
             <h1 className="text-3xl font-black text-red-400 tracking-tight">Bạn đã bị loại</h1>
             <p className="text-neutral-400 text-sm leading-relaxed max-w-sm mx-auto">
               {disqualifiedReason || 'Vi phạm nghiêm trọng nội quy thi.'}
             </p>
           </div>
-          <div className="p-4 rounded-2xl bg-red-500/5 -red-500/10">
+
+          {/* Violation count */}
+          <div className="p-4 rounded-2xl bg-red-500/5 border border-red-500/10">
             <p className="text-xs text-neutral-500">
               Số lần vi phạm: <span className="text-red-400 font-bold">{antiCheat.violationCount}</span>
             </p>
           </div>
+
+          {/* Countdown */}
+          <div className="space-y-3">
+            <p className="text-neutral-500 text-sm">
+              Tự động chuyển trang trong
+            </p>
+            <div className="text-6xl font-black font-mono text-red-400 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]">
+              {dqCountdown ?? 5}
+            </div>
+            <p className="text-neutral-600 text-xs">giây...</p>
+          </div>
+
           <Button
             onClick={() => router.push(`/contests/${id}`)}
-            className="bg-white/5 hover:bg-white/10 text-neutral-300 font-bold rounded-xl px-8 h-12"
+            className="bg-white/5 hover:bg-white/10 text-neutral-300 font-bold rounded-xl px-8 h-12 w-full"
           >
-            Quay lại trang cuộc thi
+            Quay lại ngay
           </Button>
         </div>
       </div>
@@ -697,16 +764,18 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                   </Button>
                   <Button
                     onClick={handleRun}
-                    disabled={running || submitting}
-                    className="h-8 px-4 bg-white/5 hover:bg-white/10 text-neutral-200 text-[10px] font-black uppercase tracking-widest rounded-lg gap-2"
+                    disabled={running || submitting || !!antiCheat.isDisqualified || !!disqualifiedReason || (!!antiCheat.lockedUntil && antiCheat.lockedUntil > Date.now())}
+                    title={antiCheat.isDisqualified || disqualifiedReason ? 'Bạn đã bị loại' : undefined}
+                    className="h-8 px-4 bg-white/5 hover:bg-white/10 text-neutral-200 text-[10px] font-black uppercase tracking-widest rounded-lg gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {running ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3 fill-current" />}
                     Chạy thử
                   </Button>
                   <Button
                     onClick={handleSubmit}
-                    disabled={running || submitting}
-                    className="h-8 px-5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-lg gap-2 shadow-lg shadow-emerald-500/20"
+                    disabled={running || submitting || !!antiCheat.isDisqualified || !!disqualifiedReason || (!!antiCheat.lockedUntil && antiCheat.lockedUntil > Date.now())}
+                    title={antiCheat.isDisqualified || disqualifiedReason ? 'Bạn đã bị loại' : undefined}
+                    className="h-8 px-5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-lg gap-2 shadow-lg shadow-emerald-500/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-neutral-600 disabled:shadow-none"
                   >
                     {submitting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
                     Nộp bài
@@ -759,7 +828,9 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
                   padding: { top: 20, bottom: 20 },
                   fontFamily: 'JetBrains Mono, Menlo, Monaco, Courier New, monospace',
                   renderLineHighlight: 'all',
-                  lineNumbersMinChars: 3
+                  lineNumbersMinChars: 3,
+                  // Lock editor when student is DQ'd or locked out
+                  readOnly: !!(antiCheat.isDisqualified || disqualifiedReason || (antiCheat.lockedUntil && antiCheat.lockedUntil > Date.now()))
                 }}
               />
             </div>
@@ -895,18 +966,22 @@ export default function ContestArenaPage({ params }: { params: Promise<{ id: str
         <div className="flex items-center gap-2">
           <span
             className={`w-1.5 h-1.5 rounded-full ${
-              antiCheat.connection?.state === 'Connected'
-                ? 'bg-emerald-500 animate-pulse'
-                : arena?.antiCheatLevel === 'None'
-                  ? 'bg-neutral-600'
-                  : 'bg-amber-500 animate-pulse'
+              arena?.antiCheatLevel === 'None'
+                ? 'bg-neutral-600'
+                : antiCheat.connectionState === 'connected'
+                  ? 'bg-emerald-500 animate-pulse'
+                  : antiCheat.connectionState === 'connecting'
+                  ? 'bg-amber-500 animate-pulse'
+                  : 'bg-red-500'
             }`}
           />
-          {antiCheat.connection?.state === 'Connected'
+          {arena?.antiCheatLevel === 'None'
+            ? 'Giám sát tắt'
+            : antiCheat.connectionState === 'connected'
             ? 'Đã kết nối'
-            : arena?.antiCheatLevel === 'None'
-              ? 'Giám sát tắt'
-              : 'Đang kết nối...'}{' '}
+            : antiCheat.connectionState === 'connecting'
+            ? 'Đang kết nối...'
+            : 'Mất kết nối!'}{' '}
           • CourseMate V2.0
         </div>
       </footer>

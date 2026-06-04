@@ -101,7 +101,12 @@ try
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate")!);
     builder.Services.AddHangfireServer();
-    builder.Services.AddSignalR();
+    builder.Services.AddSignalR().AddJsonProtocol(options =>
+    {
+        // FE sends enum values as strings (e.g. "TabSwitch"). Without this converter,
+        // System.Text.Json (used by SignalR) cannot deserialize them into ViolationType enum.
+        options.PayloadSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
     builder.Services.AddTransient<INotificationService, NotificationService>();
     builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
