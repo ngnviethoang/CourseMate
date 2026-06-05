@@ -127,6 +127,8 @@ export interface CourseDto {
   categoryName: string
   instructorId: string
   instructorName?: string
+  isInCart: boolean
+  isEnrollment: boolean
   creationTime: string
   lastModificationTime?: string
 }

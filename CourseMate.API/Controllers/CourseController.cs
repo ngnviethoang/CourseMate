@@ -77,14 +77,6 @@ public class CourseController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("courses/recommended")]
-    [Authorize(Roles = Roles.Student)]
-    public async Task<ActionResult> GetRecommendedCoursesAsync([FromQuery] GetRecommendedCoursesQuery request)
-    {
-        PagedDto<CourseDto> result = await _mediator.Send(request);
-        return Ok(result);
-    }
-
     #endregion
 
     #region Chapter APIs

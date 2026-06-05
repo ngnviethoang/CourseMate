@@ -39,8 +39,20 @@ export const orderService = {
   },
 
   // Payment
-  createPaymentUrl: async (orderId: string): Promise<{ checkoutUrl: string; paymentTransactionId: string }> => {
-    return api.post<{ checkoutUrl: string; paymentTransactionId: string }>('/api/payments/create-url', { orderId })
+  createPaymentUrl: async ({
+    orderId,
+    returnUrl,
+    cancelUrl
+  }: {
+    orderId: string
+    returnUrl: string
+    cancelUrl: string
+  }): Promise<{ checkoutUrl: string; paymentTransactionId: string }> => {
+    return api.post<{ checkoutUrl: string; paymentTransactionId: string }>('/api/payments/create-url', {
+      orderId,
+      returnUrl,
+      cancelUrl
+    })
   },
   fakePayOsIpn: async (orderId: string, studentId: string, paymentTransactionId: string): Promise<number> => {
     return api.post<number>('/api/payments/fake-payos-ipn', { orderId, studentId, paymentTransactionId })

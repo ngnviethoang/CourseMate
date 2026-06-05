@@ -56,10 +56,6 @@ export const courseService = {
     if (filter) params.set('filter', filter)
     return api.get<PagedDto<StudentMyCourseDto>>(`/api/courses/my?${params}`)
   },
-  getRecommendedCourses: async (pageIndex = 1, pageSize = 12): Promise<PagedDto<CourseDto>> => {
-    const params = new URLSearchParams({ pageIndex: String(pageIndex), pageSize: String(pageSize) })
-    return api.get<PagedDto<CourseDto>>(`/api/courses/recommended?${params}`)
-  },
 
   // ─── Chapter ─────────────────────────────────────────────────────────────────
   listChapters: async (params?: {

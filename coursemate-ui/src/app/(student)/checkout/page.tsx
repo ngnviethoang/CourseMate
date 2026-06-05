@@ -9,17 +9,15 @@ import { Badge } from '@/components/ui/badge'
 import {
   ArrowLeft,
   ArrowRight,
-  ShieldCheck,
   Loader2,
   CheckCircle2,
   CreditCard,
   Smartphone,
   Building2,
-  Wallet
+  Wallet,
 } from 'lucide-react'
 import { orderService } from '@/lib/order-service'
 import { CartDto } from '@/lib/types'
-import { getUserId } from '@/lib/auth-token.util'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 
@@ -27,12 +25,13 @@ import { formatCurrency } from '@/lib/utils'
 
 const PAYMENT_METHODS = [
   {
-    id: 'vnpay',
-    label: 'VNPay',
-    description: 'Thanh toán qua cổng VNPay',
+    id: 'payos',
+    label: 'PayOS',
+    description: 'Thanh toán qua cổng PayOS',
     icon: CreditCard,
     badge: 'Phổ biến',
-    badgeColor: 'bg-blue-100 text-blue-700'
+    badgeColor: 'bg-blue-100 text-blue-700',
+    disabled: false
   },
   {
     id: 'momo',
@@ -40,7 +39,8 @@ const PAYMENT_METHODS = [
     description: 'Thanh toán qua ví điện tử MoMo',
     icon: Smartphone,
     badge: null,
-    badgeColor: ''
+    badgeColor: '',
+    disabled: true
   },
   {
     id: 'bank',
@@ -48,7 +48,8 @@ const PAYMENT_METHODS = [
     description: 'Thanh toán qua tài khoản ngân hàng',
     icon: Building2,
     badge: null,
-    badgeColor: ''
+    badgeColor: '',
+    disabled: true
   },
   {
     id: 'cod',
@@ -56,7 +57,8 @@ const PAYMENT_METHODS = [
     description: 'Thanh toán sau khi đã truy cập khoá học',
     icon: Wallet,
     badge: null,
-    badgeColor: ''
+    badgeColor: '',
+    disabled: true
   }
 ]
 
@@ -64,15 +66,15 @@ const PAYMENT_METHODS = [
 
 function CheckoutSkeleton() {
   return (
-    <div className="grid grid-cols-5 gap-8 animate-pulse">
-      <div className="col-span-3 space-y-6">
-        <div className="h-6 w-40 rounded bg-muted" />
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-5 animate-pulse">
+      <div className="space-y-4 lg:col-span-3">
+        <div className="h-5 w-32 rounded bg-muted" />
         {[1, 2, 3, 4].map(i => (
-          <div key={i} className="h-20 rounded-2xl bg-muted" />
+          <div key={i} className="h-20 rounded-[1.25rem] bg-muted" />
         ))}
       </div>
-      <div className="col-span-2">
-        <div className="rounded-2xl bg-muted h-80" />
+      <div className="lg:col-span-2">
+        <div className="h-72 rounded-[1.25rem] bg-muted" />
       </div>
     </div>
   )
@@ -84,7 +86,7 @@ export default function CheckoutPage() {
   const router = useRouter()
   const [cart, setCart] = useState<CartDto | null>(null)
   const [loading, setLoading] = useState(true)
-  const [selectedMethod, setSelectedMethod] = useState('vnpay')
+  const [selectedMethod, setSelectedMethod] = useState('payos')
   const [placing, setPlacing] = useState(false)
 
   const [orderId, setOrderId] = useState<string | null>(null)
@@ -119,23 +121,29 @@ export default function CheckoutPage() {
   }, [router])
 
   const handlePlaceOrder = async () => {
-    if (!orderId) return
+    if (!orderId || typeof window === 'undefined') return
 
     setPlacing(true)
     try {
-      // Bước 2: Sử dụng api /api/payments/create-url (Backend đã tự cập nhật status sang Submitted)
-      const paymentRes = await orderService.createPaymentUrl(orderId)
-
-      // Bước 3: Đã xử lý trong Bước 2
-
-      // Bước 4: Sử dụng /api/payments/fake-payos-ipn
-      const studentId = getUserId()
-      if (studentId) {
-        await orderService.fakePayOsIpn(orderId, studentId, paymentRes.paymentTransactionId)
+      const origin = window.location.origin
+      const primaryCourseId = items[0]?.courseId ?? ''
+      const paymentRes = await orderService.createPaymentUrl({
+        orderId,
+        returnUrl: `${origin}/payment/success?orderId=${orderId}&courseId=${primaryCourseId}`,
+        cancelUrl: `${origin}/payment/cancel?orderId=${orderId}&courseId=${primaryCourseId}`
+      })
+      if (!paymentRes.checkoutUrl) {
+        throw new Error('Missing checkoutUrl')
       }
-
-      toast.success('🎉 Thanh toán thành công! Chúc bạn học vui.')
-      router.push('/orders')
+      window.sessionStorage.setItem(
+        'payos_checkout_context',
+        JSON.stringify({
+          orderId,
+          paymentTransactionId: paymentRes.paymentTransactionId,
+          courseId: primaryCourseId
+        })
+      )
+      window.location.assign(paymentRes.checkoutUrl)
     } catch (error) {
       console.error('Payment error:', error)
       toast.error('Có lỗi xảy ra trong quá trình thanh toán.')
@@ -148,108 +156,118 @@ export default function CheckoutPage() {
   const total = cart?.totalPrice ?? 0
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header strip */}
-      <div className="bg-gradient-to-br from-primary/8 via-background to-indigo-50 shadow-md border-0 border-b-0">
-        <div className="mx-auto max-w-5xl px-4 py-8 px-6 px-8">
+    <div className="min-h-screen bg-background pb-10">
+      <div className="mx-4 mt-4 overflow-hidden rounded-[1.5rem] border border-border/80 bg-gradient-to-b from-primary/10 via-primary/5 to-background shadow-sm">
+        <div className="mx-auto max-w-6xl px-4 py-4 sm:px-5">
           <Link
             href="/cart"
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
-            <ArrowLeft className="h-4 w-4" /> Quay lại giỏ hàng
+            <ArrowLeft className="h-3.5 w-3.5" /> Quay lại giỏ hàng
           </Link>
-
-          {/* Breadcrumb steps */}
-          <div className="flex items-center gap-2 text-sm font-medium mt-2">
-            <span className="text-muted-foreground">🛒 Giỏ hàng</span>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            <span className="text-primary font-semibold">💳 Thanh toán</span>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">✅ Hoàn tất</span>
+          <div className="mt-3">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-1.5">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 shadow-inner">
+                  <CreditCard className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <Badge className="h-6 border-0 bg-primary/10 px-2 text-[11px] text-primary hover:bg-primary/20">
+                  Thanh toán
+                </Badge>
+              </div>
+              <h1 className="text-lg font-black tracking-tight text-foreground">Thanh toán của tôi</h1>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-4 py-8 px-6 px-8">
+      <div className="mx-auto max-w-6xl px-4 py-4 sm:px-5">
         {loading ? (
           <CheckoutSkeleton />
         ) : (
-          <div className="grid grid-cols-5 gap-8">
-            {/* ── Left: Payment method selection ── */}
-            <div className="col-span-3 space-y-6">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+            <div className="space-y-4 lg:col-span-3">
               <div>
-                <h2 className="text-lg font-bold">Chọn phương thức thanh toán</h2>
-                <p className="text-sm text-muted-foreground mt-0.5">Chọn hình thức thanh toán phù hợp với bạn</p>
+                <h2 className="text-base font-bold">Phương thức thanh toán</h2>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Hiện tại CourseMate hỗ trợ thanh toán trực tuyến qua PayOS.
+                </p>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {PAYMENT_METHODS.map(method => {
                   const Icon = method.icon
                   const selected = selectedMethod === method.id
                   return (
                     <button
                       key={method.id}
-                      onClick={() => setSelectedMethod(method.id)}
-                      className={`w-full flex items-center gap-4 rounded-2xl -2 p-4 text-left transition-all duration-150 ${selected ? '-primary bg-primary/5 shadow-md border-0' : '-transparent bg-card hover:-primary/30 hover:bg-muted/40'}`}
+                      type="button"
+                      onClick={() => !method.disabled && setSelectedMethod(method.id)}
+                      disabled={method.disabled}
+                      className={`flex w-full items-center gap-3 rounded-[1.25rem] border p-3 text-left transition-all duration-150 ${
+                        method.disabled
+                          ? 'cursor-not-allowed border-border/60 bg-muted/30 opacity-60'
+                          : selected
+                            ? 'border-primary/40 bg-primary/5 shadow-sm'
+                            : 'border-border/80 bg-card hover:bg-muted/30'
+                      }`}
                     >
                       <div
-                        className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl transition-colors ${
-                          selected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                        className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg transition-colors ${
+                          selected && !method.disabled
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted text-muted-foreground'
                         }`}
                       >
-                        <Icon className="h-5 w-5" />
+                        <Icon className="h-4 w-4" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-sm">{method.label}</span>
+                          <span className="text-sm font-semibold">{method.label}</span>
                           {method.badge && (
                             <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${method.badgeColor}`}>
                               {method.badge}
+                            </span>
+                          )}
+                          {method.disabled && (
+                            <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                              Sắp hỗ trợ
                             </span>
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5">{method.description}</p>
                       </div>
                       <div
-                        className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full -2 transition-colors ${selected ? '-primary bg-primary' : '-muted-foreground/30'}`}
+                        className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border transition-colors ${
+                          selected && !method.disabled
+                            ? 'border-primary bg-primary'
+                            : 'border-muted-foreground/30 bg-background'
+                        }`}
                       >
-                        {selected && <CheckCircle2 className="h-3 w-3 text-primary-foreground" />}
+                        {selected && !method.disabled && <CheckCircle2 className="h-2.5 w-2.5 text-primary-foreground" />}
                       </div>
                     </button>
                   )
                 })}
               </div>
-
-              {/* Security note */}
-              <div className="flex items-start gap-3 rounded-xl bg-emerald-50 -emerald-100 p-4">
-                <ShieldCheck className="h-5 w-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                <div className="text-sm">
-                  <p className="font-semibold text-emerald-800">Giao dịch được bảo mật</p>
-                  <p className="text-emerald-700 mt-0.5">
-                    Thông tin thanh toán của bạn được mã hoá SSL 256-bit. Chúng tôi không lưu trữ thông tin thẻ của bạn.
-                  </p>
-                </div>
-              </div>
             </div>
 
-            {/* ── Right: Order summary ── */}
-            <div className="col-span-2">
-              <div className="sticky top-20 rounded-2xl bg-card shadow-md border-0 shadow-md border-0 overflow-hidden">
-                <div className="bg-gradient-to-r from-primary/10 to-indigo-50 px-5 py-4 shadow-md border-0 border-b-0">
-                  <h2 className="font-semibold">Tóm tắt đơn hàng</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">{items.length} khoá học</p>
+            <div className="lg:col-span-2">
+              <div className="sticky top-20 overflow-hidden rounded-[1.5rem] border border-border/80 bg-card shadow-sm">
+                <div className="border-b border-border/50 bg-gradient-to-r from-primary/10 to-indigo-50/50 px-4 py-3">
+                  <h2 className="text-sm font-semibold">Tóm tắt đơn hàng</h2>
+                  <p className="mt-0.5 text-xs text-muted-foreground">{items.length} khoá học</p>
                 </div>
 
-                <div className="p-5 space-y-4">
-                  {/* Course list */}
-                  <div className="space-y-3 max-h-52 overflow-y-auto pr-1">
+                <div className="space-y-3 p-4">
+                  <div className="max-h-48 space-y-2.5 overflow-y-auto pr-1">
                     {items.map(item => (
                       <div key={item.id} className="flex gap-3 items-start">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={item.courseImageUrl || 'https://placehold.co/48x36/6366f1/fff?text=K'}
                           alt={item.courseTitle}
-                          className="h-10 w-14 rounded-lg object-cover flex-shrink-0"
+                          className="h-9 w-12 flex-shrink-0 rounded-md object-cover"
                           onError={e => {
                             ;(e.target as HTMLImageElement).src = 'https://placehold.co/48x36/6366f1/fff?text=K'
                           }}
@@ -265,28 +283,28 @@ export default function CheckoutPage() {
 
                   <Separator />
 
-                  <div className="space-y-2 text-sm">
+                  <div className="space-y-1.5 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Tạm tính</span>
                       <span>{formatCurrency(total)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Giảm giá</span>
-                      <span className="text-emerald-600">{formatCurrency(0)}</span>
+                      <span className="text-emerald-600">-0%</span>
                     </div>
                   </div>
 
                   <Separator />
 
                   <div className="flex items-center justify-between">
-                    <span className="font-bold">Tổng cộng</span>
-                    <span className="text-xl font-bold text-primary">{formatCurrency(total)}</span>
+                    <span className="text-sm font-bold">Tổng cộng</span>
+                    <span className="text-lg font-bold text-primary">{formatCurrency(total)}</span>
                   </div>
 
                   <Button
-                    className="w-full h-11 rounded-xl gap-2 font-semibold shadow-sm"
+                    className="h-10 w-full gap-2 rounded-lg text-sm font-semibold shadow-sm"
                     onClick={handlePlaceOrder}
-                    disabled={placing}
+                    disabled={placing || selectedMethod !== 'payos'}
                   >
                     {placing ? (
                       <>
@@ -300,13 +318,6 @@ export default function CheckoutPage() {
                       </>
                     )}
                   </Button>
-
-                  <div className="text-center">
-                    <Badge variant="secondary" className="gap-1 text-[10px]">
-                      <ShieldCheck className="h-3 w-3" />
-                      Bảo mật SSL 256-bit
-                    </Badge>
-                  </div>
                 </div>
               </div>
             </div>

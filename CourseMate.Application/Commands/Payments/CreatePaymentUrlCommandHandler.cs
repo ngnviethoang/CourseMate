@@ -1,5 +1,7 @@
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using CourseMate.Application.Shared;
+using CourseMate.Contracts;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Enums;
@@ -22,6 +24,12 @@ namespace CourseMate.Application.Commands.Payments;
 public class CreatePaymentUrlCommand : IRequest<CreatePaymentUrlResponse>
 {
     public Guid OrderId { get; set; }
+
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    public string ReturnUrl { get; set; } = string.Empty;
+
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    public string CancelUrl { get; set; } = string.Empty;
 }
 
 public sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<CreatePaymentUrlCommand, CreatePaymentUrlResponse>
@@ -65,8 +73,8 @@ public sealed class CreatePaymentUrlCommandHandler : AbstractCommandHandler<Crea
             OrderCode = externalOrderId,
             Amount = totalAmount,
             Description = order.Description,
-            ReturnUrl = _payOsOptions.ReturnUrl,
-            CancelUrl = _payOsOptions.CancelUrl
+            ReturnUrl = request.ReturnUrl,
+            CancelUrl = request.CancelUrl
         };
 
         PayOSClient client = new(new PayOSOptions

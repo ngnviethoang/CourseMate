@@ -29,6 +29,10 @@ public class GetListCoursesQueryHandlerTests
         Assert.All(result.Items, x => Assert.True(x.IsPublished));
         Assert.DoesNotContain(result.Items, x => x.Id == testContainer.UnpublishedByInstructorAId);
         Assert.DoesNotContain(result.Items, x => x.Id == testContainer.UnpublishedByInstructorBId);
+        Assert.True(result.Items.Single(x => x.Id == testContainer.PublishedByInstructorAId).IsEnrollment);
+        Assert.False(result.Items.Single(x => x.Id == testContainer.PublishedByInstructorAId).IsInCart);
+        Assert.False(result.Items.Single(x => x.Id == testContainer.PublishedByInstructorBId).IsEnrollment);
+        Assert.True(result.Items.Single(x => x.Id == testContainer.PublishedByInstructorBId).IsInCart);
     }
 
     [Fact]
@@ -49,6 +53,11 @@ public class GetListCoursesQueryHandlerTests
         Assert.Contains(result.Items, x => x.Id == testContainer.PublishedByInstructorBId);
         Assert.Contains(result.Items, x => x.Id == testContainer.UnpublishedByInstructorAId);
         Assert.DoesNotContain(result.Items, x => x.Id == testContainer.UnpublishedByInstructorBId);
+        Assert.All(result.Items, x =>
+        {
+            Assert.False(x.IsEnrollment);
+            Assert.False(x.IsInCart);
+        });
     }
 
     [Fact]
@@ -143,6 +152,14 @@ public class GetListCoursesQueryHandlerTests
                     false,
                     CategoryBId,
                     _instructorBId));
+
+            if (role == Roles.Student)
+            {
+                Guid cartId = Guid.NewGuid();
+                DbContext.Carts.Add(new Cart(cartId, UserId));
+                DbContext.Enrollments.Add(new Enrollment(Guid.NewGuid(), UserId, PublishedByInstructorAId));
+                DbContext.CartItems.Add(new CartItem(Guid.NewGuid(), cartId, PublishedByInstructorBId));
+            }
 
             DbContext.SaveChanges();
         }

@@ -55,6 +55,7 @@ export default function CourseDetailPage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [showFullDesc, setShowFullDesc] = useState(false)
+  const [isInCart, setIsInCart] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -64,6 +65,7 @@ export default function CourseDetailPage() {
       try {
         const res = await courseService.getById(id)
         setCourse(res as unknown as StudentCourseDetailDto)
+        setIsInCart(Boolean((res as unknown as { isInCart?: boolean })?.isInCart))
       } catch {
         toast.error('Không thể tải chi tiết khóa học.')
       } finally {
@@ -80,6 +82,7 @@ export default function CourseDetailPage() {
     setSubmitting(true)
     try {
       await orderService.addToCart(course.id)
+      setIsInCart(true)
       toast.success('Đã thêm vào giỏ hàng thành công!')
     } catch {
       // Error handled by api-client automatically
@@ -246,9 +249,14 @@ export default function CourseDetailPage() {
                   {submitting ? 'Đang đăng ký...' : 'Đăng ký học miễn phí'}
                 </Button>
               ) : (
-                <Button size="lg" className="h-10 w-full gap-2 text-sm" onClick={handleAddToCart} disabled={submitting}>
+                <Button
+                  size="lg"
+                  className="h-10 w-full gap-2 text-sm"
+                  onClick={isInCart ? () => router.push('/cart') : handleAddToCart}
+                  disabled={submitting}
+                >
                   <ShoppingCart className="h-4 w-4" />
-                  {submitting ? 'Đang thêm...' : 'Thêm vào giỏ hàng'}
+                  {submitting ? 'Đang thêm...' : isInCart ? 'Đã thêm vào giỏ' : 'Thêm vào giỏ hàng'}
                 </Button>
               )}
 
