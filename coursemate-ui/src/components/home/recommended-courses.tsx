@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
-import { BookOpen, ChevronLeft, ChevronRight, Loader2, ShoppingCart, Star, Users, Zap } from 'lucide-react'
+import { BookOpen, ChevronLeft, ChevronRight, Loader2, ShoppingCart, Star, Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { orderService } from '@/lib/order-service'
 import { courseService } from '@/lib/course-service'
@@ -74,15 +74,28 @@ function CourseCard({ course, index }: CourseCardProps) {
     e.preventDefault()
     e.stopPropagation()
 
+    if (course.isEnrollment) {
+      router.push(`/learning/${course.id}`)
+      return
+    }
+
+    if (course.isInCart) {
+      router.push('/cart')
+      return
+    }
+
     try {
       setAdding(true)
       if (course.price === 0) {
         await orderService.enrollFree(course.id)
         toast.success(`Bạn đã tham gia khóa học "${course.title}" thành công!`)
+        course.isEnrollment = true 
+        course.isInCart = false 
         router.push(`/learning/${course.id}`)
       } else {
         await orderService.addToCart(course.id)
         toast.success(`"${course.title}" đã được thêm vào giỏ hàng!`)
+        course.isInCart = true 
       }
     } catch {
       // error toast handled by apiClient
@@ -171,10 +184,18 @@ function CourseCard({ course, index }: CourseCardProps) {
           >
             {adding ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : course.price > 0 ? (
+            ) : !course.isEnrollment && course.price > 0 ? (
               <ShoppingCart className="h-3.5 w-3.5" />
             ) : null}
-            {adding ? '...' : course.price === 0 ? 'Vào học' : 'Thêm'}
+            {adding
+              ? '...'
+              : course.isEnrollment
+                ? 'Vào học'
+                : course.isInCart
+                  ? 'Đã thêm vào giỏ'
+                  : course.price === 0
+                    ? 'Vào học'
+                    : 'Thêm giỏ hàng'}
           </button>
         </div>
       </div>
@@ -203,25 +224,33 @@ export function RecommendedCourses({
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
 
-  const fetchCourses = useCallback(async (page: number, filter?: string, categoryId?: string, loggedIn?: boolean) => {
-    setLoading(true)
-    try {
-      let res
-      if (filter || categoryId) {
-        res = await courseService.list({ pageIndex: page - 1, pageSize: PAGE_SIZE, filter, categoryId })
-      } else if (loggedIn) {
-        res = await courseService.getRecommendedCourses(page, PAGE_SIZE)
-      } else {
-        res = await courseService.list({ pageIndex: page - 1, pageSize: PAGE_SIZE })
+  const fetchCourses = useCallback(
+    async (page: number, filter?: string, categoryId?: string, loggedIn?: boolean) => {
+      setLoading(true)
+      try {
+        const res =
+          filter || categoryId
+            ? await courseService.list({ pageIndex: page - 1, pageSize: PAGE_SIZE, filter, categoryId })
+            : await courseService.list({ pageIndex: page - 1, pageSize: PAGE_SIZE })
+        setCourses(res.items)
+        setTotalCount(res.totalCount)
+      } catch {
+        // error handled by apiClient
+      } finally {
+        setLoading(false)
       }
-      setCourses(res.items)
-      setTotalCount(res.totalCount)
-    } catch {
-      // error handled by apiClient
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+    },
+    []
+  )
+
+  const refreshCurrentPage = useCallback(
+    async (courseId: string, changes: Partial<Pick<CourseDto, 'isInCart' | 'isEnrollment'>>) => {
+      setCourses(currentCourses =>
+        currentCourses.map(course => (course.id === courseId ? { ...course, ...changes } : course))
+      )
+    },
+    []
+  )
 
   // Trở về trang 1 khi bộ lọc thay đổi
   useEffect(() => {
@@ -233,12 +262,8 @@ export function RecommendedCourses({
   }, [pageIndex, searchQuery, selectedCategoryId, isLoggedIn, fetchCourses])
 
   const isRecommended = !searchQuery && !selectedCategoryId && isLoggedIn
+  const visibleCourses = isRecommended ? courses.filter(course => !course.isEnrollment) : courses
   const title = searchQuery ? `Kết quả cho "${searchQuery}"` : isRecommended ? 'Gợi ý cho bạn' : 'Khám phá khoá học'
-  const subtitle = searchQuery
-    ? `${totalCount} khoá học được tìm thấy`
-    : isRecommended
-      ? 'Dựa trên sở thích của bạn'
-      : `${totalCount} khoá học`
 
   // Build visible page numbers
   const getPageNumbers = () => {
@@ -266,13 +291,13 @@ export function RecommendedCourses({
         {headerAction && <div className="shrink-0">{headerAction}</div>}
       </div>
 
-      {loading && courses.length === 0 ? (
+      {loading && visibleCourses.length === 0 ? (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <CourseCardSkeleton key={i} />
           ))}
         </div>
-      ) : courses.length === 0 ? (
+      ) : visibleCourses.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed py-20 text-muted-foreground">
           <BookOpen className="h-12 w-12 opacity-30" />
           <p className="text-sm">Không tìm thấy khoá học{searchQuery ? ` cho "${searchQuery}"` : ''}.</p>
@@ -280,8 +305,12 @@ export function RecommendedCourses({
       ) : (
         <>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {courses.map((course, idx) => (
-              <CourseCard key={course.id} course={course} index={(pageIndex - 1) * PAGE_SIZE + idx} />
+            {visibleCourses.map((course, idx) => (
+              <CourseCard
+                key={course.id}
+                course={course}
+                index={(pageIndex - 1) * PAGE_SIZE + idx}
+              />
             ))}
           </div>
 

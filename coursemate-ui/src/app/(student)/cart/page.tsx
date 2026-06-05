@@ -85,14 +85,19 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true)
   const [removingId, setRemovingId] = useState<string | null>(null)
 
-  const fetchCart = async () => {
-    setLoading(true)
+  const fetchCart = async (showLoading = true) => {
+    if (showLoading) {
+      setLoading(true)
+    }
     try {
       const res = await orderService.getCart()
       setCart(res)
     } catch {
+      setCart(null)
     } finally {
-      setLoading(false)
+      if (showLoading) {
+        setLoading(false)
+      }
     }
   }
 
@@ -101,12 +106,26 @@ export default function CartPage() {
   }, [])
 
   const handleRemove = async (cartItemId: string) => {
+    if (!cart || removingId) {
+      return
+    }
+
+    const previousCart = cart
+    const nextItems = cart.items.filter(item => item.id !== cartItemId)
+    const nextTotalPrice = nextItems.reduce((total, item) => total + item.price, 0)
+
     setRemovingId(cartItemId)
+    setCart({
+      ...cart,
+      items: nextItems,
+      totalPrice: nextTotalPrice
+    })
+
     try {
       await orderService.removeFromCart(cartItemId)
       toast.success('Đã xoá khoá học khỏi giỏ hàng.')
-      fetchCart()
     } catch {
+      setCart(previousCart)
       // handled by api-client
     } finally {
       setRemovingId(null)

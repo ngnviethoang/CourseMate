@@ -26,6 +26,12 @@ public sealed class GetListCoursesQueryHandler
 
     public override async Task<PagedDto<CourseDto>> Handle(GetListCoursesQuery request, CancellationToken ct)
     {
+        bool isAdmin = IsInRole(Roles.Admin);
+        bool isInstructor = IsInRole(Roles.Instructor);
+        bool isStudent = IsInRole(Roles.Student);
+        Guid userId = CurrentUserId;
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
+
         IQueryable<CourseDto> query =
             from course in DbContext.Courses
             join category in DbContext.Categories on course.CategoryId equals category.Id
@@ -42,14 +48,17 @@ public sealed class GetListCoursesQueryHandler
                 CategoryName = category.Name,
                 InstructorId = course.InstructorId,
                 InstructorName = instructor.UserName,
+                IsInCart = isStudent && (
+                    from cart in DbContext.Carts
+                    join cartItem in DbContext.CartItems on cart.Id equals cartItem.CartId
+                    where cart.StudentId == userId && cartItem.CourseId == course.Id
+                    select cartItem.Id
+                ).Any(),
+                IsEnrollment = isStudent && DbContext.Enrollments
+                    .Any(enrollment => enrollment.StudentId == userId && enrollment.CourseId == course.Id),
                 CreationTime = course.CreationTime,
                 LastModificationTime = course.LastModificationTime
             };
-
-        bool isAdmin = IsInRole(Roles.Admin);
-        bool isInstructor = IsInRole(Roles.Instructor);
-        Guid userId = CurrentUserId;
-        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
 
         query = query
             .Where(x => x.IsPublished || isAdmin || (isInstructor && x.InstructorId == userId))

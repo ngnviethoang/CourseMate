@@ -22,6 +22,10 @@ public class CourseDto
 
     public string? InstructorName { get; set; } = string.Empty;
 
+    public bool IsInCart { get; set; }
+
+    public bool IsEnrollment { get; set; }
+
     public DateTimeOffset CreationTime { get; set; }
 
     public DateTimeOffset? LastModificationTime { get; set; }
