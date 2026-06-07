@@ -60,7 +60,7 @@ export default function CategoriesPage() {
   const [items, setItems] = useState<CategoryDto[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')
-  const [sorting, setSorting] = useState('creationTime')
+  const [sorting, setSorting] = useState('creationTime_desc')
   const [pageIndex, setPageIndex] = useState(0)
   const [pageSize] = useState(10)
   const [totalCount, setTotalCount] = useState(0)

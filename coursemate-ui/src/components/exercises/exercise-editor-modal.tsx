@@ -285,8 +285,10 @@ export function ExerciseEditorModal({
 
     const newResults: RunResult[] = []
 
-    for (let i = 0; i < exercise.examples.length; i++) {
-      const ex = exercise.examples[i]
+    const visibleTestCases = exercise.testCases.filter(tc => !tc.isHidden)
+
+    for (let i = 0; i < visibleTestCases.length; i++) {
+      const ex = visibleTestCases[i]
       try {
         const response = await runnerCodeService.run({
           compiler: selectedLang.id,
@@ -295,7 +297,7 @@ export function ExerciseEditorModal({
         })
 
         const actual = (response.output || '').replace(/\r\n/g, '\n').trim()
-        const expected = (ex.output || '').replace(/\r\n/g, '\n').trim()
+        const expected = (ex.expectedOutput || '').replace(/\r\n/g, '\n').trim()
 
         const normActual = actual
           .split('\n')
@@ -312,7 +314,7 @@ export function ExerciseEditorModal({
           case: ex.input,
           expected: expected,
           actual: actual,
-          description: `Ví dụ ${i + 1}`,
+          description: ex.description || `Bộ kiểm thử ${i + 1}`,
           isHidden: false,
           time: parseFloat(response.time || '0'),
           memory: parseInt(response.memory || '0', 10)
@@ -336,9 +338,9 @@ export function ExerciseEditorModal({
         newResults.push({
           passed: false,
           case: ex.input,
-          expected: ex.output,
+          expected: ex.expectedOutput,
           actual: 'Lỗi thực thi',
-          description: `Ví dụ ${i + 1}`,
+          description: ex.description || `Bộ kiểm thử ${i + 1}`,
           isHidden: false,
           time: 0,
           memory: 0
@@ -830,9 +832,21 @@ export function ExerciseEditorModal({
               <div className="flex-1 overflow-y-auto bg-[#0a0a12] p-5 space-y-5">
                 {/* Custom Input */}
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">
-                    Đầu vào tùy chỉnh (stdin)
-                  </Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">
+                      Đầu vào tùy chỉnh (stdin)
+                    </Label>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 text-[10px] bg-white/5 hover:bg-white/10 text-neutral-300 px-2"
+                      onClick={() => handleRun(stdin)}
+                      disabled={running || !stdin.trim()}
+                    >
+                      <Play className="h-3 w-3 mr-1 text-emerald-500" />
+                      Chạy với đầu vào này
+                    </Button>
+                  </div>
                   <textarea
                     value={stdin}
                     onChange={e => setStdin(e.target.value)}

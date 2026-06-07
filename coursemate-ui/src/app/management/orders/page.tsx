@@ -18,10 +18,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 const STATUS_MAP: Record<string, { label: string; color: string }> = {
   Draft: { label: 'Nháp', color: 'bg-gray-100 text-gray-800 hover:bg-gray-200' },
-  Pending: { label: 'Chờ thanh toán', color: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' },
-  Paid: { label: 'Đã thanh toán', color: 'bg-green-100 text-green-800 hover:bg-green-200' },
-  Failed: { label: 'Thất bại', color: 'bg-red-100 text-red-800 hover:bg-red-200' },
-  Refunded: { label: 'Đã hoàn tiền', color: 'bg-orange-100 text-orange-800 hover:bg-orange-200' }
+  Submitted: { label: 'Chờ xác nhận', color: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' },
+  Completed: { label: 'Đã hoàn thành', color: 'bg-green-100 text-green-800 hover:bg-green-200' },
+  Cancelled: { label: 'Đã huỷ', color: 'bg-red-100 text-red-800 hover:bg-red-200' }
 }
 
 const columns: Column<OrderDto>[] = [
@@ -233,7 +232,7 @@ export default function OrdersPage() {
               </Select>
             </div>
             <p className="text-xs text-muted-foreground">
-              Lưu ý: Chuyển trạng thái sang <strong>Đã thanh toán</strong> sẽ tự động ghi danh học viên vào các khóa học
+              Lưu ý: Chuyển trạng thái sang <strong>Đã hoàn thành</strong> sẽ tự động ghi danh học viên vào các khóa học
               đã mua.
             </p>
           </div>

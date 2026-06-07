@@ -37,7 +37,8 @@ public sealed class GetListOrdersQueryHandler : AbstractQueryHandler<GetListOrde
                 TotalAmount = order.TotalAmount,
                 Status = order.Status,
                 CreationTime = order.CreationTime,
-                LastModificationTime = order.LastModificationTime
+                LastModificationTime = order.LastModificationTime,
+                ItemsCount = DbContext.OrderItems.Count(oi => oi.OrderId == order.Id)
             };
 
         query = query

@@ -22,5 +22,7 @@ public class OrderDto
 
     public DateTimeOffset? LastModificationTime { get; set; }
 
+    public int ItemsCount { get; set; }
+
     public List<OrderItemDto> Items { get; set; } = [];
 }

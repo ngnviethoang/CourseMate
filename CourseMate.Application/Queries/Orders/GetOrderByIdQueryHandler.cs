@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
@@ -23,10 +24,13 @@ public sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderById
 
     public override async Task<OrderDto?> Handle(GetOrderByIdQuery request, CancellationToken ct)
     {
-        Guid studentId = CurrentUserId;
+        Guid currentUserId = CurrentUserId;
+        bool isAdmin = IsInRole(Roles.Admin);
 
-        Order? order = await DbContext.Orders
-            .FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == studentId, ct);
+        // Admin xem được bất kỳ order nào; student chỉ xem được order của chính mình
+        Order? order = isAdmin
+            ? await DbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.Id, ct)
+            : await DbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == currentUserId, ct);
 
         if (order == null)
         {
@@ -61,6 +65,7 @@ public sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderById
             Status = order.Status,
             CreationTime = order.CreationTime,
             LastModificationTime = order.LastModificationTime,
+            ItemsCount = items.Count,
             Items = items
         };
     }
