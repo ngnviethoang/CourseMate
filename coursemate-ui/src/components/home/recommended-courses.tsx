@@ -130,8 +130,17 @@ function CourseCard({ course, index }: CourseCardProps) {
           <BookOpen className="h-12 w-12 text-white/80" />
         </div>
 
+        {/* Enrolled overlay badge */}
+        {course.isEnrollment && (
+          <div className="absolute inset-0 bg-emerald-900/30 flex items-center justify-center">
+            <span className="bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
+              ✓ Đã sở hữu
+            </span>
+          </div>
+        )}
+
         {/* Badge */}
-        {badge && (
+        {badge && !course.isEnrollment && (
           <Badge className={`absolute left-3 top-3 text-[10px] font-semibold shadow ${BADGE_STYLES[badge]}`}>
             {badge}
           </Badge>
@@ -174,17 +183,40 @@ function CourseCard({ course, index }: CourseCardProps) {
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Footer: price + cart */}
-        <div className="mt-3 flex items-center justify-between border-t pt-3">
-          <span className="text-base font-bold text-primary">{formatCurrency(course.price)}</span>
+        {/* Footer: price + action */}
+        <div
+          className={`mt-3 flex items-center justify-between border-t pt-3 ${
+            course.isEnrollment ? 'border-emerald-200/60' : ''
+          }`}
+        >
+          {/* Price / status label */}
+          {course.isEnrollment ? (
+            <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
+              ✓ Đã mua
+            </span>
+          ) : course.isInCart ? (
+            <span className="text-xs font-medium text-amber-600 flex items-center gap-1">
+              🛒 Trong giỏ hàng
+            </span>
+          ) : course.price === 0 ? (
+            <span className="text-base font-bold text-emerald-600">Miễn phí</span>
+          ) : (
+            <span className="text-base font-bold text-primary">{formatCurrency(course.price)}</span>
+          )}
+
+          {/* Action button */}
           <button
             onClick={handleAction}
             disabled={adding}
-            className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3.5 py-1.5 text-xs font-semibold text-primary transition-all hover:bg-primary hover:text-white disabled:opacity-60"
+            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all disabled:opacity-60 ${
+              course.isEnrollment
+                ? 'bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500 hover:text-white'
+                : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'
+            }`}
           >
             {adding ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : !course.isEnrollment && course.price > 0 ? (
+            ) : !course.isEnrollment && course.price > 0 && !course.isInCart ? (
               <ShoppingCart className="h-3.5 w-3.5" />
             ) : null}
             {adding
@@ -192,9 +224,9 @@ function CourseCard({ course, index }: CourseCardProps) {
               : course.isEnrollment
                 ? 'Vào học'
                 : course.isInCart
-                  ? 'Đã thêm vào giỏ'
+                  ? 'Xem giỏ hàng'
                   : course.price === 0
-                    ? 'Vào học'
+                    ? 'Vào học ngay'
                     : 'Thêm giỏ hàng'}
           </button>
         </div>

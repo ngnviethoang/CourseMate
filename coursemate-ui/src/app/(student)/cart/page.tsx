@@ -258,15 +258,9 @@ export default function CartPage() {
 
                   <Separator className="bg-border/60" />
 
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-muted-foreground">Tạm tính</span>
-                      <span className="font-bold">{formatCurrency(cart?.totalPrice ?? 0)}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-muted-foreground">Giảm giá</span>
-                      <span className="text-emerald-600 font-bold">-0%</span>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-muted-foreground">Tạm tính</span>
+                    <span className="font-bold">{formatCurrency(cart?.totalPrice ?? 0)}</span>
                   </div>
 
                   <Separator className="bg-border/60" />

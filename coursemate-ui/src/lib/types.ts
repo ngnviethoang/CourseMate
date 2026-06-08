@@ -405,6 +405,7 @@ export interface OrderDto {
   studentEmail?: string
   totalAmount: number
   status: string
+  itemsCount?: number
   creationTime: string
   lastModificationTime?: string
   items: OrderItemDto[]

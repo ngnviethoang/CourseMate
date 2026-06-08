@@ -15,10 +15,9 @@ import { Separator } from '@/components/ui/separator'
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   Draft: { label: 'Nháp', color: 'bg-gray-100 text-gray-800', icon: Package },
-  Pending: { label: 'Chờ thanh toán', color: 'bg-yellow-100 text-yellow-800', icon: Loader2 },
-  Paid: { label: 'Đã thanh toán', color: 'bg-green-100 text-green-800', icon: CheckCircle },
-  Failed: { label: 'Thất bại', color: 'bg-red-100 text-red-800', icon: XCircle },
-  Refunded: { label: 'Đã hoàn tiền', color: 'bg-orange-100 text-orange-800', icon: Package }
+  Submitted: { label: 'Chờ xác nhận', color: 'bg-yellow-100 text-yellow-800', icon: Loader2 },
+  Completed: { label: 'Đã hoàn thành', color: 'bg-green-100 text-green-800', icon: CheckCircle },
+  Cancelled: { label: 'Đã huỷ', color: 'bg-red-100 text-red-800', icon: XCircle }
 }
 
 export default function OrderDetailPage() {
@@ -176,7 +175,7 @@ export default function OrderDetailPage() {
               <div className="mt-4 pt-4 shadow-md border-0 border-t-0 border-transparent">
                 <p className="text-xs text-muted-foreground mb-2">Ghi chú trạng thái đơn hàng</p>
                 <p className="text-xs text-muted-foreground">
-                  Chuyển trạng thái sang <strong>Đã thanh toán</strong> sẽ tự động ghi danh học viên vào toàn bộ khóa
+                  Chuyển trạng thái sang <strong>Đã hoàn thành</strong> sẽ tự động ghi danh học viên vào toàn bộ khóa
                   học trong đơn hàng này.
                 </p>
               </div>
