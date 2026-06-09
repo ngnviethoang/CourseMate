@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { Plus, Search, Filter, Pencil, Trash2, Loader2, Code2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Plus, Search, Filter, Pencil, Trash2, Loader2, Code2, ChevronLeft, ChevronRight, Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api-client'
 import { exerciseService } from '@/lib/exercise-service'
@@ -29,6 +29,7 @@ interface ExerciseDto {
   testCaseCount: number
   creationTime: string
   lastModificationTime?: string
+  isHidden: boolean
 }
 
 interface PagedDto<T> {
@@ -133,6 +134,17 @@ export default function ExercisesManagementPage() {
       toast.error('Xoá thất bại')
     } finally {
       setDeletingId(null)
+    }
+  }
+
+  const handleToggleHidden = async (id: string, currentIsHidden: boolean) => {
+    try {
+      const fullExercise = await exerciseService.getById(id)
+      await exerciseService.update({ ...fullExercise, isHidden: !currentIsHidden })
+      toast.success(!currentIsHidden ? 'Đã ẩn bài tập' : 'Đã công khai bài tập')
+      fetchData()
+    } catch {
+      toast.error('Cập nhật trạng thái thất bại')
     }
   }
 
@@ -275,6 +287,7 @@ export default function ExercisesManagementPage() {
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Tiêu đề</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Độ khó</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground table-cell">Danh mục</th>
+              <th className="text-center px-4 py-3 font-medium text-muted-foreground table-cell">Trạng thái</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground table-cell">Ngày tạo</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground table-cell">Cập nhật lần cuối</th>
               <th className="text-right px-4 py-3 font-medium text-muted-foreground">Thao tác</th>
@@ -283,13 +296,13 @@ export default function ExercisesManagementPage() {
           <tbody className="divide-y divide-border/60">
             {loading ? (
               <tr>
-                <td colSpan={7} className="py-16 text-center">
+                <td colSpan={8} className="py-16 text-center">
                   <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
                 </td>
               </tr>
             ) : data?.items.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-16 text-center text-muted-foreground text-sm">
+                <td colSpan={8} className="py-16 text-center text-muted-foreground text-sm">
                   Không có bài tập nào.{' '}
                   <button onClick={() => setOpenNewModal(true)} className="text-primary hover:underline cursor-pointer">
                     Tạo bài đầu tiên
@@ -311,6 +324,20 @@ export default function ExercisesManagementPage() {
                   </td>
                   <td className="px-4 py-3 table-cell">
                     <span className="text-xs bg-muted px-2 py-0.5 rounded-md">{ex.category}</span>
+                  </td>
+                  <td className="px-4 py-3 table-cell text-center">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => handleToggleHidden(ex.id, ex.isHidden)}
+                      className={`h-7 px-2 text-xs font-semibold ${ex.isHidden ? 'text-amber-600 bg-amber-50 hover:bg-amber-100 dark:bg-amber-500/10' : 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-500/10'}`}
+                    >
+                      {ex.isHidden ? (
+                        <><EyeOff className="h-3.5 w-3.5 mr-1" /> Ẩn</>
+                      ) : (
+                        <><Eye className="h-3.5 w-3.5 mr-1" /> Hiện</>
+                      )}
+                    </Button>
                   </td>
                   <td className="px-4 py-3 table-cell text-xs text-muted-foreground">{formatDate(ex.creationTime)}</td>
                   <td className="px-4 py-3 table-cell text-xs text-muted-foreground">

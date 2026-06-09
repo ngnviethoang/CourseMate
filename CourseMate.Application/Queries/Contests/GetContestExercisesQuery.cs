@@ -42,6 +42,7 @@ public sealed class GetContestExercisesQueryHandler : AbstractQueryHandler<GetCo
             from ce in DbContext.ContestExercises
             join e in DbContext.Exercises on ce.ExerciseId equals e.Id
             where ce.ContestId == request.ContestId
+            where !(IsInRole(Roles.Student) && e.IsHidden)
             orderby ce.Order
             select new ContestExerciseDto
             {

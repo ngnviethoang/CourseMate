@@ -1,4 +1,4 @@
-﻿namespace CourseMate.Contracts.DTOs;
+namespace CourseMate.Contracts.DTOs;
 
 public class GetExerciseByIdResponse
 {
@@ -17,4 +17,5 @@ public class GetExerciseByIdResponse
     public IEnumerable<string> Hints { get; set; } = [];
     public IEnumerable<ExerciseTestCaseDto> TestCases { get; set; } = [];
     public IEnumerable<ExerciseDefaultCodeDto> DefaultCodes { get; set; } = [];
+    public bool IsHidden { get; set; }
 }
