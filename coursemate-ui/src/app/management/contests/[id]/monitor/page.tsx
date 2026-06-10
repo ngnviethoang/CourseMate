@@ -220,7 +220,11 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
       return
     }
     try {
-      await contestService.disqualifyStudent(id, studentId, dqReason)
+      if (connectionRef.current?.state === 'Connected') {
+        await connectionRef.current.invoke('DisqualifyStudent', id, studentId, dqReason)
+      } else {
+        await contestService.disqualifyStudent(id, studentId, dqReason)
+      }
       toast.success('Đã loại sinh viên')
       setDqConfirm(null)
       setDqReason('')
@@ -233,7 +237,11 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
   const handleReinstate = async (studentId: string) => {
     if (!confirm('Bạn có chắc muốn phục hồi sinh viên này?')) return
     try {
-      await contestService.reinstateStudent(id, studentId)
+      if (connectionRef.current?.state === 'Connected') {
+        await connectionRef.current.invoke('ReinstateStudent', id, studentId)
+      } else {
+        await contestService.reinstateStudent(id, studentId)
+      }
       toast.success('Đã phục hồi sinh viên')
       fetchData()
     } catch {

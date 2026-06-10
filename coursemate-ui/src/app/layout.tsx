@@ -32,7 +32,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
-          <Toaster richColors position="top-right" />
+          <Toaster richColors position="top-right" expand={true} visibleToasts={5} />
         </ThemeProvider>
       </body>
     </html>

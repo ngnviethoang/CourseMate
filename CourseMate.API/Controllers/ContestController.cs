@@ -111,7 +111,7 @@ public class ContestController : ControllerBase
             ExerciseId = exerciseId,
             Payload = request
         };
-        ResultIdDto result = await _mediator.Send(command);
+        SubmitExerciseResponse result = await _mediator.Send(command);
         return Ok(result);
     }
 

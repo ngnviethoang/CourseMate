@@ -84,6 +84,7 @@ export function useAntiCheat({
   const lastViolationTimeRef = useRef<Record<string, number>>({})
   const lockedUntilRef = useRef<number | null>(null) // for use inside callbacks
   const isDisqualifiedRef = useRef(false)
+  const onDisqualifiedRef = useRef(onDisqualified)
   const deviceFingerprintRef = useRef<string>('')
   const userAgentRef = useRef<string>('')
 
@@ -94,6 +95,9 @@ export function useAntiCheat({
   useEffect(() => {
     isDisqualifiedRef.current = isDisqualified
   }, [isDisqualified])
+  useEffect(() => {
+    onDisqualifiedRef.current = onDisqualified
+  }, [onDisqualified])
 
   // ── Reset when contestId changes ───────────────────────────────────────────
   useEffect(() => {
@@ -191,7 +195,7 @@ export function useAntiCheat({
 
       // Immediate UX toast (before server confirms — purely cosmetic)
       const message = VIOLATION_MESSAGES[violationType as ViolationType]
-      if (message) toast.error(message, { id: violationType, duration: 4000 })
+      if (message) toast.error(message, { duration: 4000 })
 
       // ── Send to backend via SignalR ────────────────────────────────────────
       // State updates happen exclusively inside ViolationWarning / ForceDisqualify handlers.
@@ -201,10 +205,23 @@ export function useAntiCheat({
         console.warn(`[AntiCheat] Connection not ready (${conn?.state ?? 'null'}), skipping ${violationType}`)
         return
       }
+
+      const VIOLATION_TYPE_MAP: Record<string, number> = {
+        TabSwitch: 0,
+        WindowBlur: 1,
+        CopyPaste: 2,
+        RightClick: 3,
+        DevToolsOpen: 4,
+        ScreenResize: 5,
+        MultipleMonitors: 6,
+        ExternalPaste: 7
+      }
+      const typeInt = typeof violationType === 'string' ? (VIOLATION_TYPE_MAP[violationType] ?? 0) : violationType;
+
       try {
         await conn.invoke('ReportViolation', {
           contestId,
-          violationType,
+          violationType: typeInt,
           details: details ?? '',
           timestamp: new Date().toISOString(),
           userAgent: userAgentRef.current,
@@ -258,11 +275,11 @@ export function useAntiCheat({
       if (antiCheatLevel === 'Strict' && remaining > 0 && remaining <= 2) {
         toast.error(
           `⚠️ Vi phạm ${data.violationCount}/${data.maxViolations} — Còn ${remaining} lần trước khi bị loại!`,
-          { id: 'violation-warning', duration: 8_000 }
+          { duration: 8_000 }
         )
       } else if (data.message && !LOCKOUT_CONFIG[data.violationCount]) {
         // Only show generic message if no lockout popup is shown
-        toast.warning(`⚠️ ${data.message}`, { id: 'violation-warning', duration: 5_000 })
+        toast.warning(`⚠️ ${data.message}`, { duration: 5_000 })
       }
     })
 
@@ -275,7 +292,7 @@ export function useAntiCheat({
       setLockedUntil(null) // clear lockout — DQ overlay takes over
       setLockoutReason('')
       localStorage.removeItem(`coursemate_lockout_${contestId}`)
-      onDisqualified?.(data.reason)
+      onDisqualifiedRef.current?.(data.reason)
     })
 
     /**
@@ -295,14 +312,19 @@ export function useAntiCheat({
       })
       .catch(err => {
         setConnectionState('disconnected')
-        console.error('[AntiCheat] SignalR connect failed:', err)
+        // Ignore abort errors caused by React Strict Mode unmounting the component while connecting
+        if (err.name === 'AbortError' || err.message?.includes('stopped during negotiation')) {
+          console.log('[AntiCheat] SignalR connection cancelled (React Strict Mode unmount)')
+        } else {
+          console.error('[AntiCheat] SignalR connect failed:', err)
+        }
       })
 
     return () => {
       connection.stop().catch(() => {})
       setConnection(null)
     }
-  }, [contestId, antiCheatLevel, onDisqualified, triggerLockoutIfNeeded])
+  }, [contestId, antiCheatLevel, triggerLockoutIfNeeded])
 
   // ── Browser event monitors ─────────────────────────────────────────────────
   useEffect(() => {
@@ -314,7 +336,14 @@ export function useAntiCheat({
     }
 
     // 2. Window Blur (alt-tab, click outside browser)
-    const onBlur = () => reportViolation(ViolationType.WindowBlur, 'Browser window lost focus')
+    const onBlur = () => {
+      // Delay to ensure document.hidden has time to update if the user is switching tabs
+      setTimeout(() => {
+        if (!document.hidden) {
+          reportViolation(ViolationType.WindowBlur, 'Browser window lost focus')
+        }
+      }, 200)
+    }
 
     // 3. Paste from clipboard
     const onPaste = (e: ClipboardEvent) => {
@@ -325,7 +354,7 @@ export function useAntiCheat({
     // 4. Right-click context menu
     const onContextMenu = (e: MouseEvent) => {
       if (antiCheatLevel === 'Strict') e.preventDefault()
-      reportViolation(ViolationType.RightClick, 'Context menu opened')
+      toast.warning('🚫 Vui lòng hạn chế sử dụng chuột phải trong lúc thi!', { id: 'RightClickWarning' })
     }
 
     // 5. Significant window resize (likely devtools docked)
@@ -352,13 +381,20 @@ export function useAntiCheat({
     }
     const devToolsInterval = setInterval(checkDevTools, 3_000)
 
-    // 7. DevTools keyboard shortcuts
+    // 7. Keyboard shortcuts (DevTools and Copy/Paste)
     const onKeydown = (e: KeyboardEvent) => {
       const isDevToolsShortcut =
         e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) || (e.ctrlKey && e.key === 'u')
       if (isDevToolsShortcut) {
         if (antiCheatLevel === 'Strict') e.preventDefault()
         reportViolation(ViolationType.DevToolsOpen, `Shortcut: ${e.key}`)
+        return
+      }
+
+      const isCopyPasteShortcut = (e.ctrlKey || e.metaKey) && ['c', 'v', 'C', 'V'].includes(e.key)
+      if (isCopyPasteShortcut) {
+        if (antiCheatLevel === 'Strict') e.preventDefault()
+        reportViolation(ViolationType.CopyPaste, `Shortcut: Ctrl+${e.key.toUpperCase()}`)
       }
     }
 

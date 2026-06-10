@@ -1,5 +1,4 @@
 export const BUSINESS_ERROR_MESSAGE_MAP: Record<string, string> = {
-  Unknown: 'Đăng nhập lỗi.',
   EntityNotFound: 'Không tìm thấy dữ liệu yêu cầu.',
   InvalidUsernameOrPassword: 'Tên đăng nhập hoặc mật khẩu không đúng.',
   EmailNotVerified: 'Tài khoản chưa xác thực email.',

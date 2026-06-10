@@ -28,6 +28,7 @@ export interface ContestDto {
   exerciseCount: number
   participantCount: number
   isRegistered?: boolean
+  hasSubmitted?: boolean
   exercises: ContestExerciseDto[]
 }
 

@@ -47,7 +47,8 @@ public sealed class GetContestByIdQueryHandler : AbstractQueryHandler<GetContest
                 LastModificationTime = contest.LastModificationTime,
                 ExerciseCount = DbContext.ContestExercises.Count(x => x.ContestId == contest.Id),
                 ParticipantCount = DbContext.ContestRegistrations.Count(x => x.ContestId == contest.Id),
-                IsRegistered = DbContext.ContestRegistrations.Any(x => x.ContestId == contest.Id && x.StudentId == CurrentUserId)
+                IsRegistered = DbContext.ContestRegistrations.Any(x => x.ContestId == contest.Id && x.StudentId == CurrentUserId),
+                HasSubmitted = DbContext.ContestRegistrations.Any(x => x.ContestId == contest.Id && x.StudentId == CurrentUserId && x.SubmitTime != null)
             }).FirstOrDefaultAsync(ct);
 
         if (result == null)

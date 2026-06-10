@@ -23,5 +23,6 @@ public class ContestDto
     public int ExerciseCount { get; set; }
     public int ParticipantCount { get; set; }
     public bool IsRegistered { get; set; }
+    public bool HasSubmitted { get; set; }
     public List<ContestExerciseDto> Exercises { get; set; } = new();
 }
