@@ -22,7 +22,7 @@ import {
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { formatDate } from '@/lib/utils'
 
 const LESSON_TYPES: LessonType[] = Object.values(LessonType)
@@ -189,9 +189,18 @@ export default function LessonsPage() {
 
   const f = (field: keyof CreateLessonRequest, value: unknown) => setForm(prev => ({ ...prev, [field]: value }))
 
+  const courseFilterItems: Array<{ label: string; value: string | null }> = [
+    { label: 'Tất cả khóa học', value: null },
+    ...courseOptions.map(course => ({ value: course.id, label: course.title }))
+  ]
+  const chapterFilterItems: Array<{ label: string; value: string | null }> = [
+    { label: 'Tất cả chương', value: null },
+    ...chapterOptions.map(chapter => ({ value: chapter.id, label: chapter.title }))
+  ]
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between animate-in fade-in slide-in-from-bottom-2 duration-500">
         <div>
           <h1 className="text-2xl font-semibold">Bài học</h1>
           <p className="text-sm text-muted-foreground">Quản lý bài học trong chương</p>
@@ -201,7 +210,10 @@ export default function LessonsPage() {
         </Button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div
+        className="flex flex-wrap items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-backwards"
+        style={{ animationDelay: '100ms' }}
+      >
         <div className="relative max-w-sm flex-1 min-w-[220px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -211,71 +223,88 @@ export default function LessonsPage() {
             onChange={e => setFilter(e.target.value)}
           />
         </div>
-        <select
-          value={courseFilterId}
-          onChange={e => {
-            setCourseFilterId(e.target.value)
+        <Select
+          items={courseFilterItems}
+          value={courseFilterId || null}
+          onValueChange={(value: string | null) => {
+            setCourseFilterId(value ?? '')
             setChapterFilterId('')
           }}
-          className="h-10 min-w-[220px] rounded-md -input bg-background px-3 text-sm focus:outline-none"
         >
-          <option value="">Tất cả khóa học</option>
-          {courseOptions.map(course => (
-            <option key={course.id} value={course.id}>
-              {course.title}
-            </option>
-          ))}
-        </select>
-        <select
-          value={chapterFilterId}
-          onChange={e => setChapterFilterId(e.target.value)}
-          className="h-10 min-w-[220px] rounded-md -input bg-background px-3 text-sm focus:outline-none"
+          <SelectTrigger className="h-10 min-w-[220px]">
+            <SelectValue placeholder="Tất cả khóa học" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {courseFilterItems.map(item => (
+                <SelectItem key={item.value ?? 'all-courses'} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <Select
+          items={chapterFilterItems}
+          value={chapterFilterId || null}
+          onValueChange={(value: string | null) => setChapterFilterId(value ?? '')}
         >
-          <option value="">Tất cả chương</option>
-          {chapterOptions.map(chapter => (
-            <option key={chapter.id} value={chapter.id}>
-              {chapter.title}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="h-10 min-w-[220px]">
+            <SelectValue placeholder="Tất cả chương" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {chapterFilterItems.map(item => (
+                <SelectItem key={item.value ?? 'all-chapters'} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={items}
-        loading={loading}
-        sorting={sorting}
-        onSort={setSorting}
-        onEdit={openEdit}
-        onDelete={setDeleteId}
-        onView={row => router.push(`/management/lessons/${row.id}`)}
-        pagination={{
-          pageIndex,
-          pageSize,
-          totalCount,
-          onPageChange: setPageIndex
-        }}
-      />
+      <div
+        className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-backwards"
+        style={{ animationDelay: '150ms' }}
+      >
+        <DataTable
+          columns={columns}
+          data={items}
+          loading={loading}
+          sorting={sorting}
+          onSort={setSorting}
+          onEdit={openEdit}
+          onDelete={setDeleteId}
+          onView={row => router.push(`/management/lessons/${row.id}`)}
+          pagination={{
+            pageIndex,
+            pageSize,
+            totalCount,
+            onPageChange: setPageIndex
+          }}
+        />
+      </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{editing ? 'Chỉnh sửa bài học' : 'Tạo bài học mới'}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 py-2">
-            <div className="col-span-2 space-y-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2">
+            <div className="sm:col-span-2 space-y-1.5">
               <Label>Tiêu đề</Label>
               <Input value={form.title} onChange={e => f('title', e.target.value)} />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>ID chương</Label>
               <Input value={form.chapterId} onChange={e => f('chapterId', e.target.value)} />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>ID khóa học</Label>
               <Input value={form.courseId} onChange={e => f('courseId', e.target.value)} />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>Loại</Label>
               <Select value={form.lessonType} onValueChange={v => f('lessonType', v as LessonType)}>
                 <SelectTrigger>
@@ -290,7 +319,7 @@ export default function LessonsPage() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>Thứ tự</Label>
               <Input
                 type="number"

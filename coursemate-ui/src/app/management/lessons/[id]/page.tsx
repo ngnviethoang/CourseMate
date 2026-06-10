@@ -1,6 +1,8 @@
 'use client'
 
+import 'react-quill-new/dist/quill.snow.css'
 import { useEffect, useState, useCallback, useRef } from 'react'
+import dynamic from 'next/dynamic'
 import { useParams, useRouter } from 'next/navigation'
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 import {
@@ -14,10 +16,11 @@ import {
   FileQuestion,
   Presentation,
   CheckCircle2,
+  AlertCircle,
+  ChevronDown,
   FileText,
   RefreshCw,
-  UploadCloud,
-  Sparkles
+  UploadCloud
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { lessonService, chapterService, courseService } from '@/lib/course-service'
@@ -46,6 +49,8 @@ import Link from 'next/link'
 import { VideoUploadSection } from './video-upload'
 import { AiMaterialSection } from './ai-material-section'
 
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false })
+
 // ─── Lesson Type Icon & Color ─────────────────────────────────────────────────
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
 
@@ -60,27 +65,30 @@ const TYPE_META: Record<LessonType, { icon: React.ReactNode; label: string; colo
   [LessonType.Video]: {
     icon: <Video className="h-4 w-4" />,
     label: 'Video',
-    color: 'bg-blue-100 text-blue-700 border-blue-200'
+    color: 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20'
   },
   [LessonType.Reading]: {
     icon: <BookOpen className="h-4 w-4" />,
     label: 'Bài đọc',
-    color: 'bg-green-100 text-green-700 border-green-200'
+    color:
+      'bg-green-100 text-green-700 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20'
   },
   [LessonType.Coding]: {
     icon: <Code2 className="h-4 w-4" />,
     label: 'Lập trình',
-    color: 'bg-orange-100 text-orange-700 border-orange-200'
+    color:
+      'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20'
   },
   [LessonType.Quiz]: {
     icon: <FileQuestion className="h-4 w-4" />,
     label: 'Trắc nghiệm',
-    color: 'bg-purple-100 text-purple-700 border-purple-200'
+    color:
+      'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-500/20'
   },
   [LessonType.Slide]: {
     icon: <Presentation className="h-4 w-4" />,
     label: 'Trình chiếu',
-    color: 'bg-pink-100 text-pink-700 border-pink-200'
+    color: 'bg-pink-100 text-pink-700 border-pink-200 dark:bg-pink-500/10 dark:text-pink-400 dark:border-pink-500/20'
   }
 }
 
@@ -126,40 +134,35 @@ function uniqueNonEmpty(values: string[]): string[] {
 }
 
 function buildReadingContentFromOutline(outline: LectureOutline): string {
-  const lines: string[] = []
+  const parts: string[] = []
   const lessonTitle = normalizeText(outline.lessonTitle)
   if (lessonTitle) {
-    lines.push(`# ${lessonTitle}`, '')
+    parts.push(`<h1>${lessonTitle}</h1>`)
   }
 
   const slides = outline.slides ?? []
   slides.forEach((slide, index) => {
     const slideTitle = normalizeText(slide.title) || `Phần ${index + 1}`
-    lines.push(`## ${slideTitle}`)
+    parts.push(`<h2>${slideTitle}</h2>`)
 
     const bullets = uniqueNonEmpty(slide.bullets ?? [])
-    if (bullets.length > 0) {
-      bullets.forEach(bullet => lines.push(`- ${bullet}`))
-    } else {
-      lines.push('- (Nội dung đang được cập nhật)')
-    }
+    const bulletItems = bullets.length > 0 ? bullets : ['(Nội dung đang được cập nhật)']
+    parts.push('<ul>' + bulletItems.map(b => `<li>${b}</li>`).join('') + '</ul>')
 
     const relatedLinks = uniqueNonEmpty(slide.relatedLinks ?? [])
     if (relatedLinks.length > 0) {
-      lines.push('', 'Tài liệu tham khảo:')
-      relatedLinks.forEach(link => lines.push(`- ${link}`))
+      parts.push('<p><strong>Tài liệu tham khảo:</strong></p>')
+      parts.push('<ul>' + relatedLinks.map(link => `<li>${link}</li>`).join('') + '</ul>')
     }
-    lines.push('')
   })
 
   const courseLinks = uniqueNonEmpty(outline.relatedLinks ?? [])
   if (courseLinks.length > 0) {
-    lines.push('## Tài liệu liên quan')
-    courseLinks.forEach(link => lines.push(`- ${link}`))
-    lines.push('')
+    parts.push('<h2>Tài liệu liên quan</h2>')
+    parts.push('<ul>' + courseLinks.map(link => `<li>${link}</li>`).join('') + '</ul>')
   }
 
-  return lines.join('\n').trim()
+  return parts.join('')
 }
 
 function buildQuizDraftFromOutline(outline: LectureOutline): {
@@ -266,14 +269,14 @@ function DocxAssistPanel({
     return (result?.lectureOutline?.slides?.length ?? 0) > 0
   }, [])
 
-  const loadOutline = useCallback(async () => {
+  const loadOutline = useCallback(async (): Promise<OutlineDto | null> => {
     const result = await lessonMaterialService.getOutline(lessonId)
     if (hasReadyOutline(result)) {
       setOutline(result)
       setState('ready')
-      return true
+      return result
     }
-    return false
+    return null
   }, [hasReadyOutline, lessonId])
 
   useEffect(() => {
@@ -309,7 +312,7 @@ function DocxAssistPanel({
 
     connection.on('DocumentProcessed', (notification: DocumentProcessedNotification) => {
       const notificationLessonId = notification?.lessonId ?? notification?.LessonId
-      if (notificationLessonId && notificationLessonId !== lessonId) return
+      if (notificationLessonId && notificationLessonId.toLowerCase() !== lessonId.toLowerCase()) return
 
       const loweredMessage = (notification?.message ?? notification?.Message ?? '').toLowerCase()
       if (loweredMessage.includes('thất bại') || loweredMessage.includes('failed')) {
@@ -318,9 +321,10 @@ function DocxAssistPanel({
         return
       }
 
-      void loadOutline().then(isReady => {
-        if (isReady) {
-          toast.success('Outline đã sẵn sàng, đã đồng bộ dữ liệu mới nhất.')
+      void loadOutline().then(result => {
+        if (result?.lectureOutline) {
+          toast.success('Outline đã sẵn sàng, đã tự động áp dụng nội dung.')
+          onApplyOutline(result.lectureOutline)
         }
       })
     })
@@ -374,8 +378,8 @@ function DocxAssistPanel({
 
   const handleRefresh = async () => {
     try {
-      const loaded = await loadOutline()
-      if (loaded) {
+      const result = await loadOutline()
+      if (result) {
         toast.success('Dữ liệu AI đã sẵn sàng.')
       } else {
         toast.info('Hệ thống vẫn đang xử lý, vui lòng đợi thêm.')
@@ -396,79 +400,149 @@ function DocxAssistPanel({
   const slideCount = outline?.lectureOutline?.slides?.length ?? 0
 
   return (
-    <div className="rounded-xl border bg-muted/20 p-4 space-y-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="space-y-1">
-          <p className="text-sm font-semibold flex items-center gap-2">
-            <FileText className="h-4 w-4 text-primary" />
-            {title}
-          </p>
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border/60">
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold">{title}</p>
           <p className="text-xs text-muted-foreground">{hint}</p>
         </div>
-        {state === 'processing' && (
-          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            Đang xử lý, chờ backend gửi thông báo...
-          </span>
+      </div>
+
+      <div className="p-4 space-y-3">
+        {state === 'processing' ? (
+          <div className="flex items-center gap-4 rounded-lg border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800 p-4">
+            <div className="relative shrink-0">
+              <div className="p-2.5 rounded-full bg-amber-100 dark:bg-amber-900/30">
+                <FileText className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              </div>
+              <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-amber-500" />
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">AI đang phân tích tài liệu</p>
+              <p className="text-xs text-amber-700/70 dark:text-amber-400/70">
+                Sẽ tự động áp dụng nội dung khi hoàn tất
+              </p>
+            </div>
+          </div>
+        ) : (
+          <label
+            className={[
+              'flex flex-col items-center gap-2.5 rounded-lg border-2 border-dashed p-5 cursor-pointer transition-all duration-150',
+              state === 'error'
+                ? 'border-destructive/50 bg-destructive/5'
+                : selectedFile
+                  ? 'border-primary/50 bg-primary/5'
+                  : 'border-border hover:border-primary/40 hover:bg-muted/30',
+              state === 'uploading' ? 'pointer-events-none opacity-60' : ''
+            ].join(' ')}
+          >
+            <input
+              type="file"
+              accept=".doc,.docx"
+              className="sr-only"
+              disabled={state === 'uploading'}
+              onChange={e => {
+                handleFileChange(e.target.files?.[0] ?? null)
+                e.target.value = ''
+              }}
+            />
+            {selectedFile ? (
+              <>
+                <div className="p-2 rounded-full bg-primary/10">
+                  <FileText className="h-5 w-5 text-primary" />
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-medium">{selectedFile.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {(selectedFile.size / 1024).toFixed(0)} KB · Nhấn để đổi file
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="p-2 rounded-full bg-muted">
+                  <UploadCloud className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-medium">Chọn tài liệu</p>
+                  <p className="text-xs text-muted-foreground">Hỗ trợ .doc và .docx</p>
+                </div>
+              </>
+            )}
+          </label>
+        )}
+
+        {state === 'error' && (
+          <p className="flex items-center gap-1.5 text-xs text-destructive">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+            Xử lý thất bại, vui lòng thử lại với file DOCX khác.
+          </p>
+        )}
+
+        {state !== 'processing' && (
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleStart}
+              disabled={!selectedFile || state === 'uploading'}
+              className="gap-1.5"
+            >
+              {state === 'uploading' && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+              {state === 'uploading' ? 'Đang tải lên...' : 'Phân tích tài liệu'}
+            </Button>
+            {slideCount > 0 && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="gap-1.5 text-muted-foreground"
+                onClick={handleRefresh}
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+                Làm mới
+              </Button>
+            )}
+          </div>
+        )}
+
+        {slideCount > 0 && outline && (
+          <div className="rounded-lg border border-green-200 bg-green-50 dark:bg-green-950/20 dark:border-green-800 p-3.5 space-y-2.5 animate-in fade-in slide-in-from-bottom-1 duration-200">
+            <div className="flex items-start gap-2.5">
+              <div className="p-1 rounded-md bg-green-100 dark:bg-green-900/30 shrink-0 mt-0.5">
+                <CheckCircle2 className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-green-800 dark:text-green-300 truncate">
+                  {outline.lectureOutline.lessonTitle || 'Tài liệu đã phân tích'}
+                </p>
+                <p className="text-[11px] text-green-700/70 dark:text-green-400/70">{slideCount} phần nội dung</p>
+              </div>
+              <Button type="button" size="sm" className="h-7 text-xs shrink-0" onClick={handleApply}>
+                {applyLabel}
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {outline.lectureOutline.slides.slice(0, 5).map((slide, index) => (
+                <span
+                  key={`${slide.title}-${index}`}
+                  className="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/30 px-2 py-0.5 text-[10px] font-medium text-green-700 dark:text-green-400"
+                >
+                  {slide.title || `Phần ${index + 1}`}
+                </span>
+              ))}
+              {slideCount > 5 && (
+                <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                  +{slideCount - 5} phần
+                </span>
+              )}
+            </div>
+          </div>
         )}
       </div>
-
-      <div className="grid gap-3 grid-cols-[1fr_auto]">
-        <Input
-          type="file"
-          accept=".doc,.docx"
-          onChange={e => {
-            handleFileChange(e.target.files?.[0] ?? null)
-            e.target.value = ''
-          }}
-        />
-        <Button
-          type="button"
-          onClick={handleStart}
-          disabled={!selectedFile || state === 'uploading' || state === 'processing'}
-          className="gap-2"
-        >
-          {(state === 'uploading' || state === 'processing') && <Loader2 className="h-4 w-4 animate-spin" />}
-          {state === 'uploading' ? 'Đang tải...' : state === 'processing' ? 'Đang phân tích...' : 'Phân tích tài liệu'}
-        </Button>
-      </div>
-
-      {selectedFile && (
-        <p className="text-xs text-muted-foreground">
-          Đã chọn: <span className="font-medium text-foreground">{selectedFile.name}</span>
-        </p>
-      )}
-
-      {state === 'error' && (
-        <p className="text-xs text-destructive">Xử lý tài liệu chưa thành công, vui lòng thử lại với file DOCX khác.</p>
-      )}
-
-      {slideCount > 0 && outline && (
-        <div className="rounded-lg border bg-background p-3 space-y-3">
-          <div className="space-y-1">
-            <p className="text-xs font-semibold">
-              Kết quả AI: {outline.lectureOutline.lessonTitle || 'Tài liệu chưa có tiêu đề'}
-            </p>
-            <p className="text-xs text-muted-foreground">{slideCount} mục nội dung đã được trích xuất.</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {outline.lectureOutline.slides.slice(0, 4).map((slide, index) => (
-              <Badge key={`${slide.title}-${index}`} variant="secondary" className="text-[10px]">
-                {slide.title || `Phần ${index + 1}`}
-              </Badge>
-            ))}
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" size="sm" className="gap-2" onClick={handleApply}>
-              {applyLabel}
-            </Button>
-            <Button type="button" variant="outline" size="sm" className="gap-2" onClick={handleRefresh}>
-              <RefreshCw className="h-3.5 w-3.5" />
-              Làm mới kết quả
-            </Button>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
@@ -547,22 +621,19 @@ function ReadingContentSection({ lessonId, initialContent }: { lessonId: string;
       />
 
       {isEditing ? (
-        <>
-          <Textarea
-            className="min-h-[400px] font-mono text-sm"
-            placeholder="Viết nội dung bài đọc bằng Markdown..."
-            value={content}
-            onChange={e => setContent(e.target.value)}
-          />
-          <p className="text-xs text-muted-foreground">Hỗ trợ định dạng Markdown.</p>
-        </>
+        <div className="rounded-lg border border-border overflow-hidden [&_.ql-toolbar]:border-b [&_.ql-toolbar]:border-border [&_.ql-toolbar]:bg-muted/30 [&_.ql-container]:border-0 [&_.ql-editor]:min-h-[360px] [&_.ql-editor]:text-sm [&_.ql-editor]:font-sans [&_.ql-editor]:leading-relaxed">
+          <ReactQuill theme="snow" value={content} onChange={setContent} />
+        </div>
+      ) : content ? (
+        <div
+          className="min-h-[200px] rounded-lg bg-muted/20 p-6 prose prose-sm dark:prose-invert max-w-none bg-muted/30 shadow-inner"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
       ) : (
-        <div className="min-h-[200px] rounded-lg bg-muted/20 p-6 prose prose-sm dark:prose-invert max-w-none border-0 -dashed bg-muted/30 shadow-inner">
-          {content || (
-            <span className="text-muted-foreground italic">
-              Chưa có nội dung. Bấm chỉnh sửa để thêm tài liệu bài đọc.
-            </span>
-          )}
+        <div className="min-h-[200px] rounded-lg bg-muted/30 shadow-inner flex items-center justify-center">
+          <span className="text-sm italic text-muted-foreground">
+            Chưa có nội dung. Bấm chỉnh sửa để thêm tài liệu bài đọc.
+          </span>
         </div>
       )}
     </div>
@@ -1163,8 +1234,7 @@ function SlideContentSection({ lessonId, initialFileUrl }: { lessonId: string; i
           Quản lý slide
         </h2>
         <div className="flex bg-muted/50 p-1 rounded-lg">
-          <Button variant="secondary" size="sm" className="gap-2">
-            <Sparkles className="h-4 w-4 text-purple-600" />
+          <Button variant="secondary" size="sm">
             Hỗ trợ soạn thảo
           </Button>
           <Button
@@ -1288,28 +1358,24 @@ export default function LessonDetailPage() {
 
       {/* Type-specific Content Section */}
       {normalizedLessonType === LessonType.Video && (
-        <div className="space-y-6">
+        <div className="space-y-4">
           <VideoUploadSection lessonId={id} initialVideoUrl={detail?.videoUrl} />
-          <div className="rounded-xl bg-card p-6 shadow-md border-0 space-y-4">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <h2 className="text-lg font-semibold">Tạo nội dung slide</h2>
-                <p className="text-sm text-muted-foreground">
-                  Tải tài liệu DOC/DOCX để AI tạo bullet ý chính cho slide từ nội dung bài video.
-                </p>
-              </div>
-              <Button
-                type="button"
-                variant={showVideoSlideAssist ? 'secondary' : 'default'}
-                className="gap-2"
-                onClick={() => setShowVideoSlideAssist(prev => !prev)}
-              >
-                <Sparkles className="h-4 w-4" />
-                {showVideoSlideAssist ? 'Ẩn công cụ' : 'Tạo nội dung slide'}
-              </Button>
+
+          <button
+            type="button"
+            onClick={() => setShowVideoSlideAssist(prev => !prev)}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-dashed border-border hover:border-primary/50 hover:bg-muted/30 transition-all text-left group"
+          >
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium">Tạo nội dung slide từ tài liệu</p>
+              <p className="text-xs text-muted-foreground">Tải DOC/DOCX để AI trích xuất bullet ý chính cho slide</p>
             </div>
-            {showVideoSlideAssist && <AiMaterialSection lessonId={id} />}
-          </div>
+            <ChevronDown
+              className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${showVideoSlideAssist ? 'rotate-180' : ''}`}
+            />
+          </button>
+
+          {showVideoSlideAssist && <AiMaterialSection lessonId={id} />}
         </div>
       )}
 

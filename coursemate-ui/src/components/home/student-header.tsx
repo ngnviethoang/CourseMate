@@ -3,7 +3,19 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { ShoppingCart, LogOut, User, ChevronDown, BookMarked, Trophy, Code2, Home, Search, X, LayoutDashboard } from 'lucide-react'
+import {
+  ShoppingCart,
+  LogOut,
+  User,
+  ChevronDown,
+  BookMarked,
+  Trophy,
+  Code2,
+  Home,
+  Search,
+  X,
+  LayoutDashboard
+} from 'lucide-react'
 import { getAccessToken, getDecodedToken, removeToken } from '@/lib/auth-token.util'
 import { CourseMateLogoIcon } from '@/components/icons/coursemate-logo'
 import { buttonVariants } from '@/components/ui/button'

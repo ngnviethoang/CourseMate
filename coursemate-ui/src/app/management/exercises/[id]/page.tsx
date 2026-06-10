@@ -427,14 +427,16 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
             <div className="space-y-1.5 flex flex-col">
               <label className="text-sm font-medium">Trạng thái hiển thị</label>
               <Button
-                  variant="outline"
-                  onClick={() => setForm(f => ({ ...f, isHidden: !f.isHidden }))}
-                  className={`justify-start gap-2 w-fit ${form.isHidden ? 'border-amber-500 text-amber-600 bg-amber-50 dark:bg-amber-500/10' : 'border-emerald-500 text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10'}`}
+                variant="outline"
+                onClick={() => setForm(f => ({ ...f, isHidden: !f.isHidden }))}
+                className={`justify-start gap-2 w-fit ${form.isHidden ? 'border-amber-500 text-amber-600 bg-amber-50 dark:bg-amber-500/10' : 'border-emerald-500 text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10'}`}
               >
                 {form.isHidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 {form.isHidden ? 'Đang ẩn với học sinh' : 'Đang hiện (Công khai)'}
               </Button>
-              <p className="text-xs text-muted-foreground">Khi ẩn, bài tập sẽ không xuất hiện cho học sinh ở bất cứ đâu.</p>
+              <p className="text-xs text-muted-foreground">
+                Khi ẩn, bài tập sẽ không xuất hiện cho học sinh ở bất cứ đâu.
+              </p>
             </div>
 
             {/* Summary card */}
@@ -649,8 +651,8 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              Thêm các Testcase để đánh giá bài làm của học sinh. Testcase <strong>ẩn</strong> sẽ không hiện cho
-              học sinh thấy đầu vào/đầu ra.
+              Thêm các Testcase để đánh giá bài làm của học sinh. Testcase <strong>ẩn</strong> sẽ không hiện cho học
+              sinh thấy đầu vào/đầu ra.
             </p>
             <Button size="sm" onClick={addTestCase} className="gap-1.5">
               <Plus className="h-3.5 w-3.5" /> Thêm Testcase
