@@ -23,6 +23,14 @@ import { ReadingLessonContent } from '@/components/learning/reading-lesson-conte
 import { SlideLessonContent } from '@/components/learning/slide-lesson-content'
 import { VideoLessonContent } from '@/components/learning/video-lesson-content'
 
+const lessonTypeLabel: Record<LessonType, string> = {
+  [LessonType.Video]: 'Video',
+  [LessonType.Reading]: 'Bài đọc',
+  [LessonType.Coding]: 'Lập trình',
+  [LessonType.Quiz]: 'Trắc nghiệm',
+  [LessonType.Slide]: 'Slide'
+}
+
 function LessonHeader({
   lessonTitle,
   lessonType,
@@ -41,35 +49,36 @@ function LessonHeader({
   return (
     <div className="border-b border-border bg-background/95 px-6 py-3 backdrop-blur">
       <div className="flex items-center justify-between gap-4">
-        <div className="space-y-1.5">
-          <div className="mb-0.5 flex items-center gap-1.5">
-            <Badge variant="outline" className="px-1.5 text-[9px] font-bold uppercase tracking-widest opacity-80">
-              {lessonType}
-            </Badge>
-          </div>
-          <h1 className="text-2xl font-black tracking-tight">{lessonTitle}</h1>
+        <div className="flex items-center gap-3 min-w-0">
+          <Badge variant="secondary" className="shrink-0 text-[10px] font-semibold">
+            {lessonTypeLabel[lessonType] ?? lessonType}
+          </Badge>
+          <h1 className="truncate text-base font-bold">{lessonTitle}</h1>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2">
           <Button
             variant="outline"
+            size="sm"
             disabled={!prevLessonId}
             onClick={() => prevLessonId && onNavigate(prevLessonId)}
-            className="h-9 rounded-lg bg-background px-4 text-xs"
+            className="h-8 gap-1 px-3 text-xs"
           >
-            <ChevronLeft className="mr-1.5 h-3.5 w-3.5" /> Bài trước
+            <ChevronLeft className="h-3.5 w-3.5" /> Bài trước
           </Button>
           <Button
+            size="sm"
             disabled={!nextLessonId}
             onClick={() => nextLessonId && onNavigate(nextLessonId)}
-            className="h-9 rounded-lg px-5 text-xs shadow-lg shadow-primary/20"
+            className="h-8 gap-1 px-3 text-xs"
           >
-            Bài tiếp theo <ChevronRight className="ml-1.5 h-3.5 w-3.5" />
+            Bài tiếp theo <ChevronRight className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="ghost"
+            size="sm"
             onClick={() => window.location.assign(`/courses/${courseId}`)}
-            className="h-9 rounded-lg px-3 text-xs"
+            className="h-8 px-3 text-xs text-muted-foreground"
           >
             Về khóa học
           </Button>
@@ -248,8 +257,8 @@ export default function StudentLearningPage() {
       />
 
       <div className="flex-1 overflow-y-auto bg-muted/20">
-        <div className="flex min-h-full w-full flex-col px-6 py-5">
-          <div className="w-full rounded-[22px] border border-border bg-background p-5 shadow-lg">{content}</div>
+        <div className="flex min-h-full w-full flex-col px-3 py-3">
+          <div className="w-full h-[calc(100vh-120px)]">{content}</div>
         </div>
       </div>
     </div>

@@ -103,41 +103,38 @@ export function CategoryFormDialog({
           <DialogHeader className="relative z-10 space-y-2">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm ring-1 ring-white/30">
-                {isEditing
-                  ? <FolderOpen className="h-5 w-5 text-white" />
-                  : <Sparkles className="h-5 w-5 text-white" />
-                }
+                {isEditing ? (
+                  <FolderOpen className="h-5 w-5 text-white" />
+                ) : (
+                  <Sparkles className="h-5 w-5 text-white" />
+                )}
               </div>
               <DialogTitle className="text-xl font-bold text-white">
                 {isEditing ? 'Chỉnh sửa danh mục' : 'Tạo danh mục mới'}
               </DialogTitle>
             </div>
             <p className="text-sm text-white/70 pl-[52px]">
-              {isEditing
-                ? 'Cập nhật thông tin cho danh mục này'
-                : 'Điền thông tin để thêm danh mục khóa học mới'}
+              {isEditing ? 'Cập nhật thông tin cho danh mục này' : 'Điền thông tin để thêm danh mục khóa học mới'}
             </p>
           </DialogHeader>
         </div>
 
         {/* ── Form body ── */}
         <div className="bg-card px-6 py-5 space-y-5">
-
           {/* Name field */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <Label
-                htmlFor="cat-name"
-                className="flex items-center gap-1.5 text-sm font-semibold text-foreground"
-              >
+              <Label htmlFor="cat-name" className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
                 <Tag className="h-3.5 w-3.5 text-primary" />
                 Tên danh mục
                 <span className="text-destructive ml-0.5">*</span>
               </Label>
-              <span className={cn(
-                'text-xs tabular-nums transition-colors',
-                nameLen > 100 ? 'text-destructive' : 'text-muted-foreground'
-              )}>
+              <span
+                className={cn(
+                  'text-xs tabular-nums transition-colors',
+                  nameLen > 100 ? 'text-destructive' : 'text-muted-foreground'
+                )}
+              >
                 {nameLen}/120
               </span>
             </div>
@@ -154,16 +151,17 @@ export function CategoryFormDialog({
                   touched.name && errors.name
                     ? 'border-destructive focus-visible:ring-destructive/40'
                     : touched.name && !errors.name
-                    ? 'border-green-500 focus-visible:ring-green-500/40'
-                    : ''
+                      ? 'border-green-500 focus-visible:ring-green-500/40'
+                      : ''
                 )}
               />
               {touched.name && (
                 <div className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
-                  {errors.name
-                    ? <XCircle className="h-4 w-4 text-destructive" />
-                    : <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  }
+                  {errors.name ? (
+                    <XCircle className="h-4 w-4 text-destructive" />
+                  ) : (
+                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  )}
                 </div>
               )}
             </div>
@@ -177,18 +175,17 @@ export function CategoryFormDialog({
           {/* Description field */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <Label
-                htmlFor="cat-desc"
-                className="flex items-center gap-1.5 text-sm font-semibold text-foreground"
-              >
+              <Label htmlFor="cat-desc" className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
                 <FileText className="h-3.5 w-3.5 text-primary" />
                 Mô tả
                 <span className="text-destructive ml-0.5">*</span>
               </Label>
-              <span className={cn(
-                'text-xs tabular-nums transition-colors',
-                descLen > 900 ? 'text-destructive' : 'text-muted-foreground'
-              )}>
+              <span
+                className={cn(
+                  'text-xs tabular-nums transition-colors',
+                  descLen > 900 ? 'text-destructive' : 'text-muted-foreground'
+                )}
+              >
                 {descLen}/1000
               </span>
             </div>
@@ -200,8 +197,8 @@ export function CategoryFormDialog({
                 touched.description && errors.description
                   ? 'border-destructive focus-visible:ring-destructive/40'
                   : touched.description && !errors.description
-                  ? 'border-green-500 focus-visible:ring-green-500/40'
-                  : ''
+                    ? 'border-green-500 focus-visible:ring-green-500/40'
+                    : ''
               )}
               value={form.description}
               onChange={e => updateForm({ ...form, description: e.target.value })}
@@ -220,16 +217,16 @@ export function CategoryFormDialog({
             <div className="space-y-0.5">
               <p className="text-sm font-semibold">Trạng thái hoạt động</p>
               <p className="text-xs text-muted-foreground">
-                {form.isActive
-                  ? 'Danh mục đang hiển thị cho người dùng'
-                  : 'Danh mục đang bị ẩn khỏi hệ thống'}
+                {form.isActive ? 'Danh mục đang hiển thị cho người dùng' : 'Danh mục đang bị ẩn khỏi hệ thống'}
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <span className={cn(
-                'text-xs font-medium transition-colors',
-                form.isActive ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'
-              )}>
+              <span
+                className={cn(
+                  'text-xs font-medium transition-colors',
+                  form.isActive ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'
+                )}
+              >
                 {form.isActive ? 'Bật' : 'Tắt'}
               </span>
               <Switch
@@ -242,12 +239,7 @@ export function CategoryFormDialog({
 
           {/* Footer buttons */}
           <div className="flex gap-3 pt-1">
-            <Button
-              variant="outline"
-              className="flex-1 h-10"
-              onClick={() => handleOpenChange(false)}
-              disabled={saving}
-            >
+            <Button variant="outline" className="flex-1 h-10" onClick={() => handleOpenChange(false)} disabled={saving}>
               Hủy
             </Button>
             <Button
@@ -255,12 +247,15 @@ export function CategoryFormDialog({
               onClick={handleSaveClick}
               disabled={saving || (Object.keys(touched).length > 0 && hasErrors)}
             >
-              {saving
-                ? <><Loader2 className="h-4 w-4 animate-spin" /> Đang lưu...</>
-                : isEditing
-                ? 'Cập nhật'
-                : 'Tạo danh mục'
-              }
+              {saving ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> Đang lưu...
+                </>
+              ) : isEditing ? (
+                'Cập nhật'
+              ) : (
+                'Tạo danh mục'
+              )}
             </Button>
           </div>
         </div>

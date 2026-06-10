@@ -105,6 +105,12 @@ export default function OrdersPage() {
     return () => clearTimeout(t)
   }, [load])
 
+  function handlePageChange(nextPageIndex: number) {
+    if (nextPageIndex === pageIndex) return
+    setLoading(true)
+    setPageIndex(nextPageIndex)
+  }
+
   function handleView(row: OrderDto) {
     router.push(`/management/orders/${row.id}`)
   }
@@ -157,29 +163,27 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="space-y-10 max-w-[1600px] mx-auto pb-10">
-      <div className="flex flex-col gap-4 flex-row items-end justify-between">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-4xl font-bold tracking-tight">
-            {isAdmin ? 'Tất cả đơn hàng' : 'Doanh thu khóa học của tôi'}
-          </h1>
-          <p className="text-lg text-muted-foreground">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">{isAdmin ? 'Tất cả đơn hàng' : 'Doanh thu khóa học của tôi'}</h1>
+          <p className="text-sm text-muted-foreground">
             {isAdmin
               ? 'Quản lý việc mua khóa học và ghi danh của học viên'
               : 'Theo dõi doanh thu và ghi danh học viên cho các khóa học của bạn'}
           </p>
         </div>
-        <Button onClick={handleCreateDraft} className="h-12 gap-2 px-6 text-base">
+        <Button onClick={handleCreateDraft} className="gap-2">
           <Plus className="h-4 w-4" />
           Tạo mới
         </Button>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[220px] max-w-md">
-          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+        <div className="relative max-w-sm flex-1 min-w-[220px]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            className="pl-11 h-12 text-base rounded-xl -muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+            className="pl-9"
             placeholder="Tìm theo tên hoặc email học viên..."
             value={filter}
             onChange={e => {
@@ -202,7 +206,7 @@ export default function OrdersPage() {
           pageIndex,
           pageSize,
           totalCount,
-          onPageChange: setPageIndex
+          onPageChange: handlePageChange
         }}
       />
 

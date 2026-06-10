@@ -27,7 +27,7 @@ public sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderById
         Guid currentUserId = CurrentUserId;
         bool isAdmin = IsInRole(Roles.Admin);
 
-        // Admin xem được bất kỳ order nào; student chỉ xem được order của chính mình
+        // Admins can view any order; students can only view their own orders.
         Order? order = isAdmin
             ? await DbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.Id, ct)
             : await DbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == currentUserId, ct);

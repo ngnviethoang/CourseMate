@@ -29,7 +29,7 @@ public sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateOrd
     {
         bool isAdmin = IsInRole(Roles.Admin);
 
-        // Admin có thể update bất kỳ order nào; student chỉ update order của chính mình
+        // Admin can update any order; students can only update their own orders.
         Order? order = isAdmin
             ? await DbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.Id, ct)
             : await DbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == CurrentUserId, ct);
@@ -42,7 +42,7 @@ public sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateOrd
         OrderStatus previousStatus = order.Status;
         order.Status = request.Status;
 
-        // Khi admin xác nhận (Completed), tự động ghi danh học viên vào các khoá học đã mua
+        // When an admin marks the order as Completed, automatically enroll the student in the purchased courses.
         if (request.Status == OrderStatus.Completed && previousStatus != OrderStatus.Completed)
         {
             List<Guid> courseIds = await DbContext.OrderItems
@@ -51,7 +51,7 @@ public sealed class UpdateOrderCommandHandler : AbstractCommandHandler<UpdateOrd
                 .Distinct()
                 .ToListAsync(ct);
 
-            // Lấy danh sách enrollment đã tồn tại để tránh duplicate
+            // Retrieve existing enrollments to prevent duplicate records.
             List<Guid> existingEnrolledCourseIds = await DbContext.Enrollments
                 .Where(e => e.StudentId == order.StudentId && courseIds.Contains(e.CourseId))
                 .Select(e => e.CourseId)

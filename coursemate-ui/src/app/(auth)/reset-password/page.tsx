@@ -60,7 +60,7 @@ function ResetPasswordForm() {
   }
 
   return (
-    <Card className="border-zinc-200/70 bg-background/80 shadow-2xl shadow-zinc-900/10 backdrop-blur-xl dark:border-zinc-800/80 dark:shadow-black/30">
+    <Card className="w-full animate-in fade-in zoom-in-95 duration-500 border-zinc-200/70 bg-background/80 shadow-2xl shadow-zinc-900/10 backdrop-blur-xl dark:border-zinc-800/80 dark:shadow-black/30">
       <CardHeader className="space-y-4 pb-3">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-1 ring-primary/20">
           <GraduationCap className="h-7 w-7" />
@@ -159,7 +159,7 @@ function ResetPasswordForm() {
             <Button
               type="submit"
               id="btn-reset-password"
-              className="h-11 w-full font-semibold shadow-lg shadow-primary/25"
+              className="group h-11 w-full font-semibold shadow-lg shadow-primary/25"
               disabled={isLoading}
             >
               {isLoading ? (

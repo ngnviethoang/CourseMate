@@ -6,16 +6,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
-import {
-  ArrowLeft,
-  ArrowRight,
-  Loader2,
-  CheckCircle2,
-  CreditCard,
-  Smartphone,
-  Building2,
-  Wallet,
-} from 'lucide-react'
+import { ArrowLeft, ArrowRight, Loader2, CheckCircle2, CreditCard, Smartphone, Building2, Wallet } from 'lucide-react'
 import { orderService } from '@/lib/order-service'
 import { CartDto } from '@/lib/types'
 import { toast } from 'sonner'
@@ -157,7 +148,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-background pb-10">
-      <div className="mx-4 mt-4 overflow-hidden rounded-[1.5rem] border border-border/80 bg-gradient-to-b from-primary/10 via-primary/5 to-background shadow-sm">
+      <div className="mx-4 mt-4 overflow-hidden rounded-[1.5rem] border border-border/80 bg-gradient-to-b from-primary/10 via-primary/5 to-background shadow-sm animate-in fade-in duration-500">
         <div className="mx-auto max-w-6xl px-4 py-4 sm:px-5">
           <Link
             href="/cart"
@@ -185,7 +176,7 @@ export default function CheckoutPage() {
         {loading ? (
           <CheckoutSkeleton />
         ) : (
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-5 animate-in fade-in slide-in-from-bottom-2 duration-500">
             <div className="space-y-4 lg:col-span-3">
               <div>
                 <h2 className="text-base font-bold">Phương thức thanh toán</h2>
@@ -244,7 +235,9 @@ export default function CheckoutPage() {
                             : 'border-muted-foreground/30 bg-background'
                         }`}
                       >
-                        {selected && !method.disabled && <CheckCircle2 className="h-2.5 w-2.5 text-primary-foreground" />}
+                        {selected && !method.disabled && (
+                          <CheckCircle2 className="h-2.5 w-2.5 text-primary-foreground" />
+                        )}
                       </div>
                     </button>
                   )

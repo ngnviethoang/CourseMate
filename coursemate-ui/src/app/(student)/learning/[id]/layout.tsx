@@ -15,8 +15,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   PlayCircle,
-  Presentation,
-  Sparkles
+  Presentation
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -91,7 +90,7 @@ export default function LearningLayout({ children }: { children: React.ReactNode
       >
         {sidebarOpen && (
           <div className="flex h-full w-[320px] flex-col">
-            <div className="border-b border-border px-3.5 py-3.5">
+            <div className="border-border px-3.5 py-3.5">
               <Button
                 variant="ghost"
                 size="sm"
@@ -103,9 +102,9 @@ export default function LearningLayout({ children }: { children: React.ReactNode
 
               <div className="space-y-2.5 rounded-xl border border-border bg-muted/10 p-3.5">
                 <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">Learning Space</p>
-                    <h2 className="line-clamp-2 text-base font-bold">{course.title}</h2>
+                  <div className="space-y-0.5 min-w-0">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">Khóa học</p>
+                    <h2 className="line-clamp-2 text-sm font-bold leading-snug">{course.title}</h2>
                   </div>
                   <Button
                     variant="outline"
@@ -117,21 +116,19 @@ export default function LearningLayout({ children }: { children: React.ReactNode
                   </Button>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-muted-foreground">Tiến độ học tập</span>
+                    <span className="text-[10px] font-semibold text-emerald-600">
+                      {Math.round(course.progressPercentage)}%
+                    </span>
+                  </div>
+                  <div className="h-1.5 overflow-hidden rounded-full bg-muted">
                     <div
                       className="h-full bg-emerald-500 transition-all duration-500"
                       style={{ width: `${course.progressPercentage}%` }}
                     />
                   </div>
-                  <span className="text-[10px] font-semibold text-muted-foreground">
-                    {Math.round(course.progressPercentage)}%
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-1.5 rounded-lg bg-primary/10 px-2.5 py-1.5 text-[11px] text-muted-foreground">
-                  <Sparkles className="h-3 w-3 text-primary" />
-                  Theo dõi giáo trình và chuyển bài học ngay tại đây.
                 </div>
               </div>
             </div>
@@ -151,7 +148,7 @@ export default function LearningLayout({ children }: { children: React.ReactNode
                     <AccordionTrigger className="px-3.5 py-3 text-[13px] font-semibold transition-colors hover:bg-accent/50 hover:no-underline">
                       <div className="flex items-center gap-3 text-left">
                         <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                          Ch {chapter.sortOrder}
+                          Ch.{chapter.sortOrder}
                         </span>
                         <span className="line-clamp-2">{chapter.title}</span>
                       </div>

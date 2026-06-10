@@ -9,6 +9,7 @@ import type { ChapterDto, CourseDto, CreateChapterRequest } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import {
   AlertDialog,
@@ -146,9 +147,14 @@ export default function ChaptersPage() {
 
   const f = (field: keyof CreateChapterRequest, value: unknown) => setForm(prev => ({ ...prev, [field]: value }))
 
+  const courseFilterItems: Array<{ label: string; value: string | null }> = [
+    { label: 'Tất cả khóa học', value: null },
+    ...courseOptions.map(course => ({ value: course.id, label: course.title }))
+  ]
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between animate-in fade-in slide-in-from-bottom-2 duration-500">
         <div>
           <h1 className="text-2xl font-semibold">Chương</h1>
           <p className="text-sm text-muted-foreground">Quản lý chương của khóa học</p>
@@ -158,7 +164,10 @@ export default function ChaptersPage() {
         </Button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div
+        className="flex flex-wrap items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-backwards"
+        style={{ animationDelay: '100ms' }}
+      >
         <div className="relative max-w-sm flex-1 min-w-[220px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -168,36 +177,47 @@ export default function ChaptersPage() {
             onChange={e => setFilter(e.target.value)}
           />
         </div>
-        <select
-          value={courseFilterId}
-          onChange={e => setCourseFilterId(e.target.value)}
-          className="h-10 min-w-[220px] rounded-md -input bg-background px-3 text-sm focus:outline-none"
+        <Select
+          items={courseFilterItems}
+          value={courseFilterId || null}
+          onValueChange={(value: string | null) => setCourseFilterId(value ?? '')}
         >
-          <option value="">Tất cả khóa học</option>
-          {courseOptions.map(course => (
-            <option key={course.id} value={course.id}>
-              {course.title}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="h-10 min-w-[220px]">
+            <SelectValue placeholder="Tất cả khóa học" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {courseFilterItems.map(item => (
+                <SelectItem key={item.value ?? 'all-courses'} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={items}
-        loading={loading}
-        sorting={sorting}
-        onSort={setSorting}
-        onEdit={openEdit}
-        onDelete={setDeleteId}
-        onView={row => router.push(`/management/courses/${row.courseId}`)}
-        pagination={{
-          pageIndex,
-          pageSize,
-          totalCount,
-          onPageChange: setPageIndex
-        }}
-      />
+      <div
+        className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-backwards"
+        style={{ animationDelay: '150ms' }}
+      >
+        <DataTable
+          columns={columns}
+          data={items}
+          loading={loading}
+          sorting={sorting}
+          onSort={setSorting}
+          onEdit={openEdit}
+          onDelete={setDeleteId}
+          onView={row => router.push(`/management/courses/${row.courseId}`)}
+          pagination={{
+            pageIndex,
+            pageSize,
+            totalCount,
+            onPageChange: setPageIndex
+          }}
+        />
+      </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
@@ -205,15 +225,15 @@ export default function ChaptersPage() {
             <DialogTitle>{editing ? 'Chỉnh sửa chương' : 'Tạo chương mới'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>ID khóa học</Label>
               <Input value={form.courseId} onChange={e => f('courseId', e.target.value)} />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>Tiêu đề</Label>
               <Input value={form.title} onChange={e => f('title', e.target.value)} />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>Thứ tự</Label>
               <Input
                 type="number"

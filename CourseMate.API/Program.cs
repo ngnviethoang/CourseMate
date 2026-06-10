@@ -3,13 +3,11 @@ using CourseMate.API.Hubs;
 using CourseMate.API.Middlewares;
 using CourseMate.API.Services;
 using CourseMate.Application;
-using CourseMate.Application.Services.FileStorageServices;
 using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
-using CourseMate.API.Extensions;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -158,7 +156,6 @@ try
     });
 
     WebApplication app = builder.Build();
-    await DataFixer.FixPositionsAsync(app.Services);
     // await app.Services.SeedAsync();
     app.UseHsts();
     app.UseHttpsRedirection();

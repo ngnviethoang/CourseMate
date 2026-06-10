@@ -89,13 +89,13 @@ function CourseCard({ course, index }: CourseCardProps) {
       if (course.price === 0) {
         await orderService.enrollFree(course.id)
         toast.success(`Bạn đã tham gia khóa học "${course.title}" thành công!`)
-        course.isEnrollment = true 
-        course.isInCart = false 
+        course.isEnrollment = true
+        course.isInCart = false
         router.push(`/learning/${course.id}`)
       } else {
         await orderService.addToCart(course.id)
         toast.success(`"${course.title}" đã được thêm vào giỏ hàng!`)
-        course.isInCart = true 
+        course.isInCart = true
       }
     } catch {
       // error toast handled by apiClient
@@ -191,13 +191,9 @@ function CourseCard({ course, index }: CourseCardProps) {
         >
           {/* Price / status label */}
           {course.isEnrollment ? (
-            <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
-              ✓ Đã mua
-            </span>
+            <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">✓ Đã mua</span>
           ) : course.isInCart ? (
-            <span className="text-xs font-medium text-amber-600 flex items-center gap-1">
-              🛒 Trong giỏ hàng
-            </span>
+            <span className="text-xs font-medium text-amber-600 flex items-center gap-1">🛒 Trong giỏ hàng</span>
           ) : course.price === 0 ? (
             <span className="text-base font-bold text-emerald-600">Miễn phí</span>
           ) : (
@@ -256,24 +252,21 @@ export function RecommendedCourses({
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
 
-  const fetchCourses = useCallback(
-    async (page: number, filter?: string, categoryId?: string, loggedIn?: boolean) => {
-      setLoading(true)
-      try {
-        const res =
-          filter || categoryId
-            ? await courseService.list({ pageIndex: page - 1, pageSize: PAGE_SIZE, filter, categoryId })
-            : await courseService.list({ pageIndex: page - 1, pageSize: PAGE_SIZE })
-        setCourses(res.items)
-        setTotalCount(res.totalCount)
-      } catch {
-        // error handled by apiClient
-      } finally {
-        setLoading(false)
-      }
-    },
-    []
-  )
+  const fetchCourses = useCallback(async (page: number, filter?: string, categoryId?: string, loggedIn?: boolean) => {
+    setLoading(true)
+    try {
+      const res =
+        filter || categoryId
+          ? await courseService.list({ pageIndex: page - 1, pageSize: PAGE_SIZE, filter, categoryId })
+          : await courseService.list({ pageIndex: page - 1, pageSize: PAGE_SIZE })
+      setCourses(res.items)
+      setTotalCount(res.totalCount)
+    } catch {
+      // error handled by apiClient
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
   const refreshCurrentPage = useCallback(
     async (courseId: string, changes: Partial<Pick<CourseDto, 'isInCart' | 'isEnrollment'>>) => {
@@ -338,11 +331,7 @@ export function RecommendedCourses({
         <>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {visibleCourses.map((course, idx) => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                index={(pageIndex - 1) * PAGE_SIZE + idx}
-              />
+              <CourseCard key={course.id} course={course} index={(pageIndex - 1) * PAGE_SIZE + idx} />
             ))}
           </div>
 
