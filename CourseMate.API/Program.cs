@@ -3,7 +3,6 @@ using CourseMate.API.Hubs;
 using CourseMate.API.Middlewares;
 using CourseMate.API.Services;
 using CourseMate.Application;
-using CourseMate.Application.Services.FileStorageServices;
 using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Options;

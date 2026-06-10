@@ -59,6 +59,7 @@ interface ExerciseForm {
   description: string
   difficulty: string
   category: string
+  isHidden: boolean
   examples: Example[]
   constraints: string[]
   hints: string[]
@@ -108,6 +109,7 @@ const EMPTY_FORM: ExerciseForm = {
   description: '',
   difficulty: 'Easy',
   category: '',
+  isHidden: false,
   examples: [],
   constraints: [],
   hints: [],
@@ -157,6 +159,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
           description: data.description,
           difficulty: data.difficulty,
           category: data.category,
+          isHidden: data.isHidden || false,
           examples: data.examples || [],
           constraints: data.constraints || [],
           hints: data.hints || [],
@@ -206,7 +209,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
       ...f,
       testCases: [
         ...f.testCases,
-        { input: '', expectedOutput: '', description: `Bộ kiểm thử ${newIdx + 1}`, isHidden: false, order: newIdx }
+        { input: '', expectedOutput: '', description: `Testcase ${newIdx + 1}`, isHidden: false, order: newIdx }
       ]
     }))
     toggleTestCaseEditMode(newIdx, true)
@@ -246,7 +249,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
     try {
       if (isNew) {
         const res = await exerciseService.create(form)
-        toast.success('Tạo bài tập thành công! Bây giờ bạn có thể thêm bộ kiểm thử.')
+        toast.success('Tạo bài tập thành công! Bây giờ bạn có thể thêm Testcase.')
         router.push(`/management/exercises/${res.id}`)
       } else {
         await exerciseService.update({ ...form, id })
@@ -265,15 +268,15 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
     try {
       if (tc.id) {
         await exerciseService.updateTestCase(id as string, tc.id, tc)
-        toast.success(`Đã cập nhật bộ kiểm thử #${idx + 1}`)
+        toast.success(`Đã cập nhật Testcase #${idx + 1}`)
       } else {
         const res = await exerciseService.addTestCase(id as string, tc)
         updateTestCase(idx, { id: res.id })
-        toast.success(`Đã thêm bộ kiểm thử #${idx + 1}`)
+        toast.success(`Đã thêm Testcase #${idx + 1}`)
       }
       toggleTestCaseEditMode(idx, false)
     } catch {
-      toast.error('Lưu bộ kiểm thử thất bại')
+      toast.error('Lưu Testcase thất bại')
     }
   }
 
@@ -307,7 +310,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
     { key: 'hints', label: '4. Gợi ý', icon: <Plus className="h-4 w-4" /> },
     {
       key: 'testcases',
-      label: `5. Bộ kiểm thử (${form.testCases.length})`,
+      label: `5. Testcase (${form.testCases.length})`,
       icon: <FlaskConical className="h-4 w-4" />,
       disabled: isNew
     },
@@ -421,6 +424,19 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
               </datalist>
             </div>
 
+            <div className="space-y-1.5 flex flex-col">
+              <label className="text-sm font-medium">Trạng thái hiển thị</label>
+              <Button
+                  variant="outline"
+                  onClick={() => setForm(f => ({ ...f, isHidden: !f.isHidden }))}
+                  className={`justify-start gap-2 w-fit ${form.isHidden ? 'border-amber-500 text-amber-600 bg-amber-50 dark:bg-amber-500/10' : 'border-emerald-500 text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10'}`}
+              >
+                {form.isHidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {form.isHidden ? 'Đang ẩn với học sinh' : 'Đang hiện (Công khai)'}
+              </Button>
+              <p className="text-xs text-muted-foreground">Khi ẩn, bài tập sẽ không xuất hiện cho học sinh ở bất cứ đâu.</p>
+            </div>
+
             {/* Summary card */}
             <div className="rounded-xl bg-muted shadow-md border-0 border-0/30 p-4 space-y-2 text-sm">
               <p className="font-medium text-xs uppercase tracking-widest text-muted-foreground">Tóm tắt</p>
@@ -431,7 +447,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Bộ kiểm thử</span>
+                <span className="text-muted-foreground">Testcase</span>
                 <span className="font-medium">{form.testCases.length}</span>
               </div>
               <div className="flex justify-between">
@@ -633,11 +649,11 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              Thêm các bộ kiểm thử để đánh giá bài làm của học sinh. Bộ kiểm thử <strong>ẩn</strong> sẽ không hiện cho
+              Thêm các Testcase để đánh giá bài làm của học sinh. Testcase <strong>ẩn</strong> sẽ không hiện cho
               học sinh thấy đầu vào/đầu ra.
             </p>
             <Button size="sm" onClick={addTestCase} className="gap-1.5">
-              <Plus className="h-3.5 w-3.5" /> Thêm bộ kiểm thử
+              <Plus className="h-3.5 w-3.5" /> Thêm Testcase
             </Button>
           </div>
 
@@ -645,7 +661,7 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
             <div className="text-center py-16 text-muted-foreground rounded-xl -dashed">
               <FlaskConical className="h-10 w-10 mx-auto mb-3 opacity-40" />
               <p className="text-sm">
-                Chưa có bộ kiểm thử. Nhấn <strong>Thêm bộ kiểm thử</strong> để bắt đầu.
+                Chưa có Testcase. Nhấn <strong>Thêm Testcase</strong> để bắt đầu.
               </p>
             </div>
           )}
@@ -654,12 +670,12 @@ export default function ExerciseFormPage({ params }: { params: Promise<{ id: str
             {form.testCases.map((tc, idx) => (
               <div
                 key={idx}
-                className={`rounded-xl p-4 space-y-3 ${tc.isHidden ? '-amber-300/50 bg-amber-50/30 dark:bg-amber-500/5' : 'bg-card'}`}
+                className={`rounded-xl p-5 border shadow-sm space-y-4 transition-all hover:shadow-md ${tc.isHidden ? 'border-amber-200/50 bg-amber-50/20 dark:bg-amber-500/5 dark:border-amber-500/20' : 'border-border bg-card'}`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
-                    <span className="text-sm font-semibold">Bộ kiểm thử #{idx + 1}</span>
+                    <span className="text-sm font-semibold">Testcase #{idx + 1}</span>
                     {tc.isHidden && (
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 font-medium">
                         Ẩn

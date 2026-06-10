@@ -29,6 +29,8 @@ public class UpdateExerciseCommand : IRequest<Unit>
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
     public string Category { get; set; } = string.Empty;
 
+    public bool IsHidden { get; set; }
+
     public IEnumerable<string> Constraints { get; set; } = [];
 
     public IEnumerable<string> Hints { get; set; } = [];
@@ -102,6 +104,7 @@ public sealed class UpdateExerciseCommandHandler : AbstractCommandHandler<Update
         exercise.Description = request.Description;
         exercise.Difficulty = difficultyType;
         exercise.Category = request.Category;
+        exercise.IsHidden = request.IsHidden;
         exercise.Constraints = request.Constraints.ToList();
         exercise.Hints = request.Hints.ToList();
         DbContext.Exercises.Update(exercise);

@@ -42,10 +42,12 @@ public sealed class GetListExercisesQueryHandler : AbstractQueryHandler<GetListE
                 CreatedByName = user.UserName,
                 TestCaseCount = testCaseGroup.Count(),
                 CreationTime = exercise.CreationTime,
-                LastModificationTime = exercise.LastModificationTime
+                LastModificationTime = exercise.LastModificationTime,
+                IsHidden = exercise.IsHidden
             };
 
         query = query
+            .WhereIf(IsInRole(Roles.Student), x => !x.IsHidden)
             .WhereIf(IsInRole(Roles.Instructor), x => x.CreatedById == CurrentUserId)
             .WhereIf(isFilterGuid, x => x.Id == filterId)
             .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))

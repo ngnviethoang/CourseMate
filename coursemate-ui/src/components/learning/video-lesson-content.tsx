@@ -1,7 +1,11 @@
 'use client'
 
+import { createPlayer } from '@videojs/react'
+import { MinimalVideoSkin, Video as VideoJsVideo, videoFeatures } from '@videojs/react/video'
 import { PlayCircle } from 'lucide-react'
 import { VideoContent } from '@/components/learning/lesson-content.types'
+
+const Player = createPlayer({ features: videoFeatures })
 
 export function VideoLessonContent({
   content,
@@ -12,8 +16,9 @@ export function VideoLessonContent({
   videoUrl?: string
   title: string
 }) {
+  const autoPlayVideo = false
   const player = videoUrl ? (
-    <div className="aspect-video overflow-hidden rounded-3xl bg-slate-950 shadow-2xl ring-1 ring-white/10">
+    <div className="h-full overflow-hidden bg-slate-950 rounded-[22px]">
       {videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be') ? (
         <iframe
           className="h-full w-full"
@@ -23,7 +28,17 @@ export function VideoLessonContent({
           allowFullScreen
         />
       ) : (
-        <video src={videoUrl} controls className="h-full w-full" controlsList="nodownload" />
+        <Player.Provider key={videoUrl}>
+          <MinimalVideoSkin className="h-full w-full rounded-[22px]">
+            <VideoJsVideo
+              src={videoUrl}
+              autoPlay={autoPlayVideo}
+              playsInline
+              controlsList="nodownload noremoteplayback"
+              className="w-full h-full object-contain"
+            />
+          </MinimalVideoSkin>
+        </Player.Provider>
       )}
     </div>
   ) : (

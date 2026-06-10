@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { ShoppingCart, LogOut, User, ChevronDown, BookMarked, Trophy, Code2, Home, Search, X } from 'lucide-react'
+import { ShoppingCart, LogOut, User, ChevronDown, BookMarked, Trophy, Code2, Home, Search, X, LayoutDashboard } from 'lucide-react'
 import { getAccessToken, getDecodedToken, removeToken } from '@/lib/auth-token.util'
 import { CourseMateLogoIcon } from '@/components/icons/coursemate-logo'
 import { buttonVariants } from '@/components/ui/button'
@@ -174,6 +174,15 @@ export function StudentHeader({
                 Khoá học của tôi
               </Link>
 
+              {['Admin', 'Instructor'].includes(displayRole) && (
+                <Link
+                  href="/management"
+                  className="hidden shrink-0 rounded-xl px-3.5 py-2 text-sm font-medium transition-colors md:inline-flex text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+                >
+                  Quản lý
+                </Link>
+              )}
+
               <NotificationDropdown />
 
               <Link
@@ -223,6 +232,12 @@ export function StudentHeader({
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
+                    {['Admin', 'Instructor'].includes(displayRole) && (
+                      <DropdownMenuItem onClick={() => router.push('/management')}>
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        Trang quản lý
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={() => router.push('/profile')}>
                       <User className="mr-2 h-4 w-4" />
                       Hồ sơ của tôi

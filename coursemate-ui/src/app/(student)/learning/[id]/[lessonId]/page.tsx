@@ -248,8 +248,8 @@ export default function StudentLearningPage() {
       />
 
       <div className="flex-1 overflow-y-auto bg-muted/20">
-        <div className="flex min-h-full w-full flex-col px-6 py-5">
-          <div className="w-full rounded-[22px] border border-border bg-background p-5 shadow-lg">{content}</div>
+        <div className="flex min-h-full w-full flex-col px-3 py-3">
+          <div className="w-full h-[calc(100vh-120px)]">{content}</div>
         </div>
       </div>
     </div>

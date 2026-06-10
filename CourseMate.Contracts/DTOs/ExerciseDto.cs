@@ -12,4 +12,5 @@ public class ExerciseDto
     public int TestCaseCount { get; set; }
     public DateTimeOffset CreationTime { get; set; }
     public DateTimeOffset? LastModificationTime { get; set; }
+    public bool IsHidden { get; set; }
 }

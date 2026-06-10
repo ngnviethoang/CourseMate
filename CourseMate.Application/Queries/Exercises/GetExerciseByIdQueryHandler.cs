@@ -39,10 +39,16 @@ public sealed class GetExerciseByIdQueryHandler : AbstractQueryHandler<GetExerci
                 CreationTime = exercise.CreationTime,
                 LastModificationTime = exercise.LastModificationTime,
                 Constraints = exercise.Constraints,
-                Hints = exercise.Hints
+                Hints = exercise.Hints,
+                IsHidden = exercise.IsHidden
             }).FirstOrDefaultAsync(ct);
 
         if (result is null)
+        {
+            return null;
+        }
+
+        if (IsInRole(Roles.Student) && result.IsHidden)
         {
             return null;
         }
@@ -57,7 +63,6 @@ public sealed class GetExerciseByIdQueryHandler : AbstractQueryHandler<GetExerci
             .ToListAsync(ct);
 
         result.TestCases = await DbContext.ExerciseTestCases
-            .WhereIf(IsInRole(Roles.Student), x => !x.IsHidden)
             .Where(x => x.ExerciseId == result.Id)
             .Select(i => new ExerciseTestCaseDto
             {

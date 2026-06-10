@@ -91,7 +91,7 @@ export default function LearningLayout({ children }: { children: React.ReactNode
       >
         {sidebarOpen && (
           <div className="flex h-full w-[320px] flex-col">
-            <div className="border-b border-border px-3.5 py-3.5">
+            <div className="border-border px-3.5 py-3.5">
               <Button
                 variant="ghost"
                 size="sm"

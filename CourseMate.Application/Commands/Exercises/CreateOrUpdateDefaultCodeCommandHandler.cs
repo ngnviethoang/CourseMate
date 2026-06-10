@@ -33,7 +33,7 @@ public sealed class CreateOrUpdateDefaultCodeCommandHandler : AbstractCommandHan
 
         ExerciseDefaultCode? defaultCode = await DbContext.ExerciseDefaultCodes
             .Where(x => x.ExerciseId == request.ExerciseId)
-            .Where(x => string.Equals(x.Language, request.Language, StringComparison.CurrentCultureIgnoreCase))
+            .Where(x => x.Language.ToLower() == request.Language.ToLower())
             .FirstOrDefaultAsync(ct);
 
         if (defaultCode is null)

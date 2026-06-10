@@ -24,6 +24,8 @@ public class CreateExerciseCommand : IRequest<ResultIdDto>
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
     public string Category { get; set; } = string.Empty;
 
+    public bool IsHidden { get; set; }
+
     public IEnumerable<string> Constraints { get; set; } = [];
 
     public IEnumerable<string> Hints { get; set; } = [];
@@ -93,7 +95,7 @@ public sealed class CreateExerciseCommandHandler : AbstractCommandHandler<Create
             CurrentUserId,
             request.Constraints.ToList(),
             request.Hints.ToList()
-        );
+        ) { IsHidden = request.IsHidden };
         await DbContext.Exercises.AddAsync(exercise, ct);
 
         IEnumerable<ExerciseExample> exerciseExamples = request.Examples

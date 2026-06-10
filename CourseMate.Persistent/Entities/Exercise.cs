@@ -35,4 +35,6 @@ public class Exercise : Entity
     public ICollection<string> Constraints { get; set; }
 
     public ICollection<string> Hints { get; set; }
+
+    public bool IsHidden { get; set; } = false;
 }
