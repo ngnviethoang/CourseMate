@@ -49,7 +49,7 @@ export default function MyCoursesPage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Premium Header */}
-      <div className="mx-4 mt-6 rounded-[2rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background overflow-hidden shadow-sm">
+      <div className="mx-4 mt-6 rounded-[2rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background overflow-hidden shadow-sm animate-in fade-in duration-500">
         {/* Decorative background elements */}
         <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl" />

@@ -5,7 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export default function PendingInstructorsPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="space-y-1">
         <h1 className="text-2xl font-semibold">Duyệt giảng viên</h1>
         <p className="text-sm text-muted-foreground">Tính năng này đang tạm khóa để đồng bộ với backend.</p>

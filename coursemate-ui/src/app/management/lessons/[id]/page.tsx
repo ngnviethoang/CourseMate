@@ -60,27 +60,29 @@ const TYPE_META: Record<LessonType, { icon: React.ReactNode; label: string; colo
   [LessonType.Video]: {
     icon: <Video className="h-4 w-4" />,
     label: 'Video',
-    color: 'bg-blue-100 text-blue-700 border-blue-200'
+    color: 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20'
   },
   [LessonType.Reading]: {
     icon: <BookOpen className="h-4 w-4" />,
     label: 'Bài đọc',
-    color: 'bg-green-100 text-green-700 border-green-200'
+    color: 'bg-green-100 text-green-700 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20'
   },
   [LessonType.Coding]: {
     icon: <Code2 className="h-4 w-4" />,
     label: 'Lập trình',
-    color: 'bg-orange-100 text-orange-700 border-orange-200'
+    color:
+      'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20'
   },
   [LessonType.Quiz]: {
     icon: <FileQuestion className="h-4 w-4" />,
     label: 'Trắc nghiệm',
-    color: 'bg-purple-100 text-purple-700 border-purple-200'
+    color:
+      'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-500/20'
   },
   [LessonType.Slide]: {
     icon: <Presentation className="h-4 w-4" />,
     label: 'Trình chiếu',
-    color: 'bg-pink-100 text-pink-700 border-pink-200'
+    color: 'bg-pink-100 text-pink-700 border-pink-200 dark:bg-pink-500/10 dark:text-pink-400 dark:border-pink-500/20'
   }
 }
 
@@ -396,7 +398,7 @@ function DocxAssistPanel({
   const slideCount = outline?.lectureOutline?.slides?.length ?? 0
 
   return (
-    <div className="rounded-xl border bg-muted/20 p-4 space-y-4">
+    <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-4">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
           <p className="text-sm font-semibold flex items-center gap-2">
@@ -406,14 +408,14 @@ function DocxAssistPanel({
           <p className="text-xs text-muted-foreground">{hint}</p>
         </div>
         {state === 'processing' && (
-          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
             Đang xử lý, chờ backend gửi thông báo...
           </span>
         )}
       </div>
 
-      <div className="grid gap-3 grid-cols-[1fr_auto]">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto]">
         <Input
           type="file"
           accept=".doc,.docx"
@@ -444,7 +446,7 @@ function DocxAssistPanel({
       )}
 
       {slideCount > 0 && outline && (
-        <div className="rounded-lg border bg-background p-3 space-y-3">
+        <div className="rounded-lg border border-border/60 bg-background p-3 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
           <div className="space-y-1">
             <p className="text-xs font-semibold">
               Kết quả AI: {outline.lectureOutline.lessonTitle || 'Tài liệu chưa có tiêu đề'}

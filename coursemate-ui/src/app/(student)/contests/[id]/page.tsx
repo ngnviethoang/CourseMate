@@ -34,9 +34,9 @@ const STATUS_LABEL: Record<string, string> = {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  Ongoing: 'bg-emerald-500',
-  Upcoming: 'bg-blue-500',
-  Ended: 'bg-muted-foreground'
+  Ongoing: 'bg-emerald-500 text-white',
+  Upcoming: 'bg-blue-500 text-white',
+  Ended: 'bg-muted text-muted-foreground'
 }
 
 const ANTI_CHEAT_LABEL: Record<string, string> = {
@@ -116,8 +116,22 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
 
   if (loading)
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="min-h-screen bg-background animate-pulse">
+        <div className="mx-4 mt-6 h-64 rounded-[2rem] border border-border/60 bg-muted" />
+        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
+          <div className="h-10 w-2/3 rounded-full bg-muted" />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div className="lg:col-span-2 space-y-4">
+              <div className="h-24 rounded-2xl bg-muted" />
+              <div className="h-24 rounded-2xl bg-muted" />
+              <div className="h-40 rounded-3xl bg-muted" />
+            </div>
+            <div className="space-y-8">
+              <div className="h-48 rounded-3xl bg-muted" />
+              <div className="h-28 rounded-3xl bg-muted" />
+            </div>
+          </div>
+        </div>
       </div>
     )
 

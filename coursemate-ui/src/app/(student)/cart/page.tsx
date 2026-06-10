@@ -137,7 +137,7 @@ export default function CartPage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Premium Header Container */}
-      <div className="mx-4 mt-6 rounded-[2rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background overflow-hidden shadow-sm">
+      <div className="mx-4 mt-6 rounded-[2rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background overflow-hidden shadow-sm animate-in fade-in duration-500">
         {/* Decorative background elements */}
         <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl" />
@@ -171,10 +171,11 @@ export default function CartPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
             {/* ── Course list ── */}
             <div className="lg:col-span-2 flex flex-col">
-              {items.map(item => (
+              {items.map((item, idx) => (
                 <div
                   key={item.id}
-                  className="group flex flex-col sm:flex-row gap-4 py-4 border-b border-border/40 last:border-0 transition-colors hover:bg-muted/20 px-2 sm:px-4 rounded-xl"
+                  style={{ animationDelay: `${Math.min(idx * 60, 360)}ms` }}
+                  className="group flex flex-col sm:flex-row gap-4 py-4 border-b border-border/40 last:border-0 transition-colors hover:bg-muted/20 px-2 sm:px-4 rounded-xl animate-in fade-in slide-in-from-bottom-2 fill-mode-backwards duration-500"
                 >
                   <Link href={`/courses/${item.courseId}`} className="flex-shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -235,7 +236,7 @@ export default function CartPage() {
 
             {/* ── Order Summary ── */}
             <div className="lg:col-span-1">
-              <div className="sticky top-24 rounded-[2rem] bg-card shadow-sm border border-border/80 overflow-hidden flex flex-col">
+              <div className="sticky top-24 rounded-[2rem] bg-card shadow-sm border border-border/80 overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
                 {/* Summary header */}
                 <div className="bg-gradient-to-r from-primary/10 to-indigo-50/50 px-5 py-4 border-b border-border/50">
                   <div className="flex items-center gap-2">

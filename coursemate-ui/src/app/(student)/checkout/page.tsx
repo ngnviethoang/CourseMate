@@ -157,7 +157,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-background pb-10">
-      <div className="mx-4 mt-4 overflow-hidden rounded-[1.5rem] border border-border/80 bg-gradient-to-b from-primary/10 via-primary/5 to-background shadow-sm">
+      <div className="mx-4 mt-4 overflow-hidden rounded-[1.5rem] border border-border/80 bg-gradient-to-b from-primary/10 via-primary/5 to-background shadow-sm animate-in fade-in duration-500">
         <div className="mx-auto max-w-6xl px-4 py-4 sm:px-5">
           <Link
             href="/cart"
@@ -185,7 +185,7 @@ export default function CheckoutPage() {
         {loading ? (
           <CheckoutSkeleton />
         ) : (
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-5 animate-in fade-in slide-in-from-bottom-2 duration-500">
             <div className="space-y-4 lg:col-span-3">
               <div>
                 <h2 className="text-base font-bold">Phương thức thanh toán</h2>

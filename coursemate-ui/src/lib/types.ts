@@ -538,6 +538,7 @@ export interface ExerciseDto {
   difficulty: string
   category: string
   testCaseCount: number
+  isHidden: boolean
   creatorId?: string
   creatorName?: string
   creationTime: string
@@ -570,6 +571,7 @@ export interface UpdateExerciseRequest {
   description: string
   difficulty: string
   category: string
+  isHidden?: boolean
   examples: ExerciseExampleDto[]
   constraints: string[]
   hints: string[]

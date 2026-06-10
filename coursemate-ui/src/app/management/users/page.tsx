@@ -85,6 +85,12 @@ export default function UsersPage() {
     return () => clearTimeout(t)
   }, [load])
 
+  function handlePageChange(nextPageIndex: number) {
+    if (nextPageIndex === pageIndex) return
+    setLoading(true)
+    setPageIndex(nextPageIndex)
+  }
+
   function openCreate() {
     setEditing(null)
     setCreateForm(emptyCreate)
@@ -157,7 +163,7 @@ export default function UsersPage() {
           pageIndex,
           pageSize,
           totalCount,
-          onPageChange: setPageIndex
+          onPageChange: handlePageChange
         }}
       />
 

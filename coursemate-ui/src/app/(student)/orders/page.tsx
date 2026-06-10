@@ -329,7 +329,7 @@ export default function OrdersPage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* ── Premium Header ── */}
-      <div className="mx-4 mt-6 rounded-[2rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background overflow-hidden shadow-sm">
+      <div className="mx-4 mt-6 rounded-[2rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background overflow-hidden shadow-sm animate-in fade-in duration-500">
         <div className="pointer-events-none absolute -top-10 -right-10 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
         <div className="pointer-events-none absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 h-48 w-48 rounded-full bg-indigo-500/10 blur-3xl" />
 
@@ -412,8 +412,14 @@ export default function OrdersPage() {
             </div>
 
             {/* Order cards */}
-            {orders.map(order => (
-              <OrderCard key={order.id} order={order} />
+            {orders.map((order, idx) => (
+              <div
+                key={order.id}
+                style={{ animationDelay: `${Math.min(idx * 50, 400)}ms` }}
+                className="animate-in fade-in slide-in-from-bottom-2 fill-mode-backwards duration-500"
+              >
+                <OrderCard order={order} />
+              </div>
             ))}
           </div>
         )}

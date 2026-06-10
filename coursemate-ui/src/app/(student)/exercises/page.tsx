@@ -17,8 +17,6 @@ const DIFF_LIST_COLOR: Record<string, string> = {
 
 const CATEGORIES = ['Tất cả', 'Array', 'String', 'Tree', 'DP', 'Graph', 'Sorting', 'HashTable']
 
-// Dữ liệu chi tiết đã được chuyển sang file JSON
-
 // Mapper function to convert API Dto to internal ExerciseData
 function mapToExerciseData(dto: any): ExerciseData {
   return {
@@ -42,6 +40,24 @@ function mapToExerciseData(dto: any): ExerciseData {
         description: tc.description
       })) || []
   }
+}
+
+function ExerciseListSkeleton() {
+  return (
+    <div className="rounded-2xl border border-border/60 bg-card overflow-hidden divide-y divide-border/60 animate-pulse">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div key={i} className="flex items-center gap-4 px-5 py-4">
+          <div className="h-4 w-6 rounded bg-muted" />
+          <div className="flex-1 space-y-2">
+            <div className="h-4 w-1/3 rounded-full bg-muted" />
+            <div className="h-3 w-2/3 rounded-full bg-muted" />
+          </div>
+          <div className="h-5 w-16 rounded-md bg-muted" />
+          <div className="h-4 w-14 rounded-full bg-muted" />
+        </div>
+      ))}
+    </div>
+  )
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -79,6 +95,7 @@ export default function ExercisesPage() {
     return true
   })
   const solvedCount = exercises.filter(e => (e as any).isSolved).length
+  const progressPercent = exercises.length > 0 ? Math.round((solvedCount / exercises.length) * 100) : 0
 
   const openExercise = async (row: ExerciseDto) => {
     setClickedId(row.id)
@@ -148,15 +165,6 @@ export default function ExercisesPage() {
     }
   }, [activeExercise])
 
-  if (loading) {
-    return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center h-screen gap-4 bg-[#0f0f14]">
-        <div className="h-12 w-12 text-blue-500 animate-spin -4 shadow-md border-0 border-t-0-blue-500 -r-transparent shadow-md border-0 border-b-0-transparent -l-transparent rounded-full" />
-        <p className="text-neutral-400">Đang tải danh sách bài tập...</p>
-      </div>
-    )
-  }
-
   return (
     <>
       {/* Row click animation */}
@@ -175,47 +183,54 @@ export default function ExercisesPage() {
  `}</style>
 
       {/* ── List page ── */}
-      <div className="min-h-screen bg-background">
-        {/* Header */}
-        <div className="shadow-md border-0 border-b-0 bg-muted/30">
-          <div className="mx-auto max-w-5xl px-4 py-8 px-6 px-8">
-            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-              <Code2 className="h-6 w-6 text-primary" />
-              Bài tập lập trình
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Luyện tập các bài toán từ dễ đến khó. Hoàn toàn miễn phí.
-            </p>
+      <div className="min-h-screen bg-background pb-20">
+        {/* Premium Header */}
+        <div className="mx-4 mt-6 rounded-[2rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background overflow-hidden shadow-sm animate-in fade-in duration-500">
+          <div className="pointer-events-none absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+          <div className="pointer-events-none absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl" />
 
-            {/* Progress */}
-            <div className="mt-5 flex items-center gap-4 max-w-sm">
-              <div className="flex-1">
-                <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-                  <span>Tiến độ</span>
-                  <span className="font-medium text-foreground">
-                    {solvedCount}/{exercises.length} bài
-                  </span>
-                </div>
-                <div className="h-2 rounded-full bg-muted overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-primary transition-all"
-                    style={{ width: `${exercises.length > 0 ? (solvedCount / exercises.length) * 100 : 0}%` }}
-                  />
-                </div>
+          <div className="relative mx-auto max-w-5xl px-4 py-5 sm:px-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div className="space-y-1">
+                <h1 className="text-2xl md:text-3xl font-black tracking-tight flex items-center gap-3 text-foreground">
+                  <div className="h-9 w-9 bg-primary/10 rounded-xl flex items-center justify-center shadow-inner border border-primary/20">
+                    <Code2 className="h-4 w-4 text-primary" />
+                  </div>
+                  Bài tập lập trình
+                </h1>
+                <p className="text-muted-foreground text-sm ml-[48px] max-w-xl">
+                  Luyện tập các bài toán từ dễ đến khó. Hoàn toàn miễn phí.
+                </p>
               </div>
-              <div className="flex items-center gap-1 text-primary">
-                <Zap className="h-4 w-4 fill-primary" />
-                <span className="text-sm font-bold">
-                  {exercises.length > 0 ? Math.round((solvedCount / exercises.length) * 100) : 0}%
-                </span>
+
+              {/* Progress */}
+              <div className="flex items-center gap-4 w-full md:w-72 ml-[48px] md:ml-0">
+                <div className="flex-1">
+                  <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
+                    <span>Tiến độ</span>
+                    <span className="font-semibold text-foreground">
+                      {solvedCount}/{exercises.length} bài
+                    </span>
+                  </div>
+                  <div className="h-2 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-primary transition-all duration-700 ease-out"
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 text-primary">
+                  <Zap className="h-4 w-4 fill-primary" />
+                  <span className="text-sm font-bold">{progressPercent}%</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mx-auto max-w-5xl px-4 py-6 px-6 px-8">
+        <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
           {/* Filters */}
-          <div className="flex flex-wrap gap-4 mb-6">
+          <div className="flex flex-wrap items-center gap-4 mb-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
                 <Filter className="h-3.5 w-3.5" /> Độ khó:
@@ -224,7 +239,11 @@ export default function ExercisesPage() {
                 <button
                   key={d}
                   onClick={() => setDiffFilter(d)}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${diffFilter === d ? '-primary bg-primary/10 text-primary' : '-transparent bg-muted text-muted-foreground hover:text-foreground'}`}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+                    diffFilter === d
+                      ? 'bg-primary text-primary-foreground shadow-md'
+                      : 'bg-muted text-muted-foreground hover:text-foreground hover:bg-muted/80'
+                  }`}
                 >
                   {d}
                 </button>
@@ -232,19 +251,23 @@ export default function ExercisesPage() {
             </div>
             <button
               onClick={() => setShowSolved(v => !v)}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${!showSolved ? '-primary bg-primary/10 text-primary' : '-transparent bg-muted text-muted-foreground hover:text-foreground'}`}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+                !showSolved
+                  ? 'bg-primary/10 text-primary'
+                  : 'bg-muted text-muted-foreground hover:text-foreground hover:bg-muted/80'
+              }`}
             >
               {showSolved ? 'Ẩn bài đã làm' : 'Hiện bài đã làm'}
             </button>
           </div>
 
           {/* Category pills */}
-          <div className="flex gap-1.5 flex-wrap mb-6">
+          <div className="flex gap-1.5 flex-wrap mb-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
             {CATEGORIES.map(cat => (
               <button
                 key={cat}
                 onClick={() => setCatFilter(cat as typeof catFilter)}
-                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors duration-200 ${
                   catFilter === cat
                     ? 'bg-foreground text-background'
                     : 'bg-muted text-muted-foreground hover:text-foreground'
@@ -255,51 +278,58 @@ export default function ExercisesPage() {
             ))}
           </div>
 
-          <p className="text-xs text-muted-foreground mb-4">{filtered.length} bài tập</p>
+          {loading ? (
+            <ExerciseListSkeleton />
+          ) : (
+            <>
+              <p className="text-xs text-muted-foreground mb-4">{filtered.length} bài tập</p>
 
-          {/* Exercise list */}
-          <div className="rounded-2xl overflow-hidden divide-y">
-            {filtered.map((ex, idx) => (
-              <button
-                key={ex.id}
-                onClick={() => openExercise(ex)}
-                disabled={clickedId !== null}
-                className={`relative w-full flex items-center gap-4 px-5 py-3.5 bg-card hover:bg-muted/40 transition-colors group text-left ${
-                  clickedId === ex.id ? 'row-clicked' : ''
-                }`}
-              >
-                <span className="w-6 flex-shrink-0 text-xs text-muted-foreground text-right">{idx + 1}</span>
-                <div className="w-5 flex-shrink-0 flex justify-center">
-                  {(ex as any).isSolved && <CheckCircle2 className="h-4 w-4 text-emerald-500" />}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium leading-snug group-hover:text-primary transition-colors line-clamp-1">
-                    {ex.title}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1 block truncate">
-                    {ex.description.replace(/<[^>]*>?/gm, '')}
-                  </p>
-                </div>
-                <span className="block flex-shrink-0 rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                  {ex.category}
-                </span>
-                <span className="block flex-shrink-0 text-xs text-muted-foreground w-14 text-right">
-                  {(ex as any).acceptRate || 0}%
-                </span>
-                <span
-                  className={`flex-shrink-0 text-xs font-semibold w-20 text-right ${DIFF_LIST_COLOR[ex.difficulty as Difficulty]}`}
-                >
-                  {ex.difficulty}
-                </span>
-                <ChevronRight className="flex-shrink-0 h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-              </button>
-            ))}
-            {filtered.length === 0 && (
-              <div className="py-16 text-center text-sm text-muted-foreground">
-                Không có bài tập nào phù hợp với bộ lọc.
+              {/* Exercise list */}
+              <div className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden divide-y divide-border/60">
+                {filtered.map((ex, idx) => (
+                  <button
+                    key={ex.id}
+                    onClick={() => openExercise(ex)}
+                    disabled={clickedId !== null}
+                    style={{ animationDelay: `${Math.min(idx * 40, 400)}ms` }}
+                    className={`relative w-full flex items-center gap-4 px-5 py-3.5 bg-card hover:bg-muted/40 transition-colors group text-left animate-in fade-in slide-in-from-bottom-2 fill-mode-backwards duration-500 ${
+                      clickedId === ex.id ? 'row-clicked' : ''
+                    }`}
+                  >
+                    <span className="w-6 flex-shrink-0 text-xs text-muted-foreground text-right">{idx + 1}</span>
+                    <div className="w-5 flex-shrink-0 flex justify-center">
+                      {(ex as any).isSolved && <CheckCircle2 className="h-4 w-4 text-emerald-500" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium leading-snug group-hover:text-primary transition-colors line-clamp-1">
+                        {ex.title}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1 block truncate">
+                        {ex.description.replace(/<[^>]*>?/gm, '')}
+                      </p>
+                    </div>
+                    <span className="hidden sm:block flex-shrink-0 rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                      {ex.category}
+                    </span>
+                    <span className="hidden sm:block flex-shrink-0 text-xs text-muted-foreground w-14 text-right">
+                      {(ex as any).acceptRate || 0}%
+                    </span>
+                    <span
+                      className={`flex-shrink-0 text-xs font-semibold w-20 text-right ${DIFF_LIST_COLOR[ex.difficulty as Difficulty]}`}
+                    >
+                      {ex.difficulty}
+                    </span>
+                    <ChevronRight className="flex-shrink-0 h-4 w-4 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
+                  </button>
+                ))}
+                {filtered.length === 0 && (
+                  <div className="py-16 text-center text-sm text-muted-foreground">
+                    Không có bài tập nào phù hợp với bộ lọc.
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </div>
 
