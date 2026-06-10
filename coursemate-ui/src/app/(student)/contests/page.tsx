@@ -69,45 +69,35 @@ export default function ContestsPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Premium Header */}
-      <div className="mx-4 mt-6 rounded-[2rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background overflow-hidden shadow-sm animate-in fade-in duration-500">
-        <div className="pointer-events-none absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-        <div className="pointer-events-none absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl" />
-
-        <div className="relative mx-auto max-w-5xl px-4 py-5 sm:px-6">
-          <div className="space-y-1">
-            <h1 className="text-2xl md:text-3xl font-black tracking-tight flex items-center gap-3 text-foreground">
-              <div className="h-9 w-9 bg-primary/10 rounded-xl flex items-center justify-center shadow-inner border border-primary/20">
-                <Trophy className="h-4 w-4 text-primary" />
-              </div>
-              Đấu trường lập trình
-            </h1>
-            <p className="text-muted-foreground text-sm ml-[48px] max-w-xl">
+      <div className="mx-auto px-6 mt-5">
+        <div className="rounded-xl border border-border bg-card px-6 py-8 space-y-4">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <Trophy className="h-5 w-5 text-primary" />
+              <h1 className="text-2xl font-bold tracking-tight">Đấu trường lập trình</h1>
+            </div>
+            <p className="mt-1 text-sm text-muted-foreground">
               Tham gia các kỳ thi, giải quyết thách thức thuật toán và leo hạng cùng cộng đồng.
             </p>
           </div>
-
           {ongoing && (
-            <div className="mt-5 flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-5 animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <div className="h-12 w-12 rounded-xl bg-emerald-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-500/20">
-                <Flame className="h-6 w-6" />
+            <div className="flex items-center gap-4 rounded-xl border border-emerald-200 bg-emerald-50 dark:bg-emerald-950/20 dark:border-emerald-800/40 p-4">
+              <div className="h-9 w-9 shrink-0 rounded-lg bg-emerald-500 flex items-center justify-center text-white">
+                <Flame className="h-5 w-5" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-foreground text-lg leading-tight line-clamp-1">{ongoing.title}</p>
-                <p className="text-emerald-600 text-sm mt-1 flex items-center gap-2">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                <p className="font-semibold text-foreground leading-tight line-clamp-1">{ongoing.title}</p>
+                <p className="text-emerald-600 text-xs mt-0.5 flex items-center gap-1.5">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
                   </span>
-                  Đang diễn ra ngay bây giờ!
+                  Đang diễn ra
                 </p>
               </div>
-              <Button
-                asChild
-                className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shrink-0 h-11 px-6 shadow-md hover:-translate-y-0.5 transition-all"
-              >
+              <Button asChild size="sm" className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white gap-1">
                 <Link href={`/contests/${ongoing.id}`}>
-                  Tham gia ngay <ChevronRight className="h-4 w-4 ml-1" />
+                  Tham gia <ChevronRight className="h-3.5 w-3.5" />
                 </Link>
               </Button>
             </div>
@@ -115,7 +105,7 @@ export default function ContestsPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
+      <div className="mx-auto px-4 py-6 sm:px-6">
         {/* Filter tabs */}
         <div className="flex flex-wrap gap-2 mb-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
           {(['All', 'Upcoming', 'Ongoing', 'Ended'] as const).map(tab => (

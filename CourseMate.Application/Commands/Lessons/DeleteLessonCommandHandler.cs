@@ -14,7 +14,7 @@ public class DeleteLessonCommand : IRequest<Unit>
     public Guid Id { get; set; }
 }
 
-public sealed class DeleteLessonCommandHandler : AbstractCommandHandler<DeleteChapterCommand, Unit>
+public sealed class DeleteLessonCommandHandler : AbstractCommandHandler<DeleteLessonCommand, Unit>
 {
     public DeleteLessonCommandHandler(
         CourseMateDbContext dbContext,
@@ -22,7 +22,7 @@ public sealed class DeleteLessonCommandHandler : AbstractCommandHandler<DeleteCh
     {
     }
 
-    public override async Task<Unit> Handle(DeleteChapterCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(DeleteLessonCommand request, CancellationToken ct)
     {
         bool canDelete = await (
                 from lesson in DbContext.Lessons

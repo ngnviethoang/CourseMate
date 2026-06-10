@@ -134,10 +134,7 @@ function OrderCard({ order }: { order: OrderDto }) {
       }`}
     >
       {/* ── Header ── */}
-      <button
-        onClick={handleToggle}
-        className="w-full text-left px-5 py-4 flex items-start justify-between gap-4"
-      >
+      <button onClick={handleToggle} className="w-full text-left px-5 py-4 flex items-start justify-between gap-4">
         <div className="flex items-start gap-3 min-w-0">
           {/* Status icon circle */}
           <div
@@ -149,9 +146,7 @@ function OrderCard({ order }: { order: OrderDto }) {
           <div className="min-w-0">
             {/* Order ID + date */}
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-bold text-sm text-foreground">
-                Đơn #{order.id.slice(0, 8).toUpperCase()}
-              </span>
+              <span className="font-bold text-sm text-foreground">Đơn #{order.id.slice(0, 8).toUpperCase()}</span>
               <span
                 className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${statusCfg.bg} ${statusCfg.text}`}
               >
@@ -161,11 +156,10 @@ function OrderCard({ order }: { order: OrderDto }) {
             </div>
             <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
               <Calendar className="h-3 w-3" />
-              {format(new Date(order.creationTime), "d MMM yyyy, HH:mm", { locale: vi })}
+              {format(new Date(order.creationTime), 'd MMM yyyy, HH:mm', { locale: vi })}
               {order.lastModificationTime && (
                 <span className="ml-1">
-                  · Cập nhật{' '}
-                  {format(new Date(order.lastModificationTime), "d MMM yyyy", { locale: vi })}
+                  · Cập nhật {format(new Date(order.lastModificationTime), 'd MMM yyyy', { locale: vi })}
                 </span>
               )}
             </p>
@@ -173,7 +167,7 @@ function OrderCard({ order }: { order: OrderDto }) {
             {/* Item count preview */}
             <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
               <Package className="h-3 w-3" />
-              {order.itemsCount != null ? order.itemsCount : (items.length || '...')} khoá học
+              {order.itemsCount != null ? order.itemsCount : items.length || '...'} khoá học
             </p>
           </div>
         </div>
@@ -208,9 +202,7 @@ function OrderCard({ order }: { order: OrderDto }) {
                 </p>
 
                 {items.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-4">
-                    Không có sản phẩm
-                  </p>
+                  <p className="text-sm text-muted-foreground text-center py-4">Không có sản phẩm</p>
                 ) : (
                   <div className="space-y-2">
                     {items.map(item => (
@@ -226,8 +218,7 @@ function OrderCard({ order }: { order: OrderDto }) {
                           alt={item.courseTitle}
                           className="h-14 w-20 object-cover rounded-lg flex-shrink-0 bg-muted"
                           onError={e => {
-                            ;(e.target as HTMLImageElement).src =
-                              'https://placehold.co/80x56/6366f1/ffffff?text=KH'
+                            ;(e.target as HTMLImageElement).src = 'https://placehold.co/80x56/6366f1/ffffff?text=KH'
                           }}
                         />
                         <div className="flex-1 min-w-0">
@@ -263,15 +254,12 @@ function OrderCard({ order }: { order: OrderDto }) {
                     Phương thức: <span className="font-medium text-foreground ml-1">PayOS</span>
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Mã đầy đủ:{' '}
-                    <span className="font-mono text-[11px] select-all">{order.id}</span>
+                    Mã đầy đủ: <span className="font-mono text-[11px] select-all">{order.id}</span>
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-muted-foreground">Tổng thanh toán</p>
-                  <p className="text-xl font-black text-primary">
-                    {formatCurrency(order.totalAmount)}
-                  </p>
+                  <p className="text-xl font-black text-primary">{formatCurrency(order.totalAmount)}</p>
                 </div>
               </div>
 
@@ -307,11 +295,7 @@ export default function OrdersPage() {
       const res = await orderService.list({ pageSize: 50, sorting: 'creationTime_desc' })
       const all = res.items || []
       setOrders(all)
-      setTotalSpent(
-        all
-          .filter(o => String(o.status) === 'Completed')
-          .reduce((sum, o) => sum + o.totalAmount, 0)
-      )
+      setTotalSpent(all.filter(o => String(o.status) === 'Completed').reduce((sum, o) => sum + o.totalAmount, 0))
     } catch {
       toast.error('Không thể tải danh sách đơn hàng.')
     } finally {
@@ -328,45 +312,35 @@ export default function OrdersPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* ── Premium Header ── */}
-      <div className="mx-4 mt-6 rounded-[2rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background overflow-hidden shadow-sm animate-in fade-in duration-500">
-        <div className="pointer-events-none absolute -top-10 -right-10 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 h-48 w-48 rounded-full bg-indigo-500/10 blur-3xl" />
-
-        <div className="relative mx-auto max-w-4xl px-5 py-6">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <div className="space-y-1">
-              <h1 className="text-2xl md:text-3xl font-black tracking-tight flex items-center gap-3">
-                <div className="h-9 w-9 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
-                  <ShoppingBag className="h-4 w-4 text-primary" />
-                </div>
-                Lịch sử đơn hàng
-              </h1>
-              <p className="text-sm text-muted-foreground ml-[48px]">
-                {loading ? 'Đang tải...' : `${orders.length} đơn hàng`}
-              </p>
+      <div className="mx-auto max-w-4xl px-6 mt-5">
+        <div className="rounded-xl border border-border bg-card px-6 py-8 space-y-4">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <ShoppingBag className="h-5 w-5 text-primary" />
+              <h1 className="text-2xl font-bold tracking-tight">Lịch sử đơn hàng</h1>
             </div>
-
-            {/* Stats row */}
-            {!loading && orders.length > 0 && (
-              <div className="flex items-center gap-3 ml-[48px] sm:ml-0">
-                <div className="rounded-xl bg-emerald-500/10 border border-emerald-200/50 px-3 py-2 text-center">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-600">Hoàn thành</p>
-                  <p className="text-lg font-black text-emerald-700">{completedCount}</p>
-                </div>
-                {pendingCount > 0 && (
-                  <div className="rounded-xl bg-amber-50 border border-amber-200/50 px-3 py-2 text-center">
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-600">Chờ xác nhận</p>
-                    <p className="text-lg font-black text-amber-700">{pendingCount}</p>
-                  </div>
-                )}
-                <div className="rounded-xl bg-primary/10 border border-primary/20 px-3 py-2 text-center">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-primary">Đã chi</p>
-                  <p className="text-sm font-black text-primary">{formatCurrency(totalSpent)}</p>
-                </div>
-              </div>
-            )}
+            <p className="mt-1 text-sm text-muted-foreground">
+              {loading ? 'Đang tải...' : `${orders.length} đơn hàng`}
+            </p>
           </div>
+          {!loading && orders.length > 0 && (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-3 py-2">
+                <span className="text-xs font-bold text-emerald-700">{completedCount}</span>
+                <span className="text-xs text-muted-foreground">hoàn thành</span>
+              </div>
+              {pendingCount > 0 && (
+                <div className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-3 py-2">
+                  <span className="text-xs font-bold text-amber-700">{pendingCount}</span>
+                  <span className="text-xs text-muted-foreground">chờ xác nhận</span>
+                </div>
+              )}
+              <div className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-3 py-2">
+                <span className="text-xs font-bold text-primary">{formatCurrency(totalSpent)}</span>
+                <span className="text-xs text-muted-foreground">đã chi</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

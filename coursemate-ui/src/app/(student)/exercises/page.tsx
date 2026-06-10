@@ -184,51 +184,35 @@ export default function ExercisesPage() {
 
       {/* ── List page ── */}
       <div className="min-h-screen bg-background pb-20">
-        {/* Premium Header */}
-        <div className="mx-4 mt-6 rounded-[2rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background overflow-hidden shadow-sm animate-in fade-in duration-500">
-          <div className="pointer-events-none absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-          <div className="pointer-events-none absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl" />
-
-          <div className="relative mx-auto max-w-5xl px-4 py-5 sm:px-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div className="space-y-1">
-                <h1 className="text-2xl md:text-3xl font-black tracking-tight flex items-center gap-3 text-foreground">
-                  <div className="h-9 w-9 bg-primary/10 rounded-xl flex items-center justify-center shadow-inner border border-primary/20">
-                    <Code2 className="h-4 w-4 text-primary" />
-                  </div>
-                  Bài tập lập trình
-                </h1>
-                <p className="text-muted-foreground text-sm ml-[48px] max-w-xl">
-                  Luyện tập các bài toán từ dễ đến khó. Hoàn toàn miễn phí.
-                </p>
+        <div className="mx-auto px-6 mt-5">
+          <div className="rounded-xl border border-border bg-card px-6 py-8 space-y-4">
+            <div>
+              <div className="flex items-center gap-2.5">
+                <Code2 className="h-5 w-5 text-primary" />
+                <h1 className="text-2xl font-bold tracking-tight">Bài tập lập trình</h1>
               </div>
-
-              {/* Progress */}
-              <div className="flex items-center gap-4 w-full md:w-72 ml-[48px] md:ml-0">
-                <div className="flex-1">
-                  <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-                    <span>Tiến độ</span>
-                    <span className="font-semibold text-foreground">
-                      {solvedCount}/{exercises.length} bài
-                    </span>
-                  </div>
-                  <div className="h-2 rounded-full bg-muted overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-primary transition-all duration-700 ease-out"
-                      style={{ width: `${progressPercent}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 text-primary">
-                  <Zap className="h-4 w-4 fill-primary" />
-                  <span className="text-sm font-bold">{progressPercent}%</span>
-                </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Luyện tập các bài toán từ dễ đến khó. Hoàn toàn miễn phí.
+              </p>
+            </div>
+            <div className="w-64 space-y-1.5">
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Tiến độ</span>
+                <span className="font-semibold text-foreground">
+                  {solvedCount}/{exercises.length} bài · <span className="text-primary">{progressPercent}%</span>
+                </span>
+              </div>
+              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-700"
+                  style={{ width: `${progressPercent}%` }}
+                />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
+        <div className="mx-auto px-4 py-6 sm:px-6">
           {/* Filters */}
           <div className="flex flex-wrap items-center gap-4 mb-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
             <div className="flex items-center gap-1.5 flex-wrap">

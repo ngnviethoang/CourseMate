@@ -136,29 +136,19 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Premium Header Container */}
-      <div className="mx-4 mt-6 rounded-[2rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background overflow-hidden shadow-sm animate-in fade-in duration-500">
-        {/* Decorative background elements */}
-        <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl" />
-
-        <div className="relative mx-auto max-w-7xl px-4 py-4 sm:px-5 lg:px-6">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
-            <div className="space-y-1">
-              <h1 className="text-2xl md:text-3xl font-black tracking-tight flex items-center gap-3 text-foreground">
-                <div className="h-8 w-8 bg-primary/10 rounded-xl flex items-center justify-center shadow-inner border border-primary/20">
-                  <ShoppingCart className="h-4 w-4 text-primary" />
-                </div>
-                Giỏ hàng của tôi
-              </h1>
-              <p className="text-muted-foreground text-sm ml-[44px] max-w-xl">
-                {!loading &&
-                  (items.length > 0
-                    ? `Bạn có ${items.length} khoá học đang chờ thanh toán.`
-                    : 'Hãy bắt đầu hành trình bằng việc thêm khoá học yêu thích.')}
-              </p>
-            </div>
+      <div className="mx-auto max-w-7xl px-6 mt-5">
+        <div className="rounded-xl border border-border bg-card px-6 py-8">
+          <div className="flex items-center gap-2.5">
+            <ShoppingCart className="h-5 w-5 text-primary" />
+            <h1 className="text-2xl font-bold tracking-tight">Giỏ hàng của tôi</h1>
           </div>
+          {!loading && (
+            <p className="mt-1 text-sm text-muted-foreground">
+              {items.length > 0
+                ? `${items.length} khoá học đang chờ thanh toán`
+                : 'Hãy bắt đầu bằng việc thêm khoá học yêu thích'}
+            </p>
+          )}
         </div>
       </div>
 

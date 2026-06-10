@@ -313,7 +313,12 @@ export default function ExercisesManagementPage() {
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative max-w-sm flex-1 min-w-[220px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input className="pl-9" placeholder="Tìm kiếm bài tập..." value={filter} onChange={e => setFilter(e.target.value)} />
+          <Input
+            className="pl-9"
+            placeholder="Tìm kiếm bài tập..."
+            value={filter}
+            onChange={e => setFilter(e.target.value)}
+          />
         </div>
         <Select items={difficultyItems} value={difficulty || null} onValueChange={handleDifficultyChange}>
           <SelectTrigger className="h-10 min-w-[180px]">

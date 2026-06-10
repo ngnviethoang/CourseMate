@@ -8,6 +8,7 @@ import { UploadCloud, AlertCircle, Loader2, Video, Edit } from 'lucide-react'
 import { toast } from 'sonner'
 import { getAccessToken } from '@/lib/auth-token.util'
 import { fileService } from '@/lib/file-service'
+import { lessonService } from '@/lib/course-service'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 
@@ -90,7 +91,8 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
 
     connection.on('VideoProcessed', (notification: VideoProcessedNotification) => {
       const fileId = notification.fileId ?? notification.FileId
-      if (!fileId || fileId !== currentUploadIdRef.current) return
+      if (!fileId || !currentUploadIdRef.current || fileId.toLowerCase() !== currentUploadIdRef.current.toLowerCase())
+        return
 
       const success = notification.success ?? notification.Success ?? false
       const message = notification.message ?? notification.Message
@@ -103,16 +105,23 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
         return
       }
 
-      const nextVideoUrl = notification.fileUrl ?? notification.FileUrl ?? ''
-      setVideoUrl(nextVideoUrl)
-      setStatus('success')
-      setUploading(false)
-      setIsEditing(false)
-      setFile(null)
-      setProgress(100)
-      setAutoPlayVideo(true)
       currentUploadIdRef.current = null
-      toast.success(message || 'Video đã sẵn sàng.')
+
+      void (async () => {
+        let nextVideoUrl = notification.fileUrl ?? notification.FileUrl ?? ''
+        if (!nextVideoUrl) {
+          const detail = await lessonService.getDetail(lessonId).catch(() => null)
+          nextVideoUrl = detail?.videoUrl ?? ''
+        }
+        setVideoUrl(nextVideoUrl)
+        setStatus('success')
+        setUploading(false)
+        setIsEditing(false)
+        setFile(null)
+        setProgress(100)
+        setAutoPlayVideo(true)
+        toast.success(message || 'Video đã sẵn sàng.')
+      })()
     })
 
     void connection.start().catch(() => {})
@@ -121,7 +130,7 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
       connection.off('VideoProcessed')
       void connection.stop().catch(() => {})
     }
-  }, [])
+  }, [lessonId])
 
   const handleUpload = async () => {
     if (!file) return
@@ -192,55 +201,92 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
       </div>
 
       {isEditing ? (
-        <div className="space-y-6">
-          <div className="flex flex-col items-center justify-center -2 -dashed rounded-xl p-8 bg-muted/20">
-            <UploadCloud className="h-10 w-10 text-muted-foreground mb-4" />
-            <h3 className="font-semibold text-sm">Tải video lên</h3>
-            <p className="text-xs text-muted-foreground mb-4">Chọn tệp video để tải lên theo từng phần</p>
-
-            <input
-              type="file"
-              accept=".mp4,video/mp4"
-              onChange={handleFileChange}
-              className="block w-full max-w-sm text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
-              disabled={uploading}
-            />
-          </div>
-
-          {file && status !== 'success' && (
-            <div className="space-y-4 max-w-sm mx-auto pb-2">
-              <div className="flex justify-between items-center text-sm">
-                <span className="font-medium truncate max-w-[200px]">{file.name}</span>
-                <span className="text-muted-foreground">{(file.size / (1024 * 1024)).toFixed(2)} MB</span>
+        <div className="space-y-4">
+          {status === 'processing' ? (
+            <div className="flex items-center gap-4 rounded-xl border border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800 p-5">
+              <div className="relative shrink-0">
+                <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                  <Video className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+                  <span className="relative inline-flex h-3.5 w-3.5 rounded-full bg-blue-500" />
+                </span>
               </div>
-
-              {(status === 'uploading' || status === 'processing') && (
-                <div className="space-y-1.5">
-                  <Progress value={progress} className="h-2" />
-                  <p className="text-xs text-right text-muted-foreground">
-                    {status === 'processing' ? 'Đang ghép video...' : `${progress}%`}
-                  </p>
-                </div>
-              )}
-
-              {status === 'error' && (
-                <div className="flex items-center gap-2 text-sm text-destructive justify-center">
-                  <AlertCircle className="h-4 w-4" /> Tải lên thất bại. Vui lòng thử lại.
-                </div>
-              )}
-
-              {status === 'processing' && (
-                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Hệ thống đang ghép video nền và sẽ cập nhật tự động.
-                </div>
-              )}
-
-              <Button onClick={handleUpload} disabled={uploading || status === 'processing'} className="w-full gap-2">
-                {uploading && <Loader2 className="h-4 w-4 animate-spin" />}
-                {uploading ? 'Đang tải lên...' : status === 'processing' ? 'Đang ghép video...' : 'Bắt đầu tải lên'}
-              </Button>
+              <div>
+                <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">Đang xử lý video</p>
+                <p className="text-xs text-blue-700/70 dark:text-blue-400/70">
+                  Hệ thống đang ghép file và sẽ tự động cập nhật khi hoàn tất
+                </p>
+              </div>
             </div>
+          ) : (
+            <label
+              className={[
+                'flex flex-col items-center gap-3 rounded-xl border-2 border-dashed p-8 cursor-pointer transition-all duration-150',
+                status === 'error'
+                  ? 'border-destructive/50 bg-destructive/5'
+                  : file
+                    ? 'border-primary/50 bg-primary/5'
+                    : 'border-border hover:border-primary/40 hover:bg-muted/30',
+                uploading ? 'pointer-events-none opacity-60' : ''
+              ].join(' ')}
+            >
+              <input
+                type="file"
+                accept=".mp4,video/mp4"
+                className="sr-only"
+                onChange={handleFileChange}
+                disabled={uploading}
+              />
+              {file ? (
+                <>
+                  <div className="p-3 rounded-full bg-primary/10">
+                    <Video className="h-7 w-7 text-primary" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold">{file.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {(file.size / (1024 * 1024)).toFixed(2)} MB · Nhấn để đổi file
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="p-3 rounded-full bg-muted">
+                    <UploadCloud className="h-7 w-7 text-muted-foreground" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold">Chọn file video</p>
+                    <p className="text-xs text-muted-foreground">Chỉ hỗ trợ định dạng .mp4</p>
+                  </div>
+                </>
+              )}
+            </label>
+          )}
+
+          {status === 'uploading' && (
+            <div className="space-y-2 px-1">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>Đang tải lên...</span>
+                <span className="font-medium tabular-nums">{progress}%</span>
+              </div>
+              <Progress value={progress} className="h-1.5" />
+            </div>
+          )}
+
+          {status === 'error' && (
+            <div className="flex items-center gap-2 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              Tải lên thất bại. Vui lòng thử lại.
+            </div>
+          )}
+
+          {file && status !== 'processing' && (
+            <Button onClick={handleUpload} disabled={uploading} className="w-full gap-2">
+              {uploading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {uploading ? 'Đang tải lên...' : 'Bắt đầu tải lên'}
+            </Button>
           )}
         </div>
       ) : (

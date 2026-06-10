@@ -8,26 +8,27 @@ import { ArrowLeft, ArrowRight, Home, RotateCcw, XCircle } from 'lucide-react'
 export default function PaymentCancelPage() {
   return (
     <div className="min-h-screen bg-background pb-10">
-      {/* Premium Header — red/error variant */}
-      <div className="mx-4 mt-4 overflow-hidden rounded-[1.5rem] border border-red-500/30 relative bg-gradient-to-b from-red-500/10 via-red-500/5 to-background shadow-sm animate-in fade-in duration-500">
-        <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 -translate-y-1/2 translate-x-1/3 rounded-full bg-red-500/10 blur-3xl" />
-        <div className="mx-auto max-w-6xl px-4 py-4 sm:px-5">
+      <div className="mx-auto max-w-6xl px-6 mt-5">
+        <div className="rounded-xl border border-border bg-card px-6 py-8 space-y-3">
           <Link
             href="/cart"
-            className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Quay lại giỏ hàng
           </Link>
-          <div className="mt-3">
-            <div className="flex items-center gap-1.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-red-500/20 bg-red-500/10 shadow-inner">
-                <XCircle className="h-3.5 w-3.5 text-red-600" />
+          <div>
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-destructive/10">
+                <XCircle className="h-4 w-4 text-destructive" />
               </div>
-              <Badge className="h-6 border-0 bg-red-500/10 px-2 text-[11px] text-red-700 hover:bg-red-500/20">
-                Thanh toán thất bại
-              </Badge>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold tracking-tight">Giao dịch đã hủy</h1>
+                <Badge className="h-5 border-0 bg-destructive/10 text-destructive text-[10px] px-1.5">
+                  Thanh toán thất bại
+                </Badge>
+              </div>
             </div>
-            <h1 className="mt-1.5 text-lg font-black tracking-tight text-foreground">Giao dịch đã hủy</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Không có khoản nào bị trừ từ tài khoản của bạn.</p>
           </div>
         </div>
       </div>

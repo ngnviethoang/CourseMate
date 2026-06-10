@@ -166,9 +166,7 @@ export default function OrdersPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">
-            {isAdmin ? 'Tất cả đơn hàng' : 'Doanh thu khóa học của tôi'}
-          </h1>
+          <h1 className="text-2xl font-semibold">{isAdmin ? 'Tất cả đơn hàng' : 'Doanh thu khóa học của tôi'}</h1>
           <p className="text-sm text-muted-foreground">
             {isAdmin
               ? 'Quản lý việc mua khóa học và ghi danh của học viên'

@@ -61,24 +61,22 @@ export default function PaymentSuccessPage() {
 
   return (
     <div className="min-h-screen bg-background pb-10">
-      {/* Premium Header — green/success variant */}
-      <div className="mx-4 mt-4 overflow-hidden rounded-[1.5rem] border border-emerald-500/30 relative bg-gradient-to-b from-emerald-500/10 via-emerald-500/5 to-background shadow-sm animate-in fade-in duration-500">
-        <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 -translate-y-1/2 translate-x-1/3 rounded-full bg-emerald-500/10 blur-3xl" />
-        <div className="mx-auto max-w-6xl px-4 py-4 sm:px-5">
-          <div className="mt-1">
-            <div className="flex items-center gap-1.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 shadow-inner">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-              </div>
-              <Badge className="h-6 border-0 bg-emerald-500/10 px-2 text-[11px] text-emerald-700 hover:bg-emerald-500/20">
-                Thanh toán thành công
+      <div className="mx-auto max-w-6xl px-6 mt-5">
+        <div className="rounded-xl border border-border bg-card px-6 py-8">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+            </div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold tracking-tight">Xác nhận thanh toán</h1>
+              <Badge className="h-5 border-0 bg-emerald-100 text-emerald-700 text-[10px] px-1.5 dark:bg-emerald-900/40 dark:text-emerald-400">
+                Thành công
               </Badge>
             </div>
-            <h1 className="mt-1.5 text-lg font-black tracking-tight text-foreground">Xác nhận thanh toán</h1>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              Hệ thống đang cập nhật đơn hàng và sẽ chuyển bạn vào trang khóa học ngay sau đó.
-            </p>
           </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Hệ thống đang cập nhật đơn hàng và sẽ chuyển bạn vào trang khóa học ngay sau đó.
+          </p>
         </div>
       </div>
 

@@ -129,10 +129,7 @@ export default function CourseDetailPage() {
 
   const totalLessons = course?.chapters.reduce((acc, ch) => acc + ch.lessons.length, 0) ?? 0
   const completedLessons =
-    course?.chapters.reduce(
-      (acc, chapter) => acc + chapter.lessons.filter(l => l.isCompleted).length,
-      0
-    ) ?? 0
+    course?.chapters.reduce((acc, chapter) => acc + chapter.lessons.filter(l => l.isCompleted).length, 0) ?? 0
   const stats = course
     ? [
         { label: 'Danh mục', value: course.categoryName || 'Đang cập nhật', icon: BookOpen },
@@ -144,26 +141,30 @@ export default function CourseDetailPage() {
 
   return (
     <div className="min-h-screen bg-background pb-12">
-      {/* Premium Header */}
-      <div className="mx-4 mt-4 overflow-hidden rounded-[1.5rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background shadow-sm animate-in fade-in duration-500">
-        <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 -translate-y-1/2 translate-x-1/3 rounded-full bg-primary/10 blur-3xl" />
-        <div className="pointer-events-none absolute left-0 bottom-0 h-48 w-48 translate-y-1/2 -translate-x-1/3 rounded-full bg-indigo-500/10 blur-3xl" />
-        <div className="relative mx-auto max-w-6xl px-4 py-4 sm:px-6">
+      <div className="mx-auto max-w-6xl px-6 mt-5">
+        <div className="rounded-xl border border-border bg-card px-6 py-8 space-y-3">
           <Link
             href="/"
-            className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Về danh sách khóa học
           </Link>
-          <div className="mt-3 space-y-1">
-            {course?.categoryName && (
-              <Badge className="h-6 border-0 bg-primary/10 px-2 text-[11px] text-primary hover:bg-primary/20">
-                {course.categoryName}
-              </Badge>
+          <div>
+            <div className="flex items-center gap-2.5">
+              {course?.categoryName && (
+                <Badge variant="secondary" className="text-[10px] font-semibold shrink-0">
+                  {course.categoryName}
+                </Badge>
+              )}
+              <h1 className="text-2xl font-bold tracking-tight">
+                {loading ? 'Đang tải...' : course ? course.title : 'Chi tiết khóa học'}
+              </h1>
+            </div>
+            {course && (
+              <p className="mt-1 text-sm text-muted-foreground">
+                Giảng viên: <span className="font-medium text-foreground">{course.instructorName || 'CourseMate'}</span>
+              </p>
             )}
-            <h1 className="text-lg font-black tracking-tight text-foreground">
-              {loading ? 'Đang tải...' : course ? course.title : 'Chi tiết khóa học'}
-            </h1>
           </div>
         </div>
       </div>
@@ -302,12 +303,7 @@ export default function CourseDetailPage() {
                       Tiếp tục học
                     </Button>
                   ) : course.price === 0 ? (
-                    <Button
-                      size="lg"
-                      className="h-10 w-full text-sm"
-                      onClick={handleEnrollFree}
-                      disabled={submitting}
-                    >
+                    <Button size="lg" className="h-10 w-full text-sm" onClick={handleEnrollFree} disabled={submitting}>
                       {submitting ? 'Đang đăng ký...' : 'Đăng ký học miễn phí'}
                     </Button>
                   ) : (
@@ -346,7 +342,10 @@ export default function CourseDetailPage() {
           </section>
 
           {/* Curriculum */}
-          <section className="space-y-4 animate-in fade-in slide-in-from-bottom-2 fill-mode-backwards duration-500" style={{ animationDelay: '150ms' }}>
+          <section
+            className="space-y-4 animate-in fade-in slide-in-from-bottom-2 fill-mode-backwards duration-500"
+            style={{ animationDelay: '150ms' }}
+          >
             <div className="flex flex-row items-end justify-between gap-4">
               <div>
                 <h2 className="text-xl font-bold">Nội dung khóa học</h2>

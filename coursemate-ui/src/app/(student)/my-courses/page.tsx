@@ -48,63 +48,43 @@ export default function MyCoursesPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Premium Header */}
-      <div className="mx-4 mt-6 rounded-[2rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background overflow-hidden shadow-sm animate-in fade-in duration-500">
-        {/* Decorative background elements */}
-        <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl" />
-
-        <div className="relative mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
-            <div className="space-y-2">
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight flex items-center gap-3 text-foreground">
-                <div className="h-10 w-10 bg-primary/10 rounded-2xl flex items-center justify-center shadow-inner border border-primary/20">
-                  <BookOpen className="h-5 w-5 text-primary" />
-                </div>
-                Khoá học của tôi
-              </h1>
-              <p className="text-muted-foreground text-sm ml-[52px] max-w-xl">
-                Bạn đang sở hữu <span className="font-bold text-foreground">{courses.length}</span> khoá học.
-              </p>
+      <div className="mx-auto max-w-7xl px-6 mt-5">
+        <div className="rounded-xl border border-border bg-card px-6 py-8 space-y-4">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <BookOpen className="h-5 w-5 text-primary" />
+              <h1 className="text-2xl font-bold tracking-tight">Khoá học của tôi</h1>
             </div>
-
-            <form onSubmit={handleSearch} className="relative w-full md:w-80 group">
-              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-              </div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Bạn đang sở hữu <span className="font-semibold text-foreground">{courses.length}</span> khoá học.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 flex-wrap">
+            <form onSubmit={handleSearch} className="relative w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
                 placeholder="Tìm kiếm khóa học..."
-                className="pl-10 h-10 rounded-2xl bg-background/80 backdrop-blur-md shadow-sm border-muted/50 hover:border-primary/50 focus-visible:ring-primary/30 transition-all text-sm"
+                className="pl-9 h-9 text-sm"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
               />
             </form>
-          </div>
-
-          {/* Stats Cards */}
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl">
-            <div className="group rounded-xl bg-background/60 backdrop-blur-md p-3 border border-primary/20 shadow-sm transition-all hover:bg-primary/5 hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5">
-              <div className="flex items-center justify-between mb-1">
-                <p className="text-xs font-bold text-primary uppercase tracking-wider">Đang học</p>
-                <PlayCircle className="h-4 w-4 text-primary/50 group-hover:text-primary transition-colors" />
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-3 py-2">
+                <PlayCircle className="h-3.5 w-3.5 text-primary" />
+                <span className="text-xs font-semibold text-primary">{inProgress.length}</span>
+                <span className="text-xs text-muted-foreground">đang học</span>
               </div>
-              <p className="text-2xl font-black text-foreground">{inProgress.length}</p>
-            </div>
-
-            <div className="group rounded-xl bg-background/60 backdrop-blur-md p-3 border border-emerald-500/20 shadow-sm transition-all hover:bg-emerald-500/5 hover:border-emerald-500/40 hover:shadow-md hover:-translate-y-0.5">
-              <div className="flex items-center justify-between mb-1">
-                <p className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Hoàn thành</p>
-                <CheckCircle2 className="h-4 w-4 text-emerald-600/50 group-hover:text-emerald-600 transition-colors" />
+              <div className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-3 py-2">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                <span className="text-xs font-semibold text-emerald-600">{completed.length}</span>
+                <span className="text-xs text-muted-foreground">hoàn thành</span>
               </div>
-              <p className="text-2xl font-black text-foreground">{completed.length}</p>
-            </div>
-
-            <div className="group rounded-xl bg-background/60 backdrop-blur-md p-3 border border-red-500/20 shadow-sm transition-all hover:bg-red-500/5 hover:border-red-500/40 hover:shadow-md hover:-translate-y-0.5">
-              <div className="flex items-center justify-between mb-1">
-                <p className="text-xs font-bold text-red-600 uppercase tracking-wider">Chưa học</p>
-                <Book className="h-4 w-4 text-red-600/50 group-hover:text-red-600 transition-colors" />
+              <div className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-3 py-2">
+                <Book className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-xs font-semibold">{notStarted.length}</span>
+                <span className="text-xs text-muted-foreground">chưa học</span>
               </div>
-              <p className="text-2xl font-black text-foreground">{notStarted.length}</p>
             </div>
           </div>
         </div>

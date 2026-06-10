@@ -6,16 +6,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
-import {
-  ArrowLeft,
-  ArrowRight,
-  Loader2,
-  CheckCircle2,
-  CreditCard,
-  Smartphone,
-  Building2,
-  Wallet,
-} from 'lucide-react'
+import { ArrowLeft, ArrowRight, Loader2, CheckCircle2, CreditCard, Smartphone, Building2, Wallet } from 'lucide-react'
 import { orderService } from '@/lib/order-service'
 import { CartDto } from '@/lib/types'
 import { toast } from 'sonner'
@@ -244,7 +235,9 @@ export default function CheckoutPage() {
                             : 'border-muted-foreground/30 bg-background'
                         }`}
                       >
-                        {selected && !method.disabled && <CheckCircle2 className="h-2.5 w-2.5 text-primary-foreground" />}
+                        {selected && !method.disabled && (
+                          <CheckCircle2 className="h-2.5 w-2.5 text-primary-foreground" />
+                        )}
                       </div>
                     </button>
                   )

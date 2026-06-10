@@ -85,26 +85,20 @@ export default function StudentProfilePage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Premium Header */}
-      <div className="mx-4 mt-6 rounded-[2rem] border border-border/80 relative bg-gradient-to-b from-primary/10 via-primary/5 to-background overflow-hidden shadow-sm animate-in fade-in duration-500">
-        <div className="pointer-events-none absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-        <div className="pointer-events-none absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl" />
-
-        <div className="relative mx-auto max-w-4xl px-4 py-6 sm:px-6">
-          <div className="flex flex-col sm:flex-row items-center gap-6">
-            <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20 shadow-inner ring-4 ring-background/60">
-              <User className="h-12 w-12" />
+      <div className="mx-auto max-w-4xl px-6 mt-5">
+        <div className="rounded-xl border border-border bg-card px-6 py-8">
+          <div className="flex items-center gap-4">
+            <div className="h-14 w-14 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+              <User className="h-7 w-7" />
             </div>
-            <div className="text-center sm:text-left space-y-1">
-              <h1 className="text-2xl md:text-3xl font-black tracking-tight">{user.userName}</h1>
-              <p className="text-muted-foreground text-sm font-medium flex items-center justify-center sm:justify-start gap-2">
-                <Mail className="h-4 w-4" /> {user.email}
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">{user.userName}</h1>
+              <p className="mt-1 text-sm text-muted-foreground flex items-center gap-1.5">
+                <Mail className="h-3.5 w-3.5" /> {user.email}
               </p>
-              <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
-                <span className="text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 flex items-center gap-1">
-                  <CheckCircle2 className="h-3 w-3" /> Học viên đang hoạt động
-                </span>
-              </div>
+              <span className="mt-1.5 inline-flex items-center gap-1 text-[10px] uppercase font-semibold tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-800">
+                <CheckCircle2 className="h-3 w-3" /> Học viên đang hoạt động
+              </span>
             </div>
           </div>
         </div>
@@ -224,7 +218,9 @@ export default function StudentProfilePage() {
         </div>
 
         <div className="flex items-center justify-center">
-          <p className="text-xs text-muted-foreground opacity-50">Hồ sơ học viên CourseMate v1.0 • Đã xác thực bảo mật</p>
+          <p className="text-xs text-muted-foreground opacity-50">
+            Hồ sơ học viên CourseMate v1.0 • Đã xác thực bảo mật
+          </p>
         </div>
       </div>
     </div>
