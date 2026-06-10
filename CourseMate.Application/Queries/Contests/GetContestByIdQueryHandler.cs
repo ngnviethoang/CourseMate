@@ -113,6 +113,27 @@ public sealed class GetContestByIdQueryHandler : AbstractQueryHandler<GetContest
         }
 
         result.Exercises = exercises;
+
+        // Load prizes with course details, ordered by rank
+        result.Prizes = await (
+            from p in DbContext.ContestPrizes
+            join c in DbContext.Courses on p.CourseId equals c.Id
+            join u in DbContext.Users on c.InstructorId equals u.Id
+            where p.ContestId == result.Id
+            orderby p.MinRank
+            select new ContestPrizeDto
+            {
+                Id = p.Id,
+                MinRank = p.MinRank,
+                MaxRank = p.MaxRank,
+                CourseId = c.Id,
+                CourseTitle = c.Title,
+                CourseImageUrl = c.ImageUrl,
+                CoursePrice = c.Price,
+                CourseInstructorName = u.UserName ?? "Unknown"
+            }
+        ).ToListAsync(ct);
+
         return result;
     }
 

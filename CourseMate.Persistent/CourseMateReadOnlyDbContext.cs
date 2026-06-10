@@ -46,6 +46,7 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<User, Identi
     public DbSet<ContestRegistration> ContestRegistrations { get; set; }
     public DbSet<ContestSubmission> ContestSubmissions { get; set; }
     public DbSet<AntiCheatViolation> AntiCheatViolations { get; set; }
+    public DbSet<ContestPrize> ContestPrizes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

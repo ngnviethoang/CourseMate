@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace CourseMate.API.Controllers;
 
 [ApiController]
@@ -190,6 +191,51 @@ public class ContestController : ControllerBase
             ContestId = id,
             StudentId = studentId
         });
+        return Ok(result);
+    }
+
+    #endregion
+
+    #region Prize APIs
+
+    [HttpGet("{id:guid}/prizable-courses")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> GetPrizableCourses(Guid id)
+    {
+        List<PrizableCourseDto> result = await _mediator.Send(new GetPrizableCoursesQuery { ContestId = id });
+        return Ok(result);
+    }
+
+    [HttpPost("{id:guid}/prizes")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> AddContestPrize(Guid id, [FromBody] AddContestPrizeCommand request)
+    {
+        request.ContestId = id;
+        ResultIdDto result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
+    [HttpDelete("{id:guid}/prizes/{prizeId:guid}")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> RemoveContestPrize(Guid id, Guid prizeId)
+    {
+        await _mediator.Send(new RemoveContestPrizeCommand { ContestId = id, PrizeId = prizeId });
+        return NoContent();
+    }
+
+    [HttpPost("{id:guid}/end")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> EndContest(Guid id)
+    {
+        ResultIdDto result = await _mediator.Send(new EndContestCommand { ContestId = id });
+        return Ok(result);
+    }
+
+    [HttpPost("{id:guid}/cancel")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> CancelContest(Guid id)
+    {
+        ResultIdDto result = await _mediator.Send(new CancelContestCommand { ContestId = id });
         return Ok(result);
     }
 

@@ -10,12 +10,14 @@ export function CourseCard({ course }: { course: StudentMyCourseDto }) {
   return (
     <div className="group rounded-3xl bg-card shadow-sm overflow-hidden flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-2">
       <div className="relative overflow-hidden aspect-video">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={course.imageUrl || 'https://placehold.co/600x340/6366f1/ffffff?text=Course'}
-          alt={course.title}
-          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-        />
+        <Link href={`/courses/${course.id}`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={course.imageUrl || 'https://placehold.co/600x340/6366f1/ffffff?text=Course'}
+            alt={course.title}
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          />
+        </Link>
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-50" />
 
         {done && (
@@ -61,9 +63,11 @@ export function CourseCard({ course }: { course: StudentMyCourseDto }) {
         </div>
 
         <div className="flex-1 space-y-2">
-          <h3 className="font-bold text-base leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-300">
-            {course.title}
-          </h3>
+          <Link href={`/courses/${course.id}`}>
+            <h3 className="font-bold text-base leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-300">
+              {course.title}
+            </h3>
+          </Link>
           <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
             <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
               <span className="text-[10px] font-bold text-primary">GV</span>

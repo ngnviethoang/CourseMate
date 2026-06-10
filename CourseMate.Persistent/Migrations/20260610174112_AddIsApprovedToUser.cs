@@ -1,29 +1,29 @@
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace CourseMate.Persistent.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIsHiddenColumn : Migration
+    public partial class AddIsApprovedToUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            /* migrationBuilder.AddColumn<bool>(
-                name: "IsHidden",
-                table: "Exercises",
+            migrationBuilder.AddColumn<bool>(
+                name: "IsApproved",
+                table: "AspNetUsers",
                 type: "boolean",
                 nullable: false,
-                defaultValue: false); */
+                defaultValue: false);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "IsHidden",
-                table: "Exercises");
+                name: "IsApproved",
+                table: "AspNetUsers");
         }
     }
 }

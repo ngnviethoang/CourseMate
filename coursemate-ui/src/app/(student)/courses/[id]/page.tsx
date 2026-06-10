@@ -19,11 +19,14 @@ import {
   PlayCircle,
   ShoppingCart,
   Sparkles,
-  Users
+  Users,
+  Star
 } from 'lucide-react'
 import { LessonType, StudentCourseDetailDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
+import { CourseReviews } from './course-reviews'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const lessonTypeLabel: Record<LessonType, string> = {
   [LessonType.Video]: 'Video',
@@ -82,20 +85,21 @@ export default function CourseDetailPage() {
   const [showFullDesc, setShowFullDesc] = useState(false)
   const [isInCart, setIsInCart] = useState(false)
 
-  useEffect(() => {
+  const fetchCourse = async () => {
     if (!id) return
-    const fetchCourse = async () => {
-      setLoading(true)
-      try {
-        const res = await courseService.getById(id)
-        setCourse(res as unknown as StudentCourseDetailDto)
-        setIsInCart(Boolean((res as unknown as { isInCart?: boolean })?.isInCart))
-      } catch {
-        toast.error('Không thể tải chi tiết khóa học.')
-      } finally {
-        setLoading(false)
-      }
+    setLoading(true)
+    try {
+      const res = await courseService.getById(id as string)
+      setCourse(res as unknown as StudentCourseDetailDto)
+      setIsInCart(Boolean((res as unknown as { isInCart?: boolean })?.isInCart))
+    } catch {
+      toast.error('Không thể tải chi tiết khóa học.')
+    } finally {
+      setLoading(false)
     }
+  }
+
+  useEffect(() => {
     fetchCourse()
   }, [id])
 
@@ -161,9 +165,18 @@ export default function CourseDetailPage() {
               </h1>
             </div>
             {course && (
-              <p className="mt-1 text-sm text-muted-foreground">
-                Giảng viên: <span className="font-medium text-foreground">{course.instructorName || 'CourseMate'}</span>
-              </p>
+              <div className="mt-2 flex items-center gap-4 text-sm text-muted-foreground">
+                <p>
+                  Giảng viên: <span className="font-medium text-foreground">{course.instructorName || 'CourseMate'}</span>
+                </p>
+                {course.totalReviews !== undefined && course.totalReviews > 0 && (
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    <span className="font-medium text-foreground">{course.averageRating}</span>
+                    <span>({course.totalReviews} đánh giá)</span>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -341,107 +354,129 @@ export default function CourseDetailPage() {
             </div>
           </section>
 
-          {/* Curriculum */}
-          <section
-            className="space-y-4 animate-in fade-in slide-in-from-bottom-2 fill-mode-backwards duration-500"
-            style={{ animationDelay: '150ms' }}
-          >
-            <div className="flex flex-row items-end justify-between gap-4">
-              <div>
-                <h2 className="text-xl font-bold">Nội dung khóa học</h2>
-                <p className="text-[13px] text-muted-foreground">
-                  Theo dõi từng chương và bài học theo thứ tự để học dễ hơn.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2 shrink-0">
-                <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-[11px]">
-                  {course.chapters.length} chương
-                </Badge>
-                <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-[11px]">
-                  {totalLessons} bài học
-                </Badge>
-              </div>
-            </div>
+          {/* Content Tabs: Curriculum & Reviews */}
+          <Tabs defaultValue="curriculum" className="w-full pt-4 animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: '150ms' }}>
+            <TabsList className="bg-muted/50 p-1 rounded-xl h-11 mb-6">
+              <TabsTrigger
+                value="curriculum"
+                className="rounded-lg px-6 py-1.5 text-sm font-bold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all"
+              >
+                Nội dung khóa học
+              </TabsTrigger>
+              <TabsTrigger
+                value="reviews"
+                className="rounded-lg px-6 py-1.5 text-sm font-bold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all"
+              >
+                Đánh giá {course.totalReviews ? `(${course.totalReviews})` : ''}
+              </TabsTrigger>
+            </TabsList>
 
-            {course.chapters.length === 0 ? (
-              <Card className="border-dashed">
-                <CardContent className="p-8 text-center text-muted-foreground">Chưa có chương nào.</CardContent>
-              </Card>
-            ) : (
-              <Accordion type="multiple" className="space-y-3">
-                {course.chapters.map((chapter, chIdx) => (
-                  <div
-                    key={chapter.id}
-                    className="animate-in fade-in slide-in-from-bottom-1 fill-mode-backwards duration-300"
-                    style={{ animationDelay: `${Math.min(chIdx * 60, 360)}ms` }}
-                  >
-                    <AccordionItem
-                      value={chapter.id}
-                      className="overflow-hidden rounded-xl border border-border bg-background shadow-sm"
-                    >
-                      <AccordionTrigger className="px-4 py-3.5 hover:no-underline">
-                        <div className="flex w-full items-center justify-between gap-4 pr-4 text-left">
-                          <div className="space-y-0.5">
-                            <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-                              Chương {chapter.sortOrder}
-                            </p>
-                            <span className="text-base font-semibold">{chapter.title}</span>
-                          </div>
-                          <Badge
-                            variant="secondary"
-                            className="shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-medium"
-                          >
-                            {chapter.lessons.length} bài học
-                          </Badge>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="border-t border-border bg-muted/10 px-4 pb-4 pt-3.5">
-                        <div className="space-y-2.5">
-                          {chapter.lessons.length === 0 ? (
-                            <p className="pl-3 text-[13px] text-muted-foreground">Chưa có bài học trong chương này.</p>
-                          ) : (
-                            chapter.lessons.map(lesson => (
-                              <div
-                                key={lesson.id}
-                                className="flex flex-row items-center justify-between gap-2.5 rounded-lg border border-border bg-background p-3 transition-colors hover:bg-accent/40"
-                              >
-                                <div className="flex items-center gap-2.5">
-                                  <div className="rounded-lg border border-border bg-muted/40 p-1.5">
-                                    {getLessonIcon(lesson.lessonType)}
-                                  </div>
-                                  <div>
-                                    <p className="text-[13px] font-semibold">
-                                      {chapter.sortOrder}.{lesson.sortOrder} - {lesson.title}
-                                    </p>
-                                    <p className="text-[11px] text-muted-foreground">
-                                      Bài học trong chương {chapter.sortOrder}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="flex items-center gap-2 shrink-0">
-                                  <Badge
-                                    variant="outline"
-                                    className="rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider"
-                                  >
-                                    {lessonTypeLabel[lesson.lessonType]}
-                                  </Badge>
-                                  {course.isEnrolled && lesson.isCompleted && (
-                                    <Badge className="rounded-full px-2 py-0.5 bg-emerald-500 text-[10px] uppercase tracking-wider text-white">
-                                      Hoàn thành
-                                    </Badge>
-                                  )}
-                                </div>
-                              </div>
-                            ))
-                          )}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
+            <TabsContent value="curriculum" className="mt-0 outline-none">
+              <section className="space-y-4">
+                <div className="flex flex-row items-end justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-bold">Nội dung khóa học</h2>
+                    <p className="text-[13px] text-muted-foreground">
+                      Theo dõi từng chương và bài học theo thứ tự để học dễ hơn.
+                    </p>
                   </div>
-                ))}
-              </Accordion>
-            )}
-          </section>
+                  <div className="flex flex-wrap gap-2 shrink-0">
+                    <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-[11px]">
+                      {course.chapters.length} chương
+                    </Badge>
+                    <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-[11px]">
+                      {totalLessons} bài học
+                    </Badge>
+                  </div>
+                </div>
+
+                {course.chapters.length === 0 ? (
+                  <Card className="border-dashed">
+                    <CardContent className="p-8 text-center text-muted-foreground">Chưa có chương nào.</CardContent>
+                  </Card>
+                ) : (
+                  <Accordion type="multiple" className="space-y-3">
+                    {course.chapters.map((chapter, chIdx) => (
+                      <div
+                        key={chapter.id}
+                        className="animate-in fade-in slide-in-from-bottom-1 fill-mode-backwards duration-300"
+                        style={{ animationDelay: `${Math.min(chIdx * 60, 360)}ms` }}
+                      >
+                        <AccordionItem
+                          value={chapter.id}
+                          className="overflow-hidden rounded-xl border border-border bg-background shadow-sm"
+                        >
+                          <AccordionTrigger className="px-4 py-3.5 hover:no-underline">
+                            <div className="flex w-full items-center justify-between gap-4 pr-4 text-left">
+                              <div className="space-y-0.5">
+                                <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                                  Chương {chapter.sortOrder}
+                                </p>
+                                <span className="text-base font-semibold">{chapter.title}</span>
+                              </div>
+                              <Badge
+                                variant="secondary"
+                                className="shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-medium"
+                              >
+                                {chapter.lessons.length} bài học
+                              </Badge>
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent className="border-t border-border bg-muted/10 px-4 pb-4 pt-3.5">
+                            <div className="space-y-2.5">
+                              {chapter.lessons.length === 0 ? (
+                                <p className="pl-3 text-[13px] text-muted-foreground">Chưa có bài học trong chương này.</p>
+                              ) : (
+                                chapter.lessons.map(lesson => (
+                                  <div
+                                    key={lesson.id}
+                                    className="flex flex-row items-center justify-between gap-2.5 rounded-lg border border-border bg-background p-3 transition-colors hover:bg-accent/40"
+                                  >
+                                    <div className="flex items-center gap-2.5">
+                                      <div className="rounded-lg border border-border bg-muted/40 p-1.5">
+                                        {getLessonIcon(lesson.lessonType)}
+                                      </div>
+                                      <div>
+                                        <p className="text-[13px] font-semibold">
+                                          {chapter.sortOrder}.{lesson.sortOrder} - {lesson.title}
+                                        </p>
+                                        <p className="text-[11px] text-muted-foreground">
+                                          Bài học trong chương {chapter.sortOrder}
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-2 shrink-0">
+                                      <Badge
+                                        variant="outline"
+                                        className="rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider"
+                                      >
+                                        {lessonTypeLabel[lesson.lessonType]}
+                                      </Badge>
+                                      {course.isEnrolled && lesson.isCompleted && (
+                                        <Badge className="rounded-full px-2 py-0.5 bg-emerald-500 text-[10px] uppercase tracking-wider text-white">
+                                          Hoàn thành
+                                        </Badge>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </div>
+                    ))}
+                  </Accordion>
+                )}
+              </section>
+            </TabsContent>
+
+            <TabsContent value="reviews" className="mt-0 outline-none">
+              <section className="space-y-4">
+                <CourseReviews courseId={course.id} isEnrolled={course.isEnrolled} onReviewSubmitted={fetchCourse} />
+              </section>
+            </TabsContent>
+          </Tabs>
         </div>
       )}
     </div>

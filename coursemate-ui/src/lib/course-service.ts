@@ -19,7 +19,9 @@ import {
   UpsertLessonQuizRequest,
   StudentMyCourseDto,
   CourseDetailDto,
-  ExerciseDto
+  ExerciseDto,
+  ReviewDto,
+  ReviewCourseRequest
 } from './types'
 
 export const courseService = {
@@ -56,6 +58,19 @@ export const courseService = {
     if (filter) params.set('filter', filter)
     return api.get<PagedDto<StudentMyCourseDto>>(`/api/courses/my?${params}`)
   },
+
+  // ─── Reviews ─────────────────────────────────────────────────────────────────
+  getReviews: async (courseId: string, pageIndex = 1, pageSize = 10) => {
+    const qs = new URLSearchParams({
+      pageIndex: String(pageIndex),
+      pageSize: String(pageSize)
+    })
+    const res = await api.get<PagedDto<ReviewDto>>(`/api/courses/${courseId}/reviews?${qs}`)
+    if (res) res.pageIndex -= 1
+    return res
+  },
+  reviewCourse: (courseId: string, body: ReviewCourseRequest) =>
+    api.post<ResultIdDto>(`/api/courses/${courseId}/reviews`, body),
 
   // ─── Chapter ─────────────────────────────────────────────────────────────────
   listChapters: async (params?: {

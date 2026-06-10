@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using CourseMate.Contracts.Enums;
 
 namespace CourseMate.Application.Commands.Auth;
 
@@ -67,7 +68,8 @@ public sealed class GoogleCallbackCommandHandler : AbstractCommandHandler<Google
             {
                 Id = Guid.NewGuid(),
                 UserName = email,
-                Email = email
+                Email = email,
+                IsApproved = !string.Equals(role, RegisterRole.Instructor.ToString(), StringComparison.OrdinalIgnoreCase)
             };
 
             IdentityResult createUserResult = await _userManager.CreateAsync(user);
@@ -100,6 +102,11 @@ public sealed class GoogleCallbackCommandHandler : AbstractCommandHandler<Google
         {
             string errorString = string.Join(", ", errors.Select(e => e.Description));
             throw new BusinessException(ErrorCode.GoogleLoginFailed, errorString);
+        }
+
+        if (!user.IsApproved)
+        {
+            throw new BusinessException(ErrorCode.AccountPendingApproval, "Your account is pending admin approval.");
         }
 
         bool requireConfirmedAccount = _userManager.Options.SignIn.RequireConfirmedAccount;

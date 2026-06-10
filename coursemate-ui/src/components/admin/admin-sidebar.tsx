@@ -34,14 +34,7 @@ const navItems = [
   { href: '/management/exercises', label: 'Bài tập', icon: Code2, roles: ['Admin', 'Instructor'] },
   { href: '/management/contests', label: 'Cuộc thi', icon: Trophy, roles: ['Admin', 'Instructor'] },
   { href: '/management/users', label: 'Người dùng', icon: Users, roles: ['Admin'] },
-  {
-    href: '/management/pending-instructors',
-    label: 'Duyệt giảng viên',
-    icon: UserCheck,
-    roles: ['Admin'],
-    disabled: true,
-    disabledReason: 'Tính năng tạm thời chưa khả dụng vì backend chưa hỗ trợ API duyệt giảng viên.'
-  },
+  { href: '/management/instructors', label: 'Giảng viên', icon: UserCheck, roles: ['Admin'] },
   { href: '/management/orders', label: 'Đơn hàng', icon: ShoppingCart, roles: ['Admin', 'Instructor'] }
 ]
 

@@ -21,7 +21,9 @@ import {
   Layout,
   List,
   X,
-  Crown
+  Crown,
+  Gift,
+  BookOpen
 } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { contestService, ContestDto, ContestLeaderboardDto, StudentViolationSummaryDto } from '@/lib/contest-service'
@@ -32,13 +34,15 @@ import { toast } from 'sonner'
 const STATUS_LABEL: Record<string, string> = {
   Ongoing: 'Đang diễn ra',
   Upcoming: 'Sắp diễn ra',
-  Ended: 'Đã kết thúc'
+  Ended: 'Đã kết thúc',
+  Cancelled: 'Đã hủy'
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  Ongoing: 'bg-emerald-500 text-white',
-  Upcoming: 'bg-blue-500 text-white',
-  Ended: 'bg-muted text-muted-foreground'
+  Ongoing: 'bg-emerald-500',
+  Upcoming: 'bg-blue-500',
+  Ended: 'bg-muted-foreground',
+  Cancelled: 'bg-red-500'
 }
 
 const ANTI_CHEAT_LABEL: Record<string, string> = {
@@ -413,6 +417,63 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
       </div>
+
+      {/* Prizes Section */}
+      {contest.prizes && contest.prizes.length > 0 && (
+        <div className="border-b border-border/50 bg-gradient-to-r from-amber-500/5 via-yellow-500/3 to-transparent">
+          <div className="mx-auto max-w-5xl px-4 py-8 px-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                <Gift className="h-4 w-4 text-amber-500" />
+              </div>
+              <h2 className="text-base font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">
+                Giải thưởng
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {contest.prizes.map(prize => {
+                const rankConfig: Record<number, { label: string; border: string; medalColor: string; textColor: string }> = {
+                  1: { label: 'Giải Nhất 🥇', border: 'from-amber-500/20 to-yellow-500/10 border-amber-400/40', medalColor: 'text-amber-400', textColor: 'text-amber-500' },
+                  2: { label: 'Giải Nhì 🥈', border: 'from-slate-400/15 to-slate-300/5 border-slate-400/30', medalColor: 'text-slate-400', textColor: 'text-slate-400' },
+                  3: { label: 'Giải Ba 🥉', border: 'from-amber-700/15 to-amber-600/5 border-amber-700/30', medalColor: 'text-amber-600', textColor: 'text-amber-600' },
+                }
+                const cfg = (prize.minRank === prize.maxRank && rankConfig[prize.minRank]) ? rankConfig[prize.minRank] : {
+                  label: prize.minRank === prize.maxRank ? `Top ${prize.minRank}` : `Top ${prize.minRank} - ${prize.maxRank}`,
+                  border: 'from-primary/10 to-primary/5 border-primary/20',
+                  medalColor: 'text-primary',
+                  textColor: 'text-primary'
+                }
+                return (
+                  <div
+                    key={prize.id}
+                    className={`rounded-2xl bg-gradient-to-br border p-4 space-y-3 overflow-hidden`}
+                    style={{ backgroundImage: `linear-gradient(135deg, var(--tw-gradient-stops))` }}
+                  >
+                    <div className={`text-xs font-black uppercase tracking-widest ${cfg.textColor}`}>{cfg.label}</div>
+                    {prize.courseImageUrl && (
+                      <img
+                        src={prize.courseImageUrl}
+                        alt={prize.courseTitle}
+                        className="w-full h-24 object-cover rounded-xl"
+                      />
+                    )}
+                    <div>
+                      <p className="font-bold text-sm leading-snug">{prize.courseTitle}</p>
+                      <p className="text-xs text-muted-foreground mt-1">bởi {prize.courseInstructorName}</p>
+                    </div>
+                    <div className="flex items-center justify-between pt-1 border-t border-white/10">
+                      <span className="text-xs font-bold text-emerald-500">
+                        {prize.coursePrice > 0 ? `Trị giá ${prize.coursePrice.toLocaleString('vi-VN')}đ` : 'Miễn phí'}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-medium">Khóa học</span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Content Tabs */}
       <div className="mx-auto max-w-5xl px-4 py-10 px-6 px-8">

@@ -64,6 +64,12 @@ public sealed class LoginCommandHandler : AbstractCommandHandler<LoginCommand, L
             throw new BusinessException(ErrorCode.AccountLocked, "This account has been locked.");
         }
 
+        // Check account approval
+        if (!user.IsApproved)
+        {
+            throw new BusinessException(ErrorCode.AccountPendingApproval, "Your account is pending admin approval.");
+        }
+
         SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
         if (!result.Succeeded)
         {

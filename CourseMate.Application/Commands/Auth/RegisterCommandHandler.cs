@@ -81,6 +81,11 @@ public sealed class RegisterCommandHandler : AbstractCommandHandler<RegisterComm
         }
 
         User user = new(request.UserName);
+        if (request.Role == RegisterRole.Instructor)
+        {
+            user.IsApproved = false;
+        }
+
         await _userStore.SetUserNameAsync(user, request.UserName, CancellationToken.None);
         await _emailStore.SetEmailAsync(user, request.Email, CancellationToken.None);
 

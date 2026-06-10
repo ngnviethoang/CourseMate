@@ -135,6 +135,8 @@ export interface CourseDto {
 
 export interface CourseDetailDto extends CourseDto {
   chapters: (ChapterDto & { lessons: LessonDto[] })[]
+  averageRating?: number
+  totalReviews?: number
 }
 
 export interface CreateCourseRequest {
@@ -371,6 +373,26 @@ export interface StudentCourseDetailDto {
   isEnrolled: boolean
   progressPercentage: number
   chapters: StudentChapterDetailDto[]
+  averageRating?: number
+  totalReviews?: number
+}
+
+// ─── Review Types ─────────────────────────────────────────────────────────────
+
+export interface ReviewDto {
+  id: string
+  courseId: string
+  studentId: string
+  studentName: string
+  studentAvatar: string
+  rating: number
+  comment: string
+  createdAt: string
+}
+
+export interface ReviewCourseRequest {
+  rating: number
+  comment: string
 }
 
 export interface CartItemDto {

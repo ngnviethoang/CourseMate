@@ -3,6 +3,7 @@ using System;
 using CourseMate.Persistent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pgvector;
@@ -12,9 +13,11 @@ using Pgvector;
 namespace CourseMate.Persistent.Migrations
 {
     [DbContext(typeof(CourseMateDbContext))]
-    partial class CourseMateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260610173043_AddPrizeRangeColumns")]
+    partial class AddPrizeRangeColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1727,9 +1730,6 @@ namespace CourseMate.Persistent.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsApproved")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
