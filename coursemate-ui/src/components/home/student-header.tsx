@@ -13,8 +13,7 @@ import {
   Code2,
   Home,
   Search,
-  X,
-  LayoutDashboard
+  X
 } from 'lucide-react'
 import { getAccessToken, getDecodedToken, removeToken } from '@/lib/auth-token.util'
 import { CourseMateLogoIcon } from '@/components/icons/coursemate-logo'
@@ -163,6 +162,7 @@ export function StudentHeader({
               <button
                 type="button"
                 onClick={handleClear}
+                aria-label="Xoá tìm kiếm"
                 className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-muted-foreground transition-colors hover:text-foreground"
               >
                 <X className="h-4 w-4" />
@@ -185,15 +185,6 @@ export function StudentHeader({
               >
                 Khoá học của tôi
               </Link>
-
-              {['Admin', 'Instructor'].includes(displayRole) && (
-                <Link
-                  href="/management"
-                  className="hidden shrink-0 rounded-xl px-3.5 py-2 text-sm font-medium transition-colors md:inline-flex text-muted-foreground hover:bg-muted/70 hover:text-foreground"
-                >
-                  Quản lý
-                </Link>
-              )}
 
               <NotificationDropdown />
 
@@ -244,12 +235,6 @@ export function StudentHeader({
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                    {['Admin', 'Instructor'].includes(displayRole) && (
-                      <DropdownMenuItem onClick={() => router.push('/management')}>
-                        <LayoutDashboard className="mr-2 h-4 w-4" />
-                        Trang quản lý
-                      </DropdownMenuItem>
-                    )}
                     <DropdownMenuItem onClick={() => router.push('/profile')}>
                       <User className="mr-2 h-4 w-4" />
                       Hồ sơ của tôi

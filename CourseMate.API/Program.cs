@@ -157,7 +157,8 @@ try
     });
 
     WebApplication app = builder.Build();
-    // await app.Services.SeedAsync();
+    // await app.Services.SeedTnitialAsync();
+    // await app.Services.SeedLessonOrderDataAsync();
     app.UseHsts();
     app.UseHttpsRedirection();
     app.UseStaticFiles(new StaticFileOptions

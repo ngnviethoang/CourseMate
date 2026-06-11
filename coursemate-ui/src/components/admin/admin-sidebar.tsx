@@ -13,7 +13,8 @@ import {
   ShoppingCart,
   UserCheck,
   Code2,
-  Trophy
+  Trophy,
+  Images
 } from 'lucide-react'
 import {
   Sidebar,
@@ -35,7 +36,8 @@ const navItems = [
   { href: '/management/contests', label: 'Cuộc thi', icon: Trophy, roles: ['Admin', 'Instructor'] },
   { href: '/management/users', label: 'Người dùng', icon: Users, roles: ['Admin'] },
   { href: '/management/instructors', label: 'Giảng viên', icon: UserCheck, roles: ['Admin'] },
-  { href: '/management/orders', label: 'Đơn hàng', icon: ShoppingCart, roles: ['Admin', 'Instructor'] }
+  { href: '/management/orders', label: 'Đơn hàng', icon: ShoppingCart, roles: ['Admin', 'Instructor'] },
+  { href: '/management/banners', label: 'Banner', icon: Images, roles: ['Admin'] }
 ]
 
 export function AdminSidebar() {
