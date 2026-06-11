@@ -1,7 +1,7 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
-using CourseMate.Contracts.DTOs;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +34,7 @@ public sealed class GetPrizableCoursesQueryHandler : AbstractQueryHandler<GetPri
         bool isAdmin = IsInRole(Roles.Admin);
 
         // Admin sees all published courses; Instructor sees only their own
-        var query = DbContext.Courses
+        IQueryable<Course> query = DbContext.Courses
             .Where(c => c.IsPublished);
 
         if (!isAdmin)

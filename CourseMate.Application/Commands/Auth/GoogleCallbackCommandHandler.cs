@@ -3,6 +3,7 @@ using System.Security.Claims;
 using CourseMate.Application.BackgroundJobs;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
@@ -13,7 +14,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using CourseMate.Contracts.Enums;
 
 namespace CourseMate.Application.Commands.Auth;
 

@@ -109,7 +109,6 @@ export default function LoginPage() {
                   <Link
                     href="/forgot-password"
                     className="text-xs font-medium text-primary hover:underline"
-                    tabIndex={-1}
                   >
                     Quên mật khẩu?
                   </Link>
@@ -128,7 +127,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-muted-foreground transition hover:text-foreground focus:outline-none"
+                    className="absolute right-3 top-3 text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded"
                     aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                     disabled={isLoading || isGoogleLoading}
                   >

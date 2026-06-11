@@ -53,29 +53,29 @@ export default function ManagementPage() {
       title: 'Tổng doanh thu',
       value: formatCurrency(data.totalRevenue),
       icon: DollarSign,
-      color: 'text-emerald-500',
-      bg: 'bg-emerald-500/10'
+      color: 'text-success',
+      bg: 'bg-success/10'
     },
     {
       title: 'Học viên',
       value: data.totalStudents.toLocaleString(),
       icon: Users,
-      color: 'text-blue-500',
-      bg: 'bg-blue-500/10'
+      color: 'text-info',
+      bg: 'bg-info/10'
     },
     {
       title: 'Khoá học',
       value: data.totalCourses.toLocaleString(),
       icon: BookOpen,
-      color: 'text-violet-500',
-      bg: 'bg-violet-500/10'
+      color: 'text-primary',
+      bg: 'bg-primary/10'
     },
     {
       title: 'Đơn hàng',
       value: data.totalOrders.toLocaleString(),
       icon: ShoppingBag,
-      color: 'text-amber-500',
-      bg: 'bg-amber-500/10'
+      color: 'text-warning',
+      bg: 'bg-warning/10'
     }
   ]
 
@@ -87,9 +87,9 @@ export default function ManagementPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-6 grid-cols-2 grid-cols-4">
+      <div className="grid gap-6 grid-cols-4">
         {stats.map((stat, i) => (
-          <Card key={i} className="overflow-hidden shadow-md border-0 rounded-2xl transition-all hover:scale-[1.02]">
+          <Card key={i} className="overflow-hidden shadow-md border-0 rounded-2xl transition-colors hover:shadow-lg">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
               <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
                 {stat.title}
@@ -101,7 +101,7 @@ export default function ManagementPage() {
             <CardContent>
               <div className="text-4xl font-black tracking-tight">{stat.value}</div>
               <p className="text-sm text-muted-foreground mt-3 flex items-center gap-1.5 font-medium">
-                <TrendingUp className="h-4 w-4 text-emerald-500" />
+                <TrendingUp className="h-4 w-4 text-success" />
                 <span>+12.5% từ tháng trước</span>
               </p>
             </CardContent>
@@ -190,7 +190,7 @@ export default function ManagementPage() {
                       <div className="text-lg font-black tracking-tight">{formatCurrency(instructor.totalRevenue)}</div>
                       <Badge
                         variant="outline"
-                        className="text-[11px] font-bold px-2 py-0 h-5 mt-1 -emerald-200 bg-emerald-50 text-emerald-700"
+                        className="text-[11px] font-bold px-2 py-0 h-5 mt-1 bg-success/10 text-success"
                       >
                         Hạng {4 - i}
                       </Badge>
@@ -265,7 +265,7 @@ export default function ManagementPage() {
                     {formatCurrency(course.revenue)}
                   </TableCell>
                   <TableCell className="text-right px-8">
-                    <Badge className="bg-emerald-500/10 text-emerald-600 -none px-4 py-1.5 text-sm font-bold rounded-full">
+                    <Badge className="bg-success/10 text-success px-4 py-1.5 text-sm font-bold rounded-full">
                       Đang hoạt động
                     </Badge>
                   </TableCell>

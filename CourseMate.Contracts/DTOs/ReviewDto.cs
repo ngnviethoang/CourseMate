@@ -1,5 +1,3 @@
-using System;
-
 namespace CourseMate.Contracts.DTOs;
 
 public class ReviewDto

@@ -45,6 +45,7 @@ public sealed class AddContestPrizeCommandHandler : AbstractCommandHandler<AddCo
         {
             throw new BusinessException(ErrorCode.Unknown, "MinRank must be at least 1.");
         }
+
         if (request.MaxRank < request.MinRank)
         {
             throw new BusinessException(ErrorCode.Unknown, "MaxRank cannot be smaller than MinRank.");
@@ -81,10 +82,8 @@ public sealed class AddContestPrizeCommandHandler : AbstractCommandHandler<AddCo
                 await DbContext.SaveChangesAsync(ct);
                 return new ResultIdDto { Id = exactMatch.Id };
             }
-            else
-            {
-                throw new BusinessException(ErrorCode.Unknown, "This prize range overlaps with an existing prize.");
-            }
+
+            throw new BusinessException(ErrorCode.Unknown, "This prize range overlaps with an existing prize.");
         }
 
         ContestPrize prize = new(Guid.NewGuid(), request.ContestId, request.CourseId, request.MinRank, request.MaxRank);

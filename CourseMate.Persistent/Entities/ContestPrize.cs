@@ -18,12 +18,12 @@ public class ContestPrize : Entity
     public Guid CourseId { get; set; }
 
     /// <summary>
-    /// The lowest rank (best position) that wins this prize. Example: 1
+    ///     The lowest rank (best position) that wins this prize. Example: 1
     /// </summary>
     public int MinRank { get; set; }
 
     /// <summary>
-    /// The highest rank (worst position) that wins this prize. Example: 3 (Top 1-3)
+    ///     The highest rank (worst position) that wins this prize. Example: 3 (Top 1-3)
     /// </summary>
     public int MaxRank { get; set; }
 }

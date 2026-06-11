@@ -21,12 +21,12 @@ function getCategoryColor(title: string) {
     t.includes('javascript') ||
     t.includes('typescript')
   )
-    return { label: 'Phát triển', color: 'bg-indigo-500' }
+    return { label: 'Phát triển', color: 'bg-primary' }
   if (t.includes('design') || t.includes('figma') || t.includes('ui') || t.includes('ux') || t.includes('css'))
-    return { label: 'Thiết kế', color: 'bg-pink-500' }
+    return { label: 'Thiết kế', color: 'bg-primary/80' }
   if (t.includes('data') || t.includes('machine') || t.includes('python') || t.includes('ai') || t.includes('ml'))
-    return { label: 'Khoa học dữ liệu', color: 'bg-emerald-500' }
-  if (t.includes('market') || t.includes('business')) return { label: 'Kinh doanh', color: 'bg-amber-500' }
+    return { label: 'Khoa học dữ liệu', color: 'bg-primary/70' }
+  if (t.includes('market') || t.includes('business')) return { label: 'Kinh doanh', color: 'bg-primary/60' }
   return { label: 'Khóa học', color: 'bg-primary' }
 }
 
@@ -114,7 +114,7 @@ export function ContinueLearning() {
           return (
             <Card
               key={item.id}
-              className="group cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5 duration-200 overflow-hidden"
+              className="group cursor-pointer transition-shadow hover:shadow-md duration-200 overflow-hidden"
             >
               <div className="relative overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

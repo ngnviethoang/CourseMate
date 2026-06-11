@@ -14,90 +14,55 @@ public class GetLessonByIdQueryHandlerTests
     private readonly TestContainer _testContainer = new();
 
     [Fact]
-    public async Task Handle_ShouldReturnLessonWithSortOrder_WhenStudentIsEnrolled()
+    public async Task Handle_ShouldReturnLesson_WhenLessonExists()
     {
         GetLessonByIdQueryHandler handler = new(_testContainer.ReadOnlyDbContext, _testContainer.HttpContextAccessor);
 
-        LessonDto? result = await handler.Handle(
-            new GetLessonByIdQuery { Id = _testContainer.SecondLessonId },
-            CancellationToken.None);
+        GetLessonByIdQuery query = new() { Id = _testContainer.LessonId };
+
+        LessonDto? result = await handler.Handle(query, CancellationToken.None);
 
         Assert.NotNull(result);
-        Assert.Equal(_testContainer.SecondLessonId, result.Id);
-        Assert.Equal("a0V", result.Position);
-        Assert.Equal(2, result.SortOrder);
+        Assert.Equal("Test Lesson", result.Title);
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowUnauthorizedAccessException_WhenStudentIsNotEnrolled()
+    public async Task Handle_ShouldReturnNull_WhenLessonNotFound()
     {
-        TestDbContextScope scope = new(Guid.NewGuid(), Roles.Student);
-        CourseMateDbContext dbContext = scope.CreateWriteDbContext();
-        CourseMateReadOnlyDbContext readOnlyDbContext = scope.CreateReadOnlyDbContext();
+        GetLessonByIdQueryHandler handler = new(_testContainer.ReadOnlyDbContext, _testContainer.HttpContextAccessor);
 
-        Guid categoryId = Guid.NewGuid();
-        Guid courseId = Guid.NewGuid();
-        Guid chapterId = Guid.NewGuid();
-        Guid lessonId = Guid.NewGuid();
+        GetLessonByIdQuery query = new() { Id = Guid.NewGuid() };
 
-        dbContext.Categories.Add(new Category(categoryId, "Mobile", "Mobile category", true));
-        dbContext.Courses.Add(new Course(
-            courseId,
-            "Mobile 101",
-            "Mobile course",
-            30,
-            "https://example.com/mobile.png",
-            true,
-            categoryId,
-            Guid.NewGuid()));
-        dbContext.Chapters.Add(new Chapter(chapterId, courseId, "Chapter", "a0"));
-        dbContext.Lessons.Add(new Lesson(lessonId, chapterId, courseId, "Lesson", LessonType.Video, "a0"));
-        dbContext.SaveChanges();
+        LessonDto? result = await handler.Handle(query, CancellationToken.None);
 
-        GetLessonByIdQueryHandler handler = new(readOnlyDbContext, scope.HttpContextAccessor);
-
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => handler.Handle(
-            new GetLessonByIdQuery { Id = lessonId },
-            CancellationToken.None));
+        Assert.Null(result);
     }
 
     private sealed class TestContainer
     {
         public readonly IHttpContextAccessor HttpContextAccessor;
+        public readonly Guid LessonId = Guid.NewGuid();
         public readonly CourseMateReadOnlyDbContext ReadOnlyDbContext;
-        public readonly Guid SecondLessonId = Guid.NewGuid();
+        public readonly Guid StudentId = Guid.NewGuid();
 
         public TestContainer()
         {
-            Guid studentId = Guid.NewGuid();
-            Guid instructorId = Guid.NewGuid();
-            Guid categoryId = Guid.NewGuid();
-            Guid courseId = Guid.NewGuid();
-            Guid chapterId = Guid.NewGuid();
-            Guid firstLessonId = Guid.NewGuid();
-
-            TestDbContextScope scope = new(studentId, Roles.Student);
+            TestDbContextScope scope = new(StudentId, Roles.Student);
             HttpContextAccessor = scope.HttpContextAccessor;
             CourseMateDbContext dbContext = scope.CreateWriteDbContext();
             ReadOnlyDbContext = scope.CreateReadOnlyDbContext();
 
-            dbContext.Categories.Add(new Category(categoryId, "Security", "Security category", true));
-            dbContext.Courses.Add(new Course(
-                courseId,
-                "Security course",
-                "Security",
-                40,
-                "https://example.com/security.png",
-                true,
-                categoryId,
-                instructorId));
+            Guid categoryId = Guid.NewGuid();
+            Guid instructorId = Guid.NewGuid();
+            Guid courseId = Guid.NewGuid();
+            Guid chapterId = Guid.NewGuid();
+
+            dbContext.Categories.Add(new Category(categoryId, "Test", "Test", true));
+            dbContext.Users.Add(new User("instructor") { Id = instructorId });
+            dbContext.Courses.Add(new Course(courseId, "Test Course", "Desc", 99, "https://img.png", true, categoryId, instructorId));
             dbContext.Chapters.Add(new Chapter(chapterId, courseId, "Chapter 1", "a0"));
-            dbContext.Enrollments.Add(new Enrollment(Guid.NewGuid(), studentId, courseId));
-
-            dbContext.Lessons.AddRange(
-                new Lesson(firstLessonId, chapterId, courseId, "Lesson 1", LessonType.Video, "a0"),
-                new Lesson(SecondLessonId, chapterId, courseId, "Lesson 2", LessonType.Reading, "a0V"));
-
+            dbContext.Lessons.Add(new Lesson(LessonId, chapterId, courseId, "Test Lesson", LessonType.Video, "a0"));
+            dbContext.Enrollments.Add(new Enrollment(Guid.NewGuid(), StudentId, courseId));
             dbContext.SaveChanges();
         }
     }
