@@ -69,8 +69,8 @@ export function DataTable<T extends { id: string }>({
         heightClassName
       )}
     >
-      <div className="flex-1 min-w-0 overflow-x-auto overflow-y-auto">
-        <Table className="w-full min-w-full table-auto">
+      <div className="flex-1 min-w-0 overflow-auto">
+        <Table className="w-full table-auto">
           <TableHeader className="[&_tr]:border-b-0">
             <TableRow className="bg-muted/40 hover:bg-muted/40">
               {columns.map(col => (

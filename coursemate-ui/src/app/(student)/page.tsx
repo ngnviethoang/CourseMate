@@ -112,7 +112,7 @@ export default function CatalogPage() {
 
         {loading ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
+            {Array.from({ length: 12 }).map((_, i) => (
               <div
                 key={i}
                 className="animate-pulse overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm"

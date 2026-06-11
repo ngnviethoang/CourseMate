@@ -118,8 +118,8 @@ function CourseCard({ course, index }: CourseCardProps) {
             alt={course.title}
             className="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105"
             onError={e => {
-              ;(e.target as HTMLImageElement).style.display = 'none'
-              ;(e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden')
+              ; (e.target as HTMLImageElement).style.display = 'none'
+                ; (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden')
             }}
           />
         ) : null}
@@ -185,9 +185,8 @@ function CourseCard({ course, index }: CourseCardProps) {
 
         {/* Footer: price + action */}
         <div
-          className={`mt-3 flex items-center justify-between border-t pt-3 ${
-            course.isEnrollment ? 'border-emerald-200/60' : ''
-          }`}
+          className={`mt-3 flex items-center justify-between border-t pt-3 ${course.isEnrollment ? 'border-emerald-200/60' : ''
+            }`}
         >
           {/* Price / status label */}
           {course.isEnrollment ? (
@@ -204,11 +203,10 @@ function CourseCard({ course, index }: CourseCardProps) {
           <button
             onClick={handleAction}
             disabled={adding}
-            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all disabled:opacity-60 ${
-              course.isEnrollment
+            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all disabled:opacity-60 ${course.isEnrollment
                 ? 'bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500 hover:text-white'
                 : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'
-            }`}
+              }`}
           >
             {adding ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -287,7 +285,7 @@ export function RecommendedCourses({
   }, [pageIndex, searchQuery, selectedCategoryId, isLoggedIn, fetchCourses])
 
   const isRecommended = !searchQuery && !selectedCategoryId && isLoggedIn
-  const visibleCourses = isRecommended ? courses.filter(course => !course.isEnrollment) : courses
+  const visibleCourses = courses
   const title = searchQuery ? `Kết quả cho "${searchQuery}"` : isRecommended ? 'Gợi ý cho bạn' : 'Khám phá khoá học'
 
   // Build visible page numbers
@@ -361,11 +359,10 @@ export function RecommendedCourses({
                   <button
                     key={page}
                     onClick={() => setPageIndex(page)}
-                    className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${
-                      page === pageIndex
+                    className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${page === pageIndex
                         ? 'bg-primary text-primary-foreground shadow-md'
                         : 'border border-border bg-card shadow-sm hover:bg-accent'
-                    }`}
+                      }`}
                   >
                     {page}
                   </button>

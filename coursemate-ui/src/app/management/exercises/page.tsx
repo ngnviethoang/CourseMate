@@ -235,7 +235,7 @@ export default function ExercisesManagementPage() {
               <Plus className="h-4 w-4" /> Thêm bài tập
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-[500px]">
+          <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle>Tạo bài tập mới</DialogTitle>
               <DialogDescription>Điền các thông tin cơ bản trước khi thêm bộ kiểm thử và mã mẫu.</DialogDescription>
@@ -341,6 +341,7 @@ export default function ExercisesManagementPage() {
         data={items}
         loading={loading}
         onEdit={row => router.push(`/management/exercises/${row.id}`)}
+        onView={row => router.push(`/management/exercises/${row.id}`)}
         onDelete={setDeleteId}
         pagination={{
           pageIndex,

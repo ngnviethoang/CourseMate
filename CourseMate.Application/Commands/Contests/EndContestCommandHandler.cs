@@ -14,6 +14,7 @@ namespace CourseMate.Application.Commands.Contests;
 public class EndContestCommand : IRequest<ResultIdDto>
 {
     public Guid ContestId { get; set; }
+    public bool IsSystemTrigger { get; set; }
 }
 
 public sealed class EndContestCommandHandler : AbstractCommandHandler<EndContestCommand, ResultIdDto>
@@ -32,7 +33,7 @@ public sealed class EndContestCommandHandler : AbstractCommandHandler<EndContest
         }
 
         bool isAdmin = IsInRole(Roles.Admin);
-        if (!isAdmin && contest.CreatorId != CurrentUserId)
+        if (!request.IsSystemTrigger && !isAdmin && contest.CreatorId != CurrentUserId)
         {
             throw new UnauthorizedAccessException("You are not allowed to end this contest.");
         }
@@ -55,6 +56,13 @@ public sealed class EndContestCommandHandler : AbstractCommandHandler<EndContest
             List<ContestSubmission> allSubmissions = await DbContext.ContestSubmissions
                 .Where(s => s.ContestId == request.ContestId)
                 .ToListAsync(ct);
+
+            List<Guid> disqualifiedStudents = await DbContext.ContestRegistrations
+                .Where(r => r.ContestId == request.ContestId && r.IsDisqualified)
+                .Select(r => r.StudentId)
+                .ToListAsync(ct);
+
+            allSubmissions = allSubmissions.Where(s => !disqualifiedStudents.Contains(s.StudentId)).ToList();
 
             // Group by student, pick best score per exercise, sum totals
             List<(Guid StudentId, int TotalScore, float TotalRuntime, DateTimeOffset LastSubmit)> leaderboard = allSubmissions

@@ -287,7 +287,7 @@ export default function LessonsPage() {
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>{editing ? 'Chỉnh sửa bài học' : 'Tạo bài học mới'}</DialogTitle>
           </DialogHeader>
