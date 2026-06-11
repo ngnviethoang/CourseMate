@@ -21,7 +21,7 @@ public class CreateOrderCommandHandlerTests
         CreateOrderCommandHandler handler = new(_testContainer.DbContext, _testContainer.HttpContextAccessor);
         CreateOrderCommand request = new()
         {
-          CartItemIds = [_testContainer.CartItemAId, _testContainer.CartItemBId]
+            CartItemIds = [_testContainer.CartItemAId, _testContainer.CartItemBId]
         };
 
         ResultIdDto result = await handler.Handle(request, CancellationToken.None);
@@ -57,7 +57,7 @@ public class CreateOrderCommandHandlerTests
     [Fact]
     public async Task Handle_ShouldThrowEntityNotFoundException_WhenStudentHasNoCart()
     {
-        TestContainer testContainer = new(seedCart: false);
+        TestContainer testContainer = new(false);
         CreateOrderCommandHandler handler = new(testContainer.DbContext, testContainer.HttpContextAccessor);
         CreateOrderCommand request = new()
         {

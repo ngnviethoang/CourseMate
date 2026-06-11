@@ -1,4 +1,3 @@
-using CourseMate.Application.Commands.Chapters;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Persistent;

@@ -9,7 +9,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-
 namespace CourseMate.API.Controllers;
 
 [ApiController]
@@ -141,7 +140,7 @@ public class ContestController : ControllerBase
         ContestViolationsDto? result = await _mediator.Send(new GetContestViolationsQuery
         {
             ContestId = id,
-            IncludeAll = true  // Show all participants so instructor can see the full list
+            IncludeAll = true // Show all participants so instructor can see the full list
         });
         return Ok(result);
     }

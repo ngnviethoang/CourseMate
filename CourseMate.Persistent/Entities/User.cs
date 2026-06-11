@@ -19,11 +19,11 @@ public class User : IdentityUser<Guid>, IAuditable, ISoftDelete
     [Timestamp]
     public uint RowVersion { get; set; }
 
+    public bool IsApproved { get; set; } = true;
+
     public DateTimeOffset CreationTime { get; set; }
 
     public DateTimeOffset? LastModificationTime { get; set; }
 
     public bool IsDeleted { get; set; }
-
-    public bool IsApproved { get; set; } = true;
 }

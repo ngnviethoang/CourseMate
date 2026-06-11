@@ -7,4 +7,4 @@ public enum ContestStatus
     Ongoing,
     Ended,
     Cancelled
-}
+}

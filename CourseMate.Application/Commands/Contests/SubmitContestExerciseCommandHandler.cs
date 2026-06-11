@@ -1,3 +1,4 @@
+using CourseMate.Application.Services.CodeRunnerServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Commons;
@@ -6,7 +7,6 @@ using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
-using CourseMate.Application.Services.CodeRunnerServices;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -64,7 +64,7 @@ public sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandler
 
         if (contest != null && registration.JoinTime.HasValue)
         {
-            var userEndTime = registration.JoinTime.Value.AddMinutes(contest.DurationInMinutes);
+            DateTimeOffset userEndTime = registration.JoinTime.Value.AddMinutes(contest.DurationInMinutes);
             // Allow a small grace period (10 seconds) for network latency
             if (DateTimeOffset.UtcNow > userEndTime.AddSeconds(10))
             {
@@ -82,7 +82,7 @@ public sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandler
         }
 
         // Fetch test cases for this exercise
-        var testCases = await DbContext.ExerciseTestCases
+        List<ExerciseTestCase> testCases = await DbContext.ExerciseTestCases
             .Where(x => x.ExerciseId == request.ExerciseId)
             .OrderBy(x => x.Order)
             .ToListAsync(ct);
@@ -90,28 +90,38 @@ public sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandler
         int passedCount = 0;
         float maxTime = 0;
         int maxMemory = 0;
-        var testResults = new List<TestResultDto>();
+        List<TestResultDto> testResults = new();
 
-        foreach (var tc in testCases)
+        foreach (ExerciseTestCase tc in testCases)
         {
-            var runResponse = await _codeRunnerService.RunAsync(request.Payload.Code, request.Payload.Language, tc.Input, ct);
-            
+            RunCodeResponse runResponse = await _codeRunnerService.RunAsync(request.Payload.Code, request.Payload.Language, tc.Input, ct);
+
             string actual = (runResponse.Output ?? string.Empty).Trim();
             string expected = (tc.ExpectedOutput ?? string.Empty).Trim();
             bool isPassed = !string.IsNullOrEmpty(actual) && actual == expected && string.IsNullOrEmpty(runResponse.Error);
 
-            if (isPassed) passedCount++;
+            if (isPassed)
+            {
+                passedCount++;
+            }
 
             // Accumulate max time and memory
-            if (float.TryParse(runResponse.Time, out float time) && time > maxTime) maxTime = time;
-            if (int.TryParse(runResponse.Memory, out int memory) && memory > maxMemory) maxMemory = memory;
+            if (float.TryParse(runResponse.Time, out float time) && time > maxTime)
+            {
+                maxTime = time;
+            }
+
+            if (int.TryParse(runResponse.Memory, out int memory) && memory > maxMemory)
+            {
+                maxMemory = memory;
+            }
 
             testResults.Add(new TestResultDto
             {
                 Passed = isPassed,
                 IsHidden = tc.IsHidden,
                 ExpectedOutput = tc.ExpectedOutput ?? string.Empty,
-                ActualOutput = !string.IsNullOrEmpty(runResponse.Error) ? runResponse.Error : (runResponse.Output ?? string.Empty),
+                ActualOutput = !string.IsNullOrEmpty(runResponse.Error) ? runResponse.Error : runResponse.Output ?? string.Empty,
                 Description = tc.Description ?? string.Empty
             });
         }
@@ -134,7 +144,7 @@ public sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandler
             maxTime,
             maxMemory,
             DateTimeOffset.UtcNow,
-            true 
+            true
         );
 
         await DbContext.ContestSubmissions.AddAsync(submission, ct);
