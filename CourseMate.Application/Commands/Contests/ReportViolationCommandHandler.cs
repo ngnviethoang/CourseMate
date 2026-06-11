@@ -14,7 +14,7 @@ namespace CourseMate.Application.Commands.Contests;
 public class ReportViolationCommand : IRequest<ViolationResultDto>
 {
     public Guid ContestId { get; set; }
-    public Guid UserId { get; set; }   // must be set explicitly by caller (Hub has no HttpContext)
+    public Guid UserId { get; set; } // must be set explicitly by caller (Hub has no HttpContext)
     public ViolationType ViolationType { get; set; }
     public string Details { get; set; } = string.Empty;
     public DateTimeOffset Timestamp { get; set; }
@@ -72,7 +72,7 @@ public sealed class ReportViolationCommandHandler : AbstractCommandHandler<Repor
         // Deduplicate rapid-fire violations of the same type within 3 seconds
         bool isDuplicate = await DbContext.AntiCheatViolations
             .AnyAsync(v => v.ContestId == request.ContestId
-                           && v.StudentId == studentId           // ← fixed: use resolved studentId
+                           && v.StudentId == studentId // ← fixed: use resolved studentId
                            && v.ViolationType == request.ViolationType
                            && v.OccurredAt > DateTimeOffset.UtcNow.AddSeconds(-3), ct);
 

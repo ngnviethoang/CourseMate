@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using CourseMate.API.Hubs;
 using CourseMate.API.Middlewares;
 using CourseMate.API.Services;
@@ -104,7 +105,7 @@ try
     {
         // FE sends enum values as strings (e.g. "TabSwitch"). Without this converter,
         // System.Text.Json (used by SignalR) cannot deserialize them into ViolationType enum.
-        options.PayloadSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+        options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
     builder.Services.AddTransient<INotificationService, NotificationService>();
     builder.Services.AddControllers().AddNewtonsoftJson(options =>

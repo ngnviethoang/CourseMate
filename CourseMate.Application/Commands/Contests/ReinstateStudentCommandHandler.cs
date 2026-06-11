@@ -14,6 +14,7 @@ public class ReinstateStudentCommand : IRequest<ResultIdDto>
 {
     public Guid ContestId { get; set; }
     public Guid StudentId { get; set; }
+
     /// <summary>Explicitly provided caller ID for Hub invocations (HttpContext is null for SignalR).</summary>
     public Guid CallerUserId { get; set; }
 }

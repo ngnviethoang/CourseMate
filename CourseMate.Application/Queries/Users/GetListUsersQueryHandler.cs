@@ -34,10 +34,10 @@ public sealed class GetListUsersQueryHandler : AbstractQueryHandler<GetListUsers
         if (!string.IsNullOrWhiteSpace(request.Role))
         {
             query = from user in query
-                    join userRole in DbContext.UserRoles on user.Id equals userRole.UserId
-                    join role in DbContext.Roles on userRole.RoleId equals role.Id
-                    where role.Name == request.Role
-                    select user;
+                join userRole in DbContext.UserRoles on user.Id equals userRole.UserId
+                join role in DbContext.Roles on userRole.RoleId equals role.Id
+                where role.Name == request.Role
+                select user;
         }
 
         query = request.Sorting switch

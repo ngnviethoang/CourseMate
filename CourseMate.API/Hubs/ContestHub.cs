@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.Json;
 using CourseMate.Application.Commands.Contests;
 using CourseMate.Contracts.DTOs.AntiCheat;
 using MediatR;
@@ -58,7 +59,7 @@ public class ContestHub : Hub
         }
 
         // Build enriched details JSON (preserves original details + adds metadata)
-        string enrichedDetails = System.Text.Json.JsonSerializer.Serialize(new
+        string enrichedDetails = JsonSerializer.Serialize(new
         {
             original = request.Details,
             ipAddress,
@@ -69,7 +70,7 @@ public class ContestHub : Hub
         ReportViolationCommand command = new()
         {
             ContestId = request.ContestId,
-            UserId = userId,          // ← critical: Hub resolves user from Context.User (not HttpContext)
+            UserId = userId, // ← critical: Hub resolves user from Context.User (not HttpContext)
             ViolationType = request.ViolationType,
             Details = enrichedDetails,
             Timestamp = request.Timestamp
@@ -126,7 +127,7 @@ public class ContestHub : Hub
             ContestId = contestId,
             StudentId = studentId,
             Reason = reason,
-            CallerUserId = GetCurrentUserId()  // Hub has no HttpContext; pass explicitly
+            CallerUserId = GetCurrentUserId() // Hub has no HttpContext; pass explicitly
         };
 
         await _mediator.Send(command);
@@ -158,7 +159,7 @@ public class ContestHub : Hub
         {
             ContestId = contestId,
             StudentId = studentId,
-            CallerUserId = GetCurrentUserId()  // Hub has no HttpContext; pass explicitly
+            CallerUserId = GetCurrentUserId() // Hub has no HttpContext; pass explicitly
         };
 
         await _mediator.Send(command);

@@ -3,6 +3,7 @@ using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -132,7 +133,7 @@ public sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourseBy
         }
 
         // Calculate AverageRating and TotalReviews
-        var reviewsQuery = DbContext.Reviews.Where(r => r.CourseId == request.Id);
+        IQueryable<Review> reviewsQuery = DbContext.Reviews.Where(r => r.CourseId == request.Id);
         int totalReviews = await reviewsQuery.CountAsync(ct);
         if (totalReviews > 0)
         {

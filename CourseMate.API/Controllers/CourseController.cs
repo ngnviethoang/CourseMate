@@ -1,10 +1,12 @@
 using CourseMate.Application.Commands.Chapters;
 using CourseMate.Application.Commands.Courses;
 using CourseMate.Application.Commands.Lessons;
+using CourseMate.Application.Commands.Reviews;
 using CourseMate.Application.Events;
 using CourseMate.Application.Queries.Chapters;
 using CourseMate.Application.Queries.Courses;
 using CourseMate.Application.Queries.Lessons;
+using CourseMate.Application.Queries.Reviews;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
@@ -300,20 +302,21 @@ public class CourseController : ControllerBase
     }
 
     #endregion
+
     #region Review APIs
 
     [HttpGet("courses/{id:guid}/reviews")]
     [AllowAnonymous]
-    public async Task<ActionResult> GetCourseReviewsAsync(Guid id, [FromQuery] CourseMate.Application.Queries.Reviews.GetCourseReviewsQuery request)
+    public async Task<ActionResult> GetCourseReviewsAsync(Guid id, [FromQuery] GetCourseReviewsQuery request)
     {
         request.CourseId = id;
-        PagedDto<CourseMate.Contracts.DTOs.ReviewDto> result = await _mediator.Send(request);
+        PagedDto<ReviewDto> result = await _mediator.Send(request);
         return Ok(result);
     }
 
     [HttpPost("courses/{id:guid}/reviews")]
     [Authorize(Roles = Roles.Student)]
-    public async Task<ActionResult> ReviewCourseAsync(Guid id, [FromBody] CourseMate.Application.Commands.Reviews.ReviewCourseCommand request)
+    public async Task<ActionResult> ReviewCourseAsync(Guid id, [FromBody] ReviewCourseCommand request)
     {
         request.CourseId = id;
         Guid resultId = await _mediator.Send(request);
