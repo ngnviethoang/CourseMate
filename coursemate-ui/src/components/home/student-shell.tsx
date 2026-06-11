@@ -22,7 +22,7 @@ export function StudentShell({
   onClearSearch
 }: StudentShellProps) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" suppressHydrationWarning>
       <StudentHeader searchValue={searchValue} onSearchChange={onSearchChange} onClearSearch={onClearSearch} />
       <main className={cn('mx-auto w-full max-w-7xl px-4 py-4', mainClassName)}>{children}</main>
       <footer

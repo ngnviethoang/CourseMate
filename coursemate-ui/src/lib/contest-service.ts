@@ -28,7 +28,28 @@ export interface ContestDto {
   exerciseCount: number
   participantCount: number
   isRegistered?: boolean
+  hasSubmitted?: boolean
   exercises: ContestExerciseDto[]
+  prizes: ContestPrizeDto[]
+}
+
+export interface ContestPrizeDto {
+  id: string
+  minRank: number
+  maxRank: number
+  courseId: string
+  courseTitle: string
+  courseImageUrl: string
+  coursePrice: number
+  courseInstructorName: string
+}
+
+export interface PrizableCourseDto {
+  id: string
+  title: string
+  imageUrl: string
+  price: number
+  instructorName: string
 }
 
 export interface ContestWorkspaceDto {
@@ -153,5 +174,16 @@ export const contestService = {
   },
   disqualifyStudent: (id: string, studentId: string, reason: string) =>
     api.post(`/api/contests/${id}/disqualify/${studentId}`, { reason }),
-  reinstateStudent: (id: string, studentId: string) => api.post(`/api/contests/${id}/reinstate/${studentId}`, {})
+  reinstateStudent: (id: string, studentId: string) => api.post(`/api/contests/${id}/reinstate/${studentId}`, {}),
+
+  // Prize APIs
+  getPrizableCourses: (id: string) => api.get<PrizableCourseDto[]>(`/api/contests/${id}/prizable-courses`),
+  addPrize: (id: string, minRank: number, maxRank: number, courseId: string) =>
+    api.post<{ id: string }>(`/api/contests/${id}/prizes`, { minRank, maxRank, courseId }),
+  removePrize: (id: string, prizeId: string) =>
+    api.delete<void>(`/api/contests/${id}/prizes/${prizeId}`),
+
+  // Admin/Instructor contest lifecycle
+  endContest: (id: string) => api.post<{ id: string }>(`/api/contests/${id}/end`, {}),
+  cancelContest: (id: string) => api.post<{ id: string }>(`/api/contests/${id}/cancel`, {})
 }

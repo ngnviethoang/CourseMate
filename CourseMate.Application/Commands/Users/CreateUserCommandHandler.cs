@@ -46,8 +46,8 @@ public sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUser
 
     public override async Task<ResultIdDto> Handle(CreateUserCommand request, CancellationToken ct)
     {
-        request.Role = request.Role.Trim().ToLowerInvariant();
-        if (await _roleManager.RoleExistsAsync(request.Role))
+        request.Role = request.Role.Trim();
+        if (!await _roleManager.RoleExistsAsync(request.Role))
         {
             throw new BusinessException(ErrorCode.RoleNotExists, string.Format("{0} role does not exist.", request.Role));
         }

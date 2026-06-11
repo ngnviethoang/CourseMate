@@ -9,7 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Users;
 
-public class GetListUsersQuery : GetListQuery<UserDto>;
+public class GetListUsersQuery : GetListQuery<UserDto>
+{
+    public string? Role { get; set; }
+}
 
 public sealed class GetListUsersQueryHandler : AbstractQueryHandler<GetListUsersQuery, PagedDto<UserDto>>
 {
@@ -27,6 +30,15 @@ public sealed class GetListUsersQueryHandler : AbstractQueryHandler<GetListUsers
             .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x =>
                 (x.UserName != null && EF.Functions.ILike(x.UserName, $"%{request.Filter}%")) ||
                 (x.Email != null && EF.Functions.ILike(x.Email, $"%{request.Filter}%")));
+
+        if (!string.IsNullOrWhiteSpace(request.Role))
+        {
+            query = from user in query
+                    join userRole in DbContext.UserRoles on user.Id equals userRole.UserId
+                    join role in DbContext.Roles on userRole.RoleId equals role.Id
+                    where role.Name == request.Role
+                    select user;
+        }
 
         query = request.Sorting switch
         {
@@ -52,7 +64,9 @@ public sealed class GetListUsersQueryHandler : AbstractQueryHandler<GetListUsers
                 Email = x.Email,
                 PhoneNumber = x.PhoneNumber,
                 CreationTime = x.CreationTime,
-                LastModificationTime = x.LastModificationTime
+                LastModificationTime = x.LastModificationTime,
+                IsApproved = x.IsApproved,
+                IsLockedOut = x.LockoutEnd.HasValue && x.LockoutEnd.Value > DateTimeOffset.UtcNow
             })
             .ToListAsync(ct);
 

@@ -33,6 +33,11 @@ public sealed class CheckInContestCommandHandler : AbstractCommandHandler<CheckI
             throw new BusinessException(ErrorCode.Unknown, "You are not registered for this contest.");
         }
 
+        if (registration.SubmitTime.HasValue)
+        {
+            throw new BusinessException(ErrorCode.Unknown, "You have already submitted and finished this contest.");
+        }
+
         if (registration.JoinTime.HasValue)
         {
             return new ResultIdDto { Id = registration.Id };

@@ -131,6 +131,16 @@ public sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourseBy
             result.ProgressPercentage = 0;
         }
 
+        // Calculate AverageRating and TotalReviews
+        var reviewsQuery = DbContext.Reviews.Where(r => r.CourseId == request.Id);
+        int totalReviews = await reviewsQuery.CountAsync(ct);
+        if (totalReviews > 0)
+        {
+            double averageRating = await reviewsQuery.AverageAsync(r => r.Rating, ct);
+            result.AverageRating = Math.Round(averageRating, 1);
+            result.TotalReviews = totalReviews;
+        }
+
         return result;
     }
 

@@ -24,4 +24,6 @@ public class User : IdentityUser<Guid>, IAuditable, ISoftDelete
     public DateTimeOffset? LastModificationTime { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    public bool IsApproved { get; set; } = true;
 }

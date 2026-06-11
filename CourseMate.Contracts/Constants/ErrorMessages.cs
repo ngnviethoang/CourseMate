@@ -28,5 +28,6 @@ public enum ErrorCode
     InvalidResetToken,
     GoogleLoginFailed,
     GoogleLoginCancelled,
-    InvalidOAuthState
+    InvalidOAuthState,
+    AccountPendingApproval
 }

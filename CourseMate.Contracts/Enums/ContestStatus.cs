@@ -5,5 +5,6 @@ public enum ContestStatus
     Draft,
     Upcoming,
     Ongoing,
-    Ended
-}
+    Ended,
+    Cancelled
+}

@@ -300,4 +300,25 @@ public class CourseController : ControllerBase
     }
 
     #endregion
+    #region Review APIs
+
+    [HttpGet("courses/{id:guid}/reviews")]
+    [AllowAnonymous]
+    public async Task<ActionResult> GetCourseReviewsAsync(Guid id, [FromQuery] CourseMate.Application.Queries.Reviews.GetCourseReviewsQuery request)
+    {
+        request.CourseId = id;
+        PagedDto<CourseMate.Contracts.DTOs.ReviewDto> result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
+    [HttpPost("courses/{id:guid}/reviews")]
+    [Authorize(Roles = Roles.Student)]
+    public async Task<ActionResult> ReviewCourseAsync(Guid id, [FromBody] CourseMate.Application.Commands.Reviews.ReviewCourseCommand request)
+    {
+        request.CourseId = id;
+        Guid resultId = await _mediator.Send(request);
+        return Ok(new ResultIdDto { Id = resultId });
+    }
+
+    #endregion
 }

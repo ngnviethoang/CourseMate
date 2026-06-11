@@ -1,8 +1,9 @@
 'use client'
 
-import { use, useState, useEffect, useCallback } from 'react'
+import { use, useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { HubConnectionBuilder, HubConnection, LogLevel } from '@microsoft/signalr'
 import {
   ArrowLeft,
   Shield,
@@ -30,6 +31,9 @@ import { contestService, ContestViolationsDto, StudentViolationSummaryDto } from
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { vi } from 'date-fns/locale'
+import { getAccessToken } from '@/lib/auth-token.util'
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
 
 // ─── Violation type labels ────────────────────────────────────────────────────
 const VIOLATION_LABELS: Record<string, { label: string; color: string; bg: string }> = {
@@ -113,6 +117,8 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [dqModal, setDqModal] = useState<{ studentId: string; studentName: string } | null>(null)
   const [dqReason, setDqReason] = useState('')
+  const connectionRef = useRef<HubConnection | null>(null)
+  const [connectionState, setConnectionState] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -129,6 +135,144 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
   useEffect(() => {
     fetchData()
   }, [fetchData])
+
+  // Real-time updates via SignalR
+  useEffect(() => {
+    const token = getAccessToken()
+    if (!token) return
+
+    const connection = new HubConnectionBuilder()
+      .withUrl(`${BASE_URL}/hubs/contest?access_token=${token}`)
+      .withAutomaticReconnect()
+      .configureLogging(LogLevel.Warning)
+      .build()
+
+    connectionRef.current = connection
+
+    connection.onreconnecting(() => setConnectionState('connecting'))
+    connection.onreconnected(() => setConnectionState('connected'))
+    connection.onclose(() => setConnectionState('disconnected'))
+
+    connection.on('StudentViolation', (event: any) => {
+      setData(prev => {
+        if (!prev) return prev
+        const students = [...prev.students]
+        const idx = students.findIndex(s => s.studentId === event.studentId)
+
+        if (idx >= 0) {
+          students[idx] = {
+            ...students[idx],
+            violationCount: event.violationCount,
+            isDisqualified: event.isDisqualified,
+            violations: [
+              {
+                id: crypto.randomUUID(),
+                violationType: event.violationType,
+                occurredAt: event.timestamp,
+                ipAddress: event.ipAddress,
+                userAgent: event.userAgent,
+                deviceFingerprint: event.deviceFingerprint
+              },
+              ...students[idx].violations
+            ]
+          }
+        } else {
+          students.unshift({
+            studentId: event.studentId,
+            studentName: event.studentName,
+            violationCount: event.violationCount,
+            isDisqualified: event.isDisqualified,
+            violations: [
+              {
+                id: crypto.randomUUID(),
+                violationType: event.violationType,
+                occurredAt: event.timestamp,
+                ipAddress: event.ipAddress,
+                userAgent: event.userAgent,
+                deviceFingerprint: event.deviceFingerprint
+              }
+            ]
+          })
+        }
+        
+        // Push the active violator to the top and sort by violationCount
+        students.sort((a, b) => b.violationCount - a.violationCount)
+
+        return { ...prev, students }
+      })
+
+      const VIOLATION_TYPE_NAMES = [
+        'TabSwitch',
+        'WindowBlur',
+        'CopyPaste',
+        'RightClick',
+        'DevToolsOpen',
+        'ScreenResize',
+        'MultipleMonitors',
+        'ExternalPaste'
+      ]
+      const normalizedType =
+        typeof event.violationType === 'number'
+          ? (VIOLATION_TYPE_NAMES[event.violationType] ?? String(event.violationType))
+          : String(event.violationType)
+
+      const meta = VIOLATION_LABELS[normalizedType] ?? { label: normalizedType }
+
+      toast.warning(`🚨 ${event.studentName}: ${meta.label} (${event.violationCount}/${event.maxViolations})`, {
+        duration: 5000,
+        action: {
+          label: 'Xem',
+          onClick: () => {
+             setExpandedId(event.studentId)
+             setTimeout(() => {
+               document.getElementById(`student-row-${event.studentId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+             }, 100)
+          }
+        }
+      })
+    })
+
+    connection.on('StudentDisqualified', (event: any) => {
+      setData(prev => {
+        if (!prev) return prev
+        const students = prev.students.map(s =>
+          s.studentId === event.studentId
+            ? { ...s, isDisqualified: true, disqualifiedAt: event.disqualifiedAt, disqualifiedReason: event.reason }
+            : s
+        )
+        return { ...prev, students }
+      })
+      toast.error(`Sinh viên ${event.studentName || 'đã'} bị loại: ${event.reason}`)
+    })
+
+    connection.on('StudentReinstated', (event: any) => {
+      setData(prev => {
+        if (!prev) return prev
+        const students = prev.students.map(s =>
+          s.studentId === event.studentId
+            ? { ...s, isDisqualified: false, disqualifiedAt: undefined, disqualifiedReason: undefined }
+            : s
+        )
+        return { ...prev, students }
+      })
+      toast.success(`Sinh viên đã được phục hồi`)
+    })
+
+    connection
+      .start()
+      .then(() => {
+        setConnectionState('connected')
+        return connection.invoke('JoinContestMonitor', id)
+      })
+      .catch(err => {
+        setConnectionState('disconnected')
+        console.error('Failed to connect violations realtime:', err)
+      })
+
+    return () => {
+      connection.stop().catch(() => {})
+    }
+  }, [id])
 
   // ── Derived data ────────────────────────────────────────────────────────────
   const students = data?.students ?? []
@@ -166,7 +310,11 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
     }
     setActionLoading(dqModal.studentId)
     try {
-      await contestService.disqualifyStudent(id, dqModal.studentId, dqReason)
+      if (connectionRef.current?.state === 'Connected') {
+        await connectionRef.current.invoke('DisqualifyStudent', id, dqModal.studentId, dqReason)
+      } else {
+        await contestService.disqualifyStudent(id, dqModal.studentId, dqReason)
+      }
       toast.success(`Đã loại ${dqModal.studentName}`)
       setDqModal(null)
       setDqReason('')
@@ -182,7 +330,11 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
     if (!confirm(`Phục hồi ${studentName} tham gia cuộc thi?`)) return
     setActionLoading(studentId)
     try {
-      await contestService.reinstateStudent(id, studentId)
+      if (connectionRef.current?.state === 'Connected') {
+        await connectionRef.current.invoke('ReinstateStudent', id, studentId)
+      } else {
+        await contestService.reinstateStudent(id, studentId)
+      }
       toast.success(`Đã phục hồi ${studentName}`)
       fetchData()
     } catch {
@@ -246,6 +398,30 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
           </div>
 
           <div className="ml-auto flex items-center gap-2 flex-wrap">
+            <div
+              className={`flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full border ${
+                connectionState === 'connected'
+                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                  : connectionState === 'connecting'
+                    ? 'bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400'
+                    : 'bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400'
+              }`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  connectionState === 'connected'
+                    ? 'bg-emerald-500 animate-pulse'
+                    : connectionState === 'connecting'
+                      ? 'bg-amber-500 animate-pulse'
+                      : 'bg-red-500'
+                }`}
+              />
+              {connectionState === 'connected'
+                ? 'Realtime'
+                : connectionState === 'connecting'
+                  ? 'Đang kết nối...'
+                  : 'Mất kết nối'}
+            </div>
             <Link
               href={`/management/contests/${id}/monitor`}
               className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors"
@@ -391,7 +567,7 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
             </div>
 
             {filtered.map(student => (
-              <div key={student.studentId}>
+              <div key={student.studentId} id={`student-row-${student.studentId}`}>
                 {/* ── Row ── */}
                 <div className="px-6 py-4 grid grid-cols-1 grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 items-center hover:bg-muted/20 transition-colors">
                   {/* Name + expand toggle */}
