@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { ContinueLearning } from '@/components/home/continue-learning'
 import { CategoryDropdown } from '@/components/home/category-dropdown'
 import { RecommendedCourses } from '@/components/home/recommended-courses'
+import { CourseRecommendations } from '@/components/(student)/recommendations/course-recommendations'
 import { BannerSlider } from '@/components/home/banner-slider'
 import { buttonVariants } from '@/components/ui/button'
 import { StudentShell } from '@/components/home/student-shell'
@@ -49,6 +50,9 @@ export default function Home() {
     >
       <BannerSlider />
       {!hasActiveFilter && isLoggedIn && <ContinueLearning />}
+      {!hasActiveFilter && (
+        <CourseRecommendations variant={isLoggedIn ? 'for-me' : 'trending'} />
+      )}
 
       <RecommendedCourses
         searchQuery={searchQuery}

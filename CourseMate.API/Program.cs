@@ -4,6 +4,7 @@ using CourseMate.API.Hubs;
 using CourseMate.API.Middlewares;
 using CourseMate.API.Services;
 using CourseMate.Application;
+using CourseMate.Application.BackgroundJobs;
 using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Options;
@@ -46,6 +47,7 @@ try
     builder.Services.Configure<CorsOptions>(configuration.GetSection("CORS"));
     builder.Services.Configure<SmtpOptions>(configuration.GetSection("Smtp"));
     builder.Services.Configure<GoogleAuthOptions>(configuration.GetSection("Authentication:Google"));
+    builder.Services.Configure<RecommendationOptions>(configuration.GetSection("Recommendation"));
     builder.Services.AddHttpClient();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<HttpLoggingMiddleware>();
@@ -75,7 +77,7 @@ try
                 {
                     StringValues accessToken = context.Request.Query["access_token"];
                     PathString path = context.HttpContext.Request.Path;
-                    if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/hubs/notification") || path.StartsWithSegments("/hubs/contest")))
+                    if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/hubs/notification") || path.StartsWithSegments("/hubs/contest") || path.StartsWithSegments("/hubs/chat")))
                     {
                         context.Token = accessToken;
                     }
@@ -179,7 +181,16 @@ try
     app.MapControllers();
     app.MapHub<NotificationHub>("/hubs/notification").RequireCors("SignalRHubs");
     app.MapHub<ContestHub>("/hubs/contest").RequireCors("SignalRHubs");
+    app.MapHub<ChatHub>("/hubs/chat").RequireCors("SignalRHubs");
     app.MapHangfireDashboard();
+
+    RecurringJob.AddOrUpdate<BuildCourseSimilarityJob>(
+        "build-course-similarity", job => job.ExecuteAsync(CancellationToken.None), Cron.Daily);
+    RecurringJob.AddOrUpdate<BuildCoOccurrenceJob>(
+        "build-course-cooccurrence", job => job.ExecuteAsync(CancellationToken.None), Cron.Daily);
+    RecurringJob.AddOrUpdate<BuildUserRecommendationsJob>(
+        "build-user-recommendations", job => job.ExecuteAsync(CancellationToken.None), Cron.Daily);
+
     Log.Information("Starting web host");
     await app.RunAsync();
 }

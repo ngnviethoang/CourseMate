@@ -9,4 +9,6 @@ public interface IAiService
     Task<string> SearchAsync(string input, CancellationToken ct);
 
     Task<string> GenerateContentAsync(string input, LessonMaterialPromptType promptType, CancellationToken ct);
+
+    Task<string> ChatAsync(IReadOnlyList<ChatTurn> history, string retrievedContext, string question, CancellationToken ct);
 }

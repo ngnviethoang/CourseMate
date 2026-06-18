@@ -82,6 +82,33 @@ public class OllamaService : IAiService
         }
     }
 
+    public async Task<string> ChatAsync(IReadOnlyList<ChatTurn> history, string retrievedContext, string question, CancellationToken ct)
+    {
+        string historyText = string.Join("\n", history.Select(turn => $"{turn.Role}: {turn.Content}"));
+        string prompt = PromptBuilder.BuildChatPrompt(retrievedContext, historyText, question);
+        try
+        {
+            IChatClient chatClient = _ollamaApiClient;
+            ChatResponse response = await chatClient.GetResponseAsync(prompt, new ChatOptions
+            {
+                ModelId = OllamaModels.Llama3,
+                Temperature = 0.2f,
+                MaxOutputTokens = 2048
+            }, ct);
+            return response.Text ?? string.Empty;
+        }
+        catch (OllamaException ex)
+        {
+            _logger.LogError(ex, "Ollama chat generation failed. Model={ModelId}", OllamaModels.Llama3);
+            throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ollama chat generation failed unexpectedly. Model={ModelId}", OllamaModels.Llama3);
+            throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex);
+        }
+    }
+
     public async Task<string> GenerateContentAsync(string input, LessonMaterialPromptType promptType, CancellationToken ct)
     {
         string prompt = promptType == LessonMaterialPromptType.Reading

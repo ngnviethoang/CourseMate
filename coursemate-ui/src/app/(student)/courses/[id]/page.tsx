@@ -26,6 +26,7 @@ import { LessonType, StudentCourseDetailDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 import { CourseReviews } from './course-reviews'
+import { CourseRecommendations } from '@/components/(student)/recommendations/course-recommendations'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const lessonTypeLabel: Record<LessonType, string> = {
@@ -477,6 +478,10 @@ export default function CourseDetailPage() {
               </section>
             </TabsContent>
           </Tabs>
+
+          <div className="mt-12">
+            <CourseRecommendations variant="similar" courseId={course.id} />
+          </div>
         </div>
       )}
     </div>
