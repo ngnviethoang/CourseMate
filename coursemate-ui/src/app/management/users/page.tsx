@@ -158,6 +158,7 @@ export default function UsersPage() {
         sorting={sorting}
         onSort={setSorting}
         onEdit={openEdit}
+        onView={openEdit}
         onDelete={setDeleteId}
         pagination={{
           pageIndex,

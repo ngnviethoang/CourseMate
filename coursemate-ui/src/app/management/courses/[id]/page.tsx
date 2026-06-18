@@ -703,7 +703,7 @@ export default function CourseDetailPage() {
       </div>
 
       <Dialog open={chapterDialog} onOpenChange={setChapterDialog}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>{editingChapter ? 'Chỉnh sửa chương' : 'Tạo chương mới'}</DialogTitle>
           </DialogHeader>
@@ -746,7 +746,7 @@ export default function CourseDetailPage() {
       </Dialog>
 
       <Dialog open={lessonDialog} onOpenChange={setLessonDialog}>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="sm:max-w-xl">
           <DialogHeader>
             <DialogTitle>{editingLesson ? 'Chỉnh sửa bài học' : 'Tạo bài học mới'}</DialogTitle>
           </DialogHeader>

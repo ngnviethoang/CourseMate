@@ -170,6 +170,7 @@ export default function CategoriesPage() {
         sorting={sorting}
         onSort={setSorting}
         onEdit={openEdit}
+        onView={openEdit}
         onDelete={setDeleteId}
         pagination={{
           pageIndex,

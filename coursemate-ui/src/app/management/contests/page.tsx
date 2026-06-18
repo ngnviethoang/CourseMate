@@ -188,7 +188,7 @@ export default function ContestsManagementPage() {
               <Plus className="h-4 w-4" /> Tạo cuộc thi
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-[500px]">
+          <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle>Tạo cuộc thi mới</DialogTitle>
               <DialogDescription>
@@ -286,6 +286,7 @@ export default function ContestsManagementPage() {
         data={items}
         loading={loading}
         onEdit={row => router.push(`/management/contests/${row.id}`)}
+        onView={row => router.push(`/management/contests/${row.id}`)}
         pagination={{
           pageIndex,
           pageSize,

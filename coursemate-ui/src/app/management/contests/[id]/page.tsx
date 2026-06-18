@@ -12,7 +12,7 @@ import {
   Layout,
   Settings,
   Users,
-  Calendar,
+  Calendar as CalendarIcon,
   Clock,
   Shield,
   Globe,
@@ -31,6 +31,9 @@ import { api } from '@/lib/api-client'
 import { format } from 'date-fns'
 import Link from 'next/link'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Calendar } from '@/components/ui/calendar'
+import { cn } from '@/lib/utils'
 
 const CONTEST_STATUS_LABELS: Record<string, string> = {
   Draft: 'Bản nháp',
@@ -183,6 +186,17 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
     }
   }
 
+  const handleStartContest = async () => {
+    if (!confirm('Bạn có chắc chắn muốn BẮT ĐẦU cuộc thi này ngay bây giờ? Thí sinh sẽ có thể tham gia làm bài ngay.')) return
+    try {
+      await contestService.update(id, { ...contest, status: 'Ongoing' })
+      toast.success('Đã bắt đầu cuộc thi')
+      fetchContest()
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Lỗi khi bắt đầu cuộc thi')
+    }
+  }
+
   const handleCancelContest = async () => {
     if (!confirm('Bạn có chắc chắn muốn HỦY cuộc thi này? Sẽ không có giải thưởng nào được trao.')) return
     try {
@@ -192,6 +206,66 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Lỗi khi hủy cuộc thi')
     }
+  }
+
+  const DateTimePicker = ({ value, onChange, label }: { value: string | null; onChange: (val: string) => void; label: string }) => {
+    const dateObj = value ? new Date(value) : undefined
+
+    const handleDateSelect = (d: Date | undefined) => {
+      if (!d) return
+      if (dateObj) {
+        d.setHours(dateObj.getHours())
+        d.setMinutes(dateObj.getMinutes())
+      }
+      onChange(d.toISOString())
+    }
+
+    const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!dateObj) return
+      const [hours, minutes] = e.target.value.split(':')
+      const newDate = new Date(dateObj)
+      newDate.setHours(parseInt(hours, 10))
+      newDate.setMinutes(parseInt(minutes, 10))
+      onChange(newDate.toISOString())
+    }
+
+    return (
+      <div className="space-y-1.5 flex flex-col w-full">
+        <label className="text-sm font-medium">{label}</label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal bg-background px-4 py-2.5 h-auto",
+                !value && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {value ? format(dateObj!, 'dd/MM/yyyy HH:mm') : <span>Chọn thời gian</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={dateObj}
+              onSelect={handleDateSelect}
+              initialFocus
+            />
+            <div className="p-3 border-t">
+              <label className="text-sm font-medium mb-1 block">Thời gian</label>
+              <input
+                type="time"
+                value={dateObj ? format(dateObj, 'HH:mm') : ''}
+                onChange={handleTimeChange}
+                disabled={!value}
+                className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+    )
   }
 
   if (loading)
@@ -280,24 +354,16 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Thời điểm bắt đầu</label>
-                  <input
-                    type="datetime-local"
-                    value={contest.startTime ? contest.startTime.slice(0, 16) : ''}
-                    onChange={e => setContest({ ...contest, startTime: new Date(e.target.value).toISOString() })}
-                    className="w-full -input rounded-lg px-4 py-2.5 bg-background"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Thời điểm kết thúc</label>
-                  <input
-                    type="datetime-local"
-                    value={contest.endTime ? contest.endTime.slice(0, 16) : ''}
-                    onChange={e => setContest({ ...contest, endTime: new Date(e.target.value).toISOString() })}
-                    className="w-full -input rounded-lg px-4 py-2.5 bg-background"
-                  />
-                </div>
+                <DateTimePicker 
+                  label="Thời điểm bắt đầu" 
+                  value={contest.startTime} 
+                  onChange={val => setContest({ ...contest, startTime: val })} 
+                />
+                <DateTimePicker 
+                  label="Thời điểm kết thúc" 
+                  value={contest.endTime} 
+                  onChange={val => setContest({ ...contest, endTime: val })} 
+                />
               </div>
             </div>
           </section>
@@ -313,7 +379,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                     <Plus className="h-4 w-4 mr-2" /> Thêm bài tập
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-[600px]">
+                <DialogContent className="sm:max-w-[600px] max-w-[calc(100%-2rem)]">
                   <DialogHeader>
                     <DialogTitle>Thêm bài tập từ thư viện</DialogTitle>
                   </DialogHeader>
@@ -403,41 +469,43 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                     <Plus className="h-4 w-4 mr-2" /> Thêm giải thưởng
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-[500px]">
+                <DialogContent className="sm:!max-w-[650px] !max-w-[calc(100%-2rem)]">
                   <DialogHeader>
                     <DialogTitle>Thêm/Sửa giải thưởng khóa học</DialogTitle>
                   </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="flex gap-4 w-full">
-                      <div className="space-y-1.5 w-24 shrink-0">
-                        <label className="text-sm font-medium">Từ hạng</label>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <Trophy className="h-4 w-4 text-amber-500" />
+                  <div className="space-y-4 py-4 min-w-0">
+                    <div className="flex flex-col sm:flex-row gap-4 w-full">
+                      <div className="flex gap-4 shrink-0">
+                        <div className="space-y-1.5 w-24 shrink-0">
+                          <label className="text-sm font-medium">Từ hạng</label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <Trophy className="h-4 w-4 text-amber-500" />
+                            </div>
+                            <input
+                              type="number"
+                              min={1}
+                              value={minPrizeRank}
+                              onChange={e => {
+                                const val = parseInt(e.target.value) || 1
+                                setMinPrizeRank(val)
+                                if (val > maxPrizeRank) setMaxPrizeRank(val)
+                              }}
+                              className="w-full border border-input rounded-lg pl-9 pr-2 py-2 bg-background font-bold text-amber-600 outline-none focus:ring-2 focus:ring-primary/20"
+                            />
                           </div>
-                          <input
-                            type="number"
-                            min={1}
-                            value={minPrizeRank}
-                            onChange={e => {
-                              const val = parseInt(e.target.value) || 1
-                              setMinPrizeRank(val)
-                              if (val > maxPrizeRank) setMaxPrizeRank(val)
-                            }}
-                            className="w-full border border-input rounded-lg pl-9 pr-2 py-2 bg-background font-bold text-amber-600 outline-none focus:ring-2 focus:ring-primary/20"
-                          />
                         </div>
-                      </div>
-                      <div className="space-y-1.5 w-24 shrink-0">
-                        <label className="text-sm font-medium">Đến hạng</label>
-                        <div className="relative">
-                          <input
-                            type="number"
-                            min={minPrizeRank}
-                            value={maxPrizeRank}
-                            onChange={e => setMaxPrizeRank(parseInt(e.target.value) || minPrizeRank)}
-                            className="w-full border border-input rounded-lg px-3 py-2 bg-background font-bold text-amber-600 outline-none focus:ring-2 focus:ring-primary/20"
-                          />
+                        <div className="space-y-1.5 w-24 shrink-0">
+                          <label className="text-sm font-medium">Đến hạng</label>
+                          <div className="relative">
+                            <input
+                              type="number"
+                              min={minPrizeRank}
+                              value={maxPrizeRank}
+                              onChange={e => setMaxPrizeRank(parseInt(e.target.value) || minPrizeRank)}
+                              className="w-full border border-input rounded-lg px-3 py-2 bg-background font-bold text-amber-600 outline-none focus:ring-2 focus:ring-primary/20"
+                            />
+                          </div>
                         </div>
                       </div>
                       <div className="space-y-1.5 flex-1 min-w-0">
@@ -448,7 +516,7 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                             placeholder="Nhập tên khóa học..."
                             value={prizeSearch}
                             onChange={e => setPrizeSearch(e.target.value)}
-                            className="w-full border border-input rounded-lg pl-9 pr-4 py-2 bg-background outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                            className="w-full min-w-0 border border-input rounded-lg pl-9 pr-4 py-2 bg-background outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                           />
                         </div>
                       </div>
@@ -481,7 +549,14 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                                 <p className="font-semibold text-sm truncate">{c.title}</p>
                                 <p className="text-xs text-muted-foreground truncate">bởi {c.instructorName}</p>
                               </div>
-                              <div className="flex-shrink-0 flex items-center">
+                              <div className="flex-shrink-0 flex items-center gap-4">
+                                <div className="text-right">
+                                  {c.price === 0 ? (
+                                    <span className="text-xs font-medium text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-md">Miễn phí</span>
+                                  ) : (
+                                    <span className="text-sm font-semibold text-amber-600">{c.price.toLocaleString('vi-VN')} đ</span>
+                                  )}
+                                </div>
                                 {prizeCourseId === c.id ? (
                                   <CheckCircle className="h-5 w-5 text-primary" />
                                 ) : (
@@ -597,20 +672,30 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
               </select>
 
               {contest.status !== 'Ended' && contest.status !== 'Cancelled' && (
-                <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-border">
-                  <Button
-                    onClick={handleEndContest}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700"
-                  >
-                    <CheckCircle className="w-4 h-4 mr-2" /> Kết thúc
-                  </Button>
-                  <Button
-                    onClick={handleCancelContest}
-                    variant="destructive"
-                    className="w-full"
-                  >
-                    <Ban className="w-4 h-4 mr-2" /> Hủy cuộc thi
-                  </Button>
+                <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-border">
+                  {(contest.status === 'Draft' || contest.status === 'Upcoming') && (
+                    <Button
+                      onClick={handleStartContest}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <MonitorPlay className="w-4 h-4 mr-2" /> Bắt đầu cuộc thi
+                    </Button>
+                  )}
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      onClick={handleEndContest}
+                      className="w-full bg-emerald-600 hover:bg-emerald-700"
+                    >
+                      <CheckCircle className="w-4 h-4 mr-2" /> Kết thúc
+                    </Button>
+                    <Button
+                      onClick={handleCancelContest}
+                      variant="destructive"
+                      className="w-full"
+                    >
+                      <Ban className="w-4 h-4 mr-2" /> Hủy cuộc thi
+                    </Button>
+                  </div>
                 </div>
               )}
 
