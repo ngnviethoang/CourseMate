@@ -39,15 +39,15 @@ const lessonTypeLabel: Record<LessonType, string> = {
 const getLessonIcon = (lessonType: LessonType) => {
   switch (lessonType) {
     case LessonType.Video:
-      return <PlayCircle className="h-5 w-5 text-blue-500" />
+      return <PlayCircle className="h-5 w-5 text-primary" />
     case LessonType.Reading:
-      return <FileText className="h-5 w-5 text-amber-500" />
+      return <FileText className="h-5 w-5 text-muted-foreground" />
     case LessonType.Coding:
-      return <Sparkles className="h-5 w-5 text-violet-500" />
+      return <Sparkles className="h-5 w-5 text-primary" />
     case LessonType.Quiz:
-      return <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+      return <CheckCircle2 className="h-5 w-5 text-primary" />
     case LessonType.Slide:
-      return <Layers3 className="h-5 w-5 text-sky-500" />
+      return <Layers3 className="h-5 w-5 text-primary" />
     default:
       return <BookOpen className="h-5 w-5 text-primary" />
   }
@@ -276,7 +276,7 @@ export default function CourseDetailPage() {
                       <div className="mt-1 text-2xl font-bold text-primary">{formatCurrency(course.price)}</div>
                     </div>
                     {course.isEnrolled && (
-                      <Badge className="border-0 bg-emerald-500/10 text-[11px] text-emerald-600 hover:bg-emerald-500/20">
+                      <Badge className="border-0 bg-primary/10 text-[11px] text-primary hover:bg-primary/20">
                         Đã đăng ký
                       </Badge>
                     )}
@@ -453,7 +453,7 @@ export default function CourseDetailPage() {
                                         {lessonTypeLabel[lesson.lessonType]}
                                       </Badge>
                                       {course.isEnrolled && lesson.isCompleted && (
-                                        <Badge className="rounded-full px-2 py-0.5 bg-emerald-500 text-[10px] uppercase tracking-wider text-white">
+                                        <Badge className="rounded-full px-2 py-0.5 bg-primary text-primary-foreground text-[10px] uppercase tracking-wider">
                                           Hoàn thành
                                         </Badge>
                                       )}

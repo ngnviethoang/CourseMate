@@ -23,20 +23,20 @@ function getReview(idx: number) {
 }
 
 const BADGE_STYLES: Record<string, string> = {
-  'Bán chạy': 'bg-amber-500 text-white border-0',
-  Mới: 'bg-emerald-500 text-white border-0',
-  'Đánh giá cao': 'bg-blue-500 text-white border-0'
+  'Bán chạy': 'bg-warning text-warning-foreground border-0',
+  Mới: 'bg-success text-success-foreground border-0',
+  'Đánh giá cao': 'bg-primary text-primary-foreground border-0'
 }
 
 const GRADIENT_FALLBACKS = [
-  'from-indigo-400 to-blue-600',
-  'from-violet-400 to-purple-600',
-  'from-emerald-400 to-teal-600',
-  'from-pink-400 to-rose-600',
-  'from-amber-400 to-orange-500',
-  'from-sky-400 to-cyan-600',
-  'from-fuchsia-400 to-pink-600',
-  'from-lime-400 to-green-500'
+  'from-primary/60 to-primary',
+  'from-primary/40 to-primary/80',
+  'from-primary/30 to-primary/70',
+  'from-primary/50 to-primary/90',
+  'from-primary/20 to-primary/60',
+  'from-primary/60 to-primary/90',
+  'from-primary/40 to-primary/70',
+  'from-primary/30 to-primary/80'
 ]
 
 function CourseCardSkeleton() {
@@ -107,7 +107,7 @@ function CourseCard({ course, index }: CourseCardProps) {
   return (
     <Link
       href={`/courses/${course.id}`}
-      className="group flex flex-col rounded-2xl bg-card shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl overflow-hidden"
+      className="group flex flex-col rounded-2xl bg-card shadow-sm transition-shadow duration-200 hover:shadow-lg overflow-hidden"
     >
       {/* Thumbnail */}
       <div className="relative overflow-hidden">
@@ -132,9 +132,9 @@ function CourseCard({ course, index }: CourseCardProps) {
 
         {/* Enrolled overlay badge */}
         {course.isEnrollment && (
-          <div className="absolute inset-0 bg-emerald-900/30 flex items-center justify-center">
-            <span className="bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
-              ✓ Đã sở hữu
+          <div className="absolute inset-0 bg-background/40 flex items-center justify-center">
+            <span className="bg-primary text-primary-foreground text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
+              Đã sở hữu
             </span>
           </div>
         )}
@@ -190,11 +190,11 @@ function CourseCard({ course, index }: CourseCardProps) {
         >
           {/* Price / status label */}
           {course.isEnrollment ? (
-            <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">✓ Đã mua</span>
+            <span className="text-xs font-semibold text-primary flex items-center gap-1">Đã mua</span>
           ) : course.isInCart ? (
-            <span className="text-xs font-medium text-amber-600 flex items-center gap-1">🛒 Trong giỏ hàng</span>
+            <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">Trong giỏ hàng</span>
           ) : course.price === 0 ? (
-            <span className="text-base font-bold text-emerald-600">Miễn phí</span>
+            <span className="text-base font-bold text-primary">Miễn phí</span>
           ) : (
             <span className="text-base font-bold text-primary">{formatCurrency(course.price)}</span>
           )}
@@ -285,7 +285,7 @@ export function RecommendedCourses({
   }, [pageIndex, searchQuery, selectedCategoryId, isLoggedIn, fetchCourses])
 
   const isRecommended = !searchQuery && !selectedCategoryId && isLoggedIn
-  const visibleCourses = courses
+  const visibleCourses = isRecommended ? courses.filter(course => !course.isEnrollment) : courses
   const title = searchQuery ? `Kết quả cho "${searchQuery}"` : isRecommended ? 'Gợi ý cho bạn' : 'Khám phá khoá học'
 
   // Build visible page numbers
