@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="868" height="775.0000000000001">
+<rect width="868" height="775.0000000000001" fill="white"/>
+<defs><pattern id="gUCCAT05" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0 L0 0 0 20" fill="none" stroke="#EFEFEF" stroke-width="0.5"/></pattern></defs>
+<rect width="868" height="775.0000000000001" fill="url(#gUCCAT05)"/>
+<path d="M8,8 L8,44 L208.5,44 L208.5,17 L199.5,8 Z" fill="white" stroke="#111" stroke-width="1.5"/>
+<path d="M199.5,8 L199.5,17 L208.5,17" fill="#CCC" stroke="#111" stroke-width="1"/>
+<text x="106" y="31" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">UC-CAT-05: Xóa danh mục</text>
+<rect x="99" y="392.2" width="670" height="299.00000000000006" fill="rgba(220,220,220,0.15)" stroke="#555" stroke-width="1.5"/>
+<rect x="99" y="392.2" width="28" height="16" fill="#555" rx="1"/>
+<text x="103" y="404.2" font-family="Arial,Helvetica,sans-serif" font-size="10" fill="white" font-weight="bold">alt</text>
+<text x="105" y="421" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#333" font-style="italic">[Không có ràng buộc (Count = 0)]</text>
+<line x1="540" y1="426.7" x2="720" y2="426.7" stroke="#222" stroke-width="1.3" />
+<polygon points="728,426.7 720,422.7 720,430.7" fill="#222"/>
+<text x="634" y="419.7" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">DELETE FROM Categories WHERE Id=:id</text>
+<line x1="528" y1="472.7" x2="348" y2="472.7" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="472.7" x2="348" y2="468.7" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="472.7" x2="348" y2="476.7" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="434" y="465.7" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">HTTP 200: Xóa thành công</text>
+<line x1="328" y1="518.7" x2="148" y2="518.7" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="518.7" x2="148" y2="514.7" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="518.7" x2="148" y2="522.7" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="234" y="511.70000000000005" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Xóa khỏi danh sách hiển thị</text>
+<line x1="99" y1="564.7" x2="769" y2="564.7" stroke="#555" stroke-width="1" stroke-dasharray="5,3"/>
+<text x="105" y="579.7" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#333" font-style="italic">[Còn khóa học liên kết]</text>
+<line x1="528" y1="585.4000000000001" x2="348" y2="585.4000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="585.4000000000001" x2="348" y2="581.4000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="585.4000000000001" x2="348" y2="589.4000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="434" y="578.4000000000001" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">HTTP 409: Không thể xóa, còn khóa học liên kết</text>
+<line x1="328" y1="631.4000000000001" x2="148" y2="631.4000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="631.4000000000001" x2="148" y2="627.4000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="631.4000000000001" x2="148" y2="635.4000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="234" y="624.4000000000001" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Hiển thị thông báo lỗi</text>
+<line x1="134" y1="142" x2="134" y2="755.0000000000001" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="334" y1="142" x2="334" y2="755.0000000000001" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="534" y1="142" x2="534" y2="755.0000000000001" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="734" y1="142" x2="734" y2="755.0000000000001" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<circle cx="134" cy="67" r="12" fill="white" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="79" x2="134" y2="103" stroke="#111" stroke-width="1.5"/>
+<line x1="117" y1="88" x2="151" y2="88" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="103" x2="122" y2="121" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="103" x2="146" y2="121" stroke="#111" stroke-width="1.5"/>
+<text x="134" y="137" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" fill="#111">Admin</text>
+<rect x="270" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="334" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Giao diện</text>
+<rect x="470" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="534" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Hệ thống</text>
+<rect x="670" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="734" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Database</text>
+<line x1="140" y1="130" x2="320" y2="130" stroke="#222" stroke-width="1.3" />
+<polygon points="328,130 320,126 320,134" fill="#222"/>
+<text x="234" y="123" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Nhấn "Xóa" tại danh mục cần xóa</text>
+<line x1="328" y1="176" x2="148" y2="176" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="176" x2="148" y2="172" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="176" x2="148" y2="180" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="234" y="169" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Hiển thị xác nhận xóa</text>
+<line x1="140" y1="222" x2="320" y2="222" stroke="#222" stroke-width="1.3" />
+<polygon points="328,222 320,218 320,226" fill="#222"/>
+<text x="234" y="215" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Xác nhận</text>
+<line x1="340" y1="268" x2="520" y2="268" stroke="#222" stroke-width="1.3" />
+<polygon points="528,268 520,264 520,272" fill="#222"/>
+<text x="434" y="261" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">DELETE /api/categories/{id} [Admin JWT]</text>
+<line x1="540" y1="314" x2="720" y2="314" stroke="#222" stroke-width="1.3" />
+<polygon points="728,314 720,310 720,318" fill="#222"/>
+<text x="634" y="307" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Kiểm tra ràng buộc: còn khóa học liên kết?</text>
+<line x1="728" y1="360" x2="548" y2="360" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="540" y1="360" x2="548" y2="356" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="540" y1="360" x2="548" y2="364" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="634" y="353" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Trả về số khóa học liên kết</text>
+</svg>

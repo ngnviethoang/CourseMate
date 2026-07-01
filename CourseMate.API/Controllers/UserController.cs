@@ -30,14 +30,19 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    [Authorize]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
     public async Task<ActionResult> GetUserByIdAsync(Guid id)
     {
         UserDto? result = await _mediator.Send(new GetUserByIdQuery { Id = id });
+        if (result is null)
+        {
+            return NotFound();
+        }
         return Ok(result);
     }
 
     [HttpPost]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult> CreateUserAsync(CreateUserCommand request)
     {
         ResultIdDto result = await _mediator.Send(request);
@@ -45,6 +50,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult> UpdateUserAsync(Guid id, UpdateUserCommand request)
     {
         request.Id = id;
@@ -53,6 +59,7 @@ public class UserController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult> DeleteUserAsync(Guid id)
     {
         await _mediator.Send(new DeleteUserCommand { Id = id });
@@ -60,6 +67,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("{id:guid}/approve-instructor")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult> ApproveInstructorAsync(Guid id)
     {
         await _mediator.Send(new ApproveInstructorCommand { InstructorId = id });
@@ -67,6 +75,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("{id:guid}/toggle-lock")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult> ToggleLockAsync(Guid id)
     {
         await _mediator.Send(new ToggleUserLockCommand { UserId = id });

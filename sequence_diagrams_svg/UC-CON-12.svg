@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1268" height="798">
+<rect width="1268" height="798" fill="white"/>
+<defs><pattern id="gUCCON12" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0 L0 0 0 20" fill="none" stroke="#EFEFEF" stroke-width="0.5"/></pattern></defs>
+<rect width="1268" height="798" fill="url(#gUCCON12)"/>
+<path d="M8,8 L8,44 L248,44 L248,17 L239,8 Z" fill="white" stroke="#111" stroke-width="1.5"/>
+<path d="M239,8 L239,17 L248,17" fill="#CCC" stroke="#111" stroke-width="1"/>
+<text x="125.75" y="31" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">UC-CON-12: Nộp bài thi lập trình</text>
+<line x1="134" y1="142" x2="134" y2="778" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="334" y1="142" x2="334" y2="778" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="534" y1="142" x2="534" y2="778" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="734" y1="142" x2="734" y2="778" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="934" y1="142" x2="934" y2="778" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="1134" y1="142" x2="1134" y2="778" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<circle cx="134" cy="67" r="12" fill="white" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="79" x2="134" y2="103" stroke="#111" stroke-width="1.5"/>
+<line x1="117" y1="88" x2="151" y2="88" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="103" x2="122" y2="121" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="103" x2="146" y2="121" stroke="#111" stroke-width="1.5"/>
+<text x="134" y="137" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" fill="#111">Student</text>
+<rect x="270" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="334" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Giao diện</text>
+<rect x="470" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="534" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Hệ thống</text>
+<rect x="670" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="734" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Database</text>
+<rect x="870" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="934" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:CodeRunner</text>
+<rect x="1070" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="1134" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:ContestHub</text>
+<line x1="140" y1="130" x2="320" y2="130" stroke="#222" stroke-width="1.3" />
+<polygon points="328,130 320,126 320,134" fill="#222"/>
+<text x="234" y="123" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Chọn bài tập → Viết code → Nhấn "Nộp bài"</text>
+<line x1="340" y1="176" x2="520" y2="176" stroke="#222" stroke-width="1.3" />
+<polygon points="528,176 520,172 520,180" fill="#222"/>
+<text x="434" y="169" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">POST /api/contests/{id}/submit { exerciseId, code }</text>
+<line x1="540" y1="222" x2="720" y2="222" stroke="#222" stroke-width="1.3" />
+<polygon points="728,222 720,218 720,226" fill="#222"/>
+<text x="634" y="215" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Validate: còn trong thời gian, chưa Disqualify</text>
+<line x1="728" y1="268" x2="548" y2="268" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="540" y1="268" x2="548" y2="264" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="540" y1="268" x2="548" y2="272" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="634" y="261" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Xác nhận hợp lệ</text>
+<line x1="540" y1="314" x2="720" y2="314" stroke="#222" stroke-width="1.3" />
+<polygon points="728,314 720,310 720,318" fill="#222"/>
+<text x="634" y="307" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Lấy Test Cases của bài tập thi</text>
+<line x1="728" y1="360" x2="548" y2="360" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="540" y1="360" x2="548" y2="356" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="540" y1="360" x2="548" y2="364" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="634" y="353" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Trả về TestCases[]</text>
+<line x1="540" y1="406" x2="920" y2="406" stroke="#222" stroke-width="1.3" />
+<polygon points="928,406 920,402 920,410" fill="#222"/>
+<text x="734" y="399" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Gửi code + Test Cases để chấm điểm</text>
+<line x1="928" y1="452" x2="548" y2="452" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="540" y1="452" x2="548" y2="448" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="540" y1="452" x2="548" y2="456" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="734" y="445" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Trả về kết quả từng TC</text>
+<line x1="540" y1="498" x2="720" y2="498" stroke="#222" stroke-width="1.3" />
+<polygon points="728,498 720,494 720,502" fill="#222"/>
+<text x="634" y="491" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">INSERT ContestSubmission + UPDATE Leaderboard</text>
+<line x1="540" y1="544" x2="1120" y2="544" stroke="#222" stroke-width="1.3" />
+<polygon points="1128,544 1120,540 1120,548" fill="#222"/>
+<text x="834" y="537" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Phát LeaderboardUpdated → tất cả thí sinh trong phòng</text>
+<line x1="1128" y1="590" x2="348" y2="590" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="590" x2="348" y2="586" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="590" x2="348" y2="594" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="734" y="583" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Push cập nhật bảng xếp hạng real-time</text>
+<line x1="528" y1="636" x2="348" y2="636" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="636" x2="348" y2="632" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="636" x2="348" y2="640" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="434" y="629" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">HTTP 200: Kết quả nộp bài</text>
+<line x1="328" y1="682" x2="148" y2="682" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="682" x2="148" y2="678" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="682" x2="148" y2="686" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="234" y="675" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Hiển thị kết quả + bảng xếp hạng đã cập nhật</text>
+</svg>

@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Security.Claims;
 using CourseMate.Persistent.Entities;
 using CourseMate.Persistent.Entities.Abstracts;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CourseMate.Persistent;
 
@@ -55,6 +57,12 @@ public sealed class CourseMateDbContext : IdentityDbContext<User, IdentityRole<G
     public DbSet<AntiCheatViolation> AntiCheatViolations { get; set; }
     public DbSet<ContestPrize> ContestPrizes { get; set; }
 
+    // Recommendation system
+    public DbSet<StudentPreference> StudentPreferences { get; set; }
+    public DbSet<StudentSkillProfile> StudentSkillProfiles { get; set; }
+    public DbSet<RecommendationLog> RecommendationLogs { get; set; }
+    public DbSet<CourseEmbedding> CourseEmbeddings { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -62,7 +70,7 @@ public sealed class CourseMateDbContext : IdentityDbContext<User, IdentityRole<G
         modelBuilder.HasPostgresExtension("vector");
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
 
-        /*foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
+        foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
         {
             if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
             {
@@ -72,7 +80,7 @@ public sealed class CourseMateDbContext : IdentityDbContext<User, IdentityRole<G
                 LambdaExpression lambda = Expression.Lambda(notIsDeleted, parameter);
                 modelBuilder.Entity(entityType.ClrType).HasQueryFilter(SoftDeletionFilter, lambda);
             }
-        }*/
+        }
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -125,11 +133,11 @@ public sealed class CourseMateDbContext : IdentityDbContext<User, IdentityRole<G
                 }
             }
 
-            /*if (entry is { Entity: ISoftDelete softDelete, State: EntityState.Deleted })
+            if (entry is { Entity: ISoftDelete softDelete, State: EntityState.Deleted })
             {
                 entry.State = EntityState.Modified;
                 softDelete.IsDeleted = true;
-            }*/
+            }
         }
     }
 

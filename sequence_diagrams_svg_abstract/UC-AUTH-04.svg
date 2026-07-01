@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1068" height="931.4">
+<rect width="1068" height="931.4" fill="white"/>
+<defs><pattern id="gUCAUTH04" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0 L0 0 0 20" fill="none" stroke="#EFEFEF" stroke-width="0.5"/></pattern></defs>
+<rect width="1068" height="931.4" fill="url(#gUCAUTH04)"/>
+<path d="M8,8 L8,44 L193.5,44 L193.5,17 L184.5,8 Z" fill="white" stroke="#111" stroke-width="1.5"/>
+<path d="M184.5,8 L184.5,17 L193.5,17" fill="#CCC" stroke="#111" stroke-width="1"/>
+<text x="98.5" y="31" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">Đăng nhập bằng Google</text>
+<rect x="99" y="392.2" width="870" height="455.40000000000003" fill="rgba(220,220,220,0.15)" stroke="#555" stroke-width="1.5"/>
+<rect x="99" y="392.2" width="28" height="16" fill="#555" rx="1"/>
+<text x="103" y="404.2" font-family="Arial,Helvetica,sans-serif" font-size="10" fill="white" font-weight="bold">alt</text>
+<text x="105" y="421" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#333" font-style="italic">[Tài khoản đã tồn tại]</text>
+<path d="M740,416.7 L779,416.7 L779,446.7 L740,446.7" fill="none" stroke="#222" stroke-width="1.3"/>
+<polygon points="740,446.7 747,442.7 747,450.7" fill="#222"/>
+<text x="784" y="435.7" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#111">Tạo phiên đăng nhập</text>
+<line x1="728" y1="481.9" x2="348" y2="481.9" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="481.9" x2="348" y2="477.9" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="481.9" x2="348" y2="485.9" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="534" y="474.9" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Đăng nhập thành công</text>
+<line x1="328" y1="527.9" x2="148" y2="527.9" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="527.9" x2="148" y2="523.9" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="527.9" x2="148" y2="531.9" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="234" y="520.9" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Hiển thị trang chủ</text>
+<line x1="99" y1="573.9" x2="969" y2="573.9" stroke="#555" stroke-width="1" stroke-dasharray="5,3"/>
+<text x="105" y="588.9" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#333" font-style="italic">[Tài khoản chưa tồn tại]</text>
+<line x1="740" y1="594.6" x2="920" y2="594.6" stroke="#222" stroke-width="1.3" />
+<polygon points="928,594.6 920,590.6 920,598.6" fill="#222"/>
+<text x="834" y="587.6" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Truy vấn thêm tài khoản</text>
+<line x1="928" y1="640.6" x2="748" y2="640.6" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="740" y1="640.6" x2="748" y2="636.6" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="740" y1="640.6" x2="748" y2="644.6" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="834" y="633.6" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Trả về kết quả truy vấn</text>
+<path d="M740,676.6 L779,676.6 L779,706.6 L740,706.6" fill="none" stroke="#222" stroke-width="1.3"/>
+<polygon points="740,706.6 747,702.6 747,710.6" fill="#222"/>
+<text x="784" y="695.6" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#111">Tạo phiên đăng nhập</text>
+<line x1="728" y1="741.8000000000001" x2="348" y2="741.8000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="741.8000000000001" x2="348" y2="737.8000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="741.8000000000001" x2="348" y2="745.8000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="534" y="734.8000000000001" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Đăng nhập thành công</text>
+<line x1="328" y1="787.8000000000001" x2="148" y2="787.8000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="787.8000000000001" x2="148" y2="783.8000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="787.8000000000001" x2="148" y2="791.8000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="234" y="780.8000000000001" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Hiển thị trang chủ</text>
+<line x1="134" y1="142" x2="134" y2="911.4" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="334" y1="142" x2="334" y2="911.4" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="534" y1="142" x2="534" y2="911.4" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="734" y1="142" x2="734" y2="911.4" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="934" y1="142" x2="934" y2="911.4" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<circle cx="134" cy="67" r="12" fill="white" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="79" x2="134" y2="103" stroke="#111" stroke-width="1.5"/>
+<line x1="117" y1="88" x2="151" y2="88" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="103" x2="122" y2="121" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="103" x2="146" y2="121" stroke="#111" stroke-width="1.5"/>
+<text x="134" y="137" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" fill="#111">User</text>
+<rect x="270" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="334" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Giao diện</text>
+<rect x="470" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="534" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Hệ thống Google</text>
+<rect x="670" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="734" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Hệ thống</text>
+<rect x="870" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="934" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Database</text>
+<line x1="140" y1="130" x2="320" y2="130" stroke="#222" stroke-width="1.3" />
+<polygon points="328,130 320,126 320,134" fill="#222"/>
+<text x="234" y="123" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Nhấn đăng nhập bằng Google</text>
+<line x1="340" y1="176" x2="520" y2="176" stroke="#222" stroke-width="1.3" />
+<polygon points="528,176 520,172 520,180" fill="#222"/>
+<text x="434" y="169" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Chuyển hướng xác thực</text>
+<line x1="140" y1="222" x2="520" y2="222" stroke="#222" stroke-width="1.3" />
+<polygon points="528,222 520,218 520,226" fill="#222"/>
+<text x="334" y="215" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Chọn tài khoản</text>
+<line x1="540" y1="268" x2="720" y2="268" stroke="#222" stroke-width="1.3" />
+<polygon points="728,268 720,264 720,272" fill="#222"/>
+<text x="634" y="261" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Trả về thông tin tài khoản</text>
+<line x1="740" y1="314" x2="920" y2="314" stroke="#222" stroke-width="1.3" />
+<polygon points="928,314 920,310 920,318" fill="#222"/>
+<text x="834" y="307" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Truy vấn kiểm tra tài khoản</text>
+<line x1="928" y1="360" x2="748" y2="360" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="740" y1="360" x2="748" y2="356" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="740" y1="360" x2="748" y2="364" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="834" y="353" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Trả về kết quả truy vấn</text>
+</svg>

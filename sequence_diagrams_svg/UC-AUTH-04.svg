@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1068" height="977.4000000000001">
+<rect width="1068" height="977.4000000000001" fill="white"/>
+<defs><pattern id="gUCAUTH04" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0 L0 0 0 20" fill="none" stroke="#EFEFEF" stroke-width="0.5"/></pattern></defs>
+<rect width="1068" height="977.4000000000001" fill="url(#gUCAUTH04)"/>
+<path d="M8,8 L8,44 L248,44 L248,17 L239,8 Z" fill="white" stroke="#111" stroke-width="1.5"/>
+<path d="M239,8 L239,17 L248,17" fill="#CCC" stroke="#111" stroke-width="1"/>
+<text x="125.75" y="31" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">UC-AUTH-04: Đăng nhập Google OAuth 2.0</text>
+<rect x="99" y="484.2" width="870" height="409.40000000000015" fill="rgba(220,220,220,0.15)" stroke="#555" stroke-width="1.5"/>
+<rect x="99" y="484.2" width="28" height="16" fill="#555" rx="1"/>
+<text x="103" y="496.2" font-family="Arial,Helvetica,sans-serif" font-size="10" fill="white" font-weight="bold">alt</text>
+<text x="105" y="513" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#333" font-style="italic">[Tài khoản đã tồn tại]</text>
+<path d="M740,508.70000000000005 L779,508.70000000000005 L779,538.7 L740,538.7" fill="none" stroke="#222" stroke-width="1.3"/>
+<polygon points="740,538.7 747,534.7 747,542.7" fill="#222"/>
+<text x="784" y="527.7" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#111">Tạo JWT Token</text>
+<line x1="728" y1="573.9000000000001" x2="348" y2="573.9000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="573.9000000000001" x2="348" y2="569.9000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="573.9000000000001" x2="348" y2="577.9000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="534" y="566.9000000000001" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Redirect Frontend + JWT Token</text>
+<line x1="328" y1="619.9000000000001" x2="148" y2="619.9000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="619.9000000000001" x2="148" y2="615.9000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="619.9000000000001" x2="148" y2="623.9000000000001" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="234" y="612.9000000000001" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Đăng nhập thành công</text>
+<line x1="99" y1="665.9000000000001" x2="969" y2="665.9000000000001" stroke="#555" stroke-width="1" stroke-dasharray="5,3"/>
+<text x="105" y="680.9000000000001" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#333" font-style="italic">[Tài khoản chưa tồn tại]</text>
+<line x1="740" y1="686.6000000000001" x2="920" y2="686.6000000000001" stroke="#222" stroke-width="1.3" />
+<polygon points="928,686.6000000000001 920,682.6000000000001 920,690.6000000000001" fill="#222"/>
+<text x="834" y="679.6000000000001" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">INSERT tài khoản mới (Role=Student, GoogleId)</text>
+<path d="M740,722.6000000000001 L779,722.6000000000001 L779,752.6000000000001 L740,752.6000000000001" fill="none" stroke="#222" stroke-width="1.3"/>
+<polygon points="740,752.6000000000001 747,748.6000000000001 747,756.6000000000001" fill="#222"/>
+<text x="784" y="741.6000000000001" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#111">Tạo JWT Token</text>
+<line x1="728" y1="787.8000000000002" x2="348" y2="787.8000000000002" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="787.8000000000002" x2="348" y2="783.8000000000002" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="787.8000000000002" x2="348" y2="791.8000000000002" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="534" y="780.8000000000002" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Redirect Frontend + JWT Token</text>
+<line x1="328" y1="833.8000000000002" x2="148" y2="833.8000000000002" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="833.8000000000002" x2="148" y2="829.8000000000002" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="833.8000000000002" x2="148" y2="837.8000000000002" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="234" y="826.8000000000002" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Tạo tài khoản và đăng nhập thành công</text>
+<line x1="134" y1="142" x2="134" y2="957.4000000000001" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="334" y1="142" x2="334" y2="957.4000000000001" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="534" y1="142" x2="534" y2="957.4000000000001" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="734" y1="142" x2="734" y2="957.4000000000001" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="934" y1="142" x2="934" y2="957.4000000000001" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<circle cx="134" cy="67" r="12" fill="white" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="79" x2="134" y2="103" stroke="#111" stroke-width="1.5"/>
+<line x1="117" y1="88" x2="151" y2="88" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="103" x2="122" y2="121" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="103" x2="146" y2="121" stroke="#111" stroke-width="1.5"/>
+<text x="134" y="137" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" fill="#111">User</text>
+<rect x="270" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="334" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Giao diện</text>
+<rect x="470" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="534" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Google OAuth</text>
+<rect x="670" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="734" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Hệ thống</text>
+<rect x="870" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="934" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Database</text>
+<line x1="140" y1="130" x2="320" y2="130" stroke="#222" stroke-width="1.3" />
+<polygon points="328,130 320,126 320,134" fill="#222"/>
+<text x="234" y="123" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Nhấn "Đăng nhập bằng Google"</text>
+<line x1="340" y1="176" x2="520" y2="176" stroke="#222" stroke-width="1.3" />
+<polygon points="528,176 520,172 520,180" fill="#222"/>
+<text x="434" y="169" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Redirect → accounts.google.com (ClientId, scope)</text>
+<line x1="140" y1="222" x2="520" y2="222" stroke="#222" stroke-width="1.3" />
+<polygon points="528,222 520,218 520,226" fill="#222"/>
+<text x="334" y="215" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Chọn tài khoản Google, cấp quyền truy cập</text>
+<line x1="540" y1="268" x2="720" y2="268" stroke="#222" stroke-width="1.3" />
+<polygon points="728,268 720,264 720,272" fill="#222"/>
+<text x="634" y="261" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Callback /api/auth/google-callback?code={authCode}</text>
+<line x1="728" y1="314" x2="548" y2="314" stroke="#222" stroke-width="1.3" />
+<polygon points="540,314 548,310 548,318" fill="#222"/>
+<text x="634" y="307" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Đổi authCode → access_token + userInfo</text>
+<line x1="540" y1="360" x2="720" y2="360" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="728" y1="360" x2="720" y2="356" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="728" y1="360" x2="720" y2="364" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="634" y="353" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Trả về: email, name, googleId</text>
+<line x1="740" y1="406" x2="920" y2="406" stroke="#222" stroke-width="1.3" />
+<polygon points="928,406 920,402 920,410" fill="#222"/>
+<text x="834" y="399" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Kiểm tra email Google trong hệ thống</text>
+<line x1="928" y1="452" x2="748" y2="452" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="740" y1="452" x2="748" y2="448" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="740" y1="452" x2="748" y2="456" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="834" y="445" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Trả về kết quả</text>
+</svg>

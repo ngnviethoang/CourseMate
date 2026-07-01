@@ -1,7 +1,10 @@
 using CourseMate.Persistent.Entities;
+using CourseMate.Persistent.Entities.Abstracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using System.Linq.Expressions;
 
 namespace CourseMate.Persistent;
 
@@ -48,12 +51,18 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<User, Identi
     public DbSet<AntiCheatViolation> AntiCheatViolations { get; set; }
     public DbSet<ContestPrize> ContestPrizes { get; set; }
 
+    // Recommendation system
+    public DbSet<StudentPreference> StudentPreferences { get; set; }
+    public DbSet<StudentSkillProfile> StudentSkillProfiles { get; set; }
+    public DbSet<RecommendationLog> RecommendationLogs { get; set; }
+    public DbSet<CourseEmbedding> CourseEmbeddings { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssemblyReference).Assembly);
 
-        /*foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
+        foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
         {
             if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
             {
@@ -63,7 +72,7 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<User, Identi
                 LambdaExpression lambda = Expression.Lambda(notIsDeleted, parameter);
                 modelBuilder.Entity(entityType.ClrType).HasQueryFilter(SoftDeletionFilter, lambda);
             }
-        }*/
+        }
     }
 
     public override int SaveChanges()

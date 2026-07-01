@@ -38,7 +38,6 @@ try
     Util.CreateDirectoryIfNotExist(appSettings.Storage.TempPath);
     Util.CreateDirectoryIfNotExist(appSettings.Storage.PublicPath);
     builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
-    builder.Services.Configure<StorageOptions>(configuration.GetSection("Storage"));
     builder.Services.Configure<GoogleAiOptions>(configuration.GetSection("GoogleAi"));
     builder.Services.Configure<OllamaOptions>(configuration.GetSection("Ollama"));
     builder.Services.Configure<OnlineCompilerOptions>(configuration.GetSection("OnlineCompiler"));

@@ -36,22 +36,22 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
         switch (exception)
         {
             case EntityNotFoundException:
-                httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 problemDetails.Status = httpContext.Response.StatusCode;
-                problemDetails.Title = "Forbidden";
+                problemDetails.Title = "Not Found";
                 problemDetails.Detail = "Entity Not Found";
-                problemDetails.Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3";
+                problemDetails.Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.4";
                 problemDetails.Extensions["errorCode"] = ErrorCode.EntityNotFound.ToString();
                 problemDetails.Extensions["errorCodeValue"] = (int)ErrorCode.EntityNotFound;
                 break;
             case BusinessException businessException:
-                httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 problemDetails.Status = httpContext.Response.StatusCode;
-                problemDetails.Title = "Forbidden";
+                problemDetails.Title = "Bad Request";
                 problemDetails.Detail = string.IsNullOrWhiteSpace(businessException.Message)
                     ? "Business error."
                     : businessException.Message;
-                problemDetails.Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3";
+                problemDetails.Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.1";
                 problemDetails.Extensions["errorCode"] = businessException.ErrorCode.ToString();
                 problemDetails.Extensions["errorCodeValue"] = (int)businessException.ErrorCode;
                 break;
@@ -60,7 +60,7 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
                 problemDetails.Status = httpContext.Response.StatusCode;
                 problemDetails.Title = "Unauthorized";
                 problemDetails.Detail = exception.Message;
-                problemDetails.Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3";
+                problemDetails.Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.1";
                 break;
             case BadHttpRequestException:
                 httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;

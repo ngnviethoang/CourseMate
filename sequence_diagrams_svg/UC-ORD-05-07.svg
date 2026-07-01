@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1268" height="899.1999999999999">
+<rect width="1268" height="899.1999999999999" fill="white"/>
+<defs><pattern id="gUCORD0507" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0 L0 0 0 20" fill="none" stroke="#EFEFEF" stroke-width="0.5"/></pattern></defs>
+<rect width="1268" height="899.1999999999999" fill="url(#gUCORD0507)"/>
+<path d="M8,8 L8,44 L248,44 L248,17 L239,8 Z" fill="white" stroke="#111" stroke-width="1.5"/>
+<path d="M239,8 L239,17 L248,17" fill="#CCC" stroke="#111" stroke-width="1"/>
+<text x="125.75" y="31" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">UC-ORD-05-07: Tạo đơn hàng &amp; Thanh toán PayOS</text>
+<line x1="134" y1="142" x2="134" y2="879.1999999999999" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="334" y1="142" x2="334" y2="879.1999999999999" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="534" y1="142" x2="534" y2="879.1999999999999" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="734" y1="142" x2="734" y2="879.1999999999999" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="934" y1="142" x2="934" y2="879.1999999999999" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<line x1="1134" y1="142" x2="1134" y2="879.1999999999999" stroke="#AAA" stroke-width="1" stroke-dasharray="7,4"/>
+<circle cx="134" cy="67" r="12" fill="white" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="79" x2="134" y2="103" stroke="#111" stroke-width="1.5"/>
+<line x1="117" y1="88" x2="151" y2="88" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="103" x2="122" y2="121" stroke="#111" stroke-width="1.5"/>
+<line x1="134" y1="103" x2="146" y2="121" stroke="#111" stroke-width="1.5"/>
+<text x="134" y="137" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" fill="#111">Student</text>
+<rect x="270" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="334" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Giao diện</text>
+<rect x="470" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="534" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Hệ thống</text>
+<rect x="670" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="734" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:Database</text>
+<rect x="870" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="934" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:PayOS</text>
+<rect x="1070" y="68" width="128" height="38" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="1134" y="92" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#111">:NotifHub</text>
+<line x1="140" y1="130" x2="320" y2="130" stroke="#222" stroke-width="1.3" />
+<polygon points="328,130 320,126 320,134" fill="#222"/>
+<text x="234" y="123" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Xem giỏ hàng → Nhấn "Thanh toán"</text>
+<line x1="340" y1="176" x2="520" y2="176" stroke="#222" stroke-width="1.3" />
+<polygon points="528,176 520,172 520,180" fill="#222"/>
+<text x="434" y="169" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">POST /api/orders [JWT]</text>
+<line x1="540" y1="222" x2="720" y2="222" stroke="#222" stroke-width="1.3" />
+<polygon points="728,222 720,218 720,226" fill="#222"/>
+<text x="634" y="215" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Tính TotalAmount → INSERT Order(Pending) + OrderItems</text>
+<line x1="540" y1="268" x2="920" y2="268" stroke="#222" stroke-width="1.3" />
+<polygon points="928,268 920,264 920,272" fill="#222"/>
+<text x="734" y="261" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">POST PayOS API: { orderCode, amount, returnUrl }</text>
+<line x1="928" y1="314" x2="548" y2="314" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="540" y1="314" x2="548" y2="310" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="540" y1="314" x2="548" y2="318" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="734" y="307" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Trả về checkoutUrl</text>
+<line x1="528" y1="360" x2="348" y2="360" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="360" x2="348" y2="356" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="360" x2="348" y2="364" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="434" y="353" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">HTTP 200: { checkoutUrl }</text>
+<line x1="328" y1="406" x2="148" y2="406" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="406" x2="148" y2="402" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="140" y1="406" x2="148" y2="410" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="234" y="399" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Redirect → Trang thanh toán PayOS</text>
+<line x1="140" y1="452" x2="920" y2="452" stroke="#222" stroke-width="1.3" />
+<polygon points="928,452 920,448 920,456" fill="#222"/>
+<text x="534" y="445" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Chọn phương thức → Xác nhận thanh toán</text>
+<line x1="928" y1="498" x2="548" y2="498" stroke="#222" stroke-width="1.3" />
+<polygon points="540,498 548,494 548,502" fill="#222"/>
+<text x="734" y="491" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">POST /api/payments/payos-ipn { orderCode, status, sig…</text>
+<path d="M540,534 L579,534 L579,564 L540,564" fill="none" stroke="#222" stroke-width="1.3"/>
+<polygon points="540,564 547,560 547,568" fill="#222"/>
+<text x="584" y="553" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#111">[Bảo mật] Verify chữ ký HMAC-…</text>
+<line x1="540" y1="599.2" x2="720" y2="599.2" stroke="#222" stroke-width="1.3" />
+<polygon points="728,599.2 720,595.2 720,603.2" fill="#222"/>
+<text x="634" y="592.2" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">UPDATE Order: Status="Completed"</text>
+<line x1="540" y1="645.2" x2="720" y2="645.2" stroke="#222" stroke-width="1.3" />
+<polygon points="728,645.2 720,641.2 720,649.2" fill="#222"/>
+<text x="634" y="638.2" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">INSERT Enrollments + DELETE CartItems</text>
+<line x1="540" y1="691.2" x2="1120" y2="691.2" stroke="#222" stroke-width="1.3" />
+<polygon points="1128,691.2 1120,687.2 1120,695.2" fill="#222"/>
+<text x="834" y="684.2" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Push "Thanh toán thành công"</text>
+<line x1="1128" y1="737.2" x2="348" y2="737.2" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="737.2" x2="348" y2="733.2" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="737.2" x2="348" y2="741.2" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="734" y="730.2" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Hiển thị thông báo thành công</text>
+<line x1="928" y1="783.2" x2="348" y2="783.2" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="783.2" x2="348" y2="779.2" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<line x1="340" y1="783.2" x2="348" y2="787.2" stroke="#222" stroke-width="1.3" stroke-dasharray="6,3"/>
+<text x="634" y="776.2" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#111">Redirect về returnUrl → Trang thành công</text>
+</svg>

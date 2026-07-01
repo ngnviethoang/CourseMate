@@ -37,12 +37,15 @@ public class ExerciseController : ControllerBase
         return Ok(result);
     }
 
-    // TODO Need review
     [HttpGet("{id:guid}/student")]
-    // [Authorize(Roles = Roles.Student)]
+    [Authorize(Roles = Roles.Student)]
     public async Task<ActionResult> GetStudentExerciseByIdAsync(Guid id)
     {
         GetStudentExerciseByIdResponse? result = await _mediator.Send(new GetStudentExerciseByIdQuery { Id = id });
+        if (result is null)
+        {
+            return NotFound();
+        }
         return Ok(result);
     }
 
@@ -116,8 +119,8 @@ public class ExerciseController : ControllerBase
 
     #region Submissions APIs
 
-    // TODO Need review
     [HttpPost("{id:guid}/submissions")]
+    [Authorize(Roles = Roles.Student)]
     public async Task<ActionResult> SubmitExerciseAsync(Guid id, [FromBody] SubmitExerciseRequest request)
     {
         SubmitExerciseCommand command = new()
@@ -129,9 +132,8 @@ public class ExerciseController : ControllerBase
         return Ok(result);
     }
 
-    // TODO Need review
     [HttpGet("{id:guid}/submissions")]
-    // [Authorize(Roles = Roles.Student)]
+    [Authorize(Roles = Roles.Student)]
     public async Task<ActionResult> GetStudentExerciseSubmissionsAsync(Guid id)
     {
         IEnumerable<ExerciseSubmissionDto> result = await _mediator.Send(new GetStudentExerciseSubmissionsQuery { ExerciseId = id });
