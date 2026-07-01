@@ -11,6 +11,6 @@ public class StudentPreferenceConfiguration : IEntityTypeConfiguration<StudentPr
         builder.ToTable("StudentPreferences");
         builder.HasIndex(x => x.StudentId).IsUnique();
         builder.HasOne<User>().WithMany().HasForeignKey(x => x.StudentId).OnDelete(DeleteBehavior.Cascade);
-        builder.Property(x => x.FavouriteCategories).HasColumnType("jsonb").HasDefaultValueSql("'[]'::jsonb");
+        builder.Property(x => x.FavouriteCategories).HasColumnType("text[]");
     }
 }

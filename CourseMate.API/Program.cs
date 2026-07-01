@@ -5,6 +5,7 @@ using CourseMate.API.Middlewares;
 using CourseMate.API.Services;
 using CourseMate.Application;
 using CourseMate.Application.Services.NotificationServices;
+using CourseMate.Application.Services.RecommendationServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
@@ -45,6 +46,7 @@ try
     builder.Services.Configure<CorsOptions>(configuration.GetSection("CORS"));
     builder.Services.Configure<SmtpOptions>(configuration.GetSection("Smtp"));
     builder.Services.Configure<GoogleAuthOptions>(configuration.GetSection("Authentication:Google"));
+    builder.Services.Configure<RecommendationOptions>(configuration.GetSection("Recommendation"));
     builder.Services.AddHttpClient();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<HttpLoggingMiddleware>();

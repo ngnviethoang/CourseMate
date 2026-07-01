@@ -1,3 +1,6 @@
+using CourseMate.Contracts.DTOs;
+using CourseMate.Contracts.Enums;
+
 namespace CourseMate.Application.Services.RecommendationServices;
 
 /// <summary>
@@ -6,6 +9,7 @@ namespace CourseMate.Application.Services.RecommendationServices;
 /// </summary>
 public sealed record ScoredCourse(
     Guid CourseId,
+    Guid AnalyticsId,
     double ContentScore,
     double CollaborativeScore,
     double WeaknessScore,
@@ -42,3 +46,11 @@ public sealed record StudentSignals(
     Dictionary<Guid, double> CourseAffinityMap,
     int TotalAttempts,
     double OverallPassRate);
+
+public enum RecommendationSource
+{
+    HomePage,
+    CourseDetail,
+    CategoryPage,
+    WeakAreaPage
+}

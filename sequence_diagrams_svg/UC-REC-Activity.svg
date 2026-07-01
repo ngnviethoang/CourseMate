@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1100" style="font-family: Arial, sans-serif;">
+  <defs>
+    <style>
+      .title { font-size: 18px; font-weight: bold; fill: #1565c0; }
+      .start-end { fill: #4caf50; stroke: #2e7d32; stroke-width: 2; }
+      .start-end-text { fill: white; font-weight: bold; font-size: 12px; }
+      .process { fill: #bbdefb; stroke: #1565c0; stroke-width: 2; }
+      .process-text { fill: #0d47a1; font-size: 11px; }
+      .decision { fill: #fff9c4; stroke: #f9a825; stroke-width: 2; }
+      .decision-text { fill: #f57f17; font-size: 10px; }
+      .arrow { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .arrow-text { fill: #666; font-size: 10px; }
+      .subprocess { fill: #e1bee7; stroke: #7b1fa2; stroke-width: 2; }
+      .subprocess-text { fill: #4a148c; font-size: 10px; }
+      .swimlane { fill: none; stroke: #ccc; stroke-width: 1; stroke-dasharray: 5,5; }
+      .swimlane-text { fill: #999; font-size: 10px; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" class="title">BIỂU ĐỒ HOẠT ĐỘNG - HỆ THỐNG GỢI Ý KHÓA HỌC</text>
+
+  <!-- Start -->
+  <ellipse cx="450" cy="60" rx="60" ry="25" class="start-end"/>
+  <text x="450" y="65" text-anchor="middle" class="start-end-text">Bắt đầu</text>
+
+  <!-- Arrow to Login Check -->
+  <line x1="450" y1="85" x2="450" y2="120" class="arrow"/>
+
+  <!-- Decision: User Logged In? -->
+  <polygon points="450,120 550,170 450,220 350,170" class="decision"/>
+  <text x="450" y="168" text-anchor="middle" class="decision-text">Đã đăng nhập?</text>
+
+  <!-- No branch - Return -->
+  <line x1="350" y1="170" x2="250" y2="170" class="arrow"/>
+  <text x="300" y="160" text-anchor="middle" class="arrow-text">Không</text>
+  <rect x="100" y="150" width="150" height="40" rx="20" class="start-end"/>
+  <text x="175" y="175" text-anchor="middle" class="start-end-text">Chuyển đăng nhập</text>
+
+  <!-- Yes branch - Continue -->
+  <line x1="450" y1="220" x2="450" y2="260" class="arrow"/>
+  <text x="470" y="250" class="arrow-text">Có</text>
+
+  <!-- Get Student ID -->
+  <rect x="300" y="260" width="300" height="40" rx="5" class="process"/>
+  <text x="450" y="285" text-anchor="middle" class="process-text">1. Lấy StudentId từ Token</text>
+
+  <!-- Arrow to Collect Signals -->
+  <line x1="450" y1="300" x2="450" y2="340" class="arrow"/>
+
+  <!-- Collect Signals Process -->
+  <rect x="250" y="340" width="400" height="60" rx="5" class="subprocess"/>
+  <text x="450" y="360" text-anchor="middle" font-weight="bold" font-size="11" fill="#7b1fa2">Thu thập tín hiệu (Signal Collector)</text>
+  <text x="450" y="375" text-anchor="middle" class="subprocess-text">• StudentPreference (yêu thích)</text>
+  <text x="450" y="390" text-anchor="middle" class="subprocess-text">• StudentSkillProfile (kỹ năng)</text>
+
+  <!-- Arrow to Score Courses -->
+  <line x1="450" y1="400" x2="450" y2="440" class="arrow"/>
+
+  <!-- Parallel Scoring Process -->
+  <rect x="150" y="440" width="200" height="80" rx="5" class="subprocess"/>
+  <text x="250" y="460" text-anchor="middle" font-weight="bold" font-size="10" fill="#7b1fa2">Chấm điểm Khóa học</text>
+  <text x="250" y="475" text-anchor="middle" class="subprocess-text">Content Score</text>
+  <text x="250" y="490" text-anchor="middle" class="subprocess-text">Collab Score</text>
+  <text x="250" y="505" text-anchor="middle" class="subprocess-text">Weakness Score</text>
+
+  <rect x="400" y="440" width="200" height="80" rx="5" class="subprocess"/>
+  <text x="500" y="460" text-anchor="middle" font-weight="bold" font-size="10" fill="#7b1fa2">Chấm điểm Cuộc thi</text>
+  <text x="500" y="475" text-anchor="middle" class="subprocess-text">Content Score</text>
+  <text x="500" y="490" text-anchor="middle" class="subprocess-text">Collab Score</text>
+  <text x="500" y="505" text-anchor="middle" class="subprocess-text">Weakness Score</text>
+
+  <rect x="650" y="440" width="200" height="80" rx="5" class="subprocess"/>
+  <text x="750" y="460" text-anchor="middle" font-weight="bold" font-size="10" fill="#7b1fa2">Chấm điểm Bài tập</text>
+  <text x="750" y="475" text-anchor="middle" class="subprocess-text">Content Score</text>
+  <text x="750" y="490" text-anchor="middle" class="subprocess-text">Collab Score</text>
+  <text x="750" y="505" text-anchor="middle" class="subprocess-text">Weakness Score</text>
+
+  <!-- Arrow to Merge -->
+  <line x1="250" y1="520" x2="250" y2="560" class="arrow"/>
+  <line x1="500" y1="520" x2="500" y2="560" class="arrow"/>
+  <line x1="750" y1="520" x2="750" y2="560" class="arrow"/>
+  <line x1="250" y1="560" x2="450" y2="560" class="arrow"/>
+  <line x1="500" y1="560" x2="450" y2="560" class="arrow"/>
+  <line x1="750" y1="560" x2="450" y2="560" class="arrow"/>
+  <line x1="450" y1="560" x2="450" y2="590" class="arrow"/>
+
+  <!-- Decision: Has Results? -->
+  <polygon points="450,590 530,625 450,660 370,625" class="decision"/>
+  <text x="450" y="623" text-anchor="middle" class="decision-text">Có kết quả?</text>
+
+  <!-- No - Return empty -->
+  <line x1="370" y1="625" x2="280" y2="625" class="arrow"/>
+  <text x="325" y="615" class="arrow-text">Không</text>
+  <rect x="100" y="605" width="180" height="40" rx="20" class="start-end"/>
+  <text x="190" y="630" text-anchor="middle" class="start-end-text">Trả về rỗng</text>
+
+  <!-- Yes - Map to DTOs -->
+  <line x1="450" y1="660" x2="450" y2="700" class="arrow"/>
+  <text x="470" y="690" class="arrow-text">Có</text>
+
+  <!-- Map to DTOs -->
+  <rect x="300" y="700" width="300" height="40" rx="5" class="process"/>
+  <text x="450" y="725" text-anchor="middle" class="process-text">2. Map sang DTO & Tạo Explanation</text>
+
+  <!-- Arrow to Log -->
+  <line x1="450" y1="740" x2="450" y2="770" class="arrow"/>
+
+  <!-- Log Analytics -->
+  <rect x="300" y="770" width="300" height="40" rx="5" class="process"/>
+  <text x="450" y="795" text-anchor="middle" class="process-text">3. Lưu RecommendationLog & Analytics</text>
+
+  <!-- Arrow to Return -->
+  <line x1="450" y1="810" x2="450" y2="840" class="arrow"/>
+
+  <!-- Return Response -->
+  <rect x="300" y="840" width="300" height="50" rx="5" class="process" fill="#c8e6c9" stroke="#2e7d32"/>
+  <text x="450" y="860" text-anchor="middle" font-weight="bold" font-size="11" fill="#2e7d32">4. Trả về RecommendationResponseDto</text>
+  <text x="450" y="875" text-anchor="middle" class="process-text">Courses | Contests | Exercises | WeakAreas</text>
+
+  <!-- Arrow to End -->
+  <line x1="450" y1="890" x2="450" y2="920" class="arrow"/>
+
+  <!-- End -->
+  <ellipse cx="450" cy="950" rx="60" ry="25" class="start-end"/>
+  <text x="450" y="955" text-anchor="middle" class="start-end-text">Kết thúc</text>
+
+  <!-- Feedback Loop (optional) -->
+  <path d="M 600 890 Q 750 890 750 560 Q 750 400 530 400" class="arrow" stroke="#ff9800" stroke-dasharray="5,5"/>
+  <text x="780" y="600" font-size="10" fill="#ff9800">Feedback từ user</text>
+  <text x="780" y="615" font-size="10" fill="#ff9800">(Helpful/NotHelpful)</text>
+
+  <!-- Legend -->
+  <g transform="translate(50, 1000)">
+    <rect width="800" height="80" fill="#fafafa" stroke="#ccc" rx="5"/>
+    <text x="10" y="20" font-weight="bold" font-size="11" fill="#333">Chú thích:</text>
+
+    <ellipse cx="30" cy="40" rx="20" ry="10" class="start-end"/>
+    <text x="60" y="45" font-size="10" fill="#333">Bắt đầu/Kết thúc</text>
+
+    <rect x="160" y="32" width="40" height="16" rx="3" class="process"/>
+    <text x="210" y="45" font-size="10" fill="#333">Quá trình xử lý</text>
+
+    <polygon points="310,32 340,40 310,48 280,40" class="decision"/>
+    <text x="350" y="45" font-size="10" fill="#333">Quyết định</text>
+
+    <rect x="430" y="32" width="50" height="16" rx="3" class="subprocess"/>
+    <text x="490" y="45" font-size="10" fill="#333">Tiến trình con</text>
+
+    <line x1="570" y1="40" x2="620" y2="40" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <text x="630" y="45" font-size="10" fill="#333">Luồng chính</text>
+
+    <line x1="700" y1="40" x2="750" y2="40" stroke="#ff9800" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="760" y="45" font-size="10" fill="#333">Feedback</text>
+  </g>
+</svg>

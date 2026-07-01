@@ -22,6 +22,7 @@ public sealed class RecommendationService : IRecommendationService
     private readonly IRecommendationSignalCollector _signalCollector;
     private readonly IRecommendationScorer _scorer;
     private readonly IRecommendationLogger _logger;
+    private readonly IRecommendationAnalyticsService _analyticsService;
     private readonly RecommendationOptions _options;
 
     public RecommendationService(
@@ -30,6 +31,7 @@ public sealed class RecommendationService : IRecommendationService
         IRecommendationSignalCollector signalCollector,
         IRecommendationScorer scorer,
         IRecommendationLogger logger,
+        IRecommendationAnalyticsService analyticsService,
         IOptions<RecommendationOptions> options)
     {
         _writeDb = writeDb;
@@ -37,6 +39,7 @@ public sealed class RecommendationService : IRecommendationService
         _signalCollector = signalCollector;
         _scorer = scorer;
         _logger = logger;
+        _analyticsService = analyticsService;
         _options = options.Value;
     }
 
@@ -269,6 +272,7 @@ public sealed class RecommendationService : IRecommendationService
             return new RecommendedCourseDto
             {
                 CourseId = r.CourseId,
+                AnalyticsId = r.AnalyticsId,
                 Title = info.Title,
                 Description = info.Description,
                 ImageUrl = info.ImageUrl,

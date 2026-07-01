@@ -4,6 +4,7 @@ using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace CourseMate.Application.Services.RecommendationServices;
 
@@ -19,11 +20,11 @@ internal sealed class RecommendationScorer : IRecommendationScorer
     private readonly CourseMateReadOnlyDbContext _db;
 
     public RecommendationScorer(
-        RecommendationOptions options,
+        IOptions<RecommendationOptions> options,
         IRecommendationCourseCatalog catalog,
         CourseMateReadOnlyDbContext db)
     {
-        _options = options;
+        _options = options.Value;
         _catalog = catalog;
         _db = db;
     }
@@ -62,9 +63,11 @@ internal sealed class RecommendationScorer : IRecommendationScorer
 
             List<string> reasons = BuildReasons(contentScore, collaborativeScore, weaknessScore, popularityScore);
             string explanation = BuildExplanation(row, reasons);
+            Guid analyticsId = Guid.NewGuid();
 
             scored.Add(new ScoredCourse(
                 row.CourseId,
+                analyticsId,
                 contentScore,
                 collaborativeScore,
                 weaknessScore,

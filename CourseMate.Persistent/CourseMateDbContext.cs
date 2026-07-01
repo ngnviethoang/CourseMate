@@ -62,6 +62,7 @@ public sealed class CourseMateDbContext : IdentityDbContext<User, IdentityRole<G
     public DbSet<StudentSkillProfile> StudentSkillProfiles { get; set; }
     public DbSet<RecommendationLog> RecommendationLogs { get; set; }
     public DbSet<CourseEmbedding> CourseEmbeddings { get; set; }
+    public DbSet<RecommendationAnalytics> RecommendationAnalytics { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { GraduationCap, ArrowRight, Loader2, Lock, User, Eye, EyeOff, BookOpen, Briefcase } from 'lucide-react'
+import { GraduationCap, ArrowRight, Loader2, Lock, User, Eye, EyeOff, BookOpen, Briefcase, Home } from 'lucide-react'
 import { authService } from '@/lib/auth-service'
 import { toast } from 'sonner'
 import { Roles } from '@/lib/consts'
@@ -72,6 +72,15 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(14,165,233,0.18),transparent_36%),radial-gradient(circle_at_90%_0%,rgba(56,189,248,0.14),transparent_30%),radial-gradient(circle_at_50%_85%,rgba(245,158,11,0.12),transparent_36%)]" />
       <div className="absolute -left-20 top-20 h-64 w-64 rounded-full border border-sky-300/40 bg-sky-200/20 blur-3xl dark:border-sky-700/30 dark:bg-sky-900/10" />
       <div className="absolute -right-24 bottom-16 h-72 w-72 rounded-full border border-amber-300/30 bg-amber-200/20 blur-3xl dark:border-amber-700/20 dark:bg-amber-900/10" />
+
+      {/* Back to Home button */}
+      <Link
+        href="/"
+        className="absolute left-4 top-4 z-20 flex items-center gap-2 rounded-xl bg-background/80 px-4 py-2 text-sm font-medium text-muted-foreground shadow-md backdrop-blur-sm transition-all hover:bg-background hover:text-foreground hover:shadow-lg dark:bg-zinc-900/80 dark:hover:bg-zinc-800"
+      >
+        <Home className="h-4 w-4" />
+        Về trang chủ
+      </Link>
 
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-2rem)] w-full max-w-lg items-center">
         <Card className="w-full animate-in fade-in zoom-in-95 duration-500 border-zinc-200/70 bg-background/80 shadow-2xl shadow-zinc-900/10 backdrop-blur-xl dark:border-zinc-800/80 dark:shadow-black/30">

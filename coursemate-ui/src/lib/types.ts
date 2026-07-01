@@ -600,3 +600,139 @@ export interface UpdateExerciseRequest {
   testCases: (Partial<ExerciseTestCaseDto> & Omit<ExerciseTestCaseDto, 'id'>)[]
   defaultCodes: (Partial<ExerciseDefaultCodeDto> & Omit<ExerciseDefaultCodeDto, 'id'>)[]
 }
+
+// ─── Recommendation ─────────────────────────────────────────────────────────────────
+
+export interface RecommendationResponseDto {
+  studentId: string
+  courses: RecommendedCourseDto[]
+  contests: RecommendedContestDto[]
+  exercises: RecommendedExerciseDto[]
+  weakAreas: string[]
+  strongAreas: string[]
+  strategy: string
+  generatedAt: string
+}
+
+export interface RecommendedCourseDto {
+  courseId: string
+  analyticsId: string
+  title: string
+  description: string
+  imageUrl: string
+  price: number
+  categoryName: string
+  instructorName: string
+  averageRating: number
+  enrollmentCount: number
+  score: number
+  reasons: RecommendationReason[]
+  explanation: string
+}
+
+export interface RecommendedContestDto {
+  contestId: string
+  title: string
+  description: string
+  status: string
+  startTime?: string
+  endTime?: string
+  durationInMinutes: number
+  exerciseCount: number
+  participantCount: number
+  score: number
+  reasons: RecommendationReason[]
+  explanation: string
+}
+
+export interface RecommendedExerciseDto {
+  exerciseId: string
+  title: string
+  description: string
+  category: string
+  difficulty: string
+  testCaseCount: number
+  score: number
+  reasons: RecommendationReason[]
+  explanation: string
+}
+
+export enum RecommendationReason {
+  ContentMatch = 'ContentMatch',
+  CollaborativeFilter = 'CollaborativeFilter',
+  WeaknessTargeted = 'WeaknessTargeted',
+  PopularChoice = 'PopularChoice',
+  SimilarStudentEnrolled = 'SimilarStudentEnrolled',
+  InstructorExpertise = 'InstructorExpertise',
+  CategoryInterest = 'CategoryInterest',
+  DifficultyMatch = 'DifficultyMatch'
+}
+
+export interface RecordFeedbackRequest {
+  feedback: RecommendationFeedback
+}
+
+export enum RecommendationFeedback {
+  Helpful = 'Helpful',
+  NotHelpful = 'NotHelpful',
+  Shown = 'Shown',
+  Enrolled = 'Enrolled',
+  Dismissed = 'Dismissed'
+}
+
+export interface RecommendationAnalyticsDto {
+  id: string
+  studentId: string
+  courseId: string
+  enrollmentId?: string
+  contentScore: number
+  collaborativeScore: number
+  weaknessScore: number
+  popularityScore: number
+  finalScore: number
+  source: string
+  feedback?: string
+  feedbackTime?: string
+  enrolledAt?: string
+  isCompleted: boolean
+  completedAt?: string
+  creationTime: string
+}
+
+export interface StudentRecommendationStatsDto {
+  studentId: string
+  totalRecommendationsReceived: number
+  totalEnrollments: number
+  completedCourses: number
+  engagementRate: number
+  completionRate: number
+  preferredSources: string[]
+}
+
+export interface RecommendationAnalyticsSummaryDto {
+  totalRecommendations: number
+  totalEnrollments: number
+  totalFeedbacks: number
+  helpfulFeedbacks: number
+  notHelpfulFeedbacks: number
+  clickThroughRate: number
+  enrollmentRate: number
+  helpfulRate: number
+  recommendationsBySource: Record<string, number>
+  averageScoresBySource: Record<string, number>
+  topPerformingCourses: CoursePerformanceDto[]
+  worstPerformingCourses: CoursePerformanceDto[]
+  averageScoresByCategory: Record<string, number>
+}
+
+export interface CoursePerformanceDto {
+  courseId: string
+  courseName: string
+  recommendationCount: number
+  enrollmentCount: number
+  completionCount: number
+  enrollmentRate: number
+  completionRate: number
+  averageFeedbackScore: number
+}
+

@@ -33,6 +33,9 @@ public class RecommendedCourseDto
 {
     public Guid CourseId { get; set; }
 
+    /// <summary>Used for recording feedback. Send this to POST /api/recommendations/{analyticsId}/feedback</summary>
+    public Guid AnalyticsId { get; set; }
+
     public string Title { get; set; } = string.Empty;
 
     public string Description { get; set; } = string.Empty;

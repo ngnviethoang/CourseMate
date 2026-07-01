@@ -13,7 +13,8 @@ import {
   Code2,
   Home,
   Search,
-  X
+  X,
+  Sparkles
 } from 'lucide-react'
 import { getAccessToken, getDecodedToken, removeToken } from '@/lib/auth-token.util'
 import { CourseMateLogoIcon } from '@/components/icons/coursemate-logo'
@@ -53,6 +54,7 @@ function getUserFromToken() {
 
 const NAV_LINKS = [
   { href: '/', label: 'Trang chủ', icon: Home },
+  { href: '/recommendations', label: 'Gợi ý', icon: Sparkles },
   { href: '/contests', label: 'Cuộc thi', icon: Trophy },
   { href: '/exercises', label: 'Bài tập', icon: Code2 }
 ]

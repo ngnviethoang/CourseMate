@@ -20,17 +20,8 @@ public static class ApplicationExtensions
             services.AddTransient<Services.CodeRunnerServices.ICodeRunnerService, Services.CodeRunnerServices.OnlineCompilerService>();
             services.AddTransient<Services.FileStorageServices.IFileStorageManager, Services.FileStorageServices.LocalFileStorageManager>();
 
-            services.Configure<RecommendationOptions>(opts =>
-            {
-                opts.ContentWeight = 0.35;
-                opts.CollaborativeWeight = 0.25;
-                opts.WeaknessWeight = 0.30;
-                opts.PopularityWeight = 0.10;
-                opts.WeaknessThreshold = 0.5;
-                opts.DefaultTopN = 10;
-                opts.MaxTopN = 50;
-            });
             services.AddScoped<IRecommendationService, RecommendationService>();
+            services.AddScoped<IRecommendationAnalyticsService, RecommendationAnalyticsService>();
             services.AddScoped<IRecommendationSignalCollector, RecommendationSignalCollector>();
             services.AddScoped<IRecommendationScorer, RecommendationScorer>();
             services.AddScoped<IRecommendationCourseCatalog, RecommendationCourseCatalog>();
