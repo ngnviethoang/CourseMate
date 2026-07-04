@@ -234,94 +234,6 @@ namespace CourseMate.Persistent.Migrations
                     b.ToTable("Chapters", (string)null);
                 });
 
-            modelBuilder.Entity("CourseMate.Persistent.Entities.ChatConversation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("CourseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreationTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LastModificationTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("LessonId")
-                        .HasColumnType("uuid");
-
-                    b.Property<uint>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ChatConversations", (string)null);
-                });
-
-            modelBuilder.Entity("CourseMate.Persistent.Entities.ChatMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(32768)
-                        .HasColumnType("character varying(32768)");
-
-                    b.Property<Guid>("ConversationId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreationTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LastModificationTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("integer");
-
-                    b.Property<uint>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
-                    b.Property<string>("SourceChunkIds")
-                        .HasMaxLength(32768)
-                        .HasColumnType("character varying(32768)");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ConversationId");
-
-                    b.ToTable("ChatMessages", (string)null);
-                });
-
             modelBuilder.Entity("CourseMate.Persistent.Entities.Contest", b =>
                 {
                     b.Property<Guid>("Id")
@@ -667,132 +579,6 @@ namespace CourseMate.Persistent.Migrations
                     b.HasIndex("InstructorId");
 
                     b.ToTable("Courses", (string)null);
-                });
-
-            modelBuilder.Entity("CourseMate.Persistent.Entities.CourseCoOccurrence", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("CoCount")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("CoCourseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreationTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LastModificationTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<uint>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<double>("Weight")
-                        .HasColumnType("double precision");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CoCourseId");
-
-                    b.HasIndex("CourseId", "Weight");
-
-                    b.ToTable("CourseCoOccurrences", (string)null);
-                });
-
-            modelBuilder.Entity("CourseMate.Persistent.Entities.CourseEmbedding", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreationTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Vector>("Embedding")
-                        .IsRequired()
-                        .HasColumnType("vector(768)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LastModificationTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<uint>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId")
-                        .IsUnique();
-
-                    b.ToTable("CourseEmbeddings", (string)null);
-                });
-
-            modelBuilder.Entity("CourseMate.Persistent.Entities.CourseSimilarity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreationTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LastModificationTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<uint>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
-                    b.Property<double>("Score")
-                        .HasColumnType("double precision");
-
-                    b.Property<Guid>("SimilarCourseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SimilarCourseId");
-
-                    b.HasIndex("CourseId", "Score");
-
-                    b.ToTable("CourseSimilarities", (string)null);
                 });
 
             modelBuilder.Entity("CourseMate.Persistent.Entities.Enrollment", b =>
@@ -2048,51 +1834,6 @@ namespace CourseMate.Persistent.Migrations
                     b.ToTable("UserLessonProgresses", (string)null);
                 });
 
-            modelBuilder.Entity("CourseMate.Persistent.Entities.UserRecommendation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreationTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset>("GeneratedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LastModificationTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Rank")
-                        .HasColumnType("integer");
-
-                    b.Property<uint>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
-                    b.Property<double>("Score")
-                        .HasColumnType("double precision");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("UserId", "Rank");
-
-                    b.ToTable("UserRecommendations", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2271,24 +2012,6 @@ namespace CourseMate.Persistent.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CourseMate.Persistent.Entities.ChatConversation", b =>
-                {
-                    b.HasOne("CourseMate.Persistent.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CourseMate.Persistent.Entities.ChatMessage", b =>
-                {
-                    b.HasOne("CourseMate.Persistent.Entities.ChatConversation", null)
-                        .WithMany()
-                        .HasForeignKey("ConversationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("CourseMate.Persistent.Entities.Contest", b =>
                 {
                     b.HasOne("CourseMate.Persistent.Entities.User", null)
@@ -2360,45 +2083,6 @@ namespace CourseMate.Persistent.Migrations
                     b.HasOne("CourseMate.Persistent.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("InstructorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CourseMate.Persistent.Entities.CourseCoOccurrence", b =>
-                {
-                    b.HasOne("CourseMate.Persistent.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CoCourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CourseMate.Persistent.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CourseMate.Persistent.Entities.CourseEmbedding", b =>
-                {
-                    b.HasOne("CourseMate.Persistent.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CourseMate.Persistent.Entities.CourseSimilarity", b =>
-                {
-                    b.HasOne("CourseMate.Persistent.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CourseMate.Persistent.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("SimilarCourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -2634,21 +2318,6 @@ namespace CourseMate.Persistent.Migrations
                     b.HasOne("CourseMate.Persistent.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CourseMate.Persistent.Entities.UserRecommendation", b =>
-                {
-                    b.HasOne("CourseMate.Persistent.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CourseMate.Persistent.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
