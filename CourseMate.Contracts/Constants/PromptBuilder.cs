@@ -89,6 +89,33 @@ public static class PromptBuilder
                   """;
     }
 
+    public static string BuildChatPrompt(string retrievedContext, string conversationHistory, string question)
+    {
+        string context = string.IsNullOrWhiteSpace(retrievedContext) ? "(no relevant material found)" : retrievedContext;
+        string history = string.IsNullOrWhiteSpace(conversationHistory) ? "(no previous messages)" : conversationHistory;
+        return $"""
+                You are CourseMate's learning assistant. Answer the student's question using ONLY the provided context.
+
+                Rules:
+                - Answer strictly from the Context below. Do not use outside knowledge.
+                - If the Context does not contain the answer, say you don't have enough information in the course materials.
+                - Reply in the same language as the question (Vietnamese-friendly).
+                - Be concise, clear, and teaching-friendly. Use short paragraphs or bullet points.
+                - Do not fabricate facts, links, or citations.
+
+                Context:
+                {context}
+
+                Conversation so far:
+                {history}
+
+                Question:
+                {question}
+
+                Answer:
+                """;
+    }
+
     public static string BuildReadingLessonOutlinePrompt(string researchInput)
     {
         return $$$"""

@@ -27,7 +27,7 @@ public class LoginCommandHandlerTests
 
         LoginCommand request = new()
         {
-            UserName = _testContainer.TestUser.UserName,
+            UserName = _testContainer.TestUser.UserName ?? string.Empty,
             Password = "ValidPassword123!"
         };
 

@@ -29,5 +29,7 @@ public enum ErrorCode
     GoogleLoginFailed,
     GoogleLoginCancelled,
     InvalidOAuthState,
-    AccountPendingApproval
+    AccountPendingApproval,
+    ChatConversationNotFound,
+    ChatAccessDenied
 }

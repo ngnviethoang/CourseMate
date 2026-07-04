@@ -6,10 +6,12 @@ using CourseMate.Application.Events;
 using CourseMate.Application.Queries.Chapters;
 using CourseMate.Application.Queries.Courses;
 using CourseMate.Application.Queries.Lessons;
+using CourseMate.Application.Queries.Recommendations;
 using CourseMate.Application.Queries.Reviews;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
+using CourseMate.Contracts.DTOs.Recommendations;
 using CourseMate.Contracts.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -31,6 +33,15 @@ public class CourseController : ControllerBase
 
     #region Course APIs
 
+    [HttpGet("courses/{id:guid}/similar")]
+    [AllowAnonymous]
+    public async Task<ActionResult> GetListSimilarCourses(Guid id, [FromQuery] GetSimilarCoursesQuery request)
+    {
+        request.CourseId = id;
+        List<RecommendedCourseDto> result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
     [HttpGet("courses")]
     [AllowAnonymous]
     public async Task<ActionResult> GetListCourseAsync([FromQuery] GetListCoursesQuery request)
@@ -51,6 +62,7 @@ public class CourseController : ControllerBase
     public async Task<ActionResult> CreateCourseAsync(CreateCourseCommand request)
     {
         ResultIdDto result = await _mediator.Send(request);
+        await _mediator.Publish(new CourseSavedEvent(result.Id));
         return Ok(result);
     }
 
@@ -60,6 +72,7 @@ public class CourseController : ControllerBase
     {
         request.Id = id;
         await _mediator.Send(request);
+        await _mediator.Publish(new CourseSavedEvent(id));
         return NoContent();
     }
 

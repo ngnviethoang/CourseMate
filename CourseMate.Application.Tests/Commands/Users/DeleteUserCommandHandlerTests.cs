@@ -3,7 +3,6 @@ using CourseMate.Application.Tests.TestInfrastructure;
 using CourseMate.Contracts.Constants;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -31,12 +30,8 @@ public class DeleteUserCommandHandlerTests
     public async Task Handle_ShouldReturnUnit_WhenUserNotFound()
     {
         DeleteUserAbstractCommandHandler handler = new(_testContainer.DbContext, _testContainer.HttpContextAccessor, _testContainer.UserManager);
-
         DeleteUserCommand request = new() { Id = Guid.NewGuid() };
-
-        Unit result = await handler.Handle(request, CancellationToken.None);
-
-        Assert.NotNull(result);
+        await handler.Handle(request, CancellationToken.None);
     }
 
     private sealed class TestContainer

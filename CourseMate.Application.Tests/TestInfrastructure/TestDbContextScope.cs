@@ -162,6 +162,7 @@ public sealed class TestDbContextScope
         {
             base.Customize(modelBuilder, context);
             modelBuilder.Ignore<FileEntryEmbedding>();
+            modelBuilder.Ignore<CourseEmbedding>();
         }
     }
 }

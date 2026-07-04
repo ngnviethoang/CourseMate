@@ -100,6 +100,32 @@ public class GeminiService : IAiService
         return await GenerateWithFallbackAsync(prompt, config, GeminiModels.V25Flash, GeminiModels.V25FlashLite, ct);
     }
 
+    public async Task<string> ChatAsync(IReadOnlyList<ChatTurn> history, string retrievedContext, string question, CancellationToken ct)
+    {
+        string historyText = string.Join("\n", history.Select(turn => $"{turn.Role}: {turn.Content}"));
+        string prompt = PromptBuilder.BuildChatPrompt(retrievedContext, historyText, question);
+
+        GenerateContentConfig config = new()
+        {
+            Temperature = 0.2,
+            TopP = 0.9,
+            TopK = 20,
+            MaxOutputTokens = 2048,
+            ThinkingConfig = new ThinkingConfig
+            {
+                IncludeThoughts = false
+            }
+        };
+
+        _logger.LogInformation(
+            "Starting Gemini chat generation. QuestionLength={QuestionLength}, ContextLength={ContextLength}, HistoryTurns={HistoryTurns}",
+            question.Length,
+            retrievedContext.Length,
+            history.Count);
+
+        return await GenerateWithFallbackAsync(prompt, config, GeminiModels.V25Flash, GeminiModels.V25FlashLite, ct);
+    }
+
     private async Task<string> GenerateWithFallbackAsync(string prompt, GenerateContentConfig config, string primaryModel, string fallbackModel, CancellationToken ct)
     {
         _logger.LogInformation("Starting Gemini generation. PrimaryModel={PrimaryModel}, FallbackModel={FallbackModel}, PromptLength={PromptLength}",
