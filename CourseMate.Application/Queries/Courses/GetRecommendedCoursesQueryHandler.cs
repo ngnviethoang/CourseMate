@@ -3,7 +3,6 @@ using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
-using CourseMate.Persistent.ExtensionMethods;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +12,6 @@ namespace CourseMate.Application.Queries.Courses;
 public class GetRecommendedCoursesQuery : IRequest<PagedDto<CourseDto>>
 {
     public int PageIndex { get; set; } = 1;
-
     public int PageSize { get; set; } = 10;
 }
 
@@ -28,26 +26,37 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
     {
         Guid studentId = CurrentUserId;
 
-        // 1. Get categories of courses the student has already purchased (Paid orders)
-        List<Guid> purchasedCourseIds = await (
+        // Step 1: Collect student's purchase history (purchased courses + their categories).
+        HashSet<Guid> purchasedCourseIds = await (
             from order in DbContext.Orders
-            join orderItem in DbContext.OrderItems on order.Id equals orderItem.OrderId
+            join item in DbContext.OrderItems on order.Id equals item.OrderId
             where order.StudentId == studentId && order.Status == OrderStatus.Completed
-            select orderItem.CourseId
-        ).ToListAsync(ct);
+            select item.CourseId
+        ).ToHashSetAsync(ct);
 
-        List<Guid> purchasedCategoryIds = await (
+        HashSet<Guid> purchasedCategoryIds = await (
             from course in DbContext.Courses
             where purchasedCourseIds.Contains(course.Id)
             select course.CategoryId
-        ).Distinct().ToListAsync(ct);
+        ).ToHashSetAsync(ct);
 
-        // 2. Query published courses
-        IQueryable<CourseDto> query =
+        // Step 2: Build the candidate query. Popularity is expressed as a *correlated scalar subquery*
+        // in the ORDER BY clause so EF Core translates it to a single SQL statement
+        // (SELECT COUNT(...) ... WHERE CourseId = c.Id AND Status = 2). This avoids the
+        // "GroupBy inside LeftJoin not translatable" failure.
+        IQueryable<CourseDto> candidates =
             from course in DbContext.Courses
             join category in DbContext.Categories on course.CategoryId equals category.Id
             join instructor in DbContext.Users on course.InstructorId equals instructor.Id
             where course.IsPublished
+                  && !purchasedCourseIds.Contains(course.Id)
+            orderby (
+                from oi in DbContext.OrderItems
+                join o in DbContext.Orders on oi.OrderId equals o.Id
+                where oi.CourseId == course.Id && o.Status == OrderStatus.Completed
+                select oi.Id
+            ).Count() descending,
+                course.CreationTime descending
             select new CourseDto
             {
                 Id = course.Id,
@@ -64,28 +73,30 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
                 LastModificationTime = course.LastModificationTime
             };
 
-        query = query
-            .WhereIf(purchasedCategoryIds.Any(), c => purchasedCategoryIds.Contains(c.CategoryId) && !purchasedCourseIds.Contains(c.Id))
-            .Where(c => !purchasedCourseIds.Contains(c.Id));
+        // Step 3: Pull a bounded candidate set ordered by popularity (SQL already sorts it).
+        const int candidateLimit = 500;
+        List<CourseDto> fetched = await candidates.Take(candidateLimit).ToListAsync(ct);
 
-        // 4. Order by popularity (paid enrollment count) and creation time
-        IQueryable<CourseDto> finalQuery = query
-            .OrderByDescending(c => DbContext.OrderItems
-                .Count(oi => oi.CourseId == c.Id && DbContext.Orders
-                    .Any(o => o.Id == oi.OrderId && o.Status == OrderStatus.Completed)))
-            .ThenByDescending(c => c.CreationTime);
+        // Step 4: Personalize purely in-memory over the bounded set.
+        bool hasPersonalSignal = purchasedCategoryIds.Count > 0;
+        HashSet<Guid> purchasedCategories = purchasedCategoryIds;
 
-        // 5. Paginate and return
-        List<CourseDto> courses = await finalQuery
+        List<CourseDto> ordered = hasPersonalSignal
+            ? fetched
+                .OrderByDescending(c => purchasedCategories.Contains(c.CategoryId) ? 1 : 0)
+                .ThenByDescending(c => c.CreationTime)
+                .ToList()
+            : fetched;
+
+        int totalCount = ordered.Count;
+        List<CourseDto> page = ordered
             .Skip((request.PageIndex - 1) * request.PageSize)
             .Take(request.PageSize)
-            .ToListAsync(ct);
-
-        int totalCount = await query.CountAsync(ct);
+            .ToList();
 
         return new PagedDto<CourseDto>
         {
-            Items = courses,
+            Items = page,
             PageIndex = request.PageIndex,
             PageSize = request.PageSize,
             TotalCount = totalCount

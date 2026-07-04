@@ -529,3 +529,54 @@ export interface UpdateExerciseRequest {
   testCases: (Partial<ExerciseTestCaseDto> & Omit<ExerciseTestCaseDto, 'id'>)[]
   defaultCodes: (Partial<ExerciseDefaultCodeDto> & Omit<ExerciseDefaultCodeDto, 'id'>)[]
 }
+
+// ─── Recommendation Effectiveness (Admin) ─────────────────────────────────────
+
+export interface RecommendationAnalyticsCourseDto {
+  id: string
+  title: string
+  categoryName: string
+  recommendedViews: number
+  enrollments: number
+  conversionRate: number
+}
+
+export interface RecommendationAnalyticsByCategoryDto {
+  categoryName: string
+  recommendedViews: number
+  enrollments: number
+  conversionRate: number
+}
+
+export interface RecommendationEffectivenessTrendPointDto {
+  date: string
+  recommendations: number
+  enrollments: number
+  conversionRate: number
+}
+
+export interface RecommendationEffectivenessMetricsDto {
+  uniqueCoursesRecommended: number
+  uniqueStudentsServed: number
+  averageEnrollmentsPerActiveStudent: number
+  personalizedShare: number
+  personalizationStrategy: string
+  activeSignals: string[]
+}
+
+export interface RecommendationEffectivenessDto {
+  totalRecommendations: number
+  convertedEnrollments: number
+  overallConversionRate: number
+  activeStudents: number
+  studentsWithPersonalizedRecommendations: number
+  coldStartStudents: number
+  coldStartShare: number
+  coursesAvailable: number
+  coursesShown: number
+  catalogCoverage: number
+  topConvertingCourses: RecommendationAnalyticsCourseDto[]
+  categoryBreakdown: RecommendationAnalyticsByCategoryDto[]
+  dailyTrend: RecommendationEffectivenessTrendPointDto[]
+  metrics: RecommendationEffectivenessMetricsDto
+}
