@@ -32,8 +32,12 @@ public class GetMyRecommendationsQueryHandlerTests
     [Fact]
     public async Task Handle_ShouldFallBackToTrending_WhenUserHasNoRecommendations()
     {
-        TestContainer container = new(seedRecommendations: false);
-        List<RecommendedCourseDto> trending = [new RecommendedCourseDto { Id = Guid.NewGuid(), Reason = RecommendationReason.Popular }];
+        TestContainer container = new(false);
+        List<RecommendedCourseDto> trending =
+        [
+            new()
+                { Id = Guid.NewGuid(), Reason = RecommendationReason.Popular }
+        ];
         container.Sender
             .Setup(s => s.Send(It.IsAny<GetTrendingCoursesQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(trending);

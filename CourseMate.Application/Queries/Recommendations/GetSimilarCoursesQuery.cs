@@ -28,22 +28,22 @@ public sealed class GetSimilarCoursesQueryHandler : AbstractQueryHandler<GetSimi
     public override async Task<List<RecommendedCourseDto>> Handle(GetSimilarCoursesQuery request, CancellationToken ct)
     {
         return await (
-            from similarity in DbContext.CourseSimilarities
-            join course in DbContext.Courses on similarity.SimilarCourseId equals course.Id
-            join category in DbContext.Categories on course.CategoryId equals category.Id
-            where similarity.CourseId == request.CourseId && course.IsPublished
-            orderby similarity.Score descending
-            select new RecommendedCourseDto
-            {
-                Id = course.Id,
-                Title = course.Title,
-                ImageUrl = course.ImageUrl,
-                Price = course.Price,
-                CategoryId = course.CategoryId,
-                CategoryName = category.Name,
-                Score = similarity.Score,
-                Reason = RecommendationReason.SimilarContent
-            })
+                from similarity in DbContext.CourseSimilarities
+                join course in DbContext.Courses on similarity.SimilarCourseId equals course.Id
+                join category in DbContext.Categories on course.CategoryId equals category.Id
+                where similarity.CourseId == request.CourseId && course.IsPublished
+                orderby similarity.Score descending
+                select new RecommendedCourseDto
+                {
+                    Id = course.Id,
+                    Title = course.Title,
+                    ImageUrl = course.ImageUrl,
+                    Price = course.Price,
+                    CategoryId = course.CategoryId,
+                    CategoryName = category.Name,
+                    Score = similarity.Score,
+                    Reason = RecommendationReason.SimilarContent
+                })
             .Take(request.Limit)
             .ToListAsync(ct);
     }

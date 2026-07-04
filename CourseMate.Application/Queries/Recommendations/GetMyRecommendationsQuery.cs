@@ -32,22 +32,22 @@ public sealed class GetMyRecommendationsQueryHandler : AbstractQueryHandler<GetM
         Guid userId = CurrentUserId;
 
         List<RecommendedCourseDto> recommendations = await (
-            from recommendation in DbContext.UserRecommendations
-            join course in DbContext.Courses on recommendation.CourseId equals course.Id
-            join category in DbContext.Categories on course.CategoryId equals category.Id
-            where recommendation.UserId == userId && course.IsPublished
-            orderby recommendation.Rank
-            select new RecommendedCourseDto
-            {
-                Id = course.Id,
-                Title = course.Title,
-                ImageUrl = course.ImageUrl,
-                Price = course.Price,
-                CategoryId = course.CategoryId,
-                CategoryName = category.Name,
-                Score = recommendation.Score,
-                Reason = RecommendationReason.Personalized
-            })
+                from recommendation in DbContext.UserRecommendations
+                join course in DbContext.Courses on recommendation.CourseId equals course.Id
+                join category in DbContext.Categories on course.CategoryId equals category.Id
+                where recommendation.UserId == userId && course.IsPublished
+                orderby recommendation.Rank
+                select new RecommendedCourseDto
+                {
+                    Id = course.Id,
+                    Title = course.Title,
+                    ImageUrl = course.ImageUrl,
+                    Price = course.Price,
+                    CategoryId = course.CategoryId,
+                    CategoryName = category.Name,
+                    Score = recommendation.Score,
+                    Reason = RecommendationReason.Personalized
+                })
             .Take(request.Limit)
             .ToListAsync(ct);
 

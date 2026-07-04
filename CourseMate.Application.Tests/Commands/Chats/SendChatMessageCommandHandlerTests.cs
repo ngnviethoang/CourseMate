@@ -44,8 +44,7 @@ public class SendChatMessageCommandHandlerTests
         SendChatMessageCommandHandler handler = _testContainer.CreateHandler();
         SendChatMessageCommand request = new() { ConversationId = otherConversationId, Text = "Hello" };
 
-        BusinessException exception = await Assert.ThrowsAsync<BusinessException>(
-            () => handler.Handle(request, CancellationToken.None));
+        BusinessException exception = await Assert.ThrowsAsync<BusinessException>(() => handler.Handle(request, CancellationToken.None));
         Assert.Equal(ErrorCode.ChatAccessDenied, exception.ErrorCode);
     }
 
@@ -55,8 +54,7 @@ public class SendChatMessageCommandHandlerTests
         SendChatMessageCommandHandler handler = _testContainer.CreateHandler();
         SendChatMessageCommand request = new() { ConversationId = Guid.NewGuid(), Text = "Hello" };
 
-        BusinessException exception = await Assert.ThrowsAsync<BusinessException>(
-            () => handler.Handle(request, CancellationToken.None));
+        BusinessException exception = await Assert.ThrowsAsync<BusinessException>(() => handler.Handle(request, CancellationToken.None));
         Assert.Equal(ErrorCode.ChatConversationNotFound, exception.ErrorCode);
     }
 
@@ -71,11 +69,11 @@ public class SendChatMessageCommandHandlerTests
 
     private sealed class TestContainer
     {
+        private readonly Mock<IAiService> _aiService = new();
+        private readonly Mock<IChatRetrievalService> _retrievalService = new();
         public readonly CourseMateDbContext DbContext;
         public readonly IHttpContextAccessor HttpContextAccessor;
         public readonly Guid UserId = Guid.NewGuid();
-        private readonly Mock<IAiService> _aiService = new();
-        private readonly Mock<IChatRetrievalService> _retrievalService = new();
 
         public TestContainer()
         {

@@ -4,7 +4,6 @@ using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,11 +38,7 @@ public class DeleteOrderCommandHandlerTests
         DeleteOrderCommandHandler handler = new(otherDbContext, otherScope.HttpContextAccessor);
 
         DeleteOrderCommand request = new() { Id = _testContainer.OrderId };
-
-        Unit result = await handler.Handle(request, CancellationToken.None);
-
-        // Original order should still exist since the handler skips deletion if not owner
-        Assert.NotNull(result);
+        await handler.Handle(request, CancellationToken.None);
     }
 
     [Fact]
@@ -53,9 +48,7 @@ public class DeleteOrderCommandHandlerTests
 
         DeleteOrderCommand request = new() { Id = Guid.NewGuid() };
 
-        Unit result = await handler.Handle(request, CancellationToken.None);
-
-        Assert.NotNull(result);
+        await handler.Handle(request, CancellationToken.None);
     }
 
     private sealed class TestContainer

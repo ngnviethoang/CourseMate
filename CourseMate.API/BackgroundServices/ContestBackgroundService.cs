@@ -8,8 +8,8 @@ namespace CourseMate.API.BackgroundServices;
 
 public class ContestBackgroundService : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<ContestBackgroundService> _logger;
+    private readonly IServiceProvider _serviceProvider;
 
     public ContestBackgroundService(IServiceProvider serviceProvider, ILogger<ContestBackgroundService> logger)
     {

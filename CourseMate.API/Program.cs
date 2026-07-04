@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using CourseMate.API.BackgroundServices;
 using CourseMate.API.Hubs;
 using CourseMate.API.Middlewares;
 using CourseMate.API.Services;
@@ -103,7 +104,7 @@ try
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate")!);
     builder.Services.AddHangfireServer();
-    builder.Services.AddHostedService<CourseMate.API.BackgroundServices.ContestBackgroundService>();
+    builder.Services.AddHostedService<ContestBackgroundService>();
     builder.Services.AddSignalR().AddJsonProtocol(options =>
     {
         // FE sends enum values as strings (e.g. "TabSwitch"). Without this converter,

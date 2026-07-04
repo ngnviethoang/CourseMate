@@ -33,10 +33,10 @@ public sealed class GetTrendingCoursesQueryHandler : AbstractQueryHandler<GetTre
         Dictionary<Guid, int> popularity = enrollmentCounts.ToDictionary(x => x.CourseId, x => x.Count);
 
         List<CourseProjection> courses = await (
-            from course in DbContext.Courses
-            join category in DbContext.Categories on course.CategoryId equals category.Id
-            where course.IsPublished
-            select new CourseProjection(course.Id, course.Title, course.ImageUrl, course.Price, course.CategoryId, category.Name))
+                from course in DbContext.Courses
+                join category in DbContext.Categories on course.CategoryId equals category.Id
+                where course.IsPublished
+                select new CourseProjection(course.Id, course.Title, course.ImageUrl, course.Price, course.CategoryId, category.Name))
             .ToListAsync(ct);
 
         return courses
