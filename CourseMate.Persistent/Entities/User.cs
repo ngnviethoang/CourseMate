@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using CourseMate.Persistent.Entities.Abstracts;
 using Microsoft.AspNetCore.Identity;
 

@@ -1,7 +1,6 @@
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
-using CourseMate.Persistent.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Services.SkillAnalysisServices;
@@ -30,8 +29,8 @@ public class SkillAnalysisService : ISkillAnalysisService
             from s in _db.ExerciseSubmissions
             join e in _db.Exercises on s.ExerciseId equals e.Id
             where s.UserId == studentId
-                && !s.IsDeleted
-                && !e.IsDeleted
+                  && !s.IsDeleted
+                  && !e.IsDeleted
             select new
             {
                 s.ExerciseId,
@@ -44,12 +43,12 @@ public class SkillAnalysisService : ISkillAnalysisService
             }
         ).AsNoTracking().ToListAsync(ct);
 
-        var studentName = await _db.Users
+        string studentName = await _db.Users
             .Where(u => u.Id == studentId)
             .Select(u => u.UserName ?? "Student")
             .FirstOrDefaultAsync(ct) ?? "Student";
 
-        var grouped = allSubmissions
+        List<SkillAreaDto> grouped = allSubmissions
             .GroupBy(x => new { Category = x.Category.Trim(), x.Difficulty })
             .Where(g => !string.IsNullOrEmpty(g.Key.Category))
             .Select(g =>
@@ -60,7 +59,7 @@ public class SkillAnalysisService : ISkillAnalysisService
                 double passRate = total == 0 ? 0 : (double)passed / total;
                 double avgScore = total == 0 ? 0 : items.Average(i => i.Score);
                 double avgRuntime = total == 0 ? 0 : items.Average(i => i.TotalTime);
-                double mastery = (passRate * 0.7) + ((avgScore / 100.0) * 0.3);
+                double mastery = passRate * 0.7 + avgScore / 100.0 * 0.3;
                 bool isWeak = total >= WeakAreaMinAttempts && mastery < WeakAreaMasteryThreshold;
 
                 return new SkillAreaDto
@@ -74,31 +73,31 @@ public class SkillAnalysisService : ISkillAnalysisService
                     AverageScore = Math.Round(avgScore, 1),
                     MasteryScore = Math.Round(mastery * 100, 1),
                     IsWeakArea = isWeak,
-                    Summary = BuildSummary(category: g.Key.Category, difficulty: g.Key.Difficulty, passRate: passRate, avgScore: avgScore, total: total),
-                    ImprovementHints = BuildHints(category: g.Key.Category, difficulty: g.Key.Difficulty, avgScore: avgScore, passRate: passRate),
+                    Summary = BuildSummary(g.Key.Category, g.Key.Difficulty, passRate, avgScore, total),
+                    ImprovementHints = BuildHints(g.Key.Category, g.Key.Difficulty, avgScore, passRate),
                     LastAttemptedAt = items.Max(i => i.CreationTime)
                 };
             })
             .ToList();
 
-        var strengths = grouped
+        List<SkillAreaDto> strengths = grouped
             .Where(a => !a.IsWeakArea && a.TotalAttempts > 0)
             .OrderByDescending(a => a.MasteryScore)
             .ThenByDescending(a => a.PassedAttempts)
             .Take(5)
             .ToList();
 
-        var weakAreas = grouped
+        List<SkillAreaDto> weakAreas = grouped
             .Where(a => a.IsWeakArea)
             .OrderBy(a => a.MasteryScore)
             .ThenBy(a => a.PassRate)
             .Take(5)
             .ToList();
 
-        var overallMastery = grouped.Count == 0 ? 0 : grouped.Average(a => a.MasteryScore);
-        var overallSkillLevel = DetermineSkillLevel(overallMastery, allSubmissions.Count);
+        double overallMastery = grouped.Count == 0 ? 0 : grouped.Average(a => a.MasteryScore);
+        string overallSkillLevel = DetermineSkillLevel(overallMastery, allSubmissions.Count);
 
-        var overall = new OverallMasteryDto
+        OverallMasteryDto overall = new()
         {
             MasteryScore = Math.Round(overallMastery, 1),
             SkillLevel = overallSkillLevel,
@@ -109,8 +108,8 @@ public class SkillAnalysisService : ISkillAnalysisService
             CategoriesCovered = grouped.Count
         };
 
-        var cutoff = DateTimeOffset.UtcNow.AddDays(-RecentDaysWindow);
-        var recentProgress = allSubmissions
+        DateTimeOffset cutoff = DateTimeOffset.UtcNow.AddDays(-RecentDaysWindow);
+        List<SkillProgressPointDto> recentProgress = allSubmissions
             .Where(s => s.CreationTime >= cutoff)
             .GroupBy(s => s.CreationTime.Date)
             .OrderBy(g => g.Key)
@@ -123,9 +122,9 @@ public class SkillAnalysisService : ISkillAnalysisService
             })
             .ToList();
 
-        var recommendedExercises = await RecommendExercisesAsync(studentId, weakAreas, ct);
-        var recommendedCourses = await RecommendCoursesAsync(studentId, weakAreas, ct);
-        var tips = BuildOverallTips(grouped, overall, weakAreas.Count);
+        List<RecommendedExerciseDto> recommendedExercises = await RecommendExercisesAsync(studentId, weakAreas, ct);
+        List<RecommendedCourseDto> recommendedCourses = await RecommendCoursesAsync(studentId, weakAreas, ct);
+        List<string> tips = BuildOverallTips(grouped, overall, weakAreas.Count);
 
         return new StudentSkillAnalysisDto
         {
@@ -149,9 +148,9 @@ public class SkillAnalysisService : ISkillAnalysisService
             return new List<RecommendedExerciseDto>();
         }
 
-        var weakCategorySet = weakAreas.Select(w => w.Category).ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var weakDifficultyLevels = weakAreas.Select(w => w.DifficultyLevel).Distinct().ToHashSet();
-        var attemptedExerciseIds = await _db.ExerciseSubmissions
+        HashSet<string> weakCategorySet = weakAreas.Select(w => w.Category).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        HashSet<int> weakDifficultyLevels = weakAreas.Select(w => w.DifficultyLevel).Distinct().ToHashSet();
+        List<Guid> attemptedExerciseIds = await _db.ExerciseSubmissions
             .Where(s => s.UserId == studentId)
             .Select(s => s.ExerciseId)
             .Distinct()
@@ -196,9 +195,9 @@ public class SkillAnalysisService : ISkillAnalysisService
             return new List<RecommendedCourseDto>();
         }
 
-        var weakCategorySet = weakAreas.Select(w => w.Category).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        HashSet<string> weakCategorySet = weakAreas.Select(w => w.Category).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        var matchingCategories = await _db.Categories
+        List<Guid> matchingCategories = await _db.Categories
             .Where(c => !c.IsDeleted && weakCategorySet.Contains(c.Name.Trim()))
             .Select(c => c.Id)
             .ToListAsync(ct);
@@ -208,7 +207,7 @@ public class SkillAnalysisService : ISkillAnalysisService
             return new List<RecommendedCourseDto>();
         }
 
-        var enrolledCourseIds = await _db.Enrollments
+        List<Guid> enrolledCourseIds = await _db.Enrollments
             .Where(e => e.StudentId == studentId)
             .Select(e => e.CourseId)
             .Distinct()
@@ -216,9 +215,9 @@ public class SkillAnalysisService : ISkillAnalysisService
 
         var courses = await _db.Courses
             .Where(c => !c.IsDeleted
-                && c.IsPublished
-                && matchingCategories.Contains(c.CategoryId)
-                && !enrolledCourseIds.Contains(c.Id))
+                        && c.IsPublished
+                        && matchingCategories.Contains(c.CategoryId)
+                        && !enrolledCourseIds.Contains(c.Id))
             .OrderByDescending(c => c.CreationTime)
             .Take(50)
             .Select(c => new
@@ -246,21 +245,44 @@ public class SkillAnalysisService : ISkillAnalysisService
 
     private static string DetermineSkillLevel(double mastery, int totalAttempts)
     {
-        if (totalAttempts == 0) return "Chưa có dữ liệu";
-        if (mastery >= 85) return "Xuất sắc";
-        if (mastery >= 70) return "Thành thạo";
-        if (mastery >= 50) return "Trung bình";
-        if (mastery >= 30) return "Sơ cấp";
+        if (totalAttempts == 0)
+        {
+            return "Chưa có dữ liệu";
+        }
+
+        if (mastery >= 85)
+        {
+            return "Xuất sắc";
+        }
+
+        if (mastery >= 70)
+        {
+            return "Thành thạo";
+        }
+
+        if (mastery >= 50)
+        {
+            return "Trung bình";
+        }
+
+        if (mastery >= 30)
+        {
+            return "Sơ cấp";
+        }
+
         return "Mới bắt đầu";
     }
 
-    private static string DifficultyLabel(int difficulty) => difficulty switch
+    private static string DifficultyLabel(int difficulty)
     {
-        (int)ExerciseDifficultyType.Easy => "Dễ",
-        (int)ExerciseDifficultyType.Medium => "Trung bình",
-        (int)ExerciseDifficultyType.Hard => "Khó",
-        _ => "Khác"
-    };
+        return difficulty switch
+        {
+            (int)ExerciseDifficultyType.Easy => "Dễ",
+            (int)ExerciseDifficultyType.Medium => "Trung bình",
+            (int)ExerciseDifficultyType.Hard => "Khó",
+            _ => "Khác"
+        };
+    }
 
     private static string BuildSummary(string category, int difficulty, double passRate, double avgScore, int total)
     {
@@ -276,7 +298,7 @@ public class SkillAnalysisService : ISkillAnalysisService
 
     private static List<string> BuildHints(string category, int difficulty, double avgScore, double passRate)
     {
-        var hints = new List<string>();
+        List<string> hints = new();
         string diff = DifficultyLabel(difficulty);
 
         if (passRate < 0.4)
@@ -290,7 +312,7 @@ public class SkillAnalysisService : ISkillAnalysisService
 
         if (avgScore < 50)
         {
-            hints.Add($"Điểm trung bình dưới 50/100 — cần cải thiện tốc độ và độ chính xác.");
+            hints.Add("Điểm trung bình dưới 50/100 — cần cải thiện tốc độ và độ chính xác.");
         }
 
         if (difficulty >= (int)ExerciseDifficultyType.Medium && passRate < 0.5)
@@ -308,7 +330,7 @@ public class SkillAnalysisService : ISkillAnalysisService
 
     private static List<string> BuildOverallTips(List<SkillAreaDto> grouped, OverallMasteryDto overall, int weakCount)
     {
-        var tips = new List<string>();
+        List<string> tips = new();
 
         if (grouped.Count == 0)
         {

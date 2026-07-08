@@ -43,10 +43,10 @@ internal sealed class GetRecommendedExercisesQueryHandler : AbstractQueryHandler
                 on exercise.Id equals testCase.ExerciseId into testCaseGroup
             where !exercise.IsDeleted
             orderby (
-                from s in DbContext.ExerciseSubmissions
-                where s.ExerciseId == exercise.Id && s.IsPassed
-                select s.Id
-            ).Count() descending,
+                    from s in DbContext.ExerciseSubmissions
+                    where s.ExerciseId == exercise.Id && s.IsPassed
+                    select s.Id
+                ).Count() descending,
                 exercise.CreationTime descending
             select new ExerciseDto
             {

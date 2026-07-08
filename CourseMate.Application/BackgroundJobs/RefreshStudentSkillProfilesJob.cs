@@ -1,4 +1,3 @@
-using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using Hangfire;
@@ -43,24 +42,24 @@ public class RefreshStudentSkillProfilesJob
             }
         ).AsNoTracking().ToListAsync(ct);
 
-        var studentIds = submissions.Select(s => s.StudentId).Distinct().ToList();
+        List<Guid> studentIds = submissions.Select(s => s.StudentId).Distinct().ToList();
         if (studentIds.Count == 0)
         {
             _logger.LogInformation("No submissions found, skipping skill profile refresh");
             return;
         }
 
-        var existingProfiles = await _db.StudentSkillProfiles
+        List<StudentSkillProfile> existingProfiles = await _db.StudentSkillProfiles
             .Where(p => studentIds.Contains(p.StudentId))
             .ToListAsync(ct);
 
-        var byKey = existingProfiles.ToDictionary(p => (p.StudentId, p.Category.Trim().ToLowerInvariant(), p.Difficulty));
+        Dictionary<(Guid StudentId, string, int Difficulty), StudentSkillProfile> byKey = existingProfiles.ToDictionary(p => (p.StudentId, p.Category.Trim().ToLowerInvariant(), p.Difficulty));
 
         var grouped = submissions
             .GroupBy(x => new { x.StudentId, Category = x.Category.Trim(), x.Difficulty });
 
-        var newProfiles = new List<StudentSkillProfile>();
-        var updatedProfiles = new List<StudentSkillProfile>();
+        List<StudentSkillProfile> newProfiles = new();
+        List<StudentSkillProfile> updatedProfiles = new();
 
         foreach (var group in grouped)
         {
@@ -75,12 +74,12 @@ public class RefreshStudentSkillProfilesJob
             double passRate = total == 0 ? 0 : (double)passed / total;
             double avgScore = total == 0 ? 0 : items.Average(i => i.Score);
             double avgRuntime = total == 0 ? 0 : items.Average(i => i.TotalTime);
-            double mastery = (passRate * 0.7) + ((avgScore / 100.0) * 0.3);
+            double mastery = passRate * 0.7 + avgScore / 100.0 * 0.3;
             bool isWeak = total >= WeakAreaMinAttempts && mastery < WeakAreaMasteryThreshold;
             DateTimeOffset lastAttempted = items.Max(i => i.CreationTime);
 
-            var key = (group.Key.StudentId, group.Key.Category.ToLowerInvariant(), group.Key.Difficulty);
-            if (byKey.TryGetValue(key, out var existing))
+            (Guid StudentId, string, int Difficulty) key = (group.Key.StudentId, group.Key.Category.ToLowerInvariant(), group.Key.Difficulty);
+            if (byKey.TryGetValue(key, out StudentSkillProfile? existing))
             {
                 existing.TotalAttempts = total;
                 existing.PassedAttempts = passed;
@@ -93,17 +92,17 @@ public class RefreshStudentSkillProfilesJob
             }
             else
             {
-                var profile = new StudentSkillProfile(
-                    id: Guid.NewGuid(),
-                    studentId: group.Key.StudentId,
-                    category: group.Key.Category,
-                    difficulty: group.Key.Difficulty,
-                    totalAttempts: total,
-                    passedAttempts: passed,
-                    averageScore: avgScore,
-                    averageRuntime: avgRuntime,
-                    masteryScore: mastery,
-                    isWeakArea: isWeak)
+                StudentSkillProfile profile = new(
+                    Guid.NewGuid(),
+                    group.Key.StudentId,
+                    group.Key.Category,
+                    group.Key.Difficulty,
+                    total,
+                    passed,
+                    avgScore,
+                    avgRuntime,
+                    mastery,
+                    isWeak)
                 {
                     LastAttemptedAt = lastAttempted
                 };

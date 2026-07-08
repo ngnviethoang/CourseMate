@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using CourseMate.Persistent.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -6,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Persistent;
 
-public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
+public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     private const string SoftDeletionFilter = "SoftDeletionFilter";
 
@@ -49,6 +48,13 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<IdentityUser
     public DbSet<AntiCheatViolation> AntiCheatViolations { get; set; }
     public DbSet<StudentSkillProfile> StudentSkillProfiles { get; set; }
     public DbSet<StudentPreference> StudentPreferences { get; set; }
+    public DbSet<ContestPrize> ContestPrizes { get; set; }
+    public DbSet<ChatConversation> ChatConversations { get; set; }
+    public DbSet<ChatMessage> ChatMessages { get; set; }
+    public DbSet<CourseEmbedding> CourseEmbeddings { get; set; }
+    public DbSet<CourseSimilarity> CourseSimilarities { get; set; }
+    public DbSet<CourseCoOccurrence> CourseCoOccurrences { get; set; }
+    public DbSet<UserRecommendation> UserRecommendations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -65,7 +65,8 @@ internal sealed class GetRecommendationEffectivenessQueryHandler
             from order in DbContext.Orders
             join item in DbContext.OrderItems on order.Id equals item.OrderId
             where order.Status == OrderStatus.Completed
-            group order by item.CourseId into g
+            group order by item.CourseId
+            into g
             select new { CourseId = g.Key, StudentCount = g.Select(o => o.StudentId).Distinct().Count() }
         ).ToListAsync(ct);
 
@@ -103,7 +104,7 @@ internal sealed class GetRecommendationEffectivenessQueryHandler
             })
             .ToList();
 
-        var categoryBreakdownRaw = topCourses
+        List<RecommendationAnalyticsByCategoryDto> categoryBreakdownRaw = topCourses
             .Where(t => courseMeta.ContainsKey(t.CourseId))
             .GroupBy(t => courseMeta[t.CourseId].CategoryName)
             .Select(g => new RecommendationAnalyticsByCategoryDto
@@ -119,7 +120,7 @@ internal sealed class GetRecommendationEffectivenessQueryHandler
             .ToList();
 
         DateTimeOffset trendFrom = DateTimeOffset.UtcNow.AddDays(-14).Date;
-        var trendRaw = recentOrders
+        List<RecommendationEffectivenessTrendPointDto> trendRaw = recentOrders
             .Where(r => r.CreationTime >= trendFrom)
             .GroupBy(r => r.CreationTime.UtcDateTime.Date)
             .OrderBy(g => g.Key)

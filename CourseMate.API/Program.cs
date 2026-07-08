@@ -1,4 +1,5 @@
 using System.Text;
+using CourseMate.API.BackgroundServices;
 using CourseMate.API.Hubs;
 using CourseMate.API.Middlewares;
 using CourseMate.API.Services;
@@ -8,7 +9,9 @@ using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using Hangfire;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
@@ -43,6 +46,8 @@ try
     builder.Services.Configure<PayOsOptions>(configuration.GetSection("PayOs"));
     builder.Services.Configure<CorsOptions>(configuration.GetSection("CORS"));
     builder.Services.Configure<SmtpOptions>(configuration.GetSection("Smtp"));
+    builder.Services.Configure<GoogleAuthOptions>(configuration.GetSection("Authentication:Google"));
+    builder.Services.Configure<RecommendationOptions>(configuration.GetSection("Recommendation"));
     builder.Services.AddHttpClient();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<HttpLoggingMiddleware>();
@@ -51,7 +56,9 @@ try
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         })
+        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
@@ -70,7 +77,7 @@ try
                 {
                     StringValues accessToken = context.Request.Query["access_token"];
                     PathString path = context.HttpContext.Request.Path;
-                    if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/hubs/notification") || path.StartsWithSegments("/hubs/contest")))
+                    if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/hubs/notification") || path.StartsWithSegments("/hubs/contest") || path.StartsWithSegments("/hubs/chat")))
                     {
                         context.Token = accessToken;
                     }
@@ -78,12 +85,20 @@ try
                     return Task.CompletedTask;
                 }
             };
+        })
+        .AddGoogle(options =>
+        {
+            options.ClientId = configuration["Authentication:Google:ClientId"]!;
+            options.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
+            options.CallbackPath = configuration["Authentication:Google:CallbackPath"]!; // This is a callback for Google middleware, NOT your controller action.
+            options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         });
 
-    builder.Services.AddIdentityCore<IdentityUser<Guid>>()
+    builder.Services.AddIdentityCore<User>()
         .AddSignInManager()
         .AddRoles<IdentityRole<Guid>>()
-        .AddEntityFrameworkStores<CourseMateDbContext>();
+        .AddEntityFrameworkStores<CourseMateDbContext>()
+        .AddDefaultTokenProviders();
     builder.Services.Configure<IdentityOptions>(options =>
     {
         options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-";
@@ -93,6 +108,7 @@ try
     builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate")!);
     builder.Services.AddHangfireServer();
     builder.Services.AddSignalR();
+    builder.Services.AddHostedService<ContestBackgroundService>();
     builder.Services.AddTransient<INotificationService, NotificationService>();
     builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
@@ -163,10 +179,26 @@ try
     app.MapControllers();
     app.MapHub<NotificationHub>("/hubs/notification").RequireCors("SignalRHubs");
     app.MapHub<ContestHub>("/hubs/contest").RequireCors("SignalRHubs");
+    app.MapHub<ChatHub>("/hubs/chat").RequireCors("SignalRHubs");
     app.MapHangfireDashboard();
+
     RecurringJob.AddOrUpdate<RefreshStudentSkillProfilesJob>(
+        "refresh-student-skill-profiles",
         job => job.ExecuteAsync(CancellationToken.None),
         Cron.Daily(3));
+    RecurringJob.AddOrUpdate<BuildCourseSimilarityJob>(
+        "build-course-similarity",
+        job => job.ExecuteAsync(CancellationToken.None),
+        Cron.Daily);
+    RecurringJob.AddOrUpdate<BuildCoOccurrenceJob>(
+        "build-course-cooccurrence",
+        job => job.ExecuteAsync(CancellationToken.None),
+        Cron.Daily);
+    RecurringJob.AddOrUpdate<BuildUserRecommendationsJob>(
+        "build-user-recommendations",
+        job => job.ExecuteAsync(CancellationToken.None),
+        Cron.Daily);
+
     Log.Information("Starting web host");
     await app.RunAsync();
 }

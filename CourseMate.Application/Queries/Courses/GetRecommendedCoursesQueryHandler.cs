@@ -46,11 +46,11 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
             join instructor in DbContext.Users on course.InstructorId equals instructor.Id
             where course.IsPublished && !purchasedCourseIds.Contains(course.Id)
             orderby (
-                from oi in DbContext.OrderItems
-                join o in DbContext.Orders on oi.OrderId equals o.Id
-                where oi.CourseId == course.Id && o.Status == OrderStatus.Completed
-                select oi.Id
-            ).Count() descending,
+                    from oi in DbContext.OrderItems
+                    join o in DbContext.Orders on oi.OrderId equals o.Id
+                    where oi.CourseId == course.Id && o.Status == OrderStatus.Completed
+                    select oi.Id
+                ).Count() descending,
                 course.CreationTime descending
             select new CourseDto
             {

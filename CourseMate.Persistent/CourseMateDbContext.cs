@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace CourseMate.Persistent;
 
-public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
+public sealed class CourseMateDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     private const string SoftDeletionFilter = "SoftDeletionFilter";
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -55,6 +55,13 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
     public DbSet<AntiCheatViolation> AntiCheatViolations { get; set; }
     public DbSet<StudentSkillProfile> StudentSkillProfiles { get; set; }
     public DbSet<StudentPreference> StudentPreferences { get; set; }
+    public DbSet<ContestPrize> ContestPrizes { get; set; }
+    public DbSet<ChatConversation> ChatConversations { get; set; }
+    public DbSet<ChatMessage> ChatMessages { get; set; }
+    public DbSet<CourseEmbedding> CourseEmbeddings { get; set; }
+    public DbSet<CourseSimilarity> CourseSimilarities { get; set; }
+    public DbSet<CourseCoOccurrence> CourseCoOccurrences { get; set; }
+    public DbSet<UserRecommendation> UserRecommendations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -62,7 +69,7 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
         modelBuilder.HasPostgresExtension("citext");
         modelBuilder.HasPostgresExtension("vector");
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
-        
+
         /*foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
        {
            if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
