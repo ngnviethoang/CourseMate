@@ -8,7 +8,7 @@ services:
         shm_size: 128mb
         environment:
             POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: postgres
+            POSTGRES_PASSWORD: p@ssW0rd#6062!
             POSTGRES_DB: CourseMateV2
         healthcheck:
             test: [ "CMD-SHELL", "pg_isready -U postgres" ]
