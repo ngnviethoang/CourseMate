@@ -13,7 +13,7 @@ public class MarkNotificationReadCommand : IRequest<ResultIdDto>
     public Guid NotificationId { get; set; }
 }
 
-internal sealed class MarkNotificationReadCommandHandler : AbstractCommandHandler<MarkNotificationReadCommand, ResultIdDto>
+public sealed class MarkNotificationReadCommandHandler : AbstractCommandHandler<MarkNotificationReadCommand, ResultIdDto>
 {
     public MarkNotificationReadCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

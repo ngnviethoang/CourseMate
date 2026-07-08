@@ -1,8 +1,18 @@
+using CourseMate.Application.Commands.Chapters;
 using CourseMate.Application.Commands.Courses;
+using CourseMate.Application.Commands.Lessons;
+using CourseMate.Application.Commands.Reviews;
+using CourseMate.Application.Events;
+using CourseMate.Application.Queries.Chapters;
 using CourseMate.Application.Queries.Courses;
+using CourseMate.Application.Queries.Lessons;
+using CourseMate.Application.Queries.Recommendations;
+using CourseMate.Application.Queries.Reviews;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
+using CourseMate.Contracts.DTOs.Recommendations;
+using CourseMate.Contracts.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +32,15 @@ public class CourseController : ControllerBase
     }
 
     #region Course APIs
+
+    [HttpGet("courses/{id:guid}/similar")]
+    [AllowAnonymous]
+    public async Task<ActionResult> GetListSimilarCourses(Guid id, [FromQuery] GetSimilarCoursesQuery request)
+    {
+        request.CourseId = id;
+        List<RecommendedCourseDto> result = await _mediator.Send(request);
+        return Ok(result);
+    }
 
     [HttpGet("courses")]
     [AllowAnonymous]
@@ -43,6 +62,7 @@ public class CourseController : ControllerBase
     public async Task<ActionResult> CreateCourseAsync(CreateCourseCommand request)
     {
         ResultIdDto result = await _mediator.Send(request);
+        await _mediator.Publish(new CourseSavedEvent(result.Id));
         return Ok(result);
     }
 
@@ -52,6 +72,7 @@ public class CourseController : ControllerBase
     {
         request.Id = id;
         await _mediator.Send(request);
+        await _mediator.Publish(new CourseSavedEvent(id));
         return NoContent();
     }
 
@@ -68,14 +89,6 @@ public class CourseController : ControllerBase
     public async Task<ActionResult> GetMyCoursesAsync([FromQuery] GetMyCoursesQuery request)
     {
         PagedDto<StudentMyCourseDto> result = await _mediator.Send(request);
-        return Ok(result);
-    }
-
-    [HttpGet("courses/recommended")]
-    [Authorize(Roles = Roles.Student)]
-    public async Task<ActionResult> GetRecommendedCoursesAsync([FromQuery] GetRecommendedCoursesQuery request)
-    {
-        PagedDto<CourseDto> result = await _mediator.Send(request);
         return Ok(result);
     }
 
@@ -223,11 +236,12 @@ public class CourseController : ControllerBase
     #region AI Process Document APIs
 
     /// <summary>
-    ///     Upload a Word/PDF file for the lesson and trigger AI processing (parse + outline generation)
+    ///     Upload a lesson source file and trigger AI processing to generate a slide-oriented outline
+    ///     using <see cref="LessonMaterialPromptType.BulletSlide" />.
     /// </summary>
-    [HttpPost("lessons/{lessonId:guid}/materials")]
+    [HttpPost("lessons/{lessonId:guid}/materials/bullet-slide")]
     // [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
-    public async Task<ActionResult> CreateLessonMaterialAsync(Guid lessonId, IFormFile request)
+    public async Task<ActionResult> CreateLessonBulletSlideMaterialAsync(Guid lessonId, IFormFile request)
     {
         if (request.Length == 0)
         {
@@ -240,8 +254,39 @@ public class CourseController : ControllerBase
         {
             LessonId = lessonId,
             FileName = request.FileName,
-            Content = stream.ToArray()
+            Content = stream.ToArray(),
+            PromptType = LessonMaterialPromptType.BulletSlide
         });
+
+        await _mediator.Publish(new LessonMaterialCreatedEvent(result.LessonMaterialId, result.LessonId, LessonMaterialPromptType.BulletSlide));
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    ///     Upload a lesson source file and trigger AI processing to generate a reading-oriented outline
+    ///     using <see cref="LessonMaterialPromptType.Reading" />.
+    /// </summary>
+    [HttpPost("lessons/{lessonId:guid}/materials/reading-outline")]
+    // [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> CreateLessonReadingOutlineMaterialAsync(Guid lessonId, IFormFile request)
+    {
+        if (request.Length == 0)
+        {
+            return BadRequest();
+        }
+
+        using MemoryStream stream = new();
+        await request.CopyToAsync(stream);
+        ProcessingStatusDto result = await _mediator.Send(new CreateLessonMaterialCommand
+        {
+            LessonId = lessonId,
+            FileName = request.FileName,
+            Content = stream.ToArray(),
+            PromptType = LessonMaterialPromptType.Reading
+        });
+
+        await _mediator.Publish(new LessonMaterialCreatedEvent(result.LessonMaterialId, result.LessonId, LessonMaterialPromptType.Reading));
 
         return Ok(result);
     }
@@ -267,6 +312,28 @@ public class CourseController : ControllerBase
         command.LessonId = lessonId;
         OutlineDto result = await _mediator.Send(command);
         return Ok(result);
+    }
+
+    #endregion
+
+    #region Review APIs
+
+    [HttpGet("courses/{id:guid}/reviews")]
+    [AllowAnonymous]
+    public async Task<ActionResult> GetCourseReviewsAsync(Guid id, [FromQuery] GetCourseReviewsQuery request)
+    {
+        request.CourseId = id;
+        PagedDto<ReviewDto> result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
+    [HttpPost("courses/{id:guid}/reviews")]
+    [Authorize(Roles = Roles.Student)]
+    public async Task<ActionResult> ReviewCourseAsync(Guid id, [FromBody] ReviewCourseCommand request)
+    {
+        request.CourseId = id;
+        Guid resultId = await _mediator.Send(request);
+        return Ok(new ResultIdDto { Id = resultId });
     }
 
     #endregion

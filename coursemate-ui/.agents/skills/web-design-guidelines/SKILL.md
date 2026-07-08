@@ -22,6 +22,7 @@ The interface is based on a **light blue and white** palette to create a clean a
 **Secondary Colors** – Used sparingly for UI accents and secondary actions.
 **Neutral Colors** – Used for text, borders, dividers, cards, and secondary backgrounds (light gray, dark gray, muted gray).
 **Status Colors** – Used only when necessary for success, warning, and error states.
+**Color Usage Rule** – Avoid raw color declarations such as `rgb(...)`, `rgba(...)`, hex codes, or arbitrary one-off color values in component code. Prefer semantic Tailwind tokens and shared theme colors.
 **Gradient Usage** – Gradients should be avoided or used minimally; solid colors are preferred.
 **Accessibility** – Colors must maintain sufficient contrast and should not rely solely on color to convey meaning.
 
@@ -29,6 +30,11 @@ The interface is based on a **light blue and white** palette to create a clean a
 
 Typography should follow a clear hierarchy:
 H1 – Page titles, H2 – Section titles, H3 – Subsections, Body – Content text, Small – Labels and metadata. Font usage must remain consistent across the application.
+
+## Copywriting
+
+UI text should be direct, easy to understand, and focused on the user's task.
+Avoid decorative wording, excessive enthusiasm, multiple exclamation phrases, or copy that sounds promotional when a simple instruction or status is enough.
 
 ## Spacing and Layout
 

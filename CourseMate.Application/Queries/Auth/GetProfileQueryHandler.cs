@@ -1,16 +1,16 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Auth;
 
 public class GetProfileQuery : IRequest<ProfileDto>;
 
-internal sealed class GetProfileQueryHandler : AbstractQueryHandler<GetProfileQuery, ProfileDto?>
+public sealed class GetProfileQueryHandler : AbstractQueryHandler<GetProfileQuery, ProfileDto?>
 {
     public GetProfileQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -20,7 +20,7 @@ internal sealed class GetProfileQueryHandler : AbstractQueryHandler<GetProfileQu
     public override async Task<ProfileDto?> Handle(GetProfileQuery request, CancellationToken ct)
     {
         Guid userId = CurrentUserId;
-        IdentityUser<Guid>? user = await DbContext.Users.FirstOrDefaultAsync(i => i.Id == userId, ct);
+        User? user = await DbContext.Users.FirstOrDefaultAsync(i => i.Id == userId, ct);
 
         if (user == null)
         {

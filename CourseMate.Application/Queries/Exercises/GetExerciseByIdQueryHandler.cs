@@ -2,7 +2,6 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Persistent;
-using CourseMate.Persistent.ExtensionMethods;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +13,7 @@ public class GetExerciseByIdQuery : IRequest<GetExerciseByIdResponse?>
     public Guid Id { get; set; }
 }
 
-internal sealed class GetExerciseByIdQueryHandler : AbstractQueryHandler<GetExerciseByIdQuery, GetExerciseByIdResponse?>
+public sealed class GetExerciseByIdQueryHandler : AbstractQueryHandler<GetExerciseByIdQuery, GetExerciseByIdResponse?>
 {
     public GetExerciseByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {
@@ -39,10 +38,16 @@ internal sealed class GetExerciseByIdQueryHandler : AbstractQueryHandler<GetExer
                 CreationTime = exercise.CreationTime,
                 LastModificationTime = exercise.LastModificationTime,
                 Constraints = exercise.Constraints,
-                Hints = exercise.Hints
+                Hints = exercise.Hints,
+                IsHidden = exercise.IsHidden
             }).FirstOrDefaultAsync(ct);
 
         if (result is null)
+        {
+            return null;
+        }
+
+        if (IsInRole(Roles.Student) && result.IsHidden)
         {
             return null;
         }
@@ -57,7 +62,6 @@ internal sealed class GetExerciseByIdQueryHandler : AbstractQueryHandler<GetExer
             .ToListAsync(ct);
 
         result.TestCases = await DbContext.ExerciseTestCases
-            .WhereIf(IsInRole(Roles.Student), x => !x.IsHidden)
             .Where(x => x.ExerciseId == result.Id)
             .Select(i => new ExerciseTestCaseDto
             {

@@ -13,4 +13,10 @@ public class ReportViolationRequest
     public string Details { get; set; } = string.Empty;
 
     public DateTimeOffset Timestamp { get; set; }
+
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    public string? UserAgent { get; set; }
+
+    [MaxLength(CourseMateConsts.DefaultMaxLength)]
+    public string? DeviceFingerprint { get; set; }
 }

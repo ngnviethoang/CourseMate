@@ -19,8 +19,11 @@ public class ContestDto
     public Guid CreatorId { get; set; }
     public string? CreatorName { get; set; }
     public DateTimeOffset CreationTime { get; set; }
+    public DateTimeOffset? LastModificationTime { get; set; }
     public int ExerciseCount { get; set; }
     public int ParticipantCount { get; set; }
     public bool IsRegistered { get; set; }
+    public bool HasSubmitted { get; set; }
     public List<ContestExerciseDto> Exercises { get; set; } = new();
+    public List<ContestPrizeDto> Prizes { get; set; } = new();
 }

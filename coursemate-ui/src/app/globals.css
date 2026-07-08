@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
+@import '../../node_modules/@videojs/react/dist/default/presets/video/minimal-skin.css';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
@@ -92,5 +93,24 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+  }
+}
+
+@layer components {
+  .video-js,
+  .video-js .vjs-tech {
+    background-color: transparent;
+  }
+
+  .video-js {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+  }
+
+  .video-js .vjs-tech {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
   }
 }

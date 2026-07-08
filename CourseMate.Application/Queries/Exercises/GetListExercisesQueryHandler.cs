@@ -15,7 +15,7 @@ public class GetListExercisesQuery : GetListQuery<ExerciseDto>
     public string? Category { get; set; }
 }
 
-internal sealed class GetListExercisesQueryHandler : AbstractQueryHandler<GetListExercisesQuery, PagedDto<ExerciseDto>>
+public sealed class GetListExercisesQueryHandler : AbstractQueryHandler<GetListExercisesQuery, PagedDto<ExerciseDto>>
 {
     public GetListExercisesQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -24,6 +24,8 @@ internal sealed class GetListExercisesQueryHandler : AbstractQueryHandler<GetLis
 
     public override async Task<PagedDto<ExerciseDto>> Handle(GetListExercisesQuery request, CancellationToken ct)
     {
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
+
         IQueryable<ExerciseDto> query =
             from exercise in DbContext.Exercises
             join user in DbContext.Users on exercise.CreatorId equals user.Id
@@ -40,12 +42,15 @@ internal sealed class GetListExercisesQueryHandler : AbstractQueryHandler<GetLis
                 CreatedByName = user.UserName,
                 TestCaseCount = testCaseGroup.Count(),
                 CreationTime = exercise.CreationTime,
-                LastModificationTime = exercise.LastModificationTime
+                LastModificationTime = exercise.LastModificationTime,
+                IsHidden = exercise.IsHidden
             };
 
         query = query
+            .WhereIf(IsInRole(Roles.Student), x => !x.IsHidden)
             .WhereIf(IsInRole(Roles.Instructor), x => x.CreatedById == CurrentUserId)
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
+            .WhereIf(isFilterGuid, x => x.Id == filterId)
+            .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
             .WhereIf(!string.IsNullOrWhiteSpace(request.Difficulty), x => x.Difficulty == request.Difficulty)
             .WhereIf(!string.IsNullOrWhiteSpace(request.Category), x => EF.Functions.ILike(x.Category, $"%{request.Category}%"));
 

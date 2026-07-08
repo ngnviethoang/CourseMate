@@ -1,7 +1,11 @@
-﻿using System.Security.Cryptography;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CourseMate.Application.Shared;
 
@@ -57,5 +61,65 @@ public static class Util
         }
 
         return path;
+    }
+
+    public static string GenerateJwtToken(IConfiguration configuration, Guid userId, string userName, string email, IEnumerable<string> roles)
+    {
+        ICollection<Claim> claims =
+        [
+            new(ClaimTypes.Name, userName),
+            new(ClaimTypes.NameIdentifier, userId.ToString()),
+            new(ClaimTypes.Email, email)
+        ];
+
+        foreach (string role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+
+        SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
+        SigningCredentials credentials = new(key, SecurityAlgorithms.HmacSha256);
+
+        JwtSecurityToken token = new(
+            configuration["Jwt:Issuer"],
+            configuration["Jwt:Audience"],
+            claims,
+            expires: DateTime.Now.AddMinutes(configuration.GetValue<int>("Jwt:ExpiryMinutes")),
+            signingCredentials: credentials);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public static string ResolveEmailTemplatePath(string templateFileName)
+    {
+        string? assemblyDirectory = Directory.GetParent(AssemblyReference.Assembly.Location)?.FullName;
+        if (string.IsNullOrWhiteSpace(assemblyDirectory))
+        {
+            throw new DirectoryNotFoundException("Could not resolve assembly directory.");
+        }
+
+        string templatePath = Path.Combine(assemblyDirectory, "EmailTemplates", templateFileName);
+        if (File.Exists(templatePath))
+        {
+            return templatePath;
+        }
+
+        throw new FileNotFoundException($"Email template '{templateFileName}' was not found at path '{templatePath}'.");
+    }
+
+    public static string NormalizeRelativePath(string rootPath, string physicalPath)
+    {
+        if (string.IsNullOrWhiteSpace(rootPath))
+        {
+            throw new ArgumentException("Root path is required.", nameof(rootPath));
+        }
+
+        if (string.IsNullOrWhiteSpace(physicalPath))
+        {
+            return string.Empty;
+        }
+
+        string relativePath = Path.GetRelativePath(rootPath, physicalPath);
+        return relativePath.Replace('\\', '/').TrimStart('/');
     }
 }

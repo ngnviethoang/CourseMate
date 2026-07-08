@@ -14,9 +14,12 @@ public class ReinstateStudentCommand : IRequest<ResultIdDto>
 {
     public Guid ContestId { get; set; }
     public Guid StudentId { get; set; }
+
+    /// <summary>Explicitly provided caller ID for Hub invocations (HttpContext is null for SignalR).</summary>
+    public Guid CallerUserId { get; set; }
 }
 
-internal sealed class ReinstateStudentCommandHandler : AbstractCommandHandler<ReinstateStudentCommand, ResultIdDto>
+public sealed class ReinstateStudentCommandHandler : AbstractCommandHandler<ReinstateStudentCommand, ResultIdDto>
 {
     public ReinstateStudentCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -31,8 +34,11 @@ internal sealed class ReinstateStudentCommandHandler : AbstractCommandHandler<Re
             throw new EntityNotFoundException(nameof(Contest), request.ContestId);
         }
 
+        // Use explicitly provided caller ID if set (Hub), otherwise fall back to HttpContext (REST API).
+        Guid callerId = request.CallerUserId != Guid.Empty ? request.CallerUserId : CurrentUserId;
+
         // Only contest creator or admin can reinstate
-        if (contest.CreatorId != CurrentUserId && !IsInRole(Roles.Admin))
+        if (contest.CreatorId != callerId && !IsInRole(Roles.Admin))
         {
             throw new UnauthorizedAccessException("You are not authorized to reinstate students in this contest.");
         }
@@ -42,19 +48,17 @@ internal sealed class ReinstateStudentCommandHandler : AbstractCommandHandler<Re
 
         if (registration == null)
         {
-            throw new BusinessException("Student is not registered for this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "Student is not registered for this contest.");
         }
 
         if (!registration.IsDisqualified)
         {
-            throw new BusinessException("Student is not currently disqualified.");
+            throw new BusinessException(ErrorCode.Unknown, "Student is not currently disqualified.");
         }
 
         registration.IsDisqualified = false;
         registration.DisqualifiedAt = null;
         registration.DisqualifiedReason = string.Empty;
-
-        await DbContext.SaveChangesAsync(ct);
 
         return new ResultIdDto { Id = registration.Id };
     }

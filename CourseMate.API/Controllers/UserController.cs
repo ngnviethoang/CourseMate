@@ -1,4 +1,4 @@
-﻿using CourseMate.Application.Commands.Users;
+using CourseMate.Application.Commands.Users;
 using CourseMate.Application.Queries.Users;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
@@ -56,6 +56,20 @@ public class UserController : ControllerBase
     public async Task<ActionResult> DeleteUserAsync(Guid id)
     {
         await _mediator.Send(new DeleteUserCommand { Id = id });
+        return NoContent();
+    }
+
+    [HttpPost("{id:guid}/approve-instructor")]
+    public async Task<ActionResult> ApproveInstructorAsync(Guid id)
+    {
+        await _mediator.Send(new ApproveInstructorCommand { InstructorId = id });
+        return NoContent();
+    }
+
+    [HttpPost("{id:guid}/toggle-lock")]
+    public async Task<ActionResult> ToggleLockAsync(Guid id)
+    {
+        await _mediator.Send(new ToggleUserLockCommand { UserId = id });
         return NoContent();
     }
 }

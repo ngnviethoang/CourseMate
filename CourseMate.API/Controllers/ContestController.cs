@@ -111,7 +111,7 @@ public class ContestController : ControllerBase
             ExerciseId = exerciseId,
             Payload = request
         };
-        ResultIdDto result = await _mediator.Send(command);
+        SubmitExerciseResponse result = await _mediator.Send(command);
         return Ok(result);
     }
 
@@ -137,7 +137,34 @@ public class ContestController : ControllerBase
     [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
     public async Task<ActionResult> GetContestViolations(Guid id)
     {
-        ContestViolationsDto? result = await _mediator.Send(new GetContestViolationsQuery { ContestId = id });
+        ContestViolationsDto? result = await _mediator.Send(new GetContestViolationsQuery
+        {
+            ContestId = id,
+            IncludeAll = true // Show all participants so instructor can see the full list
+        });
+        return Ok(result);
+    }
+
+    [HttpGet("{id:guid}/violations/{studentId:guid}")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> GetStudentViolations(Guid id, Guid studentId)
+    {
+        StudentViolationSummaryDto? result = await _mediator.Send(new GetStudentViolationsQuery
+        {
+            ContestId = id,
+            StudentId = studentId
+        });
+        return Ok(result);
+    }
+
+    [HttpGet("{id:guid}/my-violations")]
+    [Authorize]
+    public async Task<ActionResult> GetMyViolations(Guid id)
+    {
+        StudentViolationSummaryDto? result = await _mediator.Send(new GetMyContestViolationsQuery
+        {
+            ContestId = id
+        });
         return Ok(result);
     }
 
@@ -163,6 +190,51 @@ public class ContestController : ControllerBase
             ContestId = id,
             StudentId = studentId
         });
+        return Ok(result);
+    }
+
+    #endregion
+
+    #region Prize APIs
+
+    [HttpGet("{id:guid}/prizable-courses")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> GetPrizableCourses(Guid id)
+    {
+        List<PrizableCourseDto> result = await _mediator.Send(new GetPrizableCoursesQuery { ContestId = id });
+        return Ok(result);
+    }
+
+    [HttpPost("{id:guid}/prizes")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> AddContestPrize(Guid id, [FromBody] AddContestPrizeCommand request)
+    {
+        request.ContestId = id;
+        ResultIdDto result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
+    [HttpDelete("{id:guid}/prizes/{prizeId:guid}")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> RemoveContestPrize(Guid id, Guid prizeId)
+    {
+        await _mediator.Send(new RemoveContestPrizeCommand { ContestId = id, PrizeId = prizeId });
+        return NoContent();
+    }
+
+    [HttpPost("{id:guid}/end")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> EndContest(Guid id)
+    {
+        ResultIdDto result = await _mediator.Send(new EndContestCommand { ContestId = id });
+        return Ok(result);
+    }
+
+    [HttpPost("{id:guid}/cancel")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Instructor}")]
+    public async Task<ActionResult> CancelContest(Guid id)
+    {
+        ResultIdDto result = await _mediator.Send(new CancelContestCommand { ContestId = id });
         return Ok(result);
     }
 

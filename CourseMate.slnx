@@ -1,5 +1,6 @@
 <Solution>
     <Project Path="CourseMate.API/CourseMate.API.csproj"/>
+    <Project Path="CourseMate.Application.Tests/CourseMate.Application.Tests.csproj"/>
     <Project Path="CourseMate.Application/CourseMate.Application.csproj"/>
     <Project Path="CourseMate.Contracts/CourseMate.Contracts.csproj"/>
     <Project Path="CourseMate.Persistent/CourseMate.Persistent.csproj"/>

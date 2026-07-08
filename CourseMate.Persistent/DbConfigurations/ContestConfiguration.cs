@@ -1,5 +1,4 @@
 using CourseMate.Persistent.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,6 +11,6 @@ public sealed class ContestConfiguration : IEntityTypeConfiguration<Contest>
         builder.ToTable("Contests");
         builder.Property(i => i.Title).HasColumnType("citext");
         builder.Property(i => i.Description).HasColumnType("citext");
-        builder.HasOne<IdentityUser<Guid>>().WithMany().HasForeignKey(i => i.CreatorId);
+        builder.HasOne<User>().WithMany().HasForeignKey(i => i.CreatorId);
     }
 }

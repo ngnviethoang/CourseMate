@@ -16,7 +16,7 @@ public class GetOutlineQuery : IRequest<OutlineDto?>
     public Guid LessonId { get; set; }
 }
 
-internal sealed class GetOutlineQueryHandler : AbstractQueryHandler<GetOutlineQuery, OutlineDto?>
+public sealed class GetOutlineQueryHandler : AbstractQueryHandler<GetOutlineQuery, OutlineDto?>
 {
     private readonly ILogger<GetOutlineQueryHandler> _logger;
 
@@ -46,6 +46,7 @@ internal sealed class GetOutlineQueryHandler : AbstractQueryHandler<GetOutlineQu
         }
 
         LessonMaterial? lessonMaterial = await DbContext.LessonMaterials
+            .Where(l => l.LessonId == request.LessonId)
             .OrderByDescending(l => l.CreationTime)
             .FirstOrDefaultAsync(ct);
         if (lessonMaterial == null)
@@ -71,6 +72,7 @@ internal sealed class GetOutlineQueryHandler : AbstractQueryHandler<GetOutlineQu
         return new OutlineDto
         {
             LessonId = request.LessonId,
+            LessonMaterialId = lessonMaterial.Id,
             LectureOutline = parsedOutline ?? new LectureOutline()
         };
     }

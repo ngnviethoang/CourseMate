@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
@@ -15,7 +16,7 @@ public class RegisterForContestCommand : IRequest<ResultIdDto>
     public Guid ContestId { get; set; }
 }
 
-internal sealed class RegisterForContestCommandHandler : AbstractCommandHandler<RegisterForContestCommand, ResultIdDto>
+public sealed class RegisterForContestCommandHandler : AbstractCommandHandler<RegisterForContestCommand, ResultIdDto>
 {
     public RegisterForContestCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -34,12 +35,12 @@ internal sealed class RegisterForContestCommandHandler : AbstractCommandHandler<
 
         if (contest.Status == ContestStatus.Draft)
         {
-            throw new BusinessException("Contest is not open for registration.");
+            throw new BusinessException(ErrorCode.Unknown, "Contest is not open for registration.");
         }
 
         if (contest.EndTime.HasValue && contest.EndTime.Value < DateTimeOffset.UtcNow)
         {
-            throw new BusinessException("Contest has already ended.");
+            throw new BusinessException(ErrorCode.Unknown, "Contest has already ended.");
         }
 
         // Check if already registered
@@ -61,7 +62,6 @@ internal sealed class RegisterForContestCommandHandler : AbstractCommandHandler<
         );
 
         await DbContext.ContestRegistrations.AddAsync(registration, ct);
-        await DbContext.SaveChangesAsync(ct);
 
         return new ResultIdDto { Id = registration.Id };
     }

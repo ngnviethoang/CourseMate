@@ -14,7 +14,7 @@ public class GetContestWorkspaceQuery : IRequest<ContestWorkspaceDto?>
     public Guid ContestId { get; set; }
 }
 
-internal sealed class GetContestWorkspaceQueryHandler : AbstractQueryHandler<GetContestWorkspaceQuery, ContestWorkspaceDto?>
+public sealed class GetContestWorkspaceQueryHandler : AbstractQueryHandler<GetContestWorkspaceQuery, ContestWorkspaceDto?>
 {
     public GetContestWorkspaceQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

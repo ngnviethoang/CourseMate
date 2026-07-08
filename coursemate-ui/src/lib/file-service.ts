@@ -1,6 +1,29 @@
 import { api } from '@/lib/api-client'
 
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? '').replace(/\/$/, '')
+
+interface FileUploadResponse {
+  fileId: string
+  fileUrl?: string
+}
+
 export const fileService = {
+  async uploadFile(file: File | Blob, fileName?: string) {
+    const formData = new FormData()
+    const normalizedFileName = file instanceof File ? file.name : (fileName ?? 'upload.bin')
+    formData.append('request', file, normalizedFileName)
+    return api.post<FileUploadResponse>('/api/files', formData)
+  },
+
+  async deleteFile(fileId: string) {
+    return api.delete<void>(`/api/files/${fileId}`)
+  },
+
+  getDownloadUrl(fileId: string) {
+    const path = `/api/files/${fileId}/download`
+    return API_BASE_URL ? `${API_BASE_URL}${path}` : path
+  },
+
   async initVideoUpload(fileName: string, fileSize: number) {
     return api.post<{ fileId: string; maxTotalTrunks: number }>('/api/files/videos/init', { fileName, fileSize })
   },
@@ -12,8 +35,8 @@ export const fileService = {
     return api.post<void>(`/api/files/videos/${fileId}/chunks/${chunkIndex}`, formData)
   },
 
-  async completeVideoUpload(fileId: string, totalChunks: number) {
-    return api.post<{ fileUrl: string }>('/api/files/videos/completed', { fileId, totalChunks })
+  async completeVideoUpload(fileId: string, totalChunks: number, lessonId?: string) {
+    return api.post<{ fileUrl: string }>('/api/files/videos/completed', { fileId, totalChunks, lessonId })
   },
 
   async getVideoUploadStatus(fileId: string) {
@@ -21,22 +44,19 @@ export const fileService = {
   },
 
   async deleteVideo(fileId: string) {
-    return api.delete<void>(`/api/files/videos/${fileId}`)
+    return fileService.deleteFile(fileId)
   },
 
+  // Deprecated wrappers kept for compatibility with existing callers.
   async uploadImage(file: File) {
-    const formData = new FormData()
-    formData.append('request', file)
-    return api.post<unknown>('/api/files/images', formData)
+    return fileService.uploadFile(file)
   },
 
   async deleteImage(fileId: string) {
-    return api.delete<void>(`/api/files/images/${fileId}`)
+    return fileService.deleteFile(fileId)
   },
 
   async uploadDocument(file: File) {
-    const formData = new FormData()
-    formData.append('request', file)
-    return api.post<{ fileId: string; fileUrl: string }>('/api/files/documents', formData)
+    return fileService.uploadFile(file)
   }
 }

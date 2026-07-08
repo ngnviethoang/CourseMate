@@ -1,6 +1,9 @@
 using CourseMate.Application.Services.AIServices;
+using CourseMate.Application.Services.FileStorageServices;
 using CourseMate.Application.Services.NotificationServices;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
+using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
@@ -17,6 +20,7 @@ public class GenerateOutlineJob
 {
     private readonly IAiService _aiService;
     private readonly CourseMateDbContext _dbContext;
+    private readonly IFileStorageManager _fileStorageManager;
     private readonly ILogger<GenerateOutlineJob> _logger;
     private readonly INotificationService _notificationService;
 
@@ -24,87 +28,147 @@ public class GenerateOutlineJob
         CourseMateDbContext dbContext,
         ILogger<GenerateOutlineJob> logger,
         IAiService aiService,
+        IFileStorageManager fileStorageManager,
         INotificationService notificationService)
     {
         _dbContext = dbContext;
         _logger = logger;
         _aiService = aiService;
+        _fileStorageManager = fileStorageManager;
         _notificationService = notificationService;
     }
 
     [AutomaticRetry(Attempts = 0)]
-    public async Task ExecuteAsync(Guid lessonMaterialId, CancellationToken ct)
+    public async Task ExecuteAsync(Guid lessonMaterialId, LessonMaterialPromptType promptType, CancellationToken ct)
     {
         LessonMaterial? lessonMaterial = await _dbContext.LessonMaterials.FirstOrDefaultAsync(lm => lm.Id == lessonMaterialId, ct);
         if (lessonMaterial == null)
         {
+            _logger.LogWarning("Lesson material not found when generating outline. LessonMaterialId={LessonMaterialId}", lessonMaterialId);
             return;
         }
 
-        _logger.LogInformation("Start generate outline for lesson {lessonMaterialId}", lessonMaterial.LessonId);
+        _logger.LogInformation(
+            "Start generate outline. LessonMaterialId={LessonMaterialId}, LessonId={LessonId}, PromptType={PromptType}, DocumentFileId={DocumentFileId}",
+            lessonMaterialId,
+            lessonMaterial.LessonId,
+            promptType,
+            lessonMaterial.DocumentFileId);
 
-        // 1. Create query embedding
-        ReadOnlyMemory<float> embedding = await _aiService.GenerateVectorAsync("main topics, key concepts, lesson structure", ct);
-        Vector queryVector = new(embedding);
-
-        // 2. Search relevant chunks
-        List<Guid> fileChunkIds = await _dbContext.FileEntryEmbeddings
-            .Where(x => x.FileEntryId == lessonMaterial.DocumentFileId)
-            .OrderBy(x => x.Embedding.CosineDistance(queryVector))
-            .Take(10)
-            .Select(x => x.FileChunkId)
-            .ToListAsync(ct);
-        if (fileChunkIds.Count == 0)
-        {
-            fileChunkIds = await _dbContext.FileEntryEmbeddings
-                .Where(x => x.FileEntryId == lessonMaterial.DocumentFileId)
-                .Select(x => x.FileChunkId)
-                .ToListAsync(ct);
-        }
-
-        // 3. Build context
-        List<FileChunk> fileChunks = await _dbContext.FileChunks
-            .Where(i => fileChunkIds.Contains(i.Id))
-            .ToListAsync(ct);
-        List<string> chunks = [];
-        foreach (FileChunk fileChunk in fileChunks)
-        {
-            chunks.Add(await File.ReadAllTextAsync(fileChunk.ChunkLocation, ct));
-        }
-
-        string docContext = string.Join("\n\n---\n\n", chunks);
-
-        // 4. External research (LLM simulate search)
-        string externalContext = await _aiService.SearchAsync(docContext, ct);
-
-        // 6. Generate outline
-        string outline = await _aiService.GenerateContentAsync(externalContext, ct);
-        outline = outline.Replace("```json", "").Replace("```", "").Trim();
         try
         {
-            LectureOutline? parsedOutline = JsonConvert.DeserializeObject<LectureOutline>(outline);
-            bool isValid = parsedOutline != null && !string.IsNullOrWhiteSpace(parsedOutline.LessonTitle) && parsedOutline?.Slides != null && parsedOutline.Slides.Any();
-            if (!isValid)
+            // 1. Create query embedding
+            ReadOnlyMemory<float> embedding = await _aiService.GenerateVectorAsync("main topics, key concepts, lesson structure", ct);
+            Vector queryVector = new(embedding);
+
+            // 2. Search relevant chunks
+            List<Guid> fileChunkIds = await _dbContext.FileEntryEmbeddings
+                .Where(x => x.FileEntryId == lessonMaterial.DocumentFileId)
+                .OrderBy(x => x.Embedding.CosineDistance(queryVector))
+                .Take(10)
+                .Select(x => x.FileChunkId)
+                .ToListAsync(ct);
+            if (fileChunkIds.Count == 0)
             {
-                _logger.LogWarning("Invalid AI outline structure for lesson {LessonId}. Raw output: {Outline}", lessonMaterial.LessonId, outline);
+                _logger.LogWarning(
+                    "No ranked embedding chunks found. Falling back to all chunks. LessonMaterialId={LessonMaterialId}, DocumentFileId={DocumentFileId}",
+                    lessonMaterialId,
+                    lessonMaterial.DocumentFileId);
+                fileChunkIds = await _dbContext.FileEntryEmbeddings
+                    .Where(x => x.FileEntryId == lessonMaterial.DocumentFileId)
+                    .Select(x => x.FileChunkId)
+                    .ToListAsync(ct);
             }
+
+            // 3. Build context
+            List<FileChunk> fileChunks = await _dbContext.FileChunks
+                .Where(i => fileChunkIds.Contains(i.Id))
+                .ToListAsync(ct);
+            List<string> chunks = [];
+            foreach (FileChunk fileChunk in fileChunks)
+            {
+                await using Stream stream = await _fileStorageManager.ReadAsync(StorageFileEntry.FromFileChunk(fileChunk), ct);
+                using StreamReader reader = new(stream);
+                chunks.Add(await reader.ReadToEndAsync(ct));
+            }
+
+            string docContext = string.Join("\n\n---\n\n", chunks);
+            _logger.LogInformation(
+                "Prepared outline context. LessonMaterialId={LessonMaterialId}, ChunkCount={ChunkCount}, ContextLength={ContextLength}",
+                lessonMaterialId,
+                chunks.Count,
+                docContext.Length);
+
+            // 4. External research (LLM simulate search)
+            string externalContext = await _aiService.SearchAsync(docContext, ct);
+            _logger.LogInformation(
+                "External research completed. LessonMaterialId={LessonMaterialId}, ExternalContextLength={ExternalContextLength}",
+                lessonMaterialId,
+                externalContext.Length);
+
+            // 6. Generate outline
+            string outline = await _aiService.GenerateContentAsync(externalContext, promptType, ct);
+            outline = outline.Replace("```json", "").Replace("```", "").Trim();
+            try
+            {
+                LectureOutline? parsedOutline = JsonConvert.DeserializeObject<LectureOutline>(outline);
+                bool isValid = parsedOutline != null && !string.IsNullOrWhiteSpace(parsedOutline.LessonTitle) && parsedOutline?.Slides != null && parsedOutline.Slides.Any();
+                if (!isValid)
+                {
+                    _logger.LogWarning("Invalid AI outline structure for lesson {LessonId}. Raw output: {Outline}", lessonMaterial.LessonId, outline);
+                }
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogWarning(ex, "Failed to parse AI outline for lesson {LessonId}. Raw output: {Outline}", lessonMaterial.LessonId, outline);
+                throw new BusinessException(ErrorCode.Unknown, $"Invalid AI outline for lesson {lessonMaterial.LessonId}", ex);
+            }
+
+            lessonMaterial.Outline = outline;
+            lessonMaterial.Status = LessonMaterialState.Completed;
+            _dbContext.LessonMaterials.Update(lessonMaterial);
+            await _dbContext.SaveChangesAsync(ct);
+            _logger.LogInformation(
+                "Finished generate outline. LessonMaterialId={LessonMaterialId}, LessonId={LessonId}, OutlineLength={OutlineLength}",
+                lessonMaterialId,
+                lessonMaterial.LessonId,
+                outline.Length);
+
+
+            await _notificationService.NotifyDocumentProcessedAsync(
+                new NotificationDto
+                {
+                    Id = Guid.NewGuid(),
+                    ReceiverId = lessonMaterial.UserId ?? Guid.Empty,
+                    LessonId = lessonMaterial.LessonId,
+                    Title = "Document processed",
+                    Message = "Outline đã sẵn sàng.",
+                    IsRead = false,
+                    CreationTime = DateTimeOffset.UtcNow
+                },
+                ct);
+            _logger.LogInformation("Sent outline completion notification. LessonMaterialId={LessonMaterialId}, LessonId={LessonId}", lessonMaterialId, lessonMaterial.LessonId);
         }
-        catch (JsonException ex)
+        catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to parse AI outline for lesson {LessonId}. Raw output: {Outline}", lessonMaterial.LessonId, outline);
-            throw new BusinessException($"Invalid AI outline for lesson {lessonMaterial.LessonId}", ex);
+            _logger.LogError(ex, "Generate outline failed. LessonMaterialId={LessonMaterialId}, LessonId={LessonId}", lessonMaterialId, lessonMaterial.LessonId);
+            lessonMaterial.Status = LessonMaterialState.Failed;
+            _dbContext.LessonMaterials.Update(lessonMaterial);
+            await _dbContext.SaveChangesAsync(ct);
+
+            await _notificationService.NotifyDocumentProcessedAsync(
+                new NotificationDto
+                {
+                    Id = Guid.NewGuid(),
+                    ReceiverId = lessonMaterial.UserId ?? Guid.Empty,
+                    LessonId = lessonMaterial.LessonId,
+                    Title = "Document processed",
+                    Message = "Outline tạo thất bại.",
+                    IsRead = false,
+                    CreationTime = DateTimeOffset.UtcNow
+                },
+                ct);
+            throw;
         }
-
-
-        lessonMaterial.Outline = outline;
-        _dbContext.LessonMaterials.Update(lessonMaterial);
-        await _dbContext.SaveChangesAsync(ct);
-        _logger.LogInformation("Finished generate outline for lesson {LessonId}", lessonMaterial.LessonId);
-
-        await _notificationService.CreateAndSendAsync(
-            lessonMaterial.UserId ?? Guid.Empty,
-            "Tạo outline thành công",
-            "Outline cho bài giảng đã được tạo xong.",
-            ct);
     }
 }

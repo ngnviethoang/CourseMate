@@ -10,7 +10,9 @@ public class LessonDetailDto
 
     public LessonType LessonType { get; set; }
 
-    public int Position { get; set; }
+    public string Position { get; set; } = string.Empty;
+
+    public int SortOrder { get; set; }
 
     public bool IsCompleted { get; set; }
     public double? Score { get; set; }

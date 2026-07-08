@@ -1,4 +1,6 @@
+using CourseMate.Application.Services.CodeRunnerServices;
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.DTOs.Exercises;
 using CourseMate.Contracts.Enums;
@@ -11,21 +13,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Contests;
 
-public class SubmitContestExerciseCommand : IRequest<ResultIdDto>
+public class SubmitContestExerciseCommand : IRequest<SubmitExerciseResponse>
 {
     public Guid ContestId { get; set; }
     public Guid ExerciseId { get; set; }
-    public SubmitExerciseRequest Payload { get; set; }
+    public SubmitExerciseRequest Payload { get; set; } = new();
 }
 
-internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandler<SubmitContestExerciseCommand, ResultIdDto>
+public sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandler<SubmitContestExerciseCommand, SubmitExerciseResponse>
 {
-    public SubmitContestExerciseCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+    private readonly ICodeRunnerService _codeRunnerService;
+
+    public SubmitContestExerciseCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor, ICodeRunnerService codeRunnerService)
         : base(dbContext, httpContextAccessor)
     {
+        _codeRunnerService = codeRunnerService;
     }
 
-    public override async Task<ResultIdDto> Handle(SubmitContestExerciseCommand request, CancellationToken ct)
+    public override async Task<SubmitExerciseResponse> Handle(SubmitContestExerciseCommand request, CancellationToken ct)
     {
         // Check registration and status
         ContestRegistration? registration = await DbContext.ContestRegistrations
@@ -38,12 +43,12 @@ internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandl
 
         if (registration.IsDisqualified)
         {
-            throw new BusinessException("You have been disqualified from this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "You have been disqualified from this contest.");
         }
 
         if (registration.SubmitTime.HasValue)
         {
-            throw new BusinessException("You have already submitted your final contest entry.");
+            throw new BusinessException(ErrorCode.Unknown, "You have already submitted your final contest entry.");
         }
 
         Contest? contest = await DbContext.Contests.FindAsync([request.ContestId], ct);
@@ -53,7 +58,17 @@ internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandl
             // Usually contest ends for everyone at EndTime.
             if (contest?.EndTime.HasValue == true && contest.EndTime.Value < DateTimeOffset.UtcNow)
             {
-                throw new BusinessException("Contest has ended.");
+                throw new BusinessException(ErrorCode.Unknown, "Contest has ended.");
+            }
+        }
+
+        if (contest != null && registration.JoinTime.HasValue)
+        {
+            DateTimeOffset userEndTime = registration.JoinTime.Value.AddMinutes(contest.DurationInMinutes);
+            // Allow a small grace period (10 seconds) for network latency
+            if (DateTimeOffset.UtcNow > userEndTime.AddSeconds(10))
+            {
+                throw new BusinessException(ErrorCode.Unknown, "Your contest time has expired.");
             }
         }
 
@@ -63,11 +78,60 @@ internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandl
 
         if (ce == null)
         {
-            throw new BusinessException("Exercise is not part of this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "Exercise is not part of this contest.");
         }
 
-        // Score in payload is 0-100 percentage
-        int weightedScore = (int)(request.Payload.Score / 100f * ce.ScoreWeight);
+        // Fetch test cases for this exercise
+        List<ExerciseTestCase> testCases = await DbContext.ExerciseTestCases
+            .Where(x => x.ExerciseId == request.ExerciseId)
+            .OrderBy(x => x.Order)
+            .ToListAsync(ct);
+
+        int passedCount = 0;
+        float maxTime = 0;
+        int maxMemory = 0;
+        List<TestResultDto> testResults = new();
+
+        foreach (ExerciseTestCase tc in testCases)
+        {
+            RunCodeResponse runResponse = await _codeRunnerService.RunAsync(request.Payload.Code, request.Payload.Language, tc.Input, ct);
+
+            string actual = (runResponse.Output ?? string.Empty).Trim();
+            string expected = (tc.ExpectedOutput ?? string.Empty).Trim();
+            bool isPassed = !string.IsNullOrEmpty(actual) && actual == expected && string.IsNullOrEmpty(runResponse.Error);
+
+            if (isPassed)
+            {
+                passedCount++;
+            }
+
+            // Accumulate max time and memory
+            if (float.TryParse(runResponse.Time, out float time) && time > maxTime)
+            {
+                maxTime = time;
+            }
+
+            if (int.TryParse(runResponse.Memory, out int memory) && memory > maxMemory)
+            {
+                maxMemory = memory;
+            }
+
+            testResults.Add(new TestResultDto
+            {
+                Passed = isPassed,
+                IsHidden = tc.IsHidden,
+                ExpectedOutput = tc.ExpectedOutput ?? string.Empty,
+                ActualOutput = !string.IsNullOrEmpty(runResponse.Error) ? runResponse.Error : runResponse.Output ?? string.Empty,
+                Description = tc.Description ?? string.Empty
+            });
+        }
+
+        // Score based on passed test cases ratio
+        int weightedScore = 0;
+        if (testCases.Count > 0)
+        {
+            weightedScore = (int)((float)passedCount / testCases.Count * ce.ScoreWeight);
+        }
 
         ContestSubmission submission = new(
             Guid.NewGuid(),
@@ -77,19 +141,19 @@ internal sealed class SubmitContestExerciseCommandHandler : AbstractCommandHandl
             request.Payload.Language,
             request.Payload.Code,
             weightedScore,
-            (float)request.Payload.TotalTime,
-            (int)request.Payload.TotalMemory,
+            maxTime,
+            maxMemory,
             DateTimeOffset.UtcNow,
-            true // For now mark all as final or logic to find best?
+            true
         );
-
-        // Logic to maintain IsFinal: only one submission per (Contest, Exercise, Student) should be IsFinal=true (the one with highest score)
-        // Actually the leaderboard logic said "Total Score (Sum of max scores per exercise)".
-        // So we can just find the max score in the query. IsFinal is just an optimization.
 
         await DbContext.ContestSubmissions.AddAsync(submission, ct);
         await DbContext.SaveChangesAsync(ct);
 
-        return new ResultIdDto { Id = submission.Id };
+        return new SubmitExerciseResponse
+        {
+            SubmissionId = submission.Id,
+            TestResults = testResults
+        };
     }
 }

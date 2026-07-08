@@ -10,7 +10,7 @@ namespace CourseMate.Application.Queries.Orders;
 
 public class GetListCoursesQuery : GetListQuery<CourseDto>;
 
-internal sealed class GetListCoursesQueryHandler : AbstractQueryHandler<GetListCoursesQuery, PagedDto<CourseDto>>
+public sealed class GetListCoursesQueryHandler : AbstractQueryHandler<GetListCoursesQuery, PagedDto<CourseDto>>
 {
     public GetListCoursesQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -38,7 +38,9 @@ internal sealed class GetListCoursesQueryHandler : AbstractQueryHandler<GetListC
                 LastModificationTime = course.LastModificationTime
             };
 
-        query = query.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
+        query = query.WhereIf(isFilterGuid, x => x.Id == filterId)
+            .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
 
         query = request.Sorting switch
         {

@@ -1,3 +1,4 @@
+using CourseMate.Application.Services.FileStorageServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
@@ -9,6 +10,7 @@ using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace CourseMate.Application.Commands.Files;
 
@@ -16,10 +18,12 @@ public class UploadFileCommand : IRequest<FileUploadResponse>
 {
     public string FileName { get; set; } = string.Empty;
     public string ContentType { get; set; } = string.Empty;
+
+    [JsonIgnore]
     public byte[] Content { get; set; } = [];
 }
 
-internal sealed class UploadFileCommandHandler : AbstractCommandHandler<UploadFileCommand, FileUploadResponse>
+public sealed class UploadFileCommandHandler : AbstractCommandHandler<UploadFileCommand, FileUploadResponse>
 {
     private static readonly IReadOnlyDictionary<FileType, HashSet<string>> AllowedExtensions = new Dictionary<FileType, HashSet<string>>
     {
@@ -27,14 +31,17 @@ internal sealed class UploadFileCommandHandler : AbstractCommandHandler<UploadFi
         [FileType.Document] = [".pdf", ".pptx", ".ppt", ".docx", ".doc", ".txt", ".md"]
     };
 
+    private readonly IFileStorageManager _fileStorageManager;
     private readonly StorageOptions _storageOptions;
 
     public UploadFileCommandHandler(
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor,
+        IFileStorageManager fileStorageManager,
         IOptions<StorageOptions> storageOptions)
         : base(dbContext, httpContextAccessor)
     {
+        _fileStorageManager = fileStorageManager;
         _storageOptions = storageOptions.Value;
     }
 
@@ -45,22 +52,21 @@ internal sealed class UploadFileCommandHandler : AbstractCommandHandler<UploadFi
         string extension = GetValidExtension(request.FileName);
         FileType fileType = GetFileType(extension);
 
-        Directory.CreateDirectory(_storageOptions.PublicPath);
-
         Guid fileId = Guid.NewGuid();
         string fileName = $"{fileId}{extension}";
-        string physicalPath = Path.Combine(_storageOptions.PublicPath, fileName);
-        await File.WriteAllBytesAsync(physicalPath, request.Content, ct);
+        string fileLocation = Path.Combine("public", fileName);
         FileEntry fileEntry = new(
             fileId,
             fileName,
             request.Content.Length,
-            physicalPath.Replace(_storageOptions.RootPath, string.Empty),
+            fileLocation,
             FileStatus.Completed,
             1,
             1,
             DateTimeOffset.UtcNow,
             fileType);
+        await using MemoryStream stream = new(request.Content);
+        await _fileStorageManager.CreateAsync(StorageFileEntry.FromFileEntry(fileEntry), stream, ct);
 
         await DbContext.FileEntries.AddAsync(fileEntry, ct);
 
@@ -77,14 +83,14 @@ internal sealed class UploadFileCommandHandler : AbstractCommandHandler<UploadFi
 
         if (string.IsNullOrWhiteSpace(extension))
         {
-            throw new BusinessException(ErrorMessages.InvalidFileType);
+            throw new BusinessException(ErrorCode.InvalidFileType, "Invalid file type. This file type is not allowed.");
         }
 
         bool isAllowed = AllowedExtensions.Values.Any(x => x.Contains(extension));
 
         if (!isAllowed)
         {
-            throw new BusinessException(ErrorMessages.InvalidFileType);
+            throw new BusinessException(ErrorCode.InvalidFileType, "Invalid file type. This file type is not allowed.");
         }
 
         return extension;
@@ -100,7 +106,7 @@ internal sealed class UploadFileCommandHandler : AbstractCommandHandler<UploadFi
             }
         }
 
-        throw new BusinessException(ErrorMessages.InvalidFileType);
+        throw new BusinessException(ErrorCode.InvalidFileType, "Invalid file type. This file type is not allowed.");
     }
 
     private string BuildFileUrl(string storedFileName)

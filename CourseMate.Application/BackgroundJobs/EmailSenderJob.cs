@@ -1,7 +1,6 @@
 ﻿using CourseMate.Contracts.Options;
 using Hangfire;
 using MailKit.Net.Smtp;
-using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
@@ -20,21 +19,44 @@ public class EmailSenderJob
     }
 
     [AutomaticRetry(Attempts = 3)]
-    public async Task Execute(MimeMessage mimeMessage)
+    public async Task Execute(string toEmail, string subject, string htmlBody)
     {
-        _logger.LogInformation("Sending email to {To}", string.Join(", ", mimeMessage.To));
+        if (string.IsNullOrWhiteSpace(toEmail))
+        {
+            throw new ArgumentException("Email recipient is required.", nameof(toEmail));
+        }
+
+        string fromAddress = string.IsNullOrWhiteSpace(_smtpOptions.DefaultFromAddress)
+            ? _smtpOptions.UserName
+            : _smtpOptions.DefaultFromAddress;
+
+        MimeMessage mimeMessage = new();
+        mimeMessage.From.Add(MailboxAddress.Parse(fromAddress));
+        mimeMessage.To.Add(MailboxAddress.Parse(toEmail));
+        mimeMessage.Subject = string.IsNullOrWhiteSpace(subject) ? "(No Subject)" : subject;
+        mimeMessage.Body = new BodyBuilder
+        {
+            HtmlBody = htmlBody
+        }.ToMessageBody();
+
+        _logger.LogInformation(
+            "Sending email. To={To}, SubjectLength={SubjectLength}, Host={Host}, Port={Port}",
+            toEmail,
+            mimeMessage.Subject.Length,
+            _smtpOptions.Host,
+            _smtpOptions.Port);
         try
         {
             using SmtpClient client = new();
-            await client.ConnectAsync(_smtpOptions.Host, _smtpOptions.Port, SecureSocketOptions.StartTls);
+            await client.ConnectAsync(_smtpOptions.Host, _smtpOptions.Port);
             await client.AuthenticateAsync(_smtpOptions.UserName, _smtpOptions.Password);
             await client.SendAsync(mimeMessage);
             await client.DisconnectAsync(true);
-            _logger.LogInformation("Email sent successfully to {To}", string.Join(", ", mimeMessage.To));
+            _logger.LogInformation("Email sent successfully to {To}", toEmail);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send email to {To}", string.Join(", ", mimeMessage.To));
+            _logger.LogError(ex, "Failed to send email to {To}", toEmail);
             throw;
         }
     }

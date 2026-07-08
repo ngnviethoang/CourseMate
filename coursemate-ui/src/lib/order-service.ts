@@ -1,5 +1,5 @@
 import { api } from './api-client'
-import { PagedDto, UpdateOrderRequest, CartDto, ResultIdDto, OrderDto } from './types'
+import { PagedDto, UpdateOrderRequest, CreateOrderRequest, CartDto, ResultIdDto, OrderDto } from './types'
 import { getUserId } from './auth-token.util'
 
 export const orderService = {
@@ -15,8 +15,9 @@ export const orderService = {
   },
   getById: (id: string) => api.get<OrderDto | null>(`/api/orders/${id}`),
   update: (id: string, body: UpdateOrderRequest) => api.put<void>(`/api/orders/${id}`, body),
-  create: async (): Promise<ResultIdDto> => {
-    return api.post<ResultIdDto>('/api/orders')
+  delete: (id: string) => api.delete<void>(`/api/orders/${id}`),
+  create: async (body: CreateOrderRequest): Promise<ResultIdDto> => {
+    return api.post<ResultIdDto>('/api/orders', body)
   },
 
   // Cart
@@ -38,8 +39,20 @@ export const orderService = {
   },
 
   // Payment
-  createPaymentUrl: async (orderId: string): Promise<{ checkoutUrl: string; paymentTransactionId: string }> => {
-    return api.post<{ checkoutUrl: string; paymentTransactionId: string }>('/api/payments/create-url', { orderId })
+  createPaymentUrl: async ({
+    orderId,
+    returnUrl,
+    cancelUrl
+  }: {
+    orderId: string
+    returnUrl: string
+    cancelUrl: string
+  }): Promise<{ checkoutUrl: string; paymentTransactionId: string }> => {
+    return api.post<{ checkoutUrl: string; paymentTransactionId: string }>('/api/payments/create-url', {
+      orderId,
+      returnUrl,
+      cancelUrl
+    })
   },
   fakePayOsIpn: async (orderId: string, studentId: string, paymentTransactionId: string): Promise<number> => {
     return api.post<number>('/api/payments/fake-payos-ipn', { orderId, studentId, paymentTransactionId })

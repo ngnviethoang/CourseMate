@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
@@ -14,7 +15,7 @@ public class DeleteExerciseFromContestCommand : IRequest<Unit>
     public Guid ContestExerciseId { get; set; }
 }
 
-internal sealed class DeleteExerciseFromContestCommandHandler : AbstractCommandHandler<DeleteExerciseFromContestCommand, Unit>
+public sealed class DeleteExerciseFromContestCommandHandler : AbstractCommandHandler<DeleteExerciseFromContestCommand, Unit>
 {
     public DeleteExerciseFromContestCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -28,12 +29,10 @@ internal sealed class DeleteExerciseFromContestCommandHandler : AbstractCommandH
 
         if (ce == null)
         {
-            throw new BusinessException("Exercise not found in this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "Exercise not found in this contest.");
         }
 
         DbContext.ContestExercises.Remove(ce);
-        await DbContext.SaveChangesAsync(ct);
-
         return Unit.Value;
     }
 }

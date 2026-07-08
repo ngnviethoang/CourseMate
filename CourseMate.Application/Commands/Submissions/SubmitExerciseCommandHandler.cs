@@ -1,8 +1,10 @@
+using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.DTOs.Exercises;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using PayOS.Exceptions;
 
@@ -11,21 +13,21 @@ namespace CourseMate.Application.Commands.Submissions;
 public class SubmitExerciseCommand : IRequest<ResultIdDto>
 {
     public Guid ExerciseId { get; set; }
-    public SubmitExerciseRequest Payload { get; set; }
+    public SubmitExerciseRequest Payload { get; set; } = new();
 }
 
-public class SubmitExerciseCommandHandler : IRequestHandler<SubmitExerciseCommand, ResultIdDto>
+public class SubmitExerciseCommandHandler : AbstractCommandHandler<SubmitExerciseCommand, ResultIdDto>
 {
-    private readonly CourseMateDbContext _dbContext;
-
-    public SubmitExerciseCommandHandler(CourseMateDbContext dbContext)
+    public SubmitExerciseCommandHandler(
+        CourseMateDbContext courseMateDbContext,
+        IHttpContextAccessor httpContextAccessor
+    ) : base(courseMateDbContext, httpContextAccessor)
     {
-        _dbContext = dbContext;
     }
 
-    public async Task<ResultIdDto> Handle(SubmitExerciseCommand request, CancellationToken cancellationToken)
+    public override async Task<ResultIdDto> Handle(SubmitExerciseCommand request, CancellationToken ct)
     {
-        bool exerciseExists = await _dbContext.Exercises.AnyAsync(e => e.Id == request.ExerciseId, cancellationToken);
+        bool exerciseExists = await DbContext.Exercises.AnyAsync(e => e.Id == request.ExerciseId, ct);
         if (!exerciseExists)
         {
             throw new NotFoundException($"Exercise {request.ExerciseId} not found");
@@ -42,9 +44,7 @@ public class SubmitExerciseCommandHandler : IRequestHandler<SubmitExerciseComman
             request.Payload.TotalMemory
         );
 
-        await _dbContext.ExerciseSubmissions.AddAsync(submission, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
+        await DbContext.ExerciseSubmissions.AddAsync(submission, ct);
         return new ResultIdDto { Id = submission.Id };
     }
 }

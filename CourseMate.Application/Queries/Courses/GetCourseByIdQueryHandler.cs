@@ -1,7 +1,9 @@
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
+using CourseMate.Contracts.Enums;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +15,7 @@ public class GetCourseByIdQuery : IRequest<CourseDetailDto?>
     public Guid Id { get; set; }
 }
 
-internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourseByIdQuery, CourseDetailDto?>
+public sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourseByIdQuery, CourseDetailDto?>
 {
     public GetCourseByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -55,28 +57,16 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
             .AnyAsync(e => e.CourseId == request.Id && e.StudentId == studentId, ct);
 
         // Fetch Chapters and Lessons
-        var chapters = await DbContext.Chapters
+        List<ChapterItem> chapters = await DbContext.Chapters
             .Where(c => c.CourseId == request.Id)
             .OrderBy(c => c.Position)
-            .Select(c => new
-            {
-                c.Id,
-                c.Title,
-                c.Position
-            })
+            .Select(c => new ChapterItem(c.Id, c.Title, c.Position))
             .ToListAsync(ct);
 
-        var lessons = await DbContext.Lessons
+        List<LessonItem> lessons = await DbContext.Lessons
             .Where(l => l.CourseId == request.Id)
             .OrderBy(l => l.Position)
-            .Select(l => new
-            {
-                l.Id,
-                l.ChapterId,
-                l.Title,
-                l.LessonType,
-                l.Position
-            })
+            .Select(l => new LessonItem(l.Id, l.ChapterId, l.Title, l.LessonType, l.Position))
             .ToListAsync(ct);
 
         List<Guid> lessonIds = lessons.Select(l => l.Id).ToList();
@@ -95,18 +85,23 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
         int totalLessons = lessons.Count;
         int completedLessons = 0;
 
-        foreach (var chapter in chapters)
+        foreach ((ChapterItem chapter, int chapterIndex) in chapters.Select((chapter, index) => (chapter, index)))
         {
+            List<LessonItem> chapterLessons = lessons
+                .Where(l => l.ChapterId == chapter.Id)
+                .OrderBy(l => l.PositionKey)
+                .ToList();
+
             ChapterDetailDto chapterDto = new()
             {
                 Id = chapter.Id,
                 Title = chapter.Title,
-                Position = chapter.Position,
-                Lessons = lessons
-                    .Where(l => l.ChapterId == chapter.Id)
-                    .Select(l =>
+                Position = chapter.PositionKey,
+                SortOrder = chapterIndex + 1,
+                Lessons = chapterLessons
+                    .Select((lesson, lessonIndex) =>
                     {
-                        bool isCompleted = completedLessonIds.Contains(l.Id);
+                        bool isCompleted = completedLessonIds.Contains(lesson.Id);
                         if (isCompleted)
                         {
                             completedLessons++;
@@ -114,10 +109,11 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
 
                         return new LessonDetailDto
                         {
-                            Id = l.Id,
-                            Title = l.Title,
-                            LessonType = l.LessonType,
-                            Position = l.Position,
+                            Id = lesson.Id,
+                            Title = lesson.Title,
+                            LessonType = lesson.LessonType,
+                            Position = lesson.PositionKey,
+                            SortOrder = lessonIndex + 1,
                             IsCompleted = isCompleted
                         };
                     })
@@ -136,6 +132,20 @@ internal sealed class GetCourseByIdQueryHandler : AbstractQueryHandler<GetCourse
             result.ProgressPercentage = 0;
         }
 
+        // Calculate AverageRating and TotalReviews
+        IQueryable<Review> reviewsQuery = DbContext.Reviews.Where(r => r.CourseId == request.Id);
+        int totalReviews = await reviewsQuery.CountAsync(ct);
+        if (totalReviews > 0)
+        {
+            double averageRating = await reviewsQuery.AverageAsync(r => r.Rating, ct);
+            result.AverageRating = Math.Round(averageRating, 1);
+            result.TotalReviews = totalReviews;
+        }
+
         return result;
     }
+
+    private sealed record ChapterItem(Guid Id, string Title, string PositionKey);
+
+    private sealed record LessonItem(Guid Id, Guid ChapterId, string Title, LessonType LessonType, string PositionKey);
 }

@@ -4,11 +4,12 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
-import { chapterService } from '@/lib/course-service'
-import type { ChapterDto, CreateChapterRequest } from '@/lib/types'
+import { chapterService, courseService } from '@/lib/course-service'
+import type { ChapterDto, CourseDto, CreateChapterRequest } from '@/lib/types'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import {
   AlertDialog,
@@ -24,25 +25,33 @@ import { Label } from '@/components/ui/label'
 import { formatDate } from '@/lib/utils'
 
 const columns: Column<ChapterDto>[] = [
-  { key: 'title', header: 'Title', sortKey: 'title' },
-  { key: 'courseName', header: 'Course' },
-  { key: 'position', header: 'Position', sortKey: 'position' },
-  { key: 'creationTime', header: 'Created', sortKey: 'creationTime', render: row => formatDate(row.creationTime) },
+  { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
+  { key: 'title', header: 'Tiêu đề', sortKey: 'title' },
+  { key: 'courseName', header: 'Khóa học' },
+  { key: 'sortOrder', header: 'Thứ tự', sortKey: 'position', render: row => row.sortOrder },
+  {
+    key: 'creationTime',
+    header: 'Ngày tạo',
+    sortKey: 'creationTime',
+    render: row => formatDate(row.creationTime)
+  },
   {
     key: 'lastModificationTime',
-    header: 'Updated',
+    header: 'Cập nhật lần cuối',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }
 ]
 
-const emptyForm: CreateChapterRequest = { courseId: '', title: '', position: 0 }
+const emptyForm: CreateChapterRequest = { courseId: '', title: '', sortOrder: 1 }
 
 export default function ChaptersPage() {
   const router = useRouter()
   const [items, setItems] = useState<ChapterDto[]>([])
+  const [courseOptions, setCourseOptions] = useState<CourseDto[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')
+  const [courseFilterId, setCourseFilterId] = useState('')
   const [sorting, setSorting] = useState('creationTime_desc')
   const [pageIndex, setPageIndex] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
@@ -56,13 +65,30 @@ export default function ChaptersPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await chapterService.list({ filter, pageSize, pageIndex, sorting })
+      const res = await chapterService.list({
+        filter,
+        pageSize,
+        pageIndex,
+        sorting,
+        courseId: courseFilterId || undefined
+      })
       setItems(res.items)
       setTotalCount(res.totalCount)
     } finally {
       setLoading(false)
     }
-  }, [filter, sorting, pageIndex])
+  }, [filter, courseFilterId, sorting, pageIndex])
+
+  useEffect(() => {
+    courseService
+      .list({ pageSize: 100, sorting: 'title' })
+      .then(res => setCourseOptions(res.items))
+      .catch(() => setCourseOptions([]))
+  }, [])
+
+  useEffect(() => {
+    setPageIndex(0)
+  }, [filter, courseFilterId, sorting])
 
   useEffect(() => {
     const t = setTimeout(load, 300)
@@ -71,13 +97,27 @@ export default function ChaptersPage() {
 
   function openCreate() {
     setEditing(null)
-    setForm(emptyForm)
+    setForm({ courseId: courseFilterId, title: '', sortOrder: totalCount + 1 })
     setDialogOpen(true)
   }
-  function openEdit(row: ChapterDto) {
+  async function openEdit(row: ChapterDto) {
     setEditing(row)
-    setForm({ courseId: row.courseId, title: row.title, position: row.position })
-    setDialogOpen(true)
+    try {
+      const detail = await chapterService.getById(row.id)
+      setForm({
+        courseId: row.courseId,
+        title: row.title,
+        sortOrder: detail?.sortOrder ?? row.sortOrder
+      })
+    } catch {
+      setForm({
+        courseId: row.courseId,
+        title: row.title,
+        sortOrder: row.sortOrder
+      })
+    } finally {
+      setDialogOpen(true)
+    }
   }
 
   async function handleSave() {
@@ -85,10 +125,10 @@ export default function ChaptersPage() {
     try {
       if (editing) {
         await chapterService.update(editing.id, form)
-        toast.success('Chapter updated.')
+        toast.success('Đã cập nhật chương.')
       } else {
         await chapterService.create(form)
-        toast.success('Chapter created.')
+        toast.success('Đã tạo chương.')
       }
       setDialogOpen(false)
       load()
@@ -100,73 +140,115 @@ export default function ChaptersPage() {
   async function handleDelete() {
     if (!deleteId) return
     await chapterService.delete(deleteId)
-    toast.success('Chapter deleted.')
+    toast.success('Đã xóa chương.')
     setDeleteId(null)
     load()
   }
 
   const f = (field: keyof CreateChapterRequest, value: unknown) => setForm(prev => ({ ...prev, [field]: value }))
 
+  const courseFilterItems: Array<{ label: string; value: string | null }> = [
+    { label: 'Tất cả khóa học', value: null },
+    ...courseOptions.map(course => ({ value: course.id, label: course.title }))
+  ]
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between animate-in fade-in slide-in-from-bottom-2 duration-500">
         <div>
-          <h1 className="text-2xl font-semibold">Chapters</h1>
-          <p className="text-sm text-muted-foreground">Manage course chapters</p>
+          <h1 className="text-2xl font-semibold">Chương</h1>
+          <p className="text-sm text-muted-foreground">Quản lý chương của khóa học</p>
         </div>
         <Button onClick={openCreate} className="gap-2">
-          <Plus className="h-4 w-4" /> New Chapter
+          <Plus className="h-4 w-4" /> Tạo chương
         </Button>
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          className="pl-9"
-          placeholder="Search chapters…"
-          value={filter}
-          onChange={e => setFilter(e.target.value)}
-        />
+      <div
+        className="flex flex-wrap items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-backwards"
+        style={{ animationDelay: '100ms' }}
+      >
+        <div className="relative max-w-sm flex-1 min-w-[220px]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="pl-9"
+            placeholder="Tìm chương..."
+            value={filter}
+            onChange={e => setFilter(e.target.value)}
+          />
+        </div>
+        <Select
+          items={courseFilterItems}
+          value={courseFilterId || null}
+          onValueChange={(value: string | null) => setCourseFilterId(value ?? '')}
+        >
+          <SelectTrigger className="h-10 min-w-[220px]">
+            <SelectValue placeholder="Tất cả khóa học" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {courseFilterItems.map(item => (
+                <SelectItem key={item.value ?? 'all-courses'} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={items}
-        loading={loading}
-        sorting={sorting}
-        onSort={setSorting}
-        onEdit={openEdit}
-        onDelete={setDeleteId}
-        onView={row => router.push(`/management/chapters/${row.id}`)}
-        pagination={{
-          pageIndex,
-          pageSize,
-          totalCount,
-          onPageChange: setPageIndex
-        }}
-      />
+      <div
+        className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-backwards"
+        style={{ animationDelay: '150ms' }}
+      >
+        <DataTable
+          columns={columns}
+          data={items}
+          loading={loading}
+          sorting={sorting}
+          onSort={setSorting}
+          onEdit={openEdit}
+          onDelete={setDeleteId}
+          onView={row => router.push(`/management/courses/${row.courseId}`)}
+          pagination={{
+            pageIndex,
+            pageSize,
+            totalCount,
+            onPageChange: setPageIndex
+          }}
+        />
+      </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editing ? 'Edit Chapter' : 'New Chapter'}</DialogTitle>
+            <DialogTitle>{editing ? 'Chỉnh sửa chương' : 'Tạo chương mới'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
-            <div className="space-y-1">
-              <Label>Course ID</Label>
+            <div className="space-y-1.5">
+              <Label>ID khóa học</Label>
               <Input value={form.courseId} onChange={e => f('courseId', e.target.value)} />
             </div>
-            <div className="space-y-1">
-              <Label>Title</Label>
+            <div className="space-y-1.5">
+              <Label>Tiêu đề</Label>
               <Input value={form.title} onChange={e => f('title', e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Thứ tự</Label>
+              <Input
+                type="number"
+                min={1}
+                value={form.sortOrder}
+                onChange={e => f('sortOrder', Number(e.target.value))}
+              />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
+              Hủy
             </Button>
             <Button onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving…' : 'Save'}
+              {saving ? 'Đang lưu...' : 'Lưu'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -175,16 +257,16 @@ export default function ChaptersPage() {
       <AlertDialog open={!!deleteId} onOpenChange={open => !open && setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete chapter?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogTitle>Xóa chương?</AlertDialogTitle>
+            <AlertDialogDescription>Hành động này không thể hoàn tác.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDelete}
             >
-              Delete
+              Xóa
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

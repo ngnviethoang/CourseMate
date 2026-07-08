@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.Json;
 using CourseMate.Application.Commands.Contests;
 using CourseMate.Contracts.DTOs.AntiCheat;
 using MediatR;
@@ -48,11 +49,30 @@ public class ContestHub : Hub
     {
         Guid userId = GetCurrentUserId();
 
+        // Capture IP address from the HTTP context
+        string? ipAddress = Context.GetHttpContext()?.Connection.RemoteIpAddress?.ToString();
+        // Prefer X-Forwarded-For header when behind a reverse proxy
+        string? forwardedFor = Context.GetHttpContext()?.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+        if (!string.IsNullOrEmpty(forwardedFor))
+        {
+            ipAddress = forwardedFor.Split(',')[0].Trim();
+        }
+
+        // Build enriched details JSON (preserves original details + adds metadata)
+        string enrichedDetails = JsonSerializer.Serialize(new
+        {
+            original = request.Details,
+            ipAddress,
+            userAgent = request.UserAgent,
+            deviceFingerprint = request.DeviceFingerprint
+        });
+
         ReportViolationCommand command = new()
         {
             ContestId = request.ContestId,
+            UserId = userId, // ← critical: Hub resolves user from Context.User (not HttpContext)
             ViolationType = request.ViolationType,
-            Details = request.Details,
+            Details = enrichedDetails,
             Timestamp = request.Timestamp
         };
 
@@ -90,7 +110,10 @@ public class ContestHub : Hub
                 violationCount = result.ViolationCount,
                 maxViolations = result.MaxViolations,
                 isDisqualified = result.IsDisqualified,
-                timestamp = DateTimeOffset.UtcNow
+                timestamp = DateTimeOffset.UtcNow,
+                ipAddress,
+                userAgent = request.UserAgent,
+                deviceFingerprint = request.DeviceFingerprint
             });
     }
 
@@ -103,7 +126,8 @@ public class ContestHub : Hub
         {
             ContestId = contestId,
             StudentId = studentId,
-            Reason = reason
+            Reason = reason,
+            CallerUserId = GetCurrentUserId() // Hub has no HttpContext; pass explicitly
         };
 
         await _mediator.Send(command);
@@ -134,7 +158,8 @@ public class ContestHub : Hub
         ReinstateStudentCommand command = new()
         {
             ContestId = contestId,
-            StudentId = studentId
+            StudentId = studentId,
+            CallerUserId = GetCurrentUserId() // Hub has no HttpContext; pass explicitly
         };
 
         await _mediator.Send(command);

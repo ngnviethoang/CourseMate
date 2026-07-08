@@ -1,5 +1,4 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
@@ -10,13 +9,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Payments;
 
-public class FakeIpnUrlCallbackCommand : IRequest<int>
+public class FakeIpnUrlCallbackCommand : IRequest<Unit>
 {
     public Guid OrderId { get; set; }
     public Guid PaymentTransactionId { get; set; }
 }
 
-internal sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<FakeIpnUrlCallbackCommand, int>
+public sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<FakeIpnUrlCallbackCommand, Unit>
 {
     public FakeIpnUrlCallbackCommandHandler(
         CourseMateDbContext dbContext,
@@ -24,7 +23,7 @@ internal sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<
     {
     }
 
-    public override async Task<int> Handle(FakeIpnUrlCallbackCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(FakeIpnUrlCallbackCommand request, CancellationToken ct)
     {
         Order? order = await DbContext.Orders.FirstOrDefaultAsync(x => x.Id == request.OrderId, ct);
         if (order == null)
@@ -65,6 +64,6 @@ internal sealed class FakeIpnUrlCallbackCommandHandler : AbstractCommandHandler<
             await DbContext.Enrollments.AddRangeAsync(newEnrollments, ct);
         }
 
-        return Codes.Success;
+        return Unit.Value;
     }
 }

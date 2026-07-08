@@ -1,5 +1,4 @@
 using CourseMate.Application.Shared;
-using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
@@ -9,21 +8,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Commands.Exercises;
 
-public class CreateOrUpdateDefaultCodeCommand : IRequest<int>
+public class CreateOrUpdateDefaultCodeCommand : IRequest<Unit>
 {
     public Guid ExerciseId { get; set; }
     public string Language { get; set; } = string.Empty;
     public string StarterCode { get; set; } = string.Empty;
 }
 
-internal sealed class CreateOrUpdateDefaultCodeCommandHandler : AbstractCommandHandler<CreateOrUpdateDefaultCodeCommand, int>
+public sealed class CreateOrUpdateDefaultCodeCommandHandler : AbstractCommandHandler<CreateOrUpdateDefaultCodeCommand, Unit>
 {
     public CreateOrUpdateDefaultCodeCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
     {
     }
 
-    public override async Task<int> Handle(CreateOrUpdateDefaultCodeCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(CreateOrUpdateDefaultCodeCommand request, CancellationToken ct)
     {
         Exercise? exercise = await DbContext.Exercises.FirstOrDefaultAsync(x => x.Id == request.ExerciseId, ct);
 
@@ -34,7 +33,7 @@ internal sealed class CreateOrUpdateDefaultCodeCommandHandler : AbstractCommandH
 
         ExerciseDefaultCode? defaultCode = await DbContext.ExerciseDefaultCodes
             .Where(x => x.ExerciseId == request.ExerciseId)
-            .Where(x => string.Equals(x.Language, request.Language, StringComparison.CurrentCultureIgnoreCase))
+            .Where(x => x.Language.ToLower() == request.Language.ToLower())
             .FirstOrDefaultAsync(ct);
 
         if (defaultCode is null)
@@ -47,6 +46,6 @@ internal sealed class CreateOrUpdateDefaultCodeCommandHandler : AbstractCommandH
             defaultCode.StarterCode = request.StarterCode;
         }
 
-        return Codes.Success;
+        return Unit.Value;
     }
 }

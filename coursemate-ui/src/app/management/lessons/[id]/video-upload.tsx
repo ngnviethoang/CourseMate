@@ -1,30 +1,136 @@
 'use client'
 
-import React, { useState } from 'react'
-import { UploadCloud, CheckCircle2, AlertCircle, Loader2, Video, Edit } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
+import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
+import { createPlayer } from '@videojs/react'
+import { MinimalVideoSkin, Video as VideoJsVideo, videoFeatures } from '@videojs/react/video'
+import { UploadCloud, AlertCircle, Loader2, Video, Edit } from 'lucide-react'
 import { toast } from 'sonner'
+import { getAccessToken } from '@/lib/auth-token.util'
 import { fileService } from '@/lib/file-service'
 import { lessonService } from '@/lib/course-service'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { Badge } from '@/components/ui/badge'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Player = createPlayer({ features: videoFeatures })
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
+
+type VideoProcessedNotification = {
+  fileId?: string
+  FileId?: string
+  fileUrl?: string
+  FileUrl?: string
+  success?: boolean
+  Success?: boolean
+  message?: string
+  Message?: string
+}
+
 export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: string; initialVideoUrl?: string }) {
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
-  const [status, setStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle')
+  const [status, setStatus] = useState<'idle' | 'uploading' | 'processing' | 'success' | 'error'>('idle')
   const [videoUrl, setVideoUrl] = useState(initialVideoUrl ?? '')
   const [isEditing, setIsEditing] = useState(!initialVideoUrl)
+  const [autoPlayVideo, setAutoPlayVideo] = useState(false)
+  const currentUploadIdRef = useRef<string | null>(null)
+
+  const hasVideoTrack = async (targetFile: File): Promise<boolean> => {
+    const objectUrl = URL.createObjectURL(targetFile)
+    try {
+      const result = await new Promise<boolean>(resolve => {
+        const preview = document.createElement('video')
+        preview.preload = 'metadata'
+        preview.muted = true
+        preview.src = objectUrl
+
+        const timeout = window.setTimeout(() => resolve(false), 5000)
+        preview.onloadedmetadata = () => {
+          window.clearTimeout(timeout)
+          resolve(preview.videoWidth > 0 && preview.videoHeight > 0)
+        }
+        preview.onerror = () => {
+          window.clearTimeout(timeout)
+          resolve(false)
+        }
+      })
+      return result
+    } finally {
+      URL.revokeObjectURL(objectUrl)
+    }
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0])
+      const nextFile = e.target.files[0]
+      const isMp4 = nextFile.name.toLowerCase().endsWith('.mp4')
+      if (!isMp4) {
+        toast.error('Chỉ hỗ trợ định dạng .mp4 để đảm bảo phát hình ảnh ổn định.')
+        e.target.value = ''
+        return
+      }
+
+      setFile(nextFile)
       setStatus('idle')
       setProgress(0)
+      setAutoPlayVideo(false)
     }
   }
+
+  useEffect(() => {
+    if (!API_BASE_URL) return
+
+    const connection = new HubConnectionBuilder()
+      .withUrl(`${API_BASE_URL}/hubs/notification`, {
+        accessTokenFactory: () => getAccessToken() ?? ''
+      })
+      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
+      .configureLogging(LogLevel.Warning)
+      .build()
+
+    connection.on('VideoProcessed', (notification: VideoProcessedNotification) => {
+      const fileId = notification.fileId ?? notification.FileId
+      if (!fileId || !currentUploadIdRef.current || fileId.toLowerCase() !== currentUploadIdRef.current.toLowerCase())
+        return
+
+      const success = notification.success ?? notification.Success ?? false
+      const message = notification.message ?? notification.Message
+
+      if (!success) {
+        setStatus('error')
+        setUploading(false)
+        currentUploadIdRef.current = null
+        toast.error(message || 'Ghép video thất bại. Vui lòng thử lại.')
+        return
+      }
+
+      currentUploadIdRef.current = null
+
+      void (async () => {
+        let nextVideoUrl = notification.fileUrl ?? notification.FileUrl ?? ''
+        if (!nextVideoUrl) {
+          const detail = await lessonService.getDetail(lessonId).catch(() => null)
+          nextVideoUrl = detail?.videoUrl ?? ''
+        }
+        setVideoUrl(nextVideoUrl)
+        setStatus('success')
+        setUploading(false)
+        setIsEditing(false)
+        setFile(null)
+        setProgress(100)
+        setAutoPlayVideo(true)
+        toast.success(message || 'Video đã sẵn sàng.')
+      })()
+    })
+
+    void connection.start().catch(() => {})
+
+    return () => {
+      connection.off('VideoProcessed')
+      void connection.stop().catch(() => {})
+    }
+  }, [lessonId])
 
   const handleUpload = async () => {
     if (!file) return
@@ -34,8 +140,17 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
     setProgress(0)
 
     try {
+      const fileContainsVideo = await hasVideoTrack(file)
+      if (!fileContainsVideo) {
+        setStatus('error')
+        setUploading(false)
+        toast.error('Video không có track hình ảnh hợp lệ hoặc codec không được trình duyệt hỗ trợ.')
+        return
+      }
+
       // Step 1: Init
       const { fileId } = await fileService.initVideoUpload(file.name, file.size)
+      currentUploadIdRef.current = fileId
 
       // Calculate chunks in frontend (e.g., 5MB per chunk)
       const CHUNK_SIZE = 5 * 1024 * 1024
@@ -53,37 +168,32 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
       }
 
       // Step 3: Complete
-      const { fileUrl } = await fileService.completeVideoUpload(fileId, maxTotalTrunks)
-
-      // Step 4: Link video to lesson
-      await lessonService.upsertVideo(lessonId, { videoUrl: fileUrl })
-
-      setVideoUrl(fileUrl)
-      setStatus('success')
-      setIsEditing(false)
-      toast.success('Video uploaded and saved successfully!')
+      await fileService.completeVideoUpload(fileId, maxTotalTrunks, lessonId)
+      setStatus('processing')
+      setUploading(false)
+      toast.info('Video đã tải xong. Hệ thống đang ghép file và sẽ tự cập nhật khi hoàn tất.')
     } catch (error) {
       console.error(error)
       setStatus('error')
-      toast.error('Failed to upload video. Please try again.')
-    } finally {
+      currentUploadIdRef.current = null
       setUploading(false)
+      toast.error('Không thể tải video lên. Vui lòng thử lại.')
     }
   }
 
   return (
-    <div className="rounded-xl border bg-card p-6 shadow-sm space-y-6">
+    <div className="rounded-xl bg-card p-6 shadow-md border-0 space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold flex items-center gap-2">
-          <Video className="h-5 w-5 text-blue-600" /> Video Content
+          <Video className="h-5 w-5 text-blue-600" /> Nội dung video
         </h2>
         {videoUrl && !uploading && (
           <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)} className="gap-2">
             {isEditing ? (
-              'Cancel'
+              'Hủy'
             ) : (
               <>
-                <Edit className="h-3.5 w-3.5" /> Change Video
+                <Edit className="h-3.5 w-3.5" /> Đổi video
               </>
             )}
           </Button>
@@ -91,85 +201,117 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
       </div>
 
       {isEditing ? (
-        <div className="space-y-6">
-          <div className="flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-8 bg-muted/20">
-            <UploadCloud className="h-10 w-10 text-muted-foreground mb-4" />
-            <h3 className="font-semibold text-sm">Upload Video</h3>
-            <p className="text-xs text-muted-foreground mb-4">Select a video file to upload in chunks</p>
-
-            <input
-              type="file"
-              accept="video/*"
-              onChange={handleFileChange}
-              className="block w-full max-w-sm text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
-              disabled={uploading}
-            />
-          </div>
-
-          {file && status !== 'success' && (
-            <div className="space-y-4 max-w-sm mx-auto pb-2">
-              <div className="flex justify-between items-center text-sm">
-                <span className="font-medium truncate max-w-[200px]">{file.name}</span>
-                <span className="text-muted-foreground">{(file.size / (1024 * 1024)).toFixed(2)} MB</span>
+        <div className="space-y-4">
+          {status === 'processing' ? (
+            <div className="flex items-center gap-4 rounded-xl border border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800 p-5">
+              <div className="relative shrink-0">
+                <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                  <Video className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+                  <span className="relative inline-flex h-3.5 w-3.5 rounded-full bg-blue-500" />
+                </span>
               </div>
-
-              {status === 'uploading' && (
-                <div className="space-y-1.5">
-                  <Progress value={progress} className="h-2" />
-                  <p className="text-xs text-right text-muted-foreground">{progress}%</p>
-                </div>
-              )}
-
-              {status === 'error' && (
-                <div className="flex items-center gap-2 text-sm text-destructive justify-center">
-                  <AlertCircle className="h-4 w-4" /> Upload failed. Please try again.
-                </div>
-              )}
-
-              <Button onClick={handleUpload} disabled={uploading} className="w-full gap-2">
-                {uploading && <Loader2 className="h-4 w-4 animate-spin" />}
-                {uploading ? 'Uploading...' : 'Start Upload'}
-              </Button>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="max-w-2xl bg-muted/20 rounded-lg p-5 border border-dashed space-y-3">
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Video Resource</p>
-          {videoUrl ? (
-            <div className="flex items-center gap-4">
-              <div className="h-16 w-28 bg-zinc-950 rounded flex items-center justify-center shrink-0 border border-zinc-800">
-                <Video className="h-6 w-6 text-zinc-500" />
-              </div>
-              <div className="flex-1 min-w-0 space-y-3">
-                <div className="relative aspect-video w-full max-w-sm bg-zinc-950 rounded-lg overflow-hidden border border-zinc-800 group shadow-lg">
-                  <video src={videoUrl} className="w-full h-full object-contain" controls={false} />
-                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <a
-                      href={videoUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="bg-white text-black hover:bg-zinc-200 px-4 py-2 rounded-full text-xs font-bold transform translate-y-2 group-hover:translate-y-0 transition-all"
-                    >
-                      Preview Video
-                    </a>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <p className="text-[10px] font-mono text-muted-foreground truncate max-w-[250px] bg-muted px-2 py-1 rounded">
-                    {videoUrl}
-                  </p>
-                  <span className="flex items-center gap-1.5 text-[10px] font-bold text-green-500">
-                    <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
-                    READY
-                  </span>
-                </div>
+              <div>
+                <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">Đang xử lý video</p>
+                <p className="text-xs text-blue-700/70 dark:text-blue-400/70">
+                  Hệ thống đang ghép file và sẽ tự động cập nhật khi hoàn tất
+                </p>
               </div>
             </div>
           ) : (
-            <p className="text-sm italic text-muted-foreground">No video uploaded yet.</p>
+            <label
+              className={[
+                'flex flex-col items-center gap-3 rounded-xl border-2 border-dashed p-8 cursor-pointer transition-all duration-150',
+                status === 'error'
+                  ? 'border-destructive/50 bg-destructive/5'
+                  : file
+                    ? 'border-primary/50 bg-primary/5'
+                    : 'border-border hover:border-primary/40 hover:bg-muted/30',
+                uploading ? 'pointer-events-none opacity-60' : ''
+              ].join(' ')}
+            >
+              <input
+                type="file"
+                accept=".mp4,video/mp4"
+                className="sr-only"
+                onChange={handleFileChange}
+                disabled={uploading}
+              />
+              {file ? (
+                <>
+                  <div className="p-3 rounded-full bg-primary/10">
+                    <Video className="h-7 w-7 text-primary" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold">{file.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {(file.size / (1024 * 1024)).toFixed(2)} MB · Nhấn để đổi file
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="p-3 rounded-full bg-muted">
+                    <UploadCloud className="h-7 w-7 text-muted-foreground" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold">Chọn file video</p>
+                    <p className="text-xs text-muted-foreground">Chỉ hỗ trợ định dạng .mp4</p>
+                  </div>
+                </>
+              )}
+            </label>
+          )}
+
+          {status === 'uploading' && (
+            <div className="space-y-2 px-1">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>Đang tải lên...</span>
+                <span className="font-medium tabular-nums">{progress}%</span>
+              </div>
+              <Progress value={progress} className="h-1.5" />
+            </div>
+          )}
+
+          {status === 'error' && (
+            <div className="flex items-center gap-2 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              Tải lên thất bại. Vui lòng thử lại.
+            </div>
+          )}
+
+          {file && status !== 'processing' && (
+            <Button onClick={handleUpload} disabled={uploading} className="w-full gap-2">
+              {uploading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {uploading ? 'Đang tải lên...' : 'Bắt đầu tải lên'}
+            </Button>
           )}
         </div>
+      ) : (
+        <>
+          {videoUrl ? (
+            <div className="space-y-3">
+              <div className="relative w-[951px] h-[535px] max-w-full mx-auto overflow-hidden rounded-xl bg-transparent">
+                <Player.Provider key={videoUrl}>
+                  <MinimalVideoSkin className="w-full h-full rounded-xl">
+                    <VideoJsVideo
+                      src={videoUrl}
+                      autoPlay={autoPlayVideo}
+                      playsInline
+                      controlsList="nodownload noremoteplayback"
+                      className="w-full h-full object-contain"
+                    />
+                  </MinimalVideoSkin>
+                </Player.Provider>
+              </div>
+              <p className="text-xs text-muted-foreground">Video đã liên kết với bài học và sẵn sàng phát.</p>
+            </div>
+          ) : (
+            <p className="text-sm italic text-muted-foreground">Chưa có video nào được tải lên.</p>
+          )}
+        </>
       )}
     </div>
   )

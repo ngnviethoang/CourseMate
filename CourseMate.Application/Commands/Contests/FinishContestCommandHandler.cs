@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
@@ -14,7 +15,7 @@ public class FinishContestCommand : IRequest<ResultIdDto>
     public Guid ContestId { get; set; }
 }
 
-internal sealed class FinishContestCommandHandler : AbstractCommandHandler<FinishContestCommand, ResultIdDto>
+public sealed class FinishContestCommandHandler : AbstractCommandHandler<FinishContestCommand, ResultIdDto>
 {
     public FinishContestCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -28,7 +29,7 @@ internal sealed class FinishContestCommandHandler : AbstractCommandHandler<Finis
 
         if (registration == null)
         {
-            throw new BusinessException("You are not registered for this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "You are not registered for this contest.");
         }
 
         if (registration.SubmitTime.HasValue)
@@ -37,8 +38,6 @@ internal sealed class FinishContestCommandHandler : AbstractCommandHandler<Finis
         }
 
         registration.SubmitTime = DateTimeOffset.UtcNow;
-        await DbContext.SaveChangesAsync(ct);
-
         return new ResultIdDto { Id = registration.Id };
     }
 }

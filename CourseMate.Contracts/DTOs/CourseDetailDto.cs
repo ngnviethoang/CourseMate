@@ -25,4 +25,8 @@ public class CourseDetailDto
     public double ProgressPercentage { get; set; }
 
     public List<ChapterDetailDto> Chapters { get; set; } = [];
+
+    public double AverageRating { get; set; }
+
+    public int TotalReviews { get; set; }
 }

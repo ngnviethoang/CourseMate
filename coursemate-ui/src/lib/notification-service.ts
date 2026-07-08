@@ -3,6 +3,7 @@ import { api } from './api-client'
 export interface NotificationDto {
   id: string
   receiverId: string
+  lessonId?: string
   title: string
   message: string
   isRead: boolean

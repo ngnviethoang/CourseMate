@@ -14,7 +14,7 @@ public class GetContestByIdQuery : IRequest<ContestDto?>
     public Guid Id { get; set; }
 }
 
-internal sealed class GetContestByIdQueryHandler : AbstractQueryHandler<GetContestByIdQuery, ContestDto?>
+public sealed class GetContestByIdQueryHandler : AbstractQueryHandler<GetContestByIdQuery, ContestDto?>
 {
     public GetContestByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -44,9 +44,11 @@ internal sealed class GetContestByIdQueryHandler : AbstractQueryHandler<GetConte
                 CreatorId = contest.CreatorId,
                 CreatorName = user.UserName,
                 CreationTime = contest.CreationTime,
+                LastModificationTime = contest.LastModificationTime,
                 ExerciseCount = DbContext.ContestExercises.Count(x => x.ContestId == contest.Id),
                 ParticipantCount = DbContext.ContestRegistrations.Count(x => x.ContestId == contest.Id),
-                IsRegistered = DbContext.ContestRegistrations.Any(x => x.ContestId == contest.Id && x.StudentId == CurrentUserId)
+                IsRegistered = DbContext.ContestRegistrations.Any(x => x.ContestId == contest.Id && x.StudentId == CurrentUserId),
+                HasSubmitted = DbContext.ContestRegistrations.Any(x => x.ContestId == contest.Id && x.StudentId == CurrentUserId && x.SubmitTime != null)
             }).FirstOrDefaultAsync(ct);
 
         if (result == null)
@@ -111,6 +113,27 @@ internal sealed class GetContestByIdQueryHandler : AbstractQueryHandler<GetConte
         }
 
         result.Exercises = exercises;
+
+        // Load prizes with course details, ordered by rank
+        result.Prizes = await (
+            from p in DbContext.ContestPrizes
+            join c in DbContext.Courses on p.CourseId equals c.Id
+            join u in DbContext.Users on c.InstructorId equals u.Id
+            where p.ContestId == result.Id
+            orderby p.MinRank
+            select new ContestPrizeDto
+            {
+                Id = p.Id,
+                MinRank = p.MinRank,
+                MaxRank = p.MaxRank,
+                CourseId = c.Id,
+                CourseTitle = c.Title,
+                CourseImageUrl = c.ImageUrl,
+                CoursePrice = c.Price,
+                CourseInstructorName = u.UserName ?? "Unknown"
+            }
+        ).ToListAsync(ct);
+
         return result;
     }
 

@@ -118,7 +118,7 @@ const LANGUAGE_MAPPING: Record<string, string> = {
 
 const DEFAULT_TEMPLATES: Record<string, string> = {
   'python-3.14':
-    'import sys\n\ndef solve():\n    # Đọc dữ liệu từ stdin\n    # input_data = sys.stdin.read().split()\n    \n    # Logic của bạn ở đây\n    print("Hello from Python")\n\nif __name__ == "__main__":\n    solve()',
+    'import sys\n\ndef solve():\n    # Đọc dữ liệu từ stdin\n    # input_data = sys.stdin.read().split()\n    \n    # Logic của bạn ở đây\n    print("Xin chao Python")\n\nif __name__ == "__main__":\n    solve()',
   'g++-15':
     '#include <iostream>\n#include <vector>\n#include <string>\n\nusing namespace std;\n\nint main() {\n    // Giải quyết bài toán tại đây\n    \n    return 0;\n}',
   'gcc-15': '#include <stdio.h>\n\nint main() {\n    // Giải quyết bài toán tại đây\n    \n    return 0;\n}',
@@ -126,15 +126,15 @@ const DEFAULT_TEMPLATES: Record<string, string> = {
     'import java.util.*;\n\npublic class Solution {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        // Viết code của bạn tại đây\n    }\n}',
   'dotnet-csharp-9':
     'using System;\n\nclass Program {\n    static void Main() {\n        // Đọc dữ liệu: string line = Console.ReadLine();\n        Console.WriteLine("Hello C#");\n    }\n}',
-  'go-1.26': 'package main\n\nimport "fmt"\n\nfunc main() {\n    // Code của bạn\n    fmt.Println("Hello Go")\n}',
+  'go-1.26': 'package main\n\nimport "fmt"\n\nfunc main() {\n    // Code của bạn\n    fmt.Println("Xin chao Go")\n}',
   'rust-1.93':
-    'use std::io;\n\nfn main() {\n    let mut input = String::new();\n    io::stdin().read_line(&mut input).unwrap();\n    println!("Hello Rust");\n}',
+    'use std::io;\n\nfn main() {\n    let mut input = String::new();\n    io::stdin().read_line(&mut input).unwrap();\n    println!("Xin chao Rust");\n}',
   'typescript-deno':
-    'const input = new TextDecoder().decode(await Deno.readAll(Deno.stdin));\nconsole.log("Hello TypeScript (Deno)");',
-  'php-8.5': "<?php\n\n$stdin = fopen('php://stdin', 'r');\necho \"Hello PHP\";",
-  'ruby-4.0': 'input = gets\nputs "Hello Ruby"',
-  'dotnet-fsharp-9': 'open System\n\n[<EntryPoint>]\nlet main argv = \n    printfn "Hello F#"\n    0',
-  'haskell-9.12': 'main :: IO ()\nmain = do\n    putStrLn "Hello Haskell"'
+    'const input = new TextDecoder().decode(await Deno.readAll(Deno.stdin));\nconsole.log("Xin chao TypeScript (Deno)");',
+  'php-8.5': "<?php\n\n$stdin = fopen('php://stdin', 'r');\necho \"Xin chao PHP\";",
+  'ruby-4.0': 'input = gets\nputs "Xin chao Ruby"',
+  'dotnet-fsharp-9': 'open System\n\n[<EntryPoint>]\nlet main argv = \n    printfn "Xin chao F#"\n    0',
+  'haskell-9.12': 'main :: IO ()\nmain = do\n    putStrLn "Xin chao Haskell"'
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -285,8 +285,10 @@ export function ExerciseEditorModal({
 
     const newResults: RunResult[] = []
 
-    for (let i = 0; i < exercise.examples.length; i++) {
-      const ex = exercise.examples[i]
+    const visibleTestCases = exercise.testCases.filter(tc => !tc.isHidden)
+
+    for (let i = 0; i < visibleTestCases.length; i++) {
+      const ex = visibleTestCases[i]
       try {
         const response = await runnerCodeService.run({
           compiler: selectedLang.id,
@@ -295,7 +297,7 @@ export function ExerciseEditorModal({
         })
 
         const actual = (response.output || '').replace(/\r\n/g, '\n').trim()
-        const expected = (ex.output || '').replace(/\r\n/g, '\n').trim()
+        const expected = (ex.expectedOutput || '').replace(/\r\n/g, '\n').trim()
 
         const normActual = actual
           .split('\n')
@@ -312,7 +314,7 @@ export function ExerciseEditorModal({
           case: ex.input,
           expected: expected,
           actual: actual,
-          description: `Example ${i + 1}`,
+          description: ex.description || `Bộ kiểm thử ${i + 1}`,
           isHidden: false,
           time: parseFloat(response.time || '0'),
           memory: parseInt(response.memory || '0', 10)
@@ -336,9 +338,9 @@ export function ExerciseEditorModal({
         newResults.push({
           passed: false,
           case: ex.input,
-          expected: ex.output,
+          expected: ex.expectedOutput,
           actual: 'Lỗi thực thi',
-          description: `Example ${i + 1}`,
+          description: ex.description || `Bộ kiểm thử ${i + 1}`,
           isHidden: false,
           time: 0,
           memory: 0
@@ -663,11 +665,11 @@ export function ExerciseEditorModal({
                         className="rounded-lg bg-[#1c1c28] border border-white/8 p-3.5 space-y-2 font-mono text-xs"
                       >
                         <div>
-                          <span className="text-neutral-500">Input: </span>
+                          <span className="text-neutral-500">Đầu vào: </span>
                           <span className="text-emerald-300">{ex.input}</span>
                         </div>
                         <div>
-                          <span className="text-neutral-500">Output: </span>
+                          <span className="text-neutral-500">Đầu ra: </span>
                           <span className="text-blue-300">{ex.output}</span>
                         </div>
                         {ex.explanation && (
@@ -748,7 +750,7 @@ export function ExerciseEditorModal({
             {/* Right tab bar */}
             <div className="flex border-b border-white/8 bg-[#1c1c28] flex-shrink-0">
               {[
-                { key: 'editor' as const, label: 'Code', icon: <Code2 className="h-3.5 w-3.5" /> },
+                { key: 'editor' as const, label: 'Mã nguồn', icon: <Code2 className="h-3.5 w-3.5" /> },
                 {
                   key: 'console' as const,
                   label: `Kết quả${results ? ` (${passedCount}/${results.length})` : ''}`,
@@ -830,9 +832,21 @@ export function ExerciseEditorModal({
               <div className="flex-1 overflow-y-auto bg-[#0a0a12] p-5 space-y-5">
                 {/* Custom Input */}
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">
-                    Custom Input (stdin)
-                  </Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">
+                      Đầu vào tùy chỉnh (stdin)
+                    </Label>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 text-[10px] bg-white/5 hover:bg-white/10 text-neutral-300 px-2"
+                      onClick={() => handleRun(stdin)}
+                      disabled={running || !stdin.trim()}
+                    >
+                      <Play className="h-3 w-3 mr-1 text-emerald-500" />
+                      Chạy với đầu vào này
+                    </Button>
+                  </div>
                   <textarea
                     value={stdin}
                     onChange={e => setStdin(e.target.value)}
@@ -846,7 +860,7 @@ export function ExerciseEditorModal({
                 {running && (
                   <div className="flex flex-col items-center gap-4 py-10 justify-center">
                     <Loader2 className="h-8 w-8 animate-spin text-blue-400" />
-                    <span className="text-sm text-neutral-400 animate-pulse">Server đang thực thi mã nguồn…</span>
+                    <span className="text-sm text-neutral-400 animate-pulse">Máy chủ đang thực thi mã nguồn…</span>
                   </div>
                 )}
 
@@ -880,8 +894,8 @@ export function ExerciseEditorModal({
                       <div className="flex-1">
                         <p className="text-sm font-bold">
                           {results.every(r => r.passed)
-                            ? 'Vượt qua tất cả test cases! 🎉'
-                            : 'Một số test case không vượt qua.'}
+                            ? 'Vượt qua tất cả bộ kiểm thử! 🎉'
+                            : 'Một số bộ kiểm thử chưa đạt.'}
                         </p>
                         <div className="mt-2 flex flex-wrap items-center gap-4 text-xs font-medium opacity-90">
                           <span className="bg-white/10 px-2.5 py-1 rounded-md">
@@ -915,7 +929,7 @@ export function ExerciseEditorModal({
                                 <XCircle className="h-3 w-3 text-red-500" />
                               )}
                               <span className={r.passed ? 'text-emerald-400' : 'text-red-400'}>
-                                Test {i + 1}: {r.description || (r.isHidden ? 'Hidden Test Case' : 'Test Case')}
+                                Bộ kiểm thử {i + 1}: {r.description || (r.isHidden ? 'Bộ kiểm thử ẩn' : 'Bộ kiểm thử')}
                               </span>
                               {r.isHidden && (
                                 <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-500 font-bold tracking-wider">
@@ -924,21 +938,21 @@ export function ExerciseEditorModal({
                               )}
                             </div>
                             <span className={r.passed ? 'text-emerald-500' : 'text-red-500'}>
-                              {r.passed ? 'PASSED' : 'FAILED'}
+                              {r.passed ? 'ĐẠT' : 'KHÔNG ĐẠT'}
                             </span>
                           </div>
                           {!r.passed && (
                             <div className="space-y-2 pl-5 pt-1">
                               {r.isHidden ? (
                                 <div className="text-neutral-500 italic mt-1 bg-white/5 px-3 py-2 rounded">
-                                  Test case này được ẩn để thử thách code của bạn. Bạn hãy kiểm tra lại các trường hợp
+                                  Bộ kiểm thử này được ẩn để thử thách mã của bạn. Bạn hãy kiểm tra lại các trường hợp
                                   đặc biệt nhé.
                                 </div>
                               ) : (
                                 <>
                                   <div>
                                     <span className="text-neutral-500 font-sans text-[10px] uppercase tracking-wider block mb-1">
-                                      Input:
+                                      Đầu vào:
                                     </span>
                                     <pre className="bg-white/5 p-2 rounded text-neutral-300 whitespace-pre-wrap">
                                       {r.case}
@@ -946,7 +960,7 @@ export function ExerciseEditorModal({
                                   </div>
                                   <div>
                                     <span className="text-neutral-500 font-sans text-[10px] uppercase tracking-wider block mb-1">
-                                      Expected:
+                                      Kỳ vọng:
                                     </span>
                                     <pre className="bg-emerald-500/10 border border-emerald-500/20 p-2 rounded text-emerald-400 whitespace-pre-wrap">
                                       {r.expected}
@@ -954,10 +968,10 @@ export function ExerciseEditorModal({
                                   </div>
                                   <div>
                                     <span className="text-neutral-500 font-sans text-[10px] uppercase tracking-wider block mb-1">
-                                      Actual:
+                                      Thực tế:
                                     </span>
                                     <pre className="bg-red-500/10 border border-red-500/20 p-2 rounded text-red-400 whitespace-pre-wrap">
-                                      {r.actual || <span className="italic opacity-50">Không có output</span>}
+                                      {r.actual || <span className="italic opacity-50">Không có kết quả đầu ra</span>}
                                     </pre>
                                   </div>
                                 </>
@@ -976,12 +990,12 @@ export function ExerciseEditorModal({
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <Label className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">
-                            Standard Output (stdout)
+                            Đầu ra chuẩn (stdout)
                           </Label>
                           {rawOutput.time && (
                             <span className="text-[10px] text-neutral-500 font-mono">
                               {rawOutput.status} • {rawOutput.time}s •{' '}
-                              {Math.round(parseInt(rawOutput.memory || '0') / 1024)}MB • Exit: {rawOutput.exitCode}
+                              {Math.round(parseInt(rawOutput.memory || '0') / 1024)}MB • Thoát: {rawOutput.exitCode}
                             </span>
                           )}
                         </div>
@@ -994,7 +1008,7 @@ export function ExerciseEditorModal({
                     {rawOutput.stderr && (
                       <div className="space-y-2">
                         <Label className="text-[10px] font-bold uppercase tracking-widest text-red-500">
-                          Error Output (stderr)
+                          Đầu ra lỗi (stderr)
                         </Label>
                         <pre className="bg-red-500/5 border border-red-500/20 rounded-lg p-4 text-xs font-mono text-red-300 text-wrap">
                           {rawOutput.stderr}
@@ -1004,7 +1018,7 @@ export function ExerciseEditorModal({
 
                     {!rawOutput.stdout && !rawOutput.stderr && (
                       <div className="text-xs text-neutral-500 italic py-4">
-                        Chương trình kết thúc mà không có output.
+                        Chương trình kết thúc mà không có kết quả đầu ra.
                       </div>
                     )}
                   </div>
@@ -1013,7 +1027,7 @@ export function ExerciseEditorModal({
                 {/* Test Cases Quick Access */}
                 <div className="pt-4 border-t border-white/5">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-3 block">
-                    Sử dụng Test Case
+                    Sử dụng bộ kiểm thử
                   </Label>
                   <div className="grid grid-cols-1 gap-2">
                     {exercise.testCases
@@ -1029,10 +1043,10 @@ export function ExerciseEditorModal({
                         >
                           <div className="flex-1 min-w-0">
                             <p className="text-[11px] font-medium text-neutral-300 truncate">
-                              {tc.description || `Test case ${i + 1}`}
+                              {tc.description || `Bộ kiểm thử ${i + 1}`}
                             </p>
                             <code className="text-[10px] text-neutral-500 truncate block mt-0.5">
-                              Input: {tc.input}
+                              Đầu vào: {tc.input}
                             </code>
                           </div>
                           <Play className="h-3 w-3 text-neutral-600 group-hover:text-blue-400 ml-3" />
@@ -1067,7 +1081,7 @@ export function ExerciseEditorModal({
                               <XCircle className="h-4 w-4 text-red-500" />
                             )}
                             <span className={`font-bold ${sub.passed ? 'text-emerald-500' : 'text-red-500'}`}>
-                              {sub.passed ? 'Accepted' : 'Failed'}
+                              {sub.passed ? 'Đạt' : 'Không đạt'}
                             </span>
                           </div>
                           <span className="text-xs text-neutral-500">

@@ -24,6 +24,8 @@ public class CreateExerciseCommand : IRequest<ResultIdDto>
     [MaxLength(CourseMateConsts.DefaultMaxLength)]
     public string Category { get; set; } = string.Empty;
 
+    public bool IsHidden { get; set; }
+
     public IEnumerable<string> Constraints { get; set; } = [];
 
     public IEnumerable<string> Hints { get; set; } = [];
@@ -73,7 +75,7 @@ public class CreateExerciseCommand : IRequest<ResultIdDto>
     }
 }
 
-internal sealed class CreateExerciseCommandHandler : AbstractCommandHandler<CreateExerciseCommand, ResultIdDto>
+public sealed class CreateExerciseCommandHandler : AbstractCommandHandler<CreateExerciseCommand, ResultIdDto>
 {
     public CreateExerciseCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -93,7 +95,7 @@ internal sealed class CreateExerciseCommandHandler : AbstractCommandHandler<Crea
             CurrentUserId,
             request.Constraints.ToList(),
             request.Hints.ToList()
-        );
+        ) { IsHidden = request.IsHidden };
         await DbContext.Exercises.AddAsync(exercise, ct);
 
         IEnumerable<ExerciseExample> exerciseExamples = request.Examples
@@ -124,7 +126,6 @@ internal sealed class CreateExerciseCommandHandler : AbstractCommandHandler<Crea
                 x.StarterCode));
         await DbContext.ExerciseDefaultCodes.AddRangeAsync(exerciseDefaultCodes, ct);
 
-        await DbContext.SaveChangesAsync(ct);
         return new ResultIdDto { Id = exercise.Id };
     }
 }

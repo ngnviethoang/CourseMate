@@ -11,6 +11,11 @@ export interface ResultIdDto {
   id: string
 }
 
+export interface LookupItemDto {
+  id: string
+  value: string
+}
+
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 
 export interface LoginCommand {
@@ -18,15 +23,39 @@ export interface LoginCommand {
   password: string
 }
 
+export enum RegisterRole {
+  Student = 'Student',
+  Instructor = 'Instructor'
+}
+
 export interface RegisterCommand {
   userName: string
   email: string
   password: string
-  role: 'Student' | 'Instructor'
+  role: RegisterRole
 }
 
 export interface LoginResponse {
   accessToken: string
+}
+
+export interface VerifyEmailRequest {
+  userId: string
+  token: string
+}
+
+export interface ForgotPasswordRequest {
+  email: string
+}
+
+export interface ResetPasswordRequest {
+  email: string
+  token: string
+  newPassword: string
+}
+
+export interface SelectRoleRequest {
+  role: string
 }
 
 // ─── Category ─────────────────────────────────────────────────────────────────
@@ -36,6 +65,7 @@ export interface CategoryDto {
   name: string
   description: string
   isActive: boolean
+  courseCount: number
   creationTime: string
   lastModificationTime?: string
 }
@@ -63,6 +93,7 @@ export interface AdminOrderItemDto {
 
 export interface AdminOrderDto {
   id: string
+  title: string
   studentId: string
   studentName: string
   studentEmail: string
@@ -70,12 +101,17 @@ export interface AdminOrderDto {
   status: string
   itemsCount: number
   creationTime: string
+  lastModificationTime?: string
   items: AdminOrderItemDto[]
 }
 
 export interface UpdateOrderRequest {
   id: string
   status: string
+}
+
+export interface CreateOrderRequest {
+  cartItemIds: string[]
 }
 
 // ─── Course ───────────────────────────────────────────────────────────────────
@@ -91,12 +127,16 @@ export interface CourseDto {
   categoryName: string
   instructorId: string
   instructorName?: string
+  isInCart: boolean
+  isEnrollment: boolean
   creationTime: string
   lastModificationTime?: string
 }
 
 export interface CourseDetailDto extends CourseDto {
   chapters: (ChapterDto & { lessons: LessonDto[] })[]
+  averageRating?: number
+  totalReviews?: number
 }
 
 export interface CreateCourseRequest {
@@ -126,7 +166,8 @@ export interface ChapterDto {
   courseId: string
   courseName: string
   title: string
-  position: number
+  position: string
+  sortOrder: number
   creationTime: string
   lastModificationTime?: string
 }
@@ -134,13 +175,13 @@ export interface ChapterDto {
 export interface CreateChapterRequest {
   courseId: string
   title: string
-  position: number
+  sortOrder: number
 }
 
 export interface UpdateChapterRequest {
   courseId: string
   title: string
-  position: number
+  sortOrder: number
 }
 
 // ─── Lesson ───────────────────────────────────────────────────────────────────
@@ -161,7 +202,8 @@ export interface LessonDto {
   courseName: string
   title: string
   lessonType: LessonType
-  position: number
+  position: string
+  sortOrder: number
   creationTime: string
   lastModificationTime?: string
 }
@@ -171,7 +213,7 @@ export interface CreateLessonRequest {
   courseId: string
   title: string
   lessonType: LessonType
-  position: number
+  sortOrder: number
 }
 
 export interface UpdateLessonRequest {
@@ -179,7 +221,7 @@ export interface UpdateLessonRequest {
   courseId: string
   title: string
   lessonType: LessonType
-  position: number
+  sortOrder: number
 }
 
 export interface QuizAnswerDto {
@@ -200,7 +242,8 @@ export interface LessonDetailDto {
   id: string
   title: string
   lessonType: LessonType
-  position: number
+  position: string
+  sortOrder: number
   isCompleted: boolean
   score?: number
   // Video
@@ -236,10 +279,6 @@ export interface UpsertLessonQuizRequest {
   questions: QuizQuestionDto[]
 }
 
-export interface UpsertLessonSlideRequest {
-  fileUrl: string
-}
-
 // ─── User ─────────────────────────────────────────────────────────────────────
 
 export interface UserDto {
@@ -247,6 +286,8 @@ export interface UserDto {
   userName?: string
   email?: string
   phoneNumber?: string
+  creationTime: string
+  lastModificationTime?: string
 }
 
 export interface CreateUserRequest {
@@ -297,7 +338,8 @@ export interface StudentLessonDetailDto {
   id: string
   title: string
   lessonType: LessonType
-  position: number
+  position: string
+  sortOrder: number
   isCompleted: boolean
   score?: number
   videoUrl?: string
@@ -313,7 +355,8 @@ export interface StudentLessonDetailDto {
 export interface StudentChapterDetailDto {
   id: string
   title: string
-  position: number
+  position: string
+  sortOrder: number
   lessons: StudentLessonDetailDto[]
 }
 
@@ -330,6 +373,26 @@ export interface StudentCourseDetailDto {
   isEnrolled: boolean
   progressPercentage: number
   chapters: StudentChapterDetailDto[]
+  averageRating?: number
+  totalReviews?: number
+}
+
+// ─── Review Types ─────────────────────────────────────────────────────────────
+
+export interface ReviewDto {
+  id: string
+  courseId: string
+  studentId: string
+  studentName: string
+  studentAvatar: string
+  rating: number
+  comment: string
+  createdAt: string
+}
+
+export interface ReviewCourseRequest {
+  rating: number
+  comment: string
 }
 
 export interface CartItemDto {
@@ -358,9 +421,15 @@ export interface OrderItemDto {
 
 export interface OrderDto {
   id: string
+  title: string
   studentId: string
+  studentName?: string
+  studentEmail?: string
   totalAmount: number
   status: string
+  itemsCount?: number
+  creationTime: string
+  lastModificationTime?: string
   items: OrderItemDto[]
 }
 
@@ -491,6 +560,7 @@ export interface ExerciseDto {
   difficulty: string
   category: string
   testCaseCount: number
+  isHidden: boolean
   creatorId?: string
   creatorName?: string
   creationTime: string
@@ -523,6 +593,7 @@ export interface UpdateExerciseRequest {
   description: string
   difficulty: string
   category: string
+  isHidden?: boolean
   examples: ExerciseExampleDto[]
   constraints: string[]
   hints: string[]

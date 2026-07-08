@@ -1,5 +1,4 @@
 using CourseMate.Persistent.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,6 +11,6 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
         builder.ToTable("Notifications");
         builder.Property(i => i.Title).HasColumnType("citext");
         builder.Property(i => i.Message).HasColumnType("citext");
-        builder.HasOne<IdentityUser<Guid>>().WithMany().HasForeignKey(i => i.ReceiverId);
+        builder.HasOne<User>().WithMany().HasForeignKey(i => i.ReceiverId);
     }
 }

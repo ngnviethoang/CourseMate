@@ -17,10 +17,11 @@ import {
   UpsertLessonReadingRequest,
   UpsertLessonCodingRequest,
   UpsertLessonQuizRequest,
-  UpsertLessonSlideRequest,
   StudentMyCourseDto,
   CourseDetailDto,
-  ExerciseDto
+  ExerciseDto,
+  ReviewDto,
+  ReviewCourseRequest
 } from './types'
 
 export const courseService = {
@@ -57,10 +58,19 @@ export const courseService = {
     if (filter) params.set('filter', filter)
     return api.get<PagedDto<StudentMyCourseDto>>(`/api/courses/my?${params}`)
   },
-  getRecommendedCourses: async (pageIndex = 1, pageSize = 12): Promise<PagedDto<CourseDto>> => {
-    const params = new URLSearchParams({ pageIndex: String(pageIndex), pageSize: String(pageSize) })
-    return api.get<PagedDto<CourseDto>>(`/api/courses/recommended?${params}`)
+
+  // ─── Reviews ─────────────────────────────────────────────────────────────────
+  getReviews: async (courseId: string, pageIndex = 1, pageSize = 10) => {
+    const qs = new URLSearchParams({
+      pageIndex: String(pageIndex),
+      pageSize: String(pageSize)
+    })
+    const res = await api.get<PagedDto<ReviewDto>>(`/api/courses/${courseId}/reviews?${qs}`)
+    if (res) res.pageIndex -= 1
+    return res
   },
+  reviewCourse: (courseId: string, body: ReviewCourseRequest) =>
+    api.post<ResultIdDto>(`/api/courses/${courseId}/reviews`, body),
 
   // ─── Chapter ─────────────────────────────────────────────────────────────────
   listChapters: async (params?: {
@@ -91,6 +101,7 @@ export const courseService = {
     pageIndex?: number
     pageSize?: number
     sorting?: string
+    courseId?: string
     chapterId?: string
   }) => {
     const qs = new URLSearchParams()
@@ -98,6 +109,7 @@ export const courseService = {
     if (params?.pageIndex != null) qs.set('pageIndex', String(params.pageIndex + 1))
     if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize))
     if (params?.sorting) qs.set('sorting', params.sorting)
+    if (params?.courseId) qs.set('courseId', params.courseId)
     if (params?.chapterId) qs.set('chapterId', params.chapterId)
 
     const res = await api.get<PagedDto<LessonDto>>(`/api/lessons?${qs}`)
@@ -123,7 +135,6 @@ export const courseService = {
     api.put<void>(`/api/lessons/${id}/reading`, body),
   upsertLessonCoding: (id: string, body: UpsertLessonCodingRequest) => api.put<void>(`/api/lessons/${id}/coding`, body),
   upsertLessonQuiz: (id: string, body: UpsertLessonQuizRequest) => api.put<void>(`/api/lessons/${id}/quiz`, body),
-  upsertLessonSlide: (id: string, body: UpsertLessonSlideRequest) => api.put<void>(`/api/lessons/${id}/slide`, body),
   deleteLesson: (id: string) => api.delete<void>(`/api/lessons/${id}`),
 
   searchExercises: async (filter?: string, pageIndex = 1, pageSize = 20) => {
@@ -151,7 +162,6 @@ export const lessonService = {
   upsertReading: courseService.upsertLessonReading,
   upsertCoding: courseService.upsertLessonCoding,
   upsertQuiz: courseService.upsertLessonQuiz,
-  upsertSlide: courseService.upsertLessonSlide,
   delete: courseService.deleteLesson,
   searchExercises: courseService.searchExercises,
   updateProgress: (lessonId: string, isCompleted: boolean, score: number = 0) =>

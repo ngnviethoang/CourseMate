@@ -15,7 +15,7 @@ public class GetContestExercisesQuery : IRequest<List<ContestExerciseDto>>
     public Guid ContestId { get; set; }
 }
 
-internal sealed class GetContestExercisesQueryHandler : AbstractQueryHandler<GetContestExercisesQuery, List<ContestExerciseDto>>
+public sealed class GetContestExercisesQueryHandler : AbstractQueryHandler<GetContestExercisesQuery, List<ContestExerciseDto>>
 {
     public GetContestExercisesQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -42,6 +42,7 @@ internal sealed class GetContestExercisesQueryHandler : AbstractQueryHandler<Get
             from ce in DbContext.ContestExercises
             join e in DbContext.Exercises on ce.ExerciseId equals e.Id
             where ce.ContestId == request.ContestId
+            where !(IsInRole(Roles.Student) && e.IsHidden)
             orderby ce.Order
             select new ContestExerciseDto
             {

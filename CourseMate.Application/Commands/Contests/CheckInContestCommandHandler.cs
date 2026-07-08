@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
@@ -15,7 +16,7 @@ public class CheckInContestCommand : IRequest<ResultIdDto>
     public Guid ContestId { get; set; }
 }
 
-internal sealed class CheckInContestCommandHandler : AbstractCommandHandler<CheckInContestCommand, ResultIdDto>
+public sealed class CheckInContestCommandHandler : AbstractCommandHandler<CheckInContestCommand, ResultIdDto>
 {
     public CheckInContestCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -29,7 +30,12 @@ internal sealed class CheckInContestCommandHandler : AbstractCommandHandler<Chec
 
         if (registration == null)
         {
-            throw new BusinessException("You are not registered for this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "You are not registered for this contest.");
+        }
+
+        if (registration.SubmitTime.HasValue)
+        {
+            throw new BusinessException(ErrorCode.Unknown, "You have already submitted and finished this contest.");
         }
 
         if (registration.JoinTime.HasValue)
@@ -44,12 +50,11 @@ internal sealed class CheckInContestCommandHandler : AbstractCommandHandler<Chec
             // For now let's just check if StartTime is near.
             if (contest?.StartTime.HasValue == true && contest.StartTime.Value > DateTimeOffset.UtcNow.AddMinutes(10))
             {
-                throw new BusinessException("Contest hasn't started yet.");
+                throw new BusinessException(ErrorCode.Unknown, "Contest hasn't started yet.");
             }
         }
 
         registration.JoinTime = DateTimeOffset.UtcNow;
-        await DbContext.SaveChangesAsync(ct);
 
         return new ResultIdDto { Id = registration.Id };
     }

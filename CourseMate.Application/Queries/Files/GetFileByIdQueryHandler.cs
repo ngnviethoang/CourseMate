@@ -1,13 +1,12 @@
+using CourseMate.Application.Services.FileStorageServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Enums;
-using CourseMate.Contracts.Options;
 using CourseMate.Persistent;
 using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace CourseMate.Application.Queries.Files;
 
@@ -16,16 +15,16 @@ public class GetFileByIdQuery : IRequest<FileContentResponse?>
     public Guid FileId { get; set; }
 }
 
-internal sealed class GetFileByIdQueryHandler : AbstractQueryHandler<GetFileByIdQuery, FileContentResponse?>
+public sealed class GetFileByIdQueryHandler : AbstractQueryHandler<GetFileByIdQuery, FileContentResponse?>
 {
-    private readonly StorageOptions _storageOptions;
+    private readonly IFileStorageManager _fileStorageManager;
 
     public GetFileByIdQueryHandler(
-        IOptions<StorageOptions> storageOptions,
+        IFileStorageManager fileStorageManager,
         CourseMateReadOnlyDbContext dbContext,
         IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {
-        _storageOptions = storageOptions.Value;
+        _fileStorageManager = fileStorageManager;
     }
 
     public override async Task<FileContentResponse?> Handle(GetFileByIdQuery request, CancellationToken ct)
@@ -37,13 +36,13 @@ internal sealed class GetFileByIdQueryHandler : AbstractQueryHandler<GetFileById
             return null;
         }
 
-        string physicalPath = Path.Combine(_storageOptions.RootPath, fileEntry.FileLocation);
-        if (!File.Exists(physicalPath))
+        StorageFileEntry storageFileEntry = StorageFileEntry.FromFileEntry(fileEntry);
+        if (!await _fileStorageManager.ExistsAsync(storageFileEntry, ct))
         {
             return null;
         }
 
-        byte[] content = await File.ReadAllBytesAsync(physicalPath, ct);
+        byte[] content = await _fileStorageManager.ReadBytesAsync(storageFileEntry, ct);
         return new FileContentResponse
         {
             FileName = fileEntry.FileName,

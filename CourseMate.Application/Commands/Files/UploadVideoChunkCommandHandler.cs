@@ -1,3 +1,4 @@
+using CourseMate.Application.Services.FileStorageServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.Enums;
@@ -9,10 +10,11 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace CourseMate.Application.Commands.Files;
 
-public class UploadVideoChunkCommand : IRequest<int>
+public class UploadVideoChunkCommand : IRequest<Unit>
 {
     public Guid FileId { get; set; }
 
@@ -20,33 +22,37 @@ public class UploadVideoChunkCommand : IRequest<int>
 
     public int ChunkIndex { get; set; }
 
+    [JsonIgnore]
     public byte[] Content { get; set; } = [];
 }
 
-internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<UploadVideoChunkCommand, int>
+public sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<UploadVideoChunkCommand, Unit>
 {
     private readonly IEnumerable<string> _allowedImageExtensions = [".mp4"];
+    private readonly IFileStorageManager _fileStorageManager;
     private readonly StorageOptions _storageOptions;
 
     public UploadVideoChunkCommandHandler(
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor,
+        IFileStorageManager fileStorageManager,
         IOptions<StorageOptions> storageOptions)
         : base(dbContext, httpContextAccessor)
     {
+        _fileStorageManager = fileStorageManager;
         _storageOptions = storageOptions.Value;
     }
 
-    public override async Task<int> Handle(UploadVideoChunkCommand request, CancellationToken ct)
+    public override async Task<Unit> Handle(UploadVideoChunkCommand request, CancellationToken ct)
     {
         if (!_allowedImageExtensions.Contains(Path.GetExtension(request.FileName), StringComparer.InvariantCultureIgnoreCase))
         {
-            throw new BusinessException(ErrorMessages.InvalidFileType);
+            throw new BusinessException(ErrorCode.InvalidFileType, "Invalid file type. This file type is not allowed.");
         }
 
         if (request.Content.Length > _storageOptions.MaxChunkSizeMb * 1024 * 1024)
         {
-            throw new BusinessException(ErrorMessages.FileTooLarge);
+            throw new BusinessException(ErrorCode.FileTooLarge, "File too large.");
         }
 
         Guid userId = CurrentUserId;
@@ -62,25 +68,31 @@ internal sealed class UploadVideoChunkCommandHandler : AbstractCommandHandler<Up
         }
 
         string chunkFileName = $"{fileEntry.Id}_chunk_{request.ChunkIndex}.dat";
-        string chunkFilePath = Path.Combine(_storageOptions.TempPath, chunkFileName);
-        if (File.Exists(chunkFilePath))
+        string chunkFileLocation = Path.Combine("temp", chunkFileName);
+        StorageFileEntry storageChunk = new()
         {
-            File.Delete(chunkFilePath);
+            Id = Guid.NewGuid(),
+            FileName = chunkFileName,
+            FileLocation = chunkFileLocation
+        };
+        if (await _fileStorageManager.ExistsAsync(storageChunk, ct))
+        {
+            await _fileStorageManager.DeleteAsync(storageChunk, ct);
         }
 
-        await using FileStream stream = new(chunkFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-        await stream.WriteAsync(request.Content, ct);
+        await using MemoryStream stream = new(request.Content);
+        await _fileStorageManager.CreateAsync(storageChunk, stream, ct);
 
         FileChunk fileChunk = new(
-            Guid.NewGuid(),
+            storageChunk.Id,
             fileEntry.Id,
             request.ChunkIndex,
-            chunkFilePath.Replace(_storageOptions.TempPath, string.Empty),
+            chunkFileLocation,
             request.Content.LongLength,
             true);
         await DbContext.FileChunks.AddAsync(fileChunk, ct);
         fileEntry.UploadedChunks += 1;
         DbContext.FileEntries.Update(fileEntry);
-        return Codes.Success;
+        return Unit.Value;
     }
 }

@@ -1,13 +1,26 @@
-import { StudentHeader } from '@/components/home/student-header'
+'use client'
+
+import { ChatWidget } from '@/components/(student)/chat/chat-widget'
+import { StudentShell } from '@/components/home/student-shell'
+import { usePathname } from 'next/navigation'
 
 export default function StudentLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const isLearningRoute = pathname.startsWith('/learning/')
+
+  if (isLearningRoute) {
+    return (
+      <div className="h-screen w-screen overflow-hidden bg-background">
+        {children}
+        <ChatWidget />
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <StudentHeader />
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-10">{children}</main>
-      <footer className="border-t py-6 text-center text-sm text-muted-foreground">
-        &copy; {new Date().getFullYear()} CourseMate. All rights reserved.
-      </footer>
-    </div>
+    <StudentShell mainClassName="py-4">
+      {children}
+      <ChatWidget />
+    </StudentShell>
   )
 }

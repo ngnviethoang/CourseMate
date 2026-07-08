@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.AntiCheat;
 using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
@@ -13,12 +14,13 @@ namespace CourseMate.Application.Commands.Contests;
 public class ReportViolationCommand : IRequest<ViolationResultDto>
 {
     public Guid ContestId { get; set; }
+    public Guid UserId { get; set; } // must be set explicitly by caller (Hub has no HttpContext)
     public ViolationType ViolationType { get; set; }
     public string Details { get; set; } = string.Empty;
     public DateTimeOffset Timestamp { get; set; }
 }
 
-internal sealed class ReportViolationCommandHandler : AbstractCommandHandler<ReportViolationCommand, ViolationResultDto>
+public sealed class ReportViolationCommandHandler : AbstractCommandHandler<ReportViolationCommand, ViolationResultDto>
 {
     public ReportViolationCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -27,12 +29,16 @@ internal sealed class ReportViolationCommandHandler : AbstractCommandHandler<Rep
 
     public override async Task<ViolationResultDto> Handle(ReportViolationCommand request, CancellationToken ct)
     {
+        // Use the explicitly provided UserId (callers like SignalR hub must set this,
+        // since IHttpContextAccessor.HttpContext is null for WebSocket connections).
+        Guid studentId = request.UserId != Guid.Empty ? request.UserId : CurrentUserId;
+
         ContestRegistration? registration = await DbContext.ContestRegistrations
-            .FirstOrDefaultAsync(x => x.ContestId == request.ContestId && x.StudentId == CurrentUserId, ct);
+            .FirstOrDefaultAsync(x => x.ContestId == request.ContestId && x.StudentId == studentId, ct);
 
         if (registration == null)
         {
-            throw new BusinessException("You are not registered for this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "You are not registered for this contest.");
         }
 
         if (registration.IsDisqualified)
@@ -66,7 +72,7 @@ internal sealed class ReportViolationCommandHandler : AbstractCommandHandler<Rep
         // Deduplicate rapid-fire violations of the same type within 3 seconds
         bool isDuplicate = await DbContext.AntiCheatViolations
             .AnyAsync(v => v.ContestId == request.ContestId
-                           && v.StudentId == CurrentUserId
+                           && v.StudentId == studentId // ← fixed: use resolved studentId
                            && v.ViolationType == request.ViolationType
                            && v.OccurredAt > DateTimeOffset.UtcNow.AddSeconds(-3), ct);
 
@@ -85,7 +91,7 @@ internal sealed class ReportViolationCommandHandler : AbstractCommandHandler<Rep
         AntiCheatViolation violation = new(
             Guid.NewGuid(),
             request.ContestId,
-            CurrentUserId,
+            studentId,
             request.ViolationType,
             request.Details,
             request.Timestamp != default ? request.Timestamp : DateTimeOffset.UtcNow
@@ -93,7 +99,7 @@ internal sealed class ReportViolationCommandHandler : AbstractCommandHandler<Rep
 
         await DbContext.AntiCheatViolations.AddAsync(violation, ct);
 
-        // Increment violation count
+        // Use the same resolved studentId for all subsequent operations
         registration.ViolationCount++;
 
         // Check auto-disqualification for Strict mode
@@ -106,8 +112,6 @@ internal sealed class ReportViolationCommandHandler : AbstractCommandHandler<Rep
             registration.DisqualifiedAt = DateTimeOffset.UtcNow;
             registration.DisqualifiedReason = $"Auto: Exceeded violation threshold ({registration.ViolationCount}/{contest.MaxViolations})";
         }
-
-        await DbContext.SaveChangesAsync(ct);
 
         return new ViolationResultDto
         {

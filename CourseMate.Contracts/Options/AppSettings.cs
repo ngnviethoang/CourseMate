@@ -1,7 +1,8 @@
-﻿namespace CourseMate.Contracts.Options;
+namespace CourseMate.Contracts.Options;
 
 public class AppSettings
 {
+    public AuthenticationOptions Authentication { get; set; } = new();
     public CorsOptions Cors { get; set; } = new();
     public GoogleAiOptions GoogleAi { get; set; } = new();
     public OllamaOptions Ollama { get; set; } = new();

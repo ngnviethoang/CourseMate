@@ -14,7 +14,7 @@ public class GetMyCoursesQuery : GetListQuery<StudentMyCourseDto>
     public Guid StudentId { get; set; }
 }
 
-internal sealed class GetMyCoursesQueryHandler : AbstractQueryHandler<GetMyCoursesQuery, PagedDto<StudentMyCourseDto>>
+public sealed class GetMyCoursesQueryHandler : AbstractQueryHandler<GetMyCoursesQuery, PagedDto<StudentMyCourseDto>>
 {
     public GetMyCoursesQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -24,6 +24,7 @@ internal sealed class GetMyCoursesQueryHandler : AbstractQueryHandler<GetMyCours
     public override async Task<PagedDto<StudentMyCourseDto>> Handle(GetMyCoursesQuery request, CancellationToken ct)
     {
         Guid studentId = IsInRole(Roles.Admin) ? request.StudentId : CurrentUserId;
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
 
         IQueryable<StudentMyCourseDto> query =
             from enrollment in DbContext.Enrollments
@@ -47,7 +48,9 @@ internal sealed class GetMyCoursesQueryHandler : AbstractQueryHandler<GetMyCours
                 LastModificationTime = course.LastModificationTime
             };
 
-        query = query.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
+        query = query
+            .WhereIf(isFilterGuid, x => x.Id == filterId)
+            .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"));
         query = request.Sorting switch
         {
             "title" => query.OrderBy(x => x.Title),

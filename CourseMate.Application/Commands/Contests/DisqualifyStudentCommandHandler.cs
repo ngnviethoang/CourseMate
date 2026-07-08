@@ -15,9 +15,12 @@ public class DisqualifyStudentCommand : IRequest<ResultIdDto>
     public Guid ContestId { get; set; }
     public Guid StudentId { get; set; }
     public string Reason { get; set; } = string.Empty;
+
+    /// <summary>Explicitly provided caller ID for Hub invocations (HttpContext is null for SignalR).</summary>
+    public Guid CallerUserId { get; set; }
 }
 
-internal sealed class DisqualifyStudentCommandHandler : AbstractCommandHandler<DisqualifyStudentCommand, ResultIdDto>
+public sealed class DisqualifyStudentCommandHandler : AbstractCommandHandler<DisqualifyStudentCommand, ResultIdDto>
 {
     public DisqualifyStudentCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -32,8 +35,11 @@ internal sealed class DisqualifyStudentCommandHandler : AbstractCommandHandler<D
             throw new EntityNotFoundException(nameof(Contest), request.ContestId);
         }
 
+        // Use explicitly provided caller ID if set (Hub), otherwise fall back to HttpContext (REST API).
+        Guid callerId = request.CallerUserId != Guid.Empty ? request.CallerUserId : CurrentUserId;
+
         // Only contest creator or admin can disqualify
-        if (contest.CreatorId != CurrentUserId && !IsInRole(Roles.Admin))
+        if (contest.CreatorId != callerId && !IsInRole(Roles.Admin))
         {
             throw new UnauthorizedAccessException("You are not authorized to disqualify students in this contest.");
         }
@@ -43,14 +49,12 @@ internal sealed class DisqualifyStudentCommandHandler : AbstractCommandHandler<D
 
         if (registration == null)
         {
-            throw new BusinessException("Student is not registered for this contest.");
+            throw new BusinessException(ErrorCode.Unknown, "Student is not registered for this contest.");
         }
 
         registration.IsDisqualified = true;
         registration.DisqualifiedAt = DateTimeOffset.UtcNow;
         registration.DisqualifiedReason = $"Manual: {request.Reason}";
-
-        await DbContext.SaveChangesAsync(ct);
 
         return new ResultIdDto { Id = registration.Id };
     }

@@ -25,7 +25,7 @@ public class CreateExerciseToContestCommand : IRequest<ResultIdDto>
     public int Order { get; set; }
 }
 
-internal sealed class CreateExerciseToContestCommandHandler : AbstractCommandHandler<CreateExerciseToContestCommand, ResultIdDto>
+public sealed class CreateExerciseToContestCommandHandler : AbstractCommandHandler<CreateExerciseToContestCommand, ResultIdDto>
 {
     public CreateExerciseToContestCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -53,14 +53,14 @@ internal sealed class CreateExerciseToContestCommandHandler : AbstractCommandHan
 
         if (alreadyAdded)
         {
-            throw new BusinessException(ErrorMessages.ExerciseAlreadyAddedToContest);
+            throw new BusinessException(ErrorCode.ExerciseAlreadyAddedToContest, "Exercise has already been added to this contest.");
         }
 
         bool duplicatedOrder = request.Order != 0 && await DbContext.ContestExercises
             .AnyAsync(x => x.ContestId == request.ContestId && x.Order == request.Order, ct);
         if (duplicatedOrder)
         {
-            throw new BusinessException(ErrorMessages.DuplicateExerciseOrder);
+            throw new BusinessException(ErrorCode.DuplicateExerciseOrder, "Exercise order already exists in this contest.");
         }
 
         ContestExercise contestExercise = new(
@@ -72,7 +72,7 @@ internal sealed class CreateExerciseToContestCommandHandler : AbstractCommandHan
         );
 
         await DbContext.ContestExercises.AddAsync(contestExercise, ct);
-        await DbContext.SaveChangesAsync(ct);
+
         return new ResultIdDto { Id = contestExercise.Id };
     }
 }

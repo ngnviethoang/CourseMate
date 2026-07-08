@@ -12,7 +12,7 @@ public class GetStudentExerciseByIdQuery : IRequest<GetStudentExerciseByIdRespon
     public Guid Id { get; set; }
 }
 
-internal sealed class GetStudentExerciseByIdQueryHandler : AbstractQueryHandler<GetStudentExerciseByIdQuery, GetStudentExerciseByIdResponse?>
+public sealed class GetStudentExerciseByIdQueryHandler : AbstractQueryHandler<GetStudentExerciseByIdQuery, GetStudentExerciseByIdResponse?>
 {
     public GetStudentExerciseByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {

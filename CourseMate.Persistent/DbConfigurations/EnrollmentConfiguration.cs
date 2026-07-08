@@ -1,5 +1,4 @@
 using CourseMate.Persistent.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,6 +10,6 @@ public class EnrollmentConfiguration : IEntityTypeConfiguration<Enrollment>
     {
         builder.ToTable("Enrollments");
         builder.HasOne<Course>().WithMany().HasForeignKey(i => i.CourseId);
-        builder.HasOne<IdentityUser<Guid>>().WithMany().HasForeignKey(i => i.UserId);
+        builder.HasOne<User>().WithMany().HasForeignKey(i => i.UserId);
     }
 }

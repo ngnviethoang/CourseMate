@@ -18,7 +18,7 @@ public sealed class CreateTestCaseCommand : IRequest<ResultIdDto>
     public int Order { get; set; }
 }
 
-internal sealed class CreateTestCaseCommandHandler : AbstractCommandHandler<CreateTestCaseCommand, ResultIdDto>
+public sealed class CreateTestCaseCommandHandler : AbstractCommandHandler<CreateTestCaseCommand, ResultIdDto>
 {
     public CreateTestCaseCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

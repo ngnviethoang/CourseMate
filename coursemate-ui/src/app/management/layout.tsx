@@ -27,7 +27,7 @@ function getUserFromToken() {
       payload['unique_name'] ??
       payload['name'] ??
       payload['sub'] ??
-      'User'
+      'Người dùng'
     const role: string =
       payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? payload['role'] ?? ''
     return { name, role }
@@ -39,15 +39,17 @@ function getUserFromToken() {
 function UserDropdown({
   user,
   mounted,
-  onLogout
+  onLogout,
+  onNavigate
 }: {
   user: { name: string; role: string } | null
   mounted: boolean
   onLogout: () => void
+  onNavigate: (path: string) => void
 }) {
   // Use a stable initials value for the first render to match SSR
   const initials = mounted && user?.name ? user.name.slice(0, 2).toUpperCase() : 'U'
-  const displayName = mounted && user?.name ? user.name : 'User'
+  const displayName = mounted && user?.name ? user.name : 'Người dùng'
   const displayRole = mounted && user?.role ? user.role : ''
 
   return (
@@ -61,7 +63,7 @@ function UserDropdown({
             {initials}
           </AvatarFallback>
         </Avatar>
-        <div className="hidden sm:flex flex-col items-start leading-none">
+        <div className="flex flex-col items-start leading-none">
           <span className="font-medium text-foreground" suppressHydrationWarning>
             {displayName}
           </span>
@@ -90,20 +92,20 @@ function UserDropdown({
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => (window.location.href = '/management/profile')}>
+          <DropdownMenuItem onClick={() => onNavigate('/management/profile')}>
             <User className="mr-2 h-4 w-4" />
-            Profile
+            Hồ sơ
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => (window.location.href = '/management/settings')}>
+          <DropdownMenuItem onClick={() => onNavigate('/management/settings')}>
             <Settings className="mr-2 h-4 w-4" />
-            Settings
+            Cài đặt
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem variant="destructive" onClick={onLogout}>
             <LogOut className="mr-2 h-4 w-4" />
-            Logout
+            Đăng xuất
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
@@ -133,21 +135,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider className="overflow-x-hidden">
       <AdminSidebar />
-      <main className="flex-1 flex flex-col min-h-screen bg-muted/20">
-        <header className="flex h-20 items-center gap-4 border-b bg-background/95 backdrop-blur px-8 shadow-sm transition-all">
+      <main className="flex min-h-screen min-w-0 flex-1 flex-col overflow-x-hidden bg-muted/20">
+        <header className="flex h-20 min-w-0 items-center gap-4 bg-background/95 px-8 shadow-md backdrop-blur transition-all">
           <SidebarTrigger className="h-10 w-10 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all" />
           <div className="h-6 w-px bg-border" />
-          <span className="text-lg font-bold tracking-tight text-foreground">
+          <span className="truncate text-lg font-bold tracking-tight text-foreground">
             {user?.role === 'Instructor' ? 'Hệ thống Giảng viên' : 'Hệ thống Quản trị'}
           </span>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex shrink-0 items-center gap-2">
             <NotificationDropdown />
-            <UserDropdown user={user} mounted={mounted} onLogout={handleLogout} />
+            <UserDropdown user={user} mounted={mounted} onLogout={handleLogout} onNavigate={router.push} />
           </div>
         </header>
-        <div className="flex-1 p-10 space-y-10 max-w-[1700px] mx-auto w-full">{children}</div>
+        <div className="mx-auto w-full max-w-[1700px] min-w-0 flex-1 space-y-10 overflow-x-hidden p-10">{children}</div>
       </main>
     </SidebarProvider>
   )

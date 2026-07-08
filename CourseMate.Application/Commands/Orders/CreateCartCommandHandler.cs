@@ -18,7 +18,7 @@ public class CreateCartCommand : IRequest<ResultIdDto>
     public Guid StudentId { get; init; }
 }
 
-internal sealed class CreateCartCommandHandler : AbstractCommandHandler<CreateCartCommand, ResultIdDto>
+public sealed class CreateCartCommandHandler : AbstractCommandHandler<CreateCartCommand, ResultIdDto>
 {
     public CreateCartCommandHandler(
         CourseMateDbContext dbContext,
@@ -45,13 +45,13 @@ internal sealed class CreateCartCommandHandler : AbstractCommandHandler<CreateCa
         bool isExistItem = await DbContext.CartItems.AnyAsync(ci => ci.CartId == cart.Id && ci.CourseId == request.CourseId, ct);
         if (isExistItem)
         {
-            throw new BusinessException(ErrorMessages.CourseAlreadyInCart);
+            throw new BusinessException(ErrorCode.CourseAlreadyInCart, "Course already exists in cart.");
         }
 
         bool isExistEnrollment = await DbContext.Enrollments.AnyAsync(ci => ci.StudentId == request.StudentId && ci.CourseId == request.CourseId, ct);
         if (isExistEnrollment)
         {
-            throw new BusinessException(ErrorMessages.CourseAlreadyEnrolled);
+            throw new BusinessException(ErrorCode.CourseAlreadyEnrolled, "Student is already enrolled in this course.");
         }
 
         CartItem cartItem = new(Guid.NewGuid(), cart.Id, request.CourseId);

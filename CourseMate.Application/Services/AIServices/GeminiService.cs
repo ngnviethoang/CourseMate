@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using CourseMate.Contracts.Constants;
+using CourseMate.Contracts.Enums;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Contracts.Options;
 using Google;
@@ -39,7 +40,7 @@ public class GeminiService : IAiService
         catch (GoogleApiException ex)
         {
             _logger.LogError(ex, "Gemini embedding failed. StatusCode={StatusCode}", ex.HttpStatusCode);
-            throw new BusinessException(ErrorMessages.AiGenerationFailed, ex);
+            throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex);
         }
     }
 
@@ -60,12 +61,21 @@ public class GeminiService : IAiService
             Tools = [new Tool { GoogleSearch = new GoogleSearch() }]
         };
 
+        _logger.LogInformation(
+            "Starting Gemini search generation. InputLength={InputLength}, PromptLength={PromptLength}, PrimaryModel={PrimaryModel}, FallbackModel={FallbackModel}",
+            input.Length,
+            prompt.Length,
+            GeminiModels.V25Flash,
+            GeminiModels.V25FlashLite);
+
         return await GenerateWithFallbackAsync(prompt, config, GeminiModels.V25Flash, GeminiModels.V25FlashLite, ct);
     }
 
-    public async Task<string> GenerateContentAsync(string input, CancellationToken ct)
+    public async Task<string> GenerateContentAsync(string input, LessonMaterialPromptType promptType, CancellationToken ct)
     {
-        string prompt = PromptBuilder.BuildLectureOutlinePrompt(input);
+        string prompt = promptType == LessonMaterialPromptType.Reading
+            ? PromptBuilder.BuildReadingLessonOutlinePrompt(input)
+            : PromptBuilder.BuildLectureOutlinePrompt(input);
 
         GenerateContentConfig config = new()
         {
@@ -79,6 +89,40 @@ public class GeminiService : IAiService
             }
         };
 
+        _logger.LogInformation(
+            "Starting Gemini content generation. PromptType={PromptType}, InputLength={InputLength}, PromptLength={PromptLength}, PrimaryModel={PrimaryModel}, FallbackModel={FallbackModel}",
+            promptType,
+            input.Length,
+            prompt.Length,
+            GeminiModels.V25Flash,
+            GeminiModels.V25FlashLite);
+
+        return await GenerateWithFallbackAsync(prompt, config, GeminiModels.V25Flash, GeminiModels.V25FlashLite, ct);
+    }
+
+    public async Task<string> ChatAsync(IReadOnlyList<ChatTurn> history, string retrievedContext, string question, CancellationToken ct)
+    {
+        string historyText = string.Join("\n", history.Select(turn => $"{turn.Role}: {turn.Content}"));
+        string prompt = PromptBuilder.BuildChatPrompt(retrievedContext, historyText, question);
+
+        GenerateContentConfig config = new()
+        {
+            Temperature = 0.2,
+            TopP = 0.9,
+            TopK = 20,
+            MaxOutputTokens = 2048,
+            ThinkingConfig = new ThinkingConfig
+            {
+                IncludeThoughts = false
+            }
+        };
+
+        _logger.LogInformation(
+            "Starting Gemini chat generation. QuestionLength={QuestionLength}, ContextLength={ContextLength}, HistoryTurns={HistoryTurns}",
+            question.Length,
+            retrievedContext.Length,
+            history.Count);
+
         return await GenerateWithFallbackAsync(prompt, config, GeminiModels.V25Flash, GeminiModels.V25FlashLite, ct);
     }
 
@@ -91,9 +135,11 @@ public class GeminiService : IAiService
         string result = await TryGenerateTextAsync(primaryModel, prompt, config, false, ct);
         if (string.IsNullOrWhiteSpace(result))
         {
+            _logger.LogWarning("Primary Gemini model returned empty response. Falling back to {FallbackModel}", fallbackModel);
             result = await TryGenerateTextAsync(fallbackModel, prompt, config, true, ct);
         }
 
+        _logger.LogInformation("Gemini generation finished. ResultLength={ResultLength}", result.Length);
         return result;
     }
 
@@ -109,7 +155,17 @@ public class GeminiService : IAiService
         catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Forbidden)
         {
             _logger.LogWarning(ex, "Gemini model {Model} returned 403 Forbidden", model);
-            return isThrow ? throw new BusinessException(ErrorMessages.AiGenerationFailed, ex) : string.Empty;
+            return isThrow ? throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex) : string.Empty;
+        }
+        catch (GoogleApiException ex)
+        {
+            _logger.LogError(ex, "Gemini API failed with model {Model}. StatusCode={StatusCode}", model, ex.HttpStatusCode);
+            return isThrow ? throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex) : string.Empty;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Gemini API failed unexpectedly with model {Model}", model);
+            return isThrow ? throw new BusinessException(ErrorCode.AiGenerationFailed, "AI generation failed.", ex) : string.Empty;
         }
     }
 }

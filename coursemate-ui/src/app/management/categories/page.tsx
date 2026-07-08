@@ -5,11 +5,11 @@ import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import { categoryService } from '@/lib/category-service'
 import type { CategoryDto, CreateCategoryRequest } from '@/lib/types'
+import { CategoryFormDialog } from '@/components/admin/category-form-dialog'
 import { DataTable, type Column } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,24 +20,35 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 import { formatDate } from '@/lib/utils'
 
 const columns: Column<CategoryDto>[] = [
-  { key: 'name', header: 'Name', sortKey: 'name' },
-  { key: 'description', header: 'Description' },
+  { key: 'id', header: 'ID', render: row => <span className="font-mono text-xs">{row.id}</span> },
+  { key: 'name', header: 'Tiêu đề', sortKey: 'name' },
+  {
+    key: 'courseCount',
+    header: 'Số khóa học',
+    sortKey: 'courseCount',
+    render: row => row.courseCount
+  },
   {
     key: 'isActive',
-    header: 'Status',
+    header: 'Trạng thái',
     render: row => (
-      <Badge variant={row.isActive ? 'default' : 'secondary'}>{row.isActive ? 'Active' : 'Inactive'}</Badge>
+      <Badge variant={row.isActive ? 'default' : 'secondary'}>
+        {row.isActive ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+      </Badge>
     )
   },
-  { key: 'creationTime', header: 'Created', sortKey: 'creationTime', render: row => formatDate(row.creationTime) },
+  {
+    key: 'creationTime',
+    header: 'Ngày tạo',
+    sortKey: 'creationTime',
+    render: row => formatDate(row.creationTime)
+  },
   {
     key: 'lastModificationTime',
-    header: 'Updated',
+    header: 'Cập nhật lần cuối',
     sortKey: 'lastModificationTime',
     render: row => formatDate(row.lastModificationTime)
   }
@@ -49,7 +60,7 @@ export default function CategoriesPage() {
   const [items, setItems] = useState<CategoryDto[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')
-  const [sorting, setSorting] = useState('creationTime')
+  const [sorting, setSorting] = useState('creationTime_desc')
   const [pageIndex, setPageIndex] = useState(0)
   const [pageSize] = useState(10)
   const [totalCount, setTotalCount] = useState(0)
@@ -62,7 +73,12 @@ export default function CategoriesPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await categoryService.list({ filter, pageIndex, pageSize, sorting })
+      const res = await categoryService.list({
+        filter,
+        pageIndex,
+        pageSize,
+        sorting
+      })
       setItems(res.items)
       setTotalCount(res.totalCount)
     } finally {
@@ -79,6 +95,12 @@ export default function CategoriesPage() {
     const t = setTimeout(load, 300)
     return () => clearTimeout(t)
   }, [load])
+
+  function handlePageChange(nextPageIndex: number) {
+    if (nextPageIndex === pageIndex) return
+    setLoading(true)
+    setPageIndex(nextPageIndex)
+  }
 
   function openCreate() {
     setEditing(null)
@@ -97,10 +119,10 @@ export default function CategoriesPage() {
     try {
       if (editing) {
         await categoryService.update(editing.id, form)
-        toast.success('Category updated.')
+        toast.success('Đã cập nhật danh mục.')
       } else {
         await categoryService.create(form)
-        toast.success('Category created.')
+        toast.success('Đã tạo danh mục.')
       }
       setDialogOpen(false)
       load()
@@ -112,7 +134,7 @@ export default function CategoriesPage() {
   async function handleDelete() {
     if (!deleteId) return
     await categoryService.delete(deleteId)
-    toast.success('Category deleted.')
+    toast.success('Đã xóa danh mục.')
     setDeleteId(null)
     load()
   }
@@ -121,22 +143,24 @@ export default function CategoriesPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Categories</h1>
-          <p className="text-sm text-muted-foreground">Manage course categories</p>
+          <h1 className="text-2xl font-semibold">Danh mục</h1>
+          <p className="text-sm text-muted-foreground">Quản lý danh mục khóa học</p>
         </div>
         <Button onClick={openCreate} className="gap-2">
-          <Plus className="h-4 w-4" /> New Category
+          <Plus className="h-4 w-4" /> Tạo danh mục
         </Button>
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          className="pl-9"
-          placeholder="Search categories…"
-          value={filter}
-          onChange={e => setFilter(e.target.value)}
-        />
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative max-w-sm flex-1 min-w-[220px]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="pl-9"
+            placeholder="Tìm danh mục..."
+            value={filter}
+            onChange={e => setFilter(e.target.value)}
+          />
+        </div>
       </div>
 
       <DataTable
@@ -146,68 +170,40 @@ export default function CategoriesPage() {
         sorting={sorting}
         onSort={setSorting}
         onEdit={openEdit}
+        onView={openEdit}
         onDelete={setDeleteId}
         pagination={{
           pageIndex,
           pageSize,
           totalCount,
-          onPageChange: setPageIndex
+          onPageChange: handlePageChange
         }}
       />
 
-      {/* Edit / Create Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editing ? 'Edit Category' : 'New Category'}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="space-y-1">
-              <Label htmlFor="cat-name">Name</Label>
-              <Input id="cat-name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="cat-desc">Description</Label>
-              <Input
-                id="cat-desc"
-                value={form.description}
-                onChange={e => setForm({ ...form, description: e.target.value })}
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <Switch
-                id="cat-active"
-                checked={form.isActive}
-                onCheckedChange={v => setForm({ ...form, isActive: v })}
-              />
-              <Label htmlFor="cat-active">Active</Label>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving…' : 'Save'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <CategoryFormDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        isEditing={Boolean(editing)}
+        form={form}
+        onFormChange={setForm}
+        saving={saving}
+        onSave={handleSave}
+      />
 
       {/* Delete Confirmation */}
       <AlertDialog open={!!deleteId} onOpenChange={open => !open && setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete category?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogTitle>Xóa danh mục?</AlertDialogTitle>
+            <AlertDialogDescription>Hành động này không thể hoàn tác.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDelete}
             >
-              Delete
+              Xóa
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

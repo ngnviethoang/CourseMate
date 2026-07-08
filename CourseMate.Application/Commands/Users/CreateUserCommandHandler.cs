@@ -4,6 +4,7 @@ using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -27,15 +28,15 @@ public class CreateUserCommand : IRequest<ResultIdDto>
     public string Role { get; set; } = string.Empty;
 }
 
-internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUserCommand, ResultIdDto>
+public sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUserCommand, ResultIdDto>
 {
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
+    private readonly UserManager<User> _userManager;
 
     public CreateUserCommandHandler(
         CourseMateDbContext dbContext,
         IHttpContextAccessor httpContextAccessor,
-        UserManager<IdentityUser<Guid>> userManager,
+        UserManager<User> userManager,
         RoleManager<IdentityRole<Guid>> roleManager
     ) : base(dbContext, httpContextAccessor)
     {
@@ -45,13 +46,13 @@ internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUs
 
     public override async Task<ResultIdDto> Handle(CreateUserCommand request, CancellationToken ct)
     {
-        request.Role = request.Role.Trim().ToLowerInvariant();
-        if (await _roleManager.RoleExistsAsync(request.Role))
+        request.Role = request.Role.Trim();
+        if (!await _roleManager.RoleExistsAsync(request.Role))
         {
-            throw new BusinessException(string.Format(ErrorMessages.RoleNotExists, request.Role));
+            throw new BusinessException(ErrorCode.RoleNotExists, string.Format("{0} role does not exist.", request.Role));
         }
 
-        IdentityUser<Guid> user = new()
+        User user = new()
         {
             UserName = request.UserName,
             Email = request.Email,
@@ -67,6 +68,6 @@ internal sealed class CreateUserCommandHandler : AbstractCommandHandler<CreateUs
         }
 
         string errors = string.Join(", ", result.Errors.Select(e => e.Description));
-        throw new BusinessException(errors);
+        throw new BusinessException(ErrorCode.Unknown, errors);
     }
 }

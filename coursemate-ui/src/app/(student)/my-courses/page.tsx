@@ -2,13 +2,15 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { BookOpen, Clock, Play, CheckCircle2, BarChart2, Loader2, Search } from 'lucide-react'
+import { BookOpen, Clock, Play, CheckCircle2, BarChart2, Loader2, Search, Trophy, Book, PlayCircle } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { courseService } from '@/lib/course-service'
 import { StudentMyCourseDto } from '@/lib/types'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { CourseCard } from '@/components/(student)/my-courses/course-card'
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -46,222 +48,169 @@ export default function MyCoursesPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <div className="border-b bg-muted/30">
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-1">
-              <h1 className="text-3xl font-black tracking-tight flex items-center gap-3">
-                <div className="h-10 w-10 bg-primary/10 rounded-2xl flex items-center justify-center">
-                  <BookOpen className="h-6 w-6 text-primary" />
-                </div>
-                Khoá học của tôi
-              </h1>
-              <p className="text-muted-foreground ml-13">Bạn đang sở hữu {courses.length} khoá học chất lượng</p>
+      <div className="mx-auto max-w-7xl px-6 mt-5">
+        <div className="rounded-xl border border-border bg-card px-6 py-8 space-y-4">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <BookOpen className="h-5 w-5 text-primary" />
+              <h1 className="text-2xl font-bold tracking-tight">Khoá học của tôi</h1>
             </div>
-
-            <form onSubmit={handleSearch} className="relative w-full md:w-80 group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <p className="mt-1 text-sm text-muted-foreground">
+              Bạn đang sở hữu <span className="font-semibold text-foreground">{courses.length}</span> khoá học.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 flex-wrap">
+            <form onSubmit={handleSearch} className="relative w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
-                placeholder="Tìm khóa học của bạn..."
-                className="pl-10 h-11 rounded-2xl bg-background shadow-sm border-muted-foreground/20 focus-visible:ring-primary/20"
+                placeholder="Tìm kiếm khóa học..."
+                className="pl-9 h-9 text-sm"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
               />
             </form>
-          </div>
-
-          {/* Stats */}
-          <div className="mt-8 grid grid-cols-3 gap-4 max-w-md">
-            <div className="group rounded-2xl border bg-card p-4 transition-all hover:border-primary/30 hover:shadow-sm">
-              <p className="text-3xl font-black text-primary group-hover:scale-110 transition-transform origin-left">
-                {inProgress.length}
-              </p>
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-1">Đang học</p>
-            </div>
-            <div className="group rounded-2xl border bg-card p-4 transition-all hover:border-emerald-500/30 hover:shadow-sm">
-              <p className="text-3xl font-black text-emerald-600 group-hover:scale-110 transition-transform origin-left">
-                {completed.length}
-              </p>
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-1">Hoàn thành</p>
-            </div>
-            <div className="group rounded-2xl border bg-card p-4 transition-all hover:border-muted-foreground/30 hover:shadow-sm">
-              <p className="text-3xl font-black text-muted-foreground group-hover:scale-110 transition-transform origin-left">
-                {notStarted.length}
-              </p>
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-1">Chưa học</p>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-3 py-2">
+                <PlayCircle className="h-3.5 w-3.5 text-primary" />
+                <span className="text-xs font-semibold text-primary">{inProgress.length}</span>
+                <span className="text-xs text-muted-foreground">đang học</span>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-3 py-2">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                <span className="text-xs font-semibold text-emerald-600">{completed.length}</span>
+                <span className="text-xs text-muted-foreground">hoàn thành</span>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-3 py-2">
+                <Book className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-xs font-semibold">{notStarted.length}</span>
+                <span className="text-xs text-muted-foreground">chưa học</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+      {/* Main Content Area */}
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <Loader2 className="h-10 w-10 animate-spin text-primary opacity-50" />
-            <p className="text-sm font-medium text-muted-foreground">Đang chuẩn bị lộ trình học của bạn...</p>
+          <div className="flex flex-col items-center justify-center py-32 gap-6">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
+              <Loader2 className="h-12 w-12 animate-spin text-primary relative z-10" />
+            </div>
+            <p className="text-lg font-medium text-muted-foreground animate-pulse">Đang tải lộ trình học của bạn...</p>
           </div>
         ) : courses.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center space-y-6 bg-muted/20 border border-dashed rounded-3xl">
-            <div className="h-20 w-20 bg-background rounded-3xl shadow-sm border flex items-center justify-center text-muted-foreground rotate-3">
-              <BookOpen className="h-10 w-10" />
+          <div className="flex flex-col items-center justify-center py-24 text-center space-y-8 bg-card border border-dashed rounded-[2rem] shadow-sm">
+            <div className="h-24 w-24 bg-muted/50 rounded-full flex items-center justify-center text-muted-foreground">
+              <BookOpen className="h-12 w-12" />
             </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold">Chưa có khóa học nào</h3>
-              <p className="text-muted-foreground max-w-xs">
+            <div className="space-y-3 max-w-md">
+              <h3 className="text-2xl font-bold text-foreground">Không tìm thấy khóa học</h3>
+              <p className="text-muted-foreground text-lg">
                 {search
-                  ? `Không tìm thấy khóa học nào khớp với "${search}"`
-                  : 'Bắt đầu hành trình chinh phục kiến thức ngay hôm nay!'}
+                  ? `Không có khóa học nào khớp với từ khóa "${search}". Vui lòng thử lại.`
+                  : 'Bạn chưa tham gia khóa học nào. Khám phá các khóa học hấp dẫn và bắt đầu hành trình của mình!'}
               </p>
             </div>
-            <Link href="/courses" className={buttonVariants({ className: 'rounded-2xl h-12 px-8' })}>
-              Khám phá khóa học
+            <Link
+              href="/courses"
+              className={buttonVariants({
+                size: 'lg',
+                className: 'rounded-full h-14 px-8 text-base shadow-lg shadow-primary/25'
+              })}
+            >
+              Khám phá khóa học ngay
             </Link>
           </div>
         ) : (
-          <div className="space-y-12">
-            {/* In progress */}
-            {inProgress.length > 0 && (
-              <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
-                  <div className="h-8 w-1 bg-primary rounded-full transition-all group-hover:h-full" />
-                  Đang học tập
-                </h2>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <Tabs defaultValue="all" className="w-full">
+            <div className="flex items-center justify-between mb-5">
+              <TabsList className="bg-muted/50 p-1 rounded-xl h-11">
+                <TabsTrigger
+                  value="all"
+                  className="rounded-lg px-4 py-1.5 text-xs font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all"
+                >
+                  Tất cả ({courses.length})
+                </TabsTrigger>
+                <TabsTrigger
+                  value="in-progress"
+                  className="rounded-lg px-4 py-1.5 text-xs font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all"
+                >
+                  Đang học ({inProgress.length})
+                </TabsTrigger>
+                <TabsTrigger
+                  value="completed"
+                  className="rounded-lg px-4 py-1.5 text-xs font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all"
+                >
+                  Hoàn thành ({completed.length})
+                </TabsTrigger>
+                <TabsTrigger
+                  value="not-started"
+                  className="rounded-lg px-4 py-1.5 text-xs font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all"
+                >
+                  Chưa học ({notStarted.length})
+                </TabsTrigger>
+              </TabsList>
+            </div>
+
+            <TabsContent value="all" className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {courses.map(course => (
+                  <CourseCard key={course.id} course={course} />
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="in-progress" className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {inProgress.length > 0 ? (
+                <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {inProgress.map(course => (
                     <CourseCard key={course.id} course={course} />
                   ))}
                 </div>
-              </section>
-            )}
+              ) : (
+                <EmptyState message="Bạn không có khóa học nào đang học dở dang." />
+              )}
+            </TabsContent>
 
-            {/* Not Started */}
-            {notStarted.length > 0 && (
-              <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
-                  <div className="h-8 w-1 bg-slate-400 rounded-full" />
-                  Khóa học mới
-                </h2>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {notStarted.map(course => (
-                    <CourseCard key={course.id} course={course} />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Completed */}
-            {completed.length > 0 && (
-              <section className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
-                  <div className="h-8 w-1 bg-emerald-500 rounded-full" />
-                  Đã hoàn thành
-                </h2>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <TabsContent value="completed" className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {completed.length > 0 ? (
+                <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {completed.map(course => (
                     <CourseCard key={course.id} course={course} />
                   ))}
                 </div>
-              </section>
-            )}
-          </div>
+              ) : (
+                <EmptyState message="Bạn chưa hoàn thành khóa học nào. Hãy tiếp tục cố gắng nhé!" />
+              )}
+            </TabsContent>
+
+            <TabsContent value="not-started" className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {notStarted.length > 0 ? (
+                <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {notStarted.map(course => (
+                    <CourseCard key={course.id} course={course} />
+                  ))}
+                </div>
+              ) : (
+                <EmptyState message="Bạn không có khóa học nào chưa bắt đầu." />
+              )}
+            </TabsContent>
+          </Tabs>
         )}
       </div>
     </div>
   )
 }
 
-function CourseCard({ course }: { course: StudentMyCourseDto }) {
-  const done = course.progressPercentage === 100
-
+function EmptyState({ message }: { message: string }) {
   return (
-    <div className="group rounded-3xl border bg-card overflow-hidden transition-all hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1 flex flex-col h-full ring-1 ring-muted">
-      <div className="relative overflow-hidden aspect-[16/9]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={course.imageUrl || 'https://placehold.co/600x340/6366f1/ffffff?text=Course'}
-          alt={course.title}
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
-
-        {done && (
-          <div className="absolute inset-0 bg-emerald-900/40 backdrop-blur-[2px] flex items-center justify-center animate-in fade-in duration-300">
-            <div className="bg-white rounded-full p-3 shadow-xl scale-125">
-              <CheckCircle2 className="h-8 w-8 text-emerald-600" />
-            </div>
-          </div>
-        )}
-
-        <Badge className="absolute left-4 top-4 bg-white/90 backdrop-blur-md text-slate-900 text-[10px] font-bold uppercase tracking-widest px-3 py-1 border-0 shadow-xl">
-          {course.categoryName}
-        </Badge>
+    <div className="py-20 text-center bg-muted/20 rounded-3xl border border-dashed flex flex-col items-center">
+      <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mb-4">
+        <Search className="h-8 w-8 text-muted-foreground/50" />
       </div>
-
-      <div className="p-6 flex flex-col flex-1">
-        <div className="flex-1 space-y-2">
-          <h3 className="font-bold text-lg line-clamp-2 leading-tight group-hover:text-primary transition-colors">
-            {course.title}
-          </h3>
-          <p className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-            <span className="h-1.5 w-1.5 bg-primary/40 rounded-full" />
-            {course.instructorName || 'Giảng viên CourseMate'}
-          </p>
-        </div>
-
-        {/* Progress */}
-        <div className="mt-6 space-y-3">
-          <div className="flex justify-between items-end">
-            <span className={`text-sm font-black ${done ? 'text-emerald-600' : 'text-foreground'}`}>
-              {Math.round(course.progressPercentage)}%
-              <span className="text-[10px] font-bold text-muted-foreground uppercase ml-1 tracking-tighter">
-                hoàn thành
-              </span>
-            </span>
-            <span className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-              <Clock className="h-3 w-3" />
-              {course.completedLessons}/{course.totalLessons} bài học
-            </span>
-          </div>
-          <div className="relative h-2 w-full bg-muted rounded-full overflow-hidden">
-            <div
-              className={`absolute top-0 left-0 h-full transition-all duration-1000 ease-out ${done ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-primary shadow-[0_0_10px_rgba(var(--primary),0.3)]'}`}
-              style={{ width: `${course.progressPercentage}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Last lesson */}
-        <p className="mt-4 text-xs font-medium text-muted-foreground line-clamp-1 italic">
-          {done
-            ? '🎉 Bạn đã hoàn thành khoá học!'
-            : course.lastLessonTitle
-              ? `Đang học: ${course.lastLessonTitle}`
-              : 'Bắt đầu bài học đầu tiên'}
-        </p>
-
-        <Link
-          href={`/learning/${course.id}`}
-          className={buttonVariants({
-            variant: done ? 'outline' : 'default',
-            className: `mt-6 w-full rounded-2xl h-11 text-xs font-bold transition-all ${!done ? 'shadow-lg shadow-primary/25 hover:shadow-primary/40' : 'hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200'}`
-          })}
-        >
-          {done ? (
-            <>
-              <BarChart2 className="h-4 w-4 mr-2" /> Xem lại bài học
-            </>
-          ) : course.progressPercentage === 0 ? (
-            <>
-              <Play className="h-4 w-4 mr-2 fill-current" /> Bắt đầu học ngay
-            </>
-          ) : (
-            <>
-              <Play className="h-4 w-4 mr-2 fill-current" /> Tiếp tục học tập
-            </>
-          )}
-        </Link>
-      </div>
+      <p className="text-muted-foreground font-medium">{message}</p>
     </div>
   )
 }

@@ -21,7 +21,7 @@ public class RunCodeCommand : IRequest<RunCodeResponse>
     public string Input { get; set; } = string.Empty;
 }
 
-internal sealed class RunCodeCommandHandler : AbstractCommandHandler<RunCodeCommand, RunCodeResponse>
+public sealed class RunCodeCommandHandler : AbstractCommandHandler<RunCodeCommand, RunCodeResponse>
 {
     private readonly ICodeRunnerService _codeRunnerService;
 

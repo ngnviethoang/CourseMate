@@ -1,4 +1,12 @@
 import { api } from './api-client'
+import { ExerciseExampleDto, ResultIdDto } from './types'
+
+interface PagedDto<T> {
+  items: T[]
+  totalCount: number
+  pageIndex: number
+  pageSize: number
+}
 
 export interface ContestDto {
   id: string
@@ -16,10 +24,32 @@ export interface ContestDto {
   creatorId: string
   creatorName?: string
   creationTime: string
+  lastModificationTime?: string
   exerciseCount: number
   participantCount: number
   isRegistered?: boolean
+  hasSubmitted?: boolean
   exercises: ContestExerciseDto[]
+  prizes: ContestPrizeDto[]
+}
+
+export interface ContestPrizeDto {
+  id: string
+  minRank: number
+  maxRank: number
+  courseId: string
+  courseTitle: string
+  courseImageUrl: string
+  coursePrice: number
+  courseInstructorName: string
+}
+
+export interface PrizableCourseDto {
+  id: string
+  title: string
+  imageUrl: string
+  price: number
+  instructorName: string
 }
 
 export interface ContestWorkspaceDto {
@@ -46,7 +76,7 @@ export interface ContestExerciseDto {
   order: number
   bestScore?: number
   isPassed: boolean
-  examples: any[]
+  examples: ExerciseExampleDto[]
   constraints: string[]
   hints: string[]
   defaultCodes: { language: string; starterCode: string }[]
@@ -76,28 +106,84 @@ export interface LeaderboardEntryDto {
   isDisqualified: boolean
 }
 
+// ─── Anti-Cheat DTOs ────────────────────────────────────────────────────────
+
+export interface ViolationEntryDto {
+  id: string
+  violationType: string
+  details?: string
+  occurredAt: string
+  /** Populated for real-time SignalR events from the instructor monitor */
+  ipAddress?: string
+  userAgent?: string
+  deviceFingerprint?: string
+}
+
+export interface StudentViolationSummaryDto {
+  studentId: string
+  studentName: string
+  violationCount: number
+  isDisqualified: boolean
+  disqualifiedAt?: string
+  disqualifiedReason?: string
+  violations: ViolationEntryDto[]
+}
+
+export interface ContestViolationsDto {
+  contestId: string
+  contestTitle: string
+  students: StudentViolationSummaryDto[]
+}
+
+// ─── Service ─────────────────────────────────────────────────────────────────
+
 export const contestService = {
-  getList: (params: any) => {
-    const searchParams = new URLSearchParams(params)
-    return api.get<any>(`/api/contests?${searchParams}`)
+  getList: (params: { filter?: string; status?: string; sorting?: string; pageIndex?: number; pageSize?: number }) => {
+    const searchParams = new URLSearchParams()
+    if (params.filter) searchParams.set('filter', params.filter)
+    if (params.status) searchParams.set('status', params.status)
+    if (params.sorting) searchParams.set('sorting', params.sorting)
+    if (params.pageIndex != null) searchParams.set('pageIndex', String(params.pageIndex))
+    if (params.pageSize != null) searchParams.set('pageSize', String(params.pageSize))
+    return api.get<PagedDto<ContestDto>>(`/api/contests?${searchParams}`)
   },
   getById: (id: string) => api.get<ContestDto>(`/api/contests/${id}`),
-  create: (data: any) => api.post<any>('/api/contests', data),
-  update: (id: string, data: any) => api.put(`/api/contests/${id}`, data),
-  addExercise: (id: string, data: any) => api.post(`/api/contests/${id}/exercises`, data),
+  create: (data: unknown) => api.post<ResultIdDto>('/api/contests', data),
+  update: (id: string, data: unknown) => api.put<void>(`/api/contests/${id}`, data),
+  addExercise: (id: string, data: unknown) => api.post<ResultIdDto>(`/api/contests/${id}/exercises`, data),
+  getExercises: (id: string) => api.get<ContestExerciseDto[]>(`/api/contests/${id}/exercises`),
+  removeExercise: (contestId: string, contestExerciseId: string) =>
+    api.delete<void>(`/api/contests/${contestId}/exercises/${contestExerciseId}`),
 
   // Student APIs
   register: (id: string) => api.post(`/api/contests/${id}/register`, {}),
   checkIn: (id: string) => api.post(`/api/contests/${id}/check-in`, {}),
   getWorkspace: (id: string) => api.get<ContestWorkspaceDto>(`/api/contests/${id}/workspace`),
-  submitExercise: (id: string, exerciseId: string, payload: any) =>
+  submitExercise: (id: string, exerciseId: string, payload: unknown) =>
     api.post(`/api/contests/${id}/exercises/${exerciseId}/submit`, payload),
   finish: (id: string) => api.post(`/api/contests/${id}/finish`, {}),
   getLeaderboard: (id: string) => api.get<ContestLeaderboardDto>(`/api/contests/${id}/leaderboard`),
 
   // Anti-Cheat APIs
-  getViolations: (id: string) => api.get<any>(`/api/contests/${id}/violations`),
+  getViolations: (id: string) => api.get<ContestViolationsDto>(`/api/contests/${id}/violations`),
+  async getStudentViolations(id: string, studentId: string): Promise<StudentViolationSummaryDto> {
+    return api.get(`/api/contests/${id}/violations/${studentId}`)
+  },
+  async getMyViolations(id: string): Promise<StudentViolationSummaryDto> {
+    return api.get(`/api/contests/${id}/my-violations`)
+  },
   disqualifyStudent: (id: string, studentId: string, reason: string) =>
     api.post(`/api/contests/${id}/disqualify/${studentId}`, { reason }),
-  reinstateStudent: (id: string, studentId: string) => api.post(`/api/contests/${id}/reinstate/${studentId}`, {})
+  reinstateStudent: (id: string, studentId: string) => api.post(`/api/contests/${id}/reinstate/${studentId}`, {}),
+
+  // Prize APIs
+  getPrizableCourses: (id: string) => api.get<PrizableCourseDto[]>(`/api/contests/${id}/prizable-courses`),
+  addPrize: (id: string, minRank: number, maxRank: number, courseId: string) =>
+    api.post<{ id: string }>(`/api/contests/${id}/prizes`, { minRank, maxRank, courseId }),
+  removePrize: (id: string, prizeId: string) =>
+    api.delete<void>(`/api/contests/${id}/prizes/${prizeId}`),
+
+  // Admin/Instructor contest lifecycle
+  endContest: (id: string) => api.post<{ id: string }>(`/api/contests/${id}/end`, {}),
+  cancelContest: (id: string) => api.post<{ id: string }>(`/api/contests/${id}/cancel`, {})
 }

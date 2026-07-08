@@ -12,7 +12,7 @@ public class GetStudentExerciseSubmissionsQuery : IRequest<IEnumerable<ExerciseS
     public Guid ExerciseId { get; set; }
 }
 
-internal sealed class GetStudentExerciseSubmissionsQueryHandler : AbstractQueryHandler<GetStudentExerciseSubmissionsQuery, IEnumerable<ExerciseSubmissionDto>>
+public sealed class GetStudentExerciseSubmissionsQueryHandler : AbstractQueryHandler<GetStudentExerciseSubmissionsQuery, IEnumerable<ExerciseSubmissionDto>>
 {
     public GetStudentExerciseSubmissionsQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
     {

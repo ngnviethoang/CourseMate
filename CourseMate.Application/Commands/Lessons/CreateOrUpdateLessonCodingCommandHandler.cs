@@ -1,0 +1,46 @@
+﻿using CourseMate.Application.Shared;
+using CourseMate.Contracts.Exceptions;
+using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+
+namespace CourseMate.Application.Commands.Lessons;
+
+public class CreateOrUpdateLessonCodingCommand : IRequest<Unit>
+{
+    public Guid LessonId { get; set; }
+
+    public Guid ExerciseId { get; set; }
+}
+
+public sealed class CreateOrUpdateLessonCodingCommandHandler : AbstractCommandHandler<CreateOrUpdateLessonCodingCommand, Unit>
+{
+    public CreateOrUpdateLessonCodingCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        : base(dbContext, httpContextAccessor)
+    {
+    }
+
+    public override async Task<Unit> Handle(CreateOrUpdateLessonCodingCommand request, CancellationToken ct)
+    {
+        await EnsureAuthorCourseAsync(request.LessonId, ct);
+        bool exerciseExists = await DbContext.Exercises.AnyAsync(e => e.Id == request.ExerciseId, ct);
+        if (!exerciseExists)
+        {
+            throw new EntityNotFoundException(nameof(Exercise), request.ExerciseId);
+        }
+
+        LessonCoding? existing = await DbContext.LessonCodings.FirstOrDefaultAsync(c => c.LessonId == request.LessonId, ct);
+        if (existing is null)
+        {
+            await DbContext.LessonCodings.AddAsync(new LessonCoding(Guid.NewGuid(), request.LessonId, request.ExerciseId), ct);
+        }
+        else
+        {
+            existing.ExerciseId = request.ExerciseId;
+        }
+
+        return Unit.Value;
+    }
+}

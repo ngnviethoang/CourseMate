@@ -2,8 +2,8 @@ namespace CourseMate.Contracts.Enums;
 
 public enum LessonType
 {
-    Video = 1,
-    Reading = 2,
-    Coding = 3,
-    Quiz = 4
+    Video = 0,
+    Reading = 1,
+    Coding = 2,
+    Quiz = 3
 }

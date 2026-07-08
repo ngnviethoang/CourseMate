@@ -22,7 +22,7 @@ public class CreateContestCommand : IRequest<ResultIdDto>
     public int MaxViolations { get; set; } = 5;
 }
 
-internal sealed class CreateContestCommandHandler : AbstractCommandHandler<CreateContestCommand, ResultIdDto>
+public sealed class CreateContestCommandHandler : AbstractCommandHandler<CreateContestCommand, ResultIdDto>
 {
     public CreateContestCommandHandler(CourseMateDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -48,7 +48,6 @@ internal sealed class CreateContestCommandHandler : AbstractCommandHandler<Creat
         );
 
         await DbContext.Contests.AddAsync(contest, ct);
-        await DbContext.SaveChangesAsync(ct);
 
         return new ResultIdDto { Id = contest.Id };
     }

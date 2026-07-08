@@ -15,7 +15,7 @@ public class GetLatestNotificationsQuery : GetListQuery<NotificationDto>
     public Guid UserId { get; set; }
 }
 
-internal sealed class GetLatestNotificationsQueryHandler : AbstractQueryHandler<GetLatestNotificationsQuery, PagedDto<NotificationDto>>
+public sealed class GetLatestNotificationsQueryHandler : AbstractQueryHandler<GetLatestNotificationsQuery, PagedDto<NotificationDto>>
 {
     public GetLatestNotificationsQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)

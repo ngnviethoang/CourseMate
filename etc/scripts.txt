@@ -16,4 +16,6 @@ ollama pull nomic-embed-text
 
 ollama pull llama3
 
-pg_dump -U postgres -h localhost -d CourseMateV2 > dump-CourseMateV2-202505072118.sql
+pg_dump -U postgres -h localhost -d CourseMateV2 > dump-CourseMateV2-202605291500.sql
+
+load coursemate-ui/.agents/**, CourseMate.API/.agents/** in current context

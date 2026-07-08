@@ -1,4 +1,5 @@
 using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.Exceptions;
 using CourseMate.Persistent;
@@ -14,7 +15,7 @@ public class GetOrderByIdQuery : IRequest<OrderDto?>
     public Guid Id { get; init; }
 }
 
-internal sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderByIdQuery, OrderDto?>
+public sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderByIdQuery, OrderDto?>
 {
     public GetOrderByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -23,10 +24,13 @@ internal sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderBy
 
     public override async Task<OrderDto?> Handle(GetOrderByIdQuery request, CancellationToken ct)
     {
-        Guid studentId = CurrentUserId;
+        Guid currentUserId = CurrentUserId;
+        bool isAdmin = IsInRole(Roles.Admin);
 
-        Order? order = await DbContext.Orders
-            .FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == studentId, ct);
+        // Admins can view any order; students can only view their own orders.
+        Order? order = isAdmin
+            ? await DbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.Id, ct)
+            : await DbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.Id && o.StudentId == currentUserId, ct);
 
         if (order == null)
         {
@@ -45,12 +49,23 @@ internal sealed class GetOrderByIdQueryHandler : AbstractQueryHandler<GetOrderBy
                 Price = item.Price
             }).ToListAsync(ct);
 
+        var student = await DbContext.Users
+            .Where(x => x.Id == order.StudentId)
+            .Select(x => new { x.UserName, x.Email })
+            .FirstOrDefaultAsync(ct);
+
         return new OrderDto
         {
             Id = order.Id,
+            Title = order.Description,
             StudentId = order.StudentId,
+            StudentName = student?.UserName,
+            StudentEmail = student?.Email,
             TotalAmount = order.TotalAmount,
             Status = order.Status,
+            CreationTime = order.CreationTime,
+            LastModificationTime = order.LastModificationTime,
+            ItemsCount = items.Count,
             Items = items
         };
     }

@@ -12,7 +12,7 @@ public class GetUserByIdQuery : IRequest<UserDto?>
     public Guid Id { get; set; }
 }
 
-internal sealed class GetUserByIdQueryHandler : AbstractQueryHandler<GetUserByIdQuery, UserDto?>
+public sealed class GetUserByIdQueryHandler : AbstractQueryHandler<GetUserByIdQuery, UserDto?>
 {
     public GetUserByIdQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -28,7 +28,9 @@ internal sealed class GetUserByIdQueryHandler : AbstractQueryHandler<GetUserById
                 Id = x.Id,
                 UserName = x.UserName,
                 Email = x.Email,
-                PhoneNumber = x.PhoneNumber
+                PhoneNumber = x.PhoneNumber,
+                CreationTime = x.CreationTime,
+                LastModificationTime = x.LastModificationTime
             })
             .FirstOrDefaultAsync(ct);
 

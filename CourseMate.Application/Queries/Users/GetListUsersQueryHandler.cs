@@ -2,16 +2,19 @@ using CourseMate.Application.Shared;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
 using CourseMate.Persistent;
+using CourseMate.Persistent.Entities;
 using CourseMate.Persistent.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMate.Application.Queries.Users;
 
-public class GetListUsersQuery : GetListQuery<UserDto>;
+public class GetListUsersQuery : GetListQuery<UserDto>
+{
+    public string? Role { get; set; }
+}
 
-internal sealed class GetListUsersQueryHandler : AbstractQueryHandler<GetListUsersQuery, PagedDto<UserDto>>
+public sealed class GetListUsersQueryHandler : AbstractQueryHandler<GetListUsersQuery, PagedDto<UserDto>>
 {
     public GetListUsersQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -20,9 +23,37 @@ internal sealed class GetListUsersQueryHandler : AbstractQueryHandler<GetListUse
 
     public override async Task<PagedDto<UserDto>> Handle(GetListUsersQuery request, CancellationToken ct)
     {
-        IQueryable<IdentityUser<Guid>> query = DbContext.Users.WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x =>
-            (x.UserName != null && EF.Functions.ILike(x.UserName, $"%{request.Filter}%")) ||
-            (x.Email != null && EF.Functions.ILike(x.Email, $"%{request.Filter}%")));
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
+
+        IQueryable<User> query = DbContext.Users
+            .WhereIf(isFilterGuid, x => x.Id == filterId)
+            .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x =>
+                (x.UserName != null && EF.Functions.ILike(x.UserName, $"%{request.Filter}%")) ||
+                (x.Email != null && EF.Functions.ILike(x.Email, $"%{request.Filter}%")));
+
+        if (!string.IsNullOrWhiteSpace(request.Role))
+        {
+            query = from user in query
+                join userRole in DbContext.UserRoles on user.Id equals userRole.UserId
+                join role in DbContext.Roles on userRole.RoleId equals role.Id
+                where role.Name == request.Role
+                select user;
+        }
+
+        query = request.Sorting switch
+        {
+            "userName" => query.OrderBy(x => x.UserName),
+            "userName_desc" => query.OrderByDescending(x => x.UserName),
+            "email" => query.OrderBy(x => x.Email),
+            "email_desc" => query.OrderByDescending(x => x.Email),
+            "creationTime" => query.OrderBy(x => x.CreationTime),
+            "creationTime_desc" => query.OrderByDescending(x => x.CreationTime),
+            "lastModificationTime" => query.OrderBy(x => x.LastModificationTime),
+            "lastModificationTime_desc" => query.OrderByDescending(x => x.LastModificationTime),
+            _ => query.OrderByDescending(x => x.CreationTime)
+        };
+
+        int totalCount = await query.CountAsync(ct);
 
         List<UserDto> users = await query
             .Paged(request.PageIndex, request.PageSize)
@@ -31,13 +62,18 @@ internal sealed class GetListUsersQueryHandler : AbstractQueryHandler<GetListUse
                 Id = x.Id,
                 UserName = x.UserName,
                 Email = x.Email,
-                PhoneNumber = x.PhoneNumber
+                PhoneNumber = x.PhoneNumber,
+                CreationTime = x.CreationTime,
+                LastModificationTime = x.LastModificationTime,
+                IsApproved = x.IsApproved,
+                IsLockedOut = x.LockoutEnd.HasValue && x.LockoutEnd.Value > DateTimeOffset.UtcNow
             })
             .ToListAsync(ct);
 
         return new PagedDto<UserDto>
         {
             Items = users,
+            TotalCount = totalCount,
             PageIndex = request.PageIndex,
             PageSize = request.PageSize
         };

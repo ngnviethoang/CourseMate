@@ -23,35 +23,17 @@ import {
   Undo2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { contestService } from '@/lib/contest-service'
+import {
+  contestService,
+  ContestViolationsDto,
+  StudentViolationSummaryDto,
+  ViolationEntryDto
+} from '@/lib/contest-service'
 import { getAccessToken } from '@/lib/auth-token.util'
 import { ViolationType } from '@/hooks/useAntiCheat'
 import { toast } from 'sonner'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? ''
-
-interface ViolationEntry {
-  id: string
-  violationType: ViolationType | string
-  details?: string
-  occurredAt: string
-}
-
-interface StudentViolation {
-  studentId: string
-  studentName: string
-  violationCount: number
-  isDisqualified: boolean
-  disqualifiedAt?: string
-  disqualifiedReason?: string
-  violations: ViolationEntry[]
-}
-
-interface ContestViolations {
-  contestId: string
-  contestTitle: string
-  students: StudentViolation[]
-}
 
 const VIOLATION_LABELS: Record<string, { label: string; color: string }> = {
   [ViolationType.TabSwitch]: { label: 'Chuyển tab', color: 'text-amber-400' },
@@ -59,12 +41,10 @@ const VIOLATION_LABELS: Record<string, { label: string; color: string }> = {
   [ViolationType.CopyPaste]: { label: 'Paste nội dung', color: 'text-red-400' },
   [ViolationType.RightClick]: { label: 'Click chuột phải', color: 'text-yellow-400' },
   [ViolationType.DevToolsOpen]: { label: 'Mở DevTools', color: 'text-red-500' },
-  [ViolationType.ScreenResize]: { label: 'Thay đổi kích thước', color: 'text-purple-400' },
-  [ViolationType.MultipleMonitors]: { label: 'Nhiều màn hình', color: 'text-pink-400' },
-  [ViolationType.ExternalPaste]: { label: 'Paste từ ngoài', color: 'text-red-500' }
+  [ViolationType.ScreenResize]: { label: 'Thay đổi kích thước', color: 'text-purple-400' }
 }
 
-function getStatusColor(student: StudentViolation) {
+function getStatusColor(student: StudentViolationSummaryDto) {
   if (student.isDisqualified) return 'bg-neutral-800 border-neutral-600'
   if (student.violationCount >= 5) return 'bg-red-500/5 border-red-500/20'
   if (student.violationCount >= 3) return 'bg-orange-500/5 border-orange-500/20'
@@ -72,7 +52,7 @@ function getStatusColor(student: StudentViolation) {
   return 'bg-emerald-500/5 border-emerald-500/20'
 }
 
-function getStatusIcon(student: StudentViolation) {
+function getStatusIcon(student: StudentViolationSummaryDto) {
   if (student.isDisqualified) return <ShieldX className="h-5 w-5 text-neutral-500" />
   if (student.violationCount >= 5) return <ShieldAlert className="h-5 w-5 text-red-500" />
   if (student.violationCount >= 1) return <AlertTriangle className="h-5 w-5 text-amber-500" />
@@ -86,12 +66,13 @@ function formatTime(dateString: string) {
 export default function ContestMonitorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
-  const [data, setData] = useState<ContestViolations | null>(null)
+  const [data, setData] = useState<ContestViolationsDto | null>(null)
   const [loading, setLoading] = useState(true)
   const [expandedStudent, setExpandedStudent] = useState<string | null>(null)
   const [dqReason, setDqReason] = useState('')
   const [dqConfirm, setDqConfirm] = useState<string | null>(null) // studentId being DQ'd
   const connectionRef = useRef<HubConnection | null>(null)
+  const [connectionState, setConnectionState] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
 
   const fetchData = useCallback(async () => {
     try {
@@ -121,6 +102,10 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
 
     connectionRef.current = connection
 
+    connection.onreconnecting(() => setConnectionState('connecting'))
+    connection.onreconnected(() => setConnectionState('connected'))
+    connection.onclose(() => setConnectionState('disconnected'))
+
     connection.on('StudentViolation', (event: any) => {
       setData(prev => {
         if (!prev) return prev
@@ -136,7 +121,10 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
               {
                 id: crypto.randomUUID(),
                 violationType: event.violationType,
-                occurredAt: event.timestamp
+                occurredAt: event.timestamp,
+                ipAddress: event.ipAddress,
+                userAgent: event.userAgent,
+                deviceFingerprint: event.deviceFingerprint
               },
               ...students[idx].violations
             ]
@@ -151,7 +139,10 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
               {
                 id: crypto.randomUUID(),
                 violationType: event.violationType,
-                occurredAt: event.timestamp
+                occurredAt: event.timestamp,
+                ipAddress: event.ipAddress,
+                userAgent: event.userAgent,
+                deviceFingerprint: event.deviceFingerprint
               }
             ]
           })
@@ -159,8 +150,26 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
         return { ...prev, students }
       })
 
-      toast.warning(`${event.studentName}: ${event.violationType} (${event.violationCount}/${event.maxViolations})`, {
-        duration: 3000
+      // Normalize violationType: BE may send integer (before JsonStringEnumConverter fix) or string
+      const VIOLATION_TYPE_NAMES = [
+        'TabSwitch',
+        'WindowBlur',
+        'CopyPaste',
+        'RightClick',
+        'DevToolsOpen',
+        'ScreenResize',
+        'MultipleMonitors',
+        'ExternalPaste'
+      ]
+      const normalizedType =
+        typeof event.violationType === 'number'
+          ? (VIOLATION_TYPE_NAMES[event.violationType] ?? String(event.violationType))
+          : String(event.violationType)
+
+      const label = VIOLATION_LABELS[normalizedType]?.label ?? normalizedType
+
+      toast.warning(`🚨 ${event.studentName}: ${label} (${event.violationCount}/${event.maxViolations})`, {
+        duration: 5000
       })
     })
 
@@ -191,8 +200,14 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
 
     connection
       .start()
-      .then(() => connection.invoke('JoinContestMonitor', id))
-      .catch(err => console.error('Failed to connect monitor:', err))
+      .then(() => {
+        setConnectionState('connected')
+        return connection.invoke('JoinContestMonitor', id)
+      })
+      .catch(err => {
+        setConnectionState('disconnected')
+        console.error('Failed to connect monitor:', err)
+      })
 
     return () => {
       connection.stop().catch(() => {})
@@ -205,7 +220,11 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
       return
     }
     try {
-      await contestService.disqualifyStudent(id, studentId, dqReason)
+      if (connectionRef.current?.state === 'Connected') {
+        await connectionRef.current.invoke('DisqualifyStudent', id, studentId, dqReason)
+      } else {
+        await contestService.disqualifyStudent(id, studentId, dqReason)
+      }
       toast.success('Đã loại sinh viên')
       setDqConfirm(null)
       setDqReason('')
@@ -218,7 +237,11 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
   const handleReinstate = async (studentId: string) => {
     if (!confirm('Bạn có chắc muốn phục hồi sinh viên này?')) return
     try {
-      await contestService.reinstateStudent(id, studentId)
+      if (connectionRef.current?.state === 'Connected') {
+        await connectionRef.current.invoke('ReinstateStudent', id, studentId)
+      } else {
+        await contestService.reinstateStudent(id, studentId)
+      }
       toast.success('Đã phục hồi sinh viên')
       fetchData()
     } catch {
@@ -237,10 +260,39 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
   const disqualifiedCount = data?.students.filter(s => s.isDisqualified).length ?? 0
   const flaggedCount = data?.students.filter(s => s.violationCount > 0 && !s.isDisqualified).length ?? 0
 
+  // Calculate IP/Device Collisions for red flags
+  const deviceMap = new Map<string, Set<string>>()
+  const ipMap = new Map<string, Set<string>>()
+
+  data?.students.forEach(student => {
+    student.violations.forEach(v => {
+      if (v.deviceFingerprint) {
+        if (!deviceMap.has(v.deviceFingerprint)) deviceMap.set(v.deviceFingerprint, new Set())
+        deviceMap.get(v.deviceFingerprint)!.add(student.studentId)
+      }
+      if (v.ipAddress) {
+        if (!ipMap.has(v.ipAddress)) ipMap.set(v.ipAddress, new Set())
+        ipMap.get(v.ipAddress)!.add(student.studentId)
+      }
+    })
+  })
+
+  const suspiciousStudents = new Set<string>()
+  deviceMap.forEach((students, device) => {
+    if (students.size > 1) {
+      students.forEach(s => suspiciousStudents.add(s))
+    }
+  })
+  ipMap.forEach((students, ip) => {
+    if (students.size > 1) {
+      students.forEach(s => suspiciousStudents.add(s))
+    }
+  })
+
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-neutral-100">
       {/* Header */}
-      <header className="border-b border-white/5 bg-[#12121a] px-6 py-4">
+      <header className="shadow-md border-0 border-b-0 -white/5 bg-[#12121a] px-6 py-4">
         <div className="flex items-center gap-4">
           <Link href={`/management/contests/${id}`} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
             <ArrowLeft className="h-5 w-5 text-neutral-400" />
@@ -248,14 +300,37 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
           <div className="flex-1">
             <h1 className="text-lg font-bold flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
-              Anti-Cheat Monitor
+              Giám sát chống gian lận
             </h1>
             <p className="text-xs text-neutral-500">{data?.contestTitle}</p>
           </div>
           <Button onClick={fetchData} variant="ghost" className="text-neutral-400 hover:text-white gap-2">
             <RefreshCw className="h-4 w-4" /> Làm mới
           </Button>
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Real-time connected" />
+          <div
+            className={`flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full border ${
+              connectionState === 'connected'
+                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                : connectionState === 'connecting'
+                  ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                  : 'bg-red-500/10 border-red-500/20 text-red-400'
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
+                connectionState === 'connected'
+                  ? 'bg-emerald-500 animate-pulse'
+                  : connectionState === 'connecting'
+                    ? 'bg-amber-500 animate-pulse'
+                    : 'bg-red-500'
+              }`}
+            />
+            {connectionState === 'connected'
+              ? 'Realtime · Đang kết nối'
+              : connectionState === 'connecting'
+                ? 'Đang kết nối lại...'
+                : 'Mất kết nối'}
+          </div>
         </div>
       </header>
 
@@ -292,7 +367,7 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
               bg: 'bg-emerald-500/10 border-emerald-500/20'
             }
           ].map((stat, i) => (
-            <div key={i} className={`p-5 rounded-2xl border ${stat.bg}`}>
+            <div key={i} className={`p-5 rounded-2xl ${stat.bg}`}>
               <div className="flex items-center justify-between">
                 <stat.icon className={`h-5 w-5 ${stat.color}`} />
                 <span className={`text-3xl font-black ${stat.color}`}>{stat.value}</span>
@@ -315,138 +390,176 @@ export default function ContestMonitorPage({ params }: { params: Promise<{ id: s
             </div>
           )}
 
-          {data?.students.map(student => (
-            <div key={student.studentId} className={`rounded-2xl border transition-all ${getStatusColor(student)}`}>
-              {/* Student Row */}
-              <button
-                onClick={() => setExpandedStudent(expandedStudent === student.studentId ? null : student.studentId)}
-                className="w-full p-5 flex items-center gap-4 text-left"
+          {data?.students.map(student => {
+            const isSuspicious = suspiciousStudents.has(student.studentId)
+
+            // Extract unique IPs and Devices for this student
+            const studentIps = Array.from(new Set(student.violations.map(v => v.ipAddress).filter(Boolean)))
+            const studentDevices = Array.from(new Set(student.violations.map(v => v.deviceFingerprint).filter(Boolean)))
+
+            return (
+              <div
+                key={student.studentId}
+                className={`rounded-2xl transition-all ${getStatusColor(student)} ${isSuspicious ? 'ring-2 ring-red-500/50' : ''}`}
               >
-                {getStatusIcon(student)}
-                <div className="flex-1 min-w-0">
-                  <p
-                    className={`font-bold text-sm ${student.isDisqualified ? 'text-neutral-500 line-through' : 'text-neutral-200'}`}
-                  >
-                    {student.studentName}
-                  </p>
-                  {student.isDisqualified && (
-                    <p className="text-[10px] text-red-400 mt-0.5">
-                      Đã loại: {student.disqualifiedReason} •{' '}
-                      {student.disqualifiedAt ? formatTime(student.disqualifiedAt) : ''}
+                {/* Student Row */}
+                <button
+                  onClick={() => setExpandedStudent(expandedStudent === student.studentId ? null : student.studentId)}
+                  className="w-full p-5 flex items-center gap-4 text-left"
+                >
+                  {getStatusIcon(student)}
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className={`font-bold text-sm flex items-center gap-2 ${student.isDisqualified ? 'text-neutral-500 line-through' : 'text-neutral-200'}`}
+                    >
+                      {student.studentName}
+                      {isSuspicious && !student.isDisqualified && (
+                        <span className="flex items-center gap-1 text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full font-black tracking-widest uppercase">
+                          <AlertTriangle className="h-3 w-3" /> Đa nghi
+                        </span>
+                      )}
                     </p>
-                  )}
-                </div>
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`px-3 py-1 rounded-lg text-xs font-black ${
-                      student.isDisqualified
-                        ? 'bg-neutral-700 text-neutral-400'
-                        : student.violationCount >= 5
-                          ? 'bg-red-500/20 text-red-400'
-                          : student.violationCount >= 3
-                            ? 'bg-orange-500/20 text-orange-400'
-                            : student.violationCount >= 1
-                              ? 'bg-amber-500/20 text-amber-400'
-                              : 'bg-emerald-500/20 text-emerald-400'
-                    }`}
-                  >
-                    {student.violationCount} vi phạm
-                  </span>
-
-                  {!student.isDisqualified ? (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10 text-xs gap-1"
-                      onClick={e => {
-                        e.stopPropagation()
-                        setDqConfirm(student.studentId)
-                      }}
-                    >
-                      <CircleSlash className="h-3 w-3" /> Loại
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 text-xs gap-1"
-                      onClick={e => {
-                        e.stopPropagation()
-                        handleReinstate(student.studentId)
-                      }}
-                    >
-                      <Undo2 className="h-3 w-3" /> Phục hồi
-                    </Button>
-                  )}
-                </div>
-              </button>
-
-              {/* Expanded: Violation Timeline */}
-              {expandedStudent === student.studentId && (
-                <div className="px-5 pb-5 border-t border-white/5">
-                  <div className="space-y-2 mt-4 max-h-[300px] overflow-y-auto">
-                    {student.violations.length === 0 ? (
-                      <p className="text-xs text-neutral-600 text-center py-4">Không có chi tiết vi phạm</p>
-                    ) : (
-                      student.violations.map((v, i) => {
-                        const info = VIOLATION_LABELS[v.violationType] || {
-                          label: v.violationType,
-                          color: 'text-neutral-400'
-                        }
-                        return (
-                          <div
-                            key={v.id || i}
-                            className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/5 transition-colors"
-                          >
-                            <div className={`w-2 h-2 rounded-full ${info.color.replace('text-', 'bg-')}`} />
-                            <span className={`text-xs font-bold ${info.color}`}>{info.label}</span>
-                            <span className="flex-1 text-xs text-neutral-600 truncate">{v.details}</span>
-                            <span className="text-[10px] text-neutral-600 font-mono">{formatTime(v.occurredAt)}</span>
-                          </div>
-                        )
-                      })
+                    {student.isDisqualified && (
+                      <p className="text-[10px] text-red-400 mt-0.5">
+                        Đã loại: {student.disqualifiedReason} •{' '}
+                        {student.disqualifiedAt ? formatTime(student.disqualifiedAt) : ''}
+                      </p>
+                    )}
+                    {!student.isDisqualified && (studentIps.length > 0 || studentDevices.length > 0) && (
+                      <div className="flex gap-3 mt-1.5 opacity-60">
+                        {studentIps.length > 0 && (
+                          <span className="text-[10px] text-neutral-400">IP: {studentIps.join(', ')}</span>
+                        )}
+                        {studentDevices.length > 0 && (
+                          <span className="text-[10px] text-neutral-400">Thiết bị: {studentDevices.length} máy</span>
+                        )}
+                      </div>
                     )}
                   </div>
-                </div>
-              )}
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`px-3 py-1 rounded-lg text-xs font-black ${
+                        student.isDisqualified
+                          ? 'bg-neutral-700 text-neutral-400'
+                          : student.violationCount >= 5
+                            ? 'bg-red-500/20 text-red-400'
+                            : student.violationCount >= 3
+                              ? 'bg-orange-500/20 text-orange-400'
+                              : student.violationCount >= 1
+                                ? 'bg-amber-500/20 text-amber-400'
+                                : 'bg-emerald-500/20 text-emerald-400'
+                      }`}
+                    >
+                      {student.violationCount} vi phạm
+                    </span>
 
-              {/* DQ Confirmation Modal */}
-              {dqConfirm === student.studentId && (
-                <div className="px-5 pb-5 border-t border-red-500/10">
-                  <div className="mt-4 p-4 rounded-xl bg-red-500/5 border border-red-500/10 space-y-3">
-                    <p className="text-xs font-bold text-red-400">Loại sinh viên: {student.studentName}</p>
-                    <input
-                      type="text"
-                      placeholder="Nhập lý do loại..."
-                      value={dqReason}
-                      onChange={e => setDqReason(e.target.value)}
-                      className="w-full px-3 py-2 bg-black/40 border border-white/10 rounded-lg text-sm text-neutral-200 outline-none focus:border-red-500/50"
-                    />
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        className="bg-red-600 hover:bg-red-500 text-white text-xs"
-                        onClick={() => handleDisqualify(student.studentId)}
-                      >
-                        Xác nhận loại
-                      </Button>
+                    {!student.isDisqualified ? (
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="text-neutral-400 text-xs"
-                        onClick={() => {
-                          setDqConfirm(null)
-                          setDqReason('')
+                        className="text-red-400 hover:text-red-300 hover:bg-red-500/10 text-xs gap-1"
+                        onClick={e => {
+                          e.stopPropagation()
+                          setDqConfirm(student.studentId)
                         }}
                       >
-                        Hủy
+                        <CircleSlash className="h-3 w-3" /> Loại
                       </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 text-xs gap-1"
+                        onClick={e => {
+                          e.stopPropagation()
+                          handleReinstate(student.studentId)
+                        }}
+                      >
+                        <Undo2 className="h-3 w-3" /> Phục hồi
+                      </Button>
+                    )}
+                  </div>
+                </button>
+
+                {/* Expanded: Violation Timeline */}
+                {expandedStudent === student.studentId && (
+                  <div className="px-5 pb-5 shadow-md border-0 border-t-0 -white/5">
+                    <div className="space-y-2 mt-4 max-h-[300px] overflow-y-auto">
+                      {student.violations.length === 0 ? (
+                        <p className="text-xs text-neutral-600 text-center py-4">Không có chi tiết vi phạm</p>
+                      ) : (
+                        student.violations.map((v, i) => {
+                          const info = VIOLATION_LABELS[v.violationType] || {
+                            label: v.violationType,
+                            color: 'text-neutral-400'
+                          }
+                          return (
+                            <div
+                              key={v.id || i}
+                              className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/5 transition-colors"
+                            >
+                              <div className={`w-2 h-2 rounded-full shrink-0 ${info.color.replace('text-', 'bg-')}`} />
+                              <div className="flex-1 min-w-0">
+                                <p className="flex items-center gap-2">
+                                  <span className={`text-xs font-bold ${info.color}`}>{info.label}</span>
+                                  <span className="text-xs text-neutral-600 truncate">{v.details}</span>
+                                </p>
+                                {(v.ipAddress || v.deviceFingerprint) && (
+                                  <p className="text-[10px] text-neutral-500 mt-1 flex items-center gap-3">
+                                    {v.ipAddress && <span>IP: {v.ipAddress}</span>}
+                                    {v.deviceFingerprint && <span>Thiết bị: {v.deviceFingerprint}</span>}
+                                  </p>
+                                )}
+                              </div>
+                              <span className="text-[10px] text-neutral-600 font-mono shrink-0">
+                                {formatTime(v.occurredAt)}
+                              </span>
+                            </div>
+                          )
+                        })
+                      )}
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+
+                {/* DQ Confirmation Modal */}
+                {dqConfirm === student.studentId && (
+                  <div className="px-5 pb-5 shadow-md border-0 border-t-0 -red-500/10">
+                    <div className="mt-4 p-4 rounded-xl bg-red-500/5 -red-500/10 space-y-3">
+                      <p className="text-xs font-bold text-red-400">Loại thí sinh: {student.studentName}</p>
+                      <input
+                        type="text"
+                        placeholder="Nhập lý do loại..."
+                        value={dqReason}
+                        onChange={e => setDqReason(e.target.value)}
+                        className="w-full px-3 py-2 bg-black/40 -white/10 rounded-lg text-sm text-neutral-200 outline-none focus:-red-500/50"
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          className="bg-red-600 hover:bg-red-500 text-white text-xs"
+                          onClick={() => handleDisqualify(student.studentId)}
+                        >
+                          Xác nhận loại
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-neutral-400 text-xs"
+                          onClick={() => {
+                            setDqConfirm(null)
+                            setDqReason('')
+                          }}
+                        >
+                          Hủy
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>

@@ -18,7 +18,7 @@ export function CategoryDropdown({ value, onChange }: CategoryDropdownProps) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await categoryService.list({ pageSize: 25 })
+        const res = await categoryService.list({ hasCourse: true, pageSize: 25 })
         setCategories(res.items.filter(c => c.isActive))
       } catch {
         setCategories([])
@@ -43,24 +43,26 @@ export function CategoryDropdown({ value, onChange }: CategoryDropdownProps) {
   const selectedCategory = categories.find(c => c.id === value)
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative w-full">
       {/* Trigger */}
       <button
         onClick={() => setOpen(!open)}
-        className="group flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium shadow-sm transition-all duration-200 hover:border-primary/40 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary/30"
+        className="group flex w-full items-center justify-between gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium shadow-sm transition-all duration-200 hover:border-primary/40 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary/30"
       >
-        <Filter className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
-        <span className={selectedCategory ? 'text-foreground' : 'text-muted-foreground'}>
-          {loading ? 'Đang tải...' : selectedCategory ? selectedCategory.name : 'Tất cả danh mục'}
+        <span className="flex min-w-0 items-center gap-2">
+          <Filter className="h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
+          <span className={`truncate ${selectedCategory ? 'text-foreground' : 'text-muted-foreground'}`}>
+            {loading ? 'Đang tải...' : selectedCategory ? selectedCategory.name : 'Tất cả danh mục'}
+          </span>
         </span>
         <ChevronDown
-          className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
         />
       </button>
 
       {/* Dropdown */}
       {open && !loading && (
-        <div className="absolute left-0 top-full z-50 mt-2 min-w-[240px] max-h-[320px] overflow-y-auto rounded-xl border border-border bg-popover shadow-xl animate-in fade-in-0 zoom-in-95 duration-150">
+        <div className="absolute left-0 top-full z-50 mt-2 max-h-[320px] w-full overflow-y-auto rounded-xl border border-border bg-popover shadow-xl animate-in fade-in-0 zoom-in-95 duration-150">
           <div className="p-1.5">
             {/* All option */}
             <button
@@ -73,7 +75,7 @@ export function CategoryDropdown({ value, onChange }: CategoryDropdownProps) {
               }`}
             >
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-slate-400 to-gray-500 text-white text-xs font-bold shadow-sm">
-                All
+                TC
               </span>
               <span>Tất cả danh mục</span>
             </button>

@@ -25,7 +25,7 @@ trigger: always_on
 
 ## Layer Responsibilities
 
-### API
+### CourseMate.API
 - Handle authentication & authorization
 - Process HTTP requests/responses
 - Call Application via MediatR
@@ -42,7 +42,7 @@ trigger: always_on
   - NoContent() for no data
 ---
 
-### Application
+### CourseMate.Application
 - Contains business logic
 - Follows **CQRS pattern**
   - Command → write operations
@@ -78,14 +78,46 @@ trigger: always_on
   Do not use `DbContext.[Entities].AsQueryable()`
 ---
 
-### Contracts
+
+### CourseMate.Application.Tests
+- Test only handlers in CourseMate.Application (CommandHandler, QueryHandler).
+- Do not test controllers or middleware here.
+- Put tests in Commands/<Feature>/<HandlerName>Tests.cs or Queries/<Feature>/<HandlerName>Tests.cs.
+- Use method name format: Handle_Should<Expected>_When<Condition>.
+- Follow Arrange - Act - Assert.
+- Always use TestInfrastructure/TestDbContextScope.cs.
+- Each test file must have private readonly TestContainer _testContainer = new();.
+- TestContainer must be a private sealed class inside the same *Tests.cs file.
+- TestContainer constructor must create context from TestDbContextScope(UserId, Roles.Admin).
+- TestContainer constructor must seed test data directly.
+- Do not create seed helper methods like SeedCategoryAsync(...), SeedCourseAsync(...).
+- Use CreateWriteDbContext() for command tests.
+- Use CreateReadOnlyDbContext() for query tests.
+- Tests use EF Core InMemory.
+- TestDbContextScope ignores FileEntryEmbedding to avoid pgvector Vector mapping issues.
+- For commands: call SaveChangesAsync() when checking persisted data.
+- Validate exact exception type for error paths (BusinessException, EntityNotFoundException, etc.).
+- If BusinessException, also assert ErrorCode.
+- For list queries, cover filter, sorting, and pagination.
+- Assertions must match seeded data (example: HasCourse = true can return multiple items if constructor seeded multiple categories with courses).
+- Each test must be independent.
+- Do not share mutable state between tests.
+- Category references for writing new tests:
+- Commands/Categories/CreateCategoryCommandHandlerTests.cs
+- Commands/Categories/UpdateCategoryCommandHandlerTests.cs
+- Commands/Categories/DeleteCategoryCommandHandlerTests.cs
+- Queries/Categories/GetCategoryByIdQueryHandlerTests.cs
+- Queries/Categories/GetListCategoriesQueryHandlerTests.cs
+---
+
+### CourseMate.Contracts
 - Shared DTOs (Response), reuse across handlers
 - DTO must be POCO classes (no inheritance, no logic)
 - Enums & constants across projects
 - No business logic
 ---
 
-### Persistent
+### CourseMate.Persistent
 - Handles database
 - No business logic
 - Contains:

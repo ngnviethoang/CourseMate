@@ -1,4 +1,4 @@
-﻿namespace CourseMate.Contracts.Constants;
+namespace CourseMate.Contracts.Constants;
 
 public static class Roles
 {

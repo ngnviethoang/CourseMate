@@ -1,0 +1,44 @@
+using CourseMate.Application.Shared;
+using CourseMate.Contracts.Constants;
+using CourseMate.Persistent;
+using CourseMate.Persistent.ExtensionMethods;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+
+namespace CourseMate.Application.Commands.Lessons;
+
+public class DeleteLessonCommand : IRequest<Unit>
+{
+    public Guid Id { get; set; }
+}
+
+public sealed class DeleteLessonCommandHandler : AbstractCommandHandler<DeleteLessonCommand, Unit>
+{
+    public DeleteLessonCommandHandler(
+        CourseMateDbContext dbContext,
+        IHttpContextAccessor httpContextAccessor) : base(dbContext, httpContextAccessor)
+    {
+    }
+
+    public override async Task<Unit> Handle(DeleteLessonCommand request, CancellationToken ct)
+    {
+        bool canDelete = await (
+                from lesson in DbContext.Lessons
+                join course in DbContext.Courses
+                    on lesson.CourseId equals course.Id
+                where lesson.Id == request.Id
+                select new { lesson, course }
+            )
+            .WhereIf(IsInRole(Roles.Instructor), x => x.course.InstructorId == CurrentUserId)
+            .AnyAsync(ct);
+
+        if (!canDelete)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        await DbContext.Lessons.RemoveByIdAsync(request.Id, ct);
+        return Unit.Value;
+    }
+}

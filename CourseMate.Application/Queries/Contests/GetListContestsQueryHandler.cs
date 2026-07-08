@@ -15,7 +15,7 @@ public class GetListContestsQuery : GetListQuery<ContestDto>
     public ContestStatus? Status { get; set; }
 }
 
-internal sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetListContestsQuery, PagedDto<ContestDto>>
+public sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetListContestsQuery, PagedDto<ContestDto>>
 {
     public GetListContestsQueryHandler(CourseMateReadOnlyDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         : base(dbContext, httpContextAccessor)
@@ -24,6 +24,8 @@ internal sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetList
 
     public override async Task<PagedDto<ContestDto>> Handle(GetListContestsQuery request, CancellationToken ct)
     {
+        bool isFilterGuid = Guid.TryParse(request.Filter, out Guid filterId);
+
         IQueryable<ContestDto> query =
             from contest in DbContext.Contests
             join user in DbContext.Users on contest.CreatorId equals user.Id
@@ -43,6 +45,7 @@ internal sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetList
                 CreatorId = contest.CreatorId,
                 CreatorName = user.UserName,
                 CreationTime = contest.CreationTime,
+                LastModificationTime = contest.LastModificationTime,
                 ExerciseCount = DbContext.ContestExercises.Count(x => x.ContestId == contest.Id),
                 ParticipantCount = DbContext.ContestRegistrations.Count(x => x.ContestId == contest.Id)
             };
@@ -50,7 +53,8 @@ internal sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetList
         query = query
             .WhereIf(IsInRole(Roles.Instructor), x => x.CreatorId == CurrentUserId)
             .WhereIf(IsInRole(Roles.Student), x => x.Status != ContestStatus.Draft)
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
+            .WhereIf(isFilterGuid, x => x.Id == filterId)
+            .WhereIf(!isFilterGuid && !string.IsNullOrWhiteSpace(request.Filter), x => EF.Functions.ILike(x.Title, $"%{request.Filter}%"))
             .WhereIf(request.Status.HasValue, x => x.Status == request.Status);
 
         query = request.Sorting switch
@@ -59,6 +63,7 @@ internal sealed class GetListContestsQueryHandler : AbstractQueryHandler<GetList
             "title_desc" => query.OrderByDescending(x => x.Title),
             "startTime" => query.OrderBy(x => x.StartTime),
             "startTime_desc" => query.OrderByDescending(x => x.StartTime),
+            "lastModificationTime_desc" => query.OrderByDescending(x => x.LastModificationTime),
             _ => query.OrderByDescending(x => x.CreationTime)
         };
 

@@ -20,7 +20,9 @@ public class LessonDto
 
     public LessonType LessonType { get; set; }
 
-    public int Position { get; set; }
+    public string Position { get; set; } = string.Empty;
+
+    public int SortOrder { get; set; }
 
     public DateTimeOffset CreationTime { get; set; }
 

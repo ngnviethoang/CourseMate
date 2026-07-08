@@ -14,7 +14,7 @@ public class CreateEnrollmentFreeCommand : IRequest<ResultIdDto>
     public Guid CourseId { get; set; }
 }
 
-internal sealed class CreateEnrollmentFreeCommandHandler : AbstractCommandHandler<CreateEnrollmentFreeCommand, ResultIdDto>
+public sealed class CreateEnrollmentFreeCommandHandler : AbstractCommandHandler<CreateEnrollmentFreeCommand, ResultIdDto>
 {
     public CreateEnrollmentFreeCommandHandler(
         CourseMateDbContext dbContext,

@@ -12,7 +12,9 @@ public class ChapterDto
 
     public string Title { get; set; } = string.Empty;
 
-    public int Position { get; set; }
+    public string Position { get; set; } = string.Empty;
+
+    public int SortOrder { get; set; }
 
     public DateTimeOffset CreationTime { get; set; }
 
