@@ -1,0 +1,145 @@
+# ĐÁNH GIÁ HỆ THỐNG COURSEMATE
+**LMS + Online Judge + Recommendation System** (.NET 9 + Next.js 16 + PostgreSQL/pgvector)
+
+---
+
+## 1. TỔNG QUAN
+
+| Mục | Thông tin |
+|---|---|
+| **Tên** | CourseMate |
+| **Kiến trúc Backend** | Clean Architecture: API → Application → Persistent → Contracts |
+| **Frontend** | Next.js 16 (App Router) + React 19 + TypeScript + Tailwind 4 + shadcn/ui |
+| **Database** | PostgreSQL 16 + pgvector (vector search) |
+| **AI/LLM** | Google AI + Ollama (self-hosted) |
+| **Real-time** | SignalR (NotificationHub, ContestHub) |
+| **Background Job** | Hangfire |
+| **Auth** | ASP.NET Core Identity + JWT |
+| **Thanh toán** | PayOS |
+| **Logging** | Serilog |
+| **Số controllers (BE)** | 12 (Auth, Course, Chapter, Lesson, Exercise, Contest, CodeRunner, File, Order, Payment, Notification, User, Dashboard, Category) |
+| **Số module quản trị (FE)** | 11 (categories, chapters, contests, courses, exercises, lessons, orders, pending-instructors, profile, recommendation-effectiveness, settings, users) |
+| **Số entities** | ~40 entities (chia 8 nhóm: User, Khóa học, Enrollment, Bài tập, Cuộc thi, Đơn hàng, Recommendation, Hệ thống) |
+
+---
+
+## 2. CHỨC NĂNG CHÍNH
+
+| Nhóm | Chức năng cụ thể |
+|---|---|
+| **Xác thực & phân quyền** | Đăng ký/đăng nhập JWT, 4 role (Admin/Manager/Instructor/Student), phê duyệt giảng viên |
+| **Quản lý khóa học** | Category → Course → Chapter → Lesson (Video/Reading/Quiz/Coding/Material); CRUD đầy đủ; Publish/Unpublish |
+| **Bài giảng đa dạng** | 5 loại lesson: Video, Reading, Quiz, Coding, Material (AI-generate outline từ PDF/Word) |
+| **Hệ thống bài tập** | Exercise + TestCase (ẩn/công khai) + DefaultCode + Example + Submission (auto-grading) |
+| **Cuộc thi lập trình** | Contest + Registration + Anti-Cheat (5 level) + Violation tracking + Leaderboard + Disqualify/Reinstate + Prize theo rank |
+| **Code execution** | Online compiler (OnlineCompilerOptions), chấm bài tự động qua test case |
+| **Thương mại** | Cart → Order → PayOS payment → Auto-enrollment sau thanh toán |
+| **Gợi ý (Hybrid)** | 4 chiến lược: Content (0.35) + Collaborative (0.25) + Weakness (0.30) + Popularity (0.10) |
+| **AI Tutor** | Upload PDF/Word → Parse + tự sinh outline bài học (Ollama/Google AI) |
+| **Embedding search** | pgvector lưu vector 768 chiều cho course (chuẩn bị cho semantic search) |
+| **Realtime** | Notification realtime + Contest realtime (start, submit, leaderboard) |
+| **File management** | Upload theo chunk, lưu trên local storage, hỗ trợ embedding cho từng đoạn |
+| **Tracking tiến độ** | UserLessonProgress, Review/Rating, Enrollment |
+| **Analytics Admin** | Tổng quan Recommendation, top courses hiệu quả, hiệu suất cá nhân hóa |
+
+---
+
+## 3. BẢNG ƯU – NHƯỢC ĐIỂM
+
+### 3.1 ƯU ĐIỂM
+
+| # | Ưu điểm | Mô tả chi tiết |
+|---|---|---|
+| 1 | **Kiến trúc Backend chuẩn** | Clean Architecture (Domain → Application → Infrastructure → API) + CQRS/MediatR → dễ test, dễ mở rộng, tách biết rõ ràng |
+| 2 | **Tính năng LMS rất phong phú** | 5 loại lesson, kèm AI sinh outline từ tài liệu – hiếm thấy ở các LMS đồ án |
+| 3 | **Online Judge tích hợp** | Chấm bài tự động qua test case, đa ngôn ngữ, contest + leaderboard + anti-cheat 5 cấp độ |
+| 4 | **Recommendation Hybrid** | Kết hợp 4 chiến lược (Content + Collaborative + Weakness + Popularity), có Explainability (Reasons + Explanation tiếng Việt) |
+| 5 | **Có Explainability** | Mỗi gợi ý kèm lý do cụ thể (FavouriteCategory, WeakArea, SimilarToEnrolled…), tăng độ tin cậy |
+| 6 | **Skill Profile thông minh** | Phân theo (Category, Difficulty), MasteryScore = PassRate×0.7 + ScoreRate×0.3, xác định điểm yếu/mạnh |
+| 7 | **Vector Search (pgvector)** | Đã chuẩn bị hạ tầng cho semantic search (CourseEmbedding 768-dim), sẵn sàng mở rộng |
+| 8 | **Realtime đầy đủ** | SignalR cho Notification + Contest (start, submit, leaderboard cập nhật trực tiếp) |
+| 9 | **Background Job với Hangfire** | Tái tạo Skill Profile, dọn dẹp, schedule tách biệt request |
+| 10 | **Soft Delete + Audit chuẩn** | Mọi entity kế thừa base Entity: Id, RowVersion, CreationTime, LastModificationTime, IsDeleted |
+| 11 | **Phân quyền chi tiết** | Authorize theo Role ở từng endpoint, `[Authorize(Roles = "Admin,Instructor")]` rõ ràng |
+| 12 | **UX/UI hiện đại** | shadcn/ui + Tailwind 4 + Monaco Editor + Recharts + Sonner (toast) → giao diện đẹp, chuyên nghiệp |
+| 13 | **Docker Compose sẵn sàng** | pgvector/pgvector:pg16, ollama, api – chỉ 1 lệnh `docker compose up` là chạy được |
+| 14 | **Có Swagger + XML doc** | API self-documented |
+| 15 | **Test project riêng** | CourseMate.Application.Tests (xUnit) cho unit test |
+| 16 | **Logging có hệ thống** | Serilog + HttpLoggingMiddleware + CorrelationId |
+| 17 | **Phân tầng domain rõ ràng** | 8 nhóm entity (Auth, Course, Enrollment, Exercise, Contest, Order, Recommendation, System) |
+| 18 | **Tài liệu phong phú** | Có sẵn README, All_Entities_Table, ER_Diagram, Recommendation_UseCase_Documentation, slide thuyết trình |
+
+### 3.2 NHƯỢC ĐIỂM
+
+| # | Nhược điểm | Mức độ | Ghi chú |
+|---|---|---|---|
+| 1 | **Content-based còn sơ khai** | Cao | Chỉ dùng category affinity, **chưa tận dụng CourseEmbedding/pgvector** trong scoring (đã nhận trong tài liệu) |
+| 2 | **Cold start chưa xử lý tốt** | Trung bình | Học viên mới chưa có skill profile/preference → ít cá nhân hóa, fallback chưa rõ ràng |
+| 3 | **Contest không có Category** | Trung bình | Khó gợi ý contest theo sở thích; chỉ dùng heuristic "đang diễn ra / sắp tới" |
+| 4 | **Collaborative chưa tinh vi** | Trung bình | Dựa trên peer pass rate ±0.15, chưa dùng Matrix Factorization hoặc embeddings người dùng |
+| 5 | **Chưa rõ refresh strategy** | Thấp | AutoRefresh=true nhưng Hangfire job tự động rebuild chưa thấy rõ cấu hình |
+| 6 | **File storage local** | Trung bình | Lưu `etc/uploads` – không scale, không có CDN, không có S3/MinIO |
+| 7 | **Thiếu caching layer** | Trung bình | Chưa thấy Redis/MemoryCache → query analytics nặng, recommendation có thể chậm khi nhiều user |
+| 8 | **Chưa có CI/CD** | Thấp | Không thấy `.github/workflows/` chứa pipeline test/deploy tự động (chỉ có thư mục rỗng `.github`) |
+| 9 | **Thiếu rate limiting** | Trung bình | API chưa cấu hình rate limit → dễ bị spam CodeRunner/Recommendation |
+| 10 | **Tài liệu API public chưa có versioning** | Thấp | Chưa thấy `/api/v1/...`, refactor sẽ vỡ client |
+| 11 | **Anti-cheat chỉ ở mức tracking** | Trung bình | Ghi nhận Violation nhưng chưa rõ cơ chế phát hiện tự động (Tab switch, copy/paste…) |
+| 12 | **Thiếu i18n** | Thấp | Hard-code tiếng Việt trong một số response (Explanation của Recommendation), khó mở rộng đa ngôn ngữ |
+| 13 | **Thiếu E2E test** | Trung bình | Chỉ có Application.Tests, chưa có integration/E2E test cho FE |
+| 14 | **Repository pattern chưa đồng nhất** | Thấp | Có vẻ mix giữa EF trực tiếp và Repository → khó maintain khi team lớn |
+| 15 | **Submission chưa rõ queue** | Thấp | CodeRunnerController có nhưng chưa rõ dùng Hangfire hay real-time → dễ block request khi chấm bài lâu |
+| 16 | **Thiếu audit log thao tác nhạy cảm** | Thấp | Thanh toán, refund, disqualify chưa có log riêng |
+| 17 | **Chưa có health check endpoint** | Thấp | Production cần `/health` để k8s probe |
+| 18 | **Hard-code JWT key path** | Thấp | `configuration["Jwt:Key"]!` không null-check kỹ |
+
+---
+
+## 4. ĐIỂM TỰ CHẤM (THANG 10)
+
+| Tiêu chí | Trọng số | Điểm (10) | Điểm có trọng số | Nhận xét |
+|---|---:|---:|---:|---|
+| **Độ phong phú chức năng** | 20% | **9.5** | 1.90 | LMS + OJ + Recommendation + AI + Payment + Realtime → cực kỳ đầy đủ, vượt mức đồ án |
+| **Kiến trúc & thiết kế** | 15% | **9.0** | 1.35 | Clean Architecture + CQRS chuẩn; thiếu caching layer & rate limit |
+| **Chất lượng AI/Recommendation** | 15% | **7.5** | 1.13 | Hybrid 4 chiến lược + Explainability tốt; nhưng chưa tận dụng vector search đã chuẩn bị |
+| **Bảo mật & phân quyền** | 10% | **8.0** | 0.80 | Identity + JWT + Role-based tốt; thiếu rate limit, 2FA chưa bật |
+| **UI/UX** | 10% | **8.5** | 0.85 | shadcn/ui + Monaco + Recharts + Tailwind 4 hiện đại; còn ít responsive check |
+| **Realtime & Hiệu năng** | 10% | **8.0** | 0.80 | SignalR + Hangfire đầy đủ; chưa có Redis cache |
+| **Khả năng mở rộng (Scalability)** | 5% | **6.5** | 0.33 | File local, chưa CDN, chưa có Redis → khó scale lớn |
+| **Test & CI/CD** | 5% | **6.0** | 0.30 | Có unit test, chưa có E2E và pipeline tự động |
+| **Tài liệu & báo cáo** | 5% | **9.5** | 0.48 | README, ER diagram, Use case doc, slide thuyết trình – rất công phu |
+| **DevOps & triển khai** | 5% | **8.0** | 0.40 | Docker Compose đầy đủ (db + ollama + api); thiếu health check, CI/CD |
+| **TỔNG** | **100%** | – | **8.34 / 10** | Hệ thống rất tốt, đầy đủ và chuyên nghiệp, vượt mức đồ án |
+
+---
+
+## 5. TÓM TẮT NHANH
+
+```
+┌────────────────────────────────────────────────────────┐
+│              CourseMate – Self-Score                   │
+│                                                        │
+│   ★ Điểm tổng:       8.3 / 10                        │
+│   ★ Xếp loại:        Giỏi – Xuất sắc (đồ án)         │
+│                                                        │
+│   ✅ Điểm sáng:                                      │
+│      • Feature cực kỳ phong phú                       │
+│      • Clean Architecture chuẩn                       │
+│      • Recommendation có Explainability                │
+│      • AI tự sinh outline bài học                     │
+│      • UI hiện đại (Next.js 16 + shadcn/ui)           │
+│                                                        │
+│   ⚠ Cần cải thiện:                                   │
+│      • Dùng pgvector cho content-based                │
+│      • Thêm Redis cache cho recommendation            │
+│      • Bật rate limit + 2FA                          │
+│      • Thêm CI/CD + E2E test                         │
+│      • Anti-cheat auto-detection                     │
+│      • Chuẩn hóa Repository pattern                  │
+└────────────────────────────────────────────────────────┘
+```
+
+---
+
+**Người đánh giá:** Cursor Assistant  
+**Ngày:** 05/07/2026  
+**Dựa trên:** Phân tích source code CourseMate.API, CourseMate.Application, CourseMate.Persistent, CourseMate.Contracts, coursemate-ui, docker-compose.yml và tài liệu liên quan.

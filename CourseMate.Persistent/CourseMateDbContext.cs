@@ -11,7 +11,6 @@ namespace CourseMate.Persistent;
 
 public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
 {
-    private const string SoftDeletionFilter = "SoftDeletionFilter";
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public CourseMateDbContext(DbContextOptions<CourseMateDbContext> options, IHttpContextAccessor httpContextAccessor)
@@ -53,6 +52,8 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
     public DbSet<ContestRegistration> ContestRegistrations { get; set; }
     public DbSet<ContestSubmission> ContestSubmissions { get; set; }
     public DbSet<AntiCheatViolation> AntiCheatViolations { get; set; }
+    public DbSet<StudentSkillProfile> StudentSkillProfiles { get; set; }
+    public DbSet<StudentPreference> StudentPreferences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -60,18 +61,6 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
         modelBuilder.HasPostgresExtension("citext");
         modelBuilder.HasPostgresExtension("vector");
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
-
-        /*foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
-        {
-            if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
-            {
-                ParameterExpression parameter = Expression.Parameter(entityType.ClrType, "i");
-                MemberExpression isDeletedProperty = Expression.Property(parameter, nameof(ISoftDelete.IsDeleted));
-                UnaryExpression notIsDeleted = Expression.Not(isDeletedProperty);
-                LambdaExpression lambda = Expression.Lambda(notIsDeleted, parameter);
-                modelBuilder.Entity(entityType.ClrType).HasQueryFilter(SoftDeletionFilter, lambda);
-            }
-        }*/
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -113,12 +102,6 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
                         break;
                 }
             }
-
-            /*if (entry is { Entity: ISoftDelete softDelete, State: EntityState.Deleted })
-            {
-                entry.State = EntityState.Modified;
-                softDelete.IsDeleted = true;
-            }*/
         }
     }
 

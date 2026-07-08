@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { ShoppingCart, LogOut, User, ChevronDown, BookMarked, Trophy, Code2, Home } from 'lucide-react'
+import { ShoppingCart, LogOut, User, ChevronDown, BookMarked, Trophy, Code2, Home, Brain } from 'lucide-react'
 import { removeToken } from '@/lib/auth-token.util'
 import { CourseMateLogoIcon } from '@/components/icons/coursemate-logo'
 import { buttonVariants } from '@/components/ui/button'
@@ -42,7 +42,8 @@ const NAV_LINKS = [
   { href: '/', label: 'Trang chủ', icon: Home },
   { href: '/my-courses', label: 'Khoá học của tôi', icon: BookMarked },
   { href: '/contests', label: 'Cuộc thi', icon: Trophy },
-  { href: '/exercises', label: 'Bài tập', icon: Code2 }
+  { href: '/exercises', label: 'Bài tập', icon: Code2 },
+  { href: '/skill-analysis', label: 'Phân tích năng lực', icon: Brain }
 ]
 
 export function StudentHeader() {

@@ -8,6 +8,8 @@ import { HeroSection } from '@/components/home/hero-section'
 import { ContinueLearning } from '@/components/home/continue-learning'
 import { CategoryDropdown } from '@/components/home/category-dropdown'
 import { RecommendedCourses } from '@/components/home/recommended-courses'
+import { RecommendedCoursesTop5 } from '@/components/home/recommended-courses-top5'
+import { RecommendedExercisesTop5 } from '@/components/home/recommended-exercises-top5'
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -35,6 +37,11 @@ export default function Home() {
 
       <main className="mx-auto max-w-7xl space-y-12 px-4 py-12 sm:px-6 lg:px-8">
         {!searchQuery && isLoggedIn && <ContinueLearning />}
+
+        {/* Featured Recommendation – Top 5 Courses */}
+        {isLoggedIn && !searchQuery && !selectedCategoryId && (
+          <RecommendedCoursesTop5 source="home" />
+        )}
 
         {/* Search + Category filter bar */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">

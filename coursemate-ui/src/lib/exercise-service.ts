@@ -11,6 +11,11 @@ export const exerciseService = {
     sorting?: string
   }) => api.get<PagedDto<ExerciseDto>>('/api/exercises', { params }),
 
+  getRecommended: async (pageIndex = 1, pageSize = 5): Promise<PagedDto<ExerciseDto>> => {
+    const params = new URLSearchParams({ pageIndex: String(pageIndex), pageSize: String(pageSize) })
+    return api.get<PagedDto<ExerciseDto>>(`/api/exercises/recommended?${params}`)
+  },
+
   getById: (id: string) => api.get<ExerciseDetailDto>(`/api/exercises/${id}`),
 
   getStudentExerciseById: (id: string) => api.get<ExerciseDetailDto>(`/api/exercises/${id}/student`),

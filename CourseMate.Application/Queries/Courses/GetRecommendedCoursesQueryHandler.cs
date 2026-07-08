@@ -12,7 +12,7 @@ namespace CourseMate.Application.Queries.Courses;
 public class GetRecommendedCoursesQuery : IRequest<PagedDto<CourseDto>>
 {
     public int PageIndex { get; set; } = 1;
-    public int PageSize { get; set; } = 10;
+    public int PageSize { get; set; } = 5;
 }
 
 internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<GetRecommendedCoursesQuery, PagedDto<CourseDto>>
@@ -26,7 +26,6 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
     {
         Guid studentId = CurrentUserId;
 
-        // Step 1: Collect student's purchase history (purchased courses + their categories).
         HashSet<Guid> purchasedCourseIds = await (
             from order in DbContext.Orders
             join item in DbContext.OrderItems on order.Id equals item.OrderId
@@ -40,16 +39,12 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
             select course.CategoryId
         ).ToHashSetAsync(ct);
 
-        // Step 2: Build the candidate query. Popularity is expressed as a *correlated scalar subquery*
-        // in the ORDER BY clause so EF Core translates it to a single SQL statement
-        // (SELECT COUNT(...) ... WHERE CourseId = c.Id AND Status = 2). This avoids the
-        // "GroupBy inside LeftJoin not translatable" failure.
-        IQueryable<CourseDto> candidates =
+        const int candidateLimit = 500;
+        List<CourseDto> fetched = await (
             from course in DbContext.Courses
             join category in DbContext.Categories on course.CategoryId equals category.Id
             join instructor in DbContext.Users on course.InstructorId equals instructor.Id
-            where course.IsPublished
-                  && !purchasedCourseIds.Contains(course.Id)
+            where course.IsPublished && !purchasedCourseIds.Contains(course.Id)
             orderby (
                 from oi in DbContext.OrderItems
                 join o in DbContext.Orders on oi.OrderId equals o.Id
@@ -71,19 +66,14 @@ internal sealed class GetRecommendedCoursesQueryHandler : AbstractQueryHandler<G
                 InstructorName = instructor.UserName,
                 CreationTime = course.CreationTime,
                 LastModificationTime = course.LastModificationTime
-            };
+            }
+        ).Take(candidateLimit).ToListAsync(ct);
 
-        // Step 3: Pull a bounded candidate set ordered by popularity (SQL already sorts it).
-        const int candidateLimit = 500;
-        List<CourseDto> fetched = await candidates.Take(candidateLimit).ToListAsync(ct);
-
-        // Step 4: Personalize purely in-memory over the bounded set.
         bool hasPersonalSignal = purchasedCategoryIds.Count > 0;
-        HashSet<Guid> purchasedCategories = purchasedCategoryIds;
 
         List<CourseDto> ordered = hasPersonalSignal
             ? fetched
-                .OrderByDescending(c => purchasedCategories.Contains(c.CategoryId) ? 1 : 0)
+                .OrderByDescending(c => purchasedCategoryIds.Contains(c.CategoryId) ? 1 : 0)
                 .ThenByDescending(c => c.CreationTime)
                 .ToList()
             : fetched;

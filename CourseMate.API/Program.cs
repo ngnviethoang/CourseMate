@@ -3,6 +3,7 @@ using CourseMate.API.Hubs;
 using CourseMate.API.Middlewares;
 using CourseMate.API.Services;
 using CourseMate.Application;
+using CourseMate.Application.BackgroundJobs;
 using CourseMate.Application.Services.NotificationServices;
 using CourseMate.Application.Shared;
 using CourseMate.Contracts.Options;
@@ -163,6 +164,9 @@ try
     app.MapHub<NotificationHub>("/hubs/notification").RequireCors("SignalRHubs");
     app.MapHub<ContestHub>("/hubs/contest").RequireCors("SignalRHubs");
     app.MapHangfireDashboard();
+    RecurringJob.AddOrUpdate<RefreshStudentSkillProfilesJob>(
+        job => job.ExecuteAsync(CancellationToken.None),
+        Cron.Daily(3));
     Log.Information("Starting web host");
     await app.RunAsync();
 }

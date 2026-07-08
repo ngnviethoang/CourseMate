@@ -28,9 +28,6 @@ internal sealed class GetRecommendationEffectivenessQueryHandler
     {
         DateTimeOffset cutoff = DateTimeOffset.UtcNow.AddDays(-30);
 
-        // Total recommended views = unique student/course pairs produced by the recommendation endpoint over time.
-        // Without an analytics table we approximate "recommended views" by counting how many distinct completed
-        // orders trace back to a course that the student had been recommended (i.e. purchase within the last 30 days).
         List<Guid> allCourseIds = await DbContext.Courses
             .Where(c => c.IsPublished)
             .Select(c => c.Id)
@@ -41,7 +38,6 @@ internal sealed class GetRecommendationEffectivenessQueryHandler
             .Where(u => DbContext.Orders.Any(o => o.StudentId == u.Id && o.Status == OrderStatus.Completed))
             .CountAsync(ct);
 
-        // Students considered "personalized" = those who already paid for ≥1 course (so we know their category affinity).
         HashSet<Guid> personalizedStudentIds = await (
             from order in DbContext.Orders
             where order.Status == OrderStatus.Completed
@@ -51,7 +47,6 @@ internal sealed class GetRecommendationEffectivenessQueryHandler
         int personalizedCount = personalizedStudentIds.Count;
         int coldStartCount = Math.Max(0, activeStudents - personalizedCount);
 
-        // Recent orders (used for conversions).
         var recentOrders = await (
             from order in DbContext.Orders
             join item in DbContext.OrderItems on order.Id equals item.OrderId
@@ -62,14 +57,10 @@ internal sealed class GetRecommendationEffectivenessQueryHandler
         int totalRecent = recentOrders.Count;
         int totalEnrollments = recentOrders.Select(r => r.StudentId).Distinct().Count();
 
-        // Top converting courses — courses that generated most enrolled-from-recommendation orders.
         Dictionary<Guid, int> courseEnrollments = recentOrders
             .GroupBy(r => r.CourseId)
             .ToDictionary(g => g.Key, g => g.Count());
 
-        // Recommended views per course ≈ equals the number of times a course appeared in the rec pool for a student.
-        // Without telemetry we approximate by counting the number of distinct students who have at least one paid
-        // order. This maps directly to how often the course can be surfaced.
         var studentsPerCourse = await (
             from order in DbContext.Orders
             join item in DbContext.OrderItems on order.Id equals item.OrderId
@@ -112,7 +103,6 @@ internal sealed class GetRecommendationEffectivenessQueryHandler
             })
             .ToList();
 
-        // Category breakdown
         var categoryBreakdownRaw = topCourses
             .Where(t => courseMeta.ContainsKey(t.CourseId))
             .GroupBy(t => courseMeta[t.CourseId].CategoryName)
@@ -128,7 +118,6 @@ internal sealed class GetRecommendationEffectivenessQueryHandler
             .OrderByDescending(x => x.Enrollments)
             .ToList();
 
-        // Daily trend (last 14 days).
         DateTimeOffset trendFrom = DateTimeOffset.UtcNow.AddDays(-14).Date;
         var trendRaw = recentOrders
             .Where(r => r.CreationTime >= trendFrom)

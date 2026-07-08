@@ -580,3 +580,67 @@ export interface RecommendationEffectivenessDto {
   dailyTrend: RecommendationEffectivenessTrendPointDto[]
   metrics: RecommendationEffectivenessMetricsDto
 }
+
+// ─── Student Skill Analysis (Self) ───────────────────────────────────────────
+
+export interface OverallMasteryDto {
+  masteryScore: number
+  skillLevel: string
+  totalAttempts: number
+  passedAttempts: number
+  passRate: number
+  attemptedExercises: number
+  categoriesCovered: number
+}
+
+export interface SkillAreaDto {
+  category: string
+  difficulty: string
+  difficultyLevel: number
+  totalAttempts: number
+  passedAttempts: number
+  passRate: number
+  averageScore: number
+  masteryScore: number
+  isWeakArea: boolean
+  summary: string
+  improvementHints: string[]
+  lastAttemptedAt: string
+}
+
+export interface SkillProgressPointDto {
+  date: string
+  submissions: number
+  passed: number
+  passRate: number
+}
+
+export interface RecommendedExerciseDto {
+  id: string
+  title: string
+  category: string
+  difficulty: string
+  reason: string
+  creatorName: string
+}
+
+export interface RecommendedCourseDto {
+  id: string
+  title: string
+  categoryName: string
+  reason: string
+  instructorName: string
+}
+
+export interface StudentSkillAnalysisDto {
+  studentId: string
+  studentName: string
+  generatedAt: string
+  overall: OverallMasteryDto
+  strengths: SkillAreaDto[]
+  weakAreas: SkillAreaDto[]
+  recentProgress: SkillProgressPointDto[]
+  recommendedExercises: RecommendedExerciseDto[]
+  recommendedCourses: RecommendedCourseDto[]
+  tips: string[]
+}

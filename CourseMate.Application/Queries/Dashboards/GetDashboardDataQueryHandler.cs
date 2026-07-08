@@ -19,7 +19,6 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
 
     public override async Task<DashboardDto> Handle(GetDashboardDataQuery request, CancellationToken ct)
     {
-        // 1. Basic Stats
         decimal totalRevenue = await DbContext.Orders
             .Where(o => o.Status == OrderStatus.Completed)
             .SumAsync(o => o.TotalAmount, ct);
@@ -28,7 +27,6 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
         int totalCourses = await DbContext.Courses.CountAsync(ct);
         int totalOrders = await DbContext.Orders.CountAsync(ct);
 
-        // 2. Revenue By Month (Last 12 Months)
         DateTimeOffset twelveMonthsAgo = DateTimeOffset.UtcNow.AddMonths(-11);
         twelveMonthsAgo = new DateTimeOffset(twelveMonthsAgo.Year, twelveMonthsAgo.Month, 1, 0, 0, 0, twelveMonthsAgo.Offset);
 
@@ -48,7 +46,6 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
             })
             .ToList();
 
-        // 3. Top 5 Courses
         List<TopCourseDto> topCourses = await (
             from orderItem in DbContext.OrderItems
             join order in DbContext.Orders on orderItem.OrderId equals order.Id
@@ -66,7 +63,6 @@ internal sealed class GetDashboardDataQueryHandler : AbstractQueryHandler<GetDas
             }
         ).Take(5).ToListAsync(ct);
 
-        // 4. Top 5 Instructors
         List<TopInstructorDto> topInstructors = await (
             from orderItem in DbContext.OrderItems
             join order in DbContext.Orders on orderItem.OrderId equals order.Id

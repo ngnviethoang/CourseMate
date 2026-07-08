@@ -1,4 +1,5 @@
 ﻿using CourseMate.Application.Queries.Dashboards;
+using CourseMate.Application.Queries.SkillAnalysis;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using MediatR;
@@ -31,6 +32,13 @@ public class DashboardController : ControllerBase
     public async Task<ActionResult> GetRecommendationEffectivenessAsync()
     {
         RecommendationEffectivenessDto result = await _mediator.Send(new GetRecommendationEffectivenessQuery());
+        return Ok(result);
+    }
+
+    [HttpGet("dashboard/skill-analysis")]
+    public async Task<ActionResult> GetStudentSkillAnalysisAsync()
+    {
+        StudentSkillAnalysisDto result = await _mediator.Send(new GetStudentSkillAnalysisQuery());
         return Ok(result);
     }
 }
