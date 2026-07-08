@@ -40,7 +40,8 @@ import {
   ResponsiveContainer,
   BarChart,
   Bar,
-  Cell
+  Cell,
+  LabelList
 } from 'recharts'
 import { dashboardService } from '@/lib/dashboard-service'
 import { StudentSkillAnalysisDto } from '@/lib/types'
@@ -53,6 +54,21 @@ const SKILL_LEVEL_COLORS: Record<string, string> = {
   'Sơ cấp': 'bg-orange-500/10 text-orange-700 border-orange-200',
   'Mới bắt đầu': 'bg-rose-500/10 text-rose-700 border-rose-200',
   'Chưa có dữ liệu': 'bg-slate-500/10 text-slate-700 border-slate-200'
+}
+
+function getMasteryColor(masteryScore: number, isWeak: boolean): string {
+  // Yếu: dùng tông đỏ từ đậm -> nhạt theo mastery tăng
+  if (isWeak) {
+    if (masteryScore <= 10) return '#B91C1C'   // đỏ đậm (rất yếu / 0%)
+    if (masteryScore <= 25) return '#DC2626'   // đỏ vừa
+    if (masteryScore <= 40) return '#F87171'   // đỏ nhạt
+    return '#FCA5A5'                            // hồng (sắp qua ngưỡng 50%)
+  }
+  // Mạnh: dùng tông xanh từ nhạt -> đậm theo mastery tăng
+  if (masteryScore >= 90) return '#059669'     // xanh đậm (xuất sắc)
+  if (masteryScore >= 75) return '#10B981'     // xanh vừa
+  if (masteryScore >= 60) return '#34D399'     // xanh nhạt
+  return '#6EE7B7'                              // xanh rất nhạt (vừa khá)
 }
 
 export default function SkillAnalysisPage() {
@@ -287,18 +303,21 @@ export default function SkillAnalysisPage() {
         <Card className="border-none shadow-xl shadow-foreground/5 rounded-2xl">
           <CardHeader>
             <CardTitle className="text-xl font-bold">Bản đồ năng lực theo chủ đề</CardTitle>
-            <CardDescription>Điểm Mastery 0–100 cho từng chủ đề (đỏ = điểm yếu, xanh = điểm mạnh).</CardDescription>
+            <CardDescription>
+              Điểm Mastery 0–100 cho từng chủ đề (đỏ đậm = rất yếu, đỏ nhạt = yếu, xanh nhạt = trung bình, xanh đậm = rất mạnh).
+            </CardDescription>
           </CardHeader>
-          <CardContent className="h-[360px]">
+          <CardContent className="h-[420px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 layout="vertical"
                 data={[...data.weakAreas, ...data.strengths].map(a => ({
                   name: `${a.category} (${a.difficulty})`,
-                  mastery: a.masteryScore,
+                  mastery: Math.max(a.masteryScore, 0.01),
+                  masteryRaw: a.masteryScore,
                   isWeak: a.isWeakArea
                 }))}
-                margin={{ left: 80 }}
+                margin={{ left: 80, right: 60 }}
               >
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f0f0f0" />
                 <XAxis type="number" domain={[0, 100]} axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
@@ -310,11 +329,26 @@ export default function SkillAnalysisPage() {
                   tick={{ fontSize: 11 }}
                   width={150}
                 />
-                <Tooltip contentStyle={{ borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                <Tooltip
+                  contentStyle={{ borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                  formatter={(value: number, _name: string, props: { payload?: { masteryRaw: number; isWeak: boolean } }) => {
+                    const raw = props.payload?.masteryRaw ?? value
+                    return [`${raw.toFixed(1)}%`, 'Mastery']
+                  }}
+                />
                 <Bar dataKey="mastery" radius={[0, 6, 6, 0]}>
                   {[...data.weakAreas, ...data.strengths].map((a, i) => (
-                    <Cell key={i} fill={a.isWeakArea ? '#EF4444' : '#10B981'} />
+                    <Cell
+                      key={i}
+                      fill={getMasteryColor(a.masteryScore, a.isWeakArea)}
+                    />
                   ))}
+                  <LabelList
+                    dataKey="masteryRaw"
+                    position="right"
+                    formatter={(v: number) => `${v.toFixed(1)}%`}
+                    style={{ fontSize: 10, fill: '#475569', fontWeight: 600 }}
+                  />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>

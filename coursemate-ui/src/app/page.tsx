@@ -36,17 +36,15 @@ export default function Home() {
       <HeroSection />
 
       <main className="mx-auto max-w-7xl space-y-12 px-4 py-12 sm:px-6 lg:px-8">
+        {/* Featured Recommendation – Top 5 Courses */}
+        {isLoggedIn && <RecommendedCoursesTop5 source="home" />}
+
         {!searchQuery && isLoggedIn && <ContinueLearning />}
 
-        {/* Featured Recommendation – Top 5 Courses */}
-        {isLoggedIn && !searchQuery && !selectedCategoryId && (
-          <RecommendedCoursesTop5 source="home" />
-        )}
-
         {/* Search + Category filter bar */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           {/* Search input */}
-          <div className="relative flex-1 max-w-md">
+          <div className="relative flex-1">
             <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Tìm khoá học, chủ đề, giảng viên…"
@@ -65,7 +63,9 @@ export default function Home() {
           </div>
 
           {/* Category dropdown */}
-          <CategoryDropdown value={selectedCategoryId} onChange={setSelectedCategoryId} />
+          <div className="w-full sm:w-64 shrink-0">
+            <CategoryDropdown value={selectedCategoryId} onChange={setSelectedCategoryId} />
+          </div>
         </div>
 
         <RecommendedCourses

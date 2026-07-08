@@ -68,46 +68,48 @@ export default function CatalogPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 space-y-6">
-        {/* Search + category filter pills */}
-        <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between animate-in fade-in slide-in-from-bottom-2 duration-500">
-          <div className="group relative w-full sm:w-96">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 space-y-4">
+        {/* Search */}
+        <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <div className="group relative w-full">
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
             <Input
               type="search"
               placeholder="Tìm kiếm khóa học..."
-              className="h-10 rounded-full border-input bg-card pl-9 shadow-sm transition-all hover:border-primary/40 focus-visible:ring-primary/30"
+              className="h-11 rounded-full border-input bg-card pl-11 shadow-sm transition-all hover:border-primary/40 focus-visible:ring-primary/30"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
           </div>
-          <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:justify-end">
+        </div>
+
+        {/* Category filter pills */}
+        <div className="flex w-full flex-wrap gap-2 animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <button
+            type="button"
+            className={`cursor-pointer rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
+              selectedCategory === ''
+                ? 'bg-primary text-primary-foreground shadow-md'
+                : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
+            }`}
+            onClick={() => setSelectedCategory('')}
+          >
+            Tất cả
+          </button>
+          {categories.map(cat => (
             <button
+              key={cat.id}
               type="button"
               className={`cursor-pointer rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                selectedCategory === ''
+                selectedCategory === cat.id
                   ? 'bg-primary text-primary-foreground shadow-md'
                   : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
               }`}
-              onClick={() => setSelectedCategory('')}
+              onClick={() => setSelectedCategory(cat.id)}
             >
-              Tất cả
+              {cat.name}
             </button>
-            {categories.map(cat => (
-              <button
-                key={cat.id}
-                type="button"
-                className={`cursor-pointer rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                  selectedCategory === cat.id
-                    ? 'bg-primary text-primary-foreground shadow-md'
-                    : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
-                }`}
-                onClick={() => setSelectedCategory(cat.id)}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
+          ))}
         </div>
 
         {loading ? (

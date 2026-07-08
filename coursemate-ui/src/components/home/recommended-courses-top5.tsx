@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { BookOpen, ChevronRight, Loader2, ShoppingCart, Sparkles, Star, Zap } from 'lucide-react'
+import { BookOpen, ChevronRight, Loader2, ShoppingCart, Star } from 'lucide-react'
 
-import { courseService } from '@/lib/course-service'
 import { orderService } from '@/lib/order-service'
-import { CourseDto } from '@/lib/types'
+import { recommendationService, RecommendedCourseDto } from '@/lib/recommendation-service'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
@@ -34,7 +33,7 @@ interface Props {
 
 export function RecommendedCoursesTop5({ source = 'home', title = 'Top 5 gợi ý cho bạn', topN = 5 }: Props) {
   const router = useRouter()
-  const [courses, setCourses] = useState<CourseDto[]>([])
+  const [courses, setCourses] = useState<RecommendedCourseDto[]>([])
   const [loading, setLoading] = useState(true)
   const [addingId, setAddingId] = useState<string | null>(null)
 
@@ -42,8 +41,8 @@ export function RecommendedCoursesTop5({ source = 'home', title = 'Top 5 gợi �
     let cancelled = false
     const load = async () => {
       try {
-        const res = await courseService.getRecommendedCourses(1, topN)
-        if (!cancelled) setCourses((res.items || []).slice(0, topN))
+        const res = await recommendationService.getForMe(topN)
+        if (!cancelled) setCourses((res || []).slice(0, topN))
       } catch {
         if (!cancelled) setCourses([])
       } finally {
@@ -56,7 +55,7 @@ export function RecommendedCoursesTop5({ source = 'home', title = 'Top 5 gợi �
     }
   }, [topN])
 
-  const handleAction = async (e: React.MouseEvent, course: CourseDto) => {
+  const handleAction = async (e: React.MouseEvent, course: RecommendedCourseDto) => {
     e.preventDefault()
     e.stopPropagation()
     try {
@@ -129,7 +128,7 @@ function RecommendedCourseCard({
   isAdding,
   onAction
 }: {
-  course: CourseDto
+  course: RecommendedCourseDto
   rank: number
   gradient: string
   rating: number
@@ -180,7 +179,7 @@ function RecommendedCourseCard({
           {course.title}
         </h3>
         <p className="mt-1 line-clamp-1 text-[11px] text-muted-foreground">
-          {course.instructorName ?? 'Instructor'}
+          {course.categoryName || 'Khóa học'}
         </p>
 
         <div className="mt-2 flex items-center gap-2 text-[11px]">
