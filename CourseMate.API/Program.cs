@@ -1,5 +1,4 @@
 using System.Text;
-using System.Text.Json.Serialization;
 using CourseMate.API.BackgroundServices;
 using CourseMate.API.Hubs;
 using CourseMate.API.Middlewares;
@@ -100,17 +99,16 @@ try
         .AddRoles<IdentityRole<Guid>>()
         .AddEntityFrameworkStores<CourseMateDbContext>()
         .AddDefaultTokenProviders();
-    builder.Services.Configure<IdentityOptions>(options => { options.User.RequireUniqueEmail = true; });
+    builder.Services.Configure<IdentityOptions>(options =>
+    {
+        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-";
+        options.User.RequireUniqueEmail = true;
+    });
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(configuration.GetConnectionString("CourseMate")!);
     builder.Services.AddHangfireServer();
+    builder.Services.AddSignalR();
     builder.Services.AddHostedService<ContestBackgroundService>();
-    builder.Services.AddSignalR().AddJsonProtocol(options =>
-    {
-        // FE sends enum values as strings (e.g. "TabSwitch"). Without this converter,
-        // System.Text.Json (used by SignalR) cannot deserialize them into ViolationType enum.
-        options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
     builder.Services.AddTransient<INotificationService, NotificationService>();
     builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
@@ -161,8 +159,7 @@ try
     });
 
     WebApplication app = builder.Build();
-    // await app.Services.SeedTnitialAsync();
-    // await app.Services.SeedLessonOrderDataAsync();
+    // await app.Services.SeedAsync();
     app.UseHsts();
     app.UseHttpsRedirection();
     app.UseStaticFiles(new StaticFileOptions
@@ -178,19 +175,29 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseMiddleware<HttpLoggingMiddleware>();
-    // app.MapGroup("/api/auth").MapIdentityApi<User>();
+    // app.MapGroup("/api/auth").MapIdentityApi<IdentityUser<Guid>>();
     app.MapControllers();
     app.MapHub<NotificationHub>("/hubs/notification").RequireCors("SignalRHubs");
     app.MapHub<ContestHub>("/hubs/contest").RequireCors("SignalRHubs");
     app.MapHub<ChatHub>("/hubs/chat").RequireCors("SignalRHubs");
     app.MapHangfireDashboard();
 
+    RecurringJob.AddOrUpdate<RefreshStudentSkillProfilesJob>(
+        "refresh-student-skill-profiles",
+        job => job.ExecuteAsync(CancellationToken.None),
+        Cron.Daily(3));
     RecurringJob.AddOrUpdate<BuildCourseSimilarityJob>(
-        "build-course-similarity", job => job.ExecuteAsync(CancellationToken.None), Cron.Daily);
+        "build-course-similarity",
+        job => job.ExecuteAsync(CancellationToken.None),
+        Cron.Daily);
     RecurringJob.AddOrUpdate<BuildCoOccurrenceJob>(
-        "build-course-cooccurrence", job => job.ExecuteAsync(CancellationToken.None), Cron.Daily);
+        "build-course-cooccurrence",
+        job => job.ExecuteAsync(CancellationToken.None),
+        Cron.Daily);
     RecurringJob.AddOrUpdate<BuildUserRecommendationsJob>(
-        "build-user-recommendations", job => job.ExecuteAsync(CancellationToken.None), Cron.Daily);
+        "build-user-recommendations",
+        job => job.ExecuteAsync(CancellationToken.None),
+        Cron.Daily);
 
     Log.Information("Starting web host");
     await app.RunAsync();

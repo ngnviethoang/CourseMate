@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using CourseMate.Persistent.Entities.Abstracts;
 using Microsoft.AspNetCore.Identity;
 
@@ -15,9 +14,6 @@ public class User : IdentityUser<Guid>, IAuditable, ISoftDelete
     }
 
     public override Guid Id { get; set; }
-
-    [Timestamp]
-    public uint RowVersion { get; set; }
 
     public bool IsApproved { get; set; } = true;
 

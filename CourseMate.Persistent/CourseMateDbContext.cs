@@ -53,6 +53,8 @@ public sealed class CourseMateDbContext : IdentityDbContext<User, IdentityRole<G
     public DbSet<ContestRegistration> ContestRegistrations { get; set; }
     public DbSet<ContestSubmission> ContestSubmissions { get; set; }
     public DbSet<AntiCheatViolation> AntiCheatViolations { get; set; }
+    public DbSet<StudentSkillProfile> StudentSkillProfiles { get; set; }
+    public DbSet<StudentPreference> StudentPreferences { get; set; }
     public DbSet<ContestPrize> ContestPrizes { get; set; }
     public DbSet<ChatConversation> ChatConversations { get; set; }
     public DbSet<ChatMessage> ChatMessages { get; set; }
@@ -69,16 +71,16 @@ public sealed class CourseMateDbContext : IdentityDbContext<User, IdentityRole<G
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
 
         /*foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
-        {
-            if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
-            {
-                ParameterExpression parameter = Expression.Parameter(entityType.ClrType, "i");
-                MemberExpression isDeletedProperty = Expression.Property(parameter, nameof(ISoftDelete.IsDeleted));
-                UnaryExpression notIsDeleted = Expression.Not(isDeletedProperty);
-                LambdaExpression lambda = Expression.Lambda(notIsDeleted, parameter);
-                modelBuilder.Entity(entityType.ClrType).HasQueryFilter(SoftDeletionFilter, lambda);
-            }
-        }*/
+       {
+           if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+           {
+               ParameterExpression parameter = Expression.Parameter(entityType.ClrType, "i");
+               MemberExpression isDeletedProperty = Expression.Property(parameter, nameof(ISoftDelete.IsDeleted));
+               UnaryExpression notIsDeleted = Expression.Not(isDeletedProperty);
+               LambdaExpression lambda = Expression.Lambda(notIsDeleted, parameter);
+               modelBuilder.Entity(entityType.ClrType).HasQueryFilter(SoftDeletionFilter, lambda);
+           }
+       }*/
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -113,29 +115,11 @@ public sealed class CourseMateDbContext : IdentityDbContext<User, IdentityRole<G
                     case EntityState.Added:
                         auditable.CreationTime = now;
                         break;
-
                     case EntityState.Modified:
                         auditable.LastModificationTime = now;
                         break;
                 }
             }
-
-            if (entry.Entity is IMayHaveUser mayHaveUser)
-            {
-                switch (entry.State)
-                {
-                    case EntityState.Added:
-                    case EntityState.Modified:
-                        mayHaveUser.UserId = userId;
-                        break;
-                }
-            }
-
-            /*if (entry is { Entity: ISoftDelete softDelete, State: EntityState.Deleted })
-            {
-                entry.State = EntityState.Modified;
-                softDelete.IsDeleted = true;
-            }*/
         }
     }
 

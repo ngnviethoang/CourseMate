@@ -1,4 +1,6 @@
 ﻿using CourseMate.Application.Queries.Dashboards;
+using CourseMate.Application.Queries.SkillAnalysis;
+using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +24,21 @@ public class DashboardController : ControllerBase
     public async Task<ActionResult> GetDashboardDataAsync()
     {
         DashboardDto result = await _mediator.Send(new GetDashboardDataQuery());
+        return Ok(result);
+    }
+
+    [HttpGet("dashboard/recommendation-effectiveness")]
+    [Authorize(Roles = Roles.Admin)]
+    public async Task<ActionResult> GetRecommendationEffectivenessAsync()
+    {
+        RecommendationEffectivenessDto result = await _mediator.Send(new GetRecommendationEffectivenessQuery());
+        return Ok(result);
+    }
+
+    [HttpGet("dashboard/skill-analysis")]
+    public async Task<ActionResult> GetStudentSkillAnalysisAsync()
+    {
+        StudentSkillAnalysisDto result = await _mediator.Send(new GetStudentSkillAnalysisQuery());
         return Ok(result);
     }
 }

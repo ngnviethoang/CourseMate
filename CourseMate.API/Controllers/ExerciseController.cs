@@ -30,6 +30,14 @@ public class ExerciseController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("recommended")]
+    [Authorize(Roles = Roles.Student)]
+    public async Task<ActionResult> GetRecommendedExercisesAsync([FromQuery] GetRecommendedExercisesQuery request)
+    {
+        PagedDto<ExerciseDto> result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult> GetExerciseByIdAsync(Guid id)
     {

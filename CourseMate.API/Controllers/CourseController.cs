@@ -11,11 +11,11 @@ using CourseMate.Application.Queries.Reviews;
 using CourseMate.Contracts.Constants;
 using CourseMate.Contracts.DTOs;
 using CourseMate.Contracts.DTOs.Commons;
-using CourseMate.Contracts.DTOs.Recommendations;
 using CourseMate.Contracts.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecommendedCourseDto = CourseMate.Contracts.DTOs.Recommendations.RecommendedCourseDto;
 
 namespace CourseMate.API.Controllers;
 

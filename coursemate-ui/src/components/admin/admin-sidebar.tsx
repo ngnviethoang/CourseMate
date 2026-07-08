@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { toast } from 'sonner'
 import {
   LayoutGrid,
   BookOpen,
@@ -14,7 +13,7 @@ import {
   UserCheck,
   Code2,
   Trophy,
-  Images
+  Sparkles
 } from 'lucide-react'
 import {
   Sidebar,
@@ -29,15 +28,15 @@ import {
 } from '@/components/ui/sidebar'
 
 const navItems = [
-  { href: '/management', label: 'Tổng quan', icon: LayoutGrid, roles: ['Admin', 'Instructor'] },
-  { href: '/management/categories', label: 'Danh mục', icon: Tag, roles: ['Admin'] },
-  { href: '/management/courses', label: 'Khóa học', icon: BookOpen, roles: ['Admin', 'Instructor'] },
+  { href: '/management', label: 'Dashboard', icon: LayoutGrid, roles: ['Admin', 'Instructor'] },
+  { href: '/management/categories', label: 'Categories', icon: Tag, roles: ['Admin'] },
+  { href: '/management/courses', label: 'Courses', icon: BookOpen, roles: ['Admin', 'Instructor'] },
   { href: '/management/exercises', label: 'Bài tập', icon: Code2, roles: ['Admin', 'Instructor'] },
   { href: '/management/contests', label: 'Cuộc thi', icon: Trophy, roles: ['Admin', 'Instructor'] },
-  { href: '/management/users', label: 'Người dùng', icon: Users, roles: ['Admin'] },
-  { href: '/management/instructors', label: 'Giảng viên', icon: UserCheck, roles: ['Admin'] },
-  { href: '/management/orders', label: 'Đơn hàng', icon: ShoppingCart, roles: ['Admin', 'Instructor'] },
-  { href: '/management/banners', label: 'Banner', icon: Images, roles: ['Admin'] }
+  { href: '/management/users', label: 'Users', icon: Users, roles: ['Admin'] },
+  { href: '/management/pending-instructors', label: 'Instructor Approvals', icon: UserCheck, roles: ['Admin'] },
+  { href: '/management/recommendation-effectiveness', label: 'Recommendation Effectiveness', icon: Sparkles, roles: ['Admin'] },
+  { href: '/management/orders', label: 'Orders', icon: ShoppingCart, roles: ['Admin', 'Instructor'] }
 ]
 
 export function AdminSidebar() {
@@ -74,7 +73,7 @@ export function AdminSidebar() {
           <div>
             <p className="text-sm font-bold text-white leading-none">CourseMate</p>
             <p className="text-[11px] text-white/70 mt-0.5">
-              {role === 'Instructor' ? 'Bảng điều khiển giảng viên' : 'Bảng điều khiển quản trị'}
+              {role === 'Instructor' ? 'Instructor Panel' : 'Admin Panel'}
             </p>
           </div>
         </div>
@@ -83,40 +82,25 @@ export function AdminSidebar() {
       <SidebarContent className="pt-2">
         <SidebarGroup>
           <SidebarGroupLabel className="text-[11px] uppercase tracking-widest text-muted-foreground/70 px-4 mb-1">
-            Quản lý
+            Management
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-0.5 px-2">
-              {filteredItems.map(({ href, label, icon: Icon, disabled, disabledReason }) => {
-                const isDisabled = Boolean(disabled)
-                const active = !isDisabled && pathname === href
+              {filteredItems.map(({ href, label, icon: Icon }) => {
+                const active = pathname === href
                 return (
                   <SidebarMenuItem key={href}>
                     <button
-                      onClick={() => {
-                        if (isDisabled) {
-                          toast.info(disabledReason ?? 'Tính năng này chưa khả dụng.')
-                          return
-                        }
-                        router.push(href)
-                      }}
-                      aria-disabled={isDisabled}
+                      onClick={() => router.push(href)}
                       className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-150
                         ${
                           active
                             ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/30 font-medium'
-                            : isDisabled
-                              ? 'cursor-not-allowed text-foreground/40'
-                              : 'text-foreground/70 hover:bg-primary/10 hover:text-primary'
+                            : 'text-foreground/70 hover:bg-primary/10 hover:text-primary'
                         }`}
                     >
                       <Icon className="size-4 shrink-0" />
                       <span>{label}</span>
-                      {isDisabled && (
-                        <span className="ml-auto rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                          Soon
-                        </span>
-                      )}
                       {active && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary-foreground/70" />}
                     </button>
                   </SidebarMenuItem>
@@ -136,7 +120,7 @@ export function AdminSidebar() {
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-400 transition-colors"
         >
           <LogOut className="size-4 shrink-0" />
-          <span className="font-medium">Đăng xuất</span>
+          <span className="font-medium">Logout</span>
         </button>
       </SidebarFooter>
     </Sidebar>

@@ -46,6 +46,8 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<User, Identi
     public DbSet<ContestRegistration> ContestRegistrations { get; set; }
     public DbSet<ContestSubmission> ContestSubmissions { get; set; }
     public DbSet<AntiCheatViolation> AntiCheatViolations { get; set; }
+    public DbSet<StudentSkillProfile> StudentSkillProfiles { get; set; }
+    public DbSet<StudentPreference> StudentPreferences { get; set; }
     public DbSet<ContestPrize> ContestPrizes { get; set; }
     public DbSet<ChatConversation> ChatConversations { get; set; }
     public DbSet<ChatMessage> ChatMessages { get; set; }
@@ -60,16 +62,16 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<User, Identi
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssemblyReference).Assembly);
 
         /*foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
-        {
-            if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
-            {
-                ParameterExpression parameter = Expression.Parameter(entityType.ClrType, "i");
-                MemberExpression isDeletedProperty = Expression.Property(parameter, nameof(ISoftDelete.IsDeleted));
-                UnaryExpression notIsDeleted = Expression.Not(isDeletedProperty);
-                LambdaExpression lambda = Expression.Lambda(notIsDeleted, parameter);
-                modelBuilder.Entity(entityType.ClrType).HasQueryFilter(SoftDeletionFilter, lambda);
-            }
-        }*/
+       {
+           if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+           {
+               ParameterExpression parameter = Expression.Parameter(entityType.ClrType, "i");
+               MemberExpression isDeletedProperty = Expression.Property(parameter, nameof(ISoftDelete.IsDeleted));
+               UnaryExpression notIsDeleted = Expression.Not(isDeletedProperty);
+               LambdaExpression lambda = Expression.Lambda(notIsDeleted, parameter);
+               modelBuilder.Entity(entityType.ClrType).HasQueryFilter(SoftDeletionFilter, lambda);
+           }
+       }*/
     }
 
     public override int SaveChanges()
