@@ -16,9 +16,6 @@ public class User : IdentityUser<Guid>, IAuditable, ISoftDelete
 
     public override Guid Id { get; set; }
 
-    [Timestamp]
-    public uint RowVersion { get; set; }
-
     public bool IsApproved { get; set; } = true;
 
     public DateTimeOffset CreationTime { get; set; }

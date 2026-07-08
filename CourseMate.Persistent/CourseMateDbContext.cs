@@ -11,6 +11,7 @@ namespace CourseMate.Persistent;
 
 public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
 {
+    private const string SoftDeletionFilter = "SoftDeletionFilter";
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public CourseMateDbContext(DbContextOptions<CourseMateDbContext> options, IHttpContextAccessor httpContextAccessor)
@@ -61,6 +62,18 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
         modelBuilder.HasPostgresExtension("citext");
         modelBuilder.HasPostgresExtension("vector");
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
+        
+        /*foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
+       {
+           if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+           {
+               ParameterExpression parameter = Expression.Parameter(entityType.ClrType, "i");
+               MemberExpression isDeletedProperty = Expression.Property(parameter, nameof(ISoftDelete.IsDeleted));
+               UnaryExpression notIsDeleted = Expression.Not(isDeletedProperty);
+               LambdaExpression lambda = Expression.Lambda(notIsDeleted, parameter);
+               modelBuilder.Entity(entityType.ClrType).HasQueryFilter(SoftDeletionFilter, lambda);
+           }
+       }*/
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -94,11 +107,9 @@ public sealed class CourseMateDbContext : IdentityDbContext<IdentityUser<Guid>, 
                 {
                     case EntityState.Added:
                         auditable.CreationTime = now;
-                        auditable.UserId = userId;
                         break;
                     case EntityState.Modified:
                         auditable.LastModificationTime = now;
-                        auditable.UserId = userId;
                         break;
                 }
             }

@@ -8,6 +8,8 @@ namespace CourseMate.Persistent;
 
 public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
 {
+    private const string SoftDeletionFilter = "SoftDeletionFilter";
+
     public CourseMateReadOnlyDbContext(DbContextOptions<CourseMateReadOnlyDbContext> options) : base(options)
     {
     }
@@ -52,6 +54,18 @@ public sealed class CourseMateReadOnlyDbContext : IdentityDbContext<IdentityUser
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssemblyReference).Assembly);
+
+        /*foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
+       {
+           if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+           {
+               ParameterExpression parameter = Expression.Parameter(entityType.ClrType, "i");
+               MemberExpression isDeletedProperty = Expression.Property(parameter, nameof(ISoftDelete.IsDeleted));
+               UnaryExpression notIsDeleted = Expression.Not(isDeletedProperty);
+               LambdaExpression lambda = Expression.Lambda(notIsDeleted, parameter);
+               modelBuilder.Entity(entityType.ClrType).HasQueryFilter(SoftDeletionFilter, lambda);
+           }
+       }*/
     }
 
     public override int SaveChanges()
