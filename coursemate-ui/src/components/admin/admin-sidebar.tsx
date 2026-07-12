@@ -28,15 +28,15 @@ import {
 } from '@/components/ui/sidebar'
 
 const navItems = [
-  { href: '/management', label: 'Dashboard', icon: LayoutGrid, roles: ['Admin', 'Instructor'] },
-  { href: '/management/categories', label: 'Categories', icon: Tag, roles: ['Admin'] },
-  { href: '/management/courses', label: 'Courses', icon: BookOpen, roles: ['Admin', 'Instructor'] },
+  { href: '/management', label: 'Bảng điều khiển', icon: LayoutGrid, roles: ['Admin', 'Instructor'] },
+  { href: '/management/categories', label: 'Danh mục', icon: Tag, roles: ['Admin'] },
+  { href: '/management/courses', label: 'Khóa học', icon: BookOpen, roles: ['Admin', 'Instructor'] },
   { href: '/management/exercises', label: 'Bài tập', icon: Code2, roles: ['Admin', 'Instructor'] },
   { href: '/management/contests', label: 'Cuộc thi', icon: Trophy, roles: ['Admin', 'Instructor'] },
-  { href: '/management/users', label: 'Users', icon: Users, roles: ['Admin'] },
-  { href: '/management/pending-instructors', label: 'Instructor Approvals', icon: UserCheck, roles: ['Admin'] },
-  { href: '/management/recommendation-effectiveness', label: 'Recommendation Effectiveness', icon: Sparkles, roles: ['Admin'] },
-  { href: '/management/orders', label: 'Orders', icon: ShoppingCart, roles: ['Admin', 'Instructor'] }
+  { href: '/management/users', label: 'Người dùng', icon: Users, roles: ['Admin'] },
+  // { href: '/management/pending-instructors', label: 'Phê duyệt giảng viên', icon: UserCheck, roles: ['Admin'] },
+  { href: '/management/recommendation-effectiveness', label: 'Hiệu quả gợi ý', icon: Sparkles, roles: ['Admin'] },
+  { href: '/management/orders', label: 'Đơn hàng', icon: ShoppingCart, roles: ['Admin', 'Instructor'] }
 ]
 
 export function AdminSidebar() {

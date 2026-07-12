@@ -181,6 +181,10 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
     }
   }
 
+  const isYoutubeUrl = (url: string) => {
+    return /(?:youtube\.com|youtu\.be)/.test(url);
+  };
+
   return (
     <div className="rounded-xl bg-card p-6 shadow-md border-0 space-y-6">
       <div className="flex items-center justify-between">
@@ -294,17 +298,26 @@ export function VideoUploadSection({ lessonId, initialVideoUrl }: { lessonId: st
           {videoUrl ? (
             <div className="space-y-3">
               <div className="relative w-[951px] h-[535px] max-w-full mx-auto overflow-hidden rounded-xl bg-transparent">
-                <Player.Provider key={videoUrl}>
-                  <MinimalVideoSkin className="w-full h-full rounded-xl">
-                    <VideoJsVideo
-                      src={videoUrl}
-                      autoPlay={autoPlayVideo}
-                      playsInline
-                      controlsList="nodownload noremoteplayback"
-                      className="w-full h-full object-contain"
-                    />
-                  </MinimalVideoSkin>
-                </Player.Provider>
+                {isYoutubeUrl(videoUrl) ? (
+                  <iframe
+                    src={videoUrl}
+                    className="w-full h-full rounded-xl"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <Player.Provider key={videoUrl}>
+                    <MinimalVideoSkin className="w-full h-full rounded-xl">
+                      <VideoJsVideo
+                        src={videoUrl}
+                        autoPlay={autoPlayVideo}
+                        playsInline
+                        controlsList="nodownload noremoteplayback"
+                        className="w-full h-full object-contain"
+                      />
+                    </MinimalVideoSkin>
+                  </Player.Provider>
+                )}
               </div>
               <p className="text-xs text-muted-foreground">Video đã liên kết với bài học và sẵn sàng phát.</p>
             </div>
