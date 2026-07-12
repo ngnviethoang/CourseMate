@@ -1,0 +1,354 @@
+erDiagram
+    USER {
+        guid Id PK
+        string UserName
+        string Email
+        bool IsApproved
+    }
+    CATEGORY {
+        guid Id PK
+        string Name
+        bool IsActive
+    }
+    COURSE {
+        guid Id PK
+        string Title
+        decimal Price
+        string ImageUrl
+        bool IsPublished
+        guid CategoryId FK
+        guid InstructorId FK
+    }
+    CHAPTER {
+        guid Id PK
+        guid CourseId FK
+        string Title
+        string Position
+    }
+    LESSON {
+        guid Id PK
+        guid ChapterId FK
+        guid CourseId FK
+        string Title
+        string LessonType
+        string Position
+    }
+    LESSON_VIDEO {
+        guid Id PK
+        guid LessonId FK
+        string VideoUrl
+    }
+    LESSON_READING {
+        guid Id PK
+        guid LessonId FK
+        string Content
+    }
+    LESSON_CODING {
+        guid Id PK
+        guid LessonId FK
+        guid ExerciseId FK
+    }
+    LESSON_QUIZ {
+        guid Id PK
+        guid LessonId FK
+        string Description
+        int PassingScore
+    }
+    LESSON_QUIZ_QUESTION {
+        guid Id PK
+        guid LessonQuizId FK
+        string Text
+        int Position
+    }
+    LESSON_QUIZ_ANSWER {
+        guid Id PK
+        guid LessonQuizQuestionId FK
+        string Text
+        bool IsCorrect
+        int Position
+    }
+    LESSON_MATERIAL {
+        guid Id PK
+        guid LessonId FK
+        string Outline
+        guid DocumentFileId FK
+        string Status
+    }
+    ENROLLMENT {
+        guid Id PK
+        guid StudentId FK
+        guid CourseId FK
+    }
+    USER_LESSON_PROGRESS {
+        guid Id PK
+        guid StudentId FK
+        guid LessonId FK
+        bool IsCompleted
+        double Score
+    }
+    REVIEW {
+        guid Id PK
+        guid CourseId FK
+        guid StudentId FK
+        int Rating
+        string Comment
+    }
+    CART {
+        guid Id PK
+        guid StudentId FK
+    }
+    CART_ITEM {
+        guid Id PK
+        guid CartId FK
+        guid CourseId FK
+    }
+    ORDER {
+        guid Id PK
+        guid StudentId FK
+        decimal TotalAmount
+        string Status
+        string Description
+    }
+    ORDER_ITEM {
+        guid Id PK
+        guid OrderId FK
+        guid CourseId FK
+        decimal Price
+    }
+    PAYMENT_TRANSACTION {
+        guid Id PK
+        guid OrderId FK
+        string Status
+        decimal Amount
+        string Provider
+        string TransactionId
+    }
+    NOTIFICATION {
+        guid Id PK
+        guid ReceiverId FK
+        string Title
+        string Message
+        bool IsRead
+    }
+    EXERCISE {
+        guid Id PK
+        string Title
+        string Difficulty
+        string Category
+        guid CreatorId FK
+        bool IsHidden
+    }
+    EXERCISE_EXAMPLE {
+        guid Id PK
+        guid ExerciseId FK
+        string Input
+        string Output
+    }
+    EXERCISE_TEST_CASE {
+        guid Id PK
+        guid ExerciseId FK
+        string Input
+        string ExpectedOutput
+        bool IsHidden
+    }
+    EXERCISE_DEFAULT_CODE {
+        guid Id PK
+        guid ExerciseId FK
+        string Language
+        string StarterCode
+    }
+    EXERCISE_SUBMISSION {
+        guid Id PK
+        guid ExerciseId FK
+        string Language
+        string Code
+        bool IsPassed
+        double Score
+    }
+    CONTEST {
+        guid Id PK
+        string Title
+        string Status
+        date StartTime
+        date EndTime
+        int DurationInMinutes
+        guid CreatorId FK
+        int MaxViolations
+    }
+    CONTEST_EXERCISE {
+        guid Id PK
+        guid ContestId FK
+        guid ExerciseId FK
+        int ScoreWeight
+        int Order
+    }
+    CONTEST_PRIZE {
+        guid Id PK
+        guid ContestId FK
+        guid CourseId FK
+        int MinRank
+        int MaxRank
+    }
+    CONTEST_REGISTRATION {
+        guid Id PK
+        guid ContestId FK
+        guid StudentId FK
+        date RegistrationTime
+        bool IsDisqualified
+        int ViolationCount
+    }
+    CONTEST_SUBMISSION {
+        guid Id PK
+        guid ContestId FK
+        guid ExerciseId FK
+        guid StudentId FK
+        string Language
+        string Code
+        int Score
+        bool IsFinal
+    }
+    ANTI_CHEAT_VIOLATION {
+        guid Id PK
+        guid ContestId FK
+        guid StudentId FK
+        string ViolationType
+        string Details
+        date OccurredAt
+    }
+    CHAT_CONVERSATION {
+        guid Id PK
+        guid UserId FK
+        string Title
+        guid CourseId
+        guid LessonId
+    }
+    CHAT_MESSAGE {
+        guid Id PK
+        guid ConversationId FK
+        string Role
+        string Content
+    }
+    FILE_ENTRY {
+        guid Id PK
+        string FileName
+        double FileSize
+        string FileLocation
+        string Status
+        string FileType
+    }
+    FILE_CHUNK {
+        guid Id PK
+        guid FileEntryId FK
+        int ChunkIndex
+        string ChunkLocation
+        bool IsUploaded
+    }
+    FILE_ENTRY_EMBEDDING {
+        guid Id PK
+        guid FileEntryId FK
+        guid FileChunkId FK
+        int StartIndex
+        int EndIndex
+        string ShortText
+        vector Embedding
+    }
+    COURSE_EMBEDDING {
+        guid Id PK
+        guid CourseId FK
+        vector Embedding
+    }
+    COURSE_SIMILARITY {
+        guid Id PK
+        guid CourseId FK
+        guid SimilarCourseId FK
+        double Score
+    }
+    COURSE_CO_OCCURRENCE {
+        guid Id PK
+        guid CourseId FK
+        guid CoCourseId FK
+        double Weight
+        int CoCount
+    }
+    USER_RECOMMENDATION {
+        guid Id PK
+        guid UserId FK
+        guid CourseId FK
+        double Score
+        int Rank
+        date GeneratedAt
+    }
+    STUDENT_PREFERENCE {
+        guid Id PK
+        guid StudentId FK
+        jsonb FavouriteCategories
+        int PreferredDifficulty
+        string SkillLevel
+        bool AutoRefresh
+    }
+    STUDENT_SKILL_PROFILE {
+        guid Id PK
+        guid StudentId FK
+        string Category
+        int Difficulty
+        int TotalAttempts
+        int PassedAttempts
+        double MasteryScore
+        bool IsWeakArea
+    }
+    CATEGORY ||--o{ COURSE : "1 n"
+    USER ||--o{ COURSE : "1 n"
+    COURSE ||--o{ CHAPTER : "1 n"
+    CHAPTER ||--o{ LESSON : "1 n"
+    LESSON ||--o| LESSON_VIDEO : "1 0..1"
+    LESSON ||--o| LESSON_READING : "1 0..1"
+    LESSON ||--o| LESSON_CODING : "1 0..1"
+    LESSON ||--o| LESSON_QUIZ : "1 0..1"
+    LESSON_QUIZ ||--o{ LESSON_QUIZ_QUESTION : "1 n"
+    LESSON_QUIZ_QUESTION ||--o{ LESSON_QUIZ_ANSWER : "1 n"
+    LESSON ||--o{ LESSON_MATERIAL : "1 n"
+    FILE_ENTRY ||--o{ LESSON_MATERIAL : "1 n"
+    USER ||--o{ ENROLLMENT : "1 n"
+    COURSE ||--o{ ENROLLMENT : "1 n"
+    USER ||--o{ USER_LESSON_PROGRESS : "1 n"
+    LESSON ||--o{ USER_LESSON_PROGRESS : "1 n"
+    COURSE ||--o{ REVIEW : "1 n"
+    USER ||--o{ REVIEW : "1 n"
+    USER ||--o{ CART : "1 1"
+    CART ||--o{ CART_ITEM : "1 n"
+    COURSE ||--o{ CART_ITEM : "1 n"
+    USER ||--o{ ORDER : "1 n"
+    ORDER ||--o{ ORDER_ITEM : "1 n"
+    COURSE ||--o{ ORDER_ITEM : "1 n"
+    ORDER ||--o{ PAYMENT_TRANSACTION : "1 n"
+    USER ||--o{ NOTIFICATION : "1 n"
+    USER ||--o{ EXERCISE : "1 n"
+    EXERCISE ||--o{ EXERCISE_EXAMPLE : "1 n"
+    EXERCISE ||--o{ EXERCISE_TEST_CASE : "1 n"
+    EXERCISE ||--o{ EXERCISE_DEFAULT_CODE : "1 n"
+    EXERCISE ||--o{ EXERCISE_SUBMISSION : "1 n"
+    EXERCISE ||--o| LESSON_CODING : "1 0..1"
+    USER ||--o{ CONTEST : "1 n"
+    CONTEST ||--o{ CONTEST_EXERCISE : "1 n"
+    EXERCISE ||--o{ CONTEST_EXERCISE : "1 n"
+    CONTEST ||--o{ CONTEST_PRIZE : "1 n"
+    COURSE ||--o{ CONTEST_PRIZE : "1 n"
+    CONTEST ||--o{ CONTEST_REGISTRATION : "1 n"
+    USER ||--o{ CONTEST_REGISTRATION : "1 n"
+    CONTEST ||--o{ CONTEST_SUBMISSION : "1 n"
+    EXERCISE ||--o{ CONTEST_SUBMISSION : "1 n"
+    USER ||--o{ CONTEST_SUBMISSION : "1 n"
+    CONTEST ||--o{ ANTI_CHEAT_VIOLATION : "1 n"
+    USER ||--o{ ANTI_CHEAT_VIOLATION : "1 n"
+    USER ||--o{ CHAT_CONVERSATION : "1 n"
+    CHAT_CONVERSATION ||--o{ CHAT_MESSAGE : "1 n"
+    FILE_ENTRY ||--o{ FILE_CHUNK : "1 n"
+    FILE_ENTRY ||--o{ FILE_ENTRY_EMBEDDING : "1 n"
+    FILE_CHUNK ||--o{ FILE_ENTRY_EMBEDDING : "1 n"
+    COURSE ||--o| COURSE_EMBEDDING : "1 0..1"
+    COURSE ||--o{ COURSE_SIMILARITY : "1 n"
+    COURSE ||--o{ COURSE_CO_OCCURRENCE : "1 n"
+    USER ||--o{ USER_RECOMMENDATION : "1 n"
+    COURSE ||--o{ USER_RECOMMENDATION : "1 n"
+    USER ||--o| STUDENT_PREFERENCE : "1 1"
+    USER ||--o{ STUDENT_SKILL_PROFILE : "1 n"

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -17,10 +17,30 @@ import { RegisterRole } from '@/lib/types'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [role, setRole] = useState<RegisterRole>(RegisterRole.Student)
+
+  const nextParam = searchParams?.get('next') ?? ''
+  const isSafeNext = (() => {
+    if (!nextParam) return false
+    try {
+      const decoded = decodeURIComponent(nextParam)
+      return decoded.startsWith('/') && !decoded.startsWith('//')
+    } catch {
+      return false
+    }
+  })()
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    // If a freshly-redirected user landed here because their token expired, keep them informed
+    if (nextParam) {
+      toast.message('Phiên đã hết hạn — vui lòng đăng nhập lại để tiếp tục.')
+    }
+  }, [nextParam])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -46,7 +66,9 @@ export default function LoginPage() {
 
         toast.success('Đăng nhập thành công.')
 
-        if (roles.includes(Roles.Admin) || roles.includes(Roles.Instructor)) {
+        if (isSafeNext) {
+          router.push(decodeURIComponent(nextParam))
+        } else if (roles.includes(Roles.Admin) || roles.includes(Roles.Instructor)) {
           router.push('/management')
         } else {
           router.push('/')

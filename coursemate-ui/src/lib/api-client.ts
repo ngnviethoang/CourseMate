@@ -14,11 +14,24 @@ interface ProblemDetails {
   [key: string]: unknown
 }
 
-import { getAccessToken } from '@/lib/auth-token.util'
+import { getAccessToken, removeToken } from '@/lib/auth-token.util'
 import { BUSINESS_ERROR_MESSAGE_MAP } from '@/lib/business-error-messages'
 
 const resolveProblemMessage = (problem: ProblemDetails, fallback: string): string =>
   (problem.errorCode && BUSINESS_ERROR_MESSAGE_MAP[problem.errorCode]) ?? problem.detail ?? problem.title ?? fallback
+
+let isRedirecting401 = false
+
+const handleUnauthorized = () => {
+  if (typeof window === 'undefined') return
+  if (isRedirecting401) return
+  isRedirecting401 = true
+  removeToken()
+  const current = window.location.pathname + window.location.search
+  const next = encodeURIComponent(current)
+  toast.error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.')
+  window.location.href = `/login?next=${next}`
+}
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL
@@ -42,7 +55,9 @@ axiosInstance.interceptors.response.use(
   (error: AxiosError<ProblemDetails>) => {
     const problem: ProblemDetails = error.response?.data || {}
     const status = error.response?.status
-    if (status === 403) {
+    if (status === 401) {
+      handleUnauthorized()
+    } else if (status === 403) {
       toast.error(resolveProblemMessage(problem, 'Truy cập bị từ chối.'))
     } else if (status === 422 || status === 400) {
       toast.error(resolveProblemMessage(problem, 'Lỗi xác thực dữ liệu.'))

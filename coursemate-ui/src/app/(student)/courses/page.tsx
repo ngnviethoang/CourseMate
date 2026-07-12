@@ -3,15 +3,15 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Search, BookOpen, Loader2, Filter, ChevronRight } from 'lucide-react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { courseService } from '@/lib/course-service'
 import { categoryService } from '@/lib/category-service'
 import { RecommendedCoursesTop5 } from '@/components/home/recommended-courses-top5'
+import { CourseBrowseCard } from '@/components/(student)/course-browse-card'
 import type { CourseDto, CategoryDto } from '@/lib/types'
 import { toast } from 'sonner'
-import { formatCurrency } from '@/lib/utils'
 
 const PAGE_SIZE = 12
 
@@ -155,45 +155,7 @@ export default function CoursesPage() {
         <>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {courses.map(course => (
-              <Card
-                key={course.id}
-                className="group cursor-pointer overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 flex flex-col"
-                onClick={() => (window.location.href = `/courses/${course.id}`)}
-              >
-                <div className="relative h-44 w-full overflow-hidden bg-muted">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={course.imageUrl || 'https://placehold.co/600x400?text=No+Image'}
-                    alt={course.title}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                  {course.categoryName && (
-                    <Badge className="absolute right-2 top-2 bg-black/60 hover:bg-black/60 text-white border-0 backdrop-blur-sm">
-                      {course.categoryName}
-                    </Badge>
-                  )}
-                </div>
-
-                <CardHeader className="p-4 pb-2 flex-none">
-                  <CardTitle className="line-clamp-2 text-base leading-tight group-hover:text-primary transition-colors">
-                    {course.title}
-                  </CardTitle>
-                  <CardDescription className="text-xs mt-1">
-                    {course.instructorName || 'Đang cập nhật'}
-                  </CardDescription>
-                </CardHeader>
-
-                <CardContent className="p-4 pt-0 flex-1">
-                  <p className="line-clamp-2 text-sm text-muted-foreground">{course.description}</p>
-                </CardContent>
-
-                <CardFooter className="p-4 pt-0 flex items-center justify-between border-t mt-auto">
-                  <span className="text-lg font-bold text-primary">{formatCurrency(course.price)}</span>
-                  <span className="text-xs font-semibold text-primary underline-offset-2 group-hover:underline">
-                    Xem chi tiết
-                  </span>
-                </CardFooter>
-              </Card>
+              <CourseBrowseCard key={course.id} course={course} />
             ))}
           </div>
 

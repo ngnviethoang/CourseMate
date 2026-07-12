@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from '@/components/ui/sonner'
+import { FavoritesProvider } from '@/contexts/favorites-context'
 import './globals.css'
 
 const geistSans = Geist({
@@ -31,7 +32,9 @@ export default function RootLayout({
     <html lang="vi" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+          <FavoritesProvider>
+            {children}
+          </FavoritesProvider>
           <Toaster richColors position="top-right" expand={true} visibleToasts={5} />
         </ThemeProvider>
       </body>

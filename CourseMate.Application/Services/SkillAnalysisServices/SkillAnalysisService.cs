@@ -12,7 +12,7 @@ public interface ISkillAnalysisService
 
 public class SkillAnalysisService : ISkillAnalysisService
 {
-    private const int WeakAreaMinAttempts = 3;
+    private const int WeakAreaMinAttempts = 1;
     private const double WeakAreaMasteryThreshold = 0.5;
     private const int RecentDaysWindow = 14;
 
@@ -91,7 +91,8 @@ public class SkillAnalysisService : ISkillAnalysisService
             .Where(a => a.IsWeakArea)
             .OrderBy(a => a.MasteryScore)
             .ThenBy(a => a.PassRate)
-            .Take(5)
+            .ThenByDescending(a => a.TotalAttempts)
+            .Take(8)
             .ToList();
 
         double overallMastery = grouped.Count == 0 ? 0 : grouped.Average(a => a.MasteryScore);

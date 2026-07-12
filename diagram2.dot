@@ -1,0 +1,31 @@
+
+digraph ER_6__Lesson_Variants___Quiz__Chen_ {
+  graph [rankdir=LR, fontname="Arial", label="6. Lesson Variants & Quiz (Chen)", labelloc=t, fontsize=16, compound=true, nodesep=0.3, ranksep=0.6];
+  node [fontname="Arial"];
+  edge [fontname="Arial"];
+  ent_LESSON [label="LESSON", shape=rectangle, style="filled,rounded", fillcolor="#E8F0FE", color="#1F3A68", penwidth=1.5, fontsize=12, fontname="Arial Bold"];
+  ent_LESSON_VIDEO [label="LESSON_VIDEO", shape=rectangle, style="filled,rounded", fillcolor="#E8F0FE", color="#1F3A68", penwidth=1.5, fontsize=12, fontname="Arial Bold"];
+  ent_LESSON_READING [label="LESSON_READING", shape=rectangle, style="filled,rounded", fillcolor="#E8F0FE", color="#1F3A68", penwidth=1.5, fontsize=12, fontname="Arial Bold"];
+  ent_LESSON_CODING [label="LESSON_CODING", shape=rectangle, style="filled,rounded", fillcolor="#E8F0FE", color="#1F3A68", penwidth=1.5, fontsize=12, fontname="Arial Bold"];
+  ent_LESSON_QUIZ [label="LESSON_QUIZ", shape=rectangle, style="filled,rounded", fillcolor="#E8F0FE", color="#1F3A68", penwidth=1.5, fontsize=12, fontname="Arial Bold"];
+  ent_LESSON_QUIZ_QUESTION [label="LESSON_QUIZ_QUESTION", shape=rectangle, style="filled,rounded", fillcolor="#E8F0FE", color="#1F3A68", penwidth=1.5, fontsize=12, fontname="Arial Bold"];
+  ent_LESSON_QUIZ_ANSWER [label="LESSON_QUIZ_ANSWER", shape=rectangle, style="filled,rounded", fillcolor="#E8F0FE", color="#1F3A68", penwidth=1.5, fontsize=12, fontname="Arial Bold"];
+  rel_has_video [label="has_video", shape=diamond, style=filled, fillcolor="#FFF4D6", color="#B07D00", penwidth=1.5, fontsize=11, fontname="Arial Bold"];
+  rel_has_reading [label="has_reading", shape=diamond, style=filled, fillcolor="#FFF4D6", color="#B07D00", penwidth=1.5, fontsize=11, fontname="Arial Bold"];
+  rel_has_coding [label="has_coding", shape=diamond, style=filled, fillcolor="#FFF4D6", color="#B07D00", penwidth=1.5, fontsize=11, fontname="Arial Bold"];
+  rel_has_quiz [label="has_quiz", shape=diamond, style=filled, fillcolor="#FFF4D6", color="#B07D00", penwidth=1.5, fontsize=11, fontname="Arial Bold"];
+  rel_contains_question [label="contains_question", shape=diamond, style=filled, fillcolor="#FFF4D6", color="#B07D00", penwidth=1.5, fontsize=11, fontname="Arial Bold"];
+  rel_has_answer [label="has_answer", shape=diamond, style=filled, fillcolor="#FFF4D6", color="#B07D00", penwidth=1.5, fontsize=11, fontname="Arial Bold"];
+  ent_LESSON -- rel_has_video;
+  rel_has_video -- ent_LESSON_VIDEO [label="1 â€” 0..1", fontsize=9, fontcolor="#444", fontname="Arial Italic", constraint=true];
+  ent_LESSON -- rel_has_reading;
+  rel_has_reading -- ent_LESSON_READING [label="1 â€” 0..1", fontsize=9, fontcolor="#444", fontname="Arial Italic", constraint=true];
+  ent_LESSON -- rel_has_coding;
+  rel_has_coding -- ent_LESSON_CODING [label="1 â€” 0..1", fontsize=9, fontcolor="#444", fontname="Arial Italic", constraint=true];
+  ent_LESSON -- rel_has_quiz;
+  rel_has_quiz -- ent_LESSON_QUIZ [label="1 â€” 0..1", fontsize=9, fontcolor="#444", fontname="Arial Italic", constraint=true];
+  rel_has_quiz -- rel_contains_question;
+  rel_contains_question -- ent_LESSON_QUIZ_QUESTION [label="1 â€” n", fontsize=9, fontcolor="#444", fontname="Arial Italic", constraint=true];
+  ent_LESSON_QUIZ_QUESTION -- rel_has_answer;
+  rel_has_answer -- ent_LESSON_QUIZ_ANSWER [label="1 â€” n", fontsize=9, fontcolor="#444", fontname="Arial Italic", constraint=true];
+}
