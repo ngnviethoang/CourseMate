@@ -113,6 +113,8 @@ public sealed class ReportViolationCommandHandler : AbstractCommandHandler<Repor
             registration.DisqualifiedReason = $"Auto: Exceeded violation threshold ({registration.ViolationCount}/{contest.MaxViolations})";
         }
 
+        await DbContext.SaveChangesAsync(ct);
+
         return new ViolationResultDto
         {
             ViolationCount = registration.ViolationCount,

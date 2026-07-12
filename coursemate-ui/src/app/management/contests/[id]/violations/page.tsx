@@ -65,6 +65,26 @@ const VIOLATION_LABELS: Record<string, { label: string; color: string; bg: strin
   }
 }
 
+// Maps integer enum value sent by backend SignalR to string name
+const VIOLATION_TYPE_NAMES = [
+  'TabSwitch',     // 0
+  'WindowBlur',    // 1
+  'CopyPaste',     // 2
+  'RightClick',    // 3
+  'DevToolsOpen',  // 4
+  'ScreenResize',  // 5
+  'MultipleMonitors', // 6
+  'ExternalPaste'  // 7
+]
+
+/** Normalize violationType — backend may send an integer enum or a string */
+function normalizeViolationType(raw: number | string): string {
+  if (typeof raw === 'number') {
+    return VIOLATION_TYPE_NAMES[raw] ?? String(raw)
+  }
+  return String(raw)
+}
+
 function getViolationMeta(type: string) {
   return VIOLATION_LABELS[type] ?? { label: type, color: 'text-muted-foreground', bg: 'bg-muted' }
 }
@@ -154,6 +174,9 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
     connection.onclose(() => setConnectionState('disconnected'))
 
     connection.on('StudentViolation', (event: any) => {
+      // Normalize violationType BEFORE storing — backend sends an integer enum via SignalR
+      const violationType = normalizeViolationType(event.violationType)
+
       setData(prev => {
         if (!prev) return prev
         const students = [...prev.students]
@@ -167,7 +190,7 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
             violations: [
               {
                 id: crypto.randomUUID(),
-                violationType: event.violationType,
+                violationType,
                 occurredAt: event.timestamp,
                 ipAddress: event.ipAddress,
                 userAgent: event.userAgent,
@@ -185,7 +208,7 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
             violations: [
               {
                 id: crypto.randomUUID(),
-                violationType: event.violationType,
+                violationType,
                 occurredAt: event.timestamp,
                 ipAddress: event.ipAddress,
                 userAgent: event.userAgent,
@@ -194,29 +217,14 @@ export default function ContestViolationsPage({ params }: { params: Promise<{ id
             ]
           })
         }
-        
-        // Push the active violator to the top and sort by violationCount
+
+        // Sort: most violations first
         students.sort((a, b) => b.violationCount - a.violationCount)
 
         return { ...prev, students }
       })
 
-      const VIOLATION_TYPE_NAMES = [
-        'TabSwitch',
-        'WindowBlur',
-        'CopyPaste',
-        'RightClick',
-        'DevToolsOpen',
-        'ScreenResize',
-        'MultipleMonitors',
-        'ExternalPaste'
-      ]
-      const normalizedType =
-        typeof event.violationType === 'number'
-          ? (VIOLATION_TYPE_NAMES[event.violationType] ?? String(event.violationType))
-          : String(event.violationType)
-
-      const meta = VIOLATION_LABELS[normalizedType] ?? { label: normalizedType }
+      const meta = VIOLATION_LABELS[violationType] ?? { label: violationType }
 
       toast.warning(`🚨 ${event.studentName}: ${meta.label} (${event.violationCount}/${event.maxViolations})`, {
         duration: 5000,

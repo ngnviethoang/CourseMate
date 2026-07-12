@@ -12,8 +12,7 @@ import {
   ShoppingCart,
   UserCheck,
   Code2,
-  Trophy,
-  Sparkles
+  Trophy
 } from 'lucide-react'
 import {
   Sidebar,
@@ -35,7 +34,7 @@ const navItems = [
   { href: '/management/contests', label: 'Cuộc thi', icon: Trophy, roles: ['Admin', 'Instructor'] },
   { href: '/management/users', label: 'Users', icon: Users, roles: ['Admin'] },
   { href: '/management/pending-instructors', label: 'Instructor Approvals', icon: UserCheck, roles: ['Admin'] },
-  { href: '/management/recommendation-effectiveness', label: 'Recommendation Effectiveness', icon: Sparkles, roles: ['Admin'] },
+
   { href: '/management/orders', label: 'Orders', icon: ShoppingCart, roles: ['Admin', 'Instructor'] }
 ]
 

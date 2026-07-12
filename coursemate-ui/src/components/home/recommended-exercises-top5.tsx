@@ -59,42 +59,43 @@ export function RecommendedExercisesTop5({ source = 'home', title = 'Top 5 bài 
   if (!loading && exercises.length === 0) return null
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border-2 border-primary/15 bg-gradient-to-br from-violet-500/5 via-background to-primary/5 p-6 shadow-sm sm:p-8">
-      <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-violet-500/15 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-primary/15 blur-3xl" />
+    // <section className="relative overflow-hidden rounded-3xl border-2 border-primary/15 bg-gradient-to-br from-violet-500/5 via-background to-primary/5 p-6 shadow-sm sm:p-8">
+    //   <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-violet-500/15 blur-3xl" />
+    //   <div className="pointer-events-none absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-primary/15 blur-3xl" />
 
-      {/* Header */}
-      <div className="relative mb-6 flex items-end justify-between">
-        <div className="flex items-start gap-3">
-          
-          <div>
-           
-            <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">{title}</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Bài tập được chọn dựa trên trình độ và chủ đề bạn quan tâm
-            </p>
-          </div>
-        </div>
-      </div>
+    //   {/* Header */}
+    //   <div className="relative mb-6 flex items-end justify-between">
+    //     <div className="flex items-start gap-3">
 
-      {loading ? (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {Array.from({ length: topN }).map((_, i) => (
-            <div key={i} className="rounded-2xl bg-card p-4 shadow-sm">
-              <div className="mb-3 h-6 w-3/4 animate-pulse rounded bg-muted" />
-              <div className="mb-2 h-3 w-full animate-pulse rounded bg-muted" />
-              <div className="h-3 w-1/2 animate-pulse rounded bg-muted" />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {exercises.map((ex, idx) => (
-            <RecommendedExerciseCard key={ex.id} exercise={ex} rank={idx + 1} />
-          ))}
-        </div>
-      )}
-    </section>
+    //       <div>
+
+    //         <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">{title}</h2>
+    //         <p className="mt-1 text-sm text-muted-foreground">
+    //           Bài tập được chọn dựa trên trình độ và chủ đề bạn quan tâm
+    //         </p>
+    //       </div>
+    //     </div>
+    //   </div>
+
+    //   {loading ? (
+    //     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+    //       {Array.from({ length: topN }).map((_, i) => (
+    //         <div key={i} className="rounded-2xl bg-card p-4 shadow-sm">
+    //           <div className="mb-3 h-6 w-3/4 animate-pulse rounded bg-muted" />
+    //           <div className="mb-2 h-3 w-full animate-pulse rounded bg-muted" />
+    //           <div className="h-3 w-1/2 animate-pulse rounded bg-muted" />
+    //         </div>
+    //       ))}
+    //     </div>
+    //   ) : (
+    //     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+    //       {exercises.map((ex, idx) => (
+    //         <RecommendedExerciseCard key={ex.id} exercise={ex} rank={idx + 1} />
+    //       ))}
+    //     </div>
+    //   )}
+    // </section>
+    <></>
   )
 }
 
@@ -115,9 +116,8 @@ function RecommendedExerciseCard({ exercise, rank }: { exercise: ExerciseDto; ra
 
       {/* Difficulty tag */}
       <span
-        className={`mb-2 w-fit rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-          DIFFICULTY_COLOR[exercise.difficulty] || 'bg-muted text-muted-foreground border-border'
-        }`}
+        className={`mb-2 w-fit rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${DIFFICULTY_COLOR[exercise.difficulty] || 'bg-muted text-muted-foreground border-border'
+          }`}
       >
         {exercise.difficulty}
       </span>

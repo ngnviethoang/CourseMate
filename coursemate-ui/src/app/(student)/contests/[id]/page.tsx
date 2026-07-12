@@ -371,27 +371,17 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
               {contest.status === 'Ongoing' ? (
                 contest.isRegistered ? (
                   contest.hasSubmitted ? (
-                    <Button
-                      onClick={handleOpenLeaderboardModal}
-                      className="h-14 px-10 rounded-2xl text-lg font-bold shadow-xl shadow-amber-500/20 bg-gradient-to-r from-amber-600 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 gap-3 text-white"
-                    >
-                      <Trophy className="h-5 w-5" /> Đã nộp bài — Xem xếp hạng
+                    <Button onClick={handleOpenLeaderboardModal} variant="outline" className="gap-2">
+                      <Trophy className="h-4 w-4" /> Đã nộp bài — Xem xếp hạng
                     </Button>
                   ) : (
-                    <Button
-                      onClick={handleJoin}
-                      className="h-14 px-10 rounded-2xl text-lg font-bold shadow-xl shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 gap-2"
-                    >
-                      <Flame className="h-5 w-5" /> Vào phòng thi
+                    <Button onClick={handleJoin} className="gap-2">
+                      <Flame className="h-4 w-4" /> Vào phòng thi
                     </Button>
                   )
                 ) : (
-                  <Button
-                    onClick={handleRegister}
-                    disabled={registering}
-                    className="h-14 px-10 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20 gap-2"
-                  >
-                    {registering ? <Loader2 className="h-5 w-5 animate-spin" /> : <Trophy className="h-5 w-5" />}
+                  <Button onClick={handleRegister} disabled={registering} className="gap-2">
+                    {registering ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trophy className="h-4 w-4" />}
                     Đăng ký &amp; Thi ngay
                   </Button>
                 )
@@ -400,17 +390,12 @@ export default function ContestDetailPage({ params }: { params: Promise<{ id: st
                   onClick={handleRegister}
                   disabled={registering || contest.isRegistered}
                   variant={contest.isRegistered ? 'outline' : 'default'}
-                  className="h-14 px-10 rounded-2xl text-lg font-bold shadow-lg"
                 >
                   {contest.isRegistered ? '✓ Đã đăng ký' : 'Đăng ký tham dự'}
                 </Button>
               ) : (
-                <Button
-                  onClick={handleOpenLeaderboardModal}
-                  variant="secondary"
-                  className="h-14 px-10 rounded-2xl text-lg font-bold gap-2"
-                >
-                  <Trophy className="h-5 w-5" /> Xem kết quả cuối cùng
+                <Button onClick={handleOpenLeaderboardModal} variant="secondary" className="gap-2">
+                  <Trophy className="h-4 w-4" /> Xem kết quả cuối cùng
                 </Button>
               )}
             </div>

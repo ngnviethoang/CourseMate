@@ -45,6 +45,7 @@ public class SubmitExerciseCommandHandler : AbstractCommandHandler<SubmitExercis
         );
 
         await DbContext.ExerciseSubmissions.AddAsync(submission, ct);
+        await DbContext.SaveChangesAsync(ct);
         return new ResultIdDto { Id = submission.Id };
     }
 }

@@ -13,13 +13,21 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   useEffect(() => {
     if (isLearningRoute) return
     if (typeof window === 'undefined') return
+    
+    const isPublicRoute = pathname === '/' || pathname?.startsWith('/courses')
+
     if (!isAuthenticated()) {
+      if (isPublicRoute) return
       const next = encodeURIComponent(pathname || '/')
       window.location.href = `/login?next=${next}`
       return
     }
     if (isTokenExpired(getDecodedToken())) {
       removeToken()
+      if (isPublicRoute) {
+        window.location.reload()
+        return
+      }
       const next = encodeURIComponent(pathname || '/')
       window.location.href = `/login?next=${next}`
     }
