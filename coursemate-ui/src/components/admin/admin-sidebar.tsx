@@ -34,7 +34,7 @@ const navItems = [
   { href: '/management/exercises', label: 'Bài tập', icon: Code2, roles: ['Admin', 'Instructor'] },
   { href: '/management/contests', label: 'Cuộc thi', icon: Trophy, roles: ['Admin', 'Instructor'] },
   { href: '/management/users', label: 'Người dùng', icon: Users, roles: ['Admin'] },
-  // { href: '/management/pending-instructors', label: 'Phê duyệt giảng viên', icon: UserCheck, roles: ['Admin'] },
+  { href: '/management/pending-instructors', label: 'Phê duyệt giảng viên', icon: UserCheck, roles: ['Admin'] },
   { href: '/management/recommendation-effectiveness', label: 'Hiệu quả gợi ý', icon: Sparkles, roles: ['Admin'] },
   { href: '/management/orders', label: 'Đơn hàng', icon: ShoppingCart, roles: ['Admin', 'Instructor'] }
 ]

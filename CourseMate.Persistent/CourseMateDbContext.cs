@@ -120,6 +120,15 @@ public sealed class CourseMateDbContext : IdentityDbContext<User, IdentityRole<G
                         break;
                 }
             }
+
+            // Auto-populate UserId for entities that track the creator
+            if (entry.State == EntityState.Added
+                && entry.Entity is IMayHaveUser mayHaveUser
+                && mayHaveUser.UserId == null
+                && userId.HasValue)
+            {
+                mayHaveUser.UserId = userId.Value;
+            }
         }
     }
 

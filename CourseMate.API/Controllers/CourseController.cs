@@ -51,6 +51,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpGet("courses/{id:guid}")]
+    [AllowAnonymous]
     public async Task<ActionResult> GetCourseByIdAsync(Guid id)
     {
         CourseDetailDto? result = await _mediator.Send(new GetCourseByIdQuery { Id = id });

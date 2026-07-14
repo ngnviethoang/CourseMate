@@ -286,6 +286,8 @@ export interface UserDto {
   userName?: string
   email?: string
   phoneNumber?: string
+  isApproved: boolean
+  isLockedOut: boolean
   creationTime: string
   lastModificationTime?: string
 }
